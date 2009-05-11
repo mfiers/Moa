@@ -52,7 +52,7 @@ dbConnection = None
 # Helper commands
 def error(message):
 	"""Display an error message & quit"""
-	sys.stderr.write(message + "\n")
+	sys.stderr.write("Error: " + message + "\n")
 	sys.exit(1)
 	
 def log(message):
@@ -119,28 +119,32 @@ def keaVarGet(datatype, name):
 		  ORDER BY created DESC
 		     LIMIT 1 """, [name, datatype] )
 		
+	i = 0
 	for rec in c.fetchall():
+		i += 1
 		if options.showTime:
 			output("%s\t%s" % (time2str(rec[1]), rec[0]))
 		elif options.showUnixTime:
 			output("%s\t%s" % (rec[1], rec[0]))
 		else:
 			output(rec[0])
-			
+	if not options.showAll and i == 0:
+		#expecting something & got nothing.. return error
+		error("Cannot find %s/%s" % (datatype, name))
 			
 def keaVarLs():
 	"""show a list of all vars in the db"""
 	c = dbConnection.cursor()
 	c.execute("""
 		SELECT DISTINCT datatype, name, count(name)
-		  FROM vars
-	  GROUP BY datatype, name """)		
+	  	  FROM vars
+  	  GROUP BY datatype, name """)		
 	
 	for rec in c.fetchall():
+		rv = "%s\t%s" % (rec[0], rec[1])
 		if options.showCount:
-			output("%s\t%s\t%s" % (rec[0], rec[1], rec[2]))
-		else:
-			output("%s\t%s" % (rec[0], rec[1]))
+			rv += "\t%s" % (rec[2])
+		output(rv)
 						
 def keaVarSet(datatype, name, value):
 	"""Get a var from the db"""
@@ -150,13 +154,23 @@ def keaVarSet(datatype, name, value):
 			 VALUES (?, ?, ?)""", [name, datatype, value])
 	dbConnection.commit()	
 				
-def keaVarSet(datatype = None, name = None):
-	"""Get a var from the db"""
+def keaVarRm(datatype = None, name = None):
+	"""remove a var from the db"""
 	c = dbConnection.cursor()
-	c.execute("""		
-		INSERT INTO vars (name, datatype, value)
-			 VALUES (?, ?, ?)""", [name, datatype, value])
-	dbConnection.commit()	
+	if datatype and name:
+		log("Removing %s/%s" % (datatype, name))
+		c.execute("""		
+			DELETE FROM vars WHERE
+				    name = ?
+			AND datatype = ?""", [name, datatype])
+		dbConnection.commit()	
+	elif name:
+		log("Removing {ALL}/%s" % (name))
+		c.execute("""		
+			DELETE FROM vars WHERE
+				    name = ?""", [name])
+		dbConnection.commit()	
+		
 def main(args):
 	#determine database location
 	if os.environ.has_key("KEA_BASE_DIR"):
@@ -185,8 +199,8 @@ def main(args):
 	elif command == "get":
 		if len(args) != 3:
 			error("invalid number of arguments")
-			datatype = args[1]
-			name = args[2]
+		datatype = args[1]
+		name = args[2]
 		keaVarGet(datatype, name)
 	elif command == "ls":
 		if len(args) == 1:
@@ -201,7 +215,7 @@ def main(args):
 			keaVarRm(datatype = datatype, 
 					 name = name)
 		elif len(args) == 2:
-			name = args[2]
+			name = args[1]
 			keaVarRm(name = name)
 		else:
 			error("invalid number of arguments")		

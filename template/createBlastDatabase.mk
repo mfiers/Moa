@@ -13,8 +13,10 @@ kea_title = Create a BLAST database
 kea_description = Takes a multi-fasta input file and creates a BLAST database.
 
 #Targets (for generating help)
-kea_targets += create_blast_db
+kea_targets += create_blast_db clean set_weka
 create_blast_db_help = Create the BLAST database
+clean_help = Remove the blast database
+set_weka_help = set location in the global weka db
 
 #Outputs (for generating help)
 kea_outputs += blastdb
@@ -56,4 +58,12 @@ create_blast_db: $(one_blast_db_file)
 $(one_blast_db_file): $(input_file)
 	@echo "Creating $@"
 	formatdb -i $< -p $(protein) -o T -n $(set_name)
-	
+
+clean: create_blast_db_clean
+
+create_blast_db_clean:	
+	if [ $(protein) == "F" ]; then \
+		rm $(set_name).n?? ;\
+	else \
+		rm $(set_name).p?? ;\
+	fi

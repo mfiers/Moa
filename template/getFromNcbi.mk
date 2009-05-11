@@ -1,14 +1,16 @@
 # Download a set of sequences from NCBI
 
 # Main target - should be first in the file
-kea_main_target: check get_from_ncbi
+kea_main_target: check get_from_ncbi set_keavar
 
 
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-kea_targets += get_from_ncbi
-kea_target_get_from_ncbi_help = Download data from NCBI
+kea_targets += get_from_ncbi set_weka clean
+get_from_ncbi_help = Download data from NCBI
+set_weka_help = set location in the global weka db
+clean_help = remove the downloaded data
 
 # Help
 kea_title = Get sequences from NCBI
@@ -50,8 +52,8 @@ get_from_ncbi_prepare:
 		touch touched; \
 	fi
 
-set_keavar:
-	keavar set $(set_name) `pwd`/$(fasta_file)
+set_weka:
+	weka set fasta $(set_name) `pwd`/$(fasta_file)
 	
 $(fasta_file): webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
 $(fasta_file): queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
@@ -62,3 +64,11 @@ $(fasta_file): tmp.xml
 tmp.xml: touched
 	wget "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
 		-O tmp.xml
+
+clean: get_from_ncbi_clean
+
+get_from_ncbi_clean:
+	-rm $(fasta_file)
+	-rm tmp.xml
+	-rm touched
+	weka rm fasta $(set_name)
