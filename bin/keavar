@@ -1,0 +1,219 @@
+#!/usr/bin/env python
+"""
+Simple system to have system wide persistent variables.
+
+Usage:
+	keavar set [NAME] [VALUE]
+	keavar get [NAME]
+	keavar ls
+	keavar rm [NAME]	
+"""
+import os
+import sys
+import time
+import optparse
+import sqlite3
+
+#CONSTANTS & vars
+COMMANDS = ["ls", "rm", "get", "set"]
+USAGE = "Usage: keavar get|set|ls|rm [NAME] [VALUE]"
+LOG = False
+DBDEF = [
+"""
+CREATE TABLE IF NOT EXISTS vars
+	(name text, 
+ 	 value text,
+ 	 datatype text,
+	 created integer DEFAULT (strftime('%s','now')))
+""", 
+"CREATE INDEX IF NOT EXISTS iname ON vars (name)",
+"CREATE INDEX IF NOT EXISTS itype ON vars (datatype)"]
+
+parser = optparse.OptionParser()
+parser.set_defaults(showAll=False)
+parser.add_option("-a", dest="showAll", action="store_true",
+				  help="show all values (as opposed to only the " +
+				  "latest version")
+parser.set_defaults(showTime=False)
+parser.add_option("-t", dest="showTime", action="store_true",
+				  help="Show time stamp")
+parser.set_defaults(showUnixTime=False)
+parser.add_option("-u", dest="showUnixTime", 
+				  action="store_true", help="Show unix time stamp")
+parser.set_defaults(showCount=False)
+parser.add_option("-c", dest="showCount", 
+				  action="store_true", help="Show no of vars (with ls)")
+
+options, args = parser.parse_args()
+
+
+dbConnection = None
+		
+# Helper commands
+def error(message):
+	"""Display an error message & quit"""
+	sys.stderr.write(message + "\n")
+	sys.exit(1)
+	
+def log(message):
+	if LOG:
+		sys.stderr.write("# " + message + "\n")
+		
+def usage():
+	"""Print usage information"""
+	sys.stderr.write(USAGE + "\n")
+	
+def output(val):
+	"""output the value (to screen, most likely)"""
+	print val
+	
+def closeDbConnection():
+    """ Close db connection. If there is uncommited data
+    it is lost """    
+    if dbConnection:
+		dbConnection.close()
+
+def exit(dbConn):
+	""" Exit. After properly closing the dbConnection """
+	closeDbConnection()
+	sys.exit(0)
+	
+def time2str(t):
+	return time.strftime("%a, %d %b %Y %H:%M:%S" , 
+						 time.localtime(float(t)))
+	
+def openDbConnection(dbLocation):
+	"""
+	Open the db connection & create the var table
+	if it doesn't already exists.
+	"""
+	log("Opening db connection")
+	global dbConnection
+	dbConnection = sqlite3.connect(dbLocation)
+	c = dbConnection.cursor()
+	for statement in DBDEF:
+		log("executing %s" % statement)
+		c.execute(statement)
+	dbConnection.commit()
+	c.close()
+	log("Opened db connection %s " % dbConnection)
+
+	
+#Main functions
+def keaVarGet(datatype, name):
+	"""Get a var from the db"""
+	c = dbConnection.cursor()
+	if options.showAll:
+		c.execute("""
+			SELECT value, created 
+			  FROM vars 
+			 WHERE name = ? 
+			   AND datatype = ?
+		  ORDER BY created DESC""", [name, datatype] )
+	else:
+		c.execute("""
+			SELECT value, created 
+			  FROM vars 
+			 WHERE name = ?
+			   AND datatype = ? 
+		  ORDER BY created DESC
+		     LIMIT 1 """, [name, datatype] )
+		
+	for rec in c.fetchall():
+		if options.showTime:
+			output("%s\t%s" % (time2str(rec[1]), rec[0]))
+		elif options.showUnixTime:
+			output("%s\t%s" % (rec[1], rec[0]))
+		else:
+			output(rec[0])
+			
+			
+def keaVarLs():
+	"""show a list of all vars in the db"""
+	c = dbConnection.cursor()
+	c.execute("""
+		SELECT DISTINCT datatype, name, count(name)
+		  FROM vars
+	  GROUP BY datatype, name """)		
+	
+	for rec in c.fetchall():
+		if options.showCount:
+			output("%s\t%s\t%s" % (rec[0], rec[1], rec[2]))
+		else:
+			output("%s\t%s" % (rec[0], rec[1]))
+						
+def keaVarSet(datatype, name, value):
+	"""Get a var from the db"""
+	c = dbConnection.cursor()
+	c.execute("""		
+		INSERT INTO vars (name, datatype, value)
+			 VALUES (?, ?, ?)""", [name, datatype, value])
+	dbConnection.commit()	
+				
+def keaVarSet(datatype = None, name = None):
+	"""Get a var from the db"""
+	c = dbConnection.cursor()
+	c.execute("""		
+		INSERT INTO vars (name, datatype, value)
+			 VALUES (?, ?, ?)""", [name, datatype, value])
+	dbConnection.commit()	
+def main(args):
+	#determine database location
+	if os.environ.has_key("KEA_BASE_DIR"):
+		dbLocation = os.path.join(os.environ['KEA_BASE_DIR'],
+								  'var',
+								  'keavar.db')
+	else:
+		#use the user home dir
+		dbLocation = os.path.join(os.path.expanduser("~"),
+								  '.keavar.db')
+
+	openDbConnection(dbLocation)
+	
+	#read commandline and act!
+	command = args[0]
+	if "help" in command.lower():
+		usage()
+		sys.exit(0)
+	elif command == "set":	
+		if len(args) != 4:			
+			error("invalid number of arguments")
+		datatype = args[1]
+		name = args[2]
+		value = args[3]
+		keaVarSet(datatype, name, value)
+	elif command == "get":
+		if len(args) != 3:
+			error("invalid number of arguments")
+			datatype = args[1]
+			name = args[2]
+		keaVarGet(datatype, name)
+	elif command == "ls":
+		if len(args) == 1:
+			keaVarLs()
+		elif len(args) == 2:
+			datatype = args[1]
+			keaVarLs(datatype)
+	elif command == "rm":
+		if len(args) == 3:
+			datatype = args[1]			
+			name = args[2]
+			keaVarRm(datatype = datatype, 
+					 name = name)
+		elif len(args) == 2:
+			name = args[2]
+			keaVarRm(name = name)
+		else:
+			error("invalid number of arguments")		
+	else:
+		usage()
+		error("Invalid command %s" % command)
+	
+		
+
+if __name__ == "__main__":
+	try:		
+		main(args)
+	except KeyboardInterrupt:
+		cleanup()
+	 

@@ -1,0 +1,59 @@
+# Create a BLAST database from a set of sequences
+################################################################################
+
+# Main target defintion
+kea_main_target: check create_blast_db
+
+
+################################################################################
+# Definitions
+
+# Help
+kea_title = Create a BLAST database 
+kea_description = Takes a multi-fasta input file and creates a BLAST database.
+
+#Targets (for generating help)
+kea_targets += create_blast_db
+create_blast_db_help = Create the BLAST database
+
+#Outputs (for generating help)
+kea_outputs += blastdb
+kea_output_blastdb = ./set_name
+kea_output_blastdb_help = The blast database created
+
+#Variable: set_name
+kea_must_define += set_name 
+set_name_help = The name of the set, determines the name of the blast db
+
+#Variable: protein
+kea_may_define += protein
+protein_help = Protein database? (T)rue) or not (F)alse (default: F)
+
+#Variable: input_file
+kea_may_define += input_file 
+input_file_help = Multifasta used as input. (default: $(set_name).fasta)
+
+#Include base kea code - does variable checks & generates help				 
+include $(shell echo $$KEA_BASE_DIR)/template/kea.base.mk
+	
+#the rest of the variable definitions 
+protein ?= F
+input_file	?= $(set_name).fasta
+
+ifeq ("$(protein)", "F")
+	one_blast_db_file = $(set_name).nhr
+else
+	one_blast_db_file = $(set_name).phr
+endif
+     
+################################################################################
+# End of the generic part - from here on you're on your own :)
+
+.PHONY: create_blast_db
+
+create_blast_db: $(one_blast_db_file)
+
+$(one_blast_db_file): $(input_file)
+	@echo "Creating $@"
+	formatdb -i $< -p $(protein) -o T -n $(set_name)
+	
