@@ -2,7 +2,7 @@
 ################################################################################
 
 # Main target defintion
-kea_main_target: check create_blast_db
+kea_main_target: check create_blast_db set_weka
 
 
 ################################################################################
@@ -59,11 +59,15 @@ $(one_blast_db_file): $(input_file)
 	@echo "Creating $@"
 	formatdb -i $< -p $(protein) -o T -n $(set_name)
 
+set_weka:
+	weka set $(set_name).blastdb `pwd`/$(set_name)
+	
 clean: create_blast_db_clean
 
 create_blast_db_clean:	
-	if [ $(protein) == "F" ]; then \
+	-if [ $(protein) == "F" ]; then \
 		rm $(set_name).n?? ;\
 	else \
 		rm $(set_name).p?? ;\
 	fi
+	-weka rm $(set_name).blastdb

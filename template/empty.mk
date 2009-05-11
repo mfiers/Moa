@@ -1,15 +1,12 @@
 # Empty - use this to create a new makefile
 ################################################################################
 # Main target
-maintarget: check *TODO*
+maintarget: not doing anything
 
 ################################################################################
 # Help
-help_intro:
-	@echo "*TODO*"
-
-help_output:
-	@echo "*TODO*"
+kea_title = 
+kea_description = 
 
 ################################################################################
 # Variable definition (non obligatory ones)
@@ -21,11 +18,11 @@ help_output:
 # makea definitions
 #
 #targets that the enduser might want to use
-kea_targets += *TODO*
+kea_targets += 
 #varables that NEED to be defined
-kea_must_define += *TODO*
+kea_must_define += 
 #varaibles that might be defined
-kea_may_define += *TODO*		
+kea_may_define += 		
 #Include base kea code - does variable checks & generates help				 
 include $(shell echo $$KEA_BASE_DIR)/template/kea.base.mk
 

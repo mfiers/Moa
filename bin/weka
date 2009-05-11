@@ -3,10 +3,10 @@
 Simple system to have system wide persistent variables.
 
 Usage:
-	keavar set [NAME] [VALUE]
-	keavar get [NAME]
-	keavar ls
-	keavar rm [NAME]	
+	weka set [NAME] [VALUE]
+	weka get [NAME]
+	weka ls
+	weka rm [NAME]	
 """
 import os
 import sys
@@ -16,7 +16,7 @@ import sqlite3
 
 #CONSTANTS & vars
 COMMANDS = ["ls", "rm", "get", "set"]
-USAGE = "Usage: keavar get|set|ls|rm [NAME] [VALUE]"
+USAGE = "Usage: keavar get|set|ls|rm [DATATYPE.NAME] [VALUE]"
 LOG = False
 DBDEF = [
 """
@@ -43,6 +43,9 @@ parser.add_option("-u", dest="showUnixTime",
 parser.set_defaults(showCount=False)
 parser.add_option("-c", dest="showCount", 
 				  action="store_true", help="Show no of vars (with ls)")
+parser.set_defaults(verbose=False)
+parser.add_option("-v", dest="verbose", 
+				  action="store_true", help="A more verbose output")
 
 options, args = parser.parse_args()
 
@@ -52,7 +55,7 @@ dbConnection = None
 # Helper commands
 def error(message):
 	"""Display an error message & quit"""
-	sys.stderr.write("Error: " + message + "\n")
+	sys.stderr.write("error: " + message + "\n")
 	sys.exit(1)
 	
 def log(message):
@@ -100,7 +103,7 @@ def openDbConnection(dbLocation):
 
 	
 #Main functions
-def keaVarGet(datatype, name):
+def keaVarGet(name, datatype):
 	"""Get a var from the db"""
 	c = dbConnection.cursor()
 	if options.showAll:
@@ -130,7 +133,7 @@ def keaVarGet(datatype, name):
 			output(rec[0])
 	if not options.showAll and i == 0:
 		#expecting something & got nothing.. return error
-		error("Cannot find %s/%s" % (datatype, name))
+		error("Cannot find %s.%s" % (datatype, name))
 			
 def keaVarLs():
 	"""show a list of all vars in the db"""
@@ -140,13 +143,19 @@ def keaVarLs():
 	  	  FROM vars
   	  GROUP BY datatype, name """)		
 	
+	if options.verbose:
+		if options.showCount:
+			output("#name.datatype\tcount")
+		else:
+			output("#name.datatype")
+			
 	for rec in c.fetchall():
-		rv = "%s\t%s" % (rec[0], rec[1])
+		rv = "%s.%s" % (rec[1], rec[0])
 		if options.showCount:
 			rv += "\t%s" % (rec[2])
 		output(rv)
 						
-def keaVarSet(datatype, name, value):
+def keaVarSet(name, datatype, value):
 	"""Get a var from the db"""
 	c = dbConnection.cursor()
 	c.execute("""		
@@ -176,7 +185,7 @@ def main(args):
 	if os.environ.has_key("KEA_BASE_DIR"):
 		dbLocation = os.path.join(os.environ['KEA_BASE_DIR'],
 								  'var',
-								  'keavar.db')
+								  'weka.db')
 	else:
 		#use the user home dir
 		dbLocation = os.path.join(os.path.expanduser("~"),
@@ -190,35 +199,29 @@ def main(args):
 		usage()
 		sys.exit(0)
 	elif command == "set":	
-		if len(args) != 4:			
+		if len(args) != 3:			
 			error("invalid number of arguments")
-		datatype = args[1]
-		name = args[2]
+		name, datatype = args[1].split('.')		
 		value = args[3]
 		keaVarSet(datatype, name, value)
 	elif command == "get":
-		if len(args) != 3:
+		if len(args) != 2:
 			error("invalid number of arguments")
-		datatype = args[1]
-		name = args[2]
-		keaVarGet(datatype, name)
+		name, datatype = args[1].split('.')
+		keaVarGet(name, datatype)
 	elif command == "ls":
-		if len(args) == 1:
-			keaVarLs()
-		elif len(args) == 2:
-			datatype = args[1]
-			keaVarLs(datatype)
+		keaVarLs()
 	elif command == "rm":
-		if len(args) == 3:
-			datatype = args[1]			
-			name = args[2]
-			keaVarRm(datatype = datatype, 
-					 name = name)
-		elif len(args) == 2:
+		if len(args) != 2:
+			error("invalid number of arguments")			
+		if '.' in args[1]:
+			name, datatype = args[1].split('.')
+		else:			
 			name = args[1]
-			keaVarRm(name = name)
-		else:
-			error("invalid number of arguments")		
+			datatype = None
+			
+		keaVarRm(datatype = datatype, 
+			 	 name = name)		
 	else:
 		usage()
 		error("Invalid command %s" % command)

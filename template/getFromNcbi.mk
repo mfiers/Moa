@@ -1,7 +1,7 @@
 # Download a set of sequences from NCBI
 
 # Main target - should be first in the file
-kea_main_target: check get_from_ncbi set_keavar
+kea_main_target: check get_from_ncbi set_weka
 
 
 ################################################################################
@@ -53,7 +53,7 @@ get_from_ncbi_prepare:
 	fi
 
 set_weka:
-	weka set fasta $(set_name) `pwd`/$(fasta_file)
+	weka set $(set_name).fasta `pwd`/$(fasta_file)
 	
 $(fasta_file): webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
 $(fasta_file): queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
@@ -71,4 +71,4 @@ get_from_ncbi_clean:
 	-rm $(fasta_file)
 	-rm tmp.xml
 	-rm touched
-	weka rm fasta $(set_name)
+	-weka rm $(set_name).fasta
