@@ -1,0 +1,26 @@
+Prerequisites
+
+- GNU Make
+- bash
+
+Installation
+
+- Download the archive
+- Unpack. For example in /opt/moa
+- Set the following environment vars (globally! For example in 
+  /etc/profile or /etc/profile.d/moa.sh):
+	- MOABASE=/opt/moa
+	- PATH=$PATH:/opt/moa/bin
+- Set permissions, assuming all users on this machine are allowed
+  to use Moa.
+	- chmod -R a+rX /opt/moa
+	- chmod a+rx /opt/moa/bin/*
+	- chmod a+rw /opt/moa/var
+- Check if weka works, run:
+	- weka ls
+  this should come back without an error message, and the following
+  file should be created:
+  	- /opt/moa/var/weka.db
+  	
+  
+	
