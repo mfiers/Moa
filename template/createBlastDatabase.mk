@@ -61,7 +61,7 @@ $(one_blast_db_file): $(input_file)
 	formatdb -i $< -p $(protein) -o T -n $(set_name)
 
 set_weka:
-	weka set $(set_name).blastdb `pwd`/$(set_name)
+	weka set $(set_name)::blastdb `pwd`/$(set_name)
 	
 clean: create_blast_db_clean
 
@@ -73,4 +73,4 @@ create_blast_db_clean:
 	fi
 	
 clean_weka:
-	weka rm $(set_name).blastdb
+	weka rm $(set_name)::blastdb

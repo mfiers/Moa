@@ -80,7 +80,9 @@ $(kea_followups):
 	@echo "  ## Executing make $(action)"
 	@echo "  ##   in $@ " 
 	@echo "  ###########################"
-	cd $@ && $(MAKE) $(action)
+	if [ -e $@/Makefile ]; then \
+		cd $@ && $(MAKE) $(action) ;\
+	fi
 
 ###############################################################################
 # Help structure

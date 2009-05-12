@@ -54,7 +54,7 @@ get_from_ncbi_prepare:
 	fi
 
 set_weka:
-	weka set $(set_name).fasta `pwd`/$(fasta_file)
+	weka set $(set_name)::fasta `pwd`/$(fasta_file)
 	
 $(fasta_file): webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
 $(fasta_file): queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
@@ -74,4 +74,4 @@ get_from_ncbi_clean:
 	-rm touched
 	
 clean_weka:
-	weka rm $(set_name).fasta
+	weka rm $(set_name)::fasta
