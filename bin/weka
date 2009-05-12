@@ -230,7 +230,7 @@ def keaVarLs():
 		rv = []
 		if options.verbose:
 			rv.append(rec[2])
-		rv.append("%s.%s" % (rec[1], rec[0]))
+		rv.append("%s::%s" % (rec[1], rec[0]))
 		outputF(rv, headers)
 						
 def keaVarSet(name, datatype, value):
