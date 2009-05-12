@@ -17,39 +17,51 @@ import sqlite3
 #CONSTANTS & vars
 COMMANDS = ["ls", "rm", "get", "set"]
 USAGE = "Usage: keavar get|set|ls|rm [DATATYPE.NAME] [VALUE]"
-LOG = False
 DBDEF = [
 """
 CREATE TABLE IF NOT EXISTS vars
 	(name text, 
  	 value text,
  	 datatype text,
+ 	 archived integer DEFAULT 0,
 	 created integer DEFAULT (strftime('%s','now')))
 """, 
 "CREATE INDEX IF NOT EXISTS iname ON vars (name)",
+"CREATE INDEX IF NOT EXISTS iarch ON vars (archived)",
 "CREATE INDEX IF NOT EXISTS itype ON vars (datatype)"]
 
 parser = optparse.OptionParser()
-parser.set_defaults(showAll=False)
-parser.add_option("-a", dest="showAll", action="store_true",
+parser.set_defaults(showAll=0)
+parser.add_option("-a", dest="showAll", action="count",
 				  help="show all values (as opposed to only the " +
-				  "latest version")
-parser.set_defaults(showTime=False)
-parser.add_option("-t", dest="showTime", action="store_true",
-				  help="Show time stamp")
-parser.set_defaults(showUnixTime=False)
-parser.add_option("-u", dest="showUnixTime", 
-				  action="store_true", help="Show unix time stamp")
-parser.set_defaults(showCount=False)
-parser.add_option("-c", dest="showCount", 
-				  action="store_true", help="Show no of vars (with ls)")
-parser.set_defaults(verbose=False)
-parser.add_option("-v", dest="verbose", 
-				  action="store_true", help="A more verbose output")
+				  "latest version. If you give this option twice, "
+				  "show also the deleted values" )
 
+parser.set_defaults(showUnixTime=False)
+parser.add_option("-u", dest="showUnixTime", action="store_true", 
+				  help="Show time in seconds since epoch")
+
+parser.set_defaults(verbose=0)
+parser.add_option("-v", dest="verbose", 
+				  action="count", help="A more human readable output")
+
+parser.set_defaults(replace=False)
+parser.add_option("-r", dest="replace", action="store_true", 
+				  help="Delete older values of this variable " + 
+				  "(actually, archive them until they are purged)")
+
+parser.set_defaults(logging=False)
+parser.add_option("-l", dest="logging", action="store_true", 
+				  help="Turn on logging messages")
 options, args = parser.parse_args()
 
 
+	
+def log(message):
+	if options.logging:
+		sys.stderr.write("# " + message + "\n")
+		
+log("verbosity %s" % options.verbose)
 dbConnection = None
 		
 # Helper commands
@@ -57,19 +69,35 @@ def error(message):
 	"""Display an error message & quit"""
 	sys.stderr.write("error: " + message + "\n")
 	sys.exit(1)
-	
-def log(message):
-	if LOG:
-		sys.stderr.write("# " + message + "\n")
-		
+
 def usage():
 	"""Print usage information"""
 	sys.stderr.write(USAGE + "\n")
 	
+def outputHeaders(headers):	
+	if options.verbose == 2:
+		print "#" + " ".join([x[1] % x[0] for x in headers])
+	
 def output(val):
-	"""output the value (to screen, most likely)"""
+	"""
+	Simple output
+	"""
 	print val
 	
+def outputF(vals, headers = None):
+	"""output the value, format depending on verbosity & headers"""
+	if type(vals) not in [type([]), type(())]:
+		vals = [vals]
+		
+	if options.verbose <= 1:
+		print "\t".join([str(x) for x in vals])	
+	else:
+		print " " + " ".join([headers[x][1] % vals[x] for x in range(len(vals))])
+
+def outputFooter(message):
+	if options.verbose > 1:
+		print "#", message
+			
 def closeDbConnection():
     """ Close db connection. If there is uncommited data
     it is lost """    
@@ -104,80 +132,143 @@ def openDbConnection(dbLocation):
 	
 #Main functions
 def keaVarGet(name, datatype):
-	"""Get a var from the db"""
+	"""
+	Get a variable from the database	
+	"""
 	c = dbConnection.cursor()
-	if options.showAll:
-		c.execute("""
-			SELECT value, created 
-			  FROM vars 
-			 WHERE name = ? 
-			   AND datatype = ?
-		  ORDER BY created DESC""", [name, datatype] )
-	else:
-		c.execute("""
-			SELECT value, created 
+	if options.showAll == 0:
+		sql = """	
+			SELECT value, created, archived 
 			  FROM vars 
 			 WHERE name = ?
 			   AND datatype = ? 
+			   AND archived = 0
 		  ORDER BY created DESC
-		     LIMIT 1 """, [name, datatype] )
-		
+		     LIMIT 1 """
+	elif options.showAll == 1:
+		sql = """   
+			SELECT value, created, archived 
+			  FROM vars 
+			 WHERE name = ? 
+			   AND datatype = ?
+			   AND archived = 0
+		  ORDER BY created DESC """
+	else:
+	 	sql = """   
+ 			SELECT value, created, archived 
+			  FROM vars 
+			 WHERE name = ? 
+			   AND datatype = ?
+		  ORDER BY created DESC """
+		  
+	log("executing %s with %s" % (sql, [name, datatype]))
+	c.execute(sql,[name, datatype])
+			
 	i = 0
-	for rec in c.fetchall():
-		i += 1
-		if options.showTime:
-			output("%s\t%s" % (time2str(rec[1]), rec[0]))
-		elif options.showUnixTime:
-			output("%s\t%s" % (rec[1], rec[0]))
+
+	headers = []
+	if options.verbose > 1:
+		headers.append(("", "%1s"))
+	if options.verbose > 0:
+		if options.showUnixTime:
+			headers.append(("unix time", "%-11s"))
 		else:
-			output(rec[0])
+			headers.append(("time", "%-26s"))
+	headers.append(("value", "%-s"))
+	outputHeaders(headers)
+		
+	for rec in c.fetchall():		
+		rv = []			
+		i += 1	
+				
+		if options.verbose > 0 and options.showAll > 1:
+			if rec[2] == 0: rv.append("+")
+			else: rv.append("d")
+		if options.verbose > 0 and options.showAll > 0:	 	
+			if options.showUnixTime: rv.append(rec[1])
+			else: rv.append(time2str(rec[1]))
+		rv.append(rec[0])
+		outputF(rv, headers)			
+	
 	if not options.showAll and i == 0:
 		#expecting something & got nothing.. return error
 		error("Cannot find %s.%s" % (datatype, name))
+	if options.verbose > 0:
+		outputFooter("d = deleted, + = active")
 			
 def keaVarLs():
 	"""show a list of all vars in the db"""
 	c = dbConnection.cursor()
-	c.execute("""
-		SELECT DISTINCT datatype, name, count(name)
-	  	  FROM vars
-  	  GROUP BY datatype, name """)		
+	if options.showAll == 0:
+		sql = """
+			SELECT DISTINCT datatype, name, 1
+		  	  FROM vars
+		  	 WHERE archived = 0 """
+	elif options.showAll == 1:
+		sql = """
+			SELECT DISTINCT datatype, name, count(name)
+		  	  FROM vars
+		  	 WHERE archived = 0
+	  	  GROUP BY datatype, name """
+	else:
+		sql = """
+			SELECT DISTINCT datatype, name, count(name)
+		  	  FROM vars
+	  	  GROUP BY datatype, name """
+	  		
+	log("executing %s" % sql)
+	c.execute(sql)
 	
-	if options.verbose:
-		if options.showCount:
-			output("#name.datatype\tcount")
-		else:
-			output("#name.datatype")
-			
+	if options.verbose == 0:
+		headers = [("name.datatype", "%s")]
+	else:
+		headers = [("count", "%5s"), ("name.datatype", "%s")]
+		
+	outputHeaders(headers)
+	
 	for rec in c.fetchall():
-		rv = "%s.%s" % (rec[1], rec[0])
-		if options.showCount:
-			rv += "\t%s" % (rec[2])
-		output(rv)
+		rv = []
+		if options.verbose:
+			rv.append(rec[2])
+		rv.append("%s.%s" % (rec[1], rec[0]))
+		outputF(rv, headers)
 						
 def keaVarSet(name, datatype, value):
 	"""Get a var from the db"""
 	c = dbConnection.cursor()
-	c.execute("""		
+	if options.replace:
+		sql = """
+			UPDATE vars
+			   SET archived = 1
+			 WHERE name = ?
+			   AND datatype = ? """
+		log("executing %s with %s" % (sql, [name, datatype]))
+		c.execute(sql, [name, datatype])
+		
+	sql = """		
 		INSERT INTO vars (name, datatype, value)
-			 VALUES (?, ?, ?)""", [name, datatype, value])
+			 VALUES (?, ?, ?)"""
+			 
+	log("executing %s with %s" % (sql, [name, datatype, value]))
+	c.execute(sql, [name, datatype, value])
 	dbConnection.commit()	
 				
 def keaVarRm(datatype = None, name = None):
-	"""remove a var from the db"""
+	"""completely remove a var from the db"""
 	c = dbConnection.cursor()
 	if datatype and name:
 		log("Removing %s/%s" % (datatype, name))
-		c.execute("""		
-			DELETE FROM vars WHERE
-				    name = ?
-			AND datatype = ?""", [name, datatype])
+		sql = """DELETE FROM vars 
+				       WHERE name = ?
+						 AND datatype = ?"""
+		log("Executing %s with %s" % (sql, [name, datatype]))
+		c.execute(sql, [name, datatype])
 		dbConnection.commit()	
 	elif name:
 		log("Removing {ALL}/%s" % (name))
-		c.execute("""		
-			DELETE FROM vars WHERE
-				    name = ?""", [name])
+		sql = "DELETE FROM vars WHERE name = ?"
+		log("Executing %s with %s" % (sql, [name]))
+		c.execute(sql, [name])
 		dbConnection.commit()	
 		
 def main(args):
@@ -195,22 +286,25 @@ def main(args):
 	
 	#read commandline and act!
 	command = args[0]
-	if "help" in command.lower():
-		usage()
-		sys.exit(0)
-	elif command == "set":	
+	
+	if command == "set":	
 		if len(args) != 3:			
 			error("invalid number of arguments")
 		name, datatype = args[1].split('.')		
-		value = args[3]
-		keaVarSet(datatype, name, value)
+		value = args[2]
+		keaVarSet(name = name, 
+				  datatype = datatype, 
+				  value = value)
+		
 	elif command == "get":
 		if len(args) != 2:
 			error("invalid number of arguments")
 		name, datatype = args[1].split('.')
 		keaVarGet(name, datatype)
+		
 	elif command == "ls":
 		keaVarLs()
+		
 	elif command == "rm":
 		if len(args) != 2:
 			error("invalid number of arguments")			
