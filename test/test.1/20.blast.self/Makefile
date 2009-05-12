@@ -1,1 +1,1 @@
-/home/mf/project/makea/template/blastSingle.mk
+include $(shell echo $$MOABASE)/template/blastSingle.mk

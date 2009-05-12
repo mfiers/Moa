@@ -1,1 +1,1 @@
-/home/mf/project/makea/template/createBlastDatabase.mk
+include $(shell echo $$MOABASE)/template/createBlastDb.mk

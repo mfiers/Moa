@@ -1,1 +1,1 @@
-/home/mf/project/makea/template/traverse.mk
+include $(shell echo $$MOABASE)/template/traverse.mk

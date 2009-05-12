@@ -194,9 +194,9 @@ def wekaGet(name, datatype):
 		rv.append(rec[0])
 		outputF(rv, headers)			
 	
-	if not options.showAll and i == 0:
-		#expecting something & got nothing.. return error
-		error("Cannot find %s.%s" % (datatype, name))
+	#if not options.showAll and i == 0:
+	#	#expecting something & got nothing.. return error
+	#	error("Cannot find %s.%s" % (datatype, name))
 	if options.verbose > 0:
 		outputFooter("d = deleted, + = active")
 			

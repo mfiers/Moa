@@ -1,1 +1,1 @@
-/home/mf/project/makea/template/getFromNcbi.mk
+include $(shell echo $$MOABASE)/template/getFromNcbi.mk
