@@ -16,7 +16,7 @@ import sqlite3
 
 #CONSTANTS & vars
 COMMANDS = ["ls", "rm", "get", "set"]
-USAGE = "Usage: keavar get|set|ls|rm [DATATYPE.NAME] [VALUE]"
+USAGE = "Usage: weka get|set|ls|rm [DATATYPE.NAME] [VALUE]"
 DBDEF = [
 """
 CREATE TABLE IF NOT EXISTS vars
@@ -120,7 +120,11 @@ def openDbConnection(dbLocation):
 	"""
 	log("Opening db connection")
 	global dbConnection
-	dbConnection = sqlite3.connect(dbLocation)
+	try:
+		dbConnection = sqlite3.connect(dbLocation)
+	except sqlite3.OperationalError:
+		error("Cannot open db %s\n" % dbLocation + 
+			  "Does the path exists? Do you have write access?")
 	c = dbConnection.cursor()
 	for statement in DBDEF:
 		log("executing %s" % statement)
@@ -131,7 +135,7 @@ def openDbConnection(dbLocation):
 
 	
 #Main functions
-def keaVarGet(name, datatype):
+def wekaGet(name, datatype):
 	"""
 	Get a variable from the database	
 	"""
@@ -196,7 +200,7 @@ def keaVarGet(name, datatype):
 	if options.verbose > 0:
 		outputFooter("d = deleted, + = active")
 			
-def keaVarLs():
+def wekaLs():
 	"""show a list of all vars in the db"""
 	c = dbConnection.cursor()
 	if options.showAll == 0:
@@ -233,7 +237,7 @@ def keaVarLs():
 		rv.append("%s::%s" % (rec[1], rec[0]))
 		outputF(rv, headers)
 						
-def keaVarSet(name, datatype, value):
+def wekaSet(name, datatype, value):
 	"""Get a var from the db"""
 	c = dbConnection.cursor()
 	if options.replace:
@@ -253,7 +257,7 @@ def keaVarSet(name, datatype, value):
 	c.execute(sql, [name, datatype, value])
 	dbConnection.commit()	
 				
-def keaVarRm(datatype = None, name = None):
+def wekaRm(datatype = None, name = None):
 	"""completely remove a var from the db"""
 	c = dbConnection.cursor()
 	if datatype and name:
@@ -273,14 +277,14 @@ def keaVarRm(datatype = None, name = None):
 		
 def main(args):
 	#determine database location
-	if os.environ.has_key("KEA_BASE_DIR"):
-		dbLocation = os.path.join(os.environ['KEA_BASE_DIR'],
+	if os.environ.has_key("MOABASE"):
+		dbLocation = os.path.join(os.environ['MOABASE'],
 								  'var',
 								  'weka.db')
 	else:
 		#use the user home dir
 		dbLocation = os.path.join(os.path.expanduser("~"),
-								  '.keavar.db')
+								  '.weka.db')
 
 	openDbConnection(dbLocation)
 	
@@ -292,7 +296,7 @@ def main(args):
 			error("invalid number of arguments")
 		name, datatype = args[1].split('::')		
 		value = args[2]
-		keaVarSet(name = name, 
+		wekaSet(name = name, 
 				  datatype = datatype, 
 				  value = value)
 		
@@ -300,10 +304,10 @@ def main(args):
 		if len(args) != 2:
 			error("invalid number of arguments")
 		name, datatype = args[1].split('::')
-		keaVarGet(name, datatype)
+		wekaGet(name, datatype)
 		
 	elif command == "ls":
-		keaVarLs()
+		wekaLs()
 		
 	elif command == "rm":
 		if len(args) != 2:
@@ -314,7 +318,7 @@ def main(args):
 			name = args[1]
 			datatype = None
 			
-		keaVarRm(datatype = datatype, 
+		wekaRm(datatype = datatype, 
 			 	 name = name)		
 	else:
 		usage()
