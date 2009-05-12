@@ -7,10 +7,11 @@ kea_main_target: check get_from_ncbi set_weka
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-kea_targets += get_from_ncbi set_weka clean
+kea_targets += get_from_ncbi set_weka clean clean_weka
 get_from_ncbi_help = Download data from NCBI
 set_weka_help = set location in the global weka db
 clean_help = remove the downloaded data
+clean_weka_help = clean location in the global weka db (will not run automatically)
 
 # Help
 kea_title = Get sequences from NCBI
@@ -58,11 +59,11 @@ set_weka:
 $(fasta_file): webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
 $(fasta_file): queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
 $(fasta_file): tmp.xml
-	wget 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&rettype=fasta' \
+	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&rettype=fasta&retmode=text&usehistory=y" \
 		-O $@
 	
 tmp.xml: touched
-	wget "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
+	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
 		-O tmp.xml
 
 clean: get_from_ncbi_clean
@@ -71,4 +72,6 @@ get_from_ncbi_clean:
 	-rm $(fasta_file)
 	-rm tmp.xml
 	-rm touched
-	-weka rm $(set_name).fasta
+	
+clean_weka:
+	weka rm $(set_name).fasta

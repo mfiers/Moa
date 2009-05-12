@@ -13,10 +13,11 @@ kea_title = Create a BLAST database
 kea_description = Takes a multi-fasta input file and creates a BLAST database.
 
 #Targets (for generating help)
-kea_targets += create_blast_db clean set_weka
+kea_targets += create_blast_db clean set_weka clean_weka
 create_blast_db_help = Create the BLAST database
 clean_help = Remove the blast database
 set_weka_help = set location in the global weka db
+clean_weka_help = clean location in the global weka db (will not run automatically)
 
 #Outputs (for generating help)
 kea_outputs += blastdb
@@ -70,4 +71,6 @@ create_blast_db_clean:
 	else \
 		rm $(set_name).p?? ;\
 	fi
-	-weka rm $(set_name).blastdb
+	
+clean_weka:
+	weka rm $(set_name).blastdb

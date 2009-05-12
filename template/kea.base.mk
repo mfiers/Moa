@@ -4,12 +4,12 @@ SHELL := /bin/bash
 #see if a local variable set is defined
 -include kea.local.mk
 
-kea_targets += check help show tree prereqs
+kea_targets += check help show all clean_all prereqs
 check_help = Check variable definition
 show_help = show defined variables
 help_help = This help!
-tree_help = Run through the directory structure
-tree_clean_help = Clean the directory structure
+all_help = Recursively run through all subdirectories (use make all \
+	action=XXX to run "make XXX" recursively) 
 prereqs_help = Check if all prerequisites are present
 
 
@@ -43,14 +43,13 @@ storeweka_%:
 		echo -n "$(subst storeweka_,,$@)=$$" >> kea.local.mk ;\
 		echo "(shell weka get $($(subst storeweka_,,$@)))" >> kea.local.mk ; \
 	fi
-	
-##>> kea.local.mk ; \
+
 set: $(addprefix storevar_, $(kea_must_define) $(kea_may_define))
 
 storevar_%:		 
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
-		
+		echo "$(subst storevar_,,$@)=$($(subst storevar_,,$@))" >> kea.local.mk ;\
 	fi	
 		
 show: $(addprefix showvar_, $(kea_must_define) $(kea_may_define))
@@ -59,20 +58,29 @@ showvar_%:
 	@echo "$(subst showvar_,,$@) : $($(subst showvar_,,$@))"
 
 #dir traversing
-kea_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+")
+kea_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+" -exec basename '{}' \; | sort )
 
-tree: 
-	@for x in $(kea_followups); do \
-		echo " # Starting in $$x" ;\
-		cd $$x && $(MAKE) && cd .. ;\
-	done
-tree_clean: 
-	@for x in $(kea_followups); do \
-		echo " # Cleaning $$x" ;\
-		cd $$x && $(MAKE) clean && cd .. ;\
-	done
+.PHONY: $(kea_followups) all clean_all
+
+all_check:
+	@echo "would run make $(action)"
+	@echo "in the following dirs"
+	@echo $(kea_followups)
 	
+action ?= all
+all: $(kea_followups)
+	if [ "$(action)" == "all" ]; then \
+		echo "running all without action, also run default action" ;\
+		$(MAKE) ;\
+	fi
+	@echo "follows" $(kea_followups)
 
+$(kea_followups):
+	@echo "  ###########################"
+	@echo "  ## Executing make $(action)"
+	@echo "  ##   in $@ " 
+	@echo "  ###########################"
+	cd $@ && $(MAKE) $(action)
 
 ###############################################################################
 # Help structure
@@ -125,7 +133,7 @@ kea_target_%:
 	@if [ "$(origin $(subst kea_target_,,$@)_help)" == "undefined" ]; then \
 		echo ;\
 	else \
-		echo " : $($(subst kea_target_,,$@)_help)"  ;\
+		echo " : $($(subst kea_target_,,$@)_help)" | fold -s  ;\
 	fi
 	
 	
