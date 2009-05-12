@@ -1,41 +1,41 @@
 # Download a set of sequences from NCBI
 
 # Main target - should be first in the file
-kea_main_target: check get_from_ncbi set_weka
+moa_main_target: check get_from_ncbi set_weka
 
 
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-kea_targets += get_from_ncbi set_weka clean clean_weka
+moa_targets += get_from_ncbi set_weka clean clean_weka
 get_from_ncbi_help = Download data from NCBI
 set_weka_help = set location in the global weka db
 clean_help = remove the downloaded data
 clean_weka_help = clean location in the global weka db (will not run automatically)
 
 # Help
-kea_title = Get sequences from NCBI
-kea_description = Download a set of sequences from NCBI based on a \
+moa_title = Get sequences from NCBI
+moa_description = Download a set of sequences from NCBI based on a \
 	query string (ncbi_query) and database (ncbi_db). This will \
 	run only once (!) unless you touch the 'touched' file.
 
 # Output definition
-kea_outputs += fastafile
-kea_output_fastafile = ./setname.fasta
-kea_output_fastafile_help = The multi-fasta file with the downloaded sequence
+moa_outputs += fastafile
+moa_output_fastafile = ./setname.fasta
+moa_output_fastafile_help = The multi-fasta file with the downloaded sequence
 
 #varables that NEED to be defined
-kea_must_define += set_name ncbi_db ncbi_query
+moa_must_define += set_name ncbi_db ncbi_query
 set_name_help = The name of the set, used to name the output fasta file
 ncbi_db_help = NCBI database (for example nucest)
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
 
 #variables that may be defined
-kea_may_define += fasta_file
+moa_may_define += fasta_file
 fasta_file_help = Name of the fasta file to save the results to
 
-#Include base kea code - does variable checks & generates help				 
-include $(shell echo $$KEA_BASE_DIR)/template/kea.base.mk
+#Include base moa code - does variable checks & generates help				 
+include $(shell echo $$MOABASE)/template/moaBase.mk
 
 ################################################################################
 # End of the generic part - from here on you're on your own :)

@@ -2,9 +2,9 @@ SHELL := /bin/bash
 .PHONY: set show help check prereqs
 
 #see if a local variable set is defined
--include kea.local.mk
+-include moa.mk
 
-kea_targets += check help show all clean_all prereqs
+moa_targets += check help show all clean_all prereqs
 check_help = Check variable definition
 show_help = show defined variables
 help_help = This help!
@@ -15,18 +15,18 @@ prereqs_help = Check if all prerequisites are present
 
 ###########################################################################
 #check prerequisites
-prereqlist += kea_envsettings
+prereqlist += moa_envsettings
 .PHONY: prereqs
 prereqs: $(prereqlist)
 
 #check if MOABASE is defined
-kea_envsettings:
+moa_envsettings:
 	@if env | grep -q MOABASE ; then true; else \
 		echo "MOABASE is not defined :(" ; \
 		false ;\
 	fi
 
-check: prereqs $(addprefix checkvar_, $(kea_must_define))
+check: prereqs $(addprefix checkvar_, $(moa_must_define))
 	@echo "Variable check: everything appears ok"
 	
 checkvar_%:
@@ -35,47 +35,47 @@ checkvar_%:
 		exit -1; \
 	fi
 
-wset: $(addprefix storeweka_, $(kea_must_define) $(kea_may_define))
+wset: $(addprefix storeweka_, $(moa_must_define) $(moa_may_define))
 
 storeweka_%:		 
 	@if [ "$(origin $(subst storeweka_,,$@))" == "command line" ]; then \
 		echo " *** Set Weka var $(subst storeweka_,,$@) to 'weka get $($(subst storeweka_,,$@))'" ;\
-		echo -n "$(subst storeweka_,,$@)=$$" >> kea.local.mk ;\
-		echo "(shell weka get $($(subst storeweka_,,$@)))" >> kea.local.mk ; \
+		echo -n "$(subst storeweka_,,$@)=$$" >> moa.mk ;\
+		echo "(shell weka get $($(subst storeweka_,,$@)))" >> moa.mk ; \
 	fi
 
-set: $(addprefix storevar_, $(kea_must_define) $(kea_may_define))
+set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
 storevar_%:		 
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
-		echo "$(subst storevar_,,$@)=$($(subst storevar_,,$@))" >> kea.local.mk ;\
+		echo "$(subst storevar_,,$@)=$($(subst storevar_,,$@))" >> moa.mk ;\
 	fi	
 		
-show: $(addprefix showvar_, $(kea_must_define) $(kea_may_define))
+show: $(addprefix showvar_, $(moa_must_define) $(moa_may_define))
 
 showvar_%:		 
 	@echo "$(subst showvar_,,$@) : $($(subst showvar_,,$@))"
 
 #dir traversing
-kea_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+" -exec basename '{}' \; | sort )
+moa_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+" -exec basename '{}' \; | sort )
 
-.PHONY: $(kea_followups) all clean_all
+.PHONY: $(moa_followups) all clean_all
 
 all_check:
 	@echo "would run make $(action)"
 	@echo "in the following dirs"
-	@echo $(kea_followups)
+	@echo $(moa_followups)
 	
 action ?= all
-all: $(kea_followups)
+all: $(moa_followups)
 	if [ "$(action)" == "all" ]; then \
 		echo "running all without action, also run default action" ;\
 		$(MAKE) ;\
 	fi
-	@echo "follows" $(kea_followups)
+	@echo "follows" $(moa_followups)
 
-$(kea_followups):
+$(moa_followups):
 	@echo "  ###########################"
 	@echo "  ## Executing make $(action)"
 	@echo "  ##   in $@ " 
@@ -86,31 +86,31 @@ $(kea_followups):
 
 ###############################################################################
 # Help structure
-help: kea_help_header \
-	kea_help_target_header kea_help_target kea_help_target_footer \
-	kea_help_vars_header kea_help_vars kea_help_vars_footer \
-	kea_help_output_header kea_help_output kea_help_output_footer
+help: moa_help_header \
+	moa_help_target_header moa_help_target moa_help_target_footer \
+	moa_help_vars_header moa_help_vars moa_help_vars_footer \
+	moa_help_output_header moa_help_output moa_help_output_footer
 	
-kea_help_header:
+moa_help_header:
 	@echo -n "=="
-	@echo -n "$(kea_title)" | sed "s/./=/g"
+	@echo -n "$(moa_title)" | sed "s/./=/g"
 	@echo "=="
-	@echo "= $(kea_title) ="
+	@echo "= $(moa_title) ="
 	@echo -n "=="
-	@echo -n "$(kea_title)" | sed "s/./=/g"
+	@echo -n "$(moa_title)" | sed "s/./=/g"
 	@echo "=="
 	@echo 
-	@echo "$(kea_description)" | fold -s
+	@echo "$(moa_description)" | fold -s
 	@echo
 
 ## Help - output section
-kea_help_output_header:
+moa_help_output_header:
 	@echo "Outputs"
 	@echo "======="
 
-kea_help_output: $(addprefix kea_output_, $(kea_outputs))
+moa_help_output: $(addprefix moa_output_, $(moa_outputs))
 
-kea_output_%:
+moa_output_%:
 	@echo -n " - $($@)"
 	@if [ "$(origin $@_help)" == "undefined" ]; then \
 		echo ;\
@@ -119,27 +119,27 @@ kea_output_%:
 	fi
 	
 	
-kea_help_output_footer:
+moa_help_output_footer:
 	@echo 
 	
 ## Help - target section
-kea_help_target_header:
+moa_help_target_header:
 	@echo "Targets"
 	@echo "======="
 
-kea_help_target: $(addprefix kea_target_, $(kea_targets))
+moa_help_target: $(addprefix moa_target_, $(moa_targets))
 	
 	
-kea_target_%:
-	@echo -n " - $(subst kea_target_,,$@)"
-	@if [ "$(origin $(subst kea_target_,,$@)_help)" == "undefined" ]; then \
+moa_target_%:
+	@echo -n " - $(subst moa_target_,,$@)"
+	@if [ "$(origin $(subst moa_target_,,$@)_help)" == "undefined" ]; then \
 		echo ;\
 	else \
-		echo " : $($(subst kea_target_,,$@)_help)" | fold -s  ;\
+		echo " : $($(subst moa_target_,,$@)_help)" | fold -s  ;\
 	fi
 	
 	
-kea_help_target_footer:
+moa_help_target_footer:
 	@echo 
 
 ## Help - output section
@@ -151,21 +151,21 @@ help_output_footer:
 	@echo 
 	
 ## Help - variable section
-kea_help_vars_header:
+moa_help_vars_header:
 	@echo "Variables"
 	@echo "========="
 	
-kea_help_vars_footer:
+moa_help_vars_footer:
 	@echo "  * these vars must be defined"
 	@echo 
 	
-kea_help_vars: kea_help_vars_must kea_help_vars_may
+moa_help_vars: moa_help_vars_must moa_help_vars_may
 
-kea_help_vars_must: help_prefix="*"
-kea_help_vars_must: $(addprefix helpvar_, $(kea_must_define))
+moa_help_vars_must: help_prefix="*"
+moa_help_vars_must: $(addprefix helpvar_, $(moa_must_define))
 
-kea_help_vars_may: help_prefix=" "
-kea_help_vars_may: $(addprefix helpvar_, $(kea_may_define))
+moa_help_vars_may: help_prefix=" "
+moa_help_vars_may: $(addprefix helpvar_, $(moa_may_define))
 
 
 helpvar_%:
