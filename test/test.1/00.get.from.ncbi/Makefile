@@ -1,0 +1,1 @@
+/home/mf/project/makea/template/getFromNcbi.mk
