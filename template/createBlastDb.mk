@@ -25,52 +25,49 @@ moa_output_blastdb = ./set_name
 moa_output_blastdb_help = The blast database created
 
 #Variable: set_name
-moa_must_define += set_name 
-set_name_help = The name of the set, determines the name of the blast db
+moa_must_define += name input_file
+name_help = The name of the set, determines the name of the blast db
+input_file_help = Multifasta used as input. (default: $(name).fasta)
 
 #Variable: protein
-moa_may_define += protein
+moa_may_define += protein 
 protein_help = Protein database? (T)rue) or not (F)alse (default: F)
-
-#Variable: input_file
-moa_may_define += input_file 
-input_file_help = Multifasta used as input. (default: $(set_name).fasta)
 
 #Include base moa code - does variable checks & generates help				 
 include $(shell echo $$MOABASE)/template/moaBase.mk
-	
-#the rest of the variable definitions 
-protein ?= F
-input_file	?= $(set_name).fasta
 
-ifeq ("$(protein)", "F")
-	one_blast_db_file = $(set_name).nhr
-else
-	one_blast_db_file = $(set_name).phr
-endif
-     
 ################################################################################
 # End of the generic part - from here on you're on your own :)
 
 .PHONY: create_blast_db
 
+#the rest of the variable definitions 
+protein ?= F
+
+ifeq ("$(protein)", "F")
+	one_blast_db_file = $(name).nhr
+else
+	one_blast_db_file = $(name).phr
+endif
+     
+
 create_blast_db: $(one_blast_db_file)
 
 $(one_blast_db_file): $(input_file)
 	@echo "Creating $@"
-	formatdb -i $< -p $(protein) -o T -n $(set_name)
+	formatdb -i $< -p $(protein) -o T -n $(name)
 
 set_weka:
-	weka set $(set_name)::blastdb `pwd`/$(set_name)
+	weka set $(name)::blastdb `pwd`/$(name)
+	
 	
 clean: create_blast_db_clean
-
 create_blast_db_clean:	
 	-if [ $(protein) == "F" ]; then \
-		rm $(set_name).n?? ;\
+		rm $(name).n?? ;\
 	else \
-		rm $(set_name).p?? ;\
+		rm $(name).p?? ;\
 	fi
 	
 clean_weka:
-	weka rm $(set_name)::blastdb
+	weka rm $(name)::blastdb

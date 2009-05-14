@@ -19,6 +19,9 @@ prereqlist += moa_envsettings
 .PHONY: prereqs
 prereqs: $(prereqlist)
 
+test:
+	echo "hello"
+	
 #check if MOABASE is defined
 moa_envsettings:
 	@if env | grep -q MOABASE ; then true; else \
@@ -35,22 +38,31 @@ checkvar_%:
 		exit -1; \
 	fi
 
-wset: $(addprefix storeweka_, $(moa_must_define) $(moa_may_define))
+#wset: $(addprefix storeweka_, $(moa_must_define) $(moa_may_define))
 
-storeweka_%:		 
-	@if [ "$(origin $(subst storeweka_,,$@))" == "command line" ]; then \
-		echo " *** Set Weka var $(subst storeweka_,,$@) to 'weka get $($(subst storeweka_,,$@))'" ;\
-		echo -n "$(subst storeweka_,,$@)=$$" >> moa.mk ;\
-		echo "(shell weka get $($(subst storeweka_,,$@)))" >> moa.mk ; \
-	fi
+#storeweka_%:
+#	if [ "$(origin $(subst storeweka_,,$@))" == "command line" ]; then \
+#		echo " *** Set Weka var $(subst storeweka_,,$@) to 'weka get $($(subst storeweka_,,$@))'" ;\
+#		echo -n "$(subst storeweka_,,$@)=$$" >> moa.mk ;\
+#		echo "(shell weka get $($(subst storeweka_,,$@)))" >> moa.mk ; \
+#	fi
 
+set: set_mode =
 set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
+
+append: set_mode="+"
+append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
 storevar_%:		 
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
-		echo "$(subst storevar_,,$@)=$($(subst storevar_,,$@))" >> moa.mk ;\
-	fi	
+		echo "$(subst storevar_,,$@)$(set_mode)=$(set_mode)$($(subst storevar_,,$@))" >> moa.mk ;\
+	fi
+	@if [ "$(origin weka_$(subst storevar_,,$@))" == "command line" ]; then \
+		echo " *** Set $(subst storevar_,,$@) to \"weka get $(weka_$(subst storevar_,,$@))\"" ;\
+		echo -n "$(subst storevar_,,$@)$(set_mode)=$$" >> moa.mk ;\
+		echo "(shell weka get $(weka_$(subst storevar_,,$@)))" >> moa.mk ; \
+	fi
 		
 show: $(addprefix showvar_, $(moa_must_define) $(moa_may_define))
 
@@ -86,6 +98,8 @@ $(moa_followups):
 
 ###############################################################################
 # Help structure
+boldOn = \033[0;1m
+boldOff = \033[0m
 help: moa_help_header \
 	moa_help_target_header moa_help_target moa_help_target_footer \
 	moa_help_vars_header moa_help_vars moa_help_vars_footer \
@@ -95,27 +109,26 @@ moa_help_header:
 	@echo -n "=="
 	@echo -n "$(moa_title)" | sed "s/./=/g"
 	@echo "=="
-	@echo "= $(moa_title) ="
+	@echo -e "= $(boldOn)$(moa_title)$(boldOff) ="
 	@echo -n "=="
 	@echo -n "$(moa_title)" | sed "s/./=/g"
 	@echo "=="
-	@echo 
 	@echo "$(moa_description)" | fold -s
 	@echo
 
 ## Help - output section
 moa_help_output_header:
-	@echo "Outputs"
+	@echo -e "$(boldOn)Outputs$(boldOff)"
 	@echo "======="
 
 moa_help_output: $(addprefix moa_output_, $(moa_outputs))
 
-moa_output_%:
-	@echo -n " - $($@)"
+moa_output_%:	
 	@if [ "$(origin $@_help)" == "undefined" ]; then \
-		echo ;\
+		echo -en " - $(boldOn)$($@)$(boldOff)" ;\
 	else \
-		echo " : $($(subst helpvar_,,$@)_help)"  | fold -s ;\
+		echo -en "- $(boldOn)$($@)$(boldOff): $($(subst helpvar_,,$@)_help)" \
+			 |fold -w 60 -s |sed '2,$$s/^/     /' ;\
 	fi
 	
 	
@@ -124,39 +137,31 @@ moa_help_output_footer:
 	
 ## Help - target section
 moa_help_target_header:
-	@echo "Targets"
+	@echo -e "$(boldOn)Targets$(boldOff)"
 	@echo "======="
 
 moa_help_target: $(addprefix moa_target_, $(moa_targets))
 	
 	
 moa_target_%:
-	@echo -n " - $(subst moa_target_,,$@)"
 	@if [ "$(origin $(subst moa_target_,,$@)_help)" == "undefined" ]; then \
-		echo ;\
+		echo -e " - $(boldOn)$(subst moa_target_,,$@)$(boldOff)" ;\
 	else \
-		echo " : $($(subst moa_target_,,$@)_help)" | fold -s  ;\
+		echo -e " - $(boldOn)$(subst moa_target_,,$@)$(boldOff): $($(subst moa_target_,,$@)_help)" \
+			| fold -w 60 -s |sed '2,$$s/^/     /' ;\
 	fi
 	
 	
 moa_help_target_footer:
 	@echo 
 
-## Help - output section
-help_output_header:
-	@echo "Output"
-	@echo "======"
-	
-help_output_footer:
-	@echo 
-	
 ## Help - variable section
 moa_help_vars_header:
-	@echo "Variables"
+	@echo -e "$(boldOn)Variables$(boldOff)"
 	@echo "========="
 	
 moa_help_vars_footer:
-	@echo "  * these vars must be defined"
+	@echo -e "*these variables $(boldOn)must$(boldOff) be defined"
 	@echo 
 	
 moa_help_vars: moa_help_vars_must moa_help_vars_may
@@ -164,16 +169,15 @@ moa_help_vars: moa_help_vars_must moa_help_vars_may
 moa_help_vars_must: help_prefix="*"
 moa_help_vars_must: $(addprefix helpvar_, $(moa_must_define))
 
-moa_help_vars_may: help_prefix=" "
+moa_help_vars_may: help_prefix=""
 moa_help_vars_may: $(addprefix helpvar_, $(moa_may_define))
 
-
-helpvar_%:
-	@echo -n " - $(subst helpvar_,,$@)$(help_prefix)"
+helpvar_%:	
 	@if [ "$(origin $(subst helpvar_,,$@)_help)" == "undefined" ]; then \
-		echo ;\
+		@echo -en " - $(boldOn)$(help_prefix)$(subst helpvar_,,$@)$(boldOff)" ;\
 	else \
-		echo " - $($(subst helpvar_,,$@)_help)"  | fold -s;\
+		echo -e " - $(boldOn)$(help_prefix)$(subst helpvar_,,$@)$(boldOff): $($(subst helpvar_,,$@)_help)" \
+			| fold -w 60 -s | sed '2,$$s/^/     /' ;\
 	fi
 		
 		

@@ -1,7 +1,7 @@
 # Empty - use this to create a new makefile
 ################################################################################
 # Main target
-maintarget:
+maintarget: traverse_main
 
 ################################################################################
 # Help
@@ -29,3 +29,6 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 ################################################################################
 # End of the generic part - from here on you're on your own :)
+
+traverse_main:
+	@echo "Traversing through `pwd`"

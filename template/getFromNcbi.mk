@@ -49,7 +49,6 @@ get_from_ncbi: get_from_ncbi_prepare $(fasta_file)
 get_from_ncbi_prepare:
 	# check if touchfile exists. If not.. create it
 	if [ ! -f touched ]; then \
-		@echo "creating touchfile" ;\
 		touch touched; \
 	fi
 
