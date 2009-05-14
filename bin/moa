@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import logging
+import optparse
+
+parser = optparse.OptionParser()
+parser.add_option('-f', '--force', dest='force', action='store_true',
+                  help = 'Force action')
+(options, args) = parser.parse_args()
+
+l = logging.getLogger('moa')
+handler = logging.StreamHandler()
+formatter = logging.Formatter('\033[0;1m%(levelname)-8s\033[0m %(asctime)-24s %(message)s')
+handler.setFormatter(formatter)
+l.addHandler(handler)
+l.setLevel(logging.DEBUG)
+
+if not os.environ.has_key("MOABASE"):
+    l.critical("need to set MOABASE environment variable")
+    sys.exit(1)
+    
+    
+MOABASE = os.environ["MOABASE"]
+TEMPLATEDIR = os.path.join(MOABASE, 'template')
+
+
+def moaAdd(what):
+    templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
+    if not os.path.exists(templatefile):
+        l.debug("cannot find %s" % templatefile)
+        l.error("No template for %s exists" % what)
+        sys.exit(1)
+    includeLine = "include $(shell echo $$MOABASE)/template/%s.mk" % what
+    l.debug("include: %s" % includeLine)
+    l.debug("start write of ./Makefile") 
+    F = open("./Makefile", 'w')
+    F.write(includeLine + "\n")
+    F.close()
+    l.info("Written Makefile, try: make help")
+    sys.exit(0)
+    
+
+if __name__ == "__main__":
+    
+    if os.path.exists("./Makefile"):
+        l.debug("Makefile exists!")
+        if not options.force:
+            l.critical("makefile exists, use force to overwrite")
+            sys.exit(1)
+            
+    if len(args) == 0:
+        l.error("Need to specificy a command")
+        sys.exit(1)
+         
+    command = args[0]
+        
+    l.info("start moa %s" % command)
+    l.debug("MOABASE : %s" % MOABASE)
+    
+    if command == 'add':
+        moaAdd(args[1])
+
+
+
