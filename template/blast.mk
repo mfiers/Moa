@@ -82,7 +82,9 @@ blast_reverse_gff_help = Create inverse gff
 
 ##### varchecks - commandline definitions
 moa_may_define += blast_input_ext blast_program blast_eval blast_nohits blast_nothreads blast_gff_source						 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+ifneq $(include_moa_base) "no"
+	include $(shell echo $$MOABASE)/template/moaBase.mk
+endif
 
 ##### Derived variables for this run
 blast_eval ?= 1e-10

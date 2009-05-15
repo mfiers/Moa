@@ -32,9 +32,10 @@ name_sed_help = Sed substitution command that alters the filename, defaults \
 output_dir_help = Output subdirectory, defaults to '.'
 
 
-#Include base moa code - does variable checks & generates help				 
-include $(shell echo $$MOABASE)/template/moaBase.mk
-
+#Include base moa code - does variable checks & generates help
+ifneq $(include_moa_base) "no"
+	include $(shell echo $$MOABASE)/template/moaBase.mk
+endif
 ################################################################################
 
 #this is a dummy command, replaces every a with an a - hence nothing happens

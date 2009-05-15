@@ -34,8 +34,10 @@ ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
 moa_may_define += fasta_file
 fasta_file_help = Name of the fasta file to save the results to
 
-#Include base moa code - does variable checks & generates help				 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+#Include base moa code - does variable checks & generates help
+ifneq $(include_moa_base) "no"
+	include $(shell echo $$MOABASE)/template/moaBase.mk
+endif
 
 ################################################################################
 # End of the generic part - from here on you're on your own :)

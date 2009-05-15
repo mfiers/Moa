@@ -29,8 +29,10 @@ name_help = name of the file, the outputfile will become ./name.fasta
 moa_may_define += input_extension
 input_extension_help = extension to the fasta files (default .fasta)
 
-#Include base moa code - does variable checks & generates help				 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+#Include base moa code - does variable checks & generates help
+ifneq $(include_moa_base) "no"
+	include $(shell echo $$MOABASE)/template/moaBase.mk
+endif
 
 ################################################################################
 

@@ -28,8 +28,10 @@ moa_may_define += input_extension sed_command
 input_extension_help = extension to the fasta files (default .fasta)
 sed_command_help = The sed command cleaning the code, defaults to \
   '/^>/!s/[^ACGTNacgtn]/N/g'
-#Include base moa code - does variable checks & generates help				 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+#Include base moa code - does variable checks & generates help
+ifneq $(include_moa_base) "no"
+	include $(shell echo $$MOABASE)/template/moaBase.mk
+endif
 
 ################################################################################
 

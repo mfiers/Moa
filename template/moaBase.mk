@@ -19,7 +19,10 @@ prereqlist += moa_envsettings
 .PHONY: prereqs
 prereqs: $(prereqlist)
 
-test:
+#prevent reinclusion of moabase
+include_moa_base=no
+
+$(moa_title).test:
 	echo "hello"
 	
 #check if MOABASE is defined

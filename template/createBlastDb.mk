@@ -33,8 +33,10 @@ input_file_help = Multifasta used as input. (default: $(name).fasta)
 moa_may_define += protein 
 protein_help = Protein database? (T)rue) or not (F)alse (default: F)
 
-#Include base moa code - does variable checks & generates help				 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+#Include base moa code - does variable checks & generates help
+ifneq $(include_moa_base) "no"
+	include $(shell echo $$MOABASE)/template/moaBase.mk
+endif
 
 ################################################################################
 # End of the generic part - from here on you're on your own :)

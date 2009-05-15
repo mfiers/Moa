@@ -42,12 +42,14 @@ output_dir_help = subdir to create & write all output to. If not defined, data \
 run_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos text \
   files (default=F).
   
-#Include base moa code - does variable checks & generates help				 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+#Include base moa code - does variable checks & generates help
+ifndef dont_include_moabase
+	include $(shell echo $$MOABASE)/template/moaBase.mk
+endif
 
 ################################################################################
 depend_lftp_timestamp ?= T
-lftp_user ?= NoNoNo 
+lftp_user ?= NoNoNo
 lftp_pass ?= NoNoNo
 lftp_noclean ?= Makefile moa.mk 
 output_dir ?= .
