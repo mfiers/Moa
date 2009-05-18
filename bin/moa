@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 import optparse
+import pyparsing as pyp
 
 parser = optparse.OptionParser()
 parser.add_option('-f', '--force', dest='force', action='store_true',
@@ -25,8 +26,42 @@ if not os.environ.has_key("MOABASE"):
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
+#simpleparser1
+simplemakefile = \
+        pyp.Literal("include $(shell echo $$MOABASE)/template/") \
+        + pyp.Word(pyp.alphas) \
+        + pyp.Literal(".mk") \
+        + pyp.Optional(pyp.White()) 
+        
+        
+def moaCheck(*args):
+    """
+    Check moa config in this directory
+    """
+    if not os.path.exists("./Makefile"):
+        l.error("Makefile does not exist, cannot check anything")
+        sys.exit(1)
+    l.debug('checking')
+    F = open('./Makefile', 'r')
+    
+    #check makefile, at the moment only accepting simple makefiles
+    #importing only one makefile
+    #include $(shell echo $$MOABASE)/template/traverse.mk
 
-def moaAdd(what):
+    makefile = F.read()
+    l.debug(simplemakefile.parseString(makefile))
+    F.close()
+    
+def moaNew(what):
+    """
+    Create a new template based makefile in the current dir.
+    """
+    if os.path.exists("./Makefile"):
+        l.debug("Makefile exists!")
+        if not options.force:
+            l.critical("makefile exists, use force to overwrite")
+            sys.exit(1)
+
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
     if not os.path.exists(templatefile):
         l.debug("cannot find %s" % templatefile)
@@ -42,25 +77,20 @@ def moaAdd(what):
     sys.exit(0)
     
 
-if __name__ == "__main__":
-    
-    if os.path.exists("./Makefile"):
-        l.debug("Makefile exists!")
-        if not options.force:
-            l.critical("makefile exists, use force to overwrite")
-            sys.exit(1)
-            
-    if len(args) == 0:
-        l.error("Need to specificy a command")
-        sys.exit(1)
-         
-    command = args[0]
-        
-    l.info("start moa %s" % command)
+if __name__ == "__main__":    
     l.debug("MOABASE : %s" % MOABASE)
     
-    if command == 'add':
-        moaAdd(args[1])
+    if len(args) == 0:
+        l.error("Need a command")
+        sys.exit(1)
 
+    command = args[0]
+    l.info("start moa %s" % command)
+                       
+    if command == 'new':
+        moaNew(args[1])
+
+    if command == 'check':
+        moaCheck(args[1:])
 
 
