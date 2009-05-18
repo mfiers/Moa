@@ -1,0 +1,69 @@
+#!/usr/bin/env stash
+
+load_package tk_utils
+load_package gap
+
+set dbname [lindex $argv 0]
+set dbversion [lindex $argv 1]
+set dbid [lindex $argv 2]
+
+if { [catch { set io [open_db -name $dbname -version $dbversion -access r] } ] } {
+   puts "error opening $dbid"
+   close $outfile
+   exit 0
+}
+
+set consOut [open "$dbid.contig.fasta" w]
+set qualOut [open "$dbid.contig.qual" w]
+set order1 [open "$dbid.contig.phase1.default.order" w]
+set order2 [open "$dbid.contig.phase2.default.order" w]
+
+set allcontigs [CreateAllContigList $io] 
+
+foreach contig $allcontigs {
+
+    set consensus_cutoff 0.01
+    set quality_cutoff 20
+    set consensus_mode 2
+    
+    set cons [calc_consensus -io $io -contigs [list $contig]]
+    set qual [calc_quality -io $io -contigs [list $contig]]
+    
+    binary scan $qual c* qual_str
+
+    set new_cons ""
+    set new_qual ""
+    set pos 0
+
+    #filter out padding characters
+    foreach c [split $cons *] {
+	#set new_cons $new_cons$c
+	set length [string length $c]
+	set new_cons $new_cons$c
+	set new_qual $new_qual[string range $qual $pos [expr $pos+$length-1]]
+	incr pos [expr $length+1]
+    }
+    
+    binary scan $new_qual c* new_qual_str
+    set currentindex [lsearch -exact $allcontigs $contig]
+    set currentcontigno [expr $currentindex + 1]
+
+    if {$currentindex == 0} {
+	puts $order1 "$contig\t+\t1\t\t"
+	puts $order2 "$contig\t+\t1\tSP6\tleft"
+    } elseif {$currentindex + 1 == [llength $allcontigs]} {
+	puts $order1 "$contig\t+\t$currentcontigno\t\t"
+	puts $order2 "$contig\t+\t1\tT7\tright"
+    } else {
+	puts $order1 "$contig\t+\t$currentcontigno\t\t"
+	puts $order2 "$contig\t+\t1\t\t"
+    }
+    puts $consOut ">$contig\n$new_cons"
+    puts $qualOut ">$contig\n$new_qual_str"
+    
+}
+
+close $order1
+close $order2
+close $consOut
+close $qualOut
