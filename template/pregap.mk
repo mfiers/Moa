@@ -82,14 +82,6 @@ $(pregap_touchfiles): %/touched : $(realpath $(input_dir))/%
 	cd $(subst /touched,,$@) ;\
 			pregap4 -nowin -config pregap.conf -fofn $(subst /touched,,$@).fof > pregap.report 2> pregap.err
 	#
-	#see if there is a phasefile, if not. create one.
-	sqid=$(subst /touched,,$@) ;\
-		for phph in $$sqid/$$sqid.?.phase; do \
-			if [ ! -f $$phph ] ; then \
-				echo "1" > $$phph ;\				
-			fi ;\
-		done
-	#		
 	#create a touchfile - prevent reexecution
 	touch $(subst /touched,,$@)/touched		
 
