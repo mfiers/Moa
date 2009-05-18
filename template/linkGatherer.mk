@@ -11,8 +11,9 @@ gather_link_help = Link-gather
 clean_help = Remove anything that is not called Makefile or moa.mk 
 
 # Help
-moa_title =  Gather & link
-moa_description = gather a set of files and create hardlinks to. Hardlinks have \
+moa_ids += gatherlink
+moa_title_gatherlink = gather and link
+moa_description_gatherlink = gather a set of files and create hardlinks to. Hardlinks have \
  as advantage that updates are noticed via the timestamp. Hence, make recognizes \
  them. 
  
@@ -31,9 +32,11 @@ name_sed_help = Sed substitution command that alters the filename, defaults \
   to leaving the names untouched.
 output_dir_help = Output subdirectory, defaults to '.'
 
+moa_may_define += glprocess
+glprocess_help += Command to process the files. If undefined, hardlink the files. 
 
 #Include base moa code - does variable checks & generates help
-ifneq $(include_moa_base) "no"
+ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 ################################################################################
@@ -42,27 +45,24 @@ endif
 #name_sed ?= 's/a/a/'
 name_sed ?= s/\.genbank\.htg\.[0-9]/.fasta/
 output_dir ?= .
+glprocess ?= ln -f $< $$target
 gather_link_noclean ?= Makefile moa.mk 
-
+.PHONY: gather_link_run
 vpath % $(input_dirs)
-input_files := $(foreach dir, $(input_dirs), $(wildcard $(dir)/$(input_pattern)))
-touch_files = $(addprefix touch/, $(notdir $(input_files)))
 
 gather_link: gather_link_prep gather_link_run 
 		
 gather_link_prep:
 	-mkdir touch
-	-mkdir $(output_dir)
+	-mkdir $(output_dir)	
+
+gather_link_run: $(addprefix touch/,$(notdir $(foreach dir, $(input_dirs), $(wildcard $(dir)/$(input_pattern))))) 
 	
-gather_link_run: $(touch_files)
-
 touch/%: %
-	@echo considering $@
-	@newname=$(output_dir)/$(shell echo "$(notdir $<)" | sed "$(name_sed)"); \
-		ln -f $< $$newname ;\
-		touch $@
-		
-
+	echo considering $@
+	@target=$(output_dir)/$(shell echo "$(notdir $<)" | sed "$(name_sed)"); \
+		$(glprocess)
+	touch $@
 #CLEAN
 clean: gather_link_clean
 

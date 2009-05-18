@@ -14,8 +14,9 @@ clean_help = remove the downloaded data
 clean_weka_help = clean location in the global weka db (will not run automatically)
 
 # Help
-moa_title = Get sequences from NCBI
-moa_description = Download a set of sequences from NCBI based on a \
+moa_ids += getfromncbi
+moa_title_getfromncbi = Get sequences from NCBI
+moa_description_getfromncbi = Download a set of sequences from NCBI based on a \
 	query string (ncbi_query) and database (ncbi_db). This will \
 	run only once (!) unless you touch the 'touched' file.
 
@@ -35,7 +36,7 @@ moa_may_define += fasta_file
 fasta_file_help = Name of the fasta file to save the results to
 
 #Include base moa code - does variable checks & generates help
-ifneq $(include_moa_base) "no"
+ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 

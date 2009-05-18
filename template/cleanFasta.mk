@@ -11,8 +11,9 @@ clean_fasta_help = Cleanup of FASTA files
 clean_help = Remove anything that is not called Makefile or moa.mk 
 
 # Help
-moa_title = clean Fasta
-moa_description = Convert files to unix format and convert all characters \
+moa_ids += cleanfasta
+moa_title_cleanfasta = clean Fasta
+moa_description_cleanfasta = Convert files to unix format and convert all characters \
  that are not an A,C,G,T or N to N. 
 
 # Output definition
@@ -29,7 +30,7 @@ input_extension_help = extension to the fasta files (default .fasta)
 sed_command_help = The sed command cleaning the code, defaults to \
   '/^>/!s/[^ACGTNacgtn]/N/g'
 #Include base moa code - does variable checks & generates help
-ifneq $(include_moa_base) "no"
+ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 

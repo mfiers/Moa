@@ -16,11 +16,11 @@ prereqs_help = Check if all prerequisites are present
 ###########################################################################
 #check prerequisites
 prereqlist += moa_envsettings
-.PHONY: prereqs
+.PHONY: prereqs $(prereqlist)
 prereqs: $(prereqlist)
 
 #prevent reinclusion of moabase
-include_moa_base=no
+dont_include_moabase=defined
 
 $(moa_title).test:
 	echo "hello"
@@ -32,9 +32,11 @@ moa_envsettings:
 		false ;\
 	fi
 
+.PHONY: check
 check: prereqs $(addprefix checkvar_, $(moa_must_define))
 	@echo "Variable check: everything appears ok"
 	
+.PHONY: $(addprefix checkvar_, $(moa_must_define))
 checkvar_%:
 	@if [ "$(origin $(subst checkvar_,,$@))" == "undefined" ]; then \
 		echo " *** Error $(subst checkvar_,,$@) is undefined" ;\
@@ -50,12 +52,15 @@ checkvar_%:
 #		echo "(shell weka get $($(subst storeweka_,,$@)))" >> moa.mk ; \
 #	fi
 
+.PHONY: set
 set: set_mode =
 set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
+.PHONY: append
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
+.PHONY: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 storevar_%:		 
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
@@ -107,18 +112,32 @@ help: moa_help_header \
 	moa_help_target_header moa_help_target moa_help_target_footer \
 	moa_help_vars_header moa_help_vars moa_help_vars_footer \
 	moa_help_output_header moa_help_output moa_help_output_footer
+
+
+
+moa_help_header: moa_help_header_title moa_help_header_description
+
+moa_help_header_title: moa_title_list = $(foreach x, $(moa_ids),$(moa_title_$(x)) &)
+moa_help_header_title: moa_all_title = $(wordlist 1, $(shell expr $(words $(moa_title_list)) - 1), $(moa_title_list))
+moa_help_header_title:
+	@echo "($(moa_ids))"
+	@echo -n "=="
+	@echo -n "$(moa_all_title)" | sed "s/./=/g"
+	@echo "=="
+	@echo -e "= $(boldOn)$(moa_all_title)$(boldOff) ="
+	@echo -n "=="
+	@echo -n "$(moa_all_title)" | sed "s/./=/g"
+	@echo "=="
 	
-moa_help_header:
-	@echo -n "=="
-	@echo -n "$(moa_title)" | sed "s/./=/g"
-	@echo "=="
-	@echo -e "= $(boldOn)$(moa_title)$(boldOff) ="
-	@echo -n "=="
-	@echo -n "$(moa_title)" | sed "s/./=/g"
-	@echo "=="
-	@echo "$(moa_description)" | fold -s
+#moa_description_LinkGather	
+moa_help_header_description: $(addprefix moa_help_header_description_, $(moa_ids))
 	@echo
 
+moa_help_header_description_%:	
+	@echo -e "$(boldOn)$(moa_title_$(patsubst moa_help_header_description_%,%,$@)):$(boldOff)"
+	@echo -e "$(moa_description_$(patsubst moa_help_header_description_%,%,$@))" | fold -w 70 -s 
+		
+		
 ## Help - output section
 moa_help_output_header:
 	@echo -e "$(boldOn)Outputs$(boldOff)"
@@ -128,9 +147,9 @@ moa_help_output: $(addprefix moa_output_, $(moa_outputs))
 
 moa_output_%:	
 	@if [ "$(origin $@_help)" == "undefined" ]; then \
-		echo -en " - $(boldOn)$($@)$(boldOff)" ;\
+		echo -e "- $(boldOn)$(subst moa_output_,, $@):$(boldOff) $($@)" ;\
 	else \
-		echo -en "- $(boldOn)$($@)$(boldOff): $($(subst helpvar_,,$@)_help)" \
+		echo -e "- $(boldOn)$(subst moa_output_,, $@):$(boldOff) $($@) - $($(subst helpvar_,,$@)_help)" \
 			 |fold -w 60 -s |sed '2,$$s/^/     /' ;\
 	fi
 	

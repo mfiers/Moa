@@ -8,9 +8,9 @@ maintarget: check blast report
 
 ################################################################################
 # Variable checks & definition & help
-
-moa_title =  BLAST
-moa_description = Run BLAST and convert the results to gff and a simple blast \
+moa_ids += blast
+moa_title_blast =  BLAST
+moa_description_blast = Run BLAST and convert the results to gff and a simple blast \
 	report
 
 #prerequisites
@@ -82,7 +82,7 @@ blast_reverse_gff_help = Create inverse gff
 
 ##### varchecks - commandline definitions
 moa_may_define += blast_input_ext blast_program blast_eval blast_nohits blast_nothreads blast_gff_source						 
-ifneq $(include_moa_base) "no"
+ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 

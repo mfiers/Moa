@@ -11,14 +11,15 @@ lftp_help = Download using ftp
 clean_help = Remove anything that is not called Makefile or moa.mk 
 
 # Help
-moa_title = LFTP
-moa_description = use lftp to download a (set of) file(s). This makefile does not \
+moa_ids += lftp
+moa_title_lftp = lftp
+moa_description_lftp = use lftp to download a (set of) file(s). This makefile does not \
   employ a touchfile since lftp checks for updates before downloading.
 
 # Output definition
 moa_outputs += lftp_output
-moa_output_lftp_output = ./*
-moa_output_lftp_output_help = Anything you define to be downloaded
+moa_output_lftp_output = *
+moa_output_lftp_output_help = anything you define
 
 #varables that NEED to be defined
 moa_must_define += lftp_url lftp_pattern

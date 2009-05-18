@@ -12,9 +12,10 @@ weka_set_help = store this location in the weka variable db
 clean_help = Clean up. 
 clean_weka_help = clean location in the global weka db (will not run automatically)
 
-# Help
-moa_title = Concatenate
-moa_description = Concatenate a set of fasta files into one.
+# Helpm
+moa_ids += concatenate
+moa_title_concatenate = Concatenate
+moa_description_concatenate = Concatenate a set of fasta files into one.
 
 # Output definition
 moa_outputs += concatenate
@@ -30,7 +31,7 @@ moa_may_define += input_extension
 input_extension_help = extension to the fasta files (default .fasta)
 
 #Include base moa code - does variable checks & generates help
-ifneq $(include_moa_base) "no"
+ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 

@@ -2,18 +2,19 @@
 ################################################################################
 
 # Main target defintion
-moa_main_target: check create_blast_db set_weka
+moa_main_target: check create_blast_db set_blastdb_weka
 
 
 ################################################################################
 # Definitions
 
 # Help
-moa_title = Create a BLAST database 
-moa_description = Takes a multi-fasta input file and creates a BLAST database.
+moa_ids += createblastdb
+moa_title_createblastdb = Create a BLAST database 
+moa_description_createblastdb = Takes a multi-fasta input file and creates a BLAST database.
 
 #Targets (for generating help)
-moa_targets += create_blast_db clean set_weka clean_weka
+moa_targets += create_blast_db clean set_blastdb_weka clean_blastdb_weka
 create_blast_db_help = Create the BLAST database
 clean_help = Remove the blast database
 set_weka_help = set location in the global weka db
@@ -21,7 +22,7 @@ clean_weka_help = clean location in the global weka db (will not run automatical
 
 #Outputs (for generating help)
 moa_outputs += blastdb
-moa_output_blastdb = ./set_name
+moa_output_blastdb = ./set_name.???
 moa_output_blastdb_help = The blast database created
 
 #Variable: set_name
@@ -34,7 +35,7 @@ moa_may_define += protein
 protein_help = Protein database? (T)rue) or not (F)alse (default: F)
 
 #Include base moa code - does variable checks & generates help
-ifneq $(include_moa_base) "no"
+ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
@@ -59,8 +60,8 @@ $(one_blast_db_file): $(input_file)
 	@echo "Creating $@"
 	formatdb -i $< -p $(protein) -o T -n $(name)
 
-set_weka:
-	weka set $(name)::blastdb `pwd`/$(name)
+set_blastdb_weka:
+	weka -r set $(name)::blastdb `pwd`/$(name)
 	
 	
 clean: create_blast_db_clean
@@ -71,5 +72,5 @@ create_blast_db_clean:
 		rm $(name).p?? ;\
 	fi
 	
-clean_weka:
+clean_blastdb_weka:
 	weka rm $(name)::blastdb
