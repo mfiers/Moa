@@ -36,7 +36,7 @@ moa_envsettings:
 check: prereqs $(addprefix checkvar_, $(moa_must_define))
 	@echo "Variable check: everything appears ok"
 	
-.PHONY: $(addprefix checkvar_, $(moa_must_define))
+#.PHONY: $(addprefix checkvar_, $(moa_must_define))
 checkvar_%:
 	@if [ "$(origin $(subst checkvar_,,$@))" == "undefined" ]; then \
 		echo " *** Error $(subst checkvar_,,$@) is undefined" ;\
@@ -60,7 +60,7 @@ set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
-.PHONY: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
+#.PHONY: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 storevar_%:		 
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\

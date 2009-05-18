@@ -4,7 +4,7 @@ import os
 import sys
 import logging
 import optparse
-import pyparsing as pyp
+#import pyparsing as pyp
 
 parser = optparse.OptionParser()
 parser.add_option('-f', '--force', dest='force', action='store_true',
@@ -25,14 +25,14 @@ if not os.environ.has_key("MOABASE"):
     
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
-
-#simpleparser1
-simplemakefile = \
-        pyp.Literal("include $(shell echo $$MOABASE)/template/") \
-        + pyp.Word(pyp.alphas) \
-        + pyp.Literal(".mk") \
-        + pyp.Optional(pyp.White()) 
-        
+#
+##simpleparser1
+#simplemakefile = \
+#        pyp.Literal("include $(shell echo $$MOABASE)/template/") \
+#        + pyp.Word(pyp.alphas) \
+#        + pyp.Literal(".mk") \
+#        + pyp.Optional(pyp.White()) 
+#        
         
 def moaCheck(*args):
     """

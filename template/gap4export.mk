@@ -35,27 +35,42 @@ endif
 
 ################################################################################
 
+
+infiles = $(notdir $(shell find $(input_dir) -maxdepth 1 -name "$(input_pattern)" -type d))
+gap4export_phase = $(addsuffix .phase, $(infiles))
+gap4export_cons = $(addsuffix .cons, $(infiles))
+
 .PHONY: gap4export
 gap4export: gap4export_run
+	
+.PHONY: gap4export_run 
+gap4export_run: $(gap4export_phase) $(gap4export_cons)
 
-
-infiles = $(notdir $(shell find $(input_dir) -name "$(input_pattern)" -type d))
-gap4export_phase = $(addprefix .phase, $(infiles))
-
-.PHONY: gap4export_run
-gap4export_run: $(gap4export_phase)
-
-$(gap4export_phase): %.phase : $(realpath $(input_dir))/%
+$(gap4export_phase):
 	@echo processing $@ from $<
-	#see if there is a phasefile, if not. create one.
-	#sqid=$(subst /touched,,$@) ;\
-	#		for phph in $$sqid/$$sqid.?.phase; do \
-	#		if [ ! -f $$phph ] ; then \
-	#			echo "1" > $$phph ;\				
-	#		fi ;\
-	#	done
-		
-	#exportContigs.tcl $dbBaseName %(version)s %(id)s
+	if [ ! -f $@ ]; then \
+		echo "1" > $@ ;\
+	fi
+
+$(gap4export_cons): %.cons : $(input_dir)/%
+	@echo creating cons $@ from $<
+	export bacId=`basename $@ .cons` ;\
+		if [ -f $</$$bacId.1.aux ]; then \
+			export bestversion=1 ;\
+		else \
+			export bestversion=a ;\
+		fi ;\
+		gap4ExportContig $</$$bacId $$bestversion $$bacId
+	
+#see if there is a phasefile, if not. create one.
+#sqid=$(subst /touched,,$@) ;\
+#		for phph in $$sqid/$$sqid.?.phase; do \
+#		if [ ! -f $$phph ] ; then \
+#			echo "1" > $$phph ;\				
+#		fi ;\
+#	done
+	
+#exportContigs.tcl $dbBaseName %(version)s %(id)s
 	
 #CLEAN	    
 .PHONY: clean    
