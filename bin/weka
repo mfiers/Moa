@@ -308,7 +308,7 @@ def main(args):
 		
 	elif command == "ls":
 		wekaLs()
-		
+			
 	elif command == "rm":
 		if len(args) != 2:
 			error("invalid number of arguments")			
