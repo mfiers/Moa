@@ -1,0 +1,140 @@
+#!/usr/bin/env python
+"""
+Simple tool to delete parts from a gbrowse seqfeature db
+
+Usage:
+	gbrowserm -s source -m method -i id 
+"""
+import os
+import sys
+import time
+import logging
+import optparse
+import MySQLdb
+import _mysql_exceptions
+
+sqlbase = """
+delete from feature where typeid > 17;
+DELETE name FROM name LEFT JOIN feature ON name.id = feature.id WHERE feature.id IS NULL;
+DELETE attribute FROM attribute LEFT JOIN feature ON attribute.id = feature.id WHERE feature.id IS NULL;
+DELETE parent2child FROM parent2child LEFT JOIN feature ON parent2child.id = feature.id WHERE feature.id IS NULL;
+DELETE parent2child FROM parent2child LEFT JOIN feature ON parent2child.child = feature.id WHERE feature.id IS NULL;
+"""
+
+
+#CONSTANTS & vars
+COMMANDS = ["ls", "rm", "get", "set"]
+USAGE = "Usage: gbrowserm -s source -m method -i seqid"
+
+parser = optparse.OptionParser()
+parser.add_option("-s", dest="source", help="source of the features to be deleted" )
+parser.add_option("-m", dest="method", help="method of the features to be deleted" )
+parser.add_option("-i", dest="seqid", help="sequence id to be removed" )
+parser.add_option("-n", dest="seqname", help="sequence name to be removed" )
+
+parser.add_option("-u", dest="user", help="mysql user" )
+parser.set_defaults(host='localhost')
+parser.add_option("--host", dest="host", help="mysql host" )
+parser.add_option("-d", dest="db", help="mysql db" )
+parser.add_option("-v", dest="verbose", help="be verbose", action="store_true" )
+options, args = parser.parse_args()
+
+
+l = logging.getLogger('gbrowserm')
+handler = logging.StreamHandler()
+formatter = logging.Formatter('\033[0;1m%(levelname)-8s\033[0m %(asctime)-24s %(message)s')
+handler.setFormatter(formatter)
+l.addHandler(handler)
+if options.verbose:
+	l.setLevel(logging.DEBUG)
+else:
+	l.setLevel(logging.WARNING)
+	
+l.debug("Loading gbrowserm")
+		
+# Helper commands
+def error(message):
+	"""Display an error message & quit"""
+	l.error(message)
+	sys.exit(1)
+
+def usage():
+	"""Print usage information"""
+	sys.stderr.write(USAGE + "\n")
+	
+def closeDbConnection():
+    """ Close db connection. If there is uncommited data
+    it is lost """    
+    if dbConnection:
+		dbConnection.close()
+
+def exit(dbConn):
+	""" Exit. After properly closing the dbConnection """
+	closeDbConnection()
+	sys.exit(0)
+
+def openDbConnection():
+	"""
+	Open the db connection	
+	"""
+	l.debug("Opening db connection")
+	global dbConnection
+	try:
+		dbConnection = MySQLdb.connect(host = options.host,
+										 db = options.db,
+									   user =   options.user )
+	except _mysql_exceptions.OperationalError:
+		error("error opening db connection")
+		
+	l.debug("Opened db connection %s " % dbConnection)
+
+		
+def main():
+	openDbConnection()
+	method = options.method
+	source = options.source
+	seqid = options.seqid
+	seqname = options.seqname
+	
+	c = dbConnection.cursor()
+	
+	#determine which typeids must go
+	if method and source:
+		c.execute(""" SELECT id 
+		                FROM typelist 
+		               WHERE tag = %s
+		          """ % [("%s:%s" % (method, source), )])
+	elif method:
+		c.execute(""" SELECT id 
+		                FROM typelist 
+		               WHERE tag like %s
+		          """ % [("%s:%%" % (method), )])
+	elif source:
+		c.execute(""" SELECT id 
+		                FROM typelist 
+		               WHERE tag like %s
+		          """ % [("%%:%s" % (source), )])
+	else:
+		c.execute(""" SELECT id
+					    FROM typelist """)
+		
+	if seqid:
+		sql = """DELETE 
+		          FROM feature f 
+		         WHERE f.seqid = %s
+		      """
+	elif seqname:
+		error("not implemented yet!")
+		sql = """DELETE 
+		           FROM feature f, 
+		           		locationlist l 
+		          WHERE l.seqname = %s
+	          """
+		         
+			
+if __name__ == "__main__":
+	try:		
+		main()
+	except KeyboardInterrupt:
+		cleanup()
+	 
