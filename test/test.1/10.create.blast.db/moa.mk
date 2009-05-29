@@ -1,2 +1,2 @@
-set_name=mushroom
+name=mushroom
 input_file=$(shell weka get mushroom::fasta)
