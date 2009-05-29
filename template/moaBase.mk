@@ -13,6 +13,11 @@ all_help = Recursively run through all subdirectories (use make all \
 prereqs_help = Check if all prerequisites are present
 
 
+#some default helps 
+
+input_dir_help = Directory with the input data
+input_extension_help = Extension of the input files
+
 ###########################################################################
 #check prerequisites
 prereqlist += moa_envsettings
@@ -33,10 +38,15 @@ moa_envsettings:
 	fi
 
 .PHONY: check
-check: prereqs $(addprefix checkvar_, $(moa_must_define))
+check: prereqs $(addprefix checkvar_, $(moa_must_define)) moa_help_deprecated
 	@echo "Variable check: everything appears ok"
 	
-.PHONY: $(addprefix checkvar_, $(moa_must_define))
+
+moa_help_deprecated_%:
+	@if [ -n "$*" ]; then \
+		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
+	fi			
+#.PHONY: $(addprefix checkvar_, $(moa_must_define))
 checkvar_%:
 	@if [ "$(origin $(subst checkvar_,,$@))" == "undefined" ]; then \
 		echo " *** Error $(subst checkvar_,,$@) is undefined" ;\
@@ -60,7 +70,7 @@ set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
-.PHONY: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
+#.PHONY: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 storevar_%:		 
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
@@ -78,7 +88,7 @@ showvar_%:
 	@echo "$(subst showvar_,,$@) : $($(subst showvar_,,$@))"
 
 #dir traversing
-moa_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+" -exec basename '{}' \; | sort )
+moa_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+" -exec basename '{}' \; | sort -n )
 
 .PHONY: $(moa_followups) all clean_all
 
@@ -106,14 +116,13 @@ $(moa_followups):
 
 ###############################################################################
 # Help structure
-boldOn = \033[0;1m
+boldOn = \033[0;1;47;0;32;4m
 boldOff = \033[0m
 help: moa_help_header \
+	moa_help_deprecated \
 	moa_help_target_header moa_help_target moa_help_target_footer \
 	moa_help_vars_header moa_help_vars moa_help_vars_footer \
 	moa_help_output_header moa_help_output moa_help_output_footer
-
-
 
 moa_help_header: moa_help_header_title moa_help_header_description
 
@@ -137,7 +146,14 @@ moa_help_header_description_%:
 	@echo -e "$(boldOn)$(moa_title_$(patsubst moa_help_header_description_%,%,$@)):$(boldOff)"
 	@echo -e "$(moa_description_$(patsubst moa_help_header_description_%,%,$@))" | fold -w 70 -s 
 		
-		
+
+moa_help_deprecated: $(addprefix moa_help_deprecated_, $(moa_ids))
+
+moa_help_deprecated_%:
+	@if [ -n "$*" ]; then \
+		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
+	fi		
+	
 ## Help - output section
 moa_help_output_header:
 	@echo -e "$(boldOn)Outputs$(boldOff)"
@@ -196,7 +212,7 @@ moa_help_vars_may: $(addprefix helpvar_, $(moa_may_define))
 
 helpvar_%:	
 	@if [ "$(origin $(subst helpvar_,,$@)_help)" == "undefined" ]; then \
-		@echo -en " - $(boldOn)$(help_prefix)$(subst helpvar_,,$@)$(boldOff)" ;\
+		echo -en " - $(boldOn)$(help_prefix)$(subst helpvar_,,$@)$(boldOff)" ;\
 	else \
 		echo -e " - $(boldOn)$(help_prefix)$(subst helpvar_,,$@)$(boldOff): $($(subst helpvar_,,$@)_help)" \
 			| fold -w 60 -s | sed '2,$$s/^/     /' ;\

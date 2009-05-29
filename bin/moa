@@ -4,7 +4,6 @@ import os
 import sys
 import logging
 import optparse
-import pyparsing as pp
 
 parser = optparse.OptionParser()
 parser.add_option('-f', '--force', dest='force', action='store_true',
@@ -25,14 +24,6 @@ if not os.environ.has_key("MOABASE"):
     
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
-
-simplemakefile = \
-        pyparsing.Literal("include $(shell echo $$MOABASE)/template/") \
-        + pyparsing.Word(pyparsing.alphas) \
-        + pyparsing.Literal(".mk") \
-        + pyparsing.Optional(pyparsing.White()) 
-
-commentLine = pp.Literal("#") 
 
 def getTemplateFile(what):
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
@@ -63,8 +54,8 @@ def moaNew(what):
         if not options.force:
             l.critical("makefile exists, use force to overwrite")
             sys.exit(1)
-            
     templateFile = getTemplateFile(what)    
+
     includeLine = "include $(shell echo $$MOABASE)/template/%s.mk" % what
     l.debug("include: %s" % includeLine)
     l.debug("start write of ./Makefile") 

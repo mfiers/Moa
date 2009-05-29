@@ -49,11 +49,11 @@ concatenate_run: $(output_file)
 
 $(output_file):  $(input_files) 
 	-rm $(output_file)
-	@cat $(input_files) > $(output_file)	
+	cat $(input_files) > $(output_file)	
 	@echo "end of concatenation"
 	
-fasta/%.$(input_extension): $(input_dir)/%.$(input_extension)
-	cat $< | sed '$(sed_command)' > $@ 
+#fasta/%.$(input_extension): $(input_dir)/%.$(input_extension)
+#	cat $< | sed '$(sed_command)' > $@ 
 	        
 weka_set:
 	weka set $(name)::fasta `pwd`/$(output_file)

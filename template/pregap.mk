@@ -1,15 +1,17 @@
 # run pregap!
 
 # Main target - should be first in the file
-moa_main_target: check pregap
+moa_main_target: check pregap 
 
 
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-moa_targets += pregap clean
+moa_targets += pregap pregap_post clean
 pregap_help = Run pregap
-clean_help = Clean up. 
+#pregap_post_help = Check if there is manual (version 1) assembly, and if so, \
+# link the .1 assembly to BACID.z.aux. Else, link the automated assemly to .z.
+clean_help = Clean up.
 
 # Help
 moa_ids += pregap
@@ -83,7 +85,10 @@ $(pregap_touchfiles): %/touched : $(realpath $(input_dir))/%
 			pregap4 -nowin -config pregap.conf -fofn $(subst /touched,,$@).fof > pregap.report 2> pregap.err
 	#
 	#create a touchfile - prevent reexecution
-	touch $(subst /touched,,$@)/touched		
+	touch $(subst /touched,,$@)/touched
+			
+#pregap_zfiles = $(addsuffix /touched, $(notdir $(shell find $(input_dir) -name "$(input_pattern)" -type d)))			
+#pregap_post_help
 
 #CLEAN	    
 .PHONY: clean    
