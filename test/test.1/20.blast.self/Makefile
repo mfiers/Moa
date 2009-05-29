@@ -1,1 +1,0 @@
-include $(shell echo $$MOABASE)/template/blastSingle.mk

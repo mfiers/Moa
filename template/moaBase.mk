@@ -1,9 +1,16 @@
+#@+leo-ver=4-thin
+#@+node:mf.20090529152037.1:@thin template/moaBase.mk
+#@@language makefile
+
+#@+all
+#@+node:mf.20090529152037.2:head
 SHELL := /bin/bash
 .PHONY: set show help check prereqs
 
 #see if a local variable set is defined
 -include moa.mk
 
+#Default targets
 moa_targets += check help show all clean_all prereqs
 check_help = Check variable definition
 show_help = show defined variables
@@ -12,65 +19,69 @@ all_help = Recursively run through all subdirectories (use make all \
 	action=XXX to run "make XXX" recursively) 
 prereqs_help = Check if all prerequisites are present
 
-
-#some default helps 
-
+#some default variable help defs
 input_dir_help = Directory with the input data
 input_extension_help = Extension of the input files
-
-###########################################################################
-#check prerequisites
-prereqlist += moa_envsettings
-.PHONY: prereqs $(prereqlist)
-prereqs: $(prereqlist)
 
 #prevent reinclusion of moabase
 dont_include_moabase=defined
 
-$(moa_title).test:
-	echo "hello"
-	
+
+#@-node:mf.20090529152037.2:head
+#@+node:mf.20090529152037.3:check
+###################################################
+## Moa check - is everything defined?
+
+#@+node:mf.20090529152037.4:prerequisites
+###########################################################################
+#check prerequisites
+
+prereqlist += prereq_moa_environment
+.PHONY: prereqs $(prereqlist)
+
+prereqs: $(prereqlist)
+
 #check if MOABASE is defined
-moa_envsettings:
+prereq_moa_environment:
 	@if env | grep -q MOABASE ; then true; else \
 		echo "MOABASE is not defined :(" ; \
 		false ;\
 	fi
-
+#@nonl
+#@-node:mf.20090529152037.4:prerequisites
+#@+node:mf.20090529152037.6:deprecated
+#check if this moa makefile is deprecated
+moa_help_deprecated_%:
+	#echo depreation check $*
+	@if [ -n "$*" ]; then \
+		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
+	fi
+#@-node:mf.20090529152037.6:deprecated
+#@+node:mf.20090529152037.7:variables
 .PHONY: check
 check: prereqs $(addprefix checkvar_, $(moa_must_define)) moa_help_deprecated
 	@echo "Variable check: everything appears ok"
-	
 
-moa_help_deprecated_%:
-	@if [ -n "$*" ]; then \
-		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
-	fi			
 #.PHONY: $(addprefix checkvar_, $(moa_must_define))
 checkvar_%:
 	@if [ "$(origin $(subst checkvar_,,$@))" == "undefined" ]; then \
 		echo " *** Error $(subst checkvar_,,$@) is undefined" ;\
 		exit -1; \
 	fi
-
-#wset: $(addprefix storeweka_, $(moa_must_define) $(moa_may_define))
-
-#storeweka_%:
-#	if [ "$(origin $(subst storeweka_,,$@))" == "command line" ]; then \
-#		echo " *** Set Weka var $(subst storeweka_,,$@) to 'weka get $($(subst storeweka_,,$@))'" ;\
-#		echo -n "$(subst storeweka_,,$@)=$$" >> moa.mk ;\
-#		echo "(shell weka get $($(subst storeweka_,,$@)))" >> moa.mk ; \
-#	fi
-
+#@nonl
+#@-node:mf.20090529152037.7:variables
+#@-node:mf.20090529152037.3:check
+#@+node:mf.20090529152037.8:set / append
+# Set a variable!
 .PHONY: set
 set: set_mode =
 set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
+# or append
 .PHONY: append
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
-#.PHONY: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 storevar_%:		 
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
@@ -81,13 +92,28 @@ storevar_%:
 		echo -n "$(subst storevar_,,$@)$(set_mode)=$$" >> moa.mk ;\
 		echo "(shell weka get $(weka_$(subst storevar_,,$@)))" >> moa.mk ; \
 	fi
-		
+#@-node:mf.20090529152037.8:set / append
+#@+node:mf.20090529152037.9:show
+
 show: $(addprefix showvar_, $(moa_must_define) $(moa_may_define))
 
 showvar_%:		 
 	@echo "$(subst showvar_,,$@) : $($(subst showvar_,,$@))"
+#@-node:mf.20090529152037.9:show
+#@+node:mf.20090529153542.2:traversal
+# Traversal through subdirectories.
 
-#dir traversing
+# by calling 'make all', all subdirs are made as well as the cd.As an extension,
+# calling 'make all action=clean' calss make clean in the cd and all subdirs.
+# action= can be replace by other actions. An interesting application is
+# to set/change variables through a whole tree using:
+
+# make all action=set KEY=VALUE
+
+# The the variable KEY will be set to VALUE in this dir and all subdirs, but only
+# when KEY is a defined variable for that moa-makefile
+
+
 moa_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+" -exec basename '{}' \; | sort -n )
 
 .PHONY: $(moa_followups) all clean_all
@@ -96,26 +122,33 @@ all_check:
 	@echo "would run make $(action)"
 	@echo "in the following dirs"
 	@echo $(moa_followups)
-	
-action ?= all
-all: $(moa_followups)
-	if [ "$(action)" == "all" ]; then \
-		echo "running all without action, also run default action" ;\
-		$(MAKE) ;\
-	fi
-	@echo "follows" $(moa_followups)
+
+#action ?= undefined
+all: traverse_start_with_this $(moa_followups)
+
+traverse_start_with_this:
+	#if [ "$(action)" == "undefined" ]; then \
+	#	echo "running all without action, also run default action" ;\
+	#	$(MAKE) ;\
+	#fi
+    #run the required action in this directory
+	-$(MAKE) $(action)
+	@echo "Following up with:" $(moa_followups)
 
 $(moa_followups):
 	@echo "  ###########################"
 	@echo "  ## Executing make $(action)"
 	@echo "  ##   in $@ " 
 	@echo "  ###########################"
-	if [ -e $@/Makefile ]; then \
-		cd $@ && $(MAKE) $(action) ;\
+	@if [ -e $@/Makefile ]; then \
+		cd $@ && $(MAKE) all action=$(action) ;\
 	fi
 
+#@-node:mf.20090529153542.2:traversal
+#@+node:mf.20090529152037.5:help
 ###############################################################################
 # Help structure
+#@+node:mf.20090529153542.3:defs
 boldOn = \033[0;1;47;0;32;4m
 boldOff = \033[0m
 help: moa_help_header \
@@ -123,6 +156,8 @@ help: moa_help_header \
 	moa_help_target_header moa_help_target moa_help_target_footer \
 	moa_help_vars_header moa_help_vars moa_help_vars_footer \
 	moa_help_output_header moa_help_output moa_help_output_footer
+#@-node:mf.20090529153542.3:defs
+#@+node:mf.20090529153542.4:header
 
 moa_help_header: moa_help_header_title moa_help_header_description
 
@@ -137,7 +172,7 @@ moa_help_header_title:
 	@echo -n "=="
 	@echo -n "$(moa_all_title)" | sed "s/./=/g"
 	@echo "=="
-	
+
 #moa_description_LinkGather	
 moa_help_header_description: $(addprefix moa_help_header_description_, $(moa_ids))
 	@echo
@@ -145,42 +180,27 @@ moa_help_header_description: $(addprefix moa_help_header_description_, $(moa_ids
 moa_help_header_description_%:	
 	@echo -e "$(boldOn)$(moa_title_$(patsubst moa_help_header_description_%,%,$@)):$(boldOff)"
 	@echo -e "$(moa_description_$(patsubst moa_help_header_description_%,%,$@))" | fold -w 70 -s 
-		
+
+#@-node:mf.20090529153542.4:header
+#@+node:mf.20090529153542.8:deprecated
 
 moa_help_deprecated: $(addprefix moa_help_deprecated_, $(moa_ids))
 
 moa_help_deprecated_%:
-	@if [ -n "$*" ]; then \
+	@if [ -n "$(moa_deprecated_$*)" ]; then \
 		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
 	fi		
-	
-## Help - output section
-moa_help_output_header:
-	@echo -e "$(boldOn)Outputs$(boldOff)"
-	@echo "======="
+#@-node:mf.20090529153542.8:deprecated
+#@+node:mf.20090529153542.5:target
 
-moa_help_output: $(addprefix moa_output_, $(moa_outputs))
-
-moa_output_%:	
-	@if [ "$(origin $@_help)" == "undefined" ]; then \
-		echo -e "- $(boldOn)$(subst moa_output_,, $@):$(boldOff) $($@)" ;\
-	else \
-		echo -e "- $(boldOn)$(subst moa_output_,, $@):$(boldOff) $($@) - $($(subst helpvar_,,$@)_help)" \
-			 |fold -w 60 -s |sed '2,$$s/^/     /' ;\
-	fi
-	
-	
-moa_help_output_footer:
-	@echo 
-	
 ## Help - target section
 moa_help_target_header:
 	@echo -e "$(boldOn)Targets$(boldOff)"
 	@echo "======="
 
 moa_help_target: $(addprefix moa_target_, $(moa_targets))
-	
-	
+
+
 moa_target_%:
 	@if [ "$(origin $(subst moa_target_,,$@)_help)" == "undefined" ]; then \
 		echo -e " - $(boldOn)$(subst moa_target_,,$@)$(boldOff)" ;\
@@ -188,20 +208,22 @@ moa_target_%:
 		echo -e " - $(boldOn)$(subst moa_target_,,$@)$(boldOff): $($(subst moa_target_,,$@)_help)" \
 			| fold -w 60 -s |sed '2,$$s/^/     /' ;\
 	fi
-	
-	
+
+
 moa_help_target_footer:
 	@echo 
+#@-node:mf.20090529153542.5:target
+#@+node:mf.20090529153542.6:variables
 
 ## Help - variable section
 moa_help_vars_header:
 	@echo -e "$(boldOn)Variables$(boldOff)"
 	@echo "========="
-	
+
 moa_help_vars_footer:
 	@echo -e "*these variables $(boldOn)must$(boldOff) be defined"
 	@echo 
-	
+
 moa_help_vars: moa_help_vars_must moa_help_vars_may
 
 moa_help_vars_must: help_prefix="*"
@@ -217,5 +239,31 @@ helpvar_%:
 		echo -e " - $(boldOn)$(help_prefix)$(subst helpvar_,,$@)$(boldOff): $($(subst helpvar_,,$@)_help)" \
 			| fold -w 60 -s | sed '2,$$s/^/     /' ;\
 	fi
-		
-		
+
+
+#@-node:mf.20090529153542.6:variables
+#@+node:mf.20090529153542.7:output
+
+## Help - output section
+moa_help_output_header:
+	@echo -e "$(boldOn)Outputs$(boldOff)"
+	@echo "======="
+
+moa_help_output: $(addprefix moa_output_, $(moa_outputs))
+
+moa_output_%:	
+	@if [ "$(origin $@_help)" == "undefined" ]; then \
+		echo -e "- $(boldOn)$(subst moa_output_,, $@):$(boldOff) $($@)" ;\
+	else \
+		echo -e "- $(boldOn)$(subst moa_output_,, $@):$(boldOff) $($@) - $($(subst helpvar_,,$@)_help)" \
+			 |fold -w 60 -s |sed '2,$$s/^/     /' ;\
+	fi
+
+
+moa_help_output_footer:
+	@echo 
+#@-node:mf.20090529153542.7:output
+#@-node:mf.20090529152037.5:help
+#@-all
+#@-node:mf.20090529152037.1:@thin template/moaBase.mk
+#@-leo

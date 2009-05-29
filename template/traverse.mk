@@ -1,37 +1,34 @@
-# Empty - use this to create a new makefile
+#@+leo-ver=4-thin
+#@+node:mf.20090529153542.1:@thin template/traverse.mk
+#@@language makefile 
+#@@tabwidth 4
+#@+all
+#@+node:mf.20090529202612.4:maintarget
 ################################################################################
 # Main target
 maintarget: traverse_main
-
+#@nonl
+#@-node:mf.20090529202612.4:maintarget
+#@+node:mf.20090529202612.5:moa definitions
 ################################################################################
 # Help
 moa_ids += traverse
 moa_title_traverse = Traverse
 moa_description_traverse = Do noting, except be a part in executing full directory structures
-
-################################################################################
-# Variable definition (non obligatory ones)
-
-################################################################################
-# Variable help definition
-
-################################################################################
-# moa definitions
-#
-#targets that the enduser might want to use
-moa_targets += 
-#varables that NEED to be defined
-moa_must_define += 
-#varaibles that might be defined
-moa_may_define += 		
-
+#@nonl
+#@-node:mf.20090529202612.5:moa definitions
+#@+node:mf.20090529202612.6:include
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
-
-################################################################################
-# End of the generic part - from here on you're on your own :)
-
+#@nonl
+#@-node:mf.20090529202612.6:include
+#@+node:mf.20090529202612.7:traverse_main
 traverse_main:
 	@echo "Traversing through `pwd`"
+#@nonl
+#@-node:mf.20090529202612.7:traverse_main
+#@-all
+#@-node:mf.20090529153542.1:@thin template/traverse.mk
+#@-leo
