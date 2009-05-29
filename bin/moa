@@ -4,7 +4,7 @@ import os
 import sys
 import logging
 import optparse
-import pyparsing as pyp
+import pyparsing as pp
 
 parser = optparse.OptionParser()
 parser.add_option('-f', '--force', dest='force', action='store_true',
@@ -26,28 +26,30 @@ if not os.environ.has_key("MOABASE"):
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
-#simpleparser1
 simplemakefile = \
-        pyp.Literal("include $(shell echo $$MOABASE)/template/") \
-        + pyp.Word(pyp.alphas) \
-        + pyp.Literal(".mk") \
-        + pyp.Optional(pyp.White()) 
-        
-        
-def moaCheck(*args):
-    """
-    Check moa config in this directory
-    """
-    if not os.path.exists("./Makefile"):
-        l.error("Makefile does not exist, cannot check anything")
-        sys.exit(1)
-    l.debug('checking')
-    F = open('./Makefile', 'r')
-    
-    #check makefile, at the moment only accepting simple makefiles
-    #importing only one makefile
-    #include $(shell echo $$MOABASE)/template/traverse.mk
+        pyparsing.Literal("include $(shell echo $$MOABASE)/template/") \
+        + pyparsing.Word(pyparsing.alphas) \
+        + pyparsing.Literal(".mk") \
+        + pyparsing.Optional(pyparsing.White()) 
 
+commentLine = pp.Literal("#") 
+
+def getTemplateFile(what):
+    templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
+    if not os.path.exists(templatefile):
+        l.debug("cannot find %s" % templatefile)
+        l.error("No template for %s exists" % what)
+        sys.exit(1)        
+    return templatefile
+        
+def moaCheck(what):
+    """
+    Check moa template
+    """
+    templateFile = getTemplateFile(what)
+        
+    F = open(templateFile, 'r')
+        
     makefile = F.read()
     l.debug(simplemakefile.parseString(makefile))
     F.close()
@@ -61,12 +63,8 @@ def moaNew(what):
         if not options.force:
             l.critical("makefile exists, use force to overwrite")
             sys.exit(1)
-
-    templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
-    if not os.path.exists(templatefile):
-        l.debug("cannot find %s" % templatefile)
-        l.error("No template for %s exists" % what)
-        sys.exit(1)
+            
+    templateFile = getTemplateFile(what)    
     includeLine = "include $(shell echo $$MOABASE)/template/%s.mk" % what
     l.debug("include: %s" % includeLine)
     l.debug("start write of ./Makefile") 
