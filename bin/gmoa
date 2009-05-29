@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.4
+#!/usr/bin/env python
 
 import os
 import sys
@@ -41,31 +41,105 @@ class GMoaGUI:
     """This is an Hello World GTK application"""
     
     def __init__(self):
-        
         #Set the Glade file
-        self.gladefile = "/home/cflmwf/project/gmoa/gmoa.glade"  
+        self.gladefile = "./gmoa.glade"  
         self.wTree = gtk.glade.XML(self.gladefile)         
         self.wTree.signal_autoconnect({
-                "on_gmoaWindow_destroy" : gtk.main_quit,
-                "on_selectWorkDir" : self.selectWorkDir,
-                "on_workDirCancelbutton_clicked" : self.workDirCancel,     
-                "on_workDirSelectButton_clicked" : self.workDirSelect,      
-                "on_newTemplateGenerateButton_clicked": self.generateTemplate, 
-                "on_generateTemplateCloseButton_clicked" : self.closeGeneratedTemplate,
+                "gmoaQuit" : self.quit,
                })
-
-        #Get the Main Window, and connect the "destroy" event
-        self.window = self.wTree.get_widget("gmoaWindow")
-        l.debug("gmoa window %s " % self.window)
-        #if (self.window):
-        #    self.window.connect("destroy", gtk.main_quit)
         
-    def selectWorkDir(self, widget):
-        """Show the select folder dialog"""        
-        wdd = self.wTree.get_widget("chooseWorkDirDialog")
-        l.debug("start select work dir (%s)" % wdd)        
-        wdd.show()
-    
+        #Get the Main Window, and connect the "destroy" event
+        self.window = self.wTree.get_widget("gmoaMainWindow")
+        l.debug("gmoa window %s " % self.window)
+
+        self.dirTreeStore = gtk.TreeStore(str)
+        self.createDirTreeView()
+        self.dirTreeBasePath = ''
+        
+        
+    def createDirTreeView(self, root="/"):
+        if root != '/':
+            self.dirTreeBasePath, newRoot = \
+                os.path.split(root)
+        else:
+            newRoot = "/"
+        self.dirTreeStore.clear()
+        
+        par = self.dirTreeStore.append(None, newRoot)
+        for x in os.listdir(root):
+            child = self.dirTreeStore.append(par, [x])
+            self.dirTreeStore.append(child, ['..'])
+        self.dirTreeview = gtk.TreeView(self.dirTreeStore)
+        #self.dirTreeview.set_property(
+        #        "headers-visible", False)
+        col = gtk.TreeViewColumn("Folders")
+        self.dirTreeview.append_column(col)
+        cell = gtk.CellRendererText()
+        col.pack_start(cell, True)
+        self.dirTreeview.set_search_column(0)
+        col.set_sort_column_id(0)
+
+        self.dirTreeview.connect("row-expanded", self.dirTreeViewRowExpand)
+        self.dirTreeview.connect("row-activated", self.dirTreeViewRowActivated)
+
+        col.add_attribute(cell, 'text', 0)
+        c = self.wTree.get_widget("dirTreeContainer")
+        c.add(self.dirTreeview)
+        c.show_all()
+        
+    def dirTreeViewRowActivated(self, tview, tpath, tcolumn):
+        l.debug("activated row %s %s %s" % (tview, tpath, tcolumn))
+        titer = self.dirTreeStore.get_iter(tpath)
+        fullPath = self.dirTreeGetFullPath(titer)
+        self.createDirTreeView(fullPath)
+        
+    def dirTreeGetFullPath(self, titer):
+        
+        fp = [self.dirTreeStore.get_value(titer, 0)]
+        ctiter = titer.copy()
+        while self.dirTreeStore.iter_parent(ctiter):
+            ctiter = self.dirTreeStore.iter_parent(ctiter)
+            fp.insert(0, self.dirTreeStore.get_value(ctiter, 0))
+        return os.path.join(self.dirTreeBasePath, *fp)
+        
+    def dirTreeViewRowExpand(self, tview, titer, tpath):
+        val = self.dirTreeStore.get_value(titer, 0)
+        l.debug("expanded %s" % val)
+        firstChild = self.dirTreeStore.iter_nth_child(titer, 0)
+        if self.dirTreeStore.get_value(firstChild, 0) == '..':
+            l.debug("dynamic expansion  %s" % val)
+            #remove the '..'
+            self.dirTreeStore.remove(firstChild)
+            
+            #get the full path
+            fullPath = self.dirTreeGetFullPath(titer)
+            for x in os.listdir(fullPath):
+                child = self.dirTreeStore.append(titer, [x])
+                self.dirTreeStore.append(child, ['..'])
+            
+            #reexpand with the new children
+            self.dirTreeview.expand_row(tpath, False)
+        #print self.dirTreeStore.iter_parent(titer)
+        
+    def menuNew(self, widget):
+        """Show the select folder dialog"""  
+        w =self.wTree.get_widget("newFolderChooseDialog")
+        l.debug("selectNewFolder (%s)" % w)
+        w.show()
+        ltl = self.wTree.get_widget("newTypeList")
+        templates = os.listdir(TEMPLATEDIR)
+        ltl.set_popdown_strings(templates)
+        
+    def closeNewDialog(self, widget):
+        w =self.wTree.get_widget("newFolderChooseDialog")
+        l.debug("clow new dialog (%s)" % w)
+        w.hide()
+        
+        
+    def quit(self, widget):
+        l.debug("quit")
+        gtk.main_quit()
+        
     def workDirCancel(self, widget):
         l.debug("cancel select work dir")   
         wdd = self.wTree.get_widget("chooseWorkDirDialog")     
@@ -93,6 +167,7 @@ class GMoaGUI:
         
         
 if __name__ == "__main__":
-    l.debug("Starting gmoa")
+    l.debug("Instantiate gmoa")
     gmoaGui = GMoaGUI()
+    l.debug("going into gtk.main")
     gtk.main()
