@@ -200,7 +200,7 @@ def wekaGet(name, datatype):
 	if options.verbose > 0:
 		outputFooter("d = deleted, + = active")
 			
-def wekaLs():
+def wekaLs(*args):
 	"""show a list of all vars in the db"""
 	c = dbConnection.cursor()
 	if options.showAll == 0:
@@ -307,7 +307,7 @@ def main(args):
 		wekaGet(name, datatype)
 		
 	elif command == "ls":
-		wekaLs()
+		wekaLs(args[1:])
 			
 	elif command == "rm":
 		if len(args) != 2:

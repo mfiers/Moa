@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+"""
+Split a url in 
+"""
+import sys
+import urlparse
+
+o = urlparse.urlparse(sys.argv[1])
+
+if sys.argv[2] == 'start':
+    print "%s://%s" % (o.scheme, o.netloc)
+if sys.argv[2] == 'path':
+    print o.path

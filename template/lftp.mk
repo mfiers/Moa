@@ -42,6 +42,12 @@ output_dir_help = subdir to create & write all output to. If not defined, data \
   will be downloaded to directory containing the Makefile
 run_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos text \
   files (default=F).
+
+moa_may_define += lftp_mode
+lftp_mode_help = Mode of operation - "mirror" or "get". Mirror enables timestamping. Get \
+  just gets a single file. If using get, consider setting depend_lftp_timestamp \
+  to F. When using "get", the full url should be in lftp_url. lftp_pattern is ignored. \
+  lftp_mode defaults to mirror
   
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -52,6 +58,7 @@ endif
 depend_lftp_timestamp ?= T
 lftp_user ?= NoNoNo
 lftp_pass ?= NoNoNo
+lftp_mode ?= mirror
 lftp_noclean ?= Makefile moa.mk 
 output_dir ?= .
 run_dos2unix ?= F
@@ -63,16 +70,25 @@ lftp: lftp_prep lftp_run
 
 lftp_prep:
 	-if [ "$(depend_lftp_timestamp)" == "T" ]; then rm lftp_run; fi
-	-if [ ! "$(output_dir)" == "." ]; then mkdir $(output_dir); fi
+	-mkdir $(output_dir)
 	
 lftp_run: fexcl=$(addprefix -not -name , $(lftp_noclean))
 lftp_run:
+	cd $(output_dir); \
 	if [ "$(lftp_user)" == "NoNoNo" ]; then \
-		cd $(output_dir); lftp $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;\
+		if [ "$(lftp_mode)" == "mirror" ]; then \
+			lftp $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;\
+		else \
+			lftp -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
+		fi ;\
 	else \
-		cd $(output_dir); lftp -u $(lftp_user),$(lftp_pass) $(lftp_url) \
-			 -e "mirror -nrL -I $(lftp_pattern); exit" ;\
-	fi	
+		if [ "$(lftp_mode)" == "mirror" ]; then \
+			lftp -u $(lftp_user),$(lftp_pass) $(lftp_url) \
+				 -e "mirror -nrL -I $(lftp_pattern); exit" ;\
+		else \
+			lftp -u $(lftp_user),$(lftp_pass) -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
+		fi ;\
+	fi
 	if [ "$(depend_lftp_timestamp)" == "F" ]; then \
 		touch lftp_run ;\
 	fi

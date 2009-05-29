@@ -33,7 +33,11 @@ name_sed_help = Sed substitution command that alters the filename, defaults \
 output_dir_help = Output subdirectory, defaults to '.'
 
 moa_may_define += glprocess
-glprocess_help += Command to process the files. If undefined, hardlink the files. 
+glprocess_help = Command to process the files. If undefined, hardlink the files. 
+
+moa_may_define += limit_gather
+limit_gather_help = limit the number of files gathered (with the most recent \
+ files first, defaults to 1mln)
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -45,6 +49,7 @@ endif
 #name_sed ?= 's/a/a/'
 name_sed ?= s/\.genbank\.htg\.[0-9]/.fasta/
 output_dir ?= .
+limit_gather ?= 1000000
 glprocess ?= ln -f $< $$target
 gather_link_noclean ?= Makefile moa.mk 
 .PHONY: gather_link_run
@@ -56,19 +61,31 @@ gather_link_prep:
 	-mkdir touch
 	-mkdir $(output_dir)	
 
-gather_link_run: $(addprefix touch/,$(notdir $(foreach dir, $(input_dirs), $(wildcard $(dir)/$(input_pattern))))) 
+
+
+#gather_link_run: $(addprefix touch/,$(notdir $(foreach dir, $(input_dirs), $(wildcard $(dir)/$(input_pattern))))) 	
+gather_link_run: $(addprefix touch/,$(notdir $(foreach dir, $(input_dirs), $(shell find $(dir) -name "$(input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(limit_gather) | cut -f 2 ))))
+# $(addprefix touch/,$(notdir 
+# ))
+test: test3 = %
+test: input_pattern=TAIR8*
+test:
+	@echo $(testval)
 	
 touch/%: %
-	echo considering $@
+	@echo considering $<
 	@target=$(output_dir)/$(shell echo "$(notdir $<)" | sed "$(name_sed)"); \
+		echo target file is $$target ;\
+		echo 'executing $(glprocess) ';\
 		$(glprocess)
-	touch $@
+	@touch $@
 #CLEAN
 clean: gather_link_clean
 
 gather_link_clean: fexcl=$(addprefix -not -name , $(gather_link_noclean))
 gather_link_clean:
-	if [ ! "$(output_dir)" == "." ]; then rm -rf $(output_dir); done
+	if [ ! "$(output_dir)" == "." ]; then rm -rf $(output_dir); fi
+	-rm -rf touch
 	for x in `find . -maxdepth 1 -type f $(fexcl)`; do \
 		rm $$x ;\
 	done

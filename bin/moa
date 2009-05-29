@@ -66,6 +66,9 @@ def moaNew(what):
     if not os.path.exists(templatefile):
         l.debug("cannot find %s" % templatefile)
         l.error("No template for %s exists" % what)
+        allTemplates = [x.replace('.mk', '') for x in os.listdir(TEMPLATEDIR) if ".mk" in x]
+        l.error("choose from %s" % ", ".join(allTemplates))
+    
         sys.exit(1)
     includeLine = "include $(shell echo $$MOABASE)/template/%s.mk" % what
     l.debug("include: %s" % includeLine)
