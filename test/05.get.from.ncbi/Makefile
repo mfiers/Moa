@@ -1,0 +1,1 @@
+include $(shell echo $$MOABASE)/template/getFromNcbi.mk
