@@ -1,6 +1,3 @@
-#@+leo-ver=4-thin
-#@+node:mf.20090529153542.9:@thin template/upload2gbrowse.mk
-#@@language makefile
 
 # Main target - should be first in the file
 moa_main_target: check upload2gbrowse
@@ -70,7 +67,3 @@ clean: upload2gbrowse_clean
 
 upload2gbrowse_clean:
 	-rm gbrowse_upload
-
-#@nonl
-#@-node:mf.20090529153542.9:@thin template/upload2gbrowse.mk
-#@-leo

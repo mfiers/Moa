@@ -1,22 +1,21 @@
-#@+leo-ver=4-thin
-#@+node:mf.20090529152037.1:@thin template/moaBase.mk
-#@@language makefile
-
-#@+all
-#@+node:mf.20090529152037.2:head
 SHELL := /bin/bash
+
 .PHONY: set show help check prereqs
 
-#see if a local variable set is defined
+# If moa.mk is defined, import it.
+# moa.mk is used to store local variables
 -include moa.mk
 
-#Default targets
+# Add a few default targets to the set 
+# of possible targets
 moa_targets += check help show all clean_all prereqs
+
+# and define help for these
 check_help = Check variable definition
 show_help = show defined variables
 help_help = This help!
 all_help = Recursively run through all subdirectories (use make all \
-	action=XXX to run "make XXX" recursively) 
+  action=XXX to run "make XXX" recursively)
 prereqs_help = Check if all prerequisites are present
 
 #some default variable help defs
@@ -25,14 +24,10 @@ input_extension_help = Extension of the input files
 
 #prevent reinclusion of moabase
 dont_include_moabase=defined
-
-
-#@-node:mf.20090529152037.2:head
-#@+node:mf.20090529152037.3:check
 ###################################################
 ## Moa check - is everything defined?
 
-#@+node:mf.20090529152037.4:prerequisites
+
 ###########################################################################
 #check prerequisites
 
@@ -47,17 +42,12 @@ prereq_moa_environment:
 		echo "MOABASE is not defined :(" ; \
 		false ;\
 	fi
-#@nonl
-#@-node:mf.20090529152037.4:prerequisites
-#@+node:mf.20090529152037.6:deprecated
 #check if this moa makefile is deprecated
 moa_help_deprecated_%:
 	#echo depreation check $*
 	@if [ -n "$*" ]; then \
 		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
 	fi
-#@-node:mf.20090529152037.6:deprecated
-#@+node:mf.20090529152037.7:variables
 .PHONY: check
 check: prereqs $(addprefix checkvar_, $(moa_must_define)) moa_help_deprecated
 	@echo "Variable check: everything appears ok"
@@ -68,10 +58,6 @@ checkvar_%:
 		echo " *** Error $(subst checkvar_,,$@) is undefined" ;\
 		exit -1; \
 	fi
-#@nonl
-#@-node:mf.20090529152037.7:variables
-#@-node:mf.20090529152037.3:check
-#@+node:mf.20090529152037.8:set / append
 # Set a variable!
 .PHONY: set
 set: set_mode =
@@ -92,15 +78,11 @@ storevar_%:
 		echo -n "$(subst storevar_,,$@)$(set_mode)=$$" >> moa.mk ;\
 		echo "(shell weka get $(weka_$(subst storevar_,,$@)))" >> moa.mk ; \
 	fi
-#@-node:mf.20090529152037.8:set / append
-#@+node:mf.20090529152037.9:show
 
 show: $(addprefix showvar_, $(moa_must_define) $(moa_may_define))
 
 showvar_%:		 
 	@echo "$(subst showvar_,,$@) : $($(subst showvar_,,$@))"
-#@-node:mf.20090529152037.9:show
-#@+node:mf.20090529153542.2:traversal
 # Traversal through subdirectories.
 
 # by calling 'make all', all subdirs are made as well as the cd.As an extension,
@@ -143,12 +125,8 @@ $(moa_followups):
 	@if [ -e $@/Makefile ]; then \
 		cd $@ && $(MAKE) all action=$(action) ;\
 	fi
-
-#@-node:mf.20090529153542.2:traversal
-#@+node:mf.20090529152037.5:help
 ###############################################################################
 # Help structure
-#@+node:mf.20090529153542.3:defs
 boldOn = \033[0;1;47;0;32;4m
 boldOff = \033[0m
 help: moa_help_header \
@@ -156,8 +134,6 @@ help: moa_help_header \
 	moa_help_target_header moa_help_target moa_help_target_footer \
 	moa_help_vars_header moa_help_vars moa_help_vars_footer \
 	moa_help_output_header moa_help_output moa_help_output_footer
-#@-node:mf.20090529153542.3:defs
-#@+node:mf.20090529153542.4:header
 
 moa_help_header: moa_help_header_title moa_help_header_description
 
@@ -181,8 +157,6 @@ moa_help_header_description_%:
 	@echo -e "$(boldOn)$(moa_title_$(patsubst moa_help_header_description_%,%,$@)):$(boldOff)"
 	@echo -e "$(moa_description_$(patsubst moa_help_header_description_%,%,$@))" | fold -w 70 -s 
 
-#@-node:mf.20090529153542.4:header
-#@+node:mf.20090529153542.8:deprecated
 
 moa_help_deprecated: $(addprefix moa_help_deprecated_, $(moa_ids))
 
@@ -190,8 +164,6 @@ moa_help_deprecated_%:
 	@if [ -n "$(moa_deprecated_$*)" ]; then \
 		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
 	fi		
-#@-node:mf.20090529153542.8:deprecated
-#@+node:mf.20090529153542.5:target
 
 ## Help - target section
 moa_help_target_header:
@@ -212,8 +184,6 @@ moa_target_%:
 
 moa_help_target_footer:
 	@echo 
-#@-node:mf.20090529153542.5:target
-#@+node:mf.20090529153542.6:variables
 
 ## Help - variable section
 moa_help_vars_header:
@@ -241,8 +211,6 @@ helpvar_%:
 	fi
 
 
-#@-node:mf.20090529153542.6:variables
-#@+node:mf.20090529153542.7:output
 
 ## Help - output section
 moa_help_output_header:
@@ -262,8 +230,3 @@ moa_output_%:
 
 moa_help_output_footer:
 	@echo 
-#@-node:mf.20090529153542.7:output
-#@-node:mf.20090529152037.5:help
-#@-all
-#@-node:mf.20090529152037.1:@thin template/moaBase.mk
-#@-leo
