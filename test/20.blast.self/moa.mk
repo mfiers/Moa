@@ -5,3 +5,5 @@ gbrowse_user=baviaan
 gbrowse_db=baviaan
 gbrowse_user=mushroom
 gbrowse_db=mushroom
+input_dir=../05.get.from.ncbi/
+input_dir=../05.get.from.ncbi/fasta/

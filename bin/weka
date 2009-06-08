@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+#@+leo-ver=4-thin
+#@+node:mf.20090601150139.25:@thin bin/weka
+#@@first
+#@@language python
+#@@tabwidth -4
+
 """
 Simple system to have system wide persistent variables.
 
@@ -56,14 +62,14 @@ parser.add_option("-l", dest="logging", action="store_true",
 options, args = parser.parse_args()
 
 
-	
+
 def log(message):
 	if options.logging:
 		sys.stderr.write("# " + message + "\n")
-		
+
 log("verbosity %s" % options.verbose)
 dbConnection = None
-		
+
 # Helper commands
 def error(message):
 	"""Display an error message & quit"""
@@ -73,22 +79,22 @@ def error(message):
 def usage():
 	"""Print usage information"""
 	sys.stderr.write(USAGE + "\n")
-	
+
 def outputHeaders(headers):	
 	if options.verbose == 2:
 		print "#" + " ".join([x[1] % x[0] for x in headers])
-	
+
 def output(val):
 	"""
 	Simple output
 	"""
 	print val
-	
+
 def outputF(vals, headers = None):
 	"""output the value, format depending on verbosity & headers"""
 	if type(vals) not in [type([]), type(())]:
 		vals = [vals]
-		
+
 	if options.verbose <= 1:
 		print "\t".join([str(x) for x in vals])	
 	else:
@@ -97,7 +103,7 @@ def outputF(vals, headers = None):
 def outputFooter(message):
 	if options.verbose > 1:
 		print "#", message
-			
+
 def closeDbConnection():
     """ Close db connection. If there is uncommited data
     it is lost """    
@@ -108,11 +114,11 @@ def exit(dbConn):
 	""" Exit. After properly closing the dbConnection """
 	closeDbConnection()
 	sys.exit(0)
-	
+
 def time2str(t):
 	return time.strftime("%a, %d %b %Y %H:%M:%S" , 
 						 time.localtime(float(t)))
-	
+
 def openDbConnection(dbLocation):
 	"""
 	Open the db connection & create the var table
@@ -133,7 +139,7 @@ def openDbConnection(dbLocation):
 	c.close()
 	log("Opened db connection %s " % dbConnection)
 
-	
+
 #Main functions
 def wekaGet(name, datatype):
 	"""
@@ -164,10 +170,10 @@ def wekaGet(name, datatype):
 			 WHERE name = ? 
 			   AND datatype = ?
 		  ORDER BY created DESC """
-		  
+
 	log("executing %s with %s" % (sql, [name, datatype]))
 	c.execute(sql,[name, datatype])
-			
+
 	i = 0
 
 	headers = []
@@ -180,11 +186,11 @@ def wekaGet(name, datatype):
 			headers.append(("time", "%-26s"))
 	headers.append(("value", "%-s"))
 	outputHeaders(headers)
-		
+
 	for rec in c.fetchall():		
 		rv = []			
 		i += 1	
-				
+
 		if options.verbose > 0 and options.showAll > 1:
 			if rec[2] == 0: rv.append("+")
 			else: rv.append("d")
@@ -193,13 +199,13 @@ def wekaGet(name, datatype):
 			else: rv.append(time2str(rec[1]))
 		rv.append(rec[0])
 		outputF(rv, headers)			
-	
+
 	#if not options.showAll and i == 0:
 	#	#expecting something & got nothing.. return error
 	#	error("Cannot find %s.%s" % (datatype, name))
 	if options.verbose > 0:
 		outputFooter("d = deleted, + = active")
-			
+
 def wekaLs(*args):
 	"""show a list of all vars in the db"""
 	c = dbConnection.cursor()
@@ -219,24 +225,24 @@ def wekaLs(*args):
 			SELECT DISTINCT datatype, name, count(name)
 		  	  FROM vars
 	  	  GROUP BY datatype, name """
-	  		
+
 	log("executing %s" % sql)
 	c.execute(sql)
-	
+
 	if options.verbose == 0:
 		headers = [("name.datatype", "%s")]
 	else:
 		headers = [("count", "%5s"), ("name.datatype", "%s")]
-		
+
 	outputHeaders(headers)
-	
+
 	for rec in c.fetchall():
 		rv = []
 		if options.verbose:
 			rv.append(rec[2])
 		rv.append("%s::%s" % (rec[1], rec[0]))
 		outputF(rv, headers)
-						
+
 def wekaSet(name, datatype, value):
 	"""Get a var from the db"""
 	c = dbConnection.cursor()
@@ -248,15 +254,15 @@ def wekaSet(name, datatype, value):
 			   AND datatype = ? """
 		log("executing %s with %s" % (sql, [name, datatype]))
 		c.execute(sql, [name, datatype])
-		
+
 	sql = """		
 		INSERT INTO vars (name, datatype, value)
 			 VALUES (?, ?, ?)"""
-			 
+
 	log("executing %s with %s" % (sql, [name, datatype, value]))
 	c.execute(sql, [name, datatype, value])
 	dbConnection.commit()	
-				
+
 def wekaRm(datatype = None, name = None):
 	"""completely remove a var from the db"""
 	c = dbConnection.cursor()
@@ -274,7 +280,7 @@ def wekaRm(datatype = None, name = None):
 		log("Executing %s with %s" % (sql, [name]))
 		c.execute(sql, [name])
 		dbConnection.commit()	
-		
+
 def main(args):
 	#determine database location
 	if os.environ.has_key("MOABASE"):
@@ -287,10 +293,10 @@ def main(args):
 								  '.weka.db')
 
 	openDbConnection(dbLocation)
-	
+
 	#read commandline and act!
 	command = args[0]
-	
+
 	if command == "set":	
 		if len(args) != 3:			
 			error("invalid number of arguments")
@@ -299,16 +305,16 @@ def main(args):
 		wekaSet(name = name, 
 				  datatype = datatype, 
 				  value = value)
-		
+
 	elif command == "get":
 		if len(args) != 2:
 			error("invalid number of arguments")
 		name, datatype = args[1].split('::')
 		wekaGet(name, datatype)
-		
+
 	elif command == "ls":
 		wekaLs(args[1:])
-			
+
 	elif command == "rm":
 		if len(args) != 2:
 			error("invalid number of arguments")			
@@ -317,18 +323,21 @@ def main(args):
 		else:			
 			name = args[1]
 			datatype = None
-			
+
 		wekaRm(datatype = datatype, 
 			 	 name = name)		
 	else:
 		usage()
 		error("Invalid command %s" % command)
-	
-		
+
+
 
 if __name__ == "__main__":
 	try:		
 		main(args)
 	except KeyboardInterrupt:
 		cleanup()
-	 
+
+#@nonl
+#@-node:mf.20090601150139.25:@thin bin/weka
+#@-leo

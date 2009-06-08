@@ -1,6 +1,5 @@
 # Create a BLAST database from a set of sequences
 ################################################################################
-
 # Main target defintion
 moa_main_target: check create_blast_db create_id_list set_blastdb_weka
 
@@ -35,20 +34,15 @@ input_extension_help = extension of the input sequence files, defaults to fasta
 
 #Variable: protein
 moa_may_define += protein 
-protein_help = Protein database? (T)rue) or not (F)alse (default: F)
-
-#Include base moa code - does variable checks & generates help
+protein_help = Protein database? (T)rue) or not (F)alse (default: F)#Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
-endif
-
-################################################################################
+endif################################################################################
 # End of the generic part - from here on you're on your own :)
 
 input_dir ?= ./fasta
 input_extension ?= fasta
 
-.PHONY: create_blast_db
 
 #the rest of the variable definitions 
 protein ?= F
@@ -60,10 +54,10 @@ ifeq ("$(protein)", "F")
 else
 	one_blast_db_file = $(name).phr
 endif
-     
 
+.PHONY: create_blast_db
 create_blast_db: $(one_blast_db_file)
-			
+
 $(one_blast_db_file): $(fasta_file)
 	@echo "Creating $@"
 	formatdb -i $< -p $(protein) -o T -n $(name)
@@ -74,24 +68,18 @@ $(fasta_file): $(input_files)
 		cat $$x >> $(fasta_file) ;\
 		echo >> $(fasta_file) ;\
 	done
-		
-create_id_list: $(name).list
 
-$(name).list: $(fasta_file)
-	grep ">" $(fasta_file) | cut -c2- | sed 's/ /\t/' | sort > $(name).list
-	
-set_blastdb_weka:
+create_id_list: $(name).list$(name).list: $(fasta_file)
+	grep ">" $(fasta_file) | cut -c2- | sed 's/ /\t/' | sort > $(name).listset_blastdb_weka:
 	weka -r set $(name)::blastdb `pwd`/$(name)
 	weka -r set $(name)::fasta `pwd`/$(input_file)
-	weka -r set $(name)::idlist `pwd`/$(name).list	
-	
-clean: create_blast_db_clean
+	weka -r set $(name)::idlist `pwd`/$(name).listclean: create_blast_db_clean
 create_blast_db_clean:	
 	-if [ $(protein) == "F" ]; then \
 		rm $(name).n?? ;\
 	else \
 		rm $(name).p?? ;\
 	fi
-	
+
 clean_blastdb_weka:
 	weka rm $(name)::blastdb

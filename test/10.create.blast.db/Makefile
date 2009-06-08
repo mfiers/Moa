@@ -1,1 +1,1 @@
-include $(shell echo $$MOABASE)/template/createBlastDb.mk
+include $(shell echo $$MOABASE)/template/createBlastDb.001.mk

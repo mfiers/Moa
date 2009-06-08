@@ -1,14 +1,28 @@
+##
+## Moabase - base library for all moa styled makefiles.
+##
+## Include this after all moa style definitions but before
+## defining any target or (and this is important) any variable
+## that depends on a variable defined in moa.mk
+##
+
+## we use bash!
 SHELL := /bin/bash
 
-.PHONY: set show help check prereqs
+## If moa.mk is defined, import it.
+## moa.mk is used to store local variables
+-include ./moa.mk
 
-# If moa.mk is defined, import it.
-# moa.mk is used to store local variables
--include moa.mk
+## moa default target:
+
+moa_default: moa_welcome $(addprefix prep_, $(moa_ids)) moa_check $(moa_ids) $(addprefix post_, $(moa_ids))
+
+moa_welcome:
+	@echo "Welcome to MOA"
 
 # Add a few default targets to the set 
 # of possible targets
-moa_targets += check help show all clean_all prereqs
+moa_targets += check help show all clean_all prereqs set append
 
 # and define help for these
 check_help = Check variable definition
@@ -17,6 +31,8 @@ help_help = This help!
 all_help = Recursively run through all subdirectories (use make all \
   action=XXX to run "make XXX" recursively)
 prereqs_help = Check if all prerequisites are present
+set_help = set a variable to moa.mk
+append_help = as set, but append the variable to a list
 
 #some default variable help defs
 input_dir_help = Directory with the input data
@@ -32,8 +48,8 @@ dont_include_moabase=defined
 #check prerequisites
 
 prereqlist += prereq_moa_environment
-.PHONY: prereqs $(prereqlist)
 
+.PHONY: prereqs $(prereqlist)
 prereqs: $(prereqlist)
 
 #check if MOABASE is defined
@@ -42,17 +58,11 @@ prereq_moa_environment:
 		echo "MOABASE is not defined :(" ; \
 		false ;\
 	fi
-#check if this moa makefile is deprecated
-moa_help_deprecated_%:
-	#echo depreation check $*
-	@if [ -n "$*" ]; then \
-		echo -e "\033[0;1;47;0;41;4;6m *** There is a newer version of: $* *** \033[0m" ;\
-	fi
 .PHONY: check
-check: prereqs $(addprefix checkvar_, $(moa_must_define)) moa_help_deprecated
+check: prereqs 
 	@echo "Variable check: everything appears ok"
 
-#.PHONY: $(addprefix checkvar_, $(moa_must_define))
+.PHONY: $(addprefix checkvar_, $(moa_must_define))
 checkvar_%:
 	@if [ "$(origin $(subst checkvar_,,$@))" == "undefined" ]; then \
 		echo " *** Error $(subst checkvar_,,$@) is undefined" ;\
@@ -68,7 +78,8 @@ set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
-storevar_%:		 
+.PHONY: storevar_%
+storevar_%:
 	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
 		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
 		echo "$(subst storevar_,,$@)$(set_mode)=$(set_mode)$($(subst storevar_,,$@))" >> moa.mk ;\
@@ -79,6 +90,7 @@ storevar_%:
 		echo "(shell weka get $(weka_$(subst storevar_,,$@)))" >> moa.mk ; \
 	fi
 
+.PHONY: show showvar_%
 show: $(addprefix showvar_, $(moa_must_define) $(moa_may_define))
 
 showvar_%:		 
@@ -98,33 +110,27 @@ showvar_%:
 
 moa_followups ?= $(shell find . -maxdepth 1 -type d -regex "\..+" -exec basename '{}' \; | sort -n )
 
-.PHONY: $(moa_followups) all clean_all
-
-all_check:
-	@echo "would run make $(action)"
-	@echo "in the following dirs"
-	@echo $(moa_followups)
-
-#action ?= undefined
+.PHONY: all
 all: traverse_start_with_this $(moa_followups)
 
+.PHONY: traverse_start_with_this
 traverse_start_with_this:
-	#if [ "$(action)" == "undefined" ]; then \
-	#	echo "running all without action, also run default action" ;\
-	#	$(MAKE) ;\
-	#fi
-    #run the required action in this directory
-	-$(MAKE) $(action)
-	@echo "Following up with:" $(moa_followups)
+	$(MAKE) $(action)
 
+.PHONY: $(moa_followups)
 $(moa_followups):
-	@echo "  ###########################"
-	@echo "  ## Executing make $(action)"
-	@echo "  ##   in $@ " 
-	@echo "  ###########################"
 	@if [ -e $@/Makefile ]; then \
+		@echo -e "\033[43;30;6m#### Executing make $(action) in $@ \033[0m"  ;\
 		cd $@ && $(MAKE) all action=$(action) ;\
 	fi
+#print a status report:
+moa_status_reports = $(addprefix status_, $(moa_ids))
+.PHONY: status $(moa_status_reports)
+
+status: status_start $(moa_status_reports)
+
+status_start:
+	@echo "Status reports: $(moa_status_reports)"
 ###############################################################################
 # Help structure
 boldOn = \033[0;1;47;0;32;4m
