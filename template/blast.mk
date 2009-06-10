@@ -1,5 +1,5 @@
 
-moa_default: moa_welcome $(addprefix prep_, $(moa_ids)) moa_check $(moa_ids) $(addprefix post_, $(moa_ids))
+#main: moa_default_target
 
 # Variable checks & definition & help
 moa_ids += blast
@@ -27,7 +27,8 @@ prereq_biopython_installed:
 		echo "biopython appears not to be installed" ;\
 		false ;\
 	fi
-moa_targets += blast clean report
+
+moa_targets += blast report
 clean_help = remove all BLAST results
 blast_help = run all BLASTs
 report_help = Create a simple blast report
@@ -70,23 +71,15 @@ gff_source_help = source field to use in the gff
 
 moa_may_define += blast_reverse_gff
 blast_reverse_gff_help = Create inverse gff
+
 #preparing for gbrowse upload:
 gup_input_dir = ./gff
 gup_input_extension = gff
 
-#function to delete the resutls from one single file:
-gup_delete_single = bp_seqfeature_delete.pl -d $(gbrowse_db) -u $(gbrowse_user) -n $(gff_source)_`basename $< .gff`
-
-#function to delete all results from this analysis
-gup_delete_single = bp_seqfeature_delete.pl -d $(gbrowse_db) -u $(gbrowse_user) -t $(gff_source)
-
 #include the code to upload stuff to gbrowse
 include $(shell echo $$MOABASE)/template/upload2gbrowseInclude.mk
-
-#include mobase, if it isn't already done yet..
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
-endif
+#include moabase, if it isn't already done yet..
+include $(shell echo $$MOABASE)/template/moaBase.mk
 
 blast_eval ?= 1e-10
 blast_program ?= blastn
@@ -131,8 +124,12 @@ endif
 ifeq ($(blast_program), blastx)
  single_blast_db_file = $(blast_db).phr
 endif
-blast: blast_prepare $(blast_gff_files) $(blast_gff_reverse_files)
+
+#echo Main target for blast
+blast: $(blast_gff_files) $(blast_gff_reverse_files)
 	@echo "Done blasting!"
+
+#prepare for blast - i.e. create directories
 blast_prepare:	
 	-mkdir out 
 	-mkdir gff  	
@@ -140,11 +137,17 @@ blast_prepare:
 		mkdir gff.reverse || true; \
 		echo "Creating reverse gff" ; \
 	fi
+
+.PHONY: blast_post
+blast_post:
+
+#status of the blast thingy
 status_blast:
 	echo "Input files: $(words $(blast_input_files))"
 	echo "blast output files: $(words $(blast_output_files))"
-#from fasta to out/*.xml
 
+
+#create out/*xml - run BLAST 
 out/%.xml: $(input_dir)/%.$(input_extension) $(single_blast_db_file)
 	@echo "Processing $(blast_program) $< $@ with db $(blast_db)"
 	blastall -i $< -p $(blast_program) -e $(blast_eval) -m 7 \
@@ -156,12 +159,14 @@ out/%.xml: $(input_dir)/%.$(input_extension) $(single_blast_db_file)
 gff/%.gff: out/%.xml
 	blast2gff -s $(gff_source) -d query < $< > $@
 
+#Convert to gff (reverse). I'm not sure it this is really necessary.
 gff.reverse/%.gff: out/%.xml
 	blast2gff -s $(blast_gff_source) -d subject < $< > $@
+
 #creating the blastreport can only be executed when all blasts are done
 report: $(blast_output_files)
 	blastReport out/ -o $@
-clean: blast_clean
+
 blast_clean:
 	-rm -rf ./gff/
 	-rm -rf ./out/
