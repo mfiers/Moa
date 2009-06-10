@@ -1,0 +1,297 @@
+#!/usr/bin/env python
+"""
+Simple command line registry-like system to store variables in a system wide manner
+
+Usage:
+    weka set [NAME] [VALUE]
+    weka get [NAME]
+    weka ls
+    weka rm [NAME]	
+
+db structure
+
+w2_key
+    id     : int
+    name   : text
+    parent : int
+
+w2_value
+    id      : int
+    key_id  : int
+    typd_id : int
+    value   : text
+
+w2_type
+    id   : int
+    list : bool
+    name : text
+
+"""
+import os
+import sys
+import time
+import optparse
+import sqlite3
+
+LOG = True
+
+DBDEF = [
+""" CREATE TABLE IF NOT EXISTS w2_key
+	(id INTEGER PRIMARY KEY AUTOINCREMENT,
+ 	 name text,
+         parent text) """, 
+
+""" CREATE INDEX 
+        IF NOT EXISTS w2_key_parent_i 
+        ON w2_key (parent)""",
+
+""" CREATE INDEX 
+        IF NOT EXISTS w2_key_name_i 
+        ON w2_key (parent)""",
+
+""" CREATE TABLE IF NOT EXISTS w2_type
+	(id       INTEGER PRIMARY KEY AUTOINCREMENT,
+ 	 list     INTEGER,
+         name     TEXT,
+         FOREIGN KEY (key_id) REFERENCES w2_key(id) """,
+ 
+""" CREATE INDEX IF NOT EXISTS w2_type_name_i 
+        ON w2_type (key_id)""",
+
+""" CREATE TABLE IF NOT EXISTS w2_value
+	(id       INTEGER PRIMARY KEY AUTOINCREMENT,
+ 	 keyid   INTEGER,
+ 	 typeid  INTEGER,
+         value    TEXT,
+         FOREIGN KEY (keyid) REFERENCES w2_key(id),
+         FOREIGN KEY (typeid) REFERENCES w2_type(id) """,
+ 
+""" CREATE INDEX IF NOT EXISTS w2_value_keyid_i 
+        ON w2_value (keyid)""",
+
+""" CREATE INDEX IF NOT EXISTS w2_value_typeid_i 
+        ON w2_value (typeid)""",
+]
+
+def time2str(t):
+    return time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(float(t)))
+
+def l(message):
+    if LOG:
+        sys.stderr.write("# " + message + "\n")
+
+if not os.environ.has_key("MOABASE"):
+    print "MOABASE is not defined"
+    exit()
+
+dbLocation = os.path.join(os.environ['MOABASE'], 'var', 'weka.db')
+
+try:
+    dbConnection = sqlite3.connect(dbLocation)
+except sqlite3.OperationalError:
+    error("Cannot open db %s\n" % dbLocation + 
+	  "Does the path exists? Do you have write access?")
+
+#Initialize the database
+c = dbConnection.cursor()
+for statement in DBDEF:
+    l("executing %s" % statement)
+    c.execute(statement)
+dbConnection.commit()
+c.close()
+
+l("Opened db connection %s " % dbConnection)
+
+#do some tests
+
+c = dbConnection.cursor()
+c.execute('''insert into w2_key (name, parent) VALUES ("hoi1", 1) ''')
+c.execute('''insert into w2_key (name, parent) VALUES ("hoi2", 2) ''')
+c.execute('''insert into w2_key (name, parent) VALUES ("hoi3", 3) ''')
+c.execute('''insert into w2_key (name, parent) VALUES ("hoi4", 4) ''')
+dbConnection.commit
+c.execute('''select * from w2_key''')
+for r in c.fetchall():
+    print 'row', r
+sys.exit()
+
+
+
+#Main functions
+def wekaGet(name, datatype):
+	"""
+	Get a variable from the database	
+	"""
+	c = dbConnection.cursor()
+	if options.showAll == 0:
+		sql = """	
+			SELECT value, created, archived 
+			  FROM vars 
+			 WHERE name = ?
+			   AND datatype = ? 
+			   AND archived = 0
+		  ORDER BY created DESC
+		     LIMIT 1 """
+	elif options.showAll == 1:
+		sql = """   
+			SELECT value, created, archived 
+			  FROM vars 
+			 WHERE name = ? 
+			   AND datatype = ?
+			   AND archived = 0
+		  ORDER BY created DESC """
+	else:
+	 	sql = """   
+ 			SELECT value, created, archived 
+			  FROM vars 
+			 WHERE name = ? 
+			   AND datatype = ?
+		  ORDER BY created DESC """
+
+	log("executing %s with %s" % (sql, [name, datatype]))
+	c.execute(sql,[name, datatype])
+
+	i = 0
+
+	headers = []
+	if options.verbose > 1:
+		headers.append(("", "%1s"))
+	if options.verbose > 0:
+		if options.showUnixTime:
+			headers.append(("unix time", "%-11s"))
+		else:
+			headers.append(("time", "%-26s"))
+	headers.append(("value", "%-s"))
+	outputHeaders(headers)
+
+	for rec in c.fetchall():		
+		rv = []			
+		i += 1	
+
+		if options.verbose > 0 and options.showAll > 1:
+			if rec[2] == 0: rv.append("+")
+			else: rv.append("d")
+		if options.verbose > 0 and options.showAll > 0:	 	
+			if options.showUnixTime: rv.append(rec[1])
+			else: rv.append(time2str(rec[1]))
+		rv.append(rec[0])
+		outputF(rv, headers)			
+
+	#if not options.showAll and i == 0:
+	#	#expecting something & got nothing.. return error
+	#	error("Cannot find %s.%s" % (datatype, name))
+	if options.verbose > 0:
+		outputFooter("d = deleted, + = active")
+
+def wekaLs(*args):
+	"""show a list of all vars in the db"""
+	c = dbConnection.cursor()
+	if options.showAll == 0:
+		sql = """
+			SELECT DISTINCT datatype, name, 1
+		  	  FROM vars
+		  	 WHERE archived = 0 """
+	elif options.showAll == 1:
+		sql = """
+			SELECT DISTINCT datatype, name, count(name)
+		  	  FROM vars
+		  	 WHERE archived = 0
+	  	  GROUP BY datatype, name """
+	else:
+		sql = """
+			SELECT DISTINCT datatype, name, count(name)
+		  	  FROM vars
+	  	  GROUP BY datatype, name """
+
+	log("executing %s" % sql)
+	c.execute(sql)
+
+	if options.verbose == 0:
+		headers = [("name.datatype", "%s")]
+	else:
+		headers = [("count", "%5s"), ("name.datatype", "%s")]
+
+	outputHeaders(headers)
+
+	for rec in c.fetchall():
+		rv = []
+		if options.verbose:
+			rv.append(rec[2])
+		rv.append("%s::%s" % (rec[1], rec[0]))
+		outputF(rv, headers)
+
+def wekaSet(name, datatype, value):
+	"""Get a var from the db"""
+	c = dbConnection.cursor()
+	if options.replace:
+		sql = """
+			UPDATE vars
+			   SET archived = 1
+			 WHERE name = ?
+			   AND datatype = ? """
+		log("executing %s with %s" % (sql, [name, datatype]))
+		c.execute(sql, [name, datatype])
+
+	sql = """		
+		INSERT INTO vars (name, datatype, value)
+			 VALUES (?, ?, ?)"""
+
+	log("executing %s with %s" % (sql, [name, datatype, value]))
+	c.execute(sql, [name, datatype, value])
+	dbConnection.commit()	
+
+def wekaRm(datatype = None, name = None):
+	"""completely remove a var from the db"""
+	c = dbConnection.cursor()
+	if datatype and name:
+		log("Removing %s/%s" % (datatype, name))
+		sql = """DELETE FROM vars 
+				       WHERE name = ?
+						 AND datatype = ?"""
+		log("Executing %s with %s" % (sql, [name, datatype]))
+		c.execute(sql, [name, datatype])
+		dbConnection.commit()	
+	elif name:
+		log("Removing {ALL}/%s" % (name))
+		sql = "DELETE FROM vars WHERE name = ?"
+		log("Executing %s with %s" % (sql, [name]))
+		c.execute(sql, [name])
+		dbConnection.commit()	
+
+
+
+	#read commandline and act!
+
+	if command == "set":	
+		if len(args) != 3:			
+			error("invalid number of arguments")
+		name, datatype = args[1].split('::')		
+		value = args[2]
+		wekaSet(name = name, 
+				  datatype = datatype, 
+				  value = value)
+
+	elif command == "get":
+		if len(args) != 2:
+			error("invalid number of arguments")
+		name, datatype = args[1].split('::')
+		wekaGet(name, datatype)
+
+	elif command == "ls":
+		wekaLs(args[1:])
+
+	elif command == "rm":
+		if len(args) != 2:
+			error("invalid number of arguments")			
+		if '.' in args[1]:
+			name, datatype = args[1].split('::')
+		else:			
+			name = args[1]
+			datatype = None
+
+		wekaRm(datatype = datatype, 
+			 	 name = name)		
+	else:
+		usage()
+		error("Invalid command %s" % command)
+
