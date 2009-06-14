@@ -3,28 +3,20 @@
 Simple command line registry-like system to store variables in a system wide manner
 
 Usage:
-    weka set [NAME] [VALUE]
-    weka get [NAME]
-    weka ls
-    weka rm [NAME]	
-
+    weka set multi.level.name value
+    weka get multi.level.name
+   
 db structure
-
-w2_key
-    id     : int
-    name   : text
-    parent : int
-
-w2_value
-    id      : int
-    key_id  : int
-    typd_id : int
-    value   : text
-
-w2_type
-    id   : int
-    list : bool
-    name : text
+    w2_key
+        id      : int <==+--+
+        name    : text   |  |
+        parent  : int    |  |
+        type_id : int -- +  |
+                            |
+    w2_value                |
+        id      : int       |
+        key_id  : int ------+
+        value   : text       
 
 """
 import os
@@ -35,50 +27,55 @@ import sqlite3
 
 LOG = True
 
+DBRM = [
+"""DROP TABLE IF EXISTS w2_key""", 
+"""DROP TABLE IF EXISTS w2_value"""
+]
+
 DBDEF = [
 """ CREATE TABLE IF NOT EXISTS w2_key
 	(id INTEGER PRIMARY KEY AUTOINCREMENT,
  	 name text,
-         parent text) """, 
+         typeid int default 3,
+         parentid int,
+         FOREIGN KEY (typeid) REFERENCES w2_key(id),
+         FOREIGN KEY (parentid) REFERENCES w2_key(id)) """,
 
 """ CREATE INDEX 
         IF NOT EXISTS w2_key_parent_i 
-        ON w2_key (parent)""",
+        ON w2_key (parentid)""",
 
 """ CREATE INDEX 
         IF NOT EXISTS w2_key_name_i 
-        ON w2_key (parent)""",
+        ON w2_key (name)""",
 
-""" CREATE TABLE IF NOT EXISTS w2_type
-	(id       INTEGER PRIMARY KEY AUTOINCREMENT,
- 	 list     INTEGER,
-         name     TEXT,
-         FOREIGN KEY (key_id) REFERENCES w2_key(id) """,
- 
-""" CREATE INDEX IF NOT EXISTS w2_type_name_i 
-        ON w2_type (key_id)""",
+""" INSERT OR REPLACE INTO w2_key (id, name)
+    VALUES (1, 'root') """,
+
+""" INSERT OR REPLACE INTO w2_key (id, name, parentid)
+    VALUES (2, 'datatypes', 1) """,
+
+""" INSERT OR REPLACE INTO w2_key (id, name, parentid)
+    VALUES (3, 'string', 2) """,
 
 """ CREATE TABLE IF NOT EXISTS w2_value
-	(id       INTEGER PRIMARY KEY AUTOINCREMENT,
+	(id      INTEGER PRIMARY KEY AUTOINCREMENT,
  	 keyid   INTEGER,
- 	 typeid  INTEGER,
-         value    TEXT,
-         FOREIGN KEY (keyid) REFERENCES w2_key(id),
-         FOREIGN KEY (typeid) REFERENCES w2_type(id) """,
+ 	 value   TEXT,
+         FOREIGN KEY (keyid) REFERENCES w2_key(id)) """,
  
 """ CREATE INDEX IF NOT EXISTS w2_value_keyid_i 
         ON w2_value (keyid)""",
-
-""" CREATE INDEX IF NOT EXISTS w2_value_typeid_i 
-        ON w2_value (typeid)""",
 ]
-
-def time2str(t):
-    return time.strftime("%a, %d %b %Y %H:%M:%S", time.localtime(float(t)))
 
 def l(message):
     if LOG:
         sys.stderr.write("# " + message + "\n")
+
+def error(message):
+    print message
+    dbConnection.close()
+    sys.exit(1)
 
 if not os.environ.has_key("MOABASE"):
     print "MOABASE is not defined"
@@ -86,37 +83,177 @@ if not os.environ.has_key("MOABASE"):
 
 dbLocation = os.path.join(os.environ['MOABASE'], 'var', 'weka.db')
 
+##
+#  open dbconn
+##
 try:
     dbConnection = sqlite3.connect(dbLocation)
 except sqlite3.OperationalError:
     error("Cannot open db %s\n" % dbLocation + 
 	  "Does the path exists? Do you have write access?")
 
-#Initialize the database
+
+##
+#  initdb
+##
 c = dbConnection.cursor()
-for statement in DBDEF:
-    l("executing %s" % statement)
-    c.execute(statement)
-dbConnection.commit()
-c.close()
+def command_init():
+    for statement in DBDEF:
+        l("executing %s" % statement)
+        c.execute(statement)
+    dbConnection.commit()
+    c.close()
 
 l("Opened db connection %s " % dbConnection)
 
-#do some tests
+##
+# runtests
+##
 
-c = dbConnection.cursor()
-c.execute('''insert into w2_key (name, parent) VALUES ("hoi1", 1) ''')
-c.execute('''insert into w2_key (name, parent) VALUES ("hoi2", 2) ''')
-c.execute('''insert into w2_key (name, parent) VALUES ("hoi3", 3) ''')
-c.execute('''insert into w2_key (name, parent) VALUES ("hoi4", 4) ''')
-dbConnection.commit
-c.execute('''select * from w2_key''')
-for r in c.fetchall():
-    print 'row', r
-sys.exit()
+if False:
+    c = dbConnection.cursor()
+    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi1", 1) ''')
+    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi2", 2) ''')
+    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi3", 3) ''')
+    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi4", 4) ''')
+    dbConnection.commit
+    c.execute('''select * from w2_key''')
+    for r in c.fetchall():
+        print 'row', r
+    sys.exit()
+
+def command_clean():
+    l("Cleaning db")
+    for statement in DBRM:
+        l("executing %s" % statement)
+        c.execute(statement)
+    dbConnection.commit()
+    c.close()
+
+def command_info():
+    l("Info")
+    sql = "SELECT COUNT(*) from w2_key"
+    nokeys = c.execute(sql).fetchone()[0]
+    l("no keys: %d" % nokeys)
+    sql = "SELECT COUNT(*) from w2_value"
+    novalues = c.execute(sql).fetchone()[0]
+    l("no values: %d" % novalues)
 
 
+def key_exists(name, parent_id):
+    sql = """SELECT id
+               FROM w2_key 
+              WHERE name=?
+                AND parentid=?"""
+    hits = c.execute(sql, ((name, parent_id))).fetchall()
+    if len(hits) == 0: return False, 0
+    if len(hits) == 1: return True, hits[0][0]
+    error("Multiple keys! This should not happen!")
 
+def get_or_create_key(name, parent_id):
+    exists, id = key_exists(name, parent_id)
+    if exists:
+        return id
+    sql = """INSERT 
+               INTO w2_key (name, parentid)
+             VALUES (?, ?) """
+    c.execute(sql, ((name, parent_id)))
+    newid = c.lastrowid
+    dbConnection.commit()
+    l("insert new key for %s %s with id %d" % 
+      (name, parent_id, newid))
+    return newid
+
+def empty_key(key_id):
+    """
+    Remove all values of a key
+    """
+    sql = """ DELETE FROM w2_value
+               WHERE keyid = ? """
+    c.execute(sql, [key_id])
+    dbConnection.commit()
+
+def set_value(key_id, value):
+    """
+    set the value of this key to 'value'
+    """
+    #first remove all earlier values
+    empty_key(key_id)
+    sql = """ INSERT INTO w2_value (keyid, value)
+             VALUES (?, ?) """
+    c.execute(sql, [key_id, value])
+    dbConnection.commit()
+
+def command_dump_keys():
+    c.execute('select id, name, parentid from w2_key')
+    for r in c.fetchall():
+        if r[2]:
+            print "%d %d %s" % (r[0], r[2], r[1])
+        else:
+            print "%d - %s" % (r[0], r[1])
+
+def get_values(key_id):
+    sql = """SELECT value FROM w2_value 
+              WHERE keyid = ? """
+    rv = []
+    c.execute(sql, [key_id])
+    for r in c.fetchall():
+        rv.append(r[0])
+    return rv
+
+def command_dump(parent=1, tree=[], recursive=True):
+    """
+    dump the full db
+    """
+    sql = """ SELECT id, name, parentid
+                FROM w2_key
+               WHERE parentid = ? """
+    c.execute(sql, [parent])
+    for row in c.fetchall():
+        i = 0
+        for v in get_values(row[0]):
+            i += 1
+            sys.stdout.write(".".join(tree + [row[1]]))
+            sys.stdout.write("\t")
+            sys.stdout.write("%s\n" % v)
+        if i == 0:
+            sys.stdout.write(".".join(tree + [row[1]]))
+            sys.stdout.write("\n")
+            
+        if recursive:
+            command_dump(parent=row[0],
+                         tree = tree + [row[1]],
+                         recursive = recursive)
+        
+def command_set():
+    key = sys.argv[2]
+    l("setting %s" % (key))
+    
+    #decompose key
+    parent_id = 1
+    for component in key.split('.'):
+        id = get_or_create_key(component, parent_id)
+        parent_id = id
+    l("Storing value for key %s with id %d" % 
+      (key, id))
+    
+    if len(sys.argv) > 3:
+        set_value(id, sys.argv[3])
+            
+def command_get():
+    key = sys.argv[1]
+    get_values
+
+command=sys.argv[1]
+
+if __name__=='__main__':
+    if command in ['clean', 'info', 'set', 'dump',
+                   'init', 'dump_keys', 'get']:
+        eval("command_%s()" % command)
+
+dbConnection.close()
+l("exit")
+sys.exit(0)
 #Main functions
 def wekaGet(name, datatype):
 	"""
@@ -127,7 +264,7 @@ def wekaGet(name, datatype):
 		sql = """	
 			SELECT value, created, archived 
 			  FROM vars 
-			 WHERE name = ?
+f			 WHERE name = ?
 			   AND datatype = ? 
 			   AND archived = 0
 		  ORDER BY created DESC
