@@ -1,12 +1,6 @@
 #!/usr/bin/env python
-#@+leo-ver=4-thin
-#@+node:mf.20090601150139.25:@thin bin/weka
-#@@first
-#@@language python
-#@@tabwidth -4
-
 """
-Simple system to have system wide persistent variables.
+Simple command line registry-like system to store variables in a system wide manner
 
 Usage:
 	weka set [NAME] [VALUE]
