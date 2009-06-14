@@ -1,38 +1,53 @@
 # Download a set of sequences from NCBI
-# Main target - should be first in the file
-moa_main_target: check get_from_ncbi set_weka################################################################################
+
+################################################################################
 # Definitions
 # targets that the enduser might want to use
-moa_targets += get_from_ncbi set_weka clean clean_weka
-get_from_ncbi_help = Download data from NCBI
-set_weka_help = set location in the global weka db
-clean_help = remove the downloaded data
-clean_weka_help = clean location in the global weka db (will not run automatically)# Help
-moa_ids += getfromncbi
-moa_title_getfromncbi = Get sequences from NCBI
-moa_description_getfromncbi = Download a set of sequences from NCBI based on a \
-	query string (ncbi_query) and database (ncbi_db). This will \
-	run only once (!) unless you touch the 'touched' file.# Output definition
+
+moa_targets += getFromNcbi setWeka cleanWeka
+getFromNcbi_help = Download some data from NCBI
+setWeka_help = set location in the global weka db
+cleanWeka_help = clean location in the global weka db (will not run automatically)# Help
+
+moa_ids += getFromNcbi
+moa_title_getFromNcbi = Get sequences from NCBI
+moa_description_getFromNcbi = Download a set of sequences from NCBI based on a \
+  query string (ncbi_query) and database (ncbi_db). This will \
+  run only once (!) unless you touch the 'touched' file.# Output definition
+
 moa_outputs += fastafile
 moa_output_fastafile = ./fasta/*.fasta
 moa_output_fastafile_help = A set of fasta files#varables that NEED to be defined
+
 moa_must_define += ncbi_db ncbi_query set_name
 ncbi_db_help = NCBI database (for example nucest)
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
-set_name_help=Name of the set to download (used by the wekadb)#Include base moa code - does variable checks & generates help
+set_name_help=Name of the set to download (used by the wekadb)
+
+#Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
-################################################################################get_from_ncbi: get_from_ncbi_prepare fasta_filesget_from_ncbi_prepare:
-	-mkdir fasta.PHONY: set_weka
-set_weka:
+################################################################################
+.PHONY: getFromNcbi_prepare
+getFromNcbi_prepare:
+	-mkdir fasta
+
+.PHONY: getFromNcbi_post
+getFromNcbi_post:
+
+
+getFromNcbi:  fasta_files
+
+.PHONY: set_weka
+setWeka:
 	weka set $(set_name)::fastadir `pwd`/fasta
+
 executed:
 	touch executed.PHONY: fasta_files
 fasta_files: tmp.fasta  
 	cd fasta; seqretsplit -sequence ../tmp.fasta -outseq out.fasta
-	#to get the fasta id & filename in the same case
 	cd fasta; for x in *.fasta ; do \
 		name=`grep ">" $$x | head -1 | cut -c2- | cut -f1 -d' '`.fasta ;\
 		mv $$x $$name ;\

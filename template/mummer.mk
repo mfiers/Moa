@@ -8,7 +8,7 @@ maintarget: check mummer
 moa_ids += mummer
 moa_title_mummer = mummer
 moa_description_mummer = Run mummer between two sequences
-	
+
 #targets
 moa_targets += mummer clean 
 mummer2seq_help = run Mummer
@@ -17,13 +17,15 @@ mummer2seq_help = run Mummer
 moa_must_define += input_dir 
 moa_may_define += input_extension
 
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
-endif
+include $(shell echo $$MOABASE)/template/moaBase.mk
 
-
+input_extension ?= fasta
 input_files = $(wildcard $(input_dir)/*.$(input_extension))
 
+.PHONY: mummer_prepare
+mummer_prepare: 
+
+.PHONY: mummer
 mummer: $(input_files)
 	for f1 in $^; do \
 		for f2 in $^; do \
@@ -35,7 +37,7 @@ mummer: $(input_files)
 			mummerplot -t png --large -p $$prefix $$prefix.delta ;\
 		done ;\
 	done
-	
+
 clean: mummer_clean
 
 mummer_clean:

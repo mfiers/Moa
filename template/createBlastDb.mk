@@ -52,7 +52,6 @@ ifeq ("$(protein)", "F")
 else
 	one_blast_db_file = $(name).phr
 endif
-     
 
 create_blast_db: $(one_blast_db_file)
 
@@ -64,12 +63,12 @@ create_id_list: $(name).list
 
 $(name).list: $(input_file)
 	grep ">" $(input_file) | cut -c2- | sed 's/ /\t/' | sort > $(name).list
-	
+
 set_blastdb_weka:
 	weka -r set $(name)::blastdb `pwd`/$(name)
 	weka -r set $(name)::fasta `pwd`/$(input_file)
 	weka -r set $(name)::idlist `pwd`/$(name).list	
-	
+
 clean: create_blast_db_clean
 create_blast_db_clean:	
 	-if [ $(protein) == "F" ]; then \
@@ -77,6 +76,6 @@ create_blast_db_clean:
 	else \
 		rm $(name).p?? ;\
 	fi
-	
+
 clean_blastdb_weka:
 	weka rm $(name)::blastdb
