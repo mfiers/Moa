@@ -24,120 +24,85 @@ import sys
 import time
 import optparse
 import sqlite3
-
+import socket
+import logging
+    
 LOG = True
 
-DBRM = [
-"""DROP TABLE IF EXISTS w2_key""", 
-"""DROP TABLE IF EXISTS w2_value"""
-]
+#Set optparse
+oparser = optparse.OptionParser()
+oparser.add_option("-v", dest="verbose", action="store_true")
 
-DBDEF = [
-""" CREATE TABLE IF NOT EXISTS w2_key
-	(id INTEGER PRIMARY KEY AUTOINCREMENT,
- 	 name text,
-         typeid int default 3,
-         parentid int,
-         FOREIGN KEY (typeid) REFERENCES w2_key(id),
-         FOREIGN KEY (parentid) REFERENCES w2_key(id)) """,
+options, args = oparser.parse_args()
 
-""" CREATE INDEX 
-        IF NOT EXISTS w2_key_parent_i 
-        ON w2_key (parentid)""",
+logFormat = "## %(name)s %(levelname)s - %(message)s"
+if options.verbose:
+    logging.basicConfig(level=logging.WARNING,
+                        format=logFormat)
+else:
+    logging.basicConfig(level=logging.DEBUG,
+                        format=logFormat)
 
-""" CREATE INDEX 
-        IF NOT EXISTS w2_key_name_i 
-        ON w2_key (name)""",
+l = logging.getLogger("weka2")
 
-""" INSERT OR REPLACE INTO w2_key (id, name)
-    VALUES (1, 'root') """,
+## Helper functions
+def DBRM():
+    """ Return a list of sql statements to remove the weka2 db """
 
-""" INSERT OR REPLACE INTO w2_key (id, name, parentid)
-    VALUES (2, 'datatypes', 1) """,
+    return [ 
+        """DROP TABLE IF EXISTS w2_key""", 
+        """DROP TABLE IF EXISTS w2_value""" 
+        ]
 
-""" INSERT OR REPLACE INTO w2_key (id, name, parentid)
-    VALUES (3, 'string', 2) """,
+def DBDEF():
+    """ Return a list of sql statements to create the weka2 db """
 
-""" CREATE TABLE IF NOT EXISTS w2_value
-	(id      INTEGER PRIMARY KEY AUTOINCREMENT,
- 	 keyid   INTEGER,
- 	 value   TEXT,
-         FOREIGN KEY (keyid) REFERENCES w2_key(id)) """,
- 
-""" CREATE INDEX IF NOT EXISTS w2_value_keyid_i 
-        ON w2_value (keyid)""",
-]
+    return [
+        """ CREATE TABLE IF NOT EXISTS w2_key
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                 name text,
+                 typeid int default 3,
+                 parentid int,
+                 FOREIGN KEY (typeid) REFERENCES w2_key(id),
+                 FOREIGN KEY (parentid) REFERENCES w2_key(id)) """,
+        """ CREATE INDEX 
+                IF NOT EXISTS w2_key_parent_i 
+                ON w2_key (parentid)""",
 
-def l(message):
-    if LOG:
-        sys.stderr.write("# " + message + "\n")
+        """ CREATE INDEX 
+                IF NOT EXISTS w2_key_name_i 
+                ON w2_key (name)""",
+
+        """ INSERT OR REPLACE INTO w2_key (id, name)
+            VALUES (1, 'root') """,
+
+        """ INSERT OR REPLACE INTO w2_key (id, name, parentid)
+            VALUES (2, 'datatypes', 1) """,
+
+        """ INSERT OR REPLACE INTO w2_key (id, name, parentid)
+            VALUES (3, 'string', 2) """,
+
+        """ CREATE TABLE IF NOT EXISTS w2_value
+                (id      INTEGER PRIMARY KEY AUTOINCREMENT,
+                 keyid   INTEGER,
+                 value   TEXT,
+                 FOREIGN KEY (keyid) REFERENCES w2_key(id)) """,
+
+        """ CREATE INDEX IF NOT EXISTS w2_value_keyid_i 
+                ON w2_value (keyid)""",
+        ]
+
+def getDbLocation():
+    """ Get the location of the weka2 database """
+
+    if not os.environ.has_key("MOABASE"):
+        raise Exception("MOABASE environment variable is Undefined")
+    return os.path.join(os.environ['MOABASE'], 'var', 'weka.db')
 
 def error(message):
     print message
     dbConnection.close()
     sys.exit(1)
-
-if not os.environ.has_key("MOABASE"):
-    print "MOABASE is not defined"
-    exit()
-
-dbLocation = os.path.join(os.environ['MOABASE'], 'var', 'weka.db')
-
-##
-#  open dbconn
-##
-try:
-    dbConnection = sqlite3.connect(dbLocation)
-except sqlite3.OperationalError:
-    error("Cannot open db %s\n" % dbLocation + 
-	  "Does the path exists? Do you have write access?")
-
-
-##
-#  initdb
-##
-c = dbConnection.cursor()
-def command_init():
-    for statement in DBDEF:
-        l("executing %s" % statement)
-        c.execute(statement)
-    dbConnection.commit()
-    c.close()
-
-l("Opened db connection %s " % dbConnection)
-
-##
-# runtests
-##
-
-if False:
-    c = dbConnection.cursor()
-    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi1", 1) ''')
-    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi2", 2) ''')
-    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi3", 3) ''')
-    c.execute('''insert into w2_key (name, parentid) VALUES ("hoi4", 4) ''')
-    dbConnection.commit
-    c.execute('''select * from w2_key''')
-    for r in c.fetchall():
-        print 'row', r
-    sys.exit()
-
-def command_clean():
-    l("Cleaning db")
-    for statement in DBRM:
-        l("executing %s" % statement)
-        c.execute(statement)
-    dbConnection.commit()
-    c.close()
-
-def command_info():
-    l("Info")
-    sql = "SELECT COUNT(*) from w2_key"
-    nokeys = c.execute(sql).fetchone()[0]
-    l("no keys: %d" % nokeys)
-    sql = "SELECT COUNT(*) from w2_value"
-    novalues = c.execute(sql).fetchone()[0]
-    l("no values: %d" % novalues)
 
 
 def key_exists(name, parent_id):
@@ -160,7 +125,7 @@ def get_or_create_key(name, parent_id):
     c.execute(sql, ((name, parent_id)))
     newid = c.lastrowid
     dbConnection.commit()
-    l("insert new key for %s %s with id %d" % 
+    l.debug("insert new key for %s %s with id %d" % 
       (name, parent_id, newid))
     return newid
 
@@ -184,6 +149,32 @@ def set_value(key_id, value):
     c.execute(sql, [key_id, value])
     dbConnection.commit()
 
+#command definitions
+
+def command_init():
+    for statement in DBDEF():
+        l.debug("executing %s" % statement)
+        c.execute(statement)
+    dbConnection.commit()
+    c.close()
+
+def command_clean():
+    l.debug("Cleaning db")
+    for statement in DBRM():
+        l.debug("executing %s" % statement)
+        c.execute(statement)
+    dbConnection.commit()
+    c.close()
+
+def command_info():
+    l.debug("Info")
+    sql = "SELECT COUNT(*) from w2_key"
+    nokeys = c.execute(sql).fetchone()[0]
+    l.debug("no keys: %d" % nokeys)
+    sql = "SELECT COUNT(*) from w2_value"
+    novalues = c.execute(sql).fetchone()[0]
+    l.debug("no values: %d" % novalues)
+
 def command_dump_keys():
     c.execute('select id, name, parentid from w2_key')
     for r in c.fetchall():
@@ -201,10 +192,13 @@ def get_values(key_id):
         rv.append(r[0])
     return rv
 
-def command_dump(parent=1, tree=[], recursive=True):
+def command_dump(args=None, parent=1, tree=[], recursive=True):
     """
     dump the full db
+    
+    no arguments (args) are expected.
     """
+    rv = []
     sql = """ SELECT id, name, parentid
                 FROM w2_key
                WHERE parentid = ? """
@@ -213,28 +207,30 @@ def command_dump(parent=1, tree=[], recursive=True):
         i = 0
         for v in get_values(row[0]):
             i += 1
-            sys.stdout.write(".".join(tree + [row[1]]))
-            sys.stdout.write("\t")
-            sys.stdout.write("%s\n" % v)
+            rv.append(".".join(tree + [row[1]]))
+            rv.append("\t")
+            rv.append("%s\n" % v)
         if i == 0:
-            sys.stdout.write(".".join(tree + [row[1]]))
-            sys.stdout.write("\n")
+            rv.append(".".join(tree + [row[1]]))
+            rv.append("\n")
             
         if recursive:
-            command_dump(parent=row[0],
-                         tree = tree + [row[1]],
-                         recursive = recursive)
-        
+            rv.append(command_dump(parent=row[0],
+                                   tree = tree + [row[1]],
+                                   recursive = recursive))
+        l.debug("about to dump %s" % rv)
+        return "".join(["%s" % x for x in rv])
+
 def command_set():
     key = sys.argv[2]
-    l("setting %s" % (key))
+    l.debug("setting %s" % (key))
     
     #decompose key
     parent_id = 1
     for component in key.split('.'):
         id = get_or_create_key(component, parent_id)
         parent_id = id
-    l("Storing value for key %s with id %d" % 
+    l.debug("Storing value for key %s with id %d" % 
       (key, id))
     
     if len(sys.argv) > 3:
@@ -244,191 +240,85 @@ def command_get():
     key = sys.argv[1]
     get_values
 
-command=sys.argv[1]
 
-if __name__=='__main__':
+SOCK = None
+ARGS = []
+#Initialize application
+
+if not os.environ.has_key("MOABASE"):
+    print "MOABASE is not defined"
+    exit()
+
+
+#see if there is a server running..
+server_pid = os.path.join(os.environ['MOABASE'], 'var', 'weka.pid')
+newpid = None
+SOCK = socket.socket(socket.AF_INET,
+                     socket.SOCK_DGRAM)
+
+def call_server(args):
+    l.debug("connecting to server")
+    SOCK.connect(('localhost', 18981))
+    send_args = "::".join(args)
+    l.debug('start sending arguments "%s"' % send_args)
+    SOCK.sendall(send_args)
+    l.debug("finished sending arguments")
+    data = SOCK.recvfrom(1024)
+    return data
+
+if not os.path.exists(server_pid):
+    #Fork off a server
+    newpid = os.fork()
+    l = logging.getLogger("-weka2c")
+    if newpid == 0:
+        #this is the child (= client) process, call the server.
+        l.debug("client calls server")
+        call_server(sys.argv[1:])
+        l.debug("end call to server")
+        sys.exit()
+else:
+    #server does already exists. call it.
+    #this is the child (= client) process, call the server.
+    call_server(sys.argv[1:])
+
+#if we're here... we'll start a server
+l = logging.getLogger("#weka2S")
+l.debug("start weka2 server")
+SOCK.bind(('localhost', 18981))
+l.debug("succes binding server to localhost 18981")
+
+##
+#  open dbconn
+##
+try:
+    dbConnection = sqlite3.connect(getDbLocation())
+except sqlite3.OperationalError:
+    error("Cannot open db %s\n" % dbLocation + 
+	  "Does the path exist? Do you have write access?")
+
+c = dbConnection.cursor()
+
+#server loop
+while True:
+    data, from_address = SOCK.recvfrom(1024)
+    l.debug("server received data %s from %s" % (data, from_address))
+    ls = data.split("::")
+    command = ls[0]
+    l.debug("server command %s" % (command))
+    command_args = ls[1:]
+    RSOCK =  socket.socket(socket.AF_INET,
+                           socket.SOCK_DGRAM)
+    RSOCK.connect(from_address)
     if command in ['clean', 'info', 'set', 'dump',
-                   'init', 'dump_keys', 'get']:
-        eval("command_%s()" % command)
+                   'init', 'dump_keys', 'get',]:
+        command = "command_%s(args=command_args)" % command
+        l.debug("executing %s with args %s" % (command, command_args))
+        
+        RSOCK.sendall(eval(command))
+        l.debug("Done executing command")
+    RSOCK.close()
+
 
 dbConnection.close()
-l("exit")
+l.debug("exit")
 sys.exit(0)
-#Main functions
-def wekaGet(name, datatype):
-	"""
-	Get a variable from the database	
-	"""
-	c = dbConnection.cursor()
-	if options.showAll == 0:
-		sql = """	
-			SELECT value, created, archived 
-			  FROM vars 
-f			 WHERE name = ?
-			   AND datatype = ? 
-			   AND archived = 0
-		  ORDER BY created DESC
-		     LIMIT 1 """
-	elif options.showAll == 1:
-		sql = """   
-			SELECT value, created, archived 
-			  FROM vars 
-			 WHERE name = ? 
-			   AND datatype = ?
-			   AND archived = 0
-		  ORDER BY created DESC """
-	else:
-	 	sql = """   
- 			SELECT value, created, archived 
-			  FROM vars 
-			 WHERE name = ? 
-			   AND datatype = ?
-		  ORDER BY created DESC """
-
-	log("executing %s with %s" % (sql, [name, datatype]))
-	c.execute(sql,[name, datatype])
-
-	i = 0
-
-	headers = []
-	if options.verbose > 1:
-		headers.append(("", "%1s"))
-	if options.verbose > 0:
-		if options.showUnixTime:
-			headers.append(("unix time", "%-11s"))
-		else:
-			headers.append(("time", "%-26s"))
-	headers.append(("value", "%-s"))
-	outputHeaders(headers)
-
-	for rec in c.fetchall():		
-		rv = []			
-		i += 1	
-
-		if options.verbose > 0 and options.showAll > 1:
-			if rec[2] == 0: rv.append("+")
-			else: rv.append("d")
-		if options.verbose > 0 and options.showAll > 0:	 	
-			if options.showUnixTime: rv.append(rec[1])
-			else: rv.append(time2str(rec[1]))
-		rv.append(rec[0])
-		outputF(rv, headers)			
-
-	#if not options.showAll and i == 0:
-	#	#expecting something & got nothing.. return error
-	#	error("Cannot find %s.%s" % (datatype, name))
-	if options.verbose > 0:
-		outputFooter("d = deleted, + = active")
-
-def wekaLs(*args):
-	"""show a list of all vars in the db"""
-	c = dbConnection.cursor()
-	if options.showAll == 0:
-		sql = """
-			SELECT DISTINCT datatype, name, 1
-		  	  FROM vars
-		  	 WHERE archived = 0 """
-	elif options.showAll == 1:
-		sql = """
-			SELECT DISTINCT datatype, name, count(name)
-		  	  FROM vars
-		  	 WHERE archived = 0
-	  	  GROUP BY datatype, name """
-	else:
-		sql = """
-			SELECT DISTINCT datatype, name, count(name)
-		  	  FROM vars
-	  	  GROUP BY datatype, name """
-
-	log("executing %s" % sql)
-	c.execute(sql)
-
-	if options.verbose == 0:
-		headers = [("name.datatype", "%s")]
-	else:
-		headers = [("count", "%5s"), ("name.datatype", "%s")]
-
-	outputHeaders(headers)
-
-	for rec in c.fetchall():
-		rv = []
-		if options.verbose:
-			rv.append(rec[2])
-		rv.append("%s::%s" % (rec[1], rec[0]))
-		outputF(rv, headers)
-
-def wekaSet(name, datatype, value):
-	"""Get a var from the db"""
-	c = dbConnection.cursor()
-	if options.replace:
-		sql = """
-			UPDATE vars
-			   SET archived = 1
-			 WHERE name = ?
-			   AND datatype = ? """
-		log("executing %s with %s" % (sql, [name, datatype]))
-		c.execute(sql, [name, datatype])
-
-	sql = """		
-		INSERT INTO vars (name, datatype, value)
-			 VALUES (?, ?, ?)"""
-
-	log("executing %s with %s" % (sql, [name, datatype, value]))
-	c.execute(sql, [name, datatype, value])
-	dbConnection.commit()	
-
-def wekaRm(datatype = None, name = None):
-	"""completely remove a var from the db"""
-	c = dbConnection.cursor()
-	if datatype and name:
-		log("Removing %s/%s" % (datatype, name))
-		sql = """DELETE FROM vars 
-				       WHERE name = ?
-						 AND datatype = ?"""
-		log("Executing %s with %s" % (sql, [name, datatype]))
-		c.execute(sql, [name, datatype])
-		dbConnection.commit()	
-	elif name:
-		log("Removing {ALL}/%s" % (name))
-		sql = "DELETE FROM vars WHERE name = ?"
-		log("Executing %s with %s" % (sql, [name]))
-		c.execute(sql, [name])
-		dbConnection.commit()	
-
-
-
-	#read commandline and act!
-
-	if command == "set":	
-		if len(args) != 3:			
-			error("invalid number of arguments")
-		name, datatype = args[1].split('::')		
-		value = args[2]
-		wekaSet(name = name, 
-				  datatype = datatype, 
-				  value = value)
-
-	elif command == "get":
-		if len(args) != 2:
-			error("invalid number of arguments")
-		name, datatype = args[1].split('::')
-		wekaGet(name, datatype)
-
-	elif command == "ls":
-		wekaLs(args[1:])
-
-	elif command == "rm":
-		if len(args) != 2:
-			error("invalid number of arguments")			
-		if '.' in args[1]:
-			name, datatype = args[1].split('::')
-		else:			
-			name = args[1]
-			datatype = None
-
-		wekaRm(datatype = datatype, 
-			 	 name = name)		
-	else:
-		usage()
-		error("Invalid command %s" % command)
-

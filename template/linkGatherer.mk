@@ -1,12 +1,9 @@
 # gather a set of files using linkgs
 
-# Main target - should be first in the file
-moa_main_target: check gather_link
-
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-moa_targets += gather_link clean
+#moa_targets += gather_link clean
 gather_link_help = Link-gather
 clean_help = Remove anything that is not called Makefile or moa.mk 
 
@@ -55,23 +52,21 @@ gather_link_noclean ?= Makefile moa.mk
 .PHONY: gather_link_run
 vpath % $(input_dirs)
 
-gather_link: gather_link_prep gather_link_run 
-		
-gather_link_prep:
+.PHONY: gatherlink_prepare
+gatherlink_prepare:
 	-mkdir touch
 	-mkdir $(output_dir)	
 
-
+.PHONY: gatherlink_post
+gatherlink_post:
 
 #gather_link_run: $(addprefix touch/,$(notdir $(foreach dir, $(input_dirs), $(wildcard $(dir)/$(input_pattern))))) 	
-gather_link_run: $(addprefix touch/,$(notdir $(foreach dir, $(input_dirs), $(shell find $(dir) -name "$(input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(limit_gather) | cut -f 2 ))))
+gatherlink: $(addprefix touch/,$(notdir $(foreach dir, $(input_dirs), $(shell find $(dir) -name "$(input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(limit_gather) | cut -f 2 ))))
 # $(addprefix touch/,$(notdir 
 # ))
-test: test3 = %
-test: input_pattern=TAIR8*
-test:
-	@echo $(testval)
-	
+
+
+
 touch/%: %
 	@echo considering $<
 	@target=$(output_dir)/$(shell echo "$(notdir $<)" | sed "$(name_sed)"); \
@@ -88,5 +83,4 @@ gather_link_clean:
 	-rm -rf touch
 	for x in `find . -maxdepth 1 -type f $(fexcl)`; do \
 		rm $$x ;\
-	done
-	
+	done	

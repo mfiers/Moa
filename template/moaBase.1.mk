@@ -24,9 +24,12 @@ boldOff := \033[0m
 .DEFAULT_GOAL := moa_default_target
 .PHONY: moa_default_target
 moa_default_target: moa_welcome \
-   $(addsuffix _prepare, $(moa_ids)) \
+  $(addsuffix _prepare, $(moa_ids)) \
   moa_check $(moa_ids) \
   $(addsuffix _post, $(moa_ids))
+
+# \
+#  moa_register
 
 #each moamakefile should include a ID_clean target cleaning up after it..
 #this one calls all cleans
@@ -36,6 +39,7 @@ clean: $(addsuffix _clean, $(moa_ids))
 #display a welcome message
 moa_welcome:
 	@echo "Welcome to MOA"
+
 
 # Add a few default targets to the set 
 # of possible targets
@@ -58,6 +62,24 @@ input_extension_help = Extension of the input files
 
 #prevent reinclusion of moabase
 dont_include_moabase=defined
+
+#each analysis MUST have a name
+#Variable: set_name
+moa_must_define += name 
+name_help = A unique name defining this job. Cannot have spaces.
+
+moa_must_define += project 
+name_help = A unique project name defining this job. Cannot have spaces.
+
+moa_register: moa_main_id = $(firstword $(moa_ids))
+moa_register: $(addprefix moa_register_, $(moa_must_define)) \
+  $(addprefix moa_register_, $(moa_may_define))
+	weka2 set moa.$(project).$(moa_main_id).$(moa_ids).$(name).pwd $(shell pwd)
+	weka2 set moa.$(project).$(moa_main_id).$(name).time "$(shell date)"
+
+moa_register_%:
+	weka2 set moa.$(project).$(moa_main_id).$(name).$* $($*)
+
 ###################################################
 ## Moa check - is everything defined?
 

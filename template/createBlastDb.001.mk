@@ -21,10 +21,6 @@ moa_outputs += blastdb
 moa_output_blastdb = ./set_name.???
 moa_output_blastdb_help = The blast database created
 
-#Variable: set_name
-moa_must_define += name 
-name_help = The name of the set, determines the name of the blast db
-
 moa_may_define = input_dir input_extension
 input_dir_help = Dir with the input fasta files, defaults to ./fasta
 input_extension_help = extension of the input sequence files, defaults to fasta
@@ -33,11 +29,8 @@ input_extension_help = extension of the input sequence files, defaults to fasta
 moa_may_define += protein 
 protein_help = Protein database? (T)rue) or not (F)alse (default: F)
 
-
-
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
-
 
 # End of the generic part - from here on you're on your own :)
 
@@ -60,12 +53,15 @@ endif
 createBlastDb_prepare:
 
 .PHONY: createBlastDb_post
-createBlastDb_post:
+createBlastDb_post: create_id_list
+	weka -r set $(name)::blastdb `pwd`/$(name)
+	weka -r set $(name)::fasta `pwd`/$(input_file)
+	weka -r set $(name)::idlist `pwd`/$(name)
 
 .PHONY: createBlastDb
-createBlastDb: $(one_blast_db_file)
+createBlastDb: $(a_blast_db_file)
 
-$(one_blast_db_file): $(fasta_file)
+$(a_blast_db_file): $(fasta_file)
 	@echo "Creating $@"
 	formatdb -i $< -p $(protein) -o T -n $(name)
 
@@ -76,13 +72,11 @@ $(fasta_file): $(input_files)
 		echo >> $(fasta_file) ;\
 	done
 
+.PHONY: create_id_list
 create_id_list: $(name).list
 
 $(name).list: $(fasta_file)
-	grep ">" $(fasta_file) | cut -c2- | sed 's/ /\t/' | sort > $(name).listset_blastdb_weka:
-	weka -r set $(name)::blastdb `pwd`/$(name)
-	weka -r set $(name)::fasta `pwd`/$(input_file)
-	weka -r set $(name)::idlist `pwd`/$(name).listclean: createBlastDb_clean
+	grep ">" $(fasta_file) | cut -c2- | sed 's/ /\t/' | sort > $(name).list
 
 createBlastDb_clean:	
 	-if [ $(protein) == "F" ]; then \
@@ -93,5 +87,4 @@ createBlastDb_clean:
 	-rm $(fasta_file)
 	-rm formatdb.log
 
-clean_blastdb_weka:
-	weka rm $(name)::blastdb
+#	weka rm $(name)::blastdb

@@ -1,14 +1,10 @@
 # lftp a set of files
 
-# Main target - should be first in the file
-moa_main_target: check fasta2gff
-
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-moa_targets += fasta2gff clean 
+moa_targets += fasta2gff
 fasta2gff_help = generate gff from a fasta file
-clean_help = Clean up. 
 
 # Help
 moa_ids += fasta2gff
@@ -51,10 +47,10 @@ output_files = $(addprefix ./gff/, $(addsuffix .gff, $(notdir $(input_files))))
 .PHONY: prep concat fasta2gff fasta2gff_run fasta2gff_prep
 
 fasta2gff: fasta2gff_prep fasta2gff_run 
-	
-fasta2gff_prep:
+
+fasta2gff_prepare:
 	-mkdir gff
-	
+
 fasta2gff_run: $(output_files)
 	@echo Run done
 
@@ -63,7 +59,7 @@ $(output_files): gff/%.gff : $(input_dir)/%
 
 fasta/%.$(input_extension): $(input_dir)/%.$(input_extension)
 	cat $< | sed '$(sed_command)' > $@ 
-	
+
 #CLEAN	        
 clean: fasta2gff_clean
 fasta2gff_clean:
