@@ -8,7 +8,7 @@ import optparse
 from Bio.Blast import NCBIStandalone
 from Bio.Blast import NCBIXML
 
-logging.basicConfig(level=logging.DEBUG, 
+logging.basicConfig(level=logging.ERROR, 
                     format = "## %(levelname)s - %(message)s",
                     stream=sys.stdout)
 l = logging

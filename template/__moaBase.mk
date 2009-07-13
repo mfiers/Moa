@@ -9,6 +9,11 @@
 ## we use bash!
 SHELL := /bin/bash
 
+## We use the Gnu Make Standard Library
+## See: http://gmsl.sourceforge.net/
+include $(shell echo $$MOABASE)/template/gmsl
+
+
 ## some help variables
 warn_on := \033[0;1;47;0;41;4;6m
 warn_off := \033[0m
@@ -24,17 +29,68 @@ boldOff := \033[0m
 .DEFAULT_GOAL := moa_default_target
 .PHONY: moa_default_target
 moa_default_target: moa_welcome \
+  moa_preprocess \
   $(addsuffix _prepare, $(moa_ids)) \
-  moa_check $(moa_ids) \
-  $(addsuffix _post, $(moa_ids))
+  moa_check \
+  moa_main_targets \
+  $(addsuffix _post, $(moa_ids)) \
+  moa_postprocess
 
-# \
-#  moa_register
+moa_all_targets = $(call set_create, \
+  set append clean \
+  $(addsuffix _prepare, $(moa_ids)) \
+  moa_check \
+  $(moa_ids) \
+  $(addsuffix _post, $(moa_ids)) )
 
-#each moamakefile should include a ID_clean target cleaning up after it..
+
+moa_check_target:
+	@echo $(moa_all_targets)
+	@echo $(check)
+	@if [ "$(call set_is_member, $(check), $(moa_all_targets))" == "$(true)" ];\
+	  then \
+	    echo "VALIDTARGET: $(check) is a valid target" ;\
+	  else \
+	    echo "NOTATARGET: $(check) is not a valid target" ;\
+	fi
+
+#the main targets - we run these as separate make instances
+#since I really cannot get them to reevaluate what possible input
+#files are inbetween steps
+moa_main_targets:
+	for moa_main_target in $(moa_ids); do \
+		$(MAKE) $$moa_main_target ;\
+	done
+
+execorder:
+	@echo "moa_welcome"
+	@echo "moa_preprocess"
+	@echo "$(addsuffix _prepare, $(moa_ids))"
+	@echo "moa_check"
+	@echo "$(moa_ids)"
+	@echo "$(addsuffix _post, $(moa_ids))"
+	@echo "moa_postprocess"
+
+
+
+moa_dummy:
+	@echo "Targets to execute were"
+	@echo "-----------------------"
+	@echo moa_welcome moa_preprocess $(addsuffix _prepare, $(moa_ids)) \
+	  moa_check $(moa_ids) \
+	  $(addsuffix _post, $(moa_ids)) \
+	  moa_postprocess
+
+
+#override these if necessary
+moa_preprocess:
+moa_postprocess:
+
+#each moa makefile should include a ID_clean target cleaning up after it..
 #this one calls all cleans
 .PHONY: clean
-clean: $(addsuffix _clean, $(moa_ids))
+clean: $(call reverse, $(addsuffix _clean, $(moa_ids)))
+	@echo "clean order $(clean_order)"
 
 #display a welcome message
 moa_welcome:
@@ -65,10 +121,10 @@ dont_include_moabase=defined
 
 #each analysis MUST have a name
 #Variable: set_name
-moa_must_define += name 
+moa_may_define += name 
 name_help = A unique name defining this job. Cannot have spaces.
 
-moa_must_define += project 
+moa_may_define += project 
 name_help = A unique project name defining this job. Cannot have spaces.
 
 moa_register: moa_main_id = $(firstword $(moa_ids))
@@ -170,7 +226,16 @@ all: traverse_start_here $(moa_followups)
 #is not defined, it's just "make".
 .PHONY: traverse_start_here
 traverse_start_here:
-	$(MAKE) $(action)
+	@if [ "$(action)" == "" ]; then \
+	  $(MAKE) $(action) ;\
+	else \
+	  if $(MAKE) moa_check_target check=$(action) | grep VALIDTARGET; \
+	  then \
+	    $(MAKE) $(action) ;\
+	  else \
+	    echo -e "$(warn_on)Ignoring $(action) - not valid in this context$(warn_off)";\
+	  fi \
+	fi
 
 .PHONY: $(moa_followups)
 $(moa_followups):

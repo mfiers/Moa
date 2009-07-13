@@ -41,14 +41,14 @@ moa_output_blastxml_help = XML output of blastall
 moa_output_blastgff_help = blast output converted to GFF
 moa_output_blastrep_help = short report of the blast run
 
-moa_may_define += input_dir
-input_dir_help = directory with the input sequences
+moa_may_define += blast_input_dir
+blast_input_dir_help = directory with the input sequences
 
 moa_must_define += blast_db
 blast_db_help = Location of the blast database
 
-moa_must_define +=  gff_source
-gff_source_help = source field to use in the gff
+moa_must_define +=  blast_gff_source
+blast_gff_source_help = source field to use in the gff
 
 moa_may_define += input_extension
 input_extension_help = input file extension
@@ -66,42 +66,26 @@ moa_may_define += blast_nothreads
 blast_nothreads_help = threads to run blast with (note the \
 	overlap with the Make -j parameter)
 
-moa_may_define +=  gff_source
-gff_source_help = source field to use in the gff
-
-moa_may_define += blast_reverse_gff
-blast_reverse_gff_help = Create inverse gff
-
 #preparing for gbrowse upload:
-gup_input_dir = ./gff
-gup_input_extension = gff
+gup_gff_dir = ./gff
+gup_upload_gff = T
 
-#include the code to upload stuff to gbrowse
-include $(shell echo $$MOABASE)/template/upload2gbrowseInclude.mk
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
 blast_eval ?= 1e-10
 blast_program ?= blastn
-input_extension ?= fasta
+blast_input_extension ?= fasta
 blast_nohits ?= 100
 blast_nothreads ?= 1
-blast_reverse_gff ?= no
 
-blast_input_files ?= $(wildcard $(input_dir)/*.$(input_extension))
+blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
 
 blast_output_files = $(addprefix out/, \
-	$(notdir $(patsubst %.$(input_extension), %.xml, $(blast_input_files))))
+	$(notdir $(patsubst %.$(blast_input_extension), %.xml, $(blast_input_files))))
 
 blast_gff_files = $(addprefix gff/, \
 	$(patsubst %.xml, %.gff, $(notdir $(blast_output_files))))
-
-ifeq ($(blast_reverse_gff), yes)
-  blast_gff_reverse_files = $(addprefix gff.reverse/, \
-	$(patsubst %.xml, %.gff, $(notdir $(blast_output_files))))	
-else
-  blast_gff_reverse_files =
-endif
 
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
@@ -125,46 +109,48 @@ ifeq ($(blast_program), blastx)
  single_blast_db_file = $(blast_db).phr
 endif
 
+test:
+	@echo $(blast_input_dir)
+	@echo $(blast_input_extension)
+
+blast_test:
+	@echo "No inp files $(words $(blast_input_files))"
+	@echo "No xml files $(words $(blast_output_files))"
+	@echo "No gff files $(words $(blast_gff_files))"
+
+ 
 #echo Main target for blast
-blast: $(blast_gff_files) $(blast_gff_reverse_files)
+.PHONY: blast
+blast: $(blast_gff_files)
 	@echo "Done blasting!"
 
 #prepare for blast - i.e. create directories
+.PHONY: blast_prepare
 blast_prepare:	
 	-mkdir out 
 	-mkdir gff  	
-	@if [ "$(blast_reverse_gff)" == "yes" ]; then \
-		mkdir gff.reverse || true; \
-		echo "Creating reverse gff" ; \
-	fi
 
 .PHONY: blast_post
-blast_post:
+blast_post: blast_report
 
-#status of the blast thingy
-status_blast:
-	echo "Input files: $(words $(blast_input_files))"
-	echo "blast output files: $(words $(blast_output_files))"
+# Convert to GFF (forward)
+gff/%.gff: out/%.xml
+	@echo "Create gff $@ from $<"
+	cat $< | blast2gff -s $(blast_gff_source) -d query > $@
 
-
-#create out/*xml - run BLAST 
-out/%.xml: $(input_dir)/%.$(input_extension) $(single_blast_db_file)
-	@echo "Processing $(blast_program) $< $@ with db $(blast_db)"
+# create out/*xml - run BLAST 
+out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(one_blast_db_file)
+	@echo "Processing blast $*"
+	@echo "Creating out.xml $@ from $<"
+	@echo "Params $(blast_program) $(blast_db)"
 	blastall -i $< -p $(blast_program) -e $(blast_eval) -m 7 \
 		-a $(blast_nothreads) -d $(blast_db) \
 		-b $(blast_nohits) -v $(blast_nohits) \
 		-o $@
 
-#Convert to GFF (forward)
-gff/%.gff: out/%.xml
-	blast2gff -s $(gff_source) -d query < $< > $@
-
-#Convert to gff (reverse). I'm not sure it this is really necessary.
-gff.reverse/%.gff: out/%.xml
-	blast2gff -s $(blast_gff_source) -d subject < $< > $@
-
-#creating the blastreport can only be executed when all blasts are done
-report: $(blast_output_files)
+# creating the blastreport can only be executed when 
+# all blasts are done
+blast_report: $(blast_output_files)
 	blastReport out/ -o $@
 
 blast_clean:

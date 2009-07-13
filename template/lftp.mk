@@ -1,14 +1,10 @@
 # lftp a set of files
 
-# Main target - should be first in the file
-moa_main_target: check lftp
-
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-moa_targets += lftp clean
+moa_targets += lftp
 lftp_help = Download using ftp
-clean_help = Remove anything that is not called Makefile or moa.mk 
 
 # Help
 moa_ids += lftp
@@ -27,54 +23,49 @@ lftp_url_help = The base url to download from
 lftp_pattern_help = glob pattern to download
 
 #variables that may be defined
-moa_may_define += depend_lftp_timestamp
-depend_lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
+moa_may_define += lftp_timestamp
+lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
  else a touchfile is created that you need to delete or touch before updating \
  (T/*F*)
  
 moa_may_define += lftp_user lftp_pass
 lftp_user_help = username for the remote site
-lftp_pass_help = password for the remote site, note that this can be defined on \
-  the commandline using: 'make lftp_pass=PASSWORD'
+lftp_pass_help = password for the remote site, note that this can be \
+  defined on the commandline using: 'make lftp_pass=PASSWORD'
 
-moa_may_define += output_dir run_dos2unix
-output_dir_help = subdir to create & write all output to. If not defined, data \
-  will be downloaded to directory containing the Makefile
-run_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos text \
-  files (default=F).
+moa_may_define += lftp_output_dir lftp_dos2unix
+lftp_output_dir_help = subdir to create & write all output to. If not defined, \
+  data will be downloaded to directory containing the Makefile
+lftp_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos \
+  text files (default=F).
 
 moa_may_define += lftp_mode
-lftp_mode_help = Mode of operation - "mirror" or "get". Mirror enables timestamping. Get \
-  just gets a single file. If using get, consider setting depend_lftp_timestamp \
-  to F. When using "get", the full url should be in lftp_url. lftp_pattern is ignored. \
-  lftp_mode defaults to mirror
-  
+lftp_mode_help = Mode of operation - "mirror" or "get". Mirror enables \
+  timestamping. Get just gets a single file. If using get, consider setting \
+  depend_lftp_timestamp to F. When using "get", the full url should be in \
+  lftp_url. lftp_pattern is ignored. Defaults to mirror.
+
 #Include base moa code - does variable checks & generates help
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
-endif
+include $(shell echo $$MOABASE)/template/moaBase.mk
 
 ################################################################################
-depend_lftp_timestamp ?= T
+lftp_timestamp ?= T
 lftp_user ?= NoNoNo
 lftp_pass ?= NoNoNo
 lftp_mode ?= mirror
 lftp_noclean ?= Makefile moa.mk 
-output_dir ?= .
+lftp_output_dir ?= .
 run_dos2unix ?= F
 
 #download files using LFTP
-.PHONY: lftp lftp_prepare
- 
-lftp: lftp_prep lftp_run
+.PHONY: lftp_prepare
+lftp_prepare:
+	-if [ "$(lftp_timestamp)" == "T" ]; then rm lftp; fi
+	-mkdir $(lftp_output_dir)
 
-lftp_prep:
-	-if [ "$(depend_lftp_timestamp)" == "T" ]; then rm lftp_run; fi
-	-mkdir $(output_dir)
-	
-lftp_run: fexcl=$(addprefix -not -name , $(lftp_noclean))
-lftp_run:
-	cd $(output_dir); \
+lftp: fexcl=$(addprefix -not -name , $(lftp_noclean))
+lftp:
+	cd $(lftp_output_dir); \
 	if [ "$(lftp_user)" == "NoNoNo" ]; then \
 		if [ "$(lftp_mode)" == "mirror" ]; then \
 			lftp $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;\
@@ -89,19 +80,18 @@ lftp_run:
 			lftp -u $(lftp_user),$(lftp_pass) -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
 		fi ;\
 	fi
-	if [ "$(depend_lftp_timestamp)" == "F" ]; then \
-		touch lftp_run ;\
+	if [ "$(lftp_timestamp)" == "F" ]; then \
+		touch lftp ;\
 	fi
 	if [ "$(run_dos2unix)" == "T" ]; then \
 		find . -type f $(fexcl) | xargs -n 100 dos2unix -k ;\
 	fi		
-	
-clean: lftp_clean
 
-lftp_clean: fexcl=$(addprefix -not -name , $(lftp_noclean))
+.PHONY: lftp_post
+lftp_post:
+
 lftp_clean:
-	if [ ! "$(output_dir)" == "." ]; then rm -rf $(output_dir); done
-	for x in `find . -maxdepth 1 -type f $(fexcl)`; do \
-		rm $$x ;\
-	done
-	
+	@echo "start lftp_clean"
+	if [ ! "$(lftp_output_dir)" == "." ]; then rm -rf $(lftp_output_dir); fi
+	-rm lftp
+

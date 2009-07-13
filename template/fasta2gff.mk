@@ -18,18 +18,18 @@ moa_output_fasta2gff = ./gff/*
 moa_output_fasta2gff_help = gff output files
 
 #varables that NEED to be defined
-moa_must_define += gffsource
-gffsource_help = Source to be used in the gff
+moa_must_define += f2g_gffsource
+f2g_gffsource_help = Source to be used in the gff
 
 #varables that MAY  be defined
-moa_may_define += input_dir 
-input_dir_help = Directory with the input fasta (default: ./fasta)
+moa_may_define += f2g_input_dir 
+f2g_input_dir_help = Directory with the input fasta (default: ./fasta)
 
-moa_may_define += input_pattern
-input_pattern_help = glob pattern of the fasta files (default: *.fasta) 
+moa_may_define += f2g_input_extension
+f2g_input_extension_help = glob pattern of the fasta files (default: *.fasta) 
 
-moa_may_define += fasta2gffoptions
-fasta2gffoptions_help = options to be passed to the fasta2gff script 
+moa_may_define += f2g_options
+f2g_options_help = options to be passed to the fasta2gff script 
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -38,29 +38,38 @@ endif
 
 ################################################################################
 
-fasta2gffoptions?=
-input_dir ?= ./fasta
-input_pattern ?= *.fasta
-input_files = $(wildcard $(input_dir)/$(input_pattern))
-output_files = $(addprefix ./gff/, $(addsuffix .gff, $(notdir $(input_files))))
+f2g_options ?=
+f2g_input_dir ?= ./fasta
+f2g_input_extension ?= fasta
+f2g_input_files = $(wildcard $(f2g_input_dir)/*.$(f2g_input_extension))
+f2g_output_files = \
+    $(addprefix ./gff/, \
+        $(patsubst %.fasta, %.gff, \
+            $(notdir $(f2g_input_files) )\
+        )\
+     )
 
 .PHONY: prep concat fasta2gff fasta2gff_run fasta2gff_prep
 
-fasta2gff: fasta2gff_prep fasta2gff_run 
-
+.PHONY: fasta2gff_prepare
 fasta2gff_prepare:
 	-mkdir gff
 
-fasta2gff_run: $(output_files)
-	@echo Run done
+#rerun make, make sure all files are recognized
+.PHONY: fasta2gff
+fasta2gff: 
+	$(MAKE) fasta2gff2
 
-$(output_files): gff/%.gff : $(input_dir)/%
-	fasta2gff $< -s $(gffsource) $(fasta2gffoptions) > $@
+.PHONY: fasta2gff2
+fasta2gff2: $(f2g_output_files)
+	@echo fasta2gff2 - done
 
-fasta/%.$(input_extension): $(input_dir)/%.$(input_extension)
-	cat $< | sed '$(sed_command)' > $@ 
+$(f2g_output_files): gff/%.gff : $(f2g_input_dir)/%.$(f2g_input_extension)
+	fasta2gff $< -s $(f2g_gffsource) $(f2g_options) > $@
 
-#CLEAN	        
-clean: fasta2gff_clean
+.PHONY: fasta2gff_post
+fasta2gff_post: 
+
+.PHONY: fasta2gff_clean
 fasta2gff_clean:
 	-rm -rf gff	

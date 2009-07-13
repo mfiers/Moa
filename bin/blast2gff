@@ -100,7 +100,7 @@ def handle_blast_record(rec):
             # idS = "%s_h%s" % (basenameS, hcount)
             # 
             attribQ = ["ID=%s" % basenameQ,
-                       "Name=%s_%s" % (options.source, subject_id),
+                       "Name=%s" % basenameQ,
                        "Target=Sequence:%s %s %s" % (subject_id, ss, se),
                        "Hsp_expect=%s" % h.expect,
                        "Hsp_identities=%s" % str(h.identities),
@@ -109,7 +109,7 @@ def handle_blast_record(rec):
     
             
             attribS = ["ID=%s" % basenameS,
-                       "Name=%s_%s" % (options.source, query_id),
+                       "Name=%s" % basenameS,
                        "Target=Sequence:%s %s %s" % (query_id, qs, qe),
                         "Hsp_expect=%s" % h.expect,
                         "Hsp_identities=%s" % h.identities,
@@ -184,9 +184,15 @@ def handle_blast_record(rec):
                 print "\t".join([str(x) for x in ss])
 
 
-
 print "##gff-version 3"
-for blast_record in NCBIXML.parse(sys.stdin):
-    handle_blast_record(blast_record)
-
-
+try:
+    for blast_record in NCBIXML.parse(sys.stdin):
+        handle_blast_record(blast_record)
+except Exception, e:
+    print "*" * 80
+    print "*" * 80
+    print "* "
+    print "* Failed : %s" % (e)
+    print "* "
+    print "*" * 80
+    print "*" * 80

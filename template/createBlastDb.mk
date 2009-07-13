@@ -20,19 +20,14 @@ clean_help = Remove the blast database
 set_weka_help = set location in the global weka db
 clean_weka_help = clean location in the global weka db (will not run automatically)
 
-#Outputs (for generating help)
-moa_outputs += blastdb
-moa_output_blastdb = ./set_name.???
-moa_output_blastdb_help = The blast database created
-
 #Variable: set_name
-moa_must_define += name input_file
-name_help = The name of the set, determines the name of the blast db
-input_file_help = Multifasta used as input. (default: $(name).fasta)
+moa_must_define += bdb_name bdb_input_file
+bdb_name_help = The name of the set, determines the name of the blast db
+bdb_input_file_help = Multifasta used as input. (default: $(name).fasta)
 
 #Variable: protein
-moa_may_define += protein 
-protein_help = Protein database? (T)rue) or not (F)alse (default: F)
+moa_may_define += bdb_protein 
+bdb_protein_help = Protein database? (T)rue) or not (F)alse (default: F)
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -45,37 +40,40 @@ endif
 .PHONY: create_blast_db
 
 #the rest of the variable definitions 
-protein ?= F
-input_file ?= $(name).fasta
-ifeq ("$(protein)", "F")
-	one_blast_db_file = $(name).nhr
+bdb_protein ?= F
+bdb_input_file ?= $(bdb_name).fasta
+ifeq ("$(bdb_protein)", "F")
+	one_blast_db_file = $(bdb_name).nhr
 else
-	one_blast_db_file = $(name).phr
+	one_blast_db_file = $(bdb_name).phr
 endif
 
-create_blast_db: $(one_blast_db_file)
+.PHONY: create_blast_db_prepare
+createblastdb_prepare:
 
-$(one_blast_db_file): $(input_file)
+createblastdb: $(one_blast_db_file)
+
+$(one_blast_db_file): $(bdb_input_file)
 	@echo "Creating $@"
-	formatdb -i $< -p $(protein) -o T -n $(name)
+	formatdb -i $< -p $(bdb_protein) -o T -n $(bdb_name)
 
-create_id_list: $(name).list
+create_id_list: $(bdb_name).list
 
-$(name).list: $(input_file)
-	grep ">" $(input_file) | cut -c2- | sed 's/ /\t/' | sort > $(name).list
+$(bdb_name).list: $(bdb_input_file)
+	grep ">" $< | cut -c2- | sed 's/ /\t/' | sort > $@
 
 set_blastdb_weka:
-	weka -r set $(name)::blastdb `pwd`/$(name)
-	weka -r set $(name)::fasta `pwd`/$(input_file)
-	weka -r set $(name)::idlist `pwd`/$(name).list	
+	weka -r set $(bdb_name)::blastdb `pwd`/$(bdb_name)
+	weka -r set $(bdb_name)::fasta `pwd`/$(bdb_input_file)
+	weka -r set $(bdb_name)::idlist `pwd`/$(bdb_name).list	
 
 clean: create_blast_db_clean
 create_blast_db_clean:	
-	-if [ $(protein) == "F" ]; then \
-		rm $(name).n?? ;\
+	-if [ $(bdb_protein) == "F" ]; then \
+		rm $(bdb_name).n?? ;\
 	else \
-		rm $(name).p?? ;\
+		rm $(bdb_name).p?? ;\
 	fi
 
 clean_blastdb_weka:
-	weka rm $(name)::blastdb
+	weka rm $(bdb_name)::blastdb
