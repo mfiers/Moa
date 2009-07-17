@@ -1,0 +1,190 @@
+#!/usr/bin/python
+
+import os
+import sys
+import httplib
+import simplejson
+import logging
+
+l = logging.getLogger('couch')
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+handler.setFormatter(formatter)
+l.addHandler(handler)
+l.setLevel(logging.INFO)
+
+def prettyPrint(s):
+    """Prettyprints the json response of an HTTPResponse object"""
+    l.debug(simplejson.dumps(s, sort_keys=True, indent=4))
+
+
+class Couch:
+    """Basic wrapper class for operations on a couchDB"""
+
+    def __init__(self, host='localhost', 
+                 port=5984, options=None):
+        self.host = host
+        self.port = port
+
+    def connect(self):
+        # No close()
+        return httplib.HTTPConnection(self.host, self.port) 
+
+    # Database operations
+
+    def createDb(self, dbName):
+        """Creates a new database on the server"""
+        l.debug("Creating db %s" % dbName)
+        r = self.put("/%s/" % dbName, '')
+        if r.has_key('error'):
+            if r['error'] == 'file_exists':
+                l.warning("Database already exists, ignoring")
+                return True
+            else:
+                l.error(r['error'])
+                sys.exit()
+        return True
+        
+    def deleteDb(self, dbName):
+        """Deletes the database on the server"""
+        r = self.delete(''.join(['/',dbName,'/']))
+        prettyPrint(r)
+
+    def listDb(self):
+        """List the databases on the server"""
+        prettyPrint(self.get('/_all_dbs'))
+
+    def infoDb(self, dbName):
+        """Returns info about the couchDB"""
+        r = self.get(''.join(['/', dbName, '/']))
+        prettyPrint(r)
+
+    # Document operations
+
+    def listDoc(self, dbName):
+        """List all documents in a given database"""
+        r = self.get(''.join(['/', dbName, '/', '_all_docs']))
+        return r
+
+    def openDoc(self, dbName, docId):
+        """Open a document in a given database"""
+        r = self.get(''.join(['/', dbName, '/', docId,]))
+        return r
+
+
+    def saveDoc(self, dbName, body, docId=None):
+        """Save/create a document to/in a given database"""
+        if docId:
+            r = self.put(
+                "/%s/%s" % (dbName, docId), 
+                simplejson.dumps(body))
+
+            if r.has_key('error') and r['error'] == 'conflict' and \
+                    not body.has_key("_rev"):
+                l.warning("save conflict - get _rev & retrying")
+                olddoc = self.openDoc(dbName, docId)
+                body['_rev'] = olddoc['_rev']
+                r = self.saveDoc(dbName, body, docId)
+        else:
+            r = self.post(
+                "/%s/" % (dbName),
+                simplejson.dumps(body))
+
+        return r
+
+    def deleteDoc(self, dbName, doc):
+        print doc
+        r = self.delete('/%s/%s?rev=%s' % (
+                dbName, doc["_id"], doc["_rev"]))
+        return r
+
+
+    #low level routines, calling get, post, put & delete
+    def get(self, uri):
+        c = self.connect()
+        headers = {"Accept": "application/json"}
+        c.request("GET", uri, None, headers)
+        return simplejson.loads(c.getresponse().read())
+
+    def post(self, uri, body):
+        c = self.connect()
+        headers = {"Content-type": "application/json"}
+        c.request('POST', uri, body, headers)
+        return simplejson.loads(c.getresponse().read())
+
+    def put(self, uri, body):
+        c = self.connect()
+        if len(body) > 0:
+            headers = {"Content-type": "application/json"}
+            c.request("PUT", uri, body, headers)
+        else:
+            c.request("PUT", uri, body)
+        return simplejson.loads(c.getresponse().read())
+
+    def delete(self, uri):
+        c = self.connect()
+        c.request("DELETE", uri)
+        return simplejson.loads(c.getresponse().read())
+
+if __name__ == "__main__":
+    l.debug("Hello, starting moacouch")
+
+    cserver, cport = sys.argv[1].split(':')
+    server = Couch(cserver, cport)
+
+    command = sys.argv[2]
+
+    if command == 'register':
+        docid = sys.argv[3]
+        newdoc = {}
+
+        #see if there was already a doc with this name:
+        doc = server.openDoc('moa', docid)
+        if doc.has_key('error'):
+            l.debug("No previous record found (%s)" % doc['error'])
+        else:
+            #remember the _rev(ision) id.. for an update
+            if doc: newdoc['_rev'] = doc['_rev']
+
+        for x in sys.argv[4:]:
+            k,v = x.split('=', 1)
+            
+            #handle moa_ids - it's a list
+            if k == 'moa_ids':
+                newdoc[k] = v.split()
+            else:
+                newdoc[k] = v
+        l.debug("New doc created (with %d keys)" % len(newdoc))
+        r = server.saveDoc('moa', newdoc, docid)
+        if r.has_key('error') and r['error'] == 'not_found':
+            #maybe the db isn't created -yet- try that
+            l.warning("Db is not created? Trying..")
+            server.createDb('moa')
+            r = server.saveDoc('moa', newdoc, docid)
+            if r.has_key('error'):
+                l.error("Error writing document")
+                prettyPrint(newdoc)
+                prettyPrint(r)
+                sys.exit(-1)
+                sys.exit(-1)
+        elif r.has_key('error'):
+            l.error("Error writing document")
+            prettyPrint(newdoc)
+            prettyPrint(r)
+            sys.exit(-1)
+        else:
+            l.info("Success, document is written to the db")
+            sys.exit()
+        
+    elif command == 'get':
+        docid, query = sys.argv[3].split(':', 1)
+        doc = server.openDoc('moa', docid)
+        if not doc:
+            l.error("Cannot find document /moa/%s" % docid)
+            sys.exit(-1)
+        if not doc.has_key(query):
+            l.error("Cannot find document /moa/%s/%s" % (docid, query))
+            sys.exit(-1)
+            
+        print doc[query]
+        
