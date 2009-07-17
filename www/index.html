@@ -1,0 +1,148 @@
+<html>
+<head>
+
+<style type="text/css">
+
+body {
+   font-family:"Trebuchet MS",Verdana,Helvetica,Arial,sans-serif !important;
+}
+div#menu {
+  position:absolute;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  height: 20px;
+  background-color: #204a87;
+  color: white;
+  font-size: 14px;
+}
+
+div#tree {
+  position:absolute;
+
+  top: 20px;
+  left: 0px;
+  width: 200px;
+  bottom: 20px;
+
+  background-color: white;
+  border-right: 3px solid #4e9a06;
+  overflow: auto;
+  margin: 0px;
+}
+
+div#message {
+  z-index:1;
+  position: absolute;
+  color: white;
+  left: 0px;
+  bottom: 0px;
+  height: 20px;
+  right: 0px;
+  background-color: #a40000; 
+}
+
+div#content {
+  position: absolute;
+  left: 200px;
+  top: 20px;
+  right: 0px;
+  bottom: 20px;
+  background-color: #eeeeec;
+  overflow: auto;
+}
+
+</style>
+
+<link rel="stylesheet" href="css/treeview.css" />
+<link rel="stylesheet" href="css/treeview-screen.css" />
+
+<!-- includes - jquery -->
+<script type="text/javascript" src="js/jquery.js"></script>
+
+<!-- includes - jquery treeview plugin -->
+<script type="text/javascript" src="js/jquery.cookie.js"></script>
+<script type="text/javascript" src="js/jquery.treeview.min.js"></script>
+<script type="text/javascript" src="js/jquery.treeview.async.js"></script>
+
+<script type="text/javascript">
+    currentDir = null;
+
+	$(document).ready(function(){
+
+		$("#moatree").treeview({
+			url: "treeview.cgi",
+			persist: "cookie",
+			speed: 1,
+			toggle: function() {
+			   newDir = this.id;
+			   if (newDir != currentDir) {
+			     currentDir = newDir;
+                 setContent(newDir);
+			   }
+			}
+		})	
+	});
+
+	//Set the content frame with the new path
+	setContent = function(path) {
+	   $("#dirname").text(path);
+	   $.getJSON("nodeinfo.cgi?path=" + path,
+          function(data){
+		     processTargets(data.targets);
+		     processVars(data.vars);
+		     $("#message").text(data.message);
+          });
+	}
+
+    processTargets = function(targets) {
+	    var tf = $('span#targets');
+		tf.empty();
+		for (var t in targets) {
+			if ( t > 0 ) {
+			    tf.append(", ");
+			} 
+			tf.append(targets[t]);
+			
+	   }		
+	}
+
+    processVars = function(vars) {
+	   vf = $('#vars');
+	   vf.empty()
+	   vf.append("<table>");
+	   for (var v in vars) {
+	     $('#vars > table').append("<tr></tr>");
+		 $('#vars > table > tr').append("<th>" + v + "</th>");
+		 $('#vars > table > tr').append("<td>" + vars[v] + "</td>");
+	   }	   
+	}
+
+</script>
+
+
+<title>Moa web interface</title>
+
+</head><body>
+
+<div id="menu">
+Moa <span id="dirname">/</span>
+</div>
+
+<div id="tree">
+  <ul id="moatree"></ul>
+</div>
+
+<div id="content">
+<b>Targets:</b> <span id="targets"></span>
+<h4>Variables</h4>
+<div id="vars">
+</div>
+
+</div>
+
+<div id="message"></div>
+ Welcome!
+</div>
+
+</body></html>
