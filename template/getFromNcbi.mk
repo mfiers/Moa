@@ -52,17 +52,21 @@ fasta_files: tmp.fasta
 		name=`grep ">" $$x | head -1 | cut -c2- | cut -f1 -d' '`.fasta ;\
 		mv $$x $$name ;\
 	done
+
 tmp.fasta: webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
 tmp.fasta: queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
 tmp.fasta: tmp.xml
 	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&rettype=fasta&retmode=text&usehistory=y" \
-		-O tmp.fasta#tmp.xml contains the IDs of the sequences to download
-tmp.xml: executed
+		-O tmp.fasta
+
+#tmp.xml contains the IDs of the sequences to download
+tmp.xml:
 	-rm tmp.xml 
 	-rm tmp.fasta 
 	-rm fasta/*.fasta
 	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
 		-O tmp.xml
+
 clean: get_from_ncbi_clean
 
 get_from_ncbi_clean:

@@ -13,17 +13,34 @@ SHELL := /bin/bash
 ## See: http://gmsl.sourceforge.net/
 include $(shell echo $$MOABASE)/template/gmsl
 
+## Load moa wide configuration
+include $(shell echo $$MOABASE)/etc/moa.conf.mk
 
 ## some help variables
-warn_on := \033[0;1;47;0;41;4;6m
+warn_on := \033[0;1;37;41;4;6m
 warn_off := \033[0m
 
 boldOn := \033[0;1;47;0;32;4m
 boldOff := \033[0m
 
+#a colorful mark, showing that this comes from moabase
+moamark := \033[0;41m \033[43m \033[42m \033[44m \033[45m \033[0m
+echo = echo -e "$(moamark) $(1)"
+errr = echo -e "$(moamark)$(warn_on) -- $(1) -- $(warn_off)"
+
 ## If moa.mk is defined, import it.
 ## moa.mk is used to store local variables
+
+ifndef MOAMK_INCLUDE
 -include ./moa.mk
+MOAMK_INCLUDE=done
+endif
+
+## If not jid is defined, define one automatically here
+jid ?= $(shell echo -n "__$(word 1 $,$(moa_ids))_"; \
+			   echo -n `basename $$PWD`"_" ;\
+			   echo "$$RANDOM" `pwd` `date` | md5sum | cut -c-12)
+
 
 ## moa default target - welcom, varcheck, prepare & post actions.
 .DEFAULT_GOAL := moa_default_target
@@ -34,15 +51,22 @@ moa_default_target: moa_welcome \
   moa_check \
   moa_main_targets \
   $(addsuffix _post, $(moa_ids)) \
-  moa_postprocess
+  moa_postprocess \
+  moa_register
 
+#A list of all targets that can 'check' as valid.
+#in other words, these targets can be used with
+#   make all action=TARGET
 moa_all_targets = $(call set_create, \
-  set append clean \
+  set append clean register reset targets \
   $(addsuffix _prepare, $(moa_ids)) \
-  moa_check \
+  check \
   $(moa_ids) \
   $(addsuffix _post, $(moa_ids)) )
 
+.PHONY: targets
+targets:
+	@echo $(moa_all_targets)
 
 moa_check_target:
 	@echo $(moa_all_targets)
@@ -71,8 +95,6 @@ execorder:
 	@echo "$(addsuffix _post, $(moa_ids))"
 	@echo "moa_postprocess"
 
-
-
 moa_dummy:
 	@echo "Targets to execute were"
 	@echo "-----------------------"
@@ -94,7 +116,7 @@ clean: $(call reverse, $(addsuffix _clean, $(moa_ids)))
 
 #display a welcome message
 moa_welcome:
-	@echo "Welcome to MOA"
+	@$(call echo, Welcome to MOA in $(shell pwd))
 
 
 # Add a few default targets to the set 
@@ -121,17 +143,31 @@ dont_include_moabase=defined
 
 #each analysis MUST have a name
 #Variable: set_name
-moa_may_define += name 
-name_help = A unique name defining this job. Cannot have spaces.
+moa_may_define += jid 
+name_help = A job id describing this project. No spaces! If this is not \
+  defined, an autogenreated ID will be used.
 
 moa_may_define += project 
 name_help = A unique project name defining this job. Cannot have spaces.
 
-moa_register: moa_main_id = $(firstword $(moa_ids))
-moa_register: $(addprefix moa_register_, $(moa_must_define)) \
-  $(addprefix moa_register_, $(moa_may_define))
-	weka2 set moa.$(project).$(moa_main_id).$(moa_ids).$(name).pwd $(shell pwd)
-	weka2 set moa.$(project).$(moa_main_id).$(name).time "$(shell date)"
+
+##############################################################################
+## Register this job usine Apache Couchdb
+
+## Define the function to get stuff from the couch db
+cget = $(shell moacouch $(couchserver) get $(1))
+
+.PHONY: register
+register: moa_register
+
+.PHONY: moa_register
+moa_register: moa_check_jid
+	@$(call echo,Calling moa register)
+	@moacouch $(couchserver) register $(jid) \
+		moa_ids="$(moa_ids)" pwd="`pwd`" date="`date`" \
+		$(foreach v, $(moa_must_define), $(v)="$($(v))") \
+		$(foreach v, $(moa_may_define), $(v)="$($(v))") \
+		$(foreach v, $(moa_register_extra), $(v)=$(moa_register_$(v)))
 
 moa_register_%:
 	weka2 set moa.$(project).$(moa_main_id).$(name).$* $($*)
@@ -148,32 +184,43 @@ prereqlist += prereq_moa_environment
 .PHONY: prereqs $(prereqlist)
 prereqs: $(prereqlist)
 
+ter:
+	$(call errr, Hello)
+
 moa_check_lock:
 	@if [ -f lock ]; then \
-	    echo -e "$(warn_on)Job is locked! won't execute. Remove the lock file$(warn_off)" ;\
+	    $(call errr, Job is locked!) ;\
 	    exit 2 ; \
 	fi
 
 #check if MOABASE is defined
 prereq_moa_environment:
 	@if env | grep -q MOABASE ; then true; else \
-		echo "MOABASE is not defined :(" ; \
+		$(call errr, the environment variable MOABASE is not defined ) ;\
 		false ;\
 	fi
 
 .PHONY: check
 check: moa_check 
 
-moa_var_checklist :=  $(addprefix checkvar_, $(moa_must_define))
+moa_var_checklist := $(addprefix checkvar_, $(moa_must_define))
 
 .PHONY: moa_check
-moa_check: moa_check_lock prereqs $(moa_var_checklist)
-	@echo "Checked: everything appears ok"
+moa_check: moa_check_lock moa_check_jid prereqs $(moa_var_checklist)
+	@$(call echo, Check - everything is fine)
 
-#.PHONY: checkvar_ncbi_db
+#check if a job id is defined in moa.mk
+.PHONY: moa_check_jid
+moa_check_jid:
+	@if ! grep -q "^jid" moa.mk; then \
+		$(call echo, Storing jid in moa.mk - $(jid)) ;\
+		echo "jid=$(jid)" >> moa.mk ;\
+	fi
+
+.PHONY: checkvar_%
 checkvar_%:
 	@if [ "$(origin $(subst checkvar_,,$@))" == "undefined" ]; then \
-		echo " *** Error $(subst checkvar_,,$@) is undefined" ;\
+		$(call errr, Error $(subst checkvar_,,$@) is undefined) ;\
 		exit -1; \
 	fi
 
@@ -187,23 +234,40 @@ set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
+
 .PHONY: storevar_%
 storevar_%:
-	@if [ "$(origin $(subst storevar_,,$@))" == "command line" ]; then \
-		echo " *** Set $(subst storevar_,,$@) to $($(subst storevar_,,$@))" ;\
-		echo "$(subst storevar_,,$@)$(set_mode)=$(set_mode)$($(subst storevar_,,$@))" >> moa.mk ;\
-	fi
-	@if [ "$(origin weka_$(subst storevar_,,$@))" == "command line" ]; then \
-		echo " *** Set $(subst storevar_,,$@) to \"weka get $(weka_$(subst storevar_,,$@))\"" ;\
-		echo -n "$(subst storevar_,,$@)$(set_mode)=$$" >> moa.mk ;\
-		echo "(shell weka get $(weka_$(subst storevar_,,$@)))" >> moa.mk ; \
-	fi
+	@cval=$($*) ;\
+		if [ "$(origin $*)" == "command line" ]; then \
+			mv moa.mk moa.mk.backup ;\
+			cat moa.mk.backup | grep -v "^$* *[\+=]" > moa.mk ;\
+			if [ ! "$$cval" == "-" ]; then \
+				$(call echo, Set $* to '$$cval') ;\
+				echo "$* $(set_mode)= $$cval" >> moa.mk ;\
+			else \
+				$(call echo, Removing $* from moa.mk) ;\
+			fi ;\
+		fi ;\
+		if [ "$(origin weka_$*)" == "command line" ]; then \
+			$(call echo, Set $* to 'weka get $(weka_$*)') ;\
+			echo -n "$* $(set_mode)= $$" >> moa.mk ;\
+			echo "(shell weka get $(weka_$*))" >> moa.mk ; \
+		fi ;\
+		if [ "$(origin c.$*)" == "command line" ]; then \
+			$(call echo, set $* to couchdb: $(c.$*)) ;\
+			mv moa.mk moa.mk.backup ;\
+			cat moa.mk.backup | grep -v "^$* *[\+=]" > moa.mk ;\
+			echo -n "$* $(set_mode)= $$" >> moa.mk ;\
+			echo "(call cget,$(c.$*))" >> moa.mk ; \
+		fi
+
 
 .PHONY: show showvar_%
 show: $(addprefix showvar_, $(moa_must_define) $(moa_may_define))
-
 showvar_%:		 
-	@echo "$(subst showvar_,,$@) : $($(subst showvar_,,$@))"
+	@echo "$* : $($*)"
+
+
 # Traversal through subdirectories.
 
 # by calling 'make all', all subdirs are made as well as the cd.As an extension,
@@ -227,13 +291,13 @@ all: traverse_start_here $(moa_followups)
 .PHONY: traverse_start_here
 traverse_start_here:
 	@if [ "$(action)" == "" ]; then \
-	  $(MAKE) $(action) ;\
+	  $(MAKE) ;\
 	else \
 	  if $(MAKE) moa_check_target check=$(action) | grep VALIDTARGET; \
 	  then \
 	    $(MAKE) $(action) ;\
 	  else \
-	    echo -e "$(warn_on)Ignoring $(action) - not valid in this context$(warn_off)";\
+	    $(call errr, Ignoring $(action) - not valid in this context) ;\
 	  fi \
 	fi
 
@@ -241,50 +305,41 @@ traverse_start_here:
 $(moa_followups):
 	@if [[ -e $@/Makefile ]]; then \
 		if [[ ! -e $@/lock ]]; then \
-			echo -e "\033[43;30;6m#### Executing make $(action) in $@ \033[0m"  ;\
+			$(call echo, Executing make $(action) in $@) ;\
 			cd $@ && $(MAKE) all action=$(action) ;\
 		else \
-			echo -e "$(warn_on) in $@ is locked$(warn_off)" ;\
+			$(call errr, Not going here : $@ is locked) ;\
 		fi ; \
 	fi
 
-#print a status report: / not full implemted yet!
-moa_status_reports = $(addprefix status_, $(moa_ids))
-.PHONY: status $(moa_status_reports)
 
-status: status_start $(moa_status_reports)
-
-status_start:
-	@echo "Status reports: $(moa_status_reports)"
 ###############################################################################
 # Help structure
+.PHONY: help
 help: moa_help_header \
-	moa_help_deprecated \
-	moa_help_target_header moa_help_target moa_help_target_footer \
-	moa_help_vars_header moa_help_vars moa_help_vars_footer \
-	moa_help_output_header moa_help_output moa_help_output_footer
+	moa_help_target_header \
+	moa_help_target \
+	moa_help_target_footer \
+	moa_help_vars_header \
+	moa_help_vars \
+	moa_help_vars_footer
 
-moa_help_header: moa_help_header_title moa_help_header_description
+.PHONY: moa_help_header
+moa_help_header: \
+	moa_help_header_title \
+	moa_help_header_description
 
-moa_help_header_title: moa_title_list = $(foreach x, $(moa_ids),$(moa_title_$(x)) &)
-moa_help_header_title: moa_all_title = $(wordlist 1, $(shell expr $(words $(moa_title_list)) - 1), $(moa_title_list))
+.PHONY: moa_help_header_title
 moa_help_header_title:
-	@echo "($(moa_ids))"
-	@echo -n "=="
-	@echo -n "$(moa_all_title)" | sed "s/./=/g"
-	@echo "=="
-	@echo -e "= $(bold_on)$(moa_all_title)$(bold_off) ="
-	@echo -n "=="
-	@echo -n "$(moa_all_title)" | sed "s/./=/g"
-	@echo "=="
 
 #moa_description_LinkGather	
+.PHONY: moa_help_header_description
 moa_help_header_description: $(addprefix moa_help_header_description_, $(moa_ids))
 	@echo
 
-moa_help_header_description_%:	
-	@echo -e "$(bold_on)$(moa_title_$(patsubst moa_help_header_description_%,%,$@)):$(bold_off)"
-	@echo -e "$(moa_description_$(patsubst moa_help_header_description_%,%,$@))" | fold -w 70 -s 
+moa_help_header_description_%:
+	@$(call echo, $(moa_title_$*))
+	@echo -e "$(moa_description_$*)" | fold -w 70 -s 
 
 
 moa_help_deprecated: $(addprefix moa_help_deprecated_, $(moa_ids))

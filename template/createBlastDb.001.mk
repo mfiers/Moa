@@ -19,7 +19,6 @@ clean_weka_help = clean location in the global weka db (will not run automatical
 moa_must_define += bdb_name
 bdb_name_help = Database name to create
 
-
 moa_may_define += bdb_input_dir bdb_input_extension 
 bdb_input_dir_help = Dir with the input fasta files, defaults to ./fasta
 bdb_input_extension_help = extension of the input sequence files, defaults to fasta
@@ -32,6 +31,11 @@ bdb_protein_help = Protein database? (T)rue) or not (F)alse (default: F)
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
 # End of the generic part - from here on you're on your own :)
+
+moa_register_extra += blastdb fastafile idlist
+moa_register_blastdb = $(shell echo `pwd`/$(bdb_name))
+moa_register_fastafile = $(shell echo `pwd`/$(bdb_name)).fasta
+moa_register_idlist = $(shell echo `pwd`/$(bdb_name).list)
 
 bdb_input_dir ?= ./fasta
 bdb_input_extension ?= fasta
