@@ -112,6 +112,8 @@ endif
 test:
 	@echo $(blast_input_dir)
 	@echo $(blast_input_extension)
+	@echo $(blast_input_dir)/*.$(blast_input_extension)
+	@echo $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
 
 blast_test:
 	@echo "No inp files $(words $(blast_input_files))"

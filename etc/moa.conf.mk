@@ -1,1 +1,1 @@
-couchserver=161.65.1.56:5984
+couchserver=127.0.0.1:5984

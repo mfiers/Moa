@@ -37,18 +37,23 @@ MOAMK_INCLUDE=done
 endif
 
 ## If not jid is defined, define one automatically here
-jid ?= $(shell echo -n "__$(word 1 $,$(moa_ids))_"; \
+jid ?= $(shell echo -n "moa_$(word 1 $,$(moa_ids))_"; \
 			   echo -n `basename $$PWD`"_" ;\
 			   echo "$$RANDOM" `pwd` `date` | md5sum | cut -c-12)
 
+#ifeq ("$(call substr,$(jid),1,2)","__")
+#jid ?= $(shell echo -n "moa_$(word 1 $,$(moa_ids))_"; \
+#			   echo -n `basename $$PWD`"_" ;\
+#			   echo "$$RANDOM" `pwd` `date` | md5sum | cut -c-12)
+#endif
 
 ## moa default target - welcom, varcheck, prepare & post actions.
 .DEFAULT_GOAL := moa_default_target
 .PHONY: moa_default_target
 moa_default_target: moa_welcome \
+  moa_prepare_var \
   moa_preprocess \
   $(addsuffix _prepare, $(moa_ids)) \
-  moa_check \
   moa_main_targets \
   $(addsuffix _post, $(moa_ids)) \
   moa_postprocess \
@@ -79,10 +84,11 @@ moa_check_target:
 	fi
 
 #the main targets - we run these as separate make instances
-#since I really cannot get them to reevaluate what possible input
+#since I really cannot Make to reevaluate what possible input
 #files are inbetween steps
 moa_main_targets:
-	for moa_main_target in $(moa_ids); do \
+	@for moa_main_target in $(moa_ids); do \
+		$(call echo,calling $$moa_main_target) ;\
 		$(MAKE) $$moa_main_target ;\
 	done
 
@@ -157,12 +163,16 @@ name_help = A unique project name defining this job. Cannot have spaces.
 ## Define the function to get stuff from the couch db
 cget = $(shell moacouch $(couchserver) get $(1))
 
+# wget -q --no-proxy -O - \
+#	$(couchserver)/$(call first,$(1)) | cljson $(call last $(2)))
+#
+
 .PHONY: register
 register: moa_register
 
 .PHONY: moa_register
 moa_register: moa_check_jid
-	@$(call echo,Calling moa register)
+	@$(call echo,Calling moa register. Couchdb server: $(couchserver))
 	@moacouch $(couchserver) register $(jid) \
 		moa_ids="$(moa_ids)" pwd="`pwd`" date="`date`" \
 		$(foreach v, $(moa_must_define), $(v)="$($(v))") \
@@ -201,19 +211,20 @@ prereq_moa_environment:
 	fi
 
 .PHONY: check
-check: moa_check 
+check: moa_prepare_var moa_check 
 
 moa_var_checklist := $(addprefix checkvar_, $(moa_must_define))
 
 .PHONY: moa_check
-moa_check: moa_check_lock moa_check_jid prereqs $(moa_var_checklist)
+moa_check: moa_check_lock \
+		   moa_check_jid prereqs $(moa_var_checklist)
 	@$(call echo, Check - everything is fine)
 
 #check if a job id is defined in moa.mk
 .PHONY: moa_check_jid
 moa_check_jid:
 	@if ! grep -q "^jid" moa.mk; then \
-		$(call echo, Storing jid in moa.mk - $(jid)) ;\
+		$(call echo,Storing jid="$(jid)" in moa.mk) ;\
 		echo "jid=$(jid)" >> moa.mk ;\
 	fi
 
@@ -237,35 +248,72 @@ append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
 .PHONY: storevar_%
 storevar_%:
-	@cval=$($*) ;\
-		if [ "$(origin $*)" == "command line" ]; then \
-			mv moa.mk moa.mk.backup ;\
-			cat moa.mk.backup | grep -v "^$* *[\+=]" > moa.mk ;\
-			if [ ! "$$cval" == "-" ]; then \
-				$(call echo, Set $* to '$$cval') ;\
-				echo "$* $(set_mode)= $$cval" >> moa.mk ;\
-			else \
-				$(call echo, Removing $* from moa.mk) ;\
-			fi ;\
+	@#A regular value
+	@if [ "$(origin $*)" == "command line" ]; then \
+		mv moa.mk moa.mk.backup ;\
+		cat moa.mk.backup | grep -v "^$* *[\+=]" > moa.mk ;\
+		if [ ! "$$cval" == "-" ]; then \
+			$(call echo, Set $* to '$$cval') ;\
+			echo "$* $(set_mode)= $$cval" >> moa.mk ;\
+		else \
+			$(call echo, Removing $* from moa.mk) ;\
 		fi ;\
-		if [ "$(origin weka_$*)" == "command line" ]; then \
-			$(call echo, Set $* to 'weka get $(weka_$*)') ;\
-			echo -n "$* $(set_mode)= $$" >> moa.mk ;\
-			echo "(shell weka get $(weka_$*))" >> moa.mk ; \
-		fi ;\
-		if [ "$(origin c.$*)" == "command line" ]; then \
-			$(call echo, set $* to couchdb: $(c.$*)) ;\
-			mv moa.mk moa.mk.backup ;\
-			cat moa.mk.backup | grep -v "^$* *[\+=]" > moa.mk ;\
-			echo -n "$* $(set_mode)= $$" >> moa.mk ;\
-			echo "(call cget,$(c.$*))" >> moa.mk ; \
-		fi
+	fi
+	@#A couchdb value
+	@if [ "$(origin c__$*)" == "command line" ]; then \
+		$(call echo, set $* to couchdb: $(c.$*)) ;\
+		mv moa.mk moa.mk.backup ;\
+		cat moa.mk.backup \
+			| grep -v "^$* *[\+=]" \
+			| grep -v "^$*__couchdb *[\+=]" \
+				> moa.mk ;\
+		echo "$*=__couchdb" >> moa.mk ;\
+		echo "$*__couchdb=$(call split,:,$(c__$*))" >> moa.mk ;\
+	fi
 
 
 .PHONY: show showvar_%
-show: $(addprefix showvar_, $(moa_must_define) $(moa_may_define))
-showvar_%:		 
-	@echo "$* : $($*)"
+show: moa_prepare_var $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
+
+moa_couch_filter = $(if $(call sne,$(origin $(1)__couchdb),undefined), $(1))
+
+.PHONY: moa_prepare_var
+moa_prepare_var: $(addprefix moa_prepvar_, \
+					$(call map,moa_couch_filter, \
+						$(moa_must_define) $(moa_may_define)))
+	@$(call errr,Called moa_prepare var $^)
+
+.PHONY: $(addprefix moa_prepvar_, \
+					$(call map,moa_couch_filter, \
+						$(moa_must_define) $(moa_may_define)))
+moa_prepvar_%:
+	@$(call echo, Running moa_prepare_var $*)
+	@#set the $* variable to the currenct couchdb val
+	$(eval $*=$(call cget,$($*__couchdb)))
+	@#store this in moa.mk as the actual value - this prevent
+	@#prepvar having to be re-executed
+	while [ -e ./moa.var.lock ]; do \
+			$(call errr, Sleeping!) ;\
+			sleep 1 ;\
+		done ;\
+		touch moa.var.lock
+	if ! grep -q "$*=$($*)" moa.mk; then \
+			$(call echo, Caching couchdb value $* in moa.mk) ;\
+			mv moa.mk moa.mk.backup ;\
+			cat moa.mk.backup \
+				| grep -v "^$* *[\+=]" \
+					> moa.mk ;\
+			echo "$*=$(call cget,$($*__couchdb))" >> moa.mk ;\
+		fi ;\
+		rm -f moa.var.lock
+
+
+#moa_prepvar_%:
+#	$(eval $*=$(call cget,$($*__couchdb)))
+
+moa_showvar_%:		 
+	@echo -e "$*\t$($*)"
+
 
 
 # Traversal through subdirectories.
