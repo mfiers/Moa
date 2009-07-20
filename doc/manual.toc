@@ -1,0 +1,18 @@
+\contentsline {chapter}{\numberline {1}Introduction}{2}
+\contentsline {section}{\numberline {1.1}Kea}{2}
+\contentsline {chapter}{\numberline {2}Installation}{5}
+\contentsline {section}{\numberline {2.1}Getting the code}{5}
+\contentsline {section}{\numberline {2.2}Install python libs}{5}
+\contentsline {section}{\numberline {2.3}Set up a basic configuration}{5}
+\contentsline {section}{\numberline {2.4}Test}{5}
+\contentsline {chapter}{\numberline {3}Configuration}{6}
+\contentsline {section}{\numberline {3.1}the .kea directory}{6}
+\contentsline {section}{\numberline {3.2}Basic configuration}{6}
+\contentsline {subsection}{\numberline {3.2.1}JOB}{6}
+\contentsline {subsection}{\numberline {3.2.2}PLANNER}{6}
+\contentsline {subsection}{\numberline {3.2.3}ACTOR}{6}
+\contentsline {subsection}{\numberline {3.2.4}INPUT}{6}
+\contentsline {subsection}{\numberline {3.2.5}ACTION}{6}
+\contentsline {section}{\numberline {3.3}Templates}{6}
+\contentsline {section}{\numberline {3.4}Learn to fly}{6}
+\contentsline {chapter}{Bibliography}{7}

@@ -1,0 +1,46 @@
+\documentclass[a4paper,11pt,oneside]{report}
+
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{natbib}
+\renewcommand{\familydefault}{\sfdefault}
+\lstset{
+   basicstyle=\footnotesize\ttfamily,
+   identifierstyle=,
+   keywordstyle=,
+   xleftmargin=6mm,
+%   framesep=10mm,
+   framextopmargin=8mm,
+   frame=l,
+   language=bash
+}
+
+\begin{document}
+\bibliographystyle{plain}
+\title{Moa}
+\author{Mark Fiers}
+\date{Tue Jul 21 10:22:22 NZST 2009}
+
+%create a title page
+\begin{titlepage}
+\center{\includegraphics[width=0.6\textwidth]{moa.jpg}}
+\vfill
+\center{\Huge Moa \normalsize}
+\center{ 0.1 }
+\vfill
+\center{Author: Mark Fiers}
+\center{Date: Tue Jul 21 10:22:22 NZST 2009}
+\center{\tiny Git: master -  \normalsize}
+\end{titlepage}
+\tableofcontents
+%end of the title page
+
+\include{introduction}
+\include{installation}
+\include{configuration}
+\include{running}
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{manual}
+
+\end{document}
