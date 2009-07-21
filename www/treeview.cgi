@@ -6,15 +6,17 @@ import cgi
 import cgitb; cgitb.enable()  # for troubleshooting
 import simplejson
 
-MOAROOT = '/data/moa'
+MOAROOT = os.environ.get('MOAROOT')
 
 form = cgi.FieldStorage()
 root = form.getvalue("root")
 
-if root == 'source':
+if not root or root == 'source':
     curdir = MOAROOT
 else:
     curdir = os.path.join(MOAROOT, root)
+
+#curdir = os.abspath(curdir)
     
 subdirs = os.listdir(curdir)
 subdirs.sort()

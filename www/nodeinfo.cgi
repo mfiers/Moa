@@ -10,14 +10,17 @@ import subprocess
 MOAROOT = '/data/moa'
 
 form = cgi.FieldStorage()
-path = form.getvalue("path")
-
+path = os.path.abspath(form.getvalue("path"))
+runmakepath = os.path.join(
+    os.environ["MOABASE"], 'bin', 'runMake')
 
 def runMake(path, *args):
-    cl = "/opt/moa/bin/runMake %s %s" % (path, " ".join(args))
+    cl = "%s %s %s" % (
+        runmakepath, path, " ".join(args))
     return subprocess.Popen(
         cl, stdout=subprocess.PIPE,
-        shell=True).communicate()[0]
+        stderr=subprocess.PIPE,
+        shell=True).communicate()
 
 def fire(data):
     print "Content-type: text/json"
@@ -33,19 +36,29 @@ if not os.path.exists(os.path.join(path, 'Makefile')):
 data = {}
 data['vars'] = {}
 data['targets'] = []
+data['error'] = ""
 
 #process targets
-rv = runMake(path, 'targets')
+rv,err = runMake(path, 'targets')
 data['targets'] = rv.split()
+if err:
+    data['error'] += err + "\n"
 
 #process variables
-rv = runMake(path, 'show')
+rv, err = runMake(path, 'show')
 
 for line in rv.split("\n"):
     line = line.strip()
     if not line: continue
-    k,v = line.split(':', 1)
-    data['vars'][k] = v
+    try:
+        k,v = line.split(':', 1)
+        data['vars'][k.strip()] = v.strip()
+    except:
+        data['error'] += "Invalid line:\n"
+        data['error'] += "%s\n\n" % line
+    
 
+if err:
+    data['error'] += rv + "\n"
 data['message'] = "Success loading data"
 fire(data)

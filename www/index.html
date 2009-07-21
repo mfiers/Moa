@@ -5,6 +5,7 @@
 
 body {
    font-family:"Trebuchet MS",Verdana,Helvetica,Arial,sans-serif !important;
+   font-size: 9px;
 }
 div#menu {
   position:absolute;
@@ -52,6 +53,32 @@ div#content {
   overflow: auto;
 }
 
+table {
+  font-size: 12px;
+}
+table#vars td {
+  margin: 0px;
+  padding: 3px;
+  border-bottom: 1px dotted black;
+}
+
+table#vars th {
+  text-align:left;
+  width:200px;
+  margin: 0px;
+  padding: 3px;
+  border-right: 1px dotted black;
+  border-bottom: 1px dotted black;
+}
+
+textarea#messagebox {
+  width: 100%;
+  height: 20px;
+  border: 0px;
+  background-color: inherit;
+  color: white;
+}
+
 </style>
 
 <link rel="stylesheet" href="css/treeview.css" />
@@ -68,30 +95,52 @@ div#content {
 <script type="text/javascript">
     currentDir = null;
 
-	$(document).ready(function(){
+$(document).ready(function(){
 
-		$("#moatree").treeview({
-			url: "treeview.cgi",
-			persist: "cookie",
-			speed: 1,
-			toggle: function() {
-			   newDir = this.id;
-			   if (newDir != currentDir) {
-			     currentDir = newDir;
-                 setContent(newDir);
-			   }
-			}
-		})	
-	});
+    $("#moatree").treeview({
+	url: "treeview.cgi",
+	  persist: "cookie",
+	  speed: 1,
+	  toggle: function() {
+	  newDir = this.id;
+	  if (newDir != currentDir) {
+	    currentDir = newDir;
+	    setContent(newDir); }
+	}
+      });
+      
+    $("#message").click(function() {
+	
+	if ($(this).css("height") == "200px") {
+	  console.log("minimize messages " + $(this).css("height"));
+	  $(this).css("height", 20);
+	  $("div#content").css("bottom", 20);
+	  $("div#tree").css("bottom", 20);
+	} else {
+	  console.log("maximize messages" + $(this).css("height"));
+	  $(this).css("height", 200);
+	  $("div#content").css("bottom", 200);
+	  $("div#tree").css("bottom", 200);
+	}
+      });
+    
+    
+  });
 
-	//Set the content frame with the new path
-	setContent = function(path) {
-	   $("#dirname").text(path);
-	   $.getJSON("nodeinfo.cgi?path=" + path,
-          function(data){
-		     processTargets(data.targets);
-		     processVars(data.vars);
-		     $("#message").text(data.message);
+logmessage = function(txt) {
+  $("textarea#messagebox").append("\n" + txt);
+};
+
+    //Set the content frame with the new path
+    setContent = function(path) {
+    $("#dirname").text(path);
+    $.getJSON("nodeinfo.cgi?path=" + path,
+	    function(data){
+	      processTargets(data.targets);
+	      processVars(data.vars);
+	      console.log(data.error);
+	      console.log(data.vars);
+	      logmessage(data.message);
           });
 	}
 
@@ -110,11 +159,13 @@ div#content {
     processVars = function(vars) {
 	   vf = $('#vars');
 	   vf.empty()
-	   vf.append("<table>");
+	   vf.append("<table id='vars'>");
 	   for (var v in vars) {
-	     $('#vars > table').append("<tr></tr>");
-		 $('#vars > table > tr').append("<th>" + v + "</th>");
-		 $('#vars > table > tr').append("<td>" + vars[v] + "</td>");
+	     row = "<tr></tr>" + 
+	       "<th>" + v + "</th>" + 
+	       "<td id=" + v + " class='varval'>" + 
+	       vars[v] + "</td>";
+	     $('#vars > table').append(row)
 	   }	   
 	}
 
@@ -134,15 +185,14 @@ Moa <span id="dirname">/</span>
 </div>
 
 <div id="content">
-<b>Targets:</b> <span id="targets"></span>
-<h4>Variables</h4>
-<div id="vars">
+  <b>Targets:</b> <span id="targets"></span>
+  <h4>Variables</h4>
+  <div id="vars">
+  </div>
 </div>
 
-</div>
-
-<div id="message"></div>
- Welcome!
+<div id="message">
+  <textarea id="messagebox">Welcome to moa web interface</textarea>
 </div>
 
 </body></html>
