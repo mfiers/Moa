@@ -1,1 +1,1 @@
-couchserver=127.0.0.1:5984
+MOA_PROCESSORS=12

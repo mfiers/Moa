@@ -29,6 +29,11 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
+#define extra variables to register in couchdb
+moa_register_extra += fastadir
+moa_register_fastadir = $(shell echo `pwd`)/fasta 
+
+
 ################################################################################
 .PHONY: getFromNcbi_prepare
 getFromNcbi_prepare:

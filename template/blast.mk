@@ -141,7 +141,7 @@ gff/%.gff: out/%.xml
 	cat $< | blast2gff -s $(blast_gff_source) -d query > $@
 
 # create out/*xml - run BLAST 
-out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(one_blast_db_file)
+out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(single_blast_db_file)
 	@echo "Processing blast $*"
 	@echo "Creating out.xml $@ from $<"
 	@echo "Params $(blast_program) $(blast_db)"

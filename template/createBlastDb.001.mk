@@ -57,9 +57,6 @@ createBlastDb_prepare:
 
 .PHONY: createBlastDb_post
 createBlastDb_post: create_id_list
-	weka -r set $(bdb_name)::blastdb `pwd`/$(bdb_name)
-	weka -r set $(bdb_name)::fasta `pwd`/$(input_file)
-	weka -r set $(bdb_name)::idlist `pwd`/$(bdb_name)
 
 .PHONY: createBlastDb
 createBlastDb: $(one_blast_db_file)

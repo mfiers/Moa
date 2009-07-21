@@ -31,6 +31,9 @@ errr = echo -e "$(moamark)$(warn_on) -- $(1) -- $(warn_off)"
 ## If moa.mk is defined, import it.
 ## moa.mk is used to store local variables
 
+## Define number of processors to be used
+MOA_PROCESSORS ?= 3
+
 ifndef MOAMK_INCLUDE
 -include ./moa.mk
 MOAMK_INCLUDE=done
@@ -89,7 +92,7 @@ moa_check_target:
 moa_main_targets:
 	@for moa_main_target in $(moa_ids); do \
 		$(call echo,calling $$moa_main_target) ;\
-		$(MAKE) $$moa_main_target ;\
+		$(MAKE) $$moa_main_target -j $(MOA_PROCESSORS) ;\
 	done
 
 execorder:
@@ -159,13 +162,11 @@ name_help = A unique project name defining this job. Cannot have spaces.
 
 ##############################################################################
 ## Register this job usine Apache Couchdb
+couchserver ?= 127.0.0.1:5984
+couchdb ?= moa
 
 ## Define the function to get stuff from the couch db
-cget = $(shell moacouch $(couchserver) get $(1))
-
-# wget -q --no-proxy -O - \
-#	$(couchserver)/$(call first,$(1)) | cljson $(call last $(2)))
-#
+cget = $(shell moacouch -d $(couchdb) -s $(couchserver) get $(1))
 
 .PHONY: register
 register: moa_register
@@ -173,7 +174,7 @@ register: moa_register
 .PHONY: moa_register
 moa_register: moa_check_jid
 	@$(call echo,Calling moa register. Couchdb server: $(couchserver))
-	@moacouch $(couchserver) register $(jid) \
+	@moacouch -v -s $(couchserver) -d $(couchdb) register $(jid) \
 		moa_ids="$(moa_ids)" pwd="`pwd`" date="`date`" \
 		$(foreach v, $(moa_must_define), $(v)="$($(v))") \
 		$(foreach v, $(moa_may_define), $(v)="$($(v))") \
@@ -238,7 +239,11 @@ checkvar_%:
 # Set a variable!
 .PHONY: set
 set: set_mode =
-set: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
+set: set_prepare $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
+
+.PHONY: set_prepare
+set_prepare:
+	touch moa.mk
 
 # or append
 .PHONY: append
@@ -253,8 +258,8 @@ storevar_%:
 		mv moa.mk moa.mk.backup ;\
 		cat moa.mk.backup | grep -v "^$* *[\+=]" > moa.mk ;\
 		if [ ! "$$cval" == "-" ]; then \
-			$(call echo, Set $* to '$$cval') ;\
-			echo "$* $(set_mode)= $$cval" >> moa.mk ;\
+			$(call echo, Set $* to '$($*)') ;\
+			echo "$* $(set_mode)= $($*)" >> moa.mk ;\
 		else \
 			$(call echo, Removing $* from moa.mk) ;\
 		fi ;\
@@ -267,7 +272,6 @@ storevar_%:
 			| grep -v "^$* *[\+=]" \
 			| grep -v "^$*__couchdb *[\+=]" \
 				> moa.mk ;\
-		echo "$*=__couchdb" >> moa.mk ;\
 		echo "$*__couchdb=$(call split,:,$(c__$*))" >> moa.mk ;\
 	fi
 
@@ -277,39 +281,29 @@ show: moa_prepare_var $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_def
 
 moa_couch_filter = $(if $(call sne,$(origin $(1)__couchdb),undefined), $(1))
 
+moa_prepare_vars = $(addprefix moa_prepvar_, \
+					$(call map,moa_couch_filter, \
+						$(moa_must_define) $(moa_may_define)))
 .PHONY: moa_prepare_var
-moa_prepare_var: $(addprefix moa_prepvar_, \
-					$(call map,moa_couch_filter, \
-						$(moa_must_define) $(moa_may_define)))
-	@$(call errr,Called moa_prepare var $^)
+moa_prepare_var: $(moa_prepare_vars) 
+	@#$(call echo,Called moa_prepare vars)
+	@#$(call echo,  for $(moa_prepare_vars))
 
-.PHONY: $(addprefix moa_prepvar_, \
-					$(call map,moa_couch_filter, \
-						$(moa_must_define) $(moa_may_define)))
-moa_prepvar_%:
-	@$(call echo, Running moa_prepare_var $*)
+#.PHONY: $(moa_prepare_vars)
+moa_prepvar_%: 
+	@#$(call echo, Running moa_prepare_var $*)
 	@#set the $* variable to the currenct couchdb val
 	$(eval $*=$(call cget,$($*__couchdb)))
 	@#store this in moa.mk as the actual value - this prevent
 	@#prepvar having to be re-executed
-	while [ -e ./moa.var.lock ]; do \
-			$(call errr, Sleeping!) ;\
-			sleep 1 ;\
-		done ;\
-		touch moa.var.lock
-	if ! grep -q "$*=$($*)" moa.mk; then \
-			$(call echo, Caching couchdb value $* in moa.mk) ;\
-			mv moa.mk moa.mk.backup ;\
-			cat moa.mk.backup \
-				| grep -v "^$* *[\+=]" \
-					> moa.mk ;\
-			echo "$*=$(call cget,$($*__couchdb))" >> moa.mk ;\
-		fi ;\
-		rm -f moa.var.lock
-
-
-#moa_prepvar_%:
-#	$(eval $*=$(call cget,$($*__couchdb)))
+	@if ! grep -q -E "^$*=$($*)$$" moa.mk; then \
+		#$(call echo, Caching couchdb value $* in moa.mk) ;\
+		mv moa.mk moa.mk.backup ;\
+		cat moa.mk.backup \
+			| grep -v "^$* *[\+=]" \
+				> moa.mk ;\
+		echo "$*=$(call cget,$($*__couchdb))" >> moa.mk ;\
+	fi
 
 moa_showvar_%:		 
 	@echo -e "$*\t$($*)"

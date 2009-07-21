@@ -1,1 +1,1 @@
-include $(shell echo $$MOABASE)/template/blast.mk
+include $(shell echo $$MOABASE)/template/traverse.mk

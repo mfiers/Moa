@@ -5,18 +5,38 @@ import sys
 import httplib
 import simplejson
 import logging
+from optparse import OptionParser
+
+parser = OptionParser()
+
+parser.set_defaults(couchserver="127.0.0.1:5984")
+
+parser.add_option("-s", "--server", dest="couchserver",
+                  help="Couchserver to connect to")
+
+parser.set_defaults(couchdb="moa")
+parser.add_option("-d", "--db", dest="couchdb",
+                  help="db to use")
+
+parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true", help="verbose output")
+
+(options, args) = parser.parse_args()
+
 
 l = logging.getLogger('couch')
+
 handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 handler.setFormatter(formatter)
 l.addHandler(handler)
-l.setLevel(logging.INFO)
+
+if options.verbose: l.setLevel(logging.DEBUG)
+else: l.setLevel(logging.INFO)
 
 def prettyPrint(s):
     """Prettyprints the json response of an HTTPResponse object"""
     l.debug(simplejson.dumps(s, sort_keys=True, indent=4))
-
 
 class Couch:
     """Basic wrapper class for operations on a couchDB"""
@@ -59,6 +79,11 @@ class Couch:
         r = self.get(''.join(['/', dbName, '/']))
         prettyPrint(r)
 
+    def allDocs(self, dbName):
+        """ returns all docs in a db """
+        r = self.get("/%s/_all_docs" % dbName)
+        return r
+        
     # Document operations
 
     def listDoc(self, dbName):
@@ -128,26 +153,27 @@ class Couch:
 
 if __name__ == "__main__":
     l.debug("Hello, starting moacouch")
-    l.debug("with arguments, %s" % sys.argv[1:])
+    l.debug("with arguments, %s" % args)
 
-    cserver, cport = sys.argv[1].split(':')
+    cserver, cport = options.couchserver.split(":")
     server = Couch(cserver, cport)
 
-    command = sys.argv[2]
+    command = args[0]
 
     if command == 'register':
-        docid = sys.argv[3]
+        docid = args[1]
         newdoc = {}
 
         #see if there was already a doc with this name:
-        doc = server.openDoc('moa', docid)
+        doc = server.openDoc(options.couchdb, docid)
         if doc.has_key('error'):
             l.debug("No previous record found (%s)" % doc['error'])
         else:
             #remember the _rev(ision) id.. for an update
             if doc: newdoc['_rev'] = doc['_rev']
 
-        for x in sys.argv[4:]:
+        for x in args[2:]:
+            l.debug("registring %s" % x)
             k,v = x.split('=', 1)
             
             #handle moa_ids - it's a list
@@ -156,12 +182,12 @@ if __name__ == "__main__":
             else:
                 newdoc[k] = v
         l.debug("New doc created (with %d keys)" % len(newdoc))
-        r = server.saveDoc('moa', newdoc, docid)
+        r = server.saveDoc(options.couchdb, newdoc, docid)
         if r.has_key('error') and r['error'] == 'not_found':
             #maybe the db isn't created -yet- try that
             l.warning("Db is not created? Trying..")
-            server.createDb('moa')
-            r = server.saveDoc('moa', newdoc, docid)
+            server.createDb(options.couchdb)
+            r = server.saveDoc(options.couchdb, newdoc, docid)
             if r.has_key('error'):
                 l.error("Error writing document")
                 prettyPrint(newdoc)
@@ -178,8 +204,8 @@ if __name__ == "__main__":
             sys.exit()
         
     elif command == 'get':
-        docid, query = sys.argv[3], sys.argv[4]
-        doc = server.openDoc('moa', docid)
+        docid, query = args[1], args[2]
+        doc = server.openDoc(options.couchdb, docid)
         if not doc:
             l.error("Cannot find document /moa/%s" % docid)
             sys.exit(-1)
@@ -189,3 +215,13 @@ if __name__ == "__main__":
             
         print doc[query]
         
+
+    elif command == 'idlist':
+        alldocs = server.allDocs(options.couchdb)
+        for doc in alldocs['rows']:
+            print doc['id']
+
+    elif command == 'doc':
+        docid = args[1]
+        doc = server.openDoc(options.couchdb, docid)
+        print simplejson.dumps(doc, sort_keys=True, indent=4)
