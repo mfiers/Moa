@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+import os
+import sys
+import simplejson
+
+
+doc = simplejson.loads(sys.stdin.read())
+if sys.argv[1].lower() in ['pp', 'pretty', 'prettyprint']:
+    print simplejson.dumps(
+        doc,
+        sort_keys=True,
+        indent=4)
+
+if doc.has_key(sys.argv[1]):
+    print doc[sys.argv[1]]
+
+
