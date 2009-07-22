@@ -21,6 +21,7 @@ bdb_name_help = Database name to create
 
 moa_may_define += bdb_input_dir bdb_input_extension 
 bdb_input_dir_help = Dir with the input fasta files, defaults to ./fasta
+bdb_input_dir_cdbattr = fastadir
 bdb_input_extension_help = extension of the input sequence files, defaults to fasta
 
 #Variable: protein

@@ -250,6 +250,11 @@ set_prepare:
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
+#determines which attribute we want from couchdb - either it's defined 
+#using id:attr, or its defined in the defining Makefile via $*__cdbattr
+#else use pwd.
+cdbsplit = $(word 1,$(call split,:,$(1))) \
+	$(call first, $(word 2,$(call split,:,$(1))) $($(2)_cdbattr) pwd) 
 
 .PHONY: storevar_%
 storevar_%:
@@ -272,7 +277,8 @@ storevar_%:
 			| grep -v "^$* *[\+=]" \
 			| grep -v "^$*__couchdb *[\+=]" \
 				> moa.mk ;\
-		echo "$*__couchdb=$(call split,:,$(c__$*))" >> moa.mk ;\
+		$(call echo,"$*__couchdb=$(call cdbsplit,$(c__$*),$*)") ;\
+		echo "$*__couchdb=$(call cdbsplit,$(c__$*),$*)" >> moa.mk ;\
 	fi
 
 
