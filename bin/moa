@@ -4,10 +4,23 @@ import os
 import sys
 import logging
 import optparse
+import httplib
+import simplejson
 
 parser = optparse.OptionParser()
 parser.add_option('-f', '--force', dest='force', action='store_true',
                   help = 'Force action')
+
+parser.set_defaults(couchserver="127.0.0.1:5984")
+parser.add_option("-s", "--server", dest="couchserver",
+                  help="Couchserver to connect to")
+parser.set_defaults(couchdb="moa")
+parser.add_option("-d", "--db", dest="couchdb",
+                  help="db to use")
+
+parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true", help="verbose output")
+
 (options, args) = parser.parse_args()
 
 l = logging.getLogger('moa')
@@ -21,10 +34,126 @@ if not os.environ.has_key("MOABASE"):
     l.critical("need to set MOABASE environment variable")
     sys.exit(1)
     
-    
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
+
+
+class Couchdb:
+    """Wrapper class for operations on a couchDB
+       Code is gracefully adapted from .....
+    """
+
+    def __init__(self, host='localhost', 
+                 port=5984, options=None):
+        self.host = host
+        self.port = port
+
+    def connect(self):
+        # No close()
+        return httplib.HTTPConnection(self.host, self.port) 
+
+    # Database operations
+
+    def createDb(self, dbName):
+        """Creates a new database on the server"""
+        l.debug("Creating db %s" % dbName)
+        r = self.put("/%s/" % dbName, '')
+        if r.has_key('error'):
+            if r['error'] == 'file_exists':
+                l.warning("Database already exists, ignoring")
+                return True
+            else:
+                l.error(r['error'])
+                sys.exit()
+        return True
+        
+    def deleteDb(self, dbName):
+        """Deletes the database on the server"""
+        r = self.delete(''.join(['/',dbName,'/']))
+        prettyPrint(r)
+
+    def listDb(self):
+        """List the databases on the server"""
+        prettyPrint(self.get('/_all_dbs'))
+
+    def infoDb(self, dbName):
+        """Returns info about the couchDB"""
+        r = self.get(''.join(['/', dbName, '/']))
+        prettyPrint(r)
+
+    def allDocs(self, dbName):
+        """ returns all docs in a db """
+        r = self.get("/%s/_all_docs" % dbName)
+        return r
+        
+    # Document operations
+
+    def listDoc(self, dbName):
+        """List all documents in a given database"""
+        r = self.get(''.join(['/', dbName, '/', '_all_docs']))
+        return r
+
+    def openDoc(self, dbName, docId):
+        """Open a document in a given database"""
+        r = self.get(''.join(['/', dbName, '/', docId,]))
+        return r
+
+
+    def saveDoc(self, dbName, body, docId=None):
+        """Save/create a document to/in a given database"""
+        if docId:
+            r = self.put(
+                "/%s/%s" % (dbName, docId), 
+                simplejson.dumps(body))
+
+            if r.has_key('error') and r['error'] == 'conflict' and \
+                    not body.has_key("_rev"):
+                l.warning("save conflict - get _rev & retrying")
+                olddoc = self.openDoc(dbName, docId)
+                body['_rev'] = olddoc['_rev']
+                r = self.saveDoc(dbName, body, docId)
+        else:
+            r = self.post(
+                "/%s/" % (dbName),
+                simplejson.dumps(body))
+
+        return r
+
+    def deleteDoc(self, dbName, doc):
+        print doc
+        r = self.delete('/%s/%s?rev=%s' % (
+                dbName, doc["_id"], doc["_rev"]))
+        return r
+
+
+    #low level routines, calling get, post, put & delete
+    def get(self, uri):
+        c = self.connect()
+        headers = {"Accept": "application/json"}
+        c.request("GET", uri, None, headers)
+        return simplejson.loads(c.getresponse().read())
+
+    def post(self, uri, body):
+        c = self.connect()
+        headers = {"Content-type": "application/json"}
+        c.request('POST', uri, body, headers)
+        return simplejson.loads(c.getresponse().read())
+
+    def put(self, uri, body):
+        c = self.connect()
+        if len(body) > 0:
+            headers = {"Content-type": "application/json"}
+            c.request("PUT", uri, body, headers)
+        else:
+            c.request("PUT", uri, body)
+        return simplejson.loads(c.getresponse().read())
+
+    def delete(self, uri):
+        c = self.connect()
+        c.request("DELETE", uri)
+        return simplejson.loads(c.getresponse().read())
+    
 def getTemplateFile(what):
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
     if not os.path.exists(templatefile):
@@ -73,13 +202,83 @@ if __name__ == "__main__":
         l.error("Need a command")
         sys.exit(1)
 
+    cserver, cport = options.couchserver.split(":")
+    server = Couchdb(cserver, cport)
+
     command = args[0]
     l.info("start moa %s" % command)
                        
     if command == 'new':
         moaNew(args[1])
+        sys.exit()
 
     if command == 'check':
         moaCheck(args[1:])
+        sys.exit()
+
+    if command == 'register':
+        docid = args[1]
+        newdoc = {}
+
+        #see if there was already a doc with this name:
+        doc = server.openDoc(options.couchdb, docid)
+        if doc.has_key('error'):
+            l.debug("No previous record found (%s)" % doc['error'])
+        else:
+            #remember the _rev(ision) id.. for an update
+            if doc: newdoc['_rev'] = doc['_rev']
+
+        for x in args[2:]:
+            l.debug("registring %s" % x)
+            k,v = x.split('=', 1)
+            #handle moa_ids - it's a list
+            if k == 'moa_ids': newdoc[k] = v.split()
+            else: newdoc[k] = v
+
+        l.debug("New doc created (with %d keys)" % len(newdoc))
+        r = server.saveDoc(options.couchdb, newdoc, docid)
+        if r.has_key('error') and r['error'] == 'not_found':
+            #maybe the db isn't created -yet- try that
+            l.warning("Db is not created? Trying..")
+            server.createDb(options.couchdb)
+            r = server.saveDoc(options.couchdb, newdoc, docid)
+            if r.has_key('error'):
+                l.error("Error writing document")
+                prettyPrint(newdoc)
+                prettyPrint(r)
+                sys.exit(-1)
+
+        elif r.has_key('error'):
+            l.error("Error writing document")
+            prettyPrint(newdoc)
+            prettyPrint(r)
+            sys.exit(-1)
+        else:
+            l.info("Success, document is written to the db")
+            sys.exit()
+        sys.exit()
+
+    if command == 'get':
+        docid, query = args[1], args[2]
+        doc = server.openDoc(options.couchdb, docid)
+        if not doc:
+            l.error("Cannot find document /moa/%s" % docid)
+            sys.exit(-1)
+        if not doc.has_key(query):
+            l.error("Cannot find document /moa/%s/%s" % (docid, query))
+            sys.exit(-1)
+            
+        print doc[query]
+        sys.exit()
+
+    if command == 'ids':
+        alldocs = server.allDocs(options.couchdb)
+        for doc in alldocs['rows']:
+            print doc['id']
+
+    if command == 'doc':
+        docid = args[1]
+        doc = server.openDoc(options.couchdb, docid)
+        print simplejson.dumps(doc, sort_keys=True, indent=4)
 
 
