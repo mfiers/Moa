@@ -12,9 +12,18 @@ moa_description_blat = Run BLAT on an set of input files (query) vs a database.
 #variables
 moa_must_define += blat_db
 blat_db_help = Blat db file (multifasta)
+blat_db_cdbattr = fastafile
 
-moa_must_define += blat_input_dir
+moa_may_define += blat_input_file
+blat_input_file_help = input query file. If this variable is not \
+  defined, the combination of blat_input_dir and blat_input_extension \
+  is used to find a list of input files
+
+blat_input_file_cdbattr = fastafile
+
+moa_may_define += blat_input_dir
 blat_input_dir_help = input dir with the query files (in multifasta)
+blat_input_dir_cdbattr = fastadir
 
 moa_must_define += blat_gff_source
 blat_input_dir_help = source field in the generated gff
@@ -29,6 +38,7 @@ blat_eval_help = evalue cutoff to select the reported hits on \
 moa_may_define += blat_db_id_list
 blat_db_id_list_help = a sorted list of db ids and descriptions, enhances \
   the report generated
+blat_db_id_list_cdbattr = idlist
 
 moa_may_define += blat_db_type blat_query_type
 blat_db_type_help = type of the database (dna, prot or dnax)
@@ -44,17 +54,31 @@ blat_eval ?= 1e-15
 blat_db_type ?= dna
 blat_query_type ?= dna
 
+ifdef blat_input_file
+blat_input_files = $(blat_input_file)
+blat_input_dir = $(shell dirname $(blat_input_file))
+blat_input_extension = $(shell echo "$(blat_input_file)" \
+										| awk -F . '{print $$NF}')
+else 
+blat_input_files = $(wildcard $(blat_input_dir)/*.$(blat_input_extension))
+endif
+
 blat_output_files = $(addprefix ./out/, \
   $(patsubst %.$(blat_input_extension), %.out, \
-    $(notdir $(wildcard $(blat_input_dir)/*.$(blat_input_extension)))))
+    $(notdir $(blat_input_files))))
 
 blat_report_files =  $(addprefix ./report/, \
   $(patsubst %.$(blat_input_extension), %.report, \
-    $(notdir $(wildcard $(blat_input_dir)/*.$(blat_input_extension)))))
+    $(notdir $(blat_input_files))))
 
 blat_gff_files = $(addprefix ./gff/, \
   $(patsubst %.$(blat_input_extension), %.gff, \
-    $(notdir $(wildcard $(blat_input_dir)/*.$(blat_input_extension)))))
+    $(notdir $(blat_input_files))))
+
+test:
+	@echo $(blat_output_files)
+	@echo $(blat_report_files)
+	@echo $(blat_gff_files)
 
 .PHONY: blat_prepare
 blat_prepare:
@@ -68,7 +92,6 @@ blat_post: blat_report
 blat: $(blat_gff_files)
 
 blat_report: blat_report_prep $(blat_report_files)
-
 
 $(blat_gff_files): ./gff/%.gff : ./out/%.out
 	@echo Creating gff $@ from $<	

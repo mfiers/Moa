@@ -67,11 +67,10 @@ $(one_blast_db_file): $(fasta_file)
 	formatdb -i $< -p $(bdb_protein) -o T -n $(bdb_name)
 
 $(fasta_file): $(input_files)
-	-rm -f $(fasta_file)
-	@for x in $^; do \
-		cat $$x >> $(fasta_file) ;\
-		echo >> $(fasta_file) ;\
-	done
+	find $(bdb_input_dir) -type f \
+		-name "*.$(bdb_input_extension)" \
+		| xargs -n 100 cat \
+		> $(fasta_file)
 
 .PHONY: create_id_list
 create_id_list: $(bdb_name).list
