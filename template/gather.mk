@@ -67,7 +67,7 @@ gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find 
 
 touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
 touch/%: %
-	@echo considering $< - $(g_target)
+	@$(call echo,gatherer: considering $< - $(g_target))
 	$(g_process)
 	@touch $@
 

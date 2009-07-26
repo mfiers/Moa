@@ -166,7 +166,7 @@ couchserver ?= 127.0.0.1:5984
 couchdb ?= moa
 
 ## Define the function to get stuff from the couch db
-cget = $(shell moacouch -d $(couchdb) -s $(couchserver) get $(1))
+cget = $(shell moa -d $(couchdb) -s $(couchserver) get $(1))
 
 .PHONY: register
 register: moa_register
@@ -174,10 +174,14 @@ register: moa_register
 .PHONY: moa_register
 moa_register: moa_check_jid
 	@$(call echo,Calling moa register. Couchdb server: $(couchserver))
-	@moacouch -v -s $(couchserver) -d $(couchdb) register $(jid) \
+	@moa -v -s $(couchserver) -d $(couchdb) register $(jid) \
 		moa_ids="$(moa_ids)" pwd="`pwd`" date="`date`" \
 		$(foreach v, $(moa_must_define), $(v)="$($(v))") \
+		$(foreach v, $(addsuffix  __couchdb,$(moa_must_define)), \
+							$(if $($(v)),$(v)="$($(v))")) \
 		$(foreach v, $(moa_may_define), $(v)="$($(v))") \
+		$(foreach v, $(addsuffix  __couchdb,$(moa_may_define)), \
+							$(if $($(v)),$(v)="$($(v))")) \
 		$(foreach v, $(moa_register_extra), $(v)=$(moa_register_$(v)))
 
 moa_register_%:
@@ -236,49 +240,116 @@ checkvar_%:
 		exit -1; \
 	fi
 
-# Set a variable!
+################################################################################
+## make set/append #############################################################
+#
+#### Store regular variables in moa.mk
+#
+# Usage: make set var=value
+#   or:
+# Usage: make append var=value
+#
+# Regular variables are stored in moa.mk in the following way:
+#
+# VARNME = VALUE
+#
+# or, if append is called:
+#
+# VARNAME += VALUE
+#
+# make set/append can be used to store any definable variable (from
+# moa_must_define & moa_may_define and stores them as key-value pairs
+# in moa.mk
+#
+################################################################################
+
 .PHONY: set
 set: set_mode =
 set: set_prepare $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
 .PHONY: set_prepare
 set_prepare:
-	touch moa.mk
+	@touch moa.mk
 
 # or append
 .PHONY: append
 append: set_mode="+"
 append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
 
-#determines which attribute we want from couchdb - either it's defined 
-#using id:attr, or its defined in the defining Makefile via $*__cdbattr
-#else use pwd.
-cdbsplit = $(word 1,$(call split,:,$(1))) \
-	$(call first, $(word 2,$(call split,:,$(1))) $($(2)_cdbattr) pwd) 
-
-.PHONY: storevar_%
+#.PHONY: storevar_%
 storevar_%:
-	@#A regular value
+	@$(call, Processing $*)
 	@if [ "$(origin $*)" == "command line" ]; then \
 		mv moa.mk moa.mk.backup ;\
-		cat moa.mk.backup | grep -v "^$* *[\+=]" > moa.mk ;\
-		if [ ! "$$cval" == "-" ]; then \
+		cat moa.mk.backup \
+			| grep -v "^$* *[\+=]" \
+			| grep -v "^$*__couchdb *[\+=]" \
+				> moa.mk ;\
+		if [ ! "$($*)" == "-" ]; then \
 			$(call echo, Set $* to '$($*)') ;\
 			echo "$* $(set_mode)= $($*)" >> moa.mk ;\
 		else \
 			$(call echo, Removing $* from moa.mk) ;\
 		fi ;\
 	fi
+
+
+################################################################################
+## make cset ###################################################################
+#
+#### Store couchdb variables in moa.mk
+#
+# usage: make cset Varname=couchdb_id:couchdb_attr
+#                                    ^-- note: colon
+#  or:
+# usage: make cset Varname=couchdb_id
+#
+#
+# Couchdb variables are stored in moa.mk in the following way:
+#
+# VARNAME__couchdb = couchdb-id couchdb-attribute
+#                              ^-- note: space
+#
+# During the initialization phase of Moa makefile execution all *__couchdb
+# variables are retrieved from couchdb and subsequently cached in moa.mk as
+# regular variables. If a variable is defined as both couchdb & regular var,
+# the regular var will get overwritten!
+#
+# A couchdb variable can defined on the commandline with or without an
+# attribute defined. If the attribute is ommitted, moa looks for a
+# default attribute, defined as VARNAME_cdbattr in the Makefile. If
+# that also doesn't exists, pwd is used as the attribute, pointing to
+# the directory where the other job lives.
+#
+################################################################################
+
+#determines which attribute we want from couchdb - either it's defined 
+#using id:attr, or its defined in the defining Makefile via $*__cdbattr
+#else use pwd.
+#cdbsplit returns: coubdb_id couchdb_attribute
+#if no attribute can be determine
+cdbsplit = $(call first,$(call split,:,$(1))) \
+	$(call first, $(word 2,$(call split,:,$(1))) $($(2)_cdbattr) pwd) 
+
+#store couchdb variables
+.PHONY: cset
+cset: cset_prepare $(addprefix store_cdbvar_, $(moa_must_define) $(moa_may_define))
+
+.PHONY: cset_prepare
+cset_prepare:
+	touch moa.mk
+
+store_cdbvar_%:
 	@#A couchdb value
-	@if [ "$(origin c__$*)" == "command line" ]; then \
-		$(call echo, set $* to couchdb: $(c.$*)) ;\
+	@if [ "$(origin $*)" == "command line" ]; then \
+		$(call echo, set $* to couchdb: $($*)) ;\
 		mv moa.mk moa.mk.backup ;\
 		cat moa.mk.backup \
 			| grep -v "^$* *[\+=]" \
 			| grep -v "^$*__couchdb *[\+=]" \
 				> moa.mk ;\
-		$(call echo,"$*__couchdb=$(call cdbsplit,$(c__$*),$*)") ;\
-		echo "$*__couchdb=$(call cdbsplit,$(c__$*),$*)" >> moa.mk ;\
+		$(call echo,"$*__couchdb=$(call cdbsplit,$($*),$*)") ;\
+		echo "$*__couchdb=$(call cdbsplit,$($*),$*)" >> moa.mk ;\
 	fi
 
 
