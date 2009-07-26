@@ -7,7 +7,7 @@
 \title{Annotation of the potato genome using GNU-make}
 \author{Mark Fiers, Susan Thomson, Jeanne Jacobs}
 
-Introduction
+\section{Introduction}
 
 An increase in genome sequencing capacity requires a matching increase in
 the capability to analyse the sequence. Plant \& Food Research is part
@@ -15,54 +15,77 @@ of the international Potato Genome Sequencing Consortium (PGSC). To
 make optimal use of the sequence it needs to be annotated as it is
 generated. 
 
-Genome annotation is a complicated, multifaceted procedure. Many
-interdependent operations are required to be executed on thousands of
-different objects. There are many tools around that can assist in
-genome annotation, but most of these tools have one or more drawbacks
-concerning installation, capacity and flexibility.
+Genome annotation is a complex operation. Multiple interdependent
+analyses steps need to be executed on many, often thousands, different
+objects. There is a multitude of tools around that assist in the
+process of genome annotation. Many of these tools, however, have one
+or more drawbacks concerning installation, capacity and flexibility.
 
-Particularly flexibility is a major problem in bioinformatics as no
-two experiments are alike. An common solution is to develop custom
-scripts that handle (a part of) a problem. Such scripts should,
-ideally be integrated in an analysis pipeline, able to interact with
-other, more standardized, building blocks.
+Particularly flexibility is a major issue as almost each experiment
+has differing analysis requirements. A common solution is to develop
+custom scripts that handle (a part of) the analysis pipeline. Such
+scripts should, ideally, be an integral part of the pipeline,
+interacting with other, more standardized, building blocks.
 
-Here we describe how to create flexible pipelines, able to embed
-customized scripts and capable of processing large amounts of data. We
-build these pipelines using a widely available piece of software:
-``GNU Make''.
+\section{GNU Make and Moa}
 
-Gnu Make is a commonly used tool to compile software. Compiling
-software requires the processing of many interdependent source
-files. Such compilation pipelines are described in ``Makefiles'' that
-are used by GNU Make to automate the whole process.
+In this poster we describe how to create flexible pipelines, able to
+embed customized scripts and capable of processing large amounts of
+data. We build these pipelines using a widely available piece of
+software: ``GNU Make''.
 
-We have created a set of generic Makefiles, and some helper scripts,
-that describe common operations in genome annotation (amongst others:
-Blast, Blat, Glimmer and Bowtie). These Makefiles act as building
-blocks of an annotation pipeline. The structure of these Makefiles
-allow easy embedding of customized scripts and, hence, the ability to
-generate very flexible pipelines.
+Gnu Make is a ubiquitous tool that aids in compiling software.
+Compilation requires the processing of many interdependent source
+files. The compilation process is described in a ``Makefile'',
+sequently used by GNU Make to automate the process.
+
+We have created a set of generic Makefiles. The Makefiles describe
+common operations in genome annotation (amongst others: Blast, Blat,
+Glimmer, GMap and Bowtie). The Makefiles are developed to closely work
+together as building blocks in an annotation pipeline. The structure
+of the Makefiles allows for easy embedding of custom scripts and,
+hence, the ability to generate very flexible pipelines. The combined
+software is called Moa.
+
+By careful design, and by making optimal use of GNU Make, the Moa software
+is capable of:
+ 
+\begin{itemize}
+\item Seamlessly chain building blocks. All Makefiles are written to
+  make use of the output of other components.
+\item Parallel execution of multiple jobs, faciliated by GNU Make.
+\item Embedding custom scripts as an integral part of a pipeline.
+\item Repeat only those jobs what are necessary (after a data update).
+\item Tracking provenance. The pipeline structure and all intermediate
+  data are stored as files, making them easily accessible.
+\item Upload data to a Generic Genome Browser database for
+  visualization.
+\end{itemize}
 
 \section{Usage}
 
-The software aims at providing capable bioinformaticians a framework
-that allows them to easily
-
-At the heart of the Makefiles is a library that provides a uniform
-interface to using the Makefiles as building blocks in an annotation
-pipeline. 
-
+The software aims at providing a bioinformaticist a framework that
+facilitates the building of annotation pipelines without losing
+flexibility. All Makefiles use an underlying library that provides a
+uniform command line interface to using the software. Figure 1 shows a
+short session that shows how to use Moa.
 
 \section{Application}
 
-Using these Makefiles we have build a pipeline (see Figure 1) that has
-generated a genome annotation for 1300+ potato BAC sequences.
+Using these Makefiles we have build a pipeline (see Figure 2) that
+annotates 1300+ potato BAC sequences. It is possible to reexecute the
+pipeline, or parts of it, after a set interval. 
 
-\section{Conclusion}
+\section{Captions}
 
-\bibliographystyle{plain}
-\bibliography{poster}
+\textbf{Figure 1} This figure show a small session on how to run a Moa pipeline. 
+
+
+\textbf{Figure 2}: A representation of (a part of) the current potato
+genome annotation pipeline.
+
+%\bibliographystyle{plain}
+%\bibliography{poster}
 \end{document}
 
 % LocalWords:  internet Ensembl bioinformaticians Makefile workflow workflows
