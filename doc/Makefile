@@ -3,7 +3,7 @@ moaversion := `cat ../VERSION`
 gitversion := `git-log --pretty=oneline -n 1 manual.main.tex | cut -f 1 -d' '`
 gitbranch := `git branch | grep "*" | cut -c3-`
 
-all: *.tex
+all: $(wildcard *.tex)
 	cat manual.main.tex | sed "s/#DATE#/$(today)/" \
 	    | sed "s/#GITVERSION#/$(gitversion)/" \
 	    | sed "s/#MOAVERSION#/$(moaversion)/" \
@@ -14,3 +14,7 @@ all: *.tex
 	bibtex manual
 	pdflatex manual.tex
 	pdflatex manual.tex
+
+poster: poster.tex
+	pdflatex poster.tex
+	pdflatex poster.tex
