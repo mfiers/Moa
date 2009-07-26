@@ -1,3 +1,0 @@
--     2009-01-23 16:43:24,965 DEBUG           __init__.py:1445     Start of kea status
--     2009-01-23 16:43:24,966 DEBUG           __init__.py:1445     in /home/cflmwf/project/kea/doc/manual (with default .kea config dir)
-##### 2009-01-23 16:43:24,966 CRITICAL        __init__.py:1402     no configuration is found, cannot execute "status"

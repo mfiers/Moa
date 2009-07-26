@@ -231,7 +231,7 @@ if __name__ == "__main__":
         for x in args[2:]:
             l.debug("registring %s" % x)
             k,v = x.split('=', 1)
-            #handle moa_ids - it's a list
+            #process the moa_ids - make it a list
             if k == 'moa_ids': newdoc[k] = v.split()
             else: newdoc[k] = v
 
@@ -244,7 +244,7 @@ if __name__ == "__main__":
             r = server.saveDoc(options.couchdb, newdoc, docid)
             if r.has_key('error'):
                 l.error("Error writing document")
-                prettyPrint(newdoc)
+                l.debug(
                 prettyPrint(r)
                 sys.exit(-1)
 
