@@ -31,9 +31,6 @@ errr = echo -e "$(moamark)$(warn_on) -- $(1) -- $(warn_off)"
 ## If moa.mk is defined, import it.
 ## moa.mk is used to store local variables
 
-## Define number of processors to be used
-MOA_PROCESSORS ?= 3
-
 ifndef MOAMK_INCLUDE
 -include ./moa.mk
 MOAMK_INCLUDE=done
@@ -92,7 +89,7 @@ moa_check_target:
 moa_main_targets:
 	@for moa_main_target in $(moa_ids); do \
 		$(call echo,calling $$moa_main_target) ;\
-		$(MAKE) $$moa_main_target -j $(MOA_PROCESSORS) ;\
+		$(MAKE) $$moa_main_target ;\
 	done
 
 execorder:
