@@ -261,38 +261,30 @@ checkvar_%:
 # moa_must_define & moa_may_define and stores them as key-value pairs
 # in moa.mk
 #
+# To make writing to the moa.mk file safe for parallel operations,
+# it's being done by the moa utility script. I could not come up with
+# a satisfactory locking mechanism that plays well with make/bash 
+#
 ################################################################################
 
 .PHONY: set
-set: set_mode =
-set: set_prepare $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
+set: set_mode=set
+set: set_func=$(1)="$($(1))"
+set: __set
 
-.PHONY: set_prepare
-set_prepare:
-	@touch moa.mk
-
-# or append
 .PHONY: append
-append: set_mode="+"
-append: $(addprefix storevar_, $(moa_must_define) $(moa_may_define))
+append: set_mode=append
+append: set_func=$(1)="$($(1))"
+append: __set
 
-#.PHONY: storevar_%
-storevar_%:
-	@$(call, Processing $*)
-	@if [ "$(origin $*)" == "command line" ]; then \
-		mv moa.mk moa.mk.backup ;\
-		cat moa.mk.backup \
-			| grep -v "^$* *[\+=]" \
-			| grep -v "^$*__couchdb *[\+=]" \
-				> moa.mk ;\
-		if [ ! "$($*)" == "-" ]; then \
-			$(call echo, Set $* to '$($*)') ;\
-			echo "$* $(set_mode)= $($*)" >> moa.mk ;\
-		else \
-			$(call echo, Removing $* from moa.mk) ;\
-		fi ;\
-	fi
-
+.PHONY: __set
+__set:
+	moa -v conf $(set_mode) \
+		$(foreach v, $(moa_must_define) $(moa_may_define), \
+			$(if $(call seq,$(origin $(v)),command line), \
+				$(call set_func,$(v)) \
+			) \
+		)
 
 ################################################################################
 ## make cset ###################################################################
@@ -331,61 +323,37 @@ storevar_%:
 cdbsplit = $(call first,$(call split,:,$(1))) \
 	$(call first, $(word 2,$(call split,:,$(1))) $($(2)_cdbattr) pwd) 
 
-#store couchdb variables
 .PHONY: cset
-cset: cset_prepare $(addprefix store_cdbvar_, $(moa_must_define) $(moa_may_define))
+cset: set_mode=set
+cset: set_func=$(1)__couchdb="$(call cdbsplit,$($(1)),$(1))"
+cset: __set
 
-.PHONY: cset_prepare
-cset_prepare:
-	touch moa.mk
-
-store_cdbvar_%:
-	@#A couchdb value
-	@if [ "$(origin $*)" == "command line" ]; then \
-		$(call echo, set $* to couchdb: $($*)) ;\
-		mv moa.mk moa.mk.backup ;\
-		cat moa.mk.backup \
-			| grep -v "^$* *[\+=]" \
-			| grep -v "^$*__couchdb *[\+=]" \
-				> moa.mk ;\
-		$(call echo,"$*__couchdb=$(call cdbsplit,$($*),$*)") ;\
-		echo "$*__couchdb=$(call cdbsplit,$($*),$*)" >> moa.mk ;\
-	fi
-
+################################################################################
+## make show ###################################################################
+#
+#### Show the current variables from moa.mk
+#
+################################################################################
 
 .PHONY: show showvar_%
-show: moa_prepare_var $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
-
-moa_couch_filter = $(if $(call sne,$(origin $(1)__couchdb),undefined), $(1))
-
-moa_prepare_vars = $(addprefix moa_prepvar_, \
-					$(call map,moa_couch_filter, \
-						$(moa_must_define) $(moa_may_define)))
-.PHONY: moa_prepare_var
-moa_prepare_var: $(moa_prepare_vars) 
-	@#$(call echo,Called moa_prepare vars)
-	@#$(call echo,  for $(moa_prepare_vars))
-
-#.PHONY: $(moa_prepare_vars)
-moa_prepvar_%: 
-	@#$(call echo, Running moa_prepare_var $*)
-	@#set the $* variable to the currenct couchdb val
-	$(eval $*=$(call cget,$($*__couchdb)))
-	@#store this in moa.mk as the actual value - this prevent
-	@#prepvar having to be re-executed
-	@if ! grep -q -E "^$*=$($*)$$" moa.mk; then \
-		#$(call echo, Caching couchdb value $* in moa.mk) ;\
-		mv moa.mk moa.mk.backup ;\
-		cat moa.mk.backup \
-			| grep -v "^$* *[\+=]" \
-				> moa.mk ;\
-		echo "$*=$(call cget,$($*__couchdb))" >> moa.mk ;\
-	fi
-
+show: moa_prepare_var \
+	$(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 moa_showvar_%:		 
 	@echo -e "$*\t$($*)"
 
 
+################################################################################
+## make moa_prepare_var ########################################################
+#
+#### Cache couchdb values in moa.mk
+#
+# Handled by the moa script, to prevent any possible race condition
+#
+################################################################################
+
+.PHONY: moa_prepare_var
+moa_prepare_var: 
+	@moa conf cache
 
 # Traversal through subdirectories.
 
