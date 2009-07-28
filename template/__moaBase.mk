@@ -32,6 +32,7 @@ errr = echo -e "$(moamark)$(warn_on) -- $(1) -- $(warn_off)"
 ## moa.mk is used to store local variables
 
 ifndef MOAMK_INCLUDE
+$(shell moa conf cache)
 -include ./moa.mk
 MOAMK_INCLUDE=done
 endif
@@ -159,27 +160,33 @@ name_help = A unique project name defining this job. Cannot have spaces.
 
 ##############################################################################
 ## Register this job usine Apache Couchdb
+## Don't use couchdb per default! 
+usecouchdb ?= F
 couchserver ?= 127.0.0.1:5984
 couchdb ?= moa
 
-## Define the function to get stuff from the couch db
-cget = $(shell moa -d $(couchdb) -s $(couchserver) get $(1))
+.PHONY: moa_couchdb_unset
+moa_couchdb_unset:
+	@$(call errr,Couchdb is turned off!)
+	@$(call errr,Have a look at: $(MOABASE)/etc/moa.conf.mk)
 
 .PHONY: register
 register: moa_register
 
 .PHONY: moa_register
 moa_register: moa_check_jid
-	@$(call echo,Calling moa register. Couchdb server: $(couchserver))
-	@moa -v -s $(couchserver) -d $(couchdb) register $(jid) \
-		moa_ids="$(moa_ids)" pwd="`pwd`" date="`date`" \
-		$(foreach v, $(moa_must_define), $(v)="$($(v))") \
-		$(foreach v, $(addsuffix  __couchdb,$(moa_must_define)), \
-							$(if $($(v)),$(v)="$($(v))")) \
-		$(foreach v, $(moa_may_define), $(v)="$($(v))") \
-		$(foreach v, $(addsuffix  __couchdb,$(moa_may_define)), \
-							$(if $($(v)),$(v)="$($(v))")) \
-		$(foreach v, $(moa_register_extra), $(v)=$(moa_register_$(v)))
+	@if [ "$(usecouchdb)" == "T" ]; then \
+		$(call echo,Calling moa register. Couchdb server: $(couchserver)) ;\
+		moa -v -s $(couchserver) -d $(couchdb) register $(jid) \
+			moa_ids="$(moa_ids)" pwd="`pwd`" date="`date`" \
+			$(foreach v, $(moa_must_define), $(v)="$($(v))") \
+			$(foreach v, $(addsuffix  __couchdb,$(moa_must_define)), \
+								$(if $($(v)),$(v)="$($(v))")) \
+			$(foreach v, $(moa_may_define), $(v)="$($(v))") \
+			$(foreach v, $(addsuffix  __couchdb,$(moa_may_define)), \
+								$(if $($(v)),$(v)="$($(v))")) \
+			$(foreach v, $(moa_register_extra), $(v)=$(moa_register_$(v))) ;\
+	fi
 
 moa_register_%:
 	weka2 set moa.$(project).$(moa_main_id).$(name).$* $($*)
@@ -323,7 +330,7 @@ cdbsplit = $(call first,$(call split,:,$(1))) \
 .PHONY: cset
 cset: set_mode=set
 cset: set_func=$(1)__couchdb="$(call cdbsplit,$($(1)),$(1))"
-cset: __set
+cset: $(if $(call seq,$(usecouchdb),T), __set, moa_couchdb_unset)
 
 ################################################################################
 ## make show ###################################################################
@@ -349,8 +356,11 @@ moa_showvar_%:
 ################################################################################
 
 .PHONY: moa_prepare_var
-moa_prepare_var: 
-	@moa conf cache
+moa_prepare_var:
+	@if [ "$(usecouchdb)" == "T" ]; then \
+		moa conf cache ;\
+	fi
+
 
 # Traversal through subdirectories.
 
