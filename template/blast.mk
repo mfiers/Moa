@@ -1,5 +1,4 @@
-
-#main: moa_default_target
+#Run BLAST
 
 # Variable checks & definition & help
 moa_ids += blast
@@ -158,4 +157,4 @@ blast_report: $(blast_output_files)
 blast_clean:
 	-rm -rf ./gff/
 	-rm -rf ./out/
-	-rm report
+	-rm blast_report
