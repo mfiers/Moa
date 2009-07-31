@@ -1,8 +1,5 @@
-Makea
+Moa - makefiles in bioinformatics.
 
-A set of generic makefiles to be used in Bioinformatics
+for installation instructions, please read: INSTALL
 
-for installation read: INSTALL
-
-
-
+The manual can eventually be found in ./doc/manual
