@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+"""
+Splits a multifasta file.
+
+Should do this with seqretsplit from emboss. but that results in a
+discrepancy between the fasta header and the filename. 
+
+"""
+import time
+import sys
+import os
+import copy
+import optparse
+
+def fastareader(f):
+    F = open(f)
+    name, head, seq = "",  "", []
+    while True:
+        l = F.readline()
+        if not l: break
+        
+        l = l.strip()
+        if not l: continue
+
+        if l[0] == '>':
+            if name and seq:
+                yield name, head, "".join(seq)
+            seq = []
+            ls = l[1:].split(None, 1)
+            name = ls[0]
+            if len(ls) > 1: head = ls[1]
+            if name[:2] == 'gi':
+                head = name + " " + head
+                name = "GI" + name.split("|",2)[1]
+        else:
+            seq.append("".join(l.split()).lower())
+
+    if name and seq:
+        yield name, head, "".join(seq)
+
+    F.close()
+
+parser = optparse.OptionParser()
+
+parser.set_defaults(out='./fasta')
+parser.add_option('-o', '--out', dest='out',
+    help = 'output directory to write to')
+
+parser.add_option('-f', '--fasta', dest='fasta',
+    help = 'fasta file to extract from')
+
+(options, args) = parser.parse_args()
+
+if not options.fasta:
+    raise "Must define a fasta file!"
+
+i = 0
+for name, head, seq in fastareader(options.fasta):
+    outfile = os.path.join(options.out, name + '.fasta')
+    F = open(outfile, 'w')
+    F.write(">%s %s\n%s\n" % (name, head, seq))
+    F.close()
+
+
