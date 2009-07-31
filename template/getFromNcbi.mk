@@ -43,12 +43,10 @@ getFromNcbi_prepare:
 .PHONY: getFromNcbi_post
 getFromNcbi_post:
 
-
-getFromNcbi: fasta_files
-
-.PHONY: fasta_files
-fasta_files: tmp.fasta
-	fastaSplitter -f tmp.fasta -o fasta	
+.PHONY: getFromNcbi
+getFromNcbi: tmp.fasta
+	fastaSplitter -f tmp.fasta -o fasta
+	touch lock
 
 #the fasta file as downloaded from NCBI
 tmp.fasta: webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
@@ -58,15 +56,12 @@ tmp.fasta: tmp.xml
 		-O tmp.fasta
 
 #tmp.xml contains the IDs of the sequences to download
-tmp.xml: executed
+tmp.xml: 
 	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
 		-O tmp.xml
-
-executed:
-	touch executed
 
 getFromNcbi_clean:
 	-rm -r fasta
 	-rm tmp.xml
 	-rm tmp.fasta
-	-rm executed
+	-rm getFromNcbi

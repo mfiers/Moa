@@ -32,9 +32,11 @@ g_output_dir_help = Output subdirectory, defaults to '.'
 moa_may_define += g_process
 g_process_help = Command to process the files. If undefined, hardlink the files. 
 
-moa_may_define += g_limit
+moa_may_define += g_limit g_powerclean
 g_limit_help = limit the number of files gathered (with the most recent \
- files first, defaults to 1mln)
+  files first, defaults to 1mln)
+g_powerclean_help = Do brute force cleaning (T/F). Remove all files, \
+  except moa.mk & Makefile when calling make clean. Defaults to F.
 
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
@@ -47,9 +49,11 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 g_name_sed ?= 's/a/a/'
 #name_sed ?= s/\.genbank\.htg\.[0-9]/.fasta/
 g_output_dir ?= .
+g_powerclean ?= F
 g_limit ?= 1000000
 g_process ?= ln -f $< $(g_target)
-gather_link_noclean ?= Makefile moa.mk 
+gather_link_noclean ?= Makefile moa.mk
+
 .PHONY: gather_link_run
 vpath % $(g_input_dir)
 
@@ -71,6 +75,12 @@ touch/%: %
 	$(g_process)
 	@touch $@
 
-gather_clean:
+gather_clean: find_exclude_args = \
+	$(foreach v, $(gather_link_noclean), -not -name $(v))
+gather_clean: 
 	if [ ! "$(g_output_dir)" == "." ]; then rm -rf $(g_output_dir); fi
 	-rm -rf touch
+	if [ "$(g_powerclean)" == "T" ]; then
+		find . -maxdepth 1 -type f $(find_exclude_args) \
+			| xargs -n 20 rm -f ;\
+	fi
