@@ -42,12 +42,13 @@ lftp_url_help = The base url to download from
 lftp_pattern_help = glob pattern to download
 
 #variables that may be defined
-moa_may_define += lftp_timestamp lftp_powerclean
+moa_may_define += lftp_timestamp lftp_powerclean lftp_noclean
 lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
  else a touchfile is created that you need to delete or touch before updating \
  (T/*F*)
 lftp_powerclean_help = Do brute force cleaning (T/F). Remove all files, \
   except moa.mk & Makefile when calling make clean. Defaults to F.
+lftp_noclean_help = set of files not to be deleted by the powerclean
 
 moa_may_define += lftp_user lftp_pass
 lftp_user_help = username for the remote site
@@ -75,7 +76,7 @@ lftp_powerclean ?= F
 lftp_user ?= NoNoNo
 lftp_pass ?= NoNoNo
 lftp_mode ?= mirror
-lftp_noclean ?= Makefile moa.mk 
+lftp_noclean +=  Makefile moa.mk 
 lftp_output_dir ?= .
 run_dos2unix ?= F
 
@@ -92,6 +93,7 @@ lftp:
 		if [ "$(lftp_mode)" == "mirror" ]; then \
 			lftp $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;\
 		else \
+			echo lftp -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
 			lftp -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
 		fi ;\
 	else \
@@ -99,6 +101,7 @@ lftp:
 			lftp -u $(lftp_user),$(lftp_pass) $(lftp_url) \
 				 -e "mirror -nrL -I $(lftp_pattern); exit" ;\
 		else \
+			echo "### lftp -u $(lftp_user),$(lftp_pass) -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ";\
 			lftp -u $(lftp_user),$(lftp_pass) -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
 		fi ;\
 	fi
@@ -117,7 +120,7 @@ lftp_clean:
 	@echo "start lftp_clean"
 	if [ ! "$(lftp_output_dir)" == "." ]; then rm -rf $(lftp_output_dir); fi
 	-rm lftp
-	if [ "$(lftp_powerclean)" == "T" ]; then
+	if [ "$(lftp_powerclean)" == "T" ]; then \
 		find . -maxdepth 1 -type f $(find_exclude_args) \
 			| xargs -n 20 rm -f ;\
 	fi

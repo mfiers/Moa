@@ -97,9 +97,8 @@ touch/%: %
 gather_clean: find_exclude_args = \
 	$(foreach v, $(gather_link_noclean), -not -name $(v))
 gather_clean: 
-	if [ ! "$(g_output_dir)" == "." ]; then rm -rf $(g_output_dir); fi
+	-if [ ! "$(g_output_dir)" == "." ]; then rm -rf $(g_output_dir); fi
 	-rm -rf touch
-	if [ "$(g_powerclean)" == "T" ]; then
-		find . -maxdepth 1 -type f $(find_exclude_args) \
-			| xargs -n 20 rm -f ;\
-	fi
+	-if [ "$(g_powerclean)" == "T" ]; then \
+		find . -maxdepth 1 -type f $(find_exclude_args) | \
+			xargs -n 20 rm -f ; fi
