@@ -56,8 +56,19 @@ gup_fasta_dir ?= ./fasta
 gup_upload_fasta ?= F
 gup_upload_gff ?= F
 
-gup_input_gff = $(wildcard $(gup_gff_dir)/*.$(gup_gff_extension))
-gup_input_fasta = $(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension))
+gup_input_gff := $(shell \
+	if [ "$(gup_upload_gff)" == "T" ]; then \
+		if [ -d "$(gup_gff_dir)" ]; then \
+			ls $(gup_gff_dir)/*.$(gup_gff_extension) ;\
+		fi ;\
+	fi)
+
+gup_input_fasta := $(shell \
+	if [ "$(gup_upload_fasta)" == "T" ]; then \
+		if [ -d $(gup_fasta_dir) ]; then \
+			ls $(gup_fasta_dir)/*.$(gup_fasta_extension) ;\
+		fi ;\
+	fi )
 
 # function to delete the results of one, a few and all input files
 # if sticking to a few rules this should work for most analyses.
@@ -65,22 +76,21 @@ gup_delete_single ?= bp_seqfeature_delete.pl -d $(gup_db) \
   -u $(gup_user) -n $(gup_gffsource)_`basename $< .gff`
 
 #delete a few files (file list in $?)
-gup_delete_few ?= bp_seqfeature_delete.pl -d $(gup_db) \
-  -u $(gup_user) \
-  -n $(addsuffix *,\
-       $(addprefix \
-         $(gup_gffsource)_, \
-         $(shell for f in $?; \
-                   do basename $$f .$(gup_gff_extension); \
-                 done) \
-        ) \
-      )
+gup_delete_few ?= bp_seqfeature_delete.pl -d $(gup_db) 				\
+	-u $(gup_user)													\
+	-n $(addsuffix *\",												\
+		$(addprefix \"$(gup_gffsource)_, 								\
+			$(shell 												\
+				for f in $(cs); 									\
+					do basename $$f .$(gup_gff_extension); 			\
+				done ) 												\
+			) 														\
+		)
 
 #delete all: Note, this will probably not work, the current version 
 # of bp_seqfeature_delete.pl seems to be broken
-gup_delete_all ?= bp_seqfeature_delete.pl -d $(gup_db) \
-  -u $(gup_user) \
-  -n $(gup_gffsource)_*
+gup_delete_all ?= bp_seqfeature_delete.pl -d $(gup_db) 				\
+						-u $(gup_user) -n $(gup_gffsource)_*
 
 # the default upload target runs make upload. This is to make sure
 # that possible files created by the rest of this makefile are read
@@ -102,26 +112,40 @@ upload2gbrowse:
 .PHONY: upload2gbrowse_post
 upload2gbrowse_post: 
 
+test: test_fasta test_gff
+
+test_fasta: $(gup_input_fasta)
+	@echo "identified $(words $(gup_input_fasta)) fasta files"
+	@echo "of which $(words $?) are scheduled to be uploaded"
+
+test_gff: $(gup_input_gff)
+	@echo "identified $(words $(gup_input_gff)) fasta files"
+	@echo "of which $(words $?) are scheduled to be uploaded"
+
+
 ## Do the actual upload
 .PHONY: upload2gbrowse2
 upload2gbrowse2: upload_fasta upload_gff
 	@echo "finished with upload to gbrowse" 
 
 upload_fasta: $(gup_input_fasta)
-	if [ "$(gup_upload_fasta)" == "T" ]; then \
-		echo "Uploading $(words $?) fasta files";\
-		bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $?;\
-		touch upload_fasta;\
-	fi
+	@# $(foreach st, $(shell seq 1 500 $(words $?)), 				\
+	    $(eval cs=$(wordlist $(st),									\
+						$(shell echo $$(( $(st) + 999 )) ),			\
+						$?))										\
+		$(shell bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) 	\
+							-f $(cs))								\
+	)
 
-upload_gff: $(gup_input_gff) 
-	if [ "$(gup_upload_gff)" == "T" ]; then \
-		echo "Uploading $(words $?) gff files";\
-		echo "deleting older stuff $(gup_delete_few)";\
-		$(gup_delete_few);\
-		bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $?;\
-		touch upload_gff;\
-	fi
+upload_gff: $(gup_input_gff)
+	@# $(foreach st, $(shell seq 1 500 $(words $?)), 				\
+	    $(eval cs=$(wordlist $(st),									\
+						$(shell echo $$(( $(st) + 999 )) ),			\
+						$?))										\
+		$(shell $(gup_delete_few)); 								\
+		$(shell bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) 	\
+							-f $(cs))								\
+	)
 
 .PHONY: upload2gbrowse_clean
 upload2gbrowse_clean: $(gup_input_gff)
@@ -129,4 +153,5 @@ upload2gbrowse_clean: $(gup_input_gff)
 	$(gup_delete_all)
 	-rm upload_gff
 	-rm upload_fasta
-
+	-rm upload_fasta_fof
+	-rm upload_gff_fof

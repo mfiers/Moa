@@ -88,7 +88,7 @@ blast_nothreads_help = threads to run blast with (note the \
 #preparing for gbrowse upload:
 gup_gff_dir = ./gff
 gup_upload_gff = T
-
+gup_gffsource ?= $(blast_gff_source)
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
@@ -108,25 +108,8 @@ blast_gff_files = $(addprefix gff/, \
 
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
-ifeq ($(blast_program), blastn)
- single_blast_db_file = $(blast_db).nhr
-endif 
 
-ifeq ($(blast_program), tblastn)
- single_blast_db_file = $(blast_db).nhr
-endif
-
-ifeq ($(blast_program), tblastx)
- single_blast_db_file = $(blast_db).nhr
-endif
-
-ifeq ($(blast_program), blastp)
- single_blast_db_file = $(blast_db).phr
-endif
-
-ifeq ($(blast_program), blastx)
- single_blast_db_file = $(blast_db).phr
-endif
+single_blast_db_file=$(shell ls $(blast_db)*.[pn]hr)
 
 test:
 	@echo $(blast_input_dir)
@@ -135,6 +118,8 @@ test:
 	@echo $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
 
 blast_test:
+	@echo "Input extension: '$(blast_input_extension)'"
+	@echo "a blastdb file: '$(single_blast_db_file)'"
 	@echo "No inp files $(words $(blast_input_files))"
 	@echo "No xml files $(words $(blast_output_files))"
 	@echo "No gff files $(words $(blast_gff_files))"

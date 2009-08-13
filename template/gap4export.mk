@@ -19,9 +19,6 @@
 #    See: http://github.com/mfiers/Moa/
 # export data from an assembly using gap4!
 
-# Main target - should be first in the file
-moa_main_target: check gap4export
-
 
 ################################################################################
 # Definitions
@@ -35,17 +32,12 @@ moa_ids += gap4export
 moa_title_gap4export = Assembly export using gap4
 moa_description_gap4export = Export data from an assembly using gap4
 
-# Output definition
-moa_outputs += g4ephase
-moa_output_g4ephase = ./BACID.phase
-moa_output_g4ephase_help = phase of the BAC (1-3)
-
 #varables that NEED to be defined
-moa_must_define += input_dir
-input_dir_help = Directory with the input data
+moa_must_define += ge_input_dir
+ge_input_dir_help = Directory with the input data
 
-moa_must_define += input_pattern
-input_pattern_help = file name pattern
+moa_must_define += ge_input_pattern
+ge_input_pattern_help = file name pattern
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -55,18 +47,22 @@ endif
 ################################################################################
 
 
-infiles = $(notdir $(shell find $(input_dir) -maxdepth 1 -name "$(input_pattern)" -type d))
-gap4export_phase = $(addsuffix .phase, $(infiles))
-gap4export_cons = $(addsuffix .contig.fasta, $(infiles))
-gap4export_gbfas = $(addsuffix .fasta, $(infiles))
+g4e_infiles = $(notdir $(shell find $(ge_input_dir) -maxdepth 1 -name "$(ge_input_pattern)" -type d))
+gap4export_phase = $(addsuffix .phase, $(g4e_infiles))
+gap4export_cons = $(addsuffix .contig.fasta, $(g4e_infiles))
+gap4export_gbfas = $(addsuffix .fasta, $(g4e_infiles))
 
-.PHONY: gap4export
-gap4export: gap4export_run
-	
-.PHONY: gap4export_run 
-gap4export_run: $(gap4export_phase) $(gap4export_cons) $(gap4export_gbfas)
+.PHONY: gap4export_prepare
+gap4export_prepare:
+	@echo $(gap4export_cons)
 
-$(gap4export_phase): %.phase : $(input_dir)/%
+.PHONY: gap4export_post
+gap4export_post:
+
+.PHONY: gap4export 
+gap4export: $(gap4export_phase) $(gap4export_cons) $(gap4export_gbfas)
+
+$(gap4export_phase): %.phase : $(ge_input_dir)/%
 	bacId=`basename $@ .phase` ;\
 		bac1phase=$</$$bacId.1.phase ;\
 		bacAphase=$</$$bacId.a.phase ;\
@@ -79,7 +75,7 @@ $(gap4export_phase): %.phase : $(input_dir)/%
 			echo "1" > $@ ;\
 		fi	
 
-$(gap4export_cons): %.contig.fasta : $(input_dir)/%
+$(gap4export_cons): %.contig.fasta : $(ge_input_dir)/%
 	@echo creating cons $@ from $<
 	export bacId=`basename $@ .contig.fasta` ;\
 		if [ -f $</$$bacId.1.aux ]; then \
@@ -102,37 +98,37 @@ $(gap4export_gbfas): %.fasta : %.contig.fasta %.contig.order
 		| union -sequence @stdin -outseq stdout \
 		| sed "s/>.*$$/>$$seqId/" \
 		> $@
-	
+
 %.contig.order:
 	@echo "looking at $@"
 	bacId=`basename $@ .contig.order` ;\
 		echo "bacId is $$bacId" ;\
 		phasefile=$$bacId.phase ;\
 		phase=`cat $$phasefile` ;\
-		catfile=$(input_dir)/$${bacId}/$${bacId}cat ;\
+		catfile=$(ge_input_dir)/$${bacId}/$${bacId}cat ;\
 		echo "CATFILE $$catfile" ;\
 		count=1 ;\
 		if [ -f $$catfile ]; then \
 			echo "CATFILE EXISTS!!!!! 0-------------------------------------" ;\
 			for x in `grep ">" $$catfile | cut -f 1 -d" " `; do \
-         		contig=`echo "$$x" | sed "s/>//"` ;\
-         		if [ $phase == "1" ]; then \
-            		echo -e "$$contig\t+\t$$count\t\t" >> $$bacId.contig.order ;\
-         		else \
-            		echo -e "$$contig\t+\t1\t\t" >> $$bacId.contig.order ;\
-         		fi ;\
-    	     	let count=count+1 ;\
+				contig=`echo "$$x" | sed "s/>//"` ;\
+				if [ $phase == "1" ]; then \
+					echo -e "$$contig\t+\t$$count\t\t" >> $$bacId.contig.order ;\
+				else \
+					echo -e "$$contig\t+\t1\t\t" >> $$bacId.contig.order ;\
+				fi ;\
+				let count=count+1 ;\
 	       done ;\
 		else \
-    		if [ "$$phase" == "1" ] ; then \
-    			cp $$bacId.contig.phase1.default.order $$bacId.contig.order ;\
-    		elif [ "$$phase" == "2" ] ; then \
-    			cp $$bacId.contig.phase2.default.order $$bacId.contig.order ;\
-    		else \
-    			echo "not phase 1 or 2, make your own contig order (should be simple enough, I just cannot be bothered right now" ;\
-    		fi ;\
-    	fi
-	
+			if [ "$$phase" == "1" ] ; then \
+				cp $$bacId.contig.phase1.default.order $$bacId.contig.order ;\
+			elif [ "$$phase" == "2" ] ; then \
+				cp $$bacId.contig.phase2.default.order $$bacId.contig.order ;\
+			else \
+				echo "not phase 1 or 2, make your own contig order (should be simple enough, I just cannot be bothered right now" ;\
+			fi ;\
+		fi
+
 #CLEAN	    
 .PHONY: clean    
 clean: pregap_clean
@@ -140,4 +136,3 @@ clean: pregap_clean
 .PHONY: pregap_clean
 pregap_clean:
 	@echo "TODO: Run clean"
-		

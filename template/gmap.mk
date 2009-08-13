@@ -74,7 +74,11 @@ output.raw: $(gmap_input_file)
 	gmap -D $(shell dirname $(gmap_db)) \
 		 -d $(shell basename $(gmap_db)) \
 		 $(gmap_extra_parameters) \
-		 -A $< -f 3 > $@
+		 -A $< -F -f 3 > $@
+	gmap -D $(shell dirname $(gmap_db)) \
+		 -d $(shell basename $(gmap_db)) \
+		 $(gmap_extra_parameters) \
+		 $< -A -F -i 10 > output.align
 
 gmap_clean:
 	-rm -f output.gff

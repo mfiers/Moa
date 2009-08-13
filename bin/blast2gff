@@ -116,15 +116,13 @@ def handle_blast_record(rec):
             if h.strand[0] == h.strand[1]: strand = '+'
             else: strand = '-'
                 
-            # idQ = "%s_h%s" % (basenameQ, hcount)
-            # idS = "%s_h%s" % (basenameS, hcount)
-            # 
             attribQ = ["ID=%s" % basenameQ,
                        "Name=%s" % basenameQ,
                        "Target=Sequence:%s %s %s" % (subject_id, ss, se),
                        "Hsp_expect=%s" % h.expect,
                        "Hsp_identities=%s" % str(h.identities),
-                       "Hsp_bits=%s" % h.bits,                   
+                       "Hsp_bits=%s" % h.bits,
+                       'Note="%s"' % full_subject_name
                         ]
     
             
@@ -133,17 +131,9 @@ def handle_blast_record(rec):
                        "Target=Sequence:%s %s %s" % (query_id, qs, qe),
                         "Hsp_expect=%s" % h.expect,
                         "Hsp_identities=%s" % h.identities,
-                       # "Hsp_frame=%s:%s" % h.frame,
-                       # "Hsp_strand=%s:%s" % h.strand,
                         "Hsp_bits=%s" % h.bits,
-                       # "Hsp_gaps=%s" % str(h.gaps),
                        ]
-                       
-            # if h.positives:
-               # attribQ.append("Hsp_positives=%s" % str(h.positives))
-               # attribS.append("Hsp_positives=%s" % str(h.positives))
-                           
-                       
+
             gff_queries.append(                
                 [query_id, options.source, 'match', qs, qe, 
                 h.score, strand, '.', ";".join(attribQ)])
@@ -151,58 +141,13 @@ def handle_blast_record(rec):
                 [subject_id, options.source, 'match', ss, se, 
                 h.score, strand, '.', ";".join(attribS)])
             
-            # #gahter statistics for the match
-            # if ss < m_ss: m_ss = ss
-            # if se > m_se: m_se = se
-            # if qs < m_qs: m_qs = qs
-            # if qe > m_qe: m_qe = qe
-            # if h.expect < m_eval: m_eval = h.expect
-            # if h.score > m_score: m_score = h.score
-            # if strand != m_strand: m_strand = '.'
-            # 
-        # attribQ = ["ID=%s" % basenameQ,
-                   # "Expect=%s" % m_eval,
-                   # "Target=Sequence:%s %s %s" % (subject_id, m_ss, m_se),				   
-                   # "Note=%s" % full_subject_name,
-                   # "Blast_program=%s" % rec.application,
-                   # "Blast_version=%s" % rec.version,
-                   # "Blast_database=%s" % cleanup_name(rec.database),
-                   # "Blast_seq_in_db=%s" % rec.num_sequences_in_database,
-                   # "Blast_letters_in_db=%s" % rec.num_letters_in_database,
-                   # "Blast_expect_cutoff=%s" % rec.expect,
-                   # "Blast_filter=%s" % rec.filter,
-                   # ]
-                   # 
-        # attribS = ["ID=%s" % basenameS, 
-                   # "Expect=%s" % h.expect,
-  				   # "Target=Sequence%s %s %s" % (query_id, qs, qe),
-                   # "Note=%s" % full_query_name,
-                   # "Blast_program=%s" % rec.application,
-                   # "Blast_version=%s" % rec.version,
-                   # "Blast_database=%s" % cleanup_name(rec.database),
-                   # "Blast_seq_in_db=%s" % rec.num_sequences_in_database,
-                   # "Blast_letters_in_db=%s" % rec.num_letters_in_database,
-                   # "Blast_expect_cutoff=%s" % rec.expect,
-                   # "Blast_filter=%s" % rec.filter,
-                   # ]
-# 
-        # gff_query_match = [query_id, options.source, 'match',
-                # m_qs, m_qe, m_score, m_strand, '.', ";".join(attribQ)]
-        # gff_subject_match = [subject_id, options.source, 'match',
-                # m_ss, m_se, m_score, m_strand, '.', ';'.join(attribS)]
-    # 
         if options.direction == 'both' or options.direction == 'query':
-            # if options.output_match:
-                # print "\t".join([str(x) for x in gff_query_match])
             for gg in gff_queries:
                 print "\t".join([str(x) for x in gg])
                 
         if options.direction == 'both' or options.direction == 'subject':
-            # if options.output_match:
-                # print "\t".join([str(x) for x in gff_subject_match])
             for ss in gff_subjects:
                 print "\t".join([str(x) for x in ss])
-
 
 print "##gff-version 3"
 try:

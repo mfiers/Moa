@@ -42,8 +42,9 @@ moa_must_define += f2g_gffsource
 f2g_gffsource_help = Source to be used in the gff
 
 #varables that MAY  be defined
-moa_may_define += f2g_input_dir 
-f2g_input_dir_help = Directory with the input fasta (default: ./fasta)
+moa_may_define += f2g_input_dir f2g_output_dir
+f2g_input_dir_help = Directory with the input fasta (default: ./fasta)	
+f2g_output_dir_help = Directory with the output gff (default: ./gff)
 
 moa_may_define += f2g_input_extension
 f2g_input_extension_help = glob pattern of the fasta files (default: *.fasta) 
@@ -60,20 +61,26 @@ endif
 
 f2g_options ?=
 f2g_input_dir ?= ./fasta
+f2g_output_dir ?= ./gff
 f2g_input_extension ?= fasta
 f2g_input_files = $(wildcard $(f2g_input_dir)/*.$(f2g_input_extension))
 f2g_output_files = \
-    $(addprefix ./gff/, \
+    $(addprefix $(f2g_output_dir)/, \
         $(patsubst %.fasta, %.gff, \
             $(notdir $(f2g_input_files) )\
         )\
      )
 
-.PHONY: prep concat fasta2gff fasta2gff_run fasta2gff_prep
+#if we;re going to upload this, prepare gff upload
+gup_gffsource ?= $(f2g_gffsource)
+gup_upload_fasta ?= T
+gup_upload_gff ?= T
 
 .PHONY: fasta2gff_prepare
 fasta2gff_prepare:
-	-mkdir gff
+	-@if [ ! "$(f2g_output_dir)" == "." ]; then \
+		mkdir $(f2g_output_dir) ;\
+	fi
 
 #rerun make, make sure all files are recognized
 .PHONY: fasta2gff
@@ -84,7 +91,7 @@ fasta2gff:
 fasta2gff2: $(f2g_output_files)
 	@echo fasta2gff2 - done
 
-$(f2g_output_files): gff/%.gff : $(f2g_input_dir)/%.$(f2g_input_extension)
+$(f2g_output_files): $(f2g_output_dir)/%.gff : $(f2g_input_dir)/%.$(f2g_input_extension)
 	fasta2gff $< -s $(f2g_gffsource) $(f2g_options) > $@
 
 .PHONY: fasta2gff_post
@@ -92,4 +99,6 @@ fasta2gff_post:
 
 .PHONY: fasta2gff_clean
 fasta2gff_clean:
-	-rm -rf gff	
+	-@if [ ! "$(f2g_output_dir)" == "." ]; then \
+		rm -rf $(f2g_output_dir) ;\
+	fi

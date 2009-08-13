@@ -72,6 +72,7 @@ jid ?= $(shell echo -n "moa_$(word 1 $,$(moa_ids))_"; \
 .PHONY: moa_default_target
 moa_default_target: moa_welcome \
   moa_prepare_var \
+  moa_check \
   moa_preprocess \
   $(addsuffix _prepare, $(moa_ids)) \
   moa_main_targets \
@@ -196,7 +197,7 @@ register: moa_register
 moa_register: moa_check_jid
 	@if [ "$(usecouchdb)" == "T" ]; then \
 		$(call echo,Calling moa register. Couchdb server: $(couchserver)) ;\
-		moa -v -s $(couchserver) -d $(couchdb) register $(jid) \
+		moa -s $(couchserver) -d $(couchdb) register $(jid) \
 			moa_ids="$(moa_ids)" pwd="`pwd`" date="`date`" \
 			$(foreach v, $(moa_must_define), $(v)="$($(v))") \
 			$(foreach v, $(addsuffix  __couchdb,$(moa_must_define)), \
@@ -302,7 +303,7 @@ append: __set
 
 .PHONY: __set
 __set:
-	moa -v conf $(set_mode) \
+	@moa conf $(set_mode) \
 		$(foreach v, $(moa_must_define) $(moa_may_define), \
 			$(if $(call seq,$(origin $(v)),command line), \
 				$(call set_func,$(v)) \
@@ -343,8 +344,8 @@ __set:
 #else use pwd.
 #cdbsplit returns: coubdb_id couchdb_attribute
 #if no attribute can be determine
-cdbsplit = $(call first,$(call split,:,$(1))) \
-	$(call first, $(word 2,$(call split,:,$(1))) $($(2)_cdbattr) pwd) 
+cdbsplit = $(call first,$(call split,^,$(1))) \
+	$(call first, $(word 2,$(call split,^,$(1))) $($(2)_cdbattr) pwd) 
 
 .PHONY: cset
 cset: set_mode=set

@@ -53,6 +53,7 @@ gmapdb_input_files = $(wildcard $(gmapdb_input_dir)/*.$(gmapdb_input_extension))
 
 .PHONY: gmapdb_prepare
 gmapdb_prepare:
+	@echo "--" $(gmapdb_input_files)
 
 .PHONY: gmapdb_post
 gmapdb_post:
@@ -64,11 +65,6 @@ gmapdb: Makefile.$(gmapdb_name)
 
 Makefile.$(gmapdb_name):
 	gmap_setup -S -d $(gmapdb_name) $(gmapdb_input_files)
-
-comma:=,
-#one of the database files
-$(gmapdb_name).1.ebwt: $(gmapdb_input_files)
-	gmap-build $(call merge,$(comma),$^) $(gmapdb_name)
 
 gmapdb_clean:
 	rm -f $(gmapdb_name).*

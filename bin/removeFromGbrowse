@@ -24,49 +24,35 @@ import sys
 
 con = MySQLdb.connect(user=sys.argv[1], db=sys.argv[2])
 
+typeid=int(sys.argv[3])
+sql = [
+    """DELETE FROM feature
+        WHERE typeid = %d
+        """ % typeid,
+    """DELETE name
+         FROM name
+         LEFT JOIN feature
+           ON name.id = feature.id
+        WHERE feature.id IS NULL
+        """,
+    """DELETE attribute
+         FROM attribute
+         LEFT JOIN feature
+           ON attribute.id = feature.id
+        WHERE feature.id IS NULL
+        """,
+    """DELETE parent2child
+         FROM parent2child
+         LEFT JOIN feature
+           ON parent2child.id = feature.id
+        WHERE feature.id IS NULL;"""
+    """DELETE parent2child
+         FROM parent2child
+         LEFT JOIN feature
+           ON parent2child.child = feature.id
+        WHERE feature.id IS NULL;""" ]
+
 c = con.cursor()
-sql1 = '''
-DELETE FROM  a 
- USING attribute a, feature f, typelist t
- WHERE a.id = f.id 
-   AND f.typeid = t.id 
-   AND t.tag = "%s" ''' % sys.argv[3]
-
-sql1t = '''
-SELECT a.*
-  FROM attribute a, feature f, typelist t
- WHERE a.id = f.id 
-   AND f.typeid = t.id 
-   AND t.tag = "%s" ''' % sys.argv[3]
-
-
-sql2 = '''
-DELETE FROM p 
- USING parent2child p, feature f, typelist t
- WHERE p.id = f.id 
-   AND f.typeid = t.id 
-   AND t.tag = "%s" ''' % sys.argv[3]
-
-
-sql3 = '''
-DELETE FROM p 
- USING parent2child p, feature f, typelist t
- WHERE p.child = f.id 
-   AND f.typeid = t.id 
-   AND t.tag = "%s" ''' % sys.argv[3]
-
-sql4 = '''
-DELETE FROM f 
- USING feature f, typelist t
- WHERE f.typeid = t.id 
-   AND t.tag = "%s" ''' % sys.argv[3]
-
-print sql1
-c.execute(sql1)
-print sql2
-c.execute(sql2)
-print sql3
-c.execute(sql3)
-print sql4
-c.execute(sql4)
-
+for s in sql:
+    print s
+    c.execute(s)

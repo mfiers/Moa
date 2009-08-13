@@ -55,7 +55,7 @@ input_pattern_help = file name pattern
 
 moa_must_define += cloning_vector
 cloning_vector_help = File containing the cloning vector
- 
+
 moa_must_define += sequencing_vector
 sequencing_vector_help = File containing the sequencing vector
 
@@ -65,35 +65,42 @@ ecoli_screenseq_help = File containing ecoli screen sequences
 moa_must_define += repeat_masker_lib
 repeat_masker_lib_help = File with a repeatmasker library
 
-moa_may_define += quality_value_clip
-quality_value_clip_help = quality cutoff
+moa_must_define += vector_primerfile
+vector_primerfile_help = File with the vector primers
 
+moa_may_define += quality_value_clip pregap_template
+quality_value_clip_help = quality cutoff (default=10)
+pregap_template_help = the template pregap config file to use. if \
+  not defined, Moa tries ./files/pregap.config.
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
-################################################################################
+quality_value_clip ?= 10
+
+.PHONY: pregap_prepare
+pregap_prepare:
+
+.PHONY: pregap_post
+pregap_post:
 
 .PHONY: pregap
-pregap: pregap_start pregap_run
-
-.PHONY: pregap_start
-pregap_start:
-	
-.PHONY: pregap_run
-pregap_touchfiles = $(addsuffix /touched, $(notdir $(shell find $(input_dir) -name "$(input_pattern)" -type d)))
-pregap_run: $(pregap_touchfiles)
+pregap_touchfiles = $(addsuffix /touched, \
+		$(notdir $(shell find $(input_dir) \
+		-name "$(input_pattern)" -type d)))
+pregap: $(pregap_touchfiles)
 
 $(pregap_touchfiles): %/touched : $(realpath $(input_dir))/%
 	@echo processing $@ from $<
 	-mkdir $(subst /touched,,$@)	
-	#create a fof	
+	@#create a fof	
 	cd $(subst /touched,,$@); find $< -name '*.ab?' > $(subst /touched,,$@).fof	
-	#create the pregap config file	
+	@#create the pregap config file	
 	cat $(pregap_template) \
         | sed "s|PROJECTNAME|$(subst /touched,,$@)|" \
+        | sed "s|VECTORPRIMERFILE|$(vector_primerfile)|" \
         | sed "s|ECOLISCREENSEQFILE|$(ecoli_screenseq)|" \
         | sed "s|REPEATMASKERLIB|$(repeat_masker_lib)|" \
         | sed "s|CLONINGVECTORFILE|$(cloning_vector)|" \
@@ -102,13 +109,12 @@ $(pregap_touchfiles): %/touched : $(realpath $(input_dir))/%
         > ./$(subst /touched,,$@)/pregap.conf
     #move in the dir & execute pregap4
 	cd $(subst /touched,,$@) ;\
-			pregap4 -nowin -config pregap.conf -fofn $(subst /touched,,$@).fof > pregap.report 2> pregap.err
-	#
-	#create a touchfile - prevent reexecution
+			pregap4 -nowin -config pregap.conf \
+					-fofn $(subst /touched,,$@).fof \
+				> pregap.report \
+				2> pregap.err
+	@#create a touchfile - prevent reexecution
 	touch $(subst /touched,,$@)/touched
-			
-#pregap_zfiles = $(addsuffix /touched, $(notdir $(shell find $(input_dir) -name "$(input_pattern)" -type d)))			
-#pregap_post_help
 
 #CLEAN	    
 .PHONY: clean    
@@ -117,4 +123,3 @@ clean: pregap_clean
 .PHONY: pregap_clean
 pregap_clean:
 	@echo "TODO: Run clean"
-		
