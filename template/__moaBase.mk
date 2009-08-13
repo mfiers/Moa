@@ -427,6 +427,59 @@ $(moa_followups):
 	fi
 
 
+##############################################################################
+# Generate Latex 
+#
+.PHONY: latex
+latex: \
+	moa_latex_header \
+	moa_latex_description \
+	moa_latex_vars \
+	moa_latex_footer
+
+.PHONY: moa_latex_header
+moa_latex_header: 
+	@echo "\section{$(moa_ids)}"
+
+.PHONY: moa_latex_description
+moa_latex_description: $(addprefix moa_latex_description_, $(moa_ids))
+
+moa_latex_description_%:
+	@echo $(moa_title_$*)
+	@echo -e "$(moa_description_$*)"
+
+moa_latex_vars: moa_latex_vars_start \
+		moa_latex_vars_must \
+		moa_latex_vars_may
+	@echo "\end{description}"
+
+moa_latex_vars_start:
+	@echo "\subsection{Variables}"
+	@echo "\textbf{Must be defined:}"
+	@echo "\begin{description}"
+
+moa_latex_vars_must: $(addprefix  moa_latex_var_, $(moa_must_define))
+	@if [ -z "$^" ]; then \
+		echo "\end{description}" ;			\
+	else 									\
+		echo "\end{description}";			\
+		echo "\bf{May be defined:}";		\
+		echo "\begin{description}";		\
+	fi
+
+moa_latex_vars_may: $(addprefix moa_latex_var_, $(moa_may_define))
+
+moa_latex_var_%:	
+	@if [ "$(origin $*_help)" == "undefined" ]; then \
+		echo "\item[$*]"; 		\
+	else 						\
+		echo "\item[$*] $($*_help)"; \
+	fi
+
+.PHONY: moa_latex_footer
+moa_latex_footer:
+
+
 ###############################################################################
 # Help structure
 .PHONY: help
@@ -454,7 +507,6 @@ moa_help_header_description: $(addprefix moa_help_header_description_, $(moa_ids
 moa_help_header_description_%:
 	@$(call echo, $(moa_title_$*))
 	@echo -e "$(moa_description_$*)" | fold -w 70 -s 
-
 
 moa_help_deprecated: $(addprefix moa_help_deprecated_, $(moa_ids))
 

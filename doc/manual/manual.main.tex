@@ -2,43 +2,62 @@
 
 \usepackage{listings}
 \usepackage{graphicx}
-\usepackage{natbib}
+\usepackage{footmisc}
+\usepackage[super]{natbib}
 \renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\thefootnote}{\alph{footnote}}   
+\usepackage{parskip}
+
 \lstset{
    basicstyle=\footnotesize\ttfamily,
    identifierstyle=,
    keywordstyle=,
-   xleftmargin=6mm,
+   xleftmargin=8mm,
 %   framesep=10mm,
-   framextopmargin=8mm,
+   framextopmargin=1mm,
+   framexbottommargin=1mm,
    frame=l,
-   language=bash
+   numbers=none,
+   showspaces=false,
+   columns=flexible,
 }
 
+\lstnewenvironment{bash}
+{\lstset{language=bash}}
+{}
+
+\lstnewenvironment{lsturl}
+{\lstset{language=bash,numbers=none}}
+{}
+
 \begin{document}
-\bibliographystyle{plain}
+\bibliographystyle{moa}
 \title{Moa}
 \author{Mark Fiers}
 \date{#DATE#}
 
 %create a title page
 \begin{titlepage}
-\center{\includegraphics[width=0.6\textwidth]{moa.jpg}}
+\center{\includegraphics[width=0.6\textwidth]{images/moa_logo_medium.png}}
 \vfill
 \center{\Huge Moa \normalsize}
 \center{ #MOAVERSION# }
 \vfill
-\center{Author: Mark Fiers}
-\center{Date: #DATE#}
-\center{\tiny Git: #GITBRANCH# - #GITVERSION# \normalsize}
+\vfill
+\center{author: Mark Fiers}
+\center{date: #DATE#}
+\center{\tiny git: #GITBRANCH# #GITVERSION# \normalsize}
 \end{titlepage}
 \tableofcontents
 %end of the title page
 
 \include{introduction}
 \include{installation}
-\include{configuration}
-\include{running}
+\include{creating}
+\include{executing}
+\include{makefiles}
+\include{couchdb}
+
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{manual}

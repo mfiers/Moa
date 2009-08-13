@@ -1,12 +1,61 @@
 \chapter{Installation}
 
-.. to be written ..
+\section{Prerequisites}
 
+Moa is developed on Ubuntu \citep{ubuntu} and RHEL \citep{rhel} Linux
+and is expected to operate without much problems on most modern Linux
+distributions. Moa is depends on the following software:\footnote{The
+  version numbers are an indication of the version used by the author,
+  not strict prerequisites. Other, even older, versions might work}
+
+\begin{itemize}
+\item Gnu Make 3.81 \citep{Gnumake}
+\item Git 1.6 \citep{git}.
+\item Python 2.6 \citep{python}\footnote{Python 2.5 will not
+  work. Several supporting scripts use 2.6 specific functionality}
+\item Apache Couchdb 0.9.0 \citep{couchdb}\footnote{Only if using
+  couchdb functionality \label{fn:usingcouchdb}}
+\item Biopython 1.49 \citep{biopython}
+\item Couchdb-python \citep{couchpy}\footref{fn:usingcouchdb}
+\end{itemize}
+
+Furthermore, the bioinformatics analysis tools that are likely to be
+used need to be installed. All Moa templates that wrap an application
+expect that application to be installed and present in the PATH.
+For more information see section \ref{s:installBTools}.
 
 \section{Getting the code}
 
-\section{Install python libs}
+Moa is hosted at github:
 
-\section{Set up a basic configuration}
+\begin{lsturl}
+http://github.com/mfiers/Moa
+\end{lsturl}
 
-\section{Test}
+Currently there are no formal releases so the only option is to
+download the latest version of the software, eiter using git \citep{git}:
+
+\begin{bash}
+git clone git://github.com/mfiers/Moa.git
+\end{bash}
+
+It is also possible to download an (automatically generated) archive
+of the trunk. Using Git, however, makes it very easy to stay in sync
+with the latest bugfixes and is thus strongly recommended until there
+are formal releases. An archive can be found here:
+
+\begin{bash}
+http://github.com/mfiers/Moa/tarball/master
+\end{bash}
+
+After downloading, and possibly unpacking, the source code must be
+moved to a suitable location of your choice. For example
+\lstinline!/opt/moa!. The resulting tree should contain the following
+directories: \lstinline!/opt/moa/bin! and
+\lstinline!/opt/moa/template!. Remember to properly set the rights on
+the files, depending on who is going to use the software.
+
+\section{Configuration}
+
+Configuration of Moa is fairly simple, 
+

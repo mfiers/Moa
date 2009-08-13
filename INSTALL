@@ -2,7 +2,7 @@ Prerequisites
 
 - GNU Make
 
-Furthermore; we probably use some bash specific commands. I haven't
+Furthermore; Moa probably uses bash specific commands. I haven't
 tested other shells.
 
 

@@ -18,13 +18,16 @@
 #
 #    See: http://github.com/mfiers/Moa/
 #
-#Run BLAST
+# BLAST
 
 # Variable checks & definition & help
 moa_ids += blast
 moa_title_blast =  BLAST
-moa_description_blast = Run BLAST and convert the results to gff \
-  and a simple blast report
+moa_description_blast = Run BLAST [Alt90], the most popular similarity	\
+  search tool in bioinformatics. This BLAST wrapper takes an input		\
+  directory with a set of input files and several parameters and		\
+  executes BLAST. The results are written as XML files and				\
+  subsequently converted to GFF3 [gff] and an simple BLAST report.
 
 prereqlist += prereq_blast_installed prereq_blast_report_installed \
   prereq_biopython_installed
@@ -109,7 +112,9 @@ blast_gff_files = $(addprefix gff/, \
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
 
+ifdef blast_db
 single_blast_db_file=$(shell ls $(blast_db)*.[pn]hr)
+endif 
 
 test:
 	@echo $(blast_input_dir)
