@@ -427,69 +427,20 @@ $(moa_followups):
 	fi
 
 
-##############################################################################
-# Generate Latex 
-#
-.PHONY: latex
-latex: \
-	moa_latex_header \
-	moa_latex_description \
-	moa_latex_vars \
-	moa_latex_footer
-
-.PHONY: moa_latex_header
-moa_latex_header: 
-	@echo "\section{$(moa_ids)}"
-
-.PHONY: moa_latex_description
-moa_latex_description: $(addprefix moa_latex_description_, $(moa_ids))
-
-moa_latex_description_%:
-	@echo $(moa_title_$*)
-	@echo -e "$(moa_description_$*)"
-
-moa_latex_vars: moa_latex_vars_start \
-		moa_latex_vars_must \
-		moa_latex_vars_may
-	@echo "\end{description}"
-
-moa_latex_vars_start:
-	@echo "\subsection{Variables}"
-	@echo "\textbf{Must be defined:}"
-	@echo "\begin{description}"
-
-moa_latex_vars_must: $(addprefix  moa_latex_var_, $(moa_must_define))
-	@if [ -z "$^" ]; then \
-		echo "\end{description}" ;			\
-	else 									\
-		echo "\end{description}";			\
-		echo "\bf{May be defined:}";		\
-		echo "\begin{description}";		\
-	fi
-
-moa_latex_vars_may: $(addprefix moa_latex_var_, $(moa_may_define))
-
-moa_latex_var_%:	
-	@if [ "$(origin $*_help)" == "undefined" ]; then \
-		echo "\item[$*]"; 		\
-	else 						\
-		echo "\item[$*] $($*_help)"; \
-	fi
-
-.PHONY: moa_latex_footer
-moa_latex_footer:
-
-
 ###############################################################################
 # Help structure
+
 .PHONY: help
 help: moa_help_header \
-	moa_help_target_header \
-	moa_help_target \
-	moa_help_target_footer \
-	moa_help_vars_header \
-	moa_help_vars \
-	moa_help_vars_footer
+	moa_help_vars
+
+help_md = \
+
+#Generate help in markdown format
+.PHONY: help_md
+help_md: moa_help_header \
+		moa_help_targets \
+		moa_help_vars \
 
 .PHONY: moa_help_header
 moa_help_header: \
@@ -498,65 +449,48 @@ moa_help_header: \
 
 .PHONY: moa_help_header_title
 moa_help_header_title:
+	@echo "% Moa-$(moa_title)"
+	@echo "% Mark Fiers"
+	@echo "%$(shell date)"
+	@echo ""
+	@echo "$(moa_description)"
+	@echo ""
+	@echo "##Targets"
 
-#moa_description_LinkGather	
 .PHONY: moa_help_header_description
 moa_help_header_description: $(addprefix moa_help_header_description_, $(moa_ids))
 	@echo
 
 moa_help_header_description_%:
-	@$(call echo, $(moa_title_$*))
-	@echo -e "$(moa_description_$*)" | fold -w 70 -s 
-
-moa_help_deprecated: $(addprefix moa_help_deprecated_, $(moa_ids))
-
-moa_help_deprecated_%:
-	@if [ -n "$(moa_deprecated_$*)" ]; then \
-		echo -e "$(warn_on)*** There is a newer version of: $* *** $(warn_off)" ;\
-	fi		
-
-## Help - target section
-moa_help_target_header:
-	@echo -e "$(bold_on)Targets$(bold_off)"
-	@echo "======="
-
-moa_help_target: $(addprefix moa_target_, $(moa_targets))
-
-
-moa_target_%:
-	@if [ "$(origin $(subst moa_target_,,$@)_help)" == "undefined" ]; then \
-		echo -e " - $(bold_on)$(subst moa_target_,,$@)$(bold_off)" ;\
-	else \
-		echo -e " - $(bold_on)$(subst moa_target_,,$@)$(bold_off): $($(subst moa_target_,,$@)_help)" \
-			| fold -w 60 -s |sed '2,$$s/^/     /' ;\
-	fi
-
-
-moa_help_target_footer:
-	@echo 
+	@echo "$*"
+	@echo ":   $(moa_$*_help)" 
 
 ## Help - variable section
 moa_help_vars_header:
-	@echo -e "$(bold_on)Variables$(bold_off)"
-	@echo "========="
+	@echo "## Required parameters"
 
 moa_help_vars_footer:
-	@echo -e "*these variables $(bold_on)must$(bold_off) be defined"
 	@echo 
 
-moa_help_vars: moa_help_vars_must moa_help_vars_may
+moa_help_vars: moa_help_vars_header \
+		moa_help_vars_must \
+		moa_help_vars_split \
+		moa_help_vars_may
 
-moa_help_vars_must: help_prefix="*"
+ moa_help_vars_split:
+	@echo
+	@echo "## Optional parameters"
+	@echo
+
 moa_help_vars_must: $(addprefix helpvar_, $(moa_must_define))
 
-moa_help_vars_may: help_prefix=""
 moa_help_vars_may: $(addprefix helpvar_, $(moa_may_define))
 
 helpvar_%:	
-	@if [ "$(origin $(subst helpvar_,,$@)_help)" == "undefined" ]; then \
-		echo -en " - $(bold_on)$(help_prefix)$(subst helpvar_,,$@)$(bold_off)" ;\
+	@if [ "$(origin $*_help)" == "undefined" ]; then \
+		echo "- **$***" ;\
 	else \
-		echo -e " - $(bold_on)$(help_prefix)$(subst helpvar_,,$@)$(bold_off): $($(subst helpvar_,,$@)_help)" \
+		echo "- **$*** - $($*_help)" \
 			| fold -w 60 -s | sed '2,$$s/^/     /' ;\
 	fi
 
