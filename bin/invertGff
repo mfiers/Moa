@@ -1,0 +1,63 @@
+#!/usr/bin/env python
+
+import os,sys,re,copy
+
+def reader(f):
+    F = open(f)
+    while True:
+        line = F.readline()
+        if not line: break
+        yield line.strip()        
+    F.close()
+
+gffline = re.compile(
+    r'^(?P<seqid>\S+)\s+' +
+    r'(?P<source>\S+)\s+' +
+    r'(?P<type>\S+)\s+' +
+    r'(?P<start>\S+)\s+' +
+    r'(?P<end>\S+)\s+' +
+    r'(?P<score>\S+)\s+' +
+    r'(?P<strand>\S+)\s+' +
+    r'(?P<phase>\S+)\s+' + 
+    r'(?P<attribid1>ID=.*_)' +
+    r'(?P=seqid)_' +
+    r'(?P<attribid2>[^;]+);' +
+    r'(?P<attrib1>.*Target=Sequence:)' +
+    r'(?P<tseq>\S+) (?P<tstart>\d+) (?P<tstop>\d+)' +
+    r'(?P<attrib2>.*)$')
+
+for l in reader(sys.argv[1]):
+    if l[0] == "#":
+        print l
+        continue
+    m = gffline.search(l)
+    if m:
+        d = copy.copy(m.groupdict())
+        #simple test:
+        if d['attribid2'].find(d['tseq']) != 0:
+            print line
+            raise Exception("Invalid ID!")
+
+        d['idremain'] = d['attribid2'].replace(d['tseq']+'_', '')
+        print ("%(tseq)s\t" +
+               "%(source)s\t" + 
+               "%(type)s\t" +
+               "%(tstart)s\t" +
+               "%(tstop)s\t" +
+               "%(score)s\t" +
+               "%(strand)s\t" +
+               "%(phase)s\t" +
+               "%(attribid1)s" +
+               "%(tseq)s_" +
+               "%(seqid)s_" +
+               "%(idremain)s;" + 
+               "%(attrib1)s" +
+               "%(seqid)s " +
+               "%(start)s " +
+               "%(end)s" +
+               "%(attrib2)s") % d
+
+
+        
+    
+    
