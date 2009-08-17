@@ -446,7 +446,11 @@ help:
 		| sed "s/\[\[.*\]\]//g" 			\
 		| sed "s/[ \t]*$$//"				\
 		| pandoc -s -f markdown -t man 		\
-		| man -l -
+		| /usr/bin/nroff -c \
+			--legacy NROFF_OLD_CHARSET 		\
+			-mandoc  						\
+		2>/dev/null 						\
+		| less -is
 
 help_latex:
 	@echo -e "$(call help_md)"				\
@@ -454,7 +458,20 @@ help_latex:
 		| sed "s/[ \t]*$$//"				\
 		| sed "s/^#/##/"					\
 		| pandoc -f markdown -t latex		\
-		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g" 			\
+		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g" 	
+
+help_man:
+	@echo -e "$(call help_md)" 				\
+		| sed "s/^ //g"  					\
+		| sed "s/\[\[.*\]\]//g" 			\
+		| sed "s/[ \t]*$$//"				\
+		| pandoc -s -f markdown -t man
+
+help_markdown:
+	@echo -e "$(call help_md)" 				\
+		| sed "s/^ //g"  					\
+		| sed "s/\[\[.*\]\]//g" 			\
+		| sed "s/[ \t]*$$//"
 
 
 help_md = % Moa_$(moa_title)			\n\
@@ -476,11 +493,15 @@ $(id)									\n\
 \#\# Required parameters				\n\
 $(foreach v,$(moa_must_define), 		\
 $(v)									\n\
-:   $($(v)_help)						\n\
+:   $(if $($(v)_help),					\
+		$($(v)_help),					\
+		- undefined)					\n\
 )										\n\
 \#\# Optional parameters				\n\
 $(foreach v,$(moa_may_define), 			\
 $(v)									\n\
-:   $($(v)_help)						\n\
+:   $(if $($(v)_help),					\
+		$($(v)_help),					\
+		- undefined)					\n\
 )
 
