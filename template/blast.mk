@@ -21,13 +21,27 @@
 # BLAST
 
 # Variable checks & definition & help
+
+moa_title = Blast
+moa_description = Wraps BLAST [[Alt90]], the most popular	\
+  similarity search tool in bioinformatics
+
 moa_ids += blast
-moa_title_blast =  BLAST
-moa_description_blast = Run BLAST [Alt90], the most popular similarity	\
-  search tool in bioinformatics. This BLAST wrapper takes an input		\
-  directory with a set of input files and several parameters and		\
-  executes BLAST. The results are written as XML files and				\
-  subsequently converted to GFF3 [gff] and an simple BLAST report.
+moa_blast_help = Running BLAST takes an input directory					\
+  (*blast_input_dir*), determines what sequence files are present		\
+  (with the parameter *blast_input_extension*) and executes BLAST on	\
+  each of these. Moa BLAST is configured to create XML output (as		\
+  opposed ot the standard text based output) in the *./out*				\
+  directory. The output XML is subsequently converted to GFF3			\
+  [[gff]] by the custom *blast2gff* script (build around biopython	\
+  [[biopython]]). Additionally, a simple text report is created.
+
+moa_additional_targets += blast_report
+moa_blast_report_help = Generate a text BLAST report.
+
+
+#########################################################################
+# Prerequisite testing
 
 prereqlist += prereq_blast_installed prereq_blast_report_installed \
   prereq_biopython_installed
@@ -50,21 +64,9 @@ prereq_biopython_installed:
 		false ;\
 	fi
 
-moa_targets += blast report
-clean_help = remove all BLAST results
-blast_help = run all BLASTs
-report_help = Create a simple blast report
-#outputs
-moa_outputs += blastxml blastgff blastrep
-moa_output_blastxml = ./out/*.xml 
-moa_output_blastgff = ./gff/*.gff
-moa_output_blastrep = ./blast.report
-moa_output_blastxml_help = XML output of blastall
-moa_output_blastgff_help = blast output converted to GFF
-moa_output_blastrep_help = short report of the blast run
 
 moa_may_define += blast_input_dir
-blast_input_dir_help = directory with the input sequences
+blast_input_dir_help = directory containing the input sequences
 
 moa_must_define += blast_db
 blast_db_help = Location of the blast database
@@ -129,7 +131,6 @@ blast_test:
 	@echo "No xml files $(words $(blast_output_files))"
 	@echo "No gff files $(words $(blast_gff_files))"
 
- 
 #echo Main target for blast
 .PHONY: blast
 blast: $(blast_gff_files)
