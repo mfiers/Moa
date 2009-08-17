@@ -56,19 +56,14 @@ gup_fasta_dir ?= ./fasta
 gup_upload_fasta ?= F
 gup_upload_gff ?= F
 
-gup_input_gff := $(shell \
-	if [ "$(gup_upload_gff)" == "T" ]; then \
-		if [ -d "$(gup_gff_dir)" ]; then \
-			ls $(gup_gff_dir)/*.$(gup_gff_extension) ;\
-		fi ;\
-	fi)
 
-gup_input_fasta := $(shell \
-	if [ "$(gup_upload_fasta)" == "T" ]; then \
-		if [ -d $(gup_fasta_dir) ]; then \
-			ls $(gup_fasta_dir)/*.$(gup_fasta_extension) ;\
-		fi ;\
-	fi )
+ifeq "$(gup_upload_gff)" "T"
+gup_input_gff := $(wildcard $(gup_gff_dir)/*.$(gup_gff_extension))
+endif
+
+ifeq "$(gup_upload_fasta)" "T"
+gup_input_gff := $(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension))
+endif
 
 # function to delete the results of one, a few and all input files
 # if sticking to a few rules this should work for most analyses.
