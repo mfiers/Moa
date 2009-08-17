@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="436.75473"
+   height="403.01288"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.46"
+   sodipodi:docname="moa_logo_medium.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   inkscape:export-filename="/home/mf/project/moa/doc/manual/images/moa_logo_medium.png"
+   inkscape:export-xdpi="103.03"
+   inkscape:export-ydpi="103.03"
+   version="1.0">
+  <defs
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective10" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.5"
+     inkscape:cx="222.25403"
+     inkscape:cy="231.74075"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="757"
+     inkscape:window-height="662"
+     inkscape:window-x="149"
+     inkscape:window-y="42" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-170.4926,-190.56359)">
+    <path
+       style="fill:#fabf00;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 241.14285,586.07648 C 260.47322,546.53866 246.38054,497.70364 217.19549,466.9052 C 193.24914,420.8314 168.76827,368.60089 181.45974,315.47976 C 193.73673,262.18725 241.06029,223.48545 292.07417,208.96887 C 334.2044,193.30787 384.54307,192.76677 422.7164,218.92158 C 464.67072,239.10696 508.69043,256.00431 546.0655,284.42355 C 564.02625,296.82931 581.42028,310.03364 598.56645,323.53648 C 605.7349,346.22526 578.63068,355.31095 561.36564,358.87282 C 513.55123,371.31429 485.39601,417.62892 440.98691,436.90114 C 413.38909,448.47704 401.0794,479.42919 406.07196,507.72334 C 406.67058,527.16015 408.70387,546.64571 406.85715,566.07648"
+       id="path2383" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:15;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 357.54373,332.83148 C 374.83157,305.6332 332.72218,272.79182 308.78584,291.07082 C 293.1869,309.89505 307.39719,342.39256 325.51059,352.59952 C 339.22782,352.99291 348.44212,341.00797 357.54373,332.83148 z"
+       id="path2385" />
+  </g>
+</svg>

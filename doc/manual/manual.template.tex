@@ -3,6 +3,7 @@
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{footmisc}
+\setcounter{tocdepth}{1}
 \usepackage[super]{natbib}
 \renewcommand{\familydefault}{\sfdefault}
 \renewcommand{\thefootnote}{\alph{footnote}}   
@@ -34,29 +35,33 @@
 \bibliographystyle{moa}
 \title{Moa}
 \author{Mark Fiers}
-\date{Thu Aug 13 23:49:07 NZST 2009}
+\date{#DATE#}
 
 %create a title page
 \begin{titlepage}
 \center{\includegraphics[width=0.6\textwidth]{images/moa_logo_medium.png}}
 \vfill
 \center{\Huge Moa \normalsize}
-\center{ 0.1 }
+\center{ #MOAVERSION# }
 \vfill
 \vfill
 \center{author: Mark Fiers}
-\center{date: Thu Aug 13 23:49:07 NZST 2009}
-\center{\tiny git: master fe3710537f77f43c8b0c9c52befcd6a2f3367318 \normalsize}
+\center{date: #DATE#}
+\center{\tiny git: #GITBRANCH# #GITVERSION# \normalsize}
 \end{titlepage}
 \tableofcontents
 %end of the title page
 
-\include{introduction}
-\include{installation}
-\include{creating}
-\include{executing}
-\include{makefiles}
-\include{couchdb}
+\chapter{Introduction\label{ch:introduction}}
+\input{introduction}
+\chapter{Installation\label{ch:installation}}
+\input{installation}
+\chapter{Using Moa\label{ch:using}}
+\input{using}
+\chapter{Template referenceUsing Moa\label{ch:templates}}
+\include{templates}
+\chapter{Couchdb\label{ch:couchdb}}
+\input{couchdb}
 
 
 \addcontentsline{toc}{chapter}{Bibliography}
