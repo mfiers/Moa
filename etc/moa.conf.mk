@@ -18,6 +18,7 @@ usecouchdb=T
 #where is pandoc binary located? 
 #default is use the pandoc in the path
 #pandocbin=/path/to/pandoc
+pandocbin=/usr/local/bin/pandoc121
 #
 #How to process man output, use the mand command:
 #mancommand=man -l -

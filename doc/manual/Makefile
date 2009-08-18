@@ -1,3 +1,5 @@
+include $(shell echo $$MOABASE)/etc/moa.conf.mk
+
 notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk
 #templates=$(filter-out $notemplate,$(notdir $(wildcard $$MOABASE/template/*.mk)))
 templates=$(sort $(filter-out $(notemplate),$(notdir $(wildcard $(shell echo $$MOABASE)/template/*.mk))))
@@ -9,8 +11,8 @@ chapters = 						\
 	installation.tex  			\
 	using.tex 					\
 	couchdb.tex 				\
-	newtemplates.tex			\
-	 templates.tex				
+	extending.tex				\
+	templates.tex				
 
 
 .PHONY: manual
@@ -61,5 +63,5 @@ clean:
 		couchdb.tex 		\
 		executing.tex		\
 		installation.tex 	\
-		newtemplates.tex  	\
+		extending.tex  		\
 		using.tex
