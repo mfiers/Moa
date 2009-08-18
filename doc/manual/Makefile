@@ -3,7 +3,6 @@ notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk
 templates=$(sort $(filter-out $(notemplate),$(notdir $(wildcard $(shell echo $$MOABASE)/template/*.mk))))
 temptex=$(addprefix ./templates/,$(patsubst %.mk,%.tex,$(templates)))
 
-
 chapters = 						\
 	manual.tex 					\
 	introduction.tex 			\
@@ -22,7 +21,7 @@ manual: $(chapters)
 	pdflatex manual	
 
 templates.tex:  $(temptex)
-	cat templates_header.md \
+	cat ../md/templates_header.md \
 		| pandoc -f markdown -t latex \
 		> templates.tex
 	for f in $(temptex); do \
@@ -45,13 +44,12 @@ manual.tex:
 			> manual.tex
 
 %.tex:
-	cat $*.md \
+	cat ../md/$*.md \
 		| pandoc -f markdown -t latex \
 		> $*.tex
 
 clean:
-	-rm *.aux *.bbl *.log *.blg
-	-rm *~ *.pdf *.toc
+	-rm *.aux *.bbl *.log *.blg *~ *.toc
 	-rm templates/*.tex
 	-rm configuration.tex  	\
 		creating.tex   		\
