@@ -13,11 +13,11 @@
    id="svg2"
    sodipodi:version="0.32"
    inkscape:version="0.46"
-   sodipodi:docname="moa_logo_medium.svg"
+   sodipodi:docname="moa_logo.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/home/mf/project/moa/doc/manual/images/moa_logo_medium.png"
-   inkscape:export-xdpi="103.03"
-   inkscape:export-ydpi="103.03"
+   inkscape:export-filename="/home/mf/project/moa/doc/images/moa_logo_smaller.png"
+   inkscape:export-xdpi="20.54525"
+   inkscape:export-ydpi="20.54525"
    version="1.0">
   <defs
      id="defs4">
@@ -47,8 +47,8 @@
      showgrid="false"
      inkscape:window-width="757"
      inkscape:window-height="662"
-     inkscape:window-x="149"
-     inkscape:window-y="42" />
+     inkscape:window-x="1692"
+     inkscape:window-y="36" />
   <metadata
      id="metadata7">
     <rdf:RDF>

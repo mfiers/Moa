@@ -1,0 +1,63 @@
+body {
+	background-color:#FFFFFF;
+	color:black;
+	font-size: 0.9em;
+	font-family:verdana,helvetica,sans-serif;
+}
+div#moaTitle {
+     font-size:40px;
+	 font-weight:bold;
+	 padding:20px;
+}
+
+div#menu {
+	margin : 15px;
+	position:absolute;
+	left:0;
+	width:150px;
+	top:0;
+	bottom: 0;
+	font-size:0.9em;
+	border-right: 3px solid black;
+}
+div#content {
+	padding:15px;
+	position:absolute;
+	left:175px;;
+	right:0px;
+	top:0px;
+	bottom:0px;
+	overflow:auto;
+}
+
+img#menuLogo {
+	border: 0px;
+}
+div#menu ul {
+	padding:20px;
+	margin:10px;
+}
+
+div#MoaDetails {
+	position: absolute;
+	color: black;
+	bottom: 0px; 	
+	left: 0px;
+	right: 0px;
+	background-color:white;
+	opacity: 0.5;
+	filter:alpha(opacity=50)
+}
+
+div#MoaDetails td{
+	font-size : 0.6em;
+}
+
+div#MoaDetails th{
+	text-align: right;
+	font-size : 0.6em;
+}
+
+h1 {
+	font-size
+}
