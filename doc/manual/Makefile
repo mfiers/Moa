@@ -6,35 +6,41 @@ templates=$(sort $(filter-out $(notemplate),$(notdir $(wildcard $(shell echo $$M
 temptex=$(addprefix ./templates/,$(patsubst %.mk,%.tex,$(templates)))
 
 chapters = 						\
-	manual.tex 					\
 	introduction.tex 			\
 	installation.tex  			\
 	using.tex 					\
 	couchdb.tex 				\
+	gbrowse.tex 				\
 	extending.tex				\
-	reference.tex				
+	reference.tex				\
+	manual.tex 					
+
 
 
 .PHONY: manual
-manual: $(chapters)
+manual: prepare $(chapters)
 	pdflatex manual
 	bibtex manual
 	pdflatex manual
 	pdflatex manual	
 
-templates.tex:  $(temptex)
+.PHONY: prepare
+prepare:
+	-mkdir templates
+
+reference.tex:  $(temptex)
 	cat ../md/templates_header.md \
 		| pandoc -f markdown -t latex \
-		> templates.tex
+		> reference.tex
 	for f in $(temptex); do \
-		cat $$f >> templates.tex ;\
+		cat $$f >> reference.tex ;\
 	done
 
 ./templates/%.tex: $(shell echo $$MOABASE)/template/%.mk
 	echo "\section{$*}" > $@
 	make -sf $$MOABASE/template/$*.mk help_latex >> $@
 
-manual.tex:
+manual.tex: manual.template.tex
 	cat manual.template.tex 							\
 		| sed "s/#DATE#/$(shell date)/" 				\
 		| sed "s/#MOAVERSION#/$(shell 					\
@@ -52,14 +58,14 @@ manual.tex:
 
 clean:
 	-rm *.aux *.bbl *.log *.blg *~ *.toc
-	-rm templates/*.tex
+	-rm -rf templates
 	-rm configuration.tex  	\
 		creating.tex   		\
 		execution.tex		\
 		introduction.tex	\
 		makefiles.tex 		\
 		manual.tex			\
-		templates.tex		\
+		reference.tex		\
 		couchdb.tex 		\
 		executing.tex		\
 		installation.tex 	\

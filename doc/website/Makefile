@@ -4,6 +4,7 @@ introduction_title = Introduction
 installation_title = Installation
 using_title = Using Moa
 couchdb_title = Using Couchdb with Moa
+gbrowse_title = Using GBrowse with Moa
 extending_title = Extending Moa
 
 chapters =						\
@@ -12,6 +13,7 @@ chapters =						\
 	installation.html  			\
 	using.html 					\
 	couchdb.html 				\
+	gbrowse.html 				\
 	extending.html				\
 	reference.html
 
@@ -23,6 +25,8 @@ imagesao: moa.css ../images/moa_logo_small.png  ../images/moa_logo_smaller.png
 	cp moa.css site/
 	cp ../images/moa_logo_small.png site/
 	cp ../images/moa_logo_smaller.png site/
+	cp ../images/pfr_logo.jpg site
+	cp ../manual/manual.pdf site
 
 site/index.html: index.template.html header.html footer.html
 	cp ../images/moa_logo_medium.png site/

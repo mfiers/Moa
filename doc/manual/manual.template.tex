@@ -1,12 +1,24 @@
 \documentclass[a4paper,11pt,oneside]{report}
 
 \usepackage{listings}
+\usepackage{amsmath}
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
 \usepackage{graphicx}
 \usepackage{footmisc}
+\usepackage{hyperref} 
+\usepackage[usenames,dvipsnames]{color}
+\hypersetup{urlcolor=OliveGreen,citecolor=OliveGreen,linkcolor=BrickRed,colorlinks=true}
 \setcounter{tocdepth}{1}
 \usepackage[super]{natbib}
 \renewcommand{\familydefault}{\sfdefault}
-\renewcommand{\thefootnote}{\alph{footnote}}   
+\renewcommand{\thefootnote}{\alph{footnote}} 
+
+\usepackage{array}
+% This is needed because raggedright in table elements redefines \\:
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\let\PBS=\PreserveBackslash
+
 \usepackage{parskip}
 
 \lstset{
@@ -40,6 +52,7 @@
 %create a title page
 \begin{titlepage}
 \center{\includegraphics[width=0.6\textwidth]{../images/moa_logo_medium.png}}
+\center{\includegraphics[width=0.6\textwidth]{../images/pfr_logo.jpg}}
 \vfill
 \center{\Huge Moa \normalsize}
 \center{ #MOAVERSION# }
@@ -58,12 +71,15 @@
 \input{installation}
 \chapter{Using Moa\label{ch:using}}
 \input{using}
+\chapter{Using GBrowse\label{ch:gbrowse}}
+\input{gbrowse}
 \chapter{Couchdb\label{ch:couchdb}}
 \input{couchdb}
 \chapter{Extending Moa\label{ch:extending}}
 \input{extending}
-\chapter{Appendix A: Template reference\label{ch:templateref}}
-\input{templates}
+\appendix
+\chapter{Template reference\label{ch:templateref}}
+\input{reference}
 
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{manual}
