@@ -48,9 +48,10 @@ echo = echo -e "$(moamark) $(1)"
 errr = echo -e "$(moamark)$(warn_on) -- $(1) -- $(warn_off)"
 
 
-## around generating help
+## concerning help generation
 moa_author?=Mark Fiers
 moa_title?=$(notdir $(firstword $(MAKEFILE_LIST)))
+pandocbin?=$(shell which pandoc)
 
 ## If moa.mk is defined, import it.
 ## moa.mk is used to store local variables
@@ -435,37 +436,51 @@ $(moa_followups):
 	fi
 
 
-###############################################################################
-# Help structure
-# manual $ make -f ~/project/moa/template/blast.mk help | sed "s/\[\[.*\]\]//g" | pandoc -s -f markdown -t man | man -l -
+################################################################################
+## Help structure
+##
+## All help / documentation is written in Markdown. The markdown is
+## converted with pandoc to Man files for command line help, and also
+## using pandoc to latex for the main manual.
+##
+## To generate the manual, the latest version of pandoc is
+## required. Most users, however, will only generate manpages. If that
+## is the case, pandoc 0.46 is also sufficient (which is the version
+## under Ubuntu Jaunty)
+##
+## It is possible to define the location of the pandoc binary in:
+##    $MOABASE/etc/moa.conf.mk
+## with:
+##    pandocbin=/path/to/pandoc
+##
+## Pandoc: see http://johnmacfarlane.net/pandoc/
+## Markdown, see: http://daringfireball.net/projects/markdown/
+##
 
 .PHONY: help
 help:
-	@echo -e "$(call help_md)" 				\
-		| sed "s/^ //g"  					\
-		| sed "s/\[\[.*\]\]//g" 			\
-		| sed "s/[ \t]*$$//"				\
-		| pandoc -s -f markdown -t man 		\
-		| /usr/bin/nroff -c \
-			--legacy NROFF_OLD_CHARSET 		\
-			-mandoc  						\
-		2>/dev/null 						\
-		| less -is
+	@echo -e "$(call help_md)" 					\
+		| sed "s/^ //g"  						\
+		| sed "s/\[\[.*\]\]//g" 				\
+		| sed "s/[ \t]*$$//"					\
+		| $(pandocbin) -s -f markdown -t man	\
+		| $(mancommand)
 
 help_latex:
 	@echo -e "$(call help_md)"				\
 		| sed "s/^ //g"						\
 		| sed "s/[ \t]*$$//"				\
 		| sed "s/^#/##/"					\
-		| pandoc -f markdown -t latex		\
+		| $(pandocbin) -f markdown -t latex		\
 		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g" 	
 
 help_man:
+	@echo $(pandocbin)
 	@echo -e "$(call help_md)" 				\
 		| sed "s/^ //g"  					\
 		| sed "s/\[\[.*\]\]//g" 			\
 		| sed "s/[ \t]*$$//"				\
-		| pandoc -s -f markdown -t man
+		| $(pandocbin) -s -f markdown -t man
 
 help_markdown:
 	@echo -e "$(call help_md)" 				\

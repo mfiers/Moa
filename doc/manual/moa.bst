@@ -285,7 +285,7 @@ FUNCTION {format.issn}
 FUNCTION {format.url}
 { url empty$
     { "" }
-    { new.block "URL \url{" url * "}" * }
+    { new.block "\url{" url * "}" * }
   if$
 }
 
@@ -719,8 +719,6 @@ FUNCTION {article}
     }
   if$
   format.issn output
-  format.doi output
-  format.url output
   new.block
   note output
   fin.entry
@@ -1412,7 +1410,7 @@ FUNCTION {begin.bib}
   write$ newline$
   "\expandafter\ifx\csname urlstyle\endcsname\relax"
   write$ newline$
-  "  \providecommand{\doi}[1]{doi: #1}\else"
+  "  \providecommand{\doi}[1]{}\else"
   write$ newline$
   "  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi"
   write$ newline$
@@ -1426,6 +1424,7 @@ ITERATE {call.type$}
 
 FUNCTION {end.bib}
 { newline$
+
   "\end{thebibliography}" write$ newline$
 }
 

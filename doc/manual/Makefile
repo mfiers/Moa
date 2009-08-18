@@ -1,33 +1,40 @@
-makefiles=blast blat blastdb bowtie bowtiedb clustalw dottup fasta2gff gap4export getFromNcbi gmapdb gmap lftp mummer nstretch pregap traverse varscan upload2gbrowse
+notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk
+#templates=$(filter-out $notemplate,$(notdir $(wildcard $$MOABASE/template/*.mk)))
+templates=$(sort $(filter-out $(notemplate),$(notdir $(wildcard $(shell echo $$MOABASE)/template/*.mk))))
+temptex=$(addprefix ./templates/,$(patsubst %.mk,%.tex,$(templates)))
 
-all: create_main \
-			create_chapters \
-			create_makefiles
+
+chapters = 						\
+	manual.tex 					\
+	introduction.tex 			\
+	installation.tex  			\
+	using.tex 					\
+	couchdb.tex 				\
+	newtemplates.tex			\
+	 templates.tex				
+
+
+.PHONY: manual
+manual: $(chapters)
 	pdflatex manual
 	bibtex manual
 	pdflatex manual
 	pdflatex manual	
 
-.PHONY: create_makefiles
-create_makefiles: cm_prepare \
-		$(addprefix cm__,$(sort $(makefiles)))
-
-cm_prepare:
-	cat templates.md \
+templates.tex:  $(temptex)
+	cat templates_header.md \
 		| pandoc -f markdown -t latex \
 		> templates.tex
+	for f in $(temptex); do \
+		cat $$f >> templates.tex ;\
+	done
 
-	echo 
-	cat makefiles.template.tex > makefiles.tex
+./templates/%.tex: $(shell echo $$MOABASE)/template/%.mk
+	echo "\section{$*}" > $@
+	make -sf $$MOABASE/template/$*.mk help_latex >> $@
 
-cm__%:
-	echo "\section{$*}" >> makefiles.tex
-	make -sf $$MOABASE/template/$*.mk help_latex \
-		>> makefiles.tex
-
-.PHONY: create_main
-create_main:
-	cat manual.template.tex 								\
+manual.tex:
+	cat manual.template.tex 							\
 		| sed "s/#DATE#/$(shell date)/" 				\
 		| sed "s/#MOAVERSION#/$(shell 					\
 				cat ../../VERSION)/"					\
@@ -37,10 +44,24 @@ create_main:
 			git branch | head -1 | cut -f 2 -d' ')/"	\
 			> manual.tex
 
-chapters = introduction installation using
-create_chapters:  $(addprefix c__, $(chapters))
-
-c__%:
+%.tex:
 	cat $*.md \
 		| pandoc -f markdown -t latex \
 		> $*.tex
+
+clean:
+	-rm *.aux *.bbl *.log *.blg
+	-rm *~ *.pdf *.toc
+	-rm templates/*.tex
+	-rm configuration.tex  	\
+		creating.tex   		\
+		execution.tex		\
+		introduction.tex	\
+		makefiles.tex 		\
+		manual.tex			\
+		templates.tex		\
+		couchdb.tex 		\
+		executing.tex		\
+		installation.tex 	\
+		newtemplates.tex  	\
+		using.tex
