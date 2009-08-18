@@ -4,9 +4,15 @@ body {
 	font-size: 0.9em;
 	font-family:verdana,helvetica,sans-serif;
 }
+
 div#moaTitle {
      font-size:40px;
 	 font-weight:bold;
+	 padding:20px;
+}
+
+div#moaVersion {
+     font-size:1em;
 	 padding:20px;
 }
 
@@ -33,6 +39,7 @@ div#content {
 img#menuLogo {
 	border: 0px;
 }
+
 div#menu ul {
 	padding:20px;
 	margin:10px;
@@ -59,5 +66,20 @@ div#MoaDetails th{
 }
 
 h1 {
-	font-size
+	font-size: 1.5em;
+}
+h2 {
+	font-size: 1.3em;
+}
+h3 {
+	font-size: 1.1em;
+}
+
+h1#chapterTitle {
+	width: 95%;
+	background-color: #333;
+	color: white;
+	padding: 8px;
+	border: 2px solid black;
+	font-size: 2em;
 }

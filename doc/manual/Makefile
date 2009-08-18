@@ -12,7 +12,7 @@ chapters = 						\
 	using.tex 					\
 	couchdb.tex 				\
 	extending.tex				\
-	templates.tex				
+	reference.tex				
 
 
 .PHONY: manual

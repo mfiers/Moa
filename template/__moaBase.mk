@@ -510,13 +510,13 @@ $(foreach v,$(moa_must_define), 		\
 $(v)									\n\
 :   $(if $($(v)_help),					\
 		$($(v)_help),					\
-		- undefined)					\n\
+		undefined)						\n\
 )										\n\
 \#\# Optional parameters				\n\
 $(foreach v,$(moa_may_define), 			\
 $(v)									\n\
 :   $(if $($(v)_help),					\
 		$($(v)_help),					\
-		- undefined)					\n\
+		undefined)						\n\
 )
 
