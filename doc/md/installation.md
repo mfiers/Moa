@@ -6,19 +6,22 @@ distributions. Moa is depends on the following list of software. The
 version numbers are an indication, not strict prerequisites. Other,
 even older, versions might work.
 
-* Gnu Make 3.81 \citep{Gnumake}
+* [Gnu Make](http://www.gnu.org/software/make/) 3.81
 
-* Git 1.6 \citep{git}. To download the Moa software. Alternatively it
-  is possible to download a tarball.
+* [Git](http://git-scm.com/) 1.6. To download the Moa
+  software. Alternatively it is possible to download a tarball.
 
-* Python 2.6 \citep{python}. Python 2.5 will not work, several
+* [Python](http://python.org) 2.6. Python 2.5 will not work, several
   supporting scripts use 2.6 specific functionality
 
-* Biopython 1.49 \citep{biopython}. Only used by the blast warpper.
+* [Biopython](http://biopython.org/) 1.49. Only used by the blast
+  wrapper.
 
-* Apache Couchdb 0.9.0 \citep{couchdb} (Only when using couchdb functionality)
+* [Apache Couchdb](http://couchdb.apache.org/) 0.9.0. Only when using
+  couchdb functionality, see the chapter on Couchdb
 
-* Couchdb-python \citep{couchpy}
+* [Couchdb-python](http://code.google.com/p/couchdb-python/). Only
+  when using couchdb functionality, see the chapter on Couchdb
 
 Furthermore, the required bioinformatics analysis tools need to be
 installed. All Moa templates that wrap an application expect that
@@ -32,7 +35,7 @@ Moa is hosted at github:
 
 Currently there are no formal releases so the only option is to
 download the latest version of the software, this can be done using
-git \citep{git}:
+git:
 
     git clone git://github.com/mfiers/Moa.git
 
