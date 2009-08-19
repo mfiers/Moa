@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import optparse
+
+parser = optparse.OptionParser()
+
+parser.add_option('-i', dest='infile',
+    help = 'input fasta file')
+parser.set_defaults(delim="\t")
+parser.add_option('-d', dest='delim', help = 'field delimiter')
+parser.add_option('-e', dest='echo', action="store_true",
+    help = 'echo unknown field ids (as opposed to raise an error)')
+
+(options, args) = parser.parse_args()
+if not options.infile:
+    raise Exception("Must define an inputfile!")
+
+
+def fastareader(f):
+    F = open(f)
+    name, seq = "", []
+    while True:
+        l = F.readline()
+        if not l: break
+        
+        l = l.strip()
+        if not l: continue
+
+        if l[0] == '>':
+            if name and seq:
+                yield name, "".join(seq)
+            seq = []
+            name = l[1:]
+                        
+        else:
+            seq.append("".join(l.split()).lower())
+
+    if name and seq:
+        yield name, "".join(seq)
+
+    F.close()
+
+for name, seq in fastareader(options.infile):
+    for what in args:
+        if what == "name":
+            sys.stdout.write("%s" % name)
+        elif what == "id":
+            sys.stdout.write("%s" % name.split()[0])
+        elif what == "length":
+            sys.stdout.write("%s" % len(seq))
+        else:
+            if options.echo:
+                sys.stdout.write("%s" % what)
+            else:
+                raise Exception("Unknown field %s" % what)
+        sys.stdout.write(options.delim)
+            
+    sys.stdout.write("\n")
