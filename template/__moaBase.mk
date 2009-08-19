@@ -92,12 +92,11 @@ moa_default_target: moa_welcome \
 #A list of all targets that can 'check' as valid.
 #in other words, these targets can be used with
 #   make all action=TARGET
-moa_all_targets = $(call set_create, \
-  set append clean register reset targets \
-  $(addsuffix _prepare, $(moa_ids)) \
-  check \
-  $(moa_ids) \
-  $(addsuffix _post, $(moa_ids)) )
+moa_all_targets = $(call set_create, 				\
+  set append clean register reset targets check 	\
+  $(moa_additional_targets)							\
+  $(addsuffix _prepare, $(moa_ids)) 				\
+  $(moa_ids) $(addsuffix _post, $(moa_ids)) )
 
 .PHONY: targets
 targets:

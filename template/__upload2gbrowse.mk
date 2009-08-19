@@ -25,27 +25,38 @@
 # uploaded, i.e. a list of fasta / gff files
 # this goes in the variale gbrowse_upload_files
 #
-moa_ids += upload2gbrowse
-moa_title_upload2gbrowse = Upload to gbrowse
-moa_description_upload2gbrowse = Upload data to a seqfeature gbrowse database
+moa_title = Library for uploading data to GBrowse
+moa_description = A library that aids in uploading FASTA and GFF		\
+  to a Generic Genome Browser database. This template is only to be		\
+  used embedded in another template. This library expects that the		\
+  following variables are preset; gup_fasta_dir, gup_gff_dir, gffsource	\
+  gup_upload_fasta, gup_upload_gff
 
-################################################################################
-## Definitions
-## targets that the enduser might want to use
-moa_targets += upload
-upload_help = upload all new data to gbrowse
+moa_ids += upload2gbrowse
+moa_upload2gbrowse_help = Upload to gbrowse
+
+moa_additional_targets += initGbrowse gupLock gupUnlock
+moa_initGbrowse_help = Clean & initalize a gbrowse database. 			\
+	**Warning: all data will be lost!**
+moa_gupLock_help = Prevent this job from uploading anything to the 		\
+	Generic Genome Browser database
+moa_gupUnlock_help = Allow this job to upload to the Generic Genome		\
+	Browser database
 
 moa_must_define += gup_user gup_db gup_gffsource
 gup_user_help = gbrowse db user. If not defined, this defaults to 'moa'.
 gup_db_help = gbrowse database. If not defined, this defaults to 'moa'.
 gup_gffsource_help = the gff source field, used in batch operations
 
-moa_may_define += gup_upload_fasta gup_upload_gff gbrowse_do_upload
-gup_upload_gff_help = Perform gff upload (T/F)
-gup_upload_fasta_help = Perform fasta upload (T/F)
-gbrowse_do_upload_help = Deprecated: use gup_upload_gff or gup_upload_fasta
+moa_may_define += gup_gff_extension gup_fasta_extension
+gup_fasta_extension_help = extension of the FASTA files to upload (.fasta)
+gup_gff_extension_help = extension of the GFF files to upload (.gff)
 
--include $(shell echo $$MOABASE)/template/moaBase.mk
+moa_may_define += marks_extensions
+marks_extensions_help = Add some extensions to the Gbrowse database to \
+  be initalized, for use by Mark.
+
+include $(shell echo $$MOABASE)/template/moaBase.mk
 
 gup_gff_extension ?= gff
 gup_fasta_extension ?= fasta
@@ -53,16 +64,35 @@ gup_fasta_extension ?= fasta
 gup_gff_dir ?= ./gff
 gup_fasta_dir ?= ./fasta
 
+#Per default we're not uploading. you really need to set this.
 gup_upload_fasta ?= F
 gup_upload_gff ?= F
 
+marks_extensions ?= F
 
+#see if this job is locked from uploading
+gup_locked = $(shell if [ -f ./gup_lock ]; then echo "T"; else echo "F"; fi)
+
+#This is a safe way to only expand
+
+
+$(warning phase $(gup_phase_two) locked $(gup_locked) upload_gff $(gup_upload_gff))
+ifeq "$(gup_phase_two)" "T"
+ifneq "$(gup_locked)" "T"
 ifeq "$(gup_upload_gff)" "T"
+$(warning Reading Gff)
 gup_input_gff := $(wildcard $(gup_gff_dir)/*.$(gup_gff_extension))
 endif
+endif
+endif
 
+ifeq "$(gup_phase_two)" "T"
+ifneq "$(gup_locked)" "T"
 ifeq "$(gup_upload_fasta)" "T"
+$(warning Reading Fasta)
 gup_input_gff := $(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension))
+endif
+endif
 endif
 
 # function to delete the results of one, a few and all input files
@@ -100,7 +130,11 @@ upload2gbrowse_prepare:
 upload2gbrowse:
 	@echo "new instance of make -> make sure that all created"
 	@echo "files are actually recognized"
-	$(MAKE) -j 1 upload2gbrowse2; 
+	if [ $(gup_locked) != "T" ]; then 						\
+		$(MAKE) upload2gbrowse2  gup_phase_two=T; 		\
+	else 													\
+		$(call echo,No upload to Gbrowse: GUP-LOCKED!);		\
+	fi
 	echo "End of make upload2gbrowse2"
 
 
@@ -116,6 +150,14 @@ test_fasta: $(gup_input_fasta)
 test_gff: $(gup_input_gff)
 	@echo "identified $(words $(gup_input_gff)) fasta files"
 	@echo "of which $(words $?) are scheduled to be uploaded"
+
+# Lock / unlock this job from uploading to/from the database
+.PHONY: gupLock
+gupLock:
+	touch gup_lock
+.PHONY: gupUnlock
+gupUnlock:
+	rm gup_lock
 
 
 ## Do the actual upload
@@ -148,5 +190,36 @@ upload2gbrowse_clean: $(gup_input_gff)
 	$(gup_delete_all)
 	-rm upload_gff
 	-rm upload_fasta
-	-rm upload_fasta_fof
-	-rm upload_gff_fof
+
+
+##
+## initGbrowse functionality
+##
+
+
+initGbrowse: mark_add_1 = 									\
+	ALTER TABLE $(gup_db).name								\
+	ADD COLUMN `pid` int(10) NOT NULL AUTO_INCREMENT,		\
+	ADD PRIMARY KEY (`pid`)
+
+initGbrowse: mark_add_2 =									\
+	ALTER TABLE $(gup_db).attribute 						\
+	ADD COLUMN `pid` int(10) NOT NULL AUTO_INCREMENT, 		\
+	ADD PRIMARY KEY (`pid`)
+
+initGbrowse: mark_add_3 = 									\
+	ALTER TABLE $(gup_db).parent2child						\
+	ADD COLUMN `pid` int(10) NOT NULL AUTO_INCREMENT, 		\
+	ADD PRIMARY KEY (`pid`)
+
+initGbrowse:
+	bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -c
+	if [ "$(marks_extensions)" == "T" ]; then 				\
+		mysql -u$(gup_user) -e '$(mark_add_1)';				\
+		mysql -u$(gup_user) -e '$(mark_add_2)';				\
+		mysql -u$(gup_user) -e '$(mark_add_3)';				\
+	fi
+	touch lock
+
+
+

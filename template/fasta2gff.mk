@@ -23,8 +23,10 @@
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
-moa_targets += fasta2gff
-fasta2gff_help = generate gff from a fasta file
+moa_title = GFF from FASTA
+moa_description = Derive GFF from a FASTA file, usually to accompany the 		\
+	Sequence for upload to a generic genome browser database.
+moa_fasta2gff_help = Generate GFF from a fasta file
 
 # Help
 moa_ids += fasta2gff
