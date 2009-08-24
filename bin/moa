@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+
 """
 A set of moa help functions. Hidden behind one command: moa.
 
@@ -24,21 +25,31 @@ Most of the functions do not have a relationship with each
 other.. Maybe I should make separate scripts out of these. Don't know
 yet.
 
-
 """
 
-#IMPORTANT: always import your modules ordered by name length!
 import os
-import re
 import sys
+import re
 import time
 import copy
 import errno
 import logging
-import httplib
 import optparse
 import contextlib
-import simplejson
+
+#moa specific libs - first set the path
+if not os.environ.has_key('MOABASE'):
+    raise Exception("MOABASE is undefined")
+
+sys.path.append(os.path.join(
+        os.environ['MOABASE'], 'lib', 'pyton'))
+
+
+
+import moa.couchdb
+#Logging
+from moa.utils import logger
+l = logger.l
 
 usage = """Usage: %prog [options] COMMAND args
 
@@ -93,26 +104,6 @@ parser.add_option("-v", "--verbose", dest="verbose",
 
 (options, args) = parser.parse_args()
 
-l = logging.getLogger('moa')
-handler = logging.StreamHandler()
-logmark = chr(27) + '[0;45m ' + \
-          chr(27) + '[44m ' + \
-          chr(27) + '[42m ' + \
-          chr(27) + '[43m ' + \
-          chr(27) + '[41m ' + \
-          chr(27) + '[0m' 
-
-formatter = logging.Formatter(
-    logmark + chr(27) + '[0;1m%(levelname)-8s' + 
-    chr(27) + '[0m %(asctime)-24s %(message)s')
-
-handler.setFormatter(formatter)
-l.addHandler(handler)
-if options.verbose:
-    l.setLevel(logging.DEBUG)
-else:
-    l.setLevel(logging.INFO)
-
 if not os.environ.has_key("MOABASE"):
     l.critical("need to set MOABASE environment variable")
     sys.exit(1)
@@ -148,124 +139,9 @@ def flock(path, wait_delay=.1):
     finally:
         os.unlink(path)
 
-
-
 def error(d):
     l.error(simplejson.dumps(doc, sort_keys=True, indent=4))
     sys.exit(-1)
-
-class Couchdb:
-    
-    """ Wrapper class for operations on a couchDB. This code is gracefully
-    adapted from ?
-    """
-
-    def __init__(self,
-                 host='localhost', 
-                 port=5984):
-        
-        self.host = host
-        self.port = port
-
-    def connect(self):
-        # No close()???
-        return httplib.HTTPConnection(self.host, self.port)
-
-
-    # high level operations
-    def createDb(self, dbName):
-        
-        """ Creates a new database on the server"""
-
-        l.debug("Creating db %s" % dbName)
-        r = self.put("/%s/" % dbName, '')
-        if r.has_key('error'):
-            if r['error'] == 'file_exists':
-                l.warning("Database already exists, ignoring/..")
-                return r
-            else:
-                error(r)
-        return r
-        
-    def deleteDb(self, dbName):
-        """Deletes the database on the server"""
-        r = self.delete('/%s/' % dbName)
-        return r
-
-    def listDb(self):
-        """List the databases on the server"""
-        return self.get('/_all_dbs')
-
-    def infoDb(self, dbName):
-        """Returns info about the couchDB"""
-        return self.get('/%s/' % dbName)
-
-    def allDocs(self, dbName):
-        """ returns all docs in a db """
-        return self.get("/%s/_all_docs" % dbName)
-
-        
-    # Document operations
-    def listDoc(self, dbName):
-        """List all documents in a given database"""
-        return self.get('%s/_all_docs' % dbName)
-
-    def openDoc(self, dbName, docId):
-        """Open a document in a given database"""
-        return self.get('/%s/%s' % (dbName,docId))
-
-    def forceSave(self, dbName, body, docId):
-        #try a regular save:
-        r = self.saveDoc(dbName, body, docId)
-        if r.get('error', None) == 'conflict':
-            if not body.has_key("_rev"):
-                l.warning("save conflict - older revision and retrying")
-                olddoc = self.openDoc(dbName, docId)
-                body['_rev'] = olddoc['_rev']
-                r = self.saveDoc(dbName, body, docId)
-        return r
-            
-    def saveDoc(self, dbName, body, docId=None):
-        """Save/create a document to/in a given database"""
-        if not docId:
-            return self.post("/%s/" % (dbName), body)
-
-        return self.put("/%s/%s" % (dbName, docId), body)
-
-
-    def deleteDoc(self, dbName, doc):
-        return self.delete('/%s/%s?rev=%s' % (
-            dbName, doc["_id"], doc["_rev"]))
-
-    #low level routines, calling get, post, put & delete
-    def get(self, uri):
-        c = self.connect()
-        headers = {"Accept": "application/json"}
-        c.request("GET", uri, None, headers)
-        return simplejson.loads(c.getresponse().read())
-
-    def post(self, uri, body):
-        c = self.connect()
-        headers = {"Content-type": "application/json"}
-        c.request('POST', uri,
-                  simplejson.dumps(body),
-                  headers)
-        return simplejson.loads(c.getresponse().read())
-
-    def put(self, uri, body):
-        body = simplejson.dumps(body)
-        c = self.connect()
-        if len(body) > 0:
-            headers = {"Content-type": "application/json"}
-            c.request("PUT", uri, body, headers)
-        else:
-            c.request("PUT", uri, body)
-        return simplejson.loads(c.getresponse().read())
-
-    def delete(self, uri):
-        c = self.connect()
-        c.request("DELETE", uri)
-        return simplejson.loads(c.getresponse().read())
 
 #Handle templates - 
     
@@ -343,55 +219,6 @@ def moaNew(what, jid=None):
         l.debug("Written jid=%s to moa.mk" % jid)
     
     l.info("Written Makefile, try: make help")
-
-# Handle couchdb related commands
-def moaRegister(args):
-    docid = args[0]
-    newdoc = {}
-
-    #see if there was already a doc with this name:
-    doc = server.openDoc(options.couchdb, docid)
-    if doc.has_key('error'):
-        l.debug("No previous record found (%s)" % doc['error'])
-    else:
-        #remember the _rev(ision) id.. for an update
-        if doc: newdoc['_rev'] = doc['_rev']
-
-    for x in args[1:]:
-        l.debug("registring %s" % x)
-        k,v = x.split('=', 1)
-        #process the moa_ids - make it a list
-        if k == 'moa_ids': newdoc[k] = v.split()
-        else: newdoc[k] = v
-
-    l.debug("New doc created (with %d keys)" % len(newdoc))
-    r = server.saveDoc(options.couchdb, newdoc, docid)
-    if r.has_key('error') and r['error'] == 'not_found':
-        #maybe the db isn't created -yet- try that
-        l.warning("Db is not created? Trying..")
-        server.createDb(options.couchdb)
-        r = server.saveDoc(options.couchdb, newdoc, docid)
-        if r.has_key('error'):
-            l.error("Error writing document")
-            error(r)
-    elif r.has_key('error'):
-        l.error("Error writing document")
-        error(r)
-    else:
-        l.info("Success, document is written to the db")
-        return True
-    return True
-
-def moaGet(docid, query):
-    doc = server.openDoc(options.couchdb, docid)
-    if not doc:
-        l.error("Cannot find document /moa/%s" % docid)
-        sys.exit(-1)
-    if not doc.has_key(query):
-        l.error("Cannot find document /moa/%s/%s" % (docid, query))
-        sys.exit(-1)
-            
-    return doc[query]
 
 #### Handle moa.mk related settings...
 
@@ -503,7 +330,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     cserver, cport = options.couchserver.split(":")
-    server = Couchdb(cserver, cport)
+    moa.couchdb.connect(cserver, cport, options.couchdb)
 
     command = args[0]
     l.debug("start moa %s" % command)
@@ -518,25 +345,22 @@ if __name__ == "__main__":
         sys.exit()
 
     if command == 'register':
-        moaRegister(args[1:])
+        moa.couchdb.moaRegister(args[1:])
         sys.exit()
         
     if command == 'get':
         docid, query = args[1], args[2]
-        value = moaGet(docid, query)
+        value = moa.couchdb.moaGet(docid, query)
         print value
         sys.exit()
 
     if command == 'jids':
-        alldocs = server.allDocs(options.couchdb)
-        for doc in alldocs['rows']:
-            print doc['id']
+        for j in moa.couchdb.getJids():
+            print j
         sys.exit()
 
     if command == 'doc':
-        docid = args[1]
-        doc = server.openDoc(options.couchdb, docid)
-        print simplejson.dumps(doc, sort_keys=True, indent=4)
+        print moa.couchdb.getDocStr(args[1])
         sys.exit()
 
     if command == 'conf':
