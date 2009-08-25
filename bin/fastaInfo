@@ -1,15 +1,38 @@
 #!/usr/bin/env python
-
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
 import os
 import sys
 import optparse
+import re
 
 parser = optparse.OptionParser()
 
 parser.add_option('-i', dest='infile',
     help = 'input fasta file')
 parser.set_defaults(delim="\t")
-parser.add_option('-d', dest='delim', help = 'field delimiter')
+
+parser.add_option('-d', dest='delim', help = 'output field delimiter')
+parser.add_option('-x', dest='maxno', type='int', 
+                  help = 'max no of sequences to process')
+parser.add_option('-s', dest='stats', help = 'stats mode - generate averages',
+                  action='store_true')
 parser.add_option('-e', dest='echo', action="store_true",
     help = 'echo unknown field ids (as opposed to raise an error)')
 
@@ -33,7 +56,6 @@ def fastareader(f):
                 yield name, "".join(seq)
             seq = []
             name = l[1:]
-                        
         else:
             seq.append("".join(l.split()).lower())
 
@@ -42,19 +64,98 @@ def fastareader(f):
 
     F.close()
 
+i = 0
+
+dd = {}
+if options.stats:
+    for x in args:
+        dd[x] = []
+
+funcs = ['length', 'fracn', 'id', 'scaf10', 'scaf100']
+
+def f_id(name, seq):
+    return name.split()[0]
+
+def f_length(name,seq):
+    return len(seq)
+
+def f_fracn(name, seq):
+    return float(seq.count('n')) / len(seq)
+
+scaf10rex = re.compile(r'n{10,}')
+scaf100rex = re.compile(r'n{100,}')
+def f_scaf10(name,seq):
+    return len(scaf10rex.split(seq))
+
+def f_scaf100(name,seq):
+    return len(scaf100rex.split(seq))
+
+
+
 for name, seq in fastareader(options.infile):
-    for what in args:
-        if what == "name":
-            sys.stdout.write("%s" % name)
-        elif what == "id":
-            sys.stdout.write("%s" % name.split()[0])
-        elif what == "length":
-            sys.stdout.write("%s" % len(seq))
-        else:
-            if options.echo:
-                sys.stdout.write("%s" % what)
+    i += 1
+    if options.maxno and i > options.maxno: 
+        break
+
+    if options.stats:
+        for what in args:
+            dd[what].append(eval('f_%s(name, seq)' % what))
+    else:
+
+        for what in args:
+            if what == "name":
+                sys.stdout.write("%s" % name)
+            elif what in funcs:
+                es = 'f_%s(name, seq)' % what
+                v = eval(es)
+                sys.stdout.write("%s" % v)
             else:
-                raise Exception("Unknown field %s" % what)
-        sys.stdout.write(options.delim)
-            
-    sys.stdout.write("\n")
+                if options.echo:
+                    sys.stdout.write("%s" % what)
+                else:
+                    raise Exception("Unknown field %s" % what)
+            sys.stdout.write(options.delim)
+
+        sys.stdout.write("\n")
+
+
+if options.stats:
+    if len(dd) == 0:
+        print "no results"
+        sys.exit(0)
+
+    print '#what no max min sum average median stdev n50'
+    for what in args:
+        d = dd[what]
+        if type(d[0]) == type('hi'):
+            continue
+        d.sort() #for median
+        _len = len(d)
+        _max = max(d)
+        _min = min(d)
+        _sum = sum(d)
+        _avg = float(_sum) / _len
+        _med = d[_len // 2]
+        __sdsq = sum([(i - _avg) ** 2 for i in d])
+        _sd = (float (__sdsq) / (_len - 1)) ** 0.5
+        
+        #calc n50
+        __n50sum = 0
+        __n50half = _sum / 2.0
+        _n50 = d[0]
+        for i in d:
+            _n50 = i
+            __n50sum += i
+            if __n50sum > __n50half:
+                break
+
+        print what,  \
+               _len, \
+               _max, \
+               _min, \
+               _sum, \
+               _avg, \
+               _med, \
+               _sd,  \
+               _n50
+    

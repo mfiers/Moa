@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
+
+"""
+Update the header with license of any moa related sourcefile
+"""
+
+header = """
+Copyright 2009 Mark Fiers, Plant & Food Research
+
+This file is part of Moa - http://github.com/mfiers/Moa
+
+Moa is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+Moa is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+""".split("\n")
+
+import os
+import sys
+
+infile = sys.argv[1]
+
+#read the original source file
+F = open(infile, 'r')
+source = F.readlines()
+F.close()
+
+shebang = ""
+if source[0][:2] == '#!':
+    shebang = source.pop(0)
+
+#write out the file 
+F = open(infile, 'w')
+
+if shebang: F.write(shebang)
+
+prefix = "#"
+for h in header:
+    F.write("%s %s\n" % (prefix, h))
+
+inoldheader = True
+i = 0
+for s in source:
+    if inoldheader and ((s.find(prefix) == 0) or not s.strip()):
+        continue
+    elif inoldheader:
+        inoldheader = False
+
+    F.write(s)
+    
+F.close()
+        

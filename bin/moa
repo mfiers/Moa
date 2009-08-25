@@ -1,23 +1,22 @@
 #!/usr/bin/env python
-#
-#     Copyright 2009 Mark Fiers
-#
-#    This file is part of Moa 
-#
-#    Moa is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    Moa is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-#
-#    See: http://github.com/mfiers/Moa/
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
 
 """
 A set of moa help functions. Hidden behind one command: moa.
@@ -26,21 +25,32 @@ Most of the functions do not have a relationship with each
 other.. Maybe I should make separate scripts out of these. Don't know
 yet.
 
-
 """
 
-#IMPORTANT: always import your modules ordered by name length!
 import os
-import re
 import sys
+import re
 import time
 import copy
 import errno
 import logging
-import httplib
 import optparse
 import contextlib
-import simplejson
+
+#moa specific libs - first set the path
+if not os.environ.has_key('MOABASE'):
+    raise Exception("MOABASE is undefined")
+
+sys.path.append(os.path.join(
+        os.environ['MOABASE'], 'lib', 'pyton'))
+
+import moa.template
+import moa.couchdb
+import moa.conf
+
+#Logging
+from moa.utils import logger
+l = logger.l
 
 usage = """Usage: %prog [options] COMMAND args
 
@@ -95,26 +105,6 @@ parser.add_option("-v", "--verbose", dest="verbose",
 
 (options, args) = parser.parse_args()
 
-l = logging.getLogger('moa')
-handler = logging.StreamHandler()
-logmark = chr(27) + '[0;45m ' + \
-          chr(27) + '[44m ' + \
-          chr(27) + '[42m ' + \
-          chr(27) + '[43m ' + \
-          chr(27) + '[41m ' + \
-          chr(27) + '[0m' 
-
-formatter = logging.Formatter(
-    logmark + chr(27) + '[0;1m%(levelname)-8s' + 
-    chr(27) + '[0m %(asctime)-24s %(message)s')
-
-handler.setFormatter(formatter)
-l.addHandler(handler)
-if options.verbose:
-    l.setLevel(logging.DEBUG)
-else:
-    l.setLevel(logging.INFO)
-
 if not os.environ.has_key("MOABASE"):
     l.critical("need to set MOABASE environment variable")
     sys.exit(1)
@@ -150,352 +140,12 @@ def flock(path, wait_delay=.1):
     finally:
         os.unlink(path)
 
-
-
 def error(d):
     l.error(simplejson.dumps(doc, sort_keys=True, indent=4))
     sys.exit(-1)
 
-class Couchdb:
-    
-    """ Wrapper class for operations on a couchDB. This code is gracefully
-    adapted from ?
-    """
-
-    def __init__(self,
-                 host='localhost', 
-                 port=5984):
-        
-        self.host = host
-        self.port = port
-
-    def connect(self):
-        # No close()???
-        return httplib.HTTPConnection(self.host, self.port)
-
-
-    # high level operations
-    def createDb(self, dbName):
-        
-        """ Creates a new database on the server"""
-
-        l.debug("Creating db %s" % dbName)
-        r = self.put("/%s/" % dbName, '')
-        if r.has_key('error'):
-            if r['error'] == 'file_exists':
-                l.warning("Database already exists, ignoring/..")
-                return r
-            else:
-                error(r)
-        return r
-        
-    def deleteDb(self, dbName):
-        """Deletes the database on the server"""
-        r = self.delete('/%s/' % dbName)
-        return r
-
-    def listDb(self):
-        """List the databases on the server"""
-        return self.get('/_all_dbs')
-
-    def infoDb(self, dbName):
-        """Returns info about the couchDB"""
-        return self.get('/%s/' % dbName)
-
-    def allDocs(self, dbName):
-        """ returns all docs in a db """
-        return self.get("/%s/_all_docs" % dbName)
-
-        
-    # Document operations
-    def listDoc(self, dbName):
-        """List all documents in a given database"""
-        return self.get('%s/_all_docs' % dbName)
-
-    def openDoc(self, dbName, docId):
-        """Open a document in a given database"""
-        return self.get('/%s/%s' % (dbName,docId))
-
-    def forceSave(self, dbName, body, docId):
-        #try a regular save:
-        r = self.saveDoc(dbName, body, docId)
-        if r.get('error', None) == 'conflict':
-            if not body.has_key("_rev"):
-                l.warning("save conflict - older revision and retrying")
-                olddoc = self.openDoc(dbName, docId)
-                body['_rev'] = olddoc['_rev']
-                r = self.saveDoc(dbName, body, docId)
-        return r
-            
-    def saveDoc(self, dbName, body, docId=None):
-        """Save/create a document to/in a given database"""
-        if not docId:
-            return self.post("/%s/" % (dbName), body)
-
-        return self.put("/%s/%s" % (dbName, docId), body)
-
-
-    def deleteDoc(self, dbName, doc):
-        return self.delete('/%s/%s?rev=%s' % (
-            dbName, doc["_id"], doc["_rev"]))
-
-    #low level routines, calling get, post, put & delete
-    def get(self, uri):
-        c = self.connect()
-        headers = {"Accept": "application/json"}
-        c.request("GET", uri, None, headers)
-        return simplejson.loads(c.getresponse().read())
-
-    def post(self, uri, body):
-        c = self.connect()
-        headers = {"Content-type": "application/json"}
-        c.request('POST', uri,
-                  simplejson.dumps(body),
-                  headers)
-        return simplejson.loads(c.getresponse().read())
-
-    def put(self, uri, body):
-        body = simplejson.dumps(body)
-        c = self.connect()
-        if len(body) > 0:
-            headers = {"Content-type": "application/json"}
-            c.request("PUT", uri, body, headers)
-        else:
-            c.request("PUT", uri, body)
-        return simplejson.loads(c.getresponse().read())
-
-    def delete(self, uri):
-        c = self.connect()
-        c.request("DELETE", uri)
-        return simplejson.loads(c.getresponse().read())
-
 #Handle templates - 
-    
-def checkTemplate(what):
-    templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
-    if not os.path.exists(templatefile):
-        l.debug("cannot find %s" % templatefile)
-        l.error("No template for %s exists" % what)
-        sys.exit(1)        
-    return True
 
-def moaList():
-    """
-    List all known templates
-    """
-    r = []
-    for f in os.listdir(TEMPLATEDIR):
-        if f[0] == '.': continue
-        if f[0] == '_': continue
-        if f[0] == '#': continue
-        if f[-1] == '~': continue
-        if f == 'gsml': continue
-        if not '.mk' in f: continue
-        r.append(f.replace('.mk', ''))
-    r.sort()
-    for r1 in r: print r1
-        
-def moaNew(what, jid=None):
-    """
-    Create a new template based makefile in the current dir.
-    """
-    if os.path.exists("./Makefile"):
-        l.debug("Makefile exists!")
-        if not options.force:
-            l.critical("makefile exists, use force to overwrite")
-            sys.exit(1)
-
-    for t in what:
-        checkTemplate(t)
-
-    l.debug("Start writing ./Makefile") 
-    F = open("./Makefile", 'w')
-    F.write("#Moa autogenerated Makefile\n")
-    F.write("-include moa.mk\n")
-    F.write("MOAMK_INCLUDE=done")
-    F.write("\n\n")
-    F.write("#Execute these commands first\n")
-    F.write("moa_preprocess:\n")
-    F.write("\t@echo preprocess commands go here\n\n\n")
-    F.write("#Execute these commands last\n")
-    F.write("moa_postprocess:\n")
-    F.write("\t@echo Postprocess commands go here..\n\n\n")
-
-    F.write("dont_include_moabase=please\n\n")
-    
-    for t in what:
-        F.write("include $(shell echo $$MOABASE)/template/%s.mk\n" % t)
-
-    F.write("include $(shell echo $$MOABASE)/template/__moaBase.mk\n")
-    F.close()
-
-    if jid:
-        if os.path.exists('moa.mk'):
-            moamk = open('moa.mk').readlines()
-        else:
-            moamk = []
-            
-        F = open('moa.mk', 'w')
-        for line in moamk:
-            if not re.match("^jid *="):
-                F.write(line)
-        F.write("\n")
-        F.write("jid=%s" % jid)
-        F.close()
-        l.debug("Written jid=%s to moa.mk" % jid)
-    
-    l.info("Written Makefile, try: make help")
-
-# Handle couchdb related commands
-def moaRegister(args):
-    docid = args[0]
-    newdoc = {}
-
-    #see if there was already a doc with this name:
-    doc = server.openDoc(options.couchdb, docid)
-    if doc.has_key('error'):
-        l.debug("No previous record found (%s)" % doc['error'])
-    else:
-        #remember the _rev(ision) id.. for an update
-        if doc: newdoc['_rev'] = doc['_rev']
-
-    for x in args[1:]:
-        l.debug("registring %s" % x)
-        k,v = x.split('=', 1)
-        #process the moa_ids - make it a list
-        if k == 'moa_ids': newdoc[k] = v.split()
-        else: newdoc[k] = v
-
-    l.debug("New doc created (with %d keys)" % len(newdoc))
-    r = server.saveDoc(options.couchdb, newdoc, docid)
-    if r.has_key('error') and r['error'] == 'not_found':
-        #maybe the db isn't created -yet- try that
-        l.warning("Db is not created? Trying..")
-        server.createDb(options.couchdb)
-        r = server.saveDoc(options.couchdb, newdoc, docid)
-        if r.has_key('error'):
-            l.error("Error writing document")
-            error(r)
-    elif r.has_key('error'):
-        l.error("Error writing document")
-        error(r)
-    else:
-        l.info("Success, document is written to the db")
-        return True
-    return True
-
-def moaGet(docid, query):
-    doc = server.openDoc(options.couchdb, docid)
-    if not doc:
-        l.error("Cannot find document /moa/%s" % docid)
-        sys.exit(-1)
-    if not doc.has_key(query):
-        l.error("Cannot find document /moa/%s/%s" % (docid, query))
-        sys.exit(-1)
-            
-    return doc[query]
-
-#### Handle moa.mk related settings...
-
-def moaConfCache():
-    """
-    Read the coucdb variables and store them in moa.mk
-    """
-    if not os.path.exists('moa.mk'):
-        l.debug("moa.mk doesn't exist. nothing to cache")
-        return
-
-    with flock('moa.mk.lock'):
-        os.rename('moa.mk', 'moa.mk.tmp')        
-        #open filehandles to both files:
-        F = open('moa.mk.tmp', 'r')
-        G = open('moa.mk', 'w')
-
-        moaCouchKeys = set()
-        moaCouchTerms = {}
-        
-        for line in F.readlines():
-            line = line.strip()
-            if not line: continue
-            k,o,v = re.split(r'\s*(\+?=)\s*', line.strip())
-            if k[-9:] == "__couchdb":
-                moaCouchKeys.add(k[:-9])
-                moaCouchTerms[k[:-9]] = v
-
-
-        F.seek(0)
-        for line in F.readlines():
-            line = line.strip()
-            if not line: continue
-            k,o,v = re.split(r'\s*(\+?=)\s*', line.strip())
-            if not k in moaCouchKeys:
-                G.write("%s%s%s\n" % (k,o,v))
-                
-        for k in moaCouchKeys:
-            cdbk, cdbv = moaCouchTerms[k].split()
-            val = moaGet(cdbk, cdbv)
-            G.write("%s=%s\n" % (k,val))
-            
-        F.close()
-        G.close()
-        os.remove('moa.mk.tmp')
-   
-   
-def moaConfChange(mode, args):
-    """
-    save the arguments in moa.mk
-    """   
-    #parse all arguments..
-    incomingKeys = set()
-    incomingArgs = []
-    for a in args:
-        k, v = [x.strip() for x in a.split('=', 1)]
-        incomingKeys.add(k)
-        incomingArgs.append((k,v))
-
-    with flock('moa.mk.lock'):
-        #move moa.mk to a new location
-        if os.path.exists('moa.mk'):
-            os.rename('moa.mk', 'moa.mk.tmp')
-        else:
-            open('moa.mk.tmp', 'w').close()
-            
-        
-        #open filehandles to both files:
-        G = open('moa.mk', 'w')
-        F = open('moa.mk.tmp', 'r')
-
-        #read the old file
-        for line in F.readlines():
-            #l.debug("trying line %s" % line)
-            k,o,v = re.split(r'\s*(\+?=)\s*', line.strip())
-            if mode != 'set':
-                #if the mode is not 'set', write 
-                G.write(line)                
-            elif (not k in incomingKeys) and \
-                 (not k.replace("__couchdb", "") in incomingKeys):
-                #write, unless the mode=='set' and the key needs
-                #an update
-                G.write(line)
-            else:
-                l.debug("Omitting line - needs replacement:")
-                l.debug(" : %s " % line.strip())
-                
-        if mode == 'set':
-            oper = "="
-        else:
-            oper = "+="
-            
-        for k,v in incomingArgs:
-            l.debug("writing new line to moa.mk:")
-            l.debug(" : %s%s%s" % (k, oper, v))
-            G.write("%s%s%s\n" % (k, oper, v))
-
-        F.close()
-        G.close()
-        os.remove('moa.mk.tmp')
-    moaConfCache()
-    
 if __name__ == "__main__":    
     l.debug("MOABASE : %s" % MOABASE)
     
@@ -505,55 +155,52 @@ if __name__ == "__main__":
         sys.exit(1)
 
     cserver, cport = options.couchserver.split(":")
-    server = Couchdb(cserver, cport)
+    moa.couchdb.connect(cserver, cport, options.couchdb)
 
     command = args[0]
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
                        
     if command == 'new':
-        moaNew(args[1:], jid=options.jid)
+        moa.template.new(args[1:], jid=options.jid)
         sys.exit()
 
     if command == 'list':
-        moaList()
+        moa.template.list()
         sys.exit()
 
     if command == 'register':
-        moaRegister(args[1:])
+        moa.couchdb.moaRegister(args[1:])
         sys.exit()
         
     if command == 'get':
         docid, query = args[1], args[2]
-        value = moaGet(docid, query)
+        value = moa.couchdb.moaGet(docid, query)
         print value
         sys.exit()
 
     if command == 'jids':
-        alldocs = server.allDocs(options.couchdb)
-        for doc in alldocs['rows']:
-            print doc['id']
+        for j in moa.couchdb.getJids():
+            print j
         sys.exit()
 
     if command == 'doc':
-        docid = args[1]
-        doc = server.openDoc(options.couchdb, docid)
-        print simplejson.dumps(doc, sort_keys=True, indent=4)
+        print moa.couchdb.getDocStr(args[1])
         sys.exit()
 
     if command == 'conf':
         subcommand = args[1]
         
         if subcommand == 'set':
-            moaConfChange('set', args[2:])
+            moa.conf.change('set', args[2:])
             sys.exit()
             
         if subcommand == 'append':
-            moaConfChange('append', args[2:])
+            moa.conf.change('append', args[2:])
             sys.exit()
 
         if subcommand == 'cache':
-            moaConfCache()
+            moa.conf.cache()
             sys.exit()
         
     l.error("No command defined!")
