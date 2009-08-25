@@ -24,6 +24,9 @@ Moa script - couchdb related code
 import httplib
 import simplejson
 
+from moa.utils import logger
+l = logger.l
+
 class Couchdb:
     
     """ Wrapper class for operations on a couchDB. This code is gracefully
@@ -138,12 +141,15 @@ class Couchdb:
 
 # Handle couchdb related commands
 def moaRegister(args):
+    
     global _dbName
+    global _server
+
     docid = args[0]
     newdoc = {}
 
     #see if there was already a doc with this name:
-    doc = server.openDoc(_dbName, docid)
+    doc = _server.openDoc(_dbName, docid)
     if doc.has_key('error'):
         l.debug("No previous record found (%s)" % doc['error'])
     else:
@@ -158,12 +164,12 @@ def moaRegister(args):
         else: newdoc[k] = v
 
     l.debug("New doc created (with %d keys)" % len(newdoc))
-    r = server.saveDoc(_dbName, newdoc, docid)
+    r = _server.saveDoc(_dbName, newdoc, docid)
     if r.has_key('error') and r['error'] == 'not_found':
         #maybe the db isn't created -yet- try that
         l.warning("Db is not created? Trying..")
-        server.createDb(_dbName)
-        r = server.saveDoc(_dbName, newdoc, docid)
+        _server.createDb(_dbName)
+        r = _server.saveDoc(_dbName, newdoc, docid)
         if r.has_key('error'):
             l.error("Error writing document")
             error(r)
@@ -176,7 +182,10 @@ def moaRegister(args):
     return True
 
 def moaGet(docid, query):
-    doc = server.openDoc(_couchdb, docid)
+    """ Get a single value from a record """
+    global _server
+    global _dbName
+    doc = _server.openDoc(_dbName, docid)
     if not doc:
         l.error("Cannot find document /moa/%s" % docid)
         sys.exit(-1)

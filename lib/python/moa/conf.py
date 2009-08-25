@@ -21,6 +21,32 @@
 Moa script - moa.mk configuration related code
 """
 
+import re
+import os
+import contextlib
+
+from moa.utils import logger
+l = logger.l
+
+# Get a file lock, borrowed from:
+#  http://code.activestate.com/recipes/576572/
+#
+@contextlib.contextmanager
+def flock(path, wait_delay=.1):
+    while True:
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+        except OSError, e:
+            if e.errno != errno.EEXIST:
+                raise
+            time.sleep(wait_delay)
+            continue
+        else:
+            break
+    try:
+        yield fd
+    finally:
+        os.unlink(path)
 
 def cache():
     """
@@ -119,5 +145,5 @@ def change(mode, args):
         F.close()
         G.close()
         os.remove('moa.mk.tmp')
-    moaConfCache()
+    cache()
     
