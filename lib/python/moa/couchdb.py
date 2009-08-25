@@ -188,9 +188,7 @@ def moaGet(docid, query):
 
 def getJids():
     """ Get a list of jids """
-    global _server
-    for d in _server.allDocs(_dbName)['rows']:
-        yield d['id']
+    return [d['id'] for d in _server.allDocs(_dbName)['rows']]
 
 def getDocStr(id):
     doc = _server.openDoc(_dbName, id)
