@@ -35,7 +35,6 @@ import copy
 import errno
 import logging
 import optparse
-import contextlib
 
 #moa specific libs - first set the path
 if not os.environ.has_key('MOABASE'):
@@ -44,8 +43,12 @@ if not os.environ.has_key('MOABASE'):
 sys.path.append(os.path.join(
         os.environ['MOABASE'], 'lib', 'pyton'))
 
+MOABASE = os.environ["MOABASE"]
+TEMPLATEDIR = os.path.join(MOABASE, 'template')
+
 import moa.template
 import moa.couchdb
+import moa.graph
 import moa.conf
 
 #Logging
@@ -109,36 +112,11 @@ if not os.environ.has_key("MOABASE"):
     l.critical("need to set MOABASE environment variable")
     sys.exit(1)
     
-MOABASE = os.environ["MOABASE"]
-TEMPLATEDIR = os.path.join(MOABASE, 'template')
-
 
 ##########
 # Helper functions
 ##########
 
-
-# Get a file lock
-#
-# borrowed from:
-#  http://code.activestate.com/recipes/576572/
-
-@contextlib.contextmanager
-def flock(path, wait_delay=.1):
-    while True:
-        try:
-            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
-        except OSError, e:
-            if e.errno != errno.EEXIST:
-                raise
-            time.sleep(wait_delay)
-            continue
-        else:
-            break
-    try:
-        yield fd
-    finally:
-        os.unlink(path)
 
 def error(d):
     l.error(simplejson.dumps(doc, sort_keys=True, indent=4))
@@ -163,46 +141,47 @@ if __name__ == "__main__":
                        
     if command == 'new':
         moa.template.new(args[1:], jid=options.jid)
-        sys.exit()
 
-    if command == 'list':
+    elif command == 'list':
         moa.template.list()
-        sys.exit()
-
-    if command == 'register':
+      
+    elif command == 'register':
         moa.couchdb.moaRegister(args[1:])
-        sys.exit()
-        
-    if command == 'get':
+              
+    elif command == 'get':
         docid, query = args[1], args[2]
         value = moa.couchdb.moaGet(docid, query)
         print value
-        sys.exit()
-
-    if command == 'jids':
-        for j in moa.couchdb.getJids():
-            print j
-        sys.exit()
-
-    if command == 'doc':
+      
+    elif command == 'jids':
+        print "\n".join(moa.couchdb.getJids())
+      
+    elif command == 'doc':
         print moa.couchdb.getDocStr(args[1])
-        sys.exit()
 
-    if command == 'conf':
+    elif command == 'conf':
         subcommand = args[1]
         
         if subcommand == 'set':
             moa.conf.change('set', args[2:])
-            sys.exit()
-            
-        if subcommand == 'append':
+                      
+        elif subcommand == 'append':
             moa.conf.change('append', args[2:])
+          
+        elif subcommand == 'cache':
+            moa.conf.cache()
+
+        else:
+            l.error("Invalud moa conf command")
             sys.exit()
 
-        if subcommand == 'cache':
-            moa.conf.cache()
-            sys.exit()
-        
-    l.error("No command defined!")
-    parser.print_help()
-    sys.exit(1)
+    elif command == 'graph':
+        subcommand = args[1]
+        if subcommand == 'test':
+            moa.graph.test()
+        else:
+            l.error("Invalid moa graph command")
+    else:
+        l.error("No command defined!")
+        parser.print_help()
+        sys.exit(1)

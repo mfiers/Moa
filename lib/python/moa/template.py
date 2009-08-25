@@ -25,6 +25,9 @@ import os
 import moa.utils.logger
 l = moa.utils.logger.l
     
+MOABASE = os.environ["MOABASE"]
+TEMPLATEDIR = os.path.join(MOABASE, 'template')
+
 def _check(what):
     """Check if a template exists"""
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
