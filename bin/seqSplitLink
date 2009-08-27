@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+
+
+"""
+Splits a sequence on a substring
+"""
+import sys
+
+def fastareader(f):
+    F = open(f)
+    name, seq = "", []
+    while True:
+        l = F.readline()
+        if not l: break
+        
+        l = l.strip()
+        if not l: continue
+
+        if l[0] == '>':
+            if name and seq:
+                yield name, "".join(seq)
+            seq = []
+            name = l[1:]
+                        
+        else:
+            seq.append("".join(l.split()).lower())
+
+    if name and seq:
+        yield name, "".join(seq)
+
+    F.close()
+
+
+splitseq = sys.argv[2].lower()
+
+for name, seq in fastareader(sys.argv[1]):
+    i = 0
+    id = name.split()[0]
+    for chunk in seq.split(splitseq):
+        chunk = chunk.strip()
+        if not chunk: continue
+        i += 1
+        print ">%s_%03d" % (id, i)
+        while chunk:
+            print chunk[:80]
+            chunk = chunk[80:]
+
+
+        
+    
+
