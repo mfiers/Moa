@@ -67,10 +67,13 @@ $(mum_input_files_a): a__%: $(mum_input_files_b)
 	for against in $?; do \
 		prefix=`basename $* .$(ix)`__`basename $$against .$(ix)` ;	\
 		nucmer --maxmatch -b $(mum_breaklen) --prefix=$$prefix 		\
-				$* $$against || true ;	\
+				$* $$against || true ;								\
 		show-coords -rcl $$prefix.delta > $$prefix.coords || true;	\
 		mummerplot -R $* -Q $$against --layout 						\
-				-t png -p $$prefix $$prefix.delta || true;\
+				-t png -p $$prefix $$prefix.delta || true;			\
+		mummerplot -R $* -Q $$against --layout 						\
+				-t postscript -p $$prefix $$prefix.delta || true; 	\
+		ps2pdf $$prefix.ps;											\
 	done
 
 clean: mummer_clean

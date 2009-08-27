@@ -155,7 +155,7 @@ for name,seq in fastareader(inputFile):
     print "\t".join([str(x) for x in ls])
 
     if options.interpret_htg:
-        contig_template = [seqid, options.source, "Contig", 0, 0, '.', '.', '.'] 
+        contig_template = [seqid, "FastaToGff", "Contig", 0, 0, '.', '.', '.'] 
         gap_template = [seqid, options.source, "Gap", 0, 0, '.', '.', '.', ]
         
         fraglist = seq.split("n" * 100)

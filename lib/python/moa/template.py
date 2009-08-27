@@ -64,7 +64,7 @@ def new(what, jid=None):
             sys.exit(1)
 
     for t in what:
-        checkTemplate(t)
+        _check(t)
 
     l.debug("Start writing ./Makefile") 
     F = open("./Makefile", 'w')

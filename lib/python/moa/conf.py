@@ -26,6 +26,7 @@ import os
 import contextlib
 
 from moa.utils import logger
+import moa.couchdb
 l = logger.l
 
 # Get a file lock, borrowed from:
@@ -84,7 +85,7 @@ def cache():
                 
         for k in moaCouchKeys:
             cdbk, cdbv = moaCouchTerms[k].split()
-            val = moaGet(cdbk, cdbv)
+            val = moa.couchdb.moaGet(cdbk, cdbv)
             G.write("%s=%s\n" % (k,val))
             
         F.close()

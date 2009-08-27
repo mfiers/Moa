@@ -31,25 +31,28 @@ import os
 import sys
 import re
 import time
+import site
 import copy
 import errno
 import logging
 import optparse
+from pprint import pprint as pp
 
 #moa specific libs - first set the path
 if not os.environ.has_key('MOABASE'):
     raise Exception("MOABASE is undefined")
 
-sys.path.append(os.path.join(
-        os.environ['MOABASE'], 'lib', 'pyton'))
+#process the .pth file in the $MOABASE/bin folder !
+site.addsitedir(os.path.join(os.environ['MOABASE'], 'bin'))
 
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
-import moa.template
 import moa.couchdb
+import moa.template
 import moa.graph
 import moa.conf
+
 
 #Logging
 from moa.utils import logger
