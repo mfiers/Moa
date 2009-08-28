@@ -1,0 +1,123 @@
+<html>
+  <head>
+	<title>Moa</title>
+  </head>
+  <link rel="stylesheet" href="moa.css">
+  <body>
+	<div id="menu">
+	  <center>
+		<a href="index.html">
+		  <img id="menulogo" align="middle" src="moa_logo_smaller.png">
+		</a>
+	  </center>
+	  <ul>
+		<li>
+		  <a href="introduction.html">Introduction</a>
+		</li>
+		<li>
+		  <a href="installation.html">Installation</a>
+		</li>
+		<li>
+		  <a href="using.html">Usage</a>
+		</li>
+		<li>
+		  <a href="gbrowse.html">Gbrowse</a>
+		</li>
+		<li>
+		  <a name="chapter_couchdb" href="couchdb.html">Couchdb</a>
+		</li>
+		<li>
+		  <a href="extending.html">Extend Moa</a>
+		</li>
+		<li>
+		  <a href="reference.html">Reference</a>
+		</li>
+	  </ul>
+	  <small>
+		<a href="manual.pdf">
+		  download this manual in pdf format
+		</a>
+	  </small> 
+   </div>
+<div id="content">
+<h1 id="chapterTitle">Extending Moa</h1>
+<p
+>This chapter describes how to create new templates for use with Moa. Creating a template is not extremely difficult, probably the hardest part is ensuring that templates are able to interact with other templates.</p
+><p
+>A template is nothing more than a standardized Makefile. To understand how Makefiles work, please read the <a href="http://www.gnu.org/software/make/manual/make.html"
+  >Gnu Make Manual</a
+  >. Note that creating Makefiles can be difficult at first, as the logic rather differs from scripting languages.</p
+><p
+>Each template exists of the following parts:</p
+><ul
+><li
+  >Definition</li
+  ><li
+  >Include moaBase</li
+  ><li
+  >Implementation</li
+  ></ul
+><p
+>The order in which the template is defined is very important!</p
+><p
+>In the remainder of this chapter we will describe a simple template that creates the reverse complement of a <a href="http://en.wikipedia.org/wiki/FASTA_format"
+  >FASTA</a
+  > file using the <a href="http://emboss.sourceforge.net/"
+  >EMBOSS</a
+  > <a href="http://emboss.sourceforge.net/apps/release/6.1/emboss/apps/revseq.html"
+  >revseq</a
+  > utility</p
+><div id="definition"
+><h1
+  >Definition</h1
+  ><p
+  >The definition is a list of variables defining what your template does and giving Moa information on how to use this template.</p
+  ><div id="describing-the-new-template"
+  ><h2
+    >Describing the new template</h2
+    ><p
+    >The following variables define what your template does. These variables are used in generating the help files, the manual and the website.</p
+    ><table
+    ><tr class="header"
+      ><th align="center" style="width: 26%;"
+	>Identifier</th
+	><th align="left" style="width: 63%;"
+	>Description</th
+	></tr
+      ><tr class="odd"
+      ><td align="center"
+	>moa_title</td
+	><td align="left"
+	>The title for this template</td
+	></tr
+      ><tr class="even"
+      ><td align="center"
+	>moa_description</td
+	><td align="left"
+	>A short description of this template</td
+	></tr
+      ></table
+    ><p
+    >Example:</p
+    ><pre
+    ><code
+      > moa_title = Reverse Complement
+ moa_description = This Moa template takes a set of      \
+     input FASTA sequences and determines the reverse    \
+     complement using the EMBOSS revseq utility.
+</code
+      ></pre
+    ><p
+    >Note:</p
+    ><ul
+    ><li
+      >Lines are allowed to break over multiple lines, but the previous line must end with a backslash. No spaces are allowd after the backslash and the new line must be indented (with at least one space).</li
+      ></ul
+    ></div
+  ></div
+><div id="implementation"
+><h1
+  >Implementation</h1
+  ></div
+>
+</div></body></html>
