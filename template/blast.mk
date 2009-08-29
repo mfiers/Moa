@@ -19,7 +19,8 @@
 moa_title = Blast
 moa_description = Wraps BLAST [[Alt90]], the most popular	\
   similarity search tool in bioinformatics
-
+moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)	\
+  [[Alt90]] suite of tools
 moa_ids += blast
 moa_blast_help = Running BLAST takes an input directory					\
   (*blast_input_dir*), determines what sequence files are present		\
@@ -27,8 +28,8 @@ moa_blast_help = Running BLAST takes an input directory					\
   each of these. Moa BLAST is configured to create XML output (as		\
   opposed ot the standard text based output) in the *./out*				\
   directory. The output XML is subsequently converted to GFF3			\
-  [[gff]] by the custom *blast2gff* script (build around biopython	\
-  [[biopython]]). Additionally, a simple text report is created.
+  [[gff]] by the custom *blast2gff* script (build around biopython		\
+  [[biopython]]). Additionally, a simple text report is created.		\
 
 moa_additional_targets += blast_report
 moa_blast_report_help = Generate a text BLAST report.

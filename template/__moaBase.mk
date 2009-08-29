@@ -150,7 +150,7 @@ moa_targets += check clean help show all prereqs set append
 
 # and define help for these
 check_help = Check variable definition
-clean_helo = Clean up. 
+moa_clean_help = Clean up. 
 show_help = Show the defined variables
 help_help = This help!
 all_help = Recursively run through all subdirectories (use make all \
