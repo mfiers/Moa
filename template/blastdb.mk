@@ -18,22 +18,21 @@
 # 
 moa_ids += blastdb
 moa_title_blastdb = Create a BLAST database 
-moa_description_blastdb = Takes a multi-fasta input file and creates a BLAST database.
-
-#Targets (for generating help)
-moa_targets += 
-blastdb_help = Create the BLAST database
-clean_help = Remove the blast database
-set_weka_help = set location in the global weka db
-clean_weka_help = clean location in the global weka db (will not run automatically)
+moa_blastdb_help = Takes either a set of fasta files or a single	\
+  multi-fasta input file and creates a BLAST database.
 
 moa_must_define += bdb_name
-bdb_name_help = Database name to create
+bdb_name_help = Database name to create.
 
-moa_may_define += bdb_input_dir bdb_input_extension 
+moa_may_define += bdb_input_dir bdb_input_extension bdb_fasta_file
 bdb_input_dir_help = Dir with the input fasta files, defaults to ./fasta
 bdb_input_dir_cdbattr = fastadir
 bdb_input_extension_help = extension of the input sequence files, defaults to fasta
+bdb_fasta_file_help = The file with all FASTA sequences for the blastdb		\
+  concatenated. This can be used as an alternative to defining			\
+  `bdb_input_dir` and `bdb_input_dir_extension`. Morover. If all your	\
+  sequences are already in a single file, then using this parameter		\
+  prevents duplication of that file.
 
 #Variable: protein
 moa_may_define += bdb_protein 
@@ -44,19 +43,24 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 # End of the generic part - from here on you're on your own :)
 
-moa_register_extra += blastdb fastafile idlist
-moa_register_blastdb = $(shell echo `pwd`/$(bdb_name))
-moa_register_fastafile = $(shell echo `pwd`/$(bdb_name)).fasta
-moa_register_idlist = $(shell echo `pwd`/$(bdb_name).list)
-
 bdb_input_dir ?= ./fasta
 bdb_input_extension ?= fasta
+bdb_doconcat = F
+ifndef $(bdb_fasta_file)
+  bdb_doconcat = T
+  bdb_fasta_file ?= $(bdb_name).fasta
+  input_files ?= $(wildcard $(bdb_input_dir)/*.$(bdb_input_extension))
+else
+  bdb_doconcat = F
+endif
 
+moa_register_extra += blastdb fastafile idlist
+moa_register_blastdb = $(shell echo `pwd`/$(bdb_name))
+moa_register_fastafile = $(bdb_fasta_file)
+moa_register_idlist = $(shell echo `pwd`/$(bdb_name).list)
 
 #the rest of the variable definitions 
 bdb_protein ?= F
-input_files ?= $(wildcard $(bdb_input_dir)/*.$(bdb_input_extension))
-fasta_file = $(bdb_name).fasta
 
 ifeq ("$(bdb_protein)", "F")
 	one_blast_db_file = $(bdb_name).nhr
@@ -73,21 +77,23 @@ blastdb_post: create_id_list
 .PHONY: blastdb
 blastdb: $(one_blast_db_file)
 
-$(one_blast_db_file): $(fasta_file)
+$(one_blast_db_file): $(bdb_fasta_file)
 	@echo "Creating $@"
 	formatdb -i $< -p $(bdb_protein) -o T -n $(bdb_name)
 
-$(fasta_file): $(input_files)
-	find $(bdb_input_dir) -type f \
-		-name "*.$(bdb_input_extension)" \
-		| xargs -n 100 cat \
-		> $(fasta_file)
+$(bdb_fasta_file): $(input_files)
+	if [[ "$(bdb_doconcat)" == "T" ]]; then 			\
+		find $(bdb_input_dir) -type f 					\
+	 		-name "*.$(bdb_input_extension)" 			\
+			| xargs -n 100 cat 							\
+			> $(bdb_fasta_file)						\
+		fi
 
 .PHONY: create_id_list
 create_id_list: $(bdb_name).list
 
-$(bdb_name).list: $(fasta_file)
-	grep ">" $(fasta_file) | cut -c2- | sed 's/ /\t/' | sort > $(bdb_name).list
+$(bdb_name).list: $(bdb_fasta_file)
+	grep ">" $(bdb_fasta_file) | cut -c2- | sed 's/ /\t/' | sort > $(bdb_name).list
 
 blastdb_clean:	
 	-if [ $(bdb_protein) == "F" ]; then \
