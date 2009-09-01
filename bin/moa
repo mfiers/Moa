@@ -43,7 +43,8 @@ if not os.environ.has_key('MOABASE'):
     raise Exception("MOABASE is undefined")
 
 #process the .pth file in the $MOABASE/bin folder !
-site.addsitedir(os.path.join(os.environ['MOABASE'], 'bin'))
+site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
+
 
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')

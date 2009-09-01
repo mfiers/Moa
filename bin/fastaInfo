@@ -17,10 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+
+import re
 import os
 import sys
+import site
+import math
 import optparse
-import re
+
+#moa specific libs - first set the path
+if not os.environ.has_key('MOABASE'):
+    raise Exception("MOABASE is undefined")
+
+#process the .pth file in the $MOABASE/bin folder !
+site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
+import moa
+import stats.stats as s
 
 parser = optparse.OptionParser()
 
@@ -119,43 +131,54 @@ for name, seq in fastareader(options.infile):
         sys.stdout.write("\n")
 
 
-if options.stats:
-    if len(dd) == 0:
-        print "no results"
-        sys.exit(0)
+if not options.stats:
+    sys.exit(0)
 
-    print '#what no max min sum average median stdev n50'
-    for what in args:
-        d = dd[what]
-        if type(d[0]) == type('hi'):
-            continue
-        d.sort() #for median
-        _len = len(d)
-        _max = max(d)
-        _min = min(d)
-        _sum = sum(d)
-        _avg = float(_sum) / _len
-        _med = d[_len // 2]
-        __sdsq = sum([(i - _avg) ** 2 for i in d])
-        _sd = (float (__sdsq) / (_len - 1)) ** 0.5
-        
-        #calc n50
-        __n50sum = 0
-        __n50half = _sum / 2.0
-        _n50 = d[0]
-        for i in d:
-            _n50 = i
-            __n50sum += i
-            if __n50sum > __n50half:
-                break
+if len(dd) == 0:
+    print "no results"
+    sys.exit(0)
 
-        print what,  \
-               _len, \
-               _max, \
-               _min, \
-               _sum, \
-               _avg, \
-               _med, \
-               _sd,  \
-               _n50
-    
+def getbinrange(min, max):
+    ibinsize = str((max - min) / 20)
+    if
+    bbin = {(ibinsize[0])+1) + ('0' * (len(ibinsize)-1))
+    print min, max, ibinsize,   bbin
+    #binMax = int(10 ** math.ceil(math.log10(max)))
+    #binMin = int(10 ** math.floor(math.log10(min)))
+    #print binMin, binMax, ibinsize
+
+getbinrange(100,100000)
+getbinrange(8000,100000)
+getbinrange(5000,6000)
+
+print '#what\tno\tmax\tmin\tsum\taverage\tmedian\tstdev\tn50'
+for what in args:
+    d = dd[what]
+    if type(d[0]) == type('hi'):
+        continue
+    M = max(d)
+    binMax = int(10 ** math.ceil(math.log10(max(d))))
+    binMin = int(10 ** math.floor(math.log10(min(d))))
+    print binMin, binMax
+    bins = range(binMin, binMax, int((binMax - binMin)/20))
+    print bins
+    #calc n50
+    __n50sum = 0
+    __n50half = sum(d) / 2.0
+    _n50 = d[0]
+    for i in d:
+        _n50 = i
+        __n50sum += i
+        if __n50sum > __n50half:
+            break
+
+    print "\t".join(map(str, [what, 
+                              len(d), 
+                              max(d),
+                              min(d),
+                              sum(d),
+                              s.mean(d),
+                              s.median(d),
+                              s.stdev(d),
+                              _n50]))
+    print s.ahistogram(d, 20)
