@@ -98,13 +98,15 @@ blast_input_extension ?= fasta
 blast_nohits ?= 100
 blast_nothreads ?= 1
 
-blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
+ifdef blast_main_phase
+  blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
 
-blast_output_files = $(addprefix out/, \
-	$(notdir $(patsubst %.$(blast_input_extension), %.xml, $(blast_input_files))))
+  blast_output_files = $(addprefix out/, \
+	  $(notdir $(patsubst %.$(blast_input_extension), %.xml, $(blast_input_files))))
 
-blast_gff_files = $(addprefix gff/, \
-	$(patsubst %.xml, %.gff, $(notdir $(blast_output_files))))
+  blast_gff_files = $(addprefix gff/, \
+	  $(patsubst %.xml, %.gff, $(notdir $(blast_output_files))))
+endif
 
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
