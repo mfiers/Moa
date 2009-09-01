@@ -22,6 +22,8 @@ Moa script - template related code
 """
 
 import os
+import sys
+
 import moa.utils.logger
 l = moa.utils.logger.l
     
