@@ -28,6 +28,8 @@ imagesao: moa.css ../images/moa_logo_small.png  ../images/moa_logo_smaller.png
 	cp ../images/pfr_logo.jpg site
 	cp ../manual/manual.pdf site
 
+moa.css:
+	cp moa.css site
 site/index.html: index.template.html header.html footer.html
 	cp ../images/moa_logo_medium.png site/
 	cat header.html > $@
