@@ -22,7 +22,7 @@ moa_description = Wraps BLAST [[Alt90]], the most popular	\
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)	\
   [[Alt90]] suite of tools
 moa_ids += blast
-moa_blast_help = Running BLAST takes an input directory					\
+blast_help = Running BLAST takes an input directory					\
   (*blast_input_dir*), determines what sequence files are present		\
   (with the parameter *blast_input_extension*) and executes BLAST on	\
   each of these. Moa BLAST is configured to create XML output (as		\

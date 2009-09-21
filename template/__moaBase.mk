@@ -476,25 +476,37 @@ help_markdown:
 		| sed "s/\[\[.*\]\]//g" 			\
 		| sed "s/[ \t]*$$//"
 
-
-help_md = % Moa_$(moa_title)			\n\
+empty:=
+space:= $(empty) $(empty)
+help_md = % $(subst $(space),_,$(moa_title)) \n\
 % $(moa_author)							\n\
 % $(shell date)							\n\
 										\n\
 $(moa_description)						\n\
 										\n\
 \#Targets								\n\
-$(foreach id,$(moa_ids),				\
+(empty)									\n\
+:   Leaving the target unspecified 		\n\
+:   executes the default target(s):     \n\
+:	($(moa_ids)) 						\n\
+clean									\n\
+:	removes all results from this job   \n\
+all										\n\
+:	executes the default target and 	\n\
+:   into subdirectories to execute any  \n\
+:	other moa makefile it encounters	\n\
+$(foreach id,$(moa_ids),				  \
+$(id)									\n\
+:	$($(id)_help)						\n\
+)										\n\
+$(foreach id,$(moa_additional_targets),	  \
 $(id)									\n\
 :	$(moa_$(id)_help)					\n\
 )										\n\
-$(foreach id,$(moa_additional_targets),	\
-$(id)									\n\
-:	$(moa_$(id)_help)					\n\
-)										\n\
+										\n\
 \#Parameters							\n\
 \#\# Required parameters				\n\
-$(foreach v,$(moa_must_define), 		\
+$(foreach v,$(moa_must_define), 		  \
 $(v)									\n\
 :   $(if $($(v)_help),					\
 		$($(v)_help),					\
