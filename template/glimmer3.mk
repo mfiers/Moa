@@ -49,12 +49,17 @@ moa_must_define += glimmer3_input_dir
 blast_input_dir_help = directory containing the input sequences
 
 moa_may_define +=  glimmer3_gff_source
-blast_gff_source_help = source field to use in the gff. Defaults to "moa"
+glimmer3_gff_source_help = source field to use in the gff. Defaults to "glimmer3"
 
-moa_may_define += glimmer3_input_extension
-input_extension_help = input file extension. Defaults to 'fasta'
+moa_may_define += glimmer3_input_extension glimmer3_max_overlap \
+	glimmer3_gene_len glimmer3_treshold
 
-moa_may_define += glimmer3_runname
+glimmer3_input_extension_help = input file extension. Defaults to 'fasta'
+glimmer3_max_overlap_help = Maximum overlap, see the glimmer	\
+  documentation for the -o or --max_olap parameter
+glimmer3_gene_len_help = Minimum gene length (glimmer3 -g/--gene_len)
+glimmer3_treshold_help = treshold for calling a gene a gene (glimmer3 -t)
+moa_may_define += 
 
 #preparing for possible gbrowse upload:
 gup_gff_dir = ./gff
@@ -64,8 +69,10 @@ gup_gffsource ?= $(blast_gff_source)
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
-glimmer3_runname ?= moa
-glimmer3_gff_source ?= moa
+glimmer3_max_overlap ?= 50
+glimmer3_gene_len ?= 110
+glimmer3_treshold ?= 30
+glimmer3_gff_source ?= glimmer3
 glimmer3_input_extension ?= fasta
 
 glimmer3_input_files ?= $(wildcard $(glimmer3_input_dir)/*.$(glimmer3_input_extension))
@@ -75,6 +82,9 @@ glimmer3_output_files = $(addprefix out/, $(notdir $(patsubst		\
 
 glimmer3_cds_files = $(addprefix out/, $(notdir $(patsubst		\
     %.$(glimmer3_input_extension), %.cds.fasta, $(glimmer3_input_files))))
+
+glimmer3_gff_files = $(addprefix gff/, $(notdir $(patsubst		\
+    %.$(glimmer3_input_extension), %.gff, $(glimmer3_input_files))))
 
 #glimmer3_gff_files = $(addprefix gff/, \
 #	$(patsubst %.orf, %.gff, $(notdir $(glimmer3_output_files))))
@@ -90,7 +100,7 @@ glimmer3_test:
 .PHONY: glimmer3_prepare
 glimmer3_prepare:	
 	-mkdir out 
-	-mkdir gff  
+	-mkdir gff	
 	-mkdir train
 	-mkdir fasta
 
@@ -104,33 +114,84 @@ glimmer3_clean:
 	-rm -rf ./fasta/
 
 
-glimmer3_input_files ?= $(wildcard $(glimmer3_input_dir)/*.$(glimmer3_input_extension))
 
 .PHONY: glimmer3
-glimmer3: train/train.icm $(glimmer3_cds_files)
+glimmer3: $(glimmer3_gff_files) $(glimmer3_cds_files)
+
+$(glimmer3_gff_files): gff/%.gff: out/%.predict
+	cat $<											\
+		| grep -v "^>"								\
+		| sed "s/orf\([0-9]*\)/$*.g3.g\1/" 			\
+		| awk ' {																	\
+					printf "$*\t$(glimmer3_gff_source)\tCDS\t";									\
+					if ($$4 > 0) { 													\
+						printf "%s\t%s\t%s\t+\t%s", $$2, $$3, $$5, $$4; } 			\
+					else { 															\
+						printf "%s\t%s\t%s\t-\t%s", $$3, $$2, $$5, $$4; } 			\
+					printf "\tID=%s;Name=%s\n", $$1, $$1;								\
+				} ' 																\
+		> $@
 
 $(glimmer3_cds_files): out/%.cds.fasta: $(glimmer3_input_dir)/%.$(glimmer3_input_extension) out/%.predict
-	extract -t $(realpath $<) $(realpath $(word 2,$^)) \
-		| sed "s/orf\([0-9]*\)/$*.g3.g\1/" > $@
+	cat $(realpath $(word 2,$^)) 					\
+		| grep -v "^>"								\
+		| extract -t $(realpath $<) -				\
+		| sed "s/orf\([0-9]*\)/$*.g3.g\1/" 			\
+		> $@
 	fastaSplitter -f $@ -o fasta
 
-$(glimmer3_output_files): out/%.predict: $(glimmer3_input_dir)/%.$(glimmer3_input_extension) train/train.icm
+$(glimmer3_output_files): out/%.predict: 											\
+		$(glimmer3_input_dir)/%.$(glimmer3_input_extension) 						\
+		 train/upstream.motif train/train1.icm
+	startuse=`start-codon-distrib -3 train/all.seq train/run1.coords`;				\
 	cd out; \
-		glimmer3 -o50 -g110 -t30 $(realpath $<) 					\
-			$(realpath $@) ../train/train.icm $*; 					\
+		glimmer3 																	\
+			-o$(glimmer3_max_overlap) 												\
+			-g$(glimmer3_gene_len)													\
+			-t$(glimmer3_treshold)													\
+			-b ../train/upstream.motif												\
+			-P $$startuse															\
+			$(realpath $<) 															\
+			../train/train1.icm $*
 
 
-train/train.icm: train/train.set
+#run the final prediction
+
+#run elph to create analyze motifs
+train/upstream.motif: train/upstream.train.set
+	elph $< LEN=6 | get-motif-counts.awk > $@
+
+#create an upstream set
+train/upstream.train.set: train/run1.coords train/all.seq
+	upstream-coords.awk 25 0 $< | extract train/all.seq - > $@
+
+#get the coordinates of the precited seqs
+train/run1.coords: train/run1.predict
+	cat $< | grep -v "^>" > $@
+
+#do the first glimmer run, based on the simple training set
+train/run1.predict: train/train1.icm
+	cd train; glimmer3 													\
+		-o$(glimmer3_max_overlap) -g$(glimmer3_gene_len)				\
+		-t$(glimmer3_treshold) 											\
+		all.seq train1.icm run1
+
+#build the first level model
+train/train1.icm: train/train1.set
 	build-icm -r $@ < $<
 
-train/train.set: train/longorfs train/all.seq
-	extract -t train/all.seq $< > $@
+#create a training set
+train/train1.set: train/all.seq train/long.orfs 
+	extract -t $^ > $@
 
-train/longorfs: train/all.seq
-	long-orfs -n -t 1.15 $< $@
+#assume a linear genome - circular would not make sense with
+#possibly multiple genomes concatenated 
+train/long.orfs: train/all.seq
+	long-orfs -l -n -t 1.15 $< $@
 
+#concatenate all seqs into one - this is only for training!!
 train/all.seq: $(glimmer3_input_files)
-	-rm fasta_in/all.seq
+	echo ">train" > $@
 	for x in $^; do 												\
-		cat $$x >> $@;												\
+		cat $$x | grep -v "^>"  >> $@;								\
 	done
