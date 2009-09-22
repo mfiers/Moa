@@ -144,7 +144,7 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
                        
     if command == 'new':
-        moa.template.new(args[1:], jid=options.jid)
+        moa.template.new(args[1:], jid=options.jid, force=options.force)
 
     elif command == 'list':
         moa.template.list()

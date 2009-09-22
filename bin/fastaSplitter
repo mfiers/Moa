@@ -74,6 +74,9 @@ parser.set_defaults(fasta='-')
 parser.add_option('-f', '--fasta', dest='fasta',
     help = 'fasta file to extract from')
 
+parser.add_option('-n', '--no', dest='no',
+    help = 'number of fasta sequences to split')
+
 (options, args) = parser.parse_args()
 
 if options.fasta == '-':
@@ -83,9 +86,12 @@ else:
 
 i = 0
 for name, head, seq in fastareader(infileorhandle):
+    i += 1
     outfile = os.path.join(options.out, name + '.fasta')
     F = open(outfile, 'w')
     F.write(">%s %s\n%s\n" % (name, head, seq))
     F.close()
+    if options.no and options.no >= i:
+        break
 
 

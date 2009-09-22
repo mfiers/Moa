@@ -102,8 +102,6 @@ def f_scaf10(name,seq):
 def f_scaf100(name,seq):
     return len(scaf100rex.split(seq))
 
-
-
 for name, seq in fastareader(options.infile):
     i += 1
     if options.maxno and i > options.maxno: 
@@ -140,16 +138,15 @@ if len(dd) == 0:
 
 def getbinrange(min, max):
     ibinsize = str((max - min) / 20)
-    if
-    bbin = {(ibinsize[0])+1) + ('0' * (len(ibinsize)-1))
-    print min, max, ibinsize,   bbin
+    #bbin = {(ibinsize[0])+1) + ('0' * (len(ibinsize)-1))
+    #print min, max, ibinsize,   bbin
     #binMax = int(10 ** math.ceil(math.log10(max)))
     #binMin = int(10 ** math.floor(math.log10(min)))
     #print binMin, binMax, ibinsize
 
-getbinrange(100,100000)
-getbinrange(8000,100000)
-getbinrange(5000,6000)
+#getbinrange(100,100000)
+#getbinrange(8000,100000)
+#getbinrange(5000,6000)
 
 print '#what\tno\tmax\tmin\tsum\taverage\tmedian\tstdev\tn50'
 for what in args:
@@ -157,11 +154,11 @@ for what in args:
     if type(d[0]) == type('hi'):
         continue
     M = max(d)
-    binMax = int(10 ** math.ceil(math.log10(max(d))))
-    binMin = int(10 ** math.floor(math.log10(min(d))))
-    print binMin, binMax
-    bins = range(binMin, binMax, int((binMax - binMin)/20))
-    print bins
+    #binMax = int(10 ** math.ceil(math.log10(max(d))))
+    #binMin = int(10 ** math.floor(math.log10(min(d))))
+    #print binMin, binMax
+    #bins = range(binMin, binMax, int((binMax - binMin)/20))
+    #print bins
     #calc n50
     __n50sum = 0
     __n50half = sum(d) / 2.0
@@ -181,4 +178,4 @@ for what in args:
                               s.median(d),
                               s.stdev(d),
                               _n50]))
-    print s.ahistogram(d, 20)
+    #print s.ahistogram(d, 20)
