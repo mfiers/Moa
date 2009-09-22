@@ -55,13 +55,13 @@ def list():
     r.sort()
     for r1 in r: print r1
         
-def new(what, jid=None):
+def new(what, jid=None, force=False):
     """
     Create a new template based makefile in the current dir.
     """
     if os.path.exists("./Makefile"):
         l.debug("Makefile exists!")
-        if not options.force:
+        if not force:
             l.critical("makefile exists, use force to overwrite")
             sys.exit(1)
 
