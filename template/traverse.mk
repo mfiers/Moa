@@ -17,9 +17,11 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_ids += traverse
-moa_title_traverse = Traverse
-moa_description_traverse = Do noting, except be a part in executing full directory structures
+moa_title = Traverse
+moa_description = Do nothing, except be a part in executing full	\
+directory structures
 
+traverse_help = Do nothing - no need to call this. 
 #Include base moa code - does '*:blastn.self' variable checks & generates help
 
 ifndef dont_include_moabase

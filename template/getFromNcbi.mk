@@ -16,18 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+
 moa_targets += getFromNcbi
 getFromNcbi_help = Download some data from NCBI
 
 moa_ids += getFromNcbi
-moa_title_getFromNcbi = Get sequences from NCBI
-moa_description_getFromNcbi = Download a set of sequences from NCBI based on a \
-  query string (ncbi_query) and database (ncbi_db). This will \
-  run only once (!) unless you touch the 'touched' file.# Output definition
+moa_title = "Download from NCBI"
+moa_description = Download a set of sequences from NCBI based on a		\
+  query string (ncbi_query) and database (ncbi_db). This tempate will	\
+  run only once (!), after a succesful run it creates a 'lock' file		\
+  that you need to remove to rerun
 
-moa_outputs += fastafile
-moa_output_fastafile = ./fasta/*.fasta
-moa_output_fastafile_help = A set of fasta files#varables that NEED to be defined
+getFromNcbi_help = Downloads from NCBI
 
 moa_must_define += ncbi_db ncbi_query
 ncbi_db_help = NCBI database (for example nucest)

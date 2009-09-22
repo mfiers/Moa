@@ -19,14 +19,11 @@
 
 moa_title = Glimmer3
 
-moa_description = Predicts open reading frames using the EMBOSS	\
-  [[emboss]] glimmer3 tool.
-
-moa_prerequisites += The [EMBOSS]() [[emboss]] suite of tools
+moa_description = Predicts (prokaryotic) using glimmer3.
 
 moa_ids += glimmer3
 
-moa_glimmer3_help = Glimmer3 is a open reading frame discovery program		\
+glimmer3_help = Glimmer3 is a open reading frame discovery program		\
   from the EMBOSS [[emboss]] package. It takes a set of input			\
   sequences and predicts all open reading frames. Additionally, this	\
   template converts the default output (predicted protein sequences)	\
