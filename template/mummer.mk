@@ -60,6 +60,12 @@ mummer_prepare:
 .PHONY: mummer_post
 mummer_post: 
 
+mummer_debug:
+	@echo $(mum_input_dir_a)	
+	@echo $(mum_input_dir_b)	
+	@echo $(mum_input_files_a)
+	@echo $(mum_input_files_b)
+
 .PHONY: mummer
 mummer: $(mum_input_files_a)
 
@@ -73,7 +79,10 @@ $(mum_input_files_a): a__%: $(mum_input_files_b)
 				-t png -p $$prefix $$prefix.delta || true;			\
 		mummerplot -R $* -Q $$against --layout 						\
 				-t postscript -p $$prefix $$prefix.delta || true; 	\
-		ps2pdf $$prefix.ps;											\
+		mummerplot -t png -p Raw_$$prefix $$prefix.delta || true;			\
+		mummerplot -t postscript -p Raw_$$prefix $$prefix.delta || true; 	\
+		ps2pdf Raw_$$prefix.ps;											\
+		ps2pdf Raw_$$prefix.ps;											\
 	done
 
 clean: mummer_clean

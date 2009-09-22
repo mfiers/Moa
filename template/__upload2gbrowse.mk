@@ -34,14 +34,15 @@ moa_gupLock_help = Prevent this job from uploading anything to the 		\
 moa_gupUnlock_help = Allow this job to upload to the Generic Genome		\
 	Browser database
 
-moa_must_define += gup_user gup_db gup_gffsource
+moa_must_define += gup_user gup_db gup_gffsource 
 gup_user_help = gbrowse db user. If not defined, this defaults to 'moa'.
 gup_db_help = gbrowse database. If not defined, this defaults to 'moa'.
 gup_gffsource_help = the gff source field, used in batch operations
 
-moa_may_define += gup_gff_extension gup_fasta_extension 
+moa_may_define += gup_gff_extension gup_fasta_extension gup_upload_limit
 gup_fasta_extension_help = extension of the FASTA files to upload (.fasta)
 gup_gff_extension_help = extension of the GFF files to upload (.gff)
+gup_upload_limit_help = Do not upload more that this number of files (infinite) 
 
 moa_may_define += gup_upload_fasta gup_upload_gff gup_force_upload
 gup_upload_fasta_help = upload fasta to gbrowse (T/F)
@@ -57,7 +58,7 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 gup_gff_extension ?= gff
 gup_fasta_extension ?= fasta
-
+gup_upload_limit ?= 999999999
 gup_gff_dir ?= ./gff
 gup_fasta_dir ?= ./fasta
 
@@ -77,11 +78,13 @@ ifeq "$(gup_phase_two)" "T"
   ifeq "$(gup_upload_gff)" "T"
     ifneq "$(gup_locked)" "T"
       $(call echo,Processing Gff files)
-      gup_input_gff := $(wildcard $(gup_gff_dir)/*.$(gup_gff_extension))
+      gup_input_gff := $(wordlist 1, $(gup_upload_limit), 						\
+			$(wildcard $(gup_gff_dir)/*.$(gup_gff_extension)))
     else
 	  ifeq "$(gup_force_upload)" "T"
         $(call echo,Processing Gff files)
-        gup_input_gff := $(wildcard $(gup_gff_dir)/*.$(gup_gff_extension))
+        gup_input_gff :=  $(wordlist 1, $(gup_upload_limit), 						\
+			$(wildcard $(gup_gff_dir)/*.$(gup_gff_extension)))
 	  else
         $(call echo,GFF Upload to gbrowse is locked)
 	  endif
@@ -94,12 +97,14 @@ endif
 ifeq "$(gup_phase_two)" "T"
   ifeq "$(gup_upload_fasta)" "T"
     ifneq "$(gup_locked)" "T"
-      $(call echo,Processing FASTA for upload to gbrowse)
-      gup_input_fasta := $(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension))
+      $(call echo,Processing FASTA for upload to gbrowse)					
+      gup_input_fasta :=  $(wordlist 1, $(gup_upload_limit), 						\
+			$(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension)))
     else
       ifeq "$(gup_force_upload)" "T"
         $(call echo,Processing FASTA for upload to gbrowse)
-        gup_input_fasta := $(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension))
+        gup_input_fasta :=  $(wordlist 1, $(gup_upload_limit), 						\
+			$(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension)))
 	  else
         $(call echo,FASTA upload to gbrowse is locked)
 	  endif 
@@ -185,8 +190,8 @@ upload2gbrowse2: upload_fasta upload_gff
 
 upload_fasta: $(gup_input_fasta)
 	@$(call echo,Start upload FASTA - new: $(words $?) all: $(words $^))
-	#$(foreach st, $(shell seq 1 500 $(words $?)), 									\
-	    $(eval cs=$(wordlist $(st), $(shell echo $$(( $(st) + 499 )) ), $?))		\
+	@#$(foreach st, $(shell seq 1 200 $(words $?)), 									\
+	    $(eval cs=$(wordlist $(st), $(shell echo $$(( $(st) + 199 )) ), $?))		\
 		$(shell bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $(cs)) 		\
 	)
 	touch upload_fasta
@@ -197,9 +202,8 @@ upload_fasta: $(gup_input_fasta)
 
 upload_gff: $(gup_input_gff)
 	@$(call echo,Start upload GFF - new: $(words $?) all: $(words $^))
-	#$(foreach st, $(shell seq 1 500 $(words $?)), 									\
-	    $(eval cs=$(wordlist $(st), $(shell echo $$(( $(st) + 499 )) ), $?)) 		\
-		$(shell echo "bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $(cs);") \
+	@#$(foreach st, $(shell seq 1 200 $(words $?)), 									\
+	    $(eval cs=$(wordlist $(st), $(shell echo $$(( $(st) + 199 )) ), $?)) 		\
 		$(shell bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $(cs);) 		\
 	)
 	touch upload_gff

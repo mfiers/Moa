@@ -33,15 +33,17 @@ moa_must_define += ncbi_db ncbi_query
 ncbi_db_help = NCBI database (for example nucest)
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
 
+moa_may_define += gfn_sequence_name
+gfn_sequence_name_help = Sequence name to download. When this			\
+  parameter is set, the template assumes that only one sequence is to	\
+  be downloaded, the rest will be discarded.
+
 #Include base moa code - does variable checks & generates help
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
-endif
+include $(shell echo $$MOABASE)/template/moaBase.mk
 
 #define extra variables to register in couchdb
 moa_register_extra += fastadir
 moa_register_fastadir = $(shell echo `pwd`)/fasta 
-
 
 ################################################################################
 .PHONY: getFromNcbi_prepare
@@ -51,13 +53,18 @@ getFromNcbi_prepare:
 	-rm tmp.fasta 
 	-rm fasta/*.fasta
 
-
 .PHONY: getFromNcbi_post
 getFromNcbi_post:
 
 .PHONY: getFromNcbi
 getFromNcbi: tmp.fasta
-	fastaSplitter -f tmp.fasta -o fasta
+	if [[ -n "$(gfn_sequence_name)" ]]; then 								\
+		cat tmp.fasta 														\
+			| sed "s/^>.*$/>$(gfn_sequence_name)/"							\
+			| fastaSplitter -f - -n 1 -o fasta;								\
+	else																	\
+		fastaSplitter -f tmp.fasta -o fasta;								\
+	fi
 	touch lock
 
 #the fasta file as downloaded from NCBI

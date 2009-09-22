@@ -86,7 +86,7 @@ $(bdb_fasta_file): $(input_files)
 		find $(bdb_input_dir) -type f 					\
 	 		-name "*.$(bdb_input_extension)" 			\
 			| xargs -n 100 cat 							\
-			> $(bdb_fasta_file)						\
+			> $(bdb_fasta_file);						\
 		fi
 
 .PHONY: create_id_list
