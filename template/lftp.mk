@@ -31,12 +31,12 @@ moa_output_lftp_output = *
 moa_output_lftp_output_help = anything you define
 
 #varables that NEED to be defined
-moa_must_define += lftp_url lftp_pattern
+moa_must_define += lftp_url
 lftp_url_help = The base url to download from
-lftp_pattern_help = glob pattern to download
 
 #variables that may be defined
-moa_may_define += lftp_timestamp lftp_powerclean lftp_noclean
+moa_may_define += lftp_timestamp lftp_powerclean lftp_noclean lftp_pattern
+lftp_pattern_help = glob pattern to download
 lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
  else a touchfile is created that you need to delete or touch before updating \
  (T/*F*)
@@ -69,6 +69,7 @@ lftp_timestamp ?= T
 lftp_powerclean ?= F
 lftp_user ?= NoNoNo
 lftp_pass ?= NoNoNo
+lftp_pattern ?= *
 lftp_mode ?= mirror
 lftp_noclean +=  Makefile moa.mk 
 lftp_output_dir ?= .
