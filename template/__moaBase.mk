@@ -224,9 +224,13 @@ ter:
 	$(call errr, Hello)
 
 moa_check_lock:
-	@if [ -f lock ]; then \
-	    $(call errr, Job is locked!) ;\
-	    exit 2 ; \
+	@if [[ "$(ignore_lock)" == "T" ]]; then \
+		$(call echo, Ignore lock checking);\
+	else \
+		if [[ -f lock ]]; then \
+	    	$(call errr, Job is locked!) ;\
+		    exit 2 ; \
+		fi;\
 	fi
 
 #check if MOABASE is defined
@@ -415,12 +419,17 @@ traverse_start_here:
 .PHONY: $(moa_followups)
 $(moa_followups):
 	@if [[ -e $@/Makefile ]]; then \
-		if [[ ! -e $@/lock ]]; then \
-			$(call echo, Executing make $(action) in $@) ;\
+		if [[ "$(ignore_lock)" == "T" ]]; then \
+			$(call echo, Ignore lock checking) ;\
 			cd $@ && $(MAKE) all action=$(action) ;\
 		else \
-			$(call errr, Not going here : $@ is locked) ;\
-		fi ; \
+			if [[ ! -e $@/lock ]]; then \
+				$(call echo, Executing make $(action) in $@) ;\
+				cd $@ && $(MAKE) all action=$(action) ;\
+			else \
+				$(call errr, Not going here : $@ is locked) ;\
+			fi ;\
+		fi ;\
 	fi
 
 

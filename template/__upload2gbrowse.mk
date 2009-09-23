@@ -202,7 +202,7 @@ upload_fasta: $(gup_input_fasta)
 
 upload_gff: $(gup_input_gff)
 	@$(call echo,Start upload GFF - new: $(words $?) all: $(words $^))
-	@#$(foreach st, $(shell seq 1 200 $(words $?)), 									\
+	@#$(foreach st, $(shell seq 1 200 $(words $?)), 								\
 	    $(eval cs=$(wordlist $(st), $(shell echo $$(( $(st) + 199 )) ), $?)) 		\
 		$(shell bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $(cs);) 		\
 	)
@@ -210,10 +210,13 @@ upload_gff: $(gup_input_gff)
 
 .PHONY: upload2gbrowse_clean
 upload2gbrowse_clean: $(gup_input_gff)
-	@echo "executing upload2gbrowse_clean" 
-	$(gup_delete_all)
-	-rm upload_gff
-	-rm upload_fasta
+	@if [[ ("$(gup_locked)" == "F") || 						\
+			("$(gup_force_upload)" == "T") ]]; then 		\
+		$(gup_delete_all);									\
+		-rm upload_gff;										\
+		-rm upload_fasta;									\
+	fi
+
 
 
 ##

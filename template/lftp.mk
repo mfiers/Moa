@@ -67,6 +67,7 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 ################################################################################
 lftp_timestamp ?= T
 lftp_powerclean ?= F
+lftp_pattern ?= *
 lftp_user ?= NoNoNo
 lftp_pass ?= NoNoNo
 lftp_pattern ?= *
