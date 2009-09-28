@@ -16,14 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_targets += lftp
+moa_title = lftp
+moa_description = Use LFTP to download files. This template has two		\
+  modi, one is set 'lftp_mode' to 'mirror' data, in which case both		\
+  'lftp_url' and 'lftp_pattern' (default *) are used. The other modus	\
+  is 'lftp_mode=get', when one file defined by 'lftp_url' is			\
+  downloaded. In the mirror mode it is possible to download only those	\
+  files that are newer as the files already downloaded by using the		\
+  'lftp_timestamp' parameter
+
 lftp_help = Download using ftp
 
 # Help
 moa_ids += lftp
-moa_title_lftp = lftp
-moa_description_lftp = use lftp to download a (set of) file(s). This makefile does not \
-  employ a touchfile since lftp checks for updates before downloading.
+lftp_help = execute the download
 
 # Output definition
 moa_outputs += lftp_output
@@ -56,9 +62,9 @@ lftp_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos \
   text files (default=F).
 
 moa_may_define += lftp_mode
-lftp_mode_help = Mode of operation - "mirror" or "get". Mirror enables \
+lftp_mode_help = Mode of operation - 'mirror' or 'get'. Mirror enables \
   timestamping. Get just gets a single file. If using get, consider setting \
-  depend_lftp_timestamp to F. When using "get", the full url should be in \
+  depend_lftp_timestamp to F. When using 'get', the full url should be in \
   lftp_url. lftp_pattern is ignored. Defaults to mirror.
 
 #Include base moa code - does variable checks & generates help
