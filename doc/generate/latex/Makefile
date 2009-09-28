@@ -23,13 +23,14 @@ manual: prepare $(chapters)
 	bibtex manual
 	pdflatex manual
 	pdflatex manual	
+	mv manual.pdf ../..
 
 .PHONY: prepare
 prepare:
 	-mkdir templates
 
 reference.tex:  $(temptex)
-	cat ../md/templates_header.md \
+	cat ../../markdown/templates_header.md \
 		| pandoc -f markdown -t latex \
 		> reference.tex
 	for f in $(temptex); do \
@@ -52,7 +53,7 @@ manual.tex: manual.template.tex
 			> manual.tex
 
 %.tex:
-	cat ../md/$*.md \
+	cat ../../markdown/$*.md \
 		| pandoc -f markdown -t latex \
 		> $*.tex
 
