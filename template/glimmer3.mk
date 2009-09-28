@@ -33,13 +33,21 @@ glimmer3_help = Glimmer3 is a open reading frame discovery program		\
 #########################################################################
 # Prerequisite testing
 
-prereqlist += prereq_glimmer3_installed
+prereqlist += prereq_glimmer3_installed prereq_elph_installed
 
 prereq_glimmer3_installed:
 	@if ! which glimmer3 >/dev/null; then \
 		echo "glimmer3 is either not installed or not in your \$$PATH" ;\
 		false ;\
 	fi
+
+prereq_elph_installed:
+	@if ! which elph >/dev/null; then \
+		$(call errr, elph is either not installed or not in your \$$PATH.);\
+		$(call errr, you can download elph from http://www.cbcb.umd.edu/software/ELPH/);\
+		false ;\
+	fi
+
 
 
 moa_must_define += glimmer3_input_dir
