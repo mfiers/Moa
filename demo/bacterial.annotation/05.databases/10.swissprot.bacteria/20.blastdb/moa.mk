@@ -1,0 +1,4 @@
+bdb_name=uniprot_sprot_bacteria
+bdb_fasta_file=../10.download/uniprot_sprot_bacteria
+jid=moa_blastdb_20.blastdb_6ce518827509
+bdb_protein=T
