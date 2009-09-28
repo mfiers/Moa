@@ -14,5 +14,5 @@ moa_postprocess:
 
 dont_include_moabase=please
 
-include $(shell echo $$MOABASE)/template/glimmer3.mk
+include $(shell echo $$MOABASE)/template/traverse.mk
 include $(shell echo $$MOABASE)/template/__moaBase.mk

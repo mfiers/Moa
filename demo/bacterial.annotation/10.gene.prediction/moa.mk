@@ -1,3 +1,2 @@
-glimmer3_input_dir=../00.download/fasta/
-jid=glimmer3
-project=test_bacterial_annotation
+project=demo.bacterial.annotation
+jid=moa_traverse_10.gene.prediction_98da00f810b9
