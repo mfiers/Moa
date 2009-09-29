@@ -31,9 +31,10 @@ moa_must_define += gmap_input_file
 gmap_input_file_help = input file with the sequences to map
 gmap_input_file_cdbattr = fastafile
 
-moa_may_define += gmap_extra_parameters gmap_invert_gff
+moa_may_define += gmap_extra_parameters gmap_invert_gff gmap_gff_source
 gmap_extra_parameters_help = extra parameters to feed to gmap
 gmap_invert_gff_help = Invert the GFF (T/*F*)
+gmap_gff_source_help = Source field to use in the output GFF
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
@@ -42,13 +43,14 @@ endif
 ##### Derived variables for this run
 
 gmap_dbname:=$(shell basename $(gmap_db))
+gmap_invert_gff?=F
+gmap_gff_source?=gmap.$(gmap_dbname)
 
 #prepare for gbrowse updload
 gup_gff_dir=.
 gup_upload_gff?=T
 gup_upload_fasta?=F
 gup_gffsource?=gmap.$(gmap_dbname)
-gmap_invert_gff?=F
 
 .PHONY: gmap_prepare
 gmap_prepare:
@@ -61,9 +63,9 @@ gmap: output.gff
 
 output.gff: output.raw
 	cat output.raw \
-		| sed "s/$(gmap_dbname)/gmap.$(gmap_dbname)/" \
+		| sed "s/$(gmap_dbname)/$(gmap_gff_source)/" \
 		| sed "s/cDNA_match/match/" \
-		| sed "s/^\([^\t]*\)\(.*\)ID=/\1\2ID=gmap.$(gmap_dbname)_\1_/" \
+		| sed "s/^\([^\t]*\)\(.*\)ID=\([^;]*\).path\([0-9]\+\);Name=\([^;]*\)\(.*\)/\1\2ID=gmap__\1__\3__\4;Name=gmap__\1__\3__\4\6/" \
 		| sed "s/Target=/Target=Sequence:/" \
 		> output.gff
 	if [ "$(gmap_invert_gff)" == "T" ]; then \
