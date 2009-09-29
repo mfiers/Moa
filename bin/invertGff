@@ -28,6 +28,7 @@ def reader(f):
     F.close()
 
 gffline = re.compile(
+    r'(?i)'
     r'^(?P<seqid>\S+)\s+' +
     r'(?P<source>\S+)\s+' +
     r'(?P<type>\S+)\s+' +
@@ -36,9 +37,8 @@ gffline = re.compile(
     r'(?P<score>\S+)\s+' +
     r'(?P<strand>\S+)\s+' +
     r'(?P<phase>\S+)\s+' + 
-    r'(?P<attribid1>ID=.*_)' +
-    r'(?P=seqid)_' +
-    r'(?P<attribid2>[^;]+);' +
+    r'ID=(?P<idhead>.*)__(?P=seqid)__(?P<targetid>.*?)__(?P<idrest>.*?[^;]+);' +
+    r'Name=(?P=idhead)__(?P=seqid)__(?P=targetid)__(?P=idrest);' +
     r'(?P<attrib1>.*Target=Sequence:)' +
     r'(?P<tseq>\S+) (?P<tstart>\d+) (?P<tstop>\d+)' +
     r'(?P<attrib2>.*)$')
@@ -48,33 +48,33 @@ for l in reader(sys.argv[1]):
         print l
         continue
     m = gffline.search(l)
-    if m:
-        d = copy.copy(m.groupdict())
-        #simple test:
-        if d['attribid2'].find(d['tseq']) != 0:
-            print line
-            raise Exception("Invalid ID!")
-
-        d['idremain'] = d['attribid2'].replace(d['tseq']+'_', '')
-        print ("%(tseq)s\t" +
-               "%(source)s\t" + 
-               "%(type)s\t" +
-               "%(tstart)s\t" +
-               "%(tstop)s\t" +
-               "%(score)s\t" +
-               "%(strand)s\t" +
-               "%(phase)s\t" +
-               "%(attribid1)s" +
-               "%(tseq)s_" +
-               "%(seqid)s_" +
-               "%(idremain)s;" + 
-               "%(attrib1)s" +
-               "%(seqid)s " +
-               "%(start)s " +
-               "%(end)s" +
-               "%(attrib2)s") % d
-
-
-        
     
+    if not m:
+        sys.stderr.write("\n\n%s\n\n" % l)
+        raise Exception("Invalid line?? I cannot make here cheese from")
+
+    d = copy.copy(m.groupdict())
     
+    #simple test:
+    
+    newId=d['idhead'] + "__" +  d['targetid'] + "__" +  d['seqid'] + "__" +  d['idrest']
+
+    print ("%(tseq)s\t" +
+           "%(source)s\t" + 
+           "%(type)s\t" +
+           "%(tstart)s\t" +
+           "%(tstop)s\t" +
+           "%(score)s\t" +
+           "%(strand)s\t" +
+           "%(phase)s\t" +
+           "ID=%s;Name=%s;" % (newId, newId) +
+           "%(attrib1)s" +
+           "%(seqid)s " +
+           "%(start)s " +
+           "%(end)s" +
+           "%(attrib2)s") % d
+
+
+
+
+
