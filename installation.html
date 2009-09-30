@@ -71,6 +71,12 @@
 	>Bash</a
 	>. Many of the embedded scripts expect the Bash shell. Luckily, Bash is the default shell of almost all Linux distributions.</p
       ></li
+    ><li
+    ><p
+      ><a href="http://sourceforge.net/gsml"
+	>Gnu Make Standard Library</a
+	> (GSML). A set of standard routines for Gnu Make. GSML is embedded in this distribution.</p
+      ></li
     ></ul
   ><div id="couchdb"
   ><h2
@@ -124,12 +130,12 @@
   ><p
   >Currently there are no stable releases so the best option is to download the latest version of the software, this can be done using <a href="http://git-scm.com/"
     >Git</a
-    > or by downloading an archive.</p
+    > or by downloading a source archive.</p
   ><div id="using-git"
   ><h2
     >Using Git</h2
     ><p
-    >Using git is a good choice, it allows easy updates</p
+    >Using git is a good choice as long as there are no releases. Git makes it very easy to stay up to date with the latest version and, even better, allows anybody to submit bugfixes to the Moa repository (more on that later). To download Moa using Git, enter the following commands (assuming you're installing Moa in your home directory):</p
     ><pre
     ><code
       >cd ~
@@ -141,14 +147,16 @@ git clone git://github.com/mfiers/Moa.git moa
   ><h2
     >Downloading an archive</h2
     ><p
-    >It is also possible to download an (automatically generated) archive of the trunk. Using Git is recommended, however, since git makes it easy to stay in sync with the latest bugfixes and is thus strongly recommended until there are stable releases. If you want to download an archive after all, go here:</p
+    >As an alternative, it is possible to download an (automatically generated) archive of the latest Moa version <a href="http://github.com/mfiers/Moa/tarball/master"
+      >here</a
+      >, for example, using the following commands:</p
     ><pre
     ><code
-      >http://github.com/mfiers/Moa/tarball/master
+      >wget http://github.com/mfiers/Moa/tarball/master
 </code
       ></pre
     ><p
-    >The archive will have a very long name that looks something like <code
+    >The archive that is downloaded will have a rather long name that looks something like <code
       >mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz</code
       >. This archive needs to be unpacked in a temporary directory and then moved to its final location:</p
     ><pre
@@ -160,17 +168,24 @@ mv mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz ~/moa
 </code
       ></pre
     ><p
-    >With bot metYou will now have a tree sitting in <code
-      >~/moa</code
-      ></p
-    ><p
-    >After downloading, and possibly unpacking, the source code must be moved to a suitable location of your choice. For example <code
-      >/opt/moa</code
-      >. The resulting tree should contain the following directories: <code
-      >/opt/moa/bin</code
-      > and <code
-      >/opt/moa/template</code
-      >. Remember to set the file attributes, depending on who is going to use the software.</p
+    >After following either procdure; downloading the archive or using Git, the source code tree should be should be in its final location. The tree should contain the following directories:</p
+    ><pre
+    ><code
+      >./moa
+    ./bin
+    ./doc
+    ./etc
+    ./lib
+    ./template
+    ./test
+    ./util
+    ./www
+    ./COPYING
+    ./INSTALL
+    ./README
+    ./VERSION
+</code
+      ></pre
     ></div
   ></div
 ><div id="configuration"
@@ -179,7 +194,7 @@ mv mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz ~/moa
   ><p
   >Configuration of Moa is simple: The Moa <code
     >/bin/</code
-    > directory must be included in the PATH and a environment variable must be set pointing to the Moa directory. The easiest way to do this is by adding the following lines to your <code
+    > directory must be included in the PATH and an environment variable must be set pointing to the Moa directory. The easiest way to do this is by adding the following lines to your <code
     >.bashrc</code
     >:</p
   ><pre
@@ -189,11 +204,20 @@ export MOABASE=/opt/moa
 </code
     ></pre
   ><p
-  >and run <code
-    >source .bashrc</code
-    >.</p
+  >and run:</p
+  ><pre
+  ><code
+    > source .bashrc
+</code
+    ></pre
   ><p
-  >..done..</p
+  >Also, if you are running Moa to be used by all users of your system system, please remember the file attributes correctly:</p
+  ><pre
+  ><code
+    >chmod a+rX -R $MOABASE
+chmod a+rx $MOABASE/bin/*
+</code
+    ></pre
   ></div
 >
 </div></body></html>
