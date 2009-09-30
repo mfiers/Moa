@@ -40,7 +40,7 @@ def fastareader(f):
             if name and seq:
                 yield name, "".join(seq)
             seq = []
-            name = l[1:]
+            name = l[1:].split()[0]
                         
         else:
             seq.append("".join(l.split()).lower())
