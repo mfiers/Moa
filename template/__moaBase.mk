@@ -46,7 +46,7 @@ errr = echo -e "$(moaerrr)$(warn_on) -- $(1) -- $(warn_off)"
 ## default variables used in generating help
 moa_title ?= $(notdir $(firstword $(MAKEFILE_LIST)))
 moa_author ?= Mark Fiers
-project_help ?= A project name; group your analyses.
+project_help ?= A project name - group your analyses.
 
 ## Pandoc is used widely to convert to & from documentation
 ## formats. A pandoc version >= v1.2 is recomended.
@@ -298,6 +298,15 @@ moa_register_%:
 
 prereqlist += prereq_moa_environment
 
+checkPrereqPath = \
+	if ! which $(1) >/dev/null; then 											\
+			$(call errr,Cannot find $(1) in your PATH, is it installed?); 		\
+			if [[ -n "$(2)" ]]; then \
+				$(call errr,$(2)); \
+			fi;						\
+			false ;																\
+	fi
+
 .PHONY: prereqs $(prereqlist)
 prereqs: $(prereqlist)
 
@@ -385,7 +394,7 @@ append: __set
 
 .PHONY: __set
 __set:
-	moa conf $(set_mode) \
+	@moa conf $(set_mode) \
 		$(foreach v, $(moa_must_define) $(moa_may_define), \
 			$(if $(call seq,$(origin $(v)),command line), \
 				$(call set_func,$(v)) \

@@ -72,7 +72,9 @@ vpath % $(g_input_dir)
 .PHONY: gather_prepare
 gather_prepare:
 	-mkdir touch
-	-mkdir $(g_output_dir)	
+	-if [[ "$(g_output_dir)" != "." ]]; then 									\
+		 $(g_output_dir);														\
+	fi
 
 .PHONY: gather_post
 gather_post:
@@ -80,6 +82,10 @@ gather_post:
 .NOTPARALLEL: gather
 .PHONY: gather
 gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))
+
+
+test:
+	@echo $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))
 
 touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
 touch/%: %
