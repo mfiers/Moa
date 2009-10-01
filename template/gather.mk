@@ -73,7 +73,7 @@ vpath % $(g_input_dir)
 gather_prepare:
 	-mkdir touch
 	-if [[ "$(g_output_dir)" != "." ]]; then 									\
-		 $(g_output_dir);														\
+		 mkdir $(g_output_dir);														\
 	fi
 
 .PHONY: gather_post
