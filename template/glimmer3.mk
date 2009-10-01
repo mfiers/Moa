@@ -47,6 +47,8 @@ prereq_elph_installed:
 prereq_awkscripts_installed:
 	@$(call checkPrereqPath,get-motif-counts.awk,Make sure you copied the 		\
 			glimmer3 AWK scripts into your PATH)
+	@$(call checkPrereqExec,get-motif-counts.awk --version,						\
+			Check the AWK shebang!)
 
 moa_must_define += glimmer3_input_dir
 blast_input_dir_help = directory containing the input sequences
@@ -123,16 +125,17 @@ $(glimmer3_gff_files): gff/%.g3.gff: out/%.g3.predict
 		| grep -v "^>"								\
 		| sed "s/orf\([0-9]*\)/$*.g3.g\1/" 			\
 		| awk ' {																	\
-					printf "$*\t$(glimmer3_gff_source)\tCDS\t";									\
+					printf "$*\t$(glimmer3_gff_source)\tCDS\t";						\
 					if ($$4 > 0) { 													\
 						printf "%s\t%s\t%s\t+\t%s", $$2, $$3, $$5, $$4; } 			\
 					else { 															\
 						printf "%s\t%s\t%s\t-\t%s", $$3, $$2, $$5, $$4; } 			\
-					printf "\tID=%s;Name=%s\n", $$1, $$1;								\
+					printf "\tID=%s;Name=%s\n", $$1, $$1;							\
 				} ' 																\
 		> $@
 
-$(glimmer3_cds_files): out/%.g3.cds.fasta: $(glimmer3_input_dir)/%.$(glimmer3_input_extension) out/%.g3.predict
+$(glimmer3_cds_files): out/%.g3.cds.fasta: \
+		$(glimmer3_input_dir)/%.$(glimmer3_input_extension) out/%.g3.predict
 	cat $(realpath $(word 2,$^)) 					\
 		| grep -v "^>"								\
 		| extract -t $(realpath $<) -				\
