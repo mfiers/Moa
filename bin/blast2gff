@@ -58,10 +58,10 @@ def cleanup_name(name):
     return name.replace(';', ','
             ).replace('=', '_'
             ).replace('%', '_'
-            ).replace(',', '_')
+            ).replace(',', '_'
+            ).replace('__', '_')
             
-def handle_blast_record(rec):    
-    
+def handle_blast_record(rec):        
     query_id = cleanup_name(
             rec.query.split()[0].replace(">", "").replace("lcl|", ""))
     full_query_name = cleanup_name(
@@ -96,8 +96,8 @@ def handle_blast_record(rec):
         gff_queries = []
         gff_subjects = []
         
-        basenameQ = "%s_%s_%s_%s" % (options.source, query_id, subject_id, count)
-        basenameS = "%s_%s_%s_%s" % (options.source, subject_id, query_id, count)
+        basenameQ = "%s__%s__%s__%s" % (options.source, query_id, subject_id, count)
+        basenameS = "%s__%s__%s__%s" % (options.source, subject_id, query_id, count)
         
         l.debug("basename Q is %s" % basenameQ)
         l.debug("basename S is %s" % basenameS)
