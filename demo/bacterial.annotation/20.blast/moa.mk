@@ -1,0 +1,2 @@
+project=demo.bacterial.annotation
+jid=moa_traverse_20.blast_e594919ea515

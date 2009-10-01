@@ -1,5 +1,4 @@
-Moa - makefiles in bioinformatics.
+Moa - makefiles for bioinformatics.
 
-for installation instructions, please read: INSTALL
-
-The manual can eventually be found in ./doc/manual
+For installation & operation please read the manual in
+./doc/manual.pdf or read it using your browser in ./doc/html/

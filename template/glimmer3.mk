@@ -33,14 +33,20 @@ glimmer3_help = Glimmer3 is a open reading frame discovery program		\
 #########################################################################
 # Prerequisite testing
 
-prereqlist += prereq_glimmer3_installed
+prereqlist += prereq_glimmer3_installed prereq_elph_installed \
+			prereq_awkscripts_installed
+
 
 prereq_glimmer3_installed:
-	@if ! which glimmer3 >/dev/null; then \
-		echo "glimmer3 is either not installed or not in your \$$PATH" ;\
-		false ;\
-	fi
+	@$(call checkPrereqPath,glimmer3)
 
+prereq_elph_installed:
+	@$(call checkPrereqPath,elph,You can download elph from						\
+				 http://www.cbcb.umd.edu/software/ELPH/)
+
+prereq_awkscripts_installed:
+	@$(call checkPrereqPath,get-motif-counts.awk,Make sure you copied the 		\
+			glimmer3 AWK scripts into your PATH)
 
 moa_must_define += glimmer3_input_dir
 blast_input_dir_help = directory containing the input sequences
@@ -75,16 +81,13 @@ glimmer3_input_extension ?= fasta
 glimmer3_input_files ?= $(wildcard $(glimmer3_input_dir)/*.$(glimmer3_input_extension))
 
 glimmer3_output_files = $(addprefix out/, $(notdir $(patsubst		\
-    %.$(glimmer3_input_extension), %.predict, $(glimmer3_input_files))))
+    %.$(glimmer3_input_extension), %.g3.predict, $(glimmer3_input_files))))
 
 glimmer3_cds_files = $(addprefix out/, $(notdir $(patsubst		\
-    %.$(glimmer3_input_extension), %.cds.fasta, $(glimmer3_input_files))))
+    %.$(glimmer3_input_extension), %.g3.cds.fasta, $(glimmer3_input_files))))
 
 glimmer3_gff_files = $(addprefix gff/, $(notdir $(patsubst		\
-    %.$(glimmer3_input_extension), %.gff, $(glimmer3_input_files))))
-
-#glimmer3_gff_files = $(addprefix gff/, \
-#	$(patsubst %.orf, %.gff, $(notdir $(glimmer3_output_files))))
+    %.$(glimmer3_input_extension), %.g3.gff, $(glimmer3_input_files))))
 
 glimmer3_test:
 	@echo "Input extension: '$(glimmer3_input_extension)'"
@@ -115,7 +118,7 @@ glimmer3_clean:
 .PHONY: glimmer3
 glimmer3: $(glimmer3_gff_files) $(glimmer3_cds_files)
 
-$(glimmer3_gff_files): gff/%.gff: out/%.predict
+$(glimmer3_gff_files): gff/%.g3.gff: out/%.g3.predict
 	cat $<											\
 		| grep -v "^>"								\
 		| sed "s/orf\([0-9]*\)/$*.g3.g\1/" 			\
@@ -129,7 +132,7 @@ $(glimmer3_gff_files): gff/%.gff: out/%.predict
 				} ' 																\
 		> $@
 
-$(glimmer3_cds_files): out/%.cds.fasta: $(glimmer3_input_dir)/%.$(glimmer3_input_extension) out/%.predict
+$(glimmer3_cds_files): out/%.g3.cds.fasta: $(glimmer3_input_dir)/%.$(glimmer3_input_extension) out/%.g3.predict
 	cat $(realpath $(word 2,$^)) 					\
 		| grep -v "^>"								\
 		| extract -t $(realpath $<) -				\
@@ -137,22 +140,20 @@ $(glimmer3_cds_files): out/%.cds.fasta: $(glimmer3_input_dir)/%.$(glimmer3_input
 		> $@
 	fastaSplitter -f $@ -o fasta
 
-$(glimmer3_output_files): out/%.predict: 											\
-		$(glimmer3_input_dir)/%.$(glimmer3_input_extension) 						\
-		 train/upstream.motif train/train1.icm
-	startuse=`start-codon-distrib -3 train/all.seq train/run1.coords`;				\
-	cd out; \
-		glimmer3 																	\
-			-o$(glimmer3_max_overlap) 												\
-			-g$(glimmer3_gene_len)													\
-			-t$(glimmer3_treshold)													\
-			-b ../train/upstream.motif												\
-			-P $$startuse															\
-			$(realpath $<) 															\
-			../train/train1.icm $*
+$(glimmer3_output_files): out/%.g3.predict: 									\
+		$(glimmer3_input_dir)/%.$(glimmer3_input_extension) 					\
+		train/upstream.motif train/train1.icm
+	startuse=`start-codon-distrib -3 train/all.seq train/run1.coords`;			\
+	cd out; 																	\
+		glimmer3 																\
+			-o$(glimmer3_max_overlap) 											\
+			-g$(glimmer3_gene_len)												\
+			-t$(glimmer3_treshold)												\
+			-b ../train/upstream.motif											\
+			-P $$startuse														\
+			$(realpath $<) 														\
+			../train/train1.icm $*.g3
 
-
-#run the final prediction
 
 #run elph to create analyze motifs
 train/upstream.motif: train/upstream.train.set
@@ -162,7 +163,7 @@ train/upstream.motif: train/upstream.train.set
 train/upstream.train.set: train/run1.coords train/all.seq
 	upstream-coords.awk 25 0 $< | extract train/all.seq - > $@
 
-#get the coordinates of the precited seqs
+#get the coordinates of the predicted seqs from the first glimmer run
 train/run1.coords: train/run1.predict
 	cat $< | grep -v "^>" > $@
 
@@ -173,11 +174,11 @@ train/run1.predict: train/train1.icm
 		-t$(glimmer3_treshold) 											\
 		all.seq train1.icm run1
 
-#build the first level model
+#build the training model
 train/train1.icm: train/train1.set
 	build-icm -r $@ < $<
 
-#create a training set
+#create a training set from all ORFs
 train/train1.set: train/all.seq train/long.orfs 
 	extract -t $^ > $@
 

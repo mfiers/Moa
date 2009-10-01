@@ -39,11 +39,7 @@ moa_getorf_help = Getorf is a open reading frame discovery program		\
 prereqlist += prereq_getorf_installed
 
 prereq_getorf_installed:
-	@if ! which getorf >/dev/null; then \
-		echo "getorf is either not installed or not in your \$$PATH" ;\
-		false ;\
-	fi
-
+	@$(call checkPrereqPath,getorf,gerorf is part of EMBOSS)
 
 moa_must_define += getorf_input_dir
 blast_input_dir_help = directory containing the input sequences
@@ -65,9 +61,12 @@ getorf_maxsize_help = maximal nucleotide size of the predicted ORF,	\
 
 getorf_circular_help = Is the sequence linear (Y/**N**)
 
-getorf_find_help = What to output? See the getorf manual (**0**)
+getorf_find_help = What to output? 0: Translation between stop codons,	\
+  1: Translation between start & stop codon, 2: Nucleotide sequence		\
+  between stop codons; 3: Nucleotide sequence between start	\
+  and stop codons. Default: 3
 
-getorf_table_help = Genetic code to use: **0** Standard; 1 Standard	\
+getorf_table_help = Genetic code to use: 0 Standard; 1 Standard	\
    with alternative initiation codons; 2 Vertebrate Mitochondrial; 3	\
    Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial	\
    and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate	\
@@ -76,7 +75,7 @@ getorf_table_help = Genetic code to use: **0** Standard; 1 Standard	\
    Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma	\
    Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode			\
    Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium			\
-   Mitochondrial
+   Mitochondrial. Default: 11
 
 #preparing for possible gbrowse upload:
 gup_gff_dir = ./gff
@@ -86,27 +85,28 @@ gup_gffsource ?= $(blast_gff_source)
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
-getorf_table ?= 1
-getorf_find ?= 0
+getorf_table ?= 11
+getorf_find ?= 3
 getorf_minsize ?= 30
 getorf_maxsize ?= 1000000
+getorf_circular ?= Y
 getorf_gff_source ?= moa
 getorf_input_extension ?= fasta
 getorf_find ?= 0
 getorf_input_files ?= $(wildcard $(getorf_input_dir)/*.$(getorf_input_extension))
 
 getorf_output_files = $(addprefix out/, $(notdir $(patsubst		\
-    %.$(getorf_input_extension), %.orf, $(getorf_input_files))))
+    %.$(getorf_input_extension), %.getorf.fasta, $(getorf_input_files))))
 
 getorf_gff_files = $(addprefix gff/, \
-	$(patsubst %.orf, %.gff, $(notdir $(getorf_output_files))))
+	$(patsubst %.fasta, %.gff, $(notdir $(getorf_output_files))))
 
 getorf_test:
 	@echo "Input extension: '$(getorf_input_extension)'"
 	@echo "a blastdb file: '$(single_getorf_db_file)'"
-	@echo "No inp files $(words $(getorf_input_files))"
-	@echo "No orf files $(words $(getorf_output_files))"
-	@echo "No gff files $(words $(getorf_gff_files))"
+	@echo "No inp files $(words $(getorf_input_files))  $(word 1,$(getorf_input_files))"
+	@echo "No orf files $(words $(getorf_output_files))  $(word 1,$(getorf_output_files))"
+	@echo "No gff files $(words $(getorf_gff_files))  $(word 1,$(getorf_gff_files))"
 
 #echo Main target for getorf
 .PHONY: getorf
@@ -124,36 +124,32 @@ getorf_prepare:
 getorf_post:
 
 # Convert to GFF (forward)
-gff/%.gff: out/%.orf
-	@echo "Create gff $@ from $<"
-	#first forward genes
-	cat $< 												\
-		| grep "^>" 									\
-		| grep -v "REVERSE SENSE"		 				\
-		| sed "s/>\(.*\)_\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\]/\1\t$(getorf_gff_source)\torf\t\3\t\4\t.\t+\t.\tID=ORF_\1_\2;Name=ORF_\1_\2/"		\
+gff/%.getorf.gff: out/%.getorf.fasta
+	@echo "Create gff $@ from $< - forward genes"
+	cat $< 																		\
+		| grep "^>" 															\
+		| grep -v "REVERSE SENSE"		 										\
+		| sed "s/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\]/\1\t$(getorf_gff_source)\tCDS\t\3\t\4\t.\t+\t.\tID=ORF_\1_\2;Name=ORF_\1_\2/"	\
 		> $@
-	#and then backward
-	cat $< 												\
-		| grep "^>" 									\
-		| grep "REVERSE SENSE"		 				\
-		| sed "s/>\(.*\)_\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\]/\1\t$(getorf_gff_source)\torf\t\4\t\3\t.\t-\t.\tID=ORF_\1_\2;Name=ORF_\1_\2/"		\
+	@echo "Create gff $@ from $< - reverse genes"
+	cat $< 																		\
+		| grep "^>" 															\
+		| grep "REVERSE SENSE"		 											\
+		| sed "s/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\]/\1\t$(getorf_gff_source)\tCDS\t\4\t\3\t.\t-\t.\tID=ORF_\1_\2;Name=ORF_\1_\2/"	\
 		>> $@
 
 # create out/*xml - run GETORF 
-out/%.orf: $(getorf_input_dir)/%.$(getorf_input_extension)
+out/%.getorf.fasta: $(getorf_input_dir)/%.$(getorf_input_extension)
 	@echo "Processing getorf $*"
 	@echo "Creating out.orf $@ from $<"
 	@echo "Params $(getorf_program) $(getorf_db)"
-	getorf -sequence $< -outseq $@ -table $(getorf_table) \
-		-minsize $(getorf_minsize) -maxsize $(getorf_maxsize) \
-		-circular $(getorf_circular) -find $(getorf_find)
-	Fastasplitter -f $@ -o fasta
+	cat $< | getorf -filter -table $(getorf_table) 						\
+		-minsize $(getorf_minsize) -maxsize $(getorf_maxsize) 			\
+		-circular $(getorf_circular) -find $(getorf_find) 				\
+			| sed "s/>$*_\([0-9]*\)/>$*.getorf.\1/" 						\
+			>  $@
+	fastaSplitter -f $@ -o fasta
 
-# creating the getorfreport can only be executed when 
-# all getorfs are done
-getorf_report: $(getorf_output_files)
-	getorfReport out/ -o $@
-	
 getorf_clean:
 	-rm -rf ./gff/
 	-rm -rf ./out/

@@ -16,14 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_targets += lftp
+moa_title = lftp
+moa_description = Use LFTP to download files. This template has two		\
+  modi, one is set 'lftp_mode' to 'mirror' data, in which case both		\
+  'lftp_url' and 'lftp_pattern' (default *) are used. The other modus	\
+  is 'lftp_mode=get', when one file defined by 'lftp_url' is			\
+  downloaded. In the mirror mode it is possible to download only those	\
+  files that are newer as the files already downloaded by using the		\
+  'lftp_timestamp' parameter
+
 lftp_help = Download using ftp
 
 # Help
 moa_ids += lftp
-moa_title_lftp = lftp
-moa_description_lftp = use lftp to download a (set of) file(s). This makefile does not \
-  employ a touchfile since lftp checks for updates before downloading.
+lftp_help = execute the download
 
 # Output definition
 moa_outputs += lftp_output
@@ -31,18 +37,18 @@ moa_output_lftp_output = *
 moa_output_lftp_output_help = anything you define
 
 #varables that NEED to be defined
-moa_must_define += lftp_url 
+moa_must_define += lftp_url
 lftp_url_help = The base url to download from
 
 #variables that may be defined
 moa_may_define += lftp_timestamp lftp_powerclean lftp_noclean lftp_pattern
+lftp_pattern_help = glob pattern to download
 lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
  else a touchfile is created that you need to delete or touch before updating \
  (T/*F*)
 lftp_powerclean_help = Do brute force cleaning (T/F). Remove all files, \
   except moa.mk & Makefile when calling make clean. Defaults to F.
 lftp_noclean_help = set of files not to be deleted by the powerclean
-lftp_pattern_help = glob pattern to download
 
 moa_may_define += lftp_user lftp_pass
 lftp_user_help = username for the remote site
@@ -56,9 +62,9 @@ lftp_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos \
   text files (default=F).
 
 moa_may_define += lftp_mode
-lftp_mode_help = Mode of operation - "mirror" or "get". Mirror enables \
+lftp_mode_help = Mode of operation - 'mirror' or 'get'. Mirror enables \
   timestamping. Get just gets a single file. If using get, consider setting \
-  depend_lftp_timestamp to F. When using "get", the full url should be in \
+  depend_lftp_timestamp to F. When using 'get', the full url should be in \
   lftp_url. lftp_pattern is ignored. Defaults to mirror.
 
 #Include base moa code - does variable checks & generates help
@@ -70,6 +76,7 @@ lftp_powerclean ?= F
 lftp_pattern ?= *
 lftp_user ?= NoNoNo
 lftp_pass ?= NoNoNo
+lftp_pattern ?= *
 lftp_mode ?= mirror
 lftp_noclean +=  Makefile moa.mk 
 lftp_output_dir ?= .
