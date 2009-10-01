@@ -22,9 +22,9 @@ clean_help = Remove anything that is not called Makefile or moa.mk
 # Help
 moa_ids += gather
 moa_title_gather = gather files
-moa_description_gather = gather a set of files and create hardlinks to. Hardlinks have \
- as advantage that updates are noticed via the timestamp. Hence, make recognizes \
- them. 
+moa_description_gather = gather a set of files and create hardlinks				\
+ to. Hardlinks have as advantage that updates are noticed via the				\
+ timestamp. Hence, make recognizes them.
  
 # Output definition
 moa_outputs += gather
@@ -37,17 +37,18 @@ g_input_dir_help = list of directories with the input files
 g_input_pattern_help = glob pattern to download
 
 moa_may_define += g_name_sed g_output_dir
-name_sed_help = Sed substitution command that alters the filename, \
+name_sed_help = Sed substitution command that alters the filename,				\
   defaults to leaving the names untouched.
 g_output_dir_help = Output subdirectory, defaults to '.'
 
 moa_may_define += g_process
-g_process_help = Command to process the files. If undefined, hardlink the files. 
+g_process_help = Command to process the files. If undefined, hardlink			\
+	the files.
 
 moa_may_define += g_limit g_powerclean
-g_limit_help = limit the number of files gathered (with the most recent \
-  files first, defaults to 1mln)
-g_powerclean_help = Do brute force cleaning (T/F). Remove all files, \
+g_limit_help = limit the number of files gathered (with the most				\
+  recent files first, defaults to 1mln)
+g_powerclean_help = Do brute force cleaning (T/F). Remove all files,			\
   except moa.mk & Makefile when calling make clean. Defaults to F.
 
 #Include base moa code - does variable checks & generates help
@@ -73,7 +74,7 @@ vpath % $(g_input_dir)
 gather_prepare:
 	-mkdir touch
 	-if [[ "$(g_output_dir)" != "." ]]; then 									\
-		 mkdir $(g_output_dir);														\
+		 mkdir $(g_output_dir);													\
 	fi
 
 .PHONY: gather_post
