@@ -298,13 +298,24 @@ moa_register_%:
 
 prereqlist += prereq_moa_environment
 
+checkPrereqExec = \
+	if ! eval $(1) > /dev/null 2>/dev/null; then 								\
+		$(call errr,Prerequisite check);										\
+		$(call errr,Cannot execute $(1). Is properly executable?); 				\
+			if [[ -n "$(2)" ]]; then 											\
+				$(call errr,$(2)); 												\
+			fi;																	\
+			false ;																\
+	fi
+
 checkPrereqPath = \
 	if ! which $(1) >/dev/null; then 											\
-			$(call errr,Cannot find $(1) in your PATH, is it installed?); 		\
-			if [[ -n "$(2)" ]]; then \
-				$(call errr,$(2)); \
-			fi;						\
-			false ;																\
+		$(call errr,Prerequisite check);										\
+		$(call errr,Cannot find $(1) in your PATH, is it installed?); 			\
+		if [[ -n "$(2)" ]]; then 												\
+			$(call errr,$(2)); 													\
+		fi;																		\
+		false ;																	\
 	fi
 
 .PHONY: prereqs $(prereqlist)

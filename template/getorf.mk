@@ -129,13 +129,13 @@ gff/%.getorf.gff: out/%.getorf.fasta
 	cat $< 																		\
 		| grep "^>" 															\
 		| grep -v "REVERSE SENSE"		 										\
-		| sed "s/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\]/\1\t$(getorf_gff_source)\tCDS\t\3\t\4\t.\t+\t.\tID=ORF_\1_\2;Name=ORF_\1_\2/"	\
+		| sed 's/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\].*/\1\t$(getorf_gff_source)\tCDS\t\3\t\4\t.\t+\t.\tID=\1.getorf.\2;Name=\1.getorf.\2/'	\
 		> $@
 	@echo "Create gff $@ from $< - reverse genes"
 	cat $< 																		\
 		| grep "^>" 															\
 		| grep "REVERSE SENSE"		 											\
-		| sed "s/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\]/\1\t$(getorf_gff_source)\tCDS\t\4\t\3\t.\t-\t.\tID=ORF_\1_\2;Name=ORF_\1_\2/"	\
+		| sed 's/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\].*/\1\t$(getorf_gff_source)\tCDS\t\4\t\3\t.\t-\t.\tID=\1.getorf.\2;Name=\1.getorf.\2/'	\
 		>> $@
 
 # create out/*xml - run GETORF 
