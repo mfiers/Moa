@@ -26,23 +26,20 @@ moa_description = A library that aids in uploading FASTA and GFF		\
 moa_ids += upload2gbrowse
 moa_upload2gbrowse_help = Upload to gbrowse
 
-moa_additional_targets += initGbrowse gupLock gupUnlock
+moa_additional_targets += initGbrowse gupgo
 moa_initGbrowse_help = Clean & initalize a gbrowse database. 			\
 	**Warning: all data will be lost!**
-moa_gupLock_help = Prevent this job from uploading anything to the 		\
-	Generic Genome Browser database
-moa_gupUnlock_help = Allow this job to upload to the Generic Genome		\
-	Browser database
+moa_gupgo_help = Actually do the upload. upload2gbrowse NEVER does	\
+	this automatically!
 
 moa_must_define += gup_user gup_db gup_gffsource 
 gup_user_help = gbrowse db user. If not defined, this defaults to 'moa'.
 gup_db_help = gbrowse database. If not defined, this defaults to 'moa'.
 gup_gffsource_help = the gff source field, used in batch operations
 
-moa_may_define += gup_gff_extension gup_fasta_extension gup_upload_limit
+moa_may_define += gup_gff_extension gup_fasta_extension
 gup_fasta_extension_help = extension of the FASTA files to upload (.fasta)
 gup_gff_extension_help = extension of the GFF files to upload (.gff)
-gup_upload_limit_help = Do not upload more that this number of files (infinite) 
 
 moa_may_define += gup_upload_fasta gup_upload_gff gup_force_upload
 gup_upload_fasta_help = upload fasta to gbrowse (T/F)
@@ -58,7 +55,6 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 gup_gff_extension ?= gff
 gup_fasta_extension ?= fasta
-gup_upload_limit ?= 999999999
 gup_gff_dir ?= ./gff
 gup_fasta_dir ?= ./fasta
 
@@ -71,68 +67,6 @@ marks_extensions ?= F
 #see if this job is locked from uploading
 gup_locked = $(shell if [ -f ./gup_lock ]; then echo "T"; else echo "F"; fi)
 
-#This is a safe way to only expand
-
-
-ifeq "$(gup_phase_two)" "T"
-  ifeq "$(gup_upload_gff)" "T"
-    ifneq "$(gup_locked)" "T"
-      $(call echo,Processing Gff files)
-      gup_input_gff := $(wordlist 1, $(gup_upload_limit), 						\
-			$(wildcard $(gup_gff_dir)/*.$(gup_gff_extension)))
-    else
-	  ifeq "$(gup_force_upload)" "T"
-        $(call echo,Processing Gff files)
-        gup_input_gff :=  $(wordlist 1, $(gup_upload_limit), 						\
-			$(wildcard $(gup_gff_dir)/*.$(gup_gff_extension)))
-	  else
-        $(call echo,GFF Upload to gbrowse is locked)
-	  endif
-    endif
-  else
-      $(call echo,GFF upload to gbrowse is disabled)
-  endif
-endif
-
-ifeq "$(gup_phase_two)" "T"
-  ifeq "$(gup_upload_fasta)" "T"
-    ifneq "$(gup_locked)" "T"
-      $(call echo,Processing FASTA for upload to gbrowse)					
-      gup_input_fasta :=  $(wordlist 1, $(gup_upload_limit), 						\
-			$(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension)))
-    else
-      ifeq "$(gup_force_upload)" "T"
-        $(call echo,Processing FASTA for upload to gbrowse)
-        gup_input_fasta :=  $(wordlist 1, $(gup_upload_limit), 						\
-			$(wildcard $(gup_fasta_dir)/*.$(gup_fasta_extension)))
-	  else
-        $(call echo,FASTA upload to gbrowse is locked)
-	  endif 
-    endif
-  else
-    $(call echo,FASTA upload to gbrowse is disabled)
-  endif
-endif
-
-# function to delete the results of one, a few and all input files
-# if sticking to a few rules this should work for most analyses.
-gup_delete_single ?= bp_seqfeature_delete.pl -d $(gup_db) \
-  -u $(gup_user) -n $(gup_gffsource)_`basename $< .gff`
-
-#delete a few files (file list in $?)
-gup_delete_few ?= bp_seqfeature_delete.pl --noverbose -d $(gup_db) 		\
-	-u $(gup_user)														\
-	-n $(addsuffix *\",													\
-		$(addprefix \"$(gup_gffsource)_, 								\
-			$(shell for f in $(cs); 									\
-						do basename $$f .$(gup_gff_extension); 			\
-					done ) ) )
-
-#delete all: Note, this will probably not work, the current version 
-# of bp_seqfeature_delete.pl seems to be broken
-gup_delete_all ?= bp_seqfeature_delete.pl -d $(gup_db) 					\
-						-u $(gup_user) -n $(gup_gffsource)_*
-
 # the default upload target runs make upload. This is to make sure
 # that possible files created by the rest of this makefile are read
 # correctly. I'm under the impression that this should be possible by
@@ -142,87 +76,41 @@ gup_delete_all ?= bp_seqfeature_delete.pl -d $(gup_db) 					\
 .PHONY: upload2gbrowse_prepare
 upload2gbrowse_prepare: 
 
+## We never ever go through automatic invocation!
+## This is too complicated. Needs to be called with
+## "make gup_up"
+## or 
+## "make all action="gup_up""
 .PHONY: upload2gbrowse
 upload2gbrowse:
-	@echo "new instance of make -> make sure that all created"
-	@echo "files are actually recognized"
-	@if [[ ("$(gup_locked)" == "T") && 							\
-			("$(gup_force_upload)" != "T") ]]; then 			\
-		$(call echo,No upload to Gbrowse: GUP-LOCKED!);			\
-	else														\
-		if [[ "$(gup_force_upload)" == "T" ]]; then				\
-			rm upload_fasta || true;							\
-			rm upload_gff || true;								\
-		fi;														\
-		$(MAKE) upload2gbrowse2 gup_phase_two=T 				\
-					gup_locked=$(gup_locked)					\
-					gup_force_upload=$(gup_force_upload);		\
-	fi
-	@echo "End of make upload2gbrowse2"
-
 
 .PHONY: upload2gbrowse_post
 upload2gbrowse_post: 
 
-test: test_fasta test_gff
-
-test_fasta: $(gup_input_fasta)
-	@echo "identified $(words $(gup_input_fasta)) fasta files"
-	@echo "of which $(words $?) are scheduled to be uploaded"
-
-test_gff: $(gup_input_gff)
-	@echo "identified $(words $(gup_input_gff)) fasta files"
-	@echo "of which $(words $?) are scheduled to be uploaded"
-
-# Lock / unlock this job from uploading to/from the database
-.PHONY: gupLock
-gupLock:
-	touch gup_lock
-.PHONY: gupUnlock
-gupUnlock:
-	-rm gup_lock
-
-
 ## Do the actual upload
-.PHONY: upload2gbrowse2
-upload2gbrowse2: upload_fasta upload_gff
-	@echo "finished with upload to gbrowse" 
+.PHONY: gupgo
+gupgo: $(if ifeq("$(gup_upload_fasta)", "T"), gup_do_fasta_upload) \
+		$(if ifeq("$(gup_upload_gff)", "T"), gup_do_gff_upload)
+	@echo "finished gbrowse upload"
 
-upload_fasta: $(gup_input_fasta)
-	@$(call echo,Start upload FASTA - new: $(words $?) all: $(words $^))
-	@#$(foreach st, $(shell seq 1 200 $(words $?)), 									\
-	    $(eval cs=$(wordlist $(st), $(shell echo $$(( $(st) + 199 )) ), $?))		\
-		$(shell bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $(cs)) 		\
-	)
-	touch upload_fasta
+.PHONY: gup_do_fasta_upload gup_do_gff_upload 
+gup_do_fasta_upload: 
+	@$(call echo,Start FASTA upload)
+	@find $(gup_fasta_dir) -name "*.$(gup_fasta_extension)" 					\
+		| xargs -n 200 bp_seqfeature_load.pl 									\
+				-d $(gup_db) -u $(gup_user) -f
+	@$(call echo,Finished FASTA upload)
 
-#	
-#$(shell echo "$(gup_delete_few)" )											\
-#
-
-upload_gff: $(gup_input_gff)
-	@$(call echo,Start upload GFF - new: $(words $?) all: $(words $^))
-	@#$(foreach st, $(shell seq 1 200 $(words $?)), 								\
-	    $(eval cs=$(wordlist $(st), $(shell echo $$(( $(st) + 199 )) ), $?)) 		\
-		$(shell bp_seqfeature_load.pl -d $(gup_db) -u $(gup_user) -f $(cs);) 		\
-	)
-	touch upload_gff
-
-.PHONY: upload2gbrowse_clean
-upload2gbrowse_clean: $(gup_input_gff)
-	@if [[ ("$(gup_locked)" == "F") || 						\
-			("$(gup_force_upload)" == "T") ]]; then 		\
-		$(gup_delete_all);									\
-		-rm upload_gff;										\
-		-rm upload_fasta;									\
-	fi
-
-
+gup_do_gff_upload: 
+	@$(call echo,Start GFF upload)
+	@find $(gup_gff_dir) -name "*.$(gup_gff_extension)"							\
+		| xargs -n 200 bp_seqfeature_load.pl 									\
+				-d $(gup_db) -u $(gup_user) -f
+	@$(call echo,Finished GFF upload)
 
 ##
 ## initGbrowse functionality
 ##
-
 
 initGbrowse: mark_add_1 = 									\
 	ALTER TABLE $(gup_db).name								\
