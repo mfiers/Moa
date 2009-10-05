@@ -82,9 +82,11 @@ endif
 ###############################################################################
 
 ## If the job identifier is not defined, define one here
-jid ?= $(shell echo -n "moa_$(word 1 $,$(moa_ids))_"; \
-			   echo -n `basename $$PWD`"_" ;\
-			   echo "$$RANDOM" `pwd` `date` | md5sum | cut -c-12)
+ifeq ($(jid),)
+jid := $(shell echo -n "moa_$(word 1 $,$(moa_ids))_"; \
+		   echo -n `basename $$PWD`"_" ;\
+		   echo "$$RANDOM" `pwd` `date` | md5sum | cut -c-12)
+endif
 
 ###############################################################################
 # Define and executed a MOA run 
@@ -100,7 +102,12 @@ moa_execute_targets =										\
 	moa_main_targets 										\
 	$(addsuffix _post, $(moa_ids)) 							\
 	moa_postprocess 										\
-	moa_register
+	moa_register											\
+	moa_finished
+
+.PHONY: moa_finished
+moa_finished:
+	@$(call echo, Moa finished - Succes!)
 
 ## The default Moa target - A single moa invocation calls a set of targets
 .PHONY: moa_default_target
@@ -153,6 +160,7 @@ moa_dummy:
 ## targets are called in reverse order.
 .PHONY: clean
 clean: $(call reverse, $(addsuffix _clean, $(moa_ids)))
+	-@rm lock
 
 
 ################################################################################
@@ -465,7 +473,8 @@ cset: $(if $(call seq,$(usecouchdb),T), __set, moa_couchdb_unset)
 show: moa_prepare_var \
 	$(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 moa_showvar_%:		 
-	@echo -e "$*\t$($*)"
+	@echo -ne '$*\t'
+	@echo '$(value $*)'
 
 
 ################################################################################

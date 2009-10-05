@@ -73,11 +73,13 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 ################################################################################
 lftp_timestamp ?= T
 lftp_powerclean ?= F
-lftp_pattern ?= *
-lftp_user ?= NoNoNo
-lftp_pass ?= NoNoNo
-lftp_pattern ?= *
-lftp_mode ?= mirror
+
+ifdef lftp_pattern
+	lftp_mode = mirror
+else
+	lftp_mode = get
+endif 
+
 lftp_noclean +=  Makefile moa.mk 
 lftp_output_dir ?= .
 run_dos2unix ?= F
@@ -90,29 +92,27 @@ lftp_prepare:
 
 lftp: fexcl=$(addprefix -not -name , $(lftp_noclean))
 lftp:
-	cd $(lftp_output_dir); \
-	if [ "$(lftp_user)" == "NoNoNo" ]; then \
-		if [ "$(lftp_mode)" == "mirror" ]; then \
-			lftp $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;\
-		else \
-			echo lftp -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
-			lftp -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
-		fi ;\
-	else \
-		if [ "$(lftp_mode)" == "mirror" ]; then \
-			lftp -u $(lftp_user),$(lftp_pass) $(lftp_url) \
-				 -e "mirror -nrL -I $(lftp_pattern); exit" ;\
-		else \
-			echo "### lftp -u $(lftp_user),$(lftp_pass) -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ";\
-			lftp -u $(lftp_user),$(lftp_pass) -e "get `urlsplit $(lftp_url) path`; exit" `urlsplit $(lftp_url) start` ;\
-		fi ;\
+	cd $(lftp_output_dir); 														\
+	if [ -z "$(lftp_user)" ]; then 												\
+		if [ "$(lftp_mode)" == "mirror" ]; then 								\
+			lftp $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;		\
+		else 																	\
+			lftp -e "get $(lftp_url); exit";									\
+		fi ;																	\
+	else 																		\
+		if [ "$(lftp_mode)" == "mirror" ]; then 								\
+			lftp -u $(lftp_user),$(lftp_pass) $(lftp_url) 						\
+				 -e "mirror -nrL -I $(lftp_pattern); exit" ;					\
+		else 																	\
+			lftp -u $(lftp_user),$(lftp_pass) -e "get $(lftp_url); exit";		\
+		fi ;																	\
 	fi
-	if [ "$(lftp_timestamp)" == "F" ]; then \
-		touch lftp ;\
+	if [ "$(lftp_timestamp)" == "F" ]; then 									\
+		touch lftp ;															\
 	fi
-	if [ "$(run_dos2unix)" == "T" ]; then \
-		find . -type f $(fexcl) | xargs -n 100 dos2unix -k ;\
-	fi		
+	if [ "$(run_dos2unix)" == "T" ]; then 										\
+		find . -type f $(fexcl) | xargs -n 100 dos2unix -k ;					\
+	fi
 
 .PHONY: lftp_post
 lftp_post:
