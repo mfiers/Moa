@@ -1,58 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-	<title>Moa</title>
+	<title>MOA - Makefiles in bioinformatics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link href="moa.css" rel="stylesheet" type="text/css">
   </head>
-  <link rel="stylesheet" href="moa.css">
   <body>
-	<div id="menu">
-	  <center>
-		<a href="index.html">
-		  <img id="menulogo" align="middle" src="moa_logo_smaller.png">
-		</a>
-	  </center>
-	  <ul>
-		<li>
-		  <a href="introduction.html">Introduction</a>
-		</li>
-		<li>
-		  <a href="installation.html">Installation</a>
-		</li>
-		<li>
-		  <a href="using.html">Usage</a>
-		</li>
-		<li>
-		  <a href="gbrowse.html">Gbrowse</a>
-		</li>
-		<li>
-		  <a name="chapter_couchdb" href="couchdb.html">Couchdb</a>
-		</li>
-		<li>
-		  <a href="extending.html">Extend Moa</a>
-		</li>
-		<li>
-		  <a href="reference.html">Reference</a>
-		</li>
-	  </ul>
-	  <small>
-		<a href="manual.pdf">
-		  download this manual in pdf format
-		</a>
-	  </small> 
-   </div>
-<div id="content">
+	<center>
+	  <div id="wrapper">
+		<div style="width: 815px;">
+		  <div style="clear: left;">
+			<div style="float: left; vertical-align:text-bottom">
+			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			</div>
+			<div style="float: right;">
+			  <a href="http://www.plantandfood.co.nz/">
+				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+			</a>
+			</div>
+		  </div>
+		  <div style="clear: left;">
+			<div style="float: left; width: 715px; height: 31px; background-color: rgb(81, 0, 45);">
+			  &nbsp;&nbsp;
+			</div>
+			<div style="float: left;">
+			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			</div>
+		  </div>
+		</div>
+		<div style="clear: left;">
+		  <div id="left">
+			<div style="width: 160px;">
+			  <div style="text-align: right;">
+                 <a href="introduction.html">Introduction</a><br>
+                 <a href="installation.html">Installation</a><br>
+                 <a href="using.html">Usage</a><br>
+                 <a href="gbrowse.html">Gbrowse</a><br>
+                 <a name="chapter_couchdb" href="couchdb.html">Couchdb</a><br>
+                 <a href="extending.html">Extend Moa</a><br>
+                 <a href="reference.html">Reference</a><br>
+			  </div>
+			</div>
+		  </div>
+		  <div id="center_content">
+			<div id="homepage_container">
+			
 <h1 id="chapterTitle">Introduction</h1>
 <p
 >'' NOTE '' Both the software and the manual are still under heavy development.</p
 ><p
->Moa is a piece of software build around GNU Make  that allows you to use Gnu Make run bioinformatics pipelines.</p
+>Moa is a set of tools build with and around GNU Make  that allows you to use GNU make to run bioinformatics pipelines.</p
 ><p
->GNU Make is an excellent tool to automate the compilation of software. Gnu make determines how a file is created, what it's dependencies are, and what needs to be executed. Gnu Make uses so called Makefiles to describe a project. A bioinformatics project is often of the same form as compiling software.</p
+>GNU Make is an excellent tool to automate repeated execution of a set of programs, and is mainly used in the automated compilation of software. Gnu make determines how a file is created, what it's dependencies are, and what needs to be executed. Gnu Make uses so called Makefiles to describe a project. A bioinformatics project is often of the same form as compiling software.</p
 ><p
->Moa wraps a set of common bioinformatics tools as Makefiles. Features of Moa are:</p
+>Moa wraps a set of common bioinformatics tools as Makefiles. Using Moa gives you a:</p
 ><ul
 ><li
   ><p
     >A uniform interface; all Moa makefiles use a central library that provides a uniform, command line, interface to configuring and executing jobs.</p
+    ></li
+  ><li
+  ><p
+    >An easy way to track and repeat a set of analyses. With Moa pipelines are build in a uniform way and</p
     ></li
   ><li
   ><p
@@ -87,14 +96,180 @@
 ><h2
   >Example session</h2
   ><p
-  >To really understand how easy it is to use Moa, a sample session:</p
+  >To really understand how easy it is to use Moa, a sample session. We'll start by downloading some data to analyse from NCBI. First, we'll create a few directories to get started:</p
   ><pre
   ><code
-    >mkdir test
-cd test
+    >mkdir sample
+cd sample
+mkdir 10.download
+cd 10.download
+</code
+    ></pre
+  ><p
+  >We've created a directory called <code
+    >sample</code
+    > to store the complete analysis in. In this directory we'll start to organize the components of our sample analysis. Most pipelines are sequential. Moa doesn't try to enforce this, but expects the user to organize this using a logical directory structure. Hence, the directory describing the first step - downloading data from NCBI - is prefixed with a <code
+    >10.</code
+    >.</p
+  ><pre
+  ><code
+    >mkdir 10.genome
+</code
+    ></pre
+  ><p
+  >In the <code
+    >10.download</code
+    > directory we do the same thing; Create numbered directories to enforce organization. We'll now go to the <code
+    >10.genome</code
+    > directory and actually use Moa to download something from NCBI.</p
+  ><pre
+  ><code
+    >cd 10.genome
+moa new getFromNcbi
+</code
+    ></pre
+  ><p
+  >The utility script <code
+    >moa</code
+    > is used in occasions where direct interaction with GNU Make is not possible (yet). In this case the <code
+    >moa</code
+    > script creates our first Moa makefile. Whenever there is a Moa makefile you can type <code
+    >make help</code
+    >. Apart from some introduction, you'll get see some targets and parameters.</p
+  ><p
+  >Targets are things that a Moa makefile can do. You can use GNU Make to execute one of these target by running <code
+    >Make TARGET</code
+    >. Each Moa makefile usually has one main task (in this case, download data from NCBI). That main task is alway executed by running Make without a target defined (i.e. <code
+    >make</code
+    >).</p
+  ><p
+  >If you try to run <code
+    >make</code
+    > now, you'll get an error!. Thas is because you haven't told Moa yet what you want to download. This is done by setting a few parameters. <code
+    >make help</code
+    > gives you an overview of all parameters that you can set. Moa distinguishes between required and optional parameters. Optional parameters can usually be guessed or are set to reasonable default values. In the case of the &quot;getFromNcbi&quot; Makefile, there are two parameters that need setting: <code
+    >ncbi_db</code
+    > and <code
+    >ncbi_query</code
+    >. The easiest way to find out what these are is by doing a query on the NCBI website and browse until you have the page with data you're looking for. In this case, we will download an <strong
+    ><em
+      >Lactobacillus</em
+      ></strong
+    > genome from <a href="http://www.ncbi.nlm.nih.gov/nuccore/NC_012214"
+    >NCBI</a
+    >. If you inspect the URL (<code
+    >http://www.ncbi.nlm.nih.gov/nuccore/NC_012214</code
+    >) it is easy to identify the two parameters that need to be set:</p
+  ><pre
+  ><code
+    >make set ncbi_db=nuccore
+make set ncbi_query=NC_004567
+</code
+    ></pre
+  ><p
+  >If you execute these two commands, nothing seems to happen. You can, however, check what parameters are set by running:</p
+  ><pre
+  ><code
+    >make show
+</code
+    ></pre
+  ><p
+  >You should now see:</p
+  ><pre
+  ><code
+    >ncbi_db nuccore
+ncbi_query  NC_004567
+gfn_sequence_name   
+jid moa_getFromNcbi_10.genome_??????????
+project 
+</code
+    ></pre
+  ><p
+  >There are a few more parameters here, you can ignore all of these now, execpt for &quot;jid&quot;. A &quot;jid&quot;, or &quot;job id&quot; is a unique name that will be used to track information on this job. It is important, particularly if you're creating big projects, to set this to an understandable, descriptive, but short value (without spaces!!), so we'll run an additional <code
+    >make set</code
+    >:</p
+  ><pre
+  ><code
+    >make set jid=download.lactobacillus.genome
+</code
+    ></pre
+  ><p
+  >This job is set up and can be executed now by running:</p
+  ><pre
+  ><code
+    >make
+</code
+    ></pre
+  ><p
+  >This generates quite a lot of output. If things go wrong, there is probably a clue to why in the output. If the Moa job is successful, the last line should be &quot;Moa finished - Succes!&quot;. If you do an <code
+    >ls</code
+    > you now see a <code
+    >fasta</code
+    > directory with one fasta file. This fasta file contains the downloaded genome.</p
+  ><p
+  >Good, nice, but not very exciting. We'll now start doing something with this data. For example, we could map the results from a 454 run against this genome. Lets download a dataset from <a href="http://www.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?"
+    >NCBI's short read archive</a
+    >:</p
+  ><pre
+  ><code
+    >cd ..
+mkdir 20.454reads
+cd 20.454reads
+mkdir 10.download
+cd 10.download
 moa new lftp
+</code
+    ></pre
+  ><p
+  >Here we use a different template: lftp. We need to set a single parameters (i.e. the location of the file to download).</p
+  ><pre
+  ><code
+    >make set lftp_url=ftp://ftp.ncbi.nlm.nih.gov/sra/static/SRX002/SRX002375/SRR011133.fastq.gz
+</code
+    ></pre
+  ><p
+  >again we can run <code
+    >make</code
+    > to download the data. After downloading we see that an archive is downloaded. We have now two options - unpack it manually or automate unpacking. We could do it manually. If the project is a quick, one-off, this is probably not so bad. However, you won't be able to completely rerun the analysis without having to think what steps you did manually. Therefore, we'll now set something up to also automate this.</p
+  ><pre
+  ><code
+    >cd ..
+mkdir 20.unpack
+cd 20.unpack
+moa new gather
+</code
+    ></pre
+  ><p
+  >The Moa &quot;gather&quot; template is probably not named very well. It's a very flexible template that allows you to do many different things on a set of input files (read the manual page). We'll set it up now to automate the unpacking.</p
+  ><pre
+  ><code
+    >make set g_input_dir=../10.download
+make set g_input_pattern=*.gz
+</code
+    ></pre
+  ><p
+  >These two lines define what files are used as input for the &quot;gather&quot; step. The next parameter is a sed command that strips of the .gz extension for the unpacked output file.</p
+  ><pre
+  ><code
+    >make set g_name_sed='s/\.gz$//'
+</code
+    ></pre
+  ><p
+  >(Note that you must use ' quotes to prevent bash from expanding the $ sign as a variable!)</p
+  ><pre
+  ><code
+    >make set g_process=`
 </code
     ></pre
   ></div
 >
-</div></body></html>
+</div>
+</div>
+  
+<p>&nbsp;</p><div class="footer_text" id="footer"> © 2008 PLANT &amp; FOOD RESEARCH | <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a></div>
+</div>
+</div></center>
+
+
+</body>
+</html>

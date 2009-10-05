@@ -65,15 +65,17 @@
 		</div>
 		<div id="center_content">
 		  <div id="content">
-<h1 id="chapterTitle">clustalw.mk</h1>
-<div id="targets"
+<h1 id="chapterTitle">glimmer3.mk</h1>
+<p
+>Predicts (prokaryotic) using glimmer3.</p
+><div id="targets"
 ><h1
   >Targets</h1
   ><dl
   ><dt
     >(empty)</dt
     ><dd
-    >Leaving the target unspecified executes the default target(s): (clustalw)</dd
+    >Leaving the target unspecified executes the default target(s): (glimmer3)</dd
     ><dt
     >clean</dt
     ><dd
@@ -83,9 +85,9 @@
     ><dd
     >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
     ><dt
-    >clustalw</dt
+    >glimmer3</dt
     ><dd
-    >run clustalw</dd
+    >Glimmer3 is a open reading frame discovery program from the EMBOSS package. It takes a set of input sequences and predicts all open reading frames. Additionally, this template converts the default output (predicted protein sequences) to GFF3.</dd
     ></dl
   ></div
 ><div id="parameters"
@@ -96,13 +98,9 @@
     >Required parameters</h2
     ><dl
     ><dt
-      >input_dir_a</dt
+      >glimmer3_input_dir</dt
       ><dd
-      >This set is compared to the sequences in input_dir_b. only a forward comparison is made (a against b, not the other way round )</dd
-      ><dt
-      >input_dir_b</dt
-      ><dd
-      >The set to compare against</dd
+      >undefined</dd
       ></dl
     ></div
   ><div id="optional-parameters"
@@ -110,9 +108,25 @@
     >Optional parameters</h2
     ><dl
     ><dt
-      >input_extension</dt
+      >glimmer3_gff_source</dt
       ><dd
-      >Extension of the input files</dd
+      >source field to use in the gff. Defaults to glimmer3</dd
+      ><dt
+      >glimmer3_input_extension</dt
+      ><dd
+      >input file extension. Defaults to 'fasta'</dd
+      ><dt
+      >glimmer3_max_overlap</dt
+      ><dd
+      >Maximum overlap, see the glimmer documentation for the -o or --max_olap parameter</dd
+      ><dt
+      >glimmer3_gene_len</dt
+      ><dd
+      >Minimum gene length (glimmer3 -g/--gene_len)</dd
+      ><dt
+      >glimmer3_treshold</dt
+      ><dd
+      >treshold for calling a gene a gene (glimmer3 -t)</dd
       ><dt
       >jid</dt
       ><dd

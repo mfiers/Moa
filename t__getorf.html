@@ -65,15 +65,17 @@
 		</div>
 		<div id="center_content">
 		  <div id="content">
-<h1 id="chapterTitle">clustalw.mk</h1>
-<div id="targets"
+<h1 id="chapterTitle">getorf.mk</h1>
+<p
+>Predicts open reading frames using the EMBOSS getorf tool.</p
+><div id="targets"
 ><h1
   >Targets</h1
   ><dl
   ><dt
     >(empty)</dt
     ><dd
-    >Leaving the target unspecified executes the default target(s): (clustalw)</dd
+    >Leaving the target unspecified executes the default target(s): (getorf)</dd
     ><dt
     >clean</dt
     ><dd
@@ -82,11 +84,9 @@
     >all</dt
     ><dd
     >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-    ><dt
-    >clustalw</dt
-    ><dd
-    >run clustalw</dd
     ></dl
+  ><p
+  >getorf :</p
   ></div
 ><div id="parameters"
 ><h1
@@ -96,13 +96,9 @@
     >Required parameters</h2
     ><dl
     ><dt
-      >input_dir_a</dt
+      >getorf_input_dir</dt
       ><dd
-      >This set is compared to the sequences in input_dir_b. only a forward comparison is made (a against b, not the other way round )</dd
-      ><dt
-      >input_dir_b</dt
-      ><dd
-      >The set to compare against</dd
+      >undefined</dd
       ></dl
     ></div
   ><div id="optional-parameters"
@@ -110,9 +106,39 @@
     >Optional parameters</h2
     ><dl
     ><dt
-      >input_extension</dt
+      >getorf_gff_source</dt
       ><dd
-      >Extension of the input files</dd
+      >undefined</dd
+      ><dt
+      >getorf_input_extension</dt
+      ><dd
+      >undefined</dd
+      ><dt
+      >getorf_minsize</dt
+      ><dd
+      >minimal nucleotide size of the predicted ORF, (<strong
+	>30</strong
+	>)</dd
+      ><dt
+      >getorf_maxsize</dt
+      ><dd
+      >maximal nucleotide size of the predicted ORF, (<strong
+	>1000000</strong
+	>)</dd
+      ><dt
+      >getorf_circular</dt
+      ><dd
+      >Is the sequence linear (Y/<strong
+	>N</strong
+	>)</dd
+      ><dt
+      >getorf_table</dt
+      ><dd
+      >Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial. Default: 11</dd
+      ><dt
+      >getorf_find</dt
+      ><dd
+      >What to output? 0: Translation between stop codons, 1: Translation between start &amp; stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide sequence between start and stop codons. Default: 3</dd
       ><dt
       >jid</dt
       ><dd

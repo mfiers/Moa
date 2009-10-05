@@ -65,7 +65,7 @@
 		</div>
 		<div id="center_content">
 		  <div id="content">
-<h1 id="chapterTitle">clustalw.mk</h1>
+<h1 id="chapterTitle">vmatch.mk</h1>
 <div id="targets"
 ><h1
   >Targets</h1
@@ -73,7 +73,7 @@
   ><dt
     >(empty)</dt
     ><dd
-    >Leaving the target unspecified executes the default target(s): (clustalw)</dd
+    >Leaving the target unspecified executes the default target(s): (vmatch)</dd
     ><dt
     >clean</dt
     ><dd
@@ -82,11 +82,9 @@
     >all</dt
     ><dd
     >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-    ><dt
-    >clustalw</dt
-    ><dd
-    >run clustalw</dd
     ></dl
+  ><p
+  >vmatch :</p
   ></div
 ><div id="parameters"
 ><h1
@@ -96,13 +94,13 @@
     >Required parameters</h2
     ><dl
     ><dt
-      >input_dir_a</dt
+      >vmatch_db</dt
       ><dd
-      >This set is compared to the sequences in input_dir_b. only a forward comparison is made (a against b, not the other way round )</dd
+      >vmatch db to compare against</dd
       ><dt
-      >input_dir_b</dt
+      >vmatch_input_file</dt
       ><dd
-      >The set to compare against</dd
+      >input file with the sequences to map</dd
       ></dl
     ></div
   ><div id="optional-parameters"
@@ -110,9 +108,15 @@
     >Optional parameters</h2
     ><dl
     ><dt
-      >input_extension</dt
+      >vmatch_extra_parameters</dt
       ><dd
-      >Extension of the input files</dd
+      >extra parameters to feed to vmatch</dd
+      ><dt
+      >vmatch_invert_gff</dt
+      ><dd
+      >Invert the GFF (T/<em
+	>F</em
+	>)</dd
       ><dt
       >jid</dt
       ><dd
