@@ -20,25 +20,21 @@ chapters =						\
 	reference.html
 
 .PHONY: all
-all: imagesao $(addprefix ../../html/,$(chapters))
+all: imagesao $(addprefix ../../html/,$(chapters)) 
 
 .PHONY: imagesao
 imagesao: moa.css images/moa_logo_small.png  images/moa_logo_smaller.png
 	cp moa.css ../../html/
-	cp images/moa_logo_small.png ../../html/
-	cp images/moa_logo_smaller.png ../../html/
-	cp images/pfr_logo.jpg ../../html/
+	cp images/* ../../html
 	cp ../../manual.pdf ../../html/
 
-moa.css:
-	cp moa.css site
-site/index.html: index.template.html header.html footer.html
-	cp ../images/moa_logo_medium.png ../../html/
+
+../../html/index.html: index.template.html header.html footer.html
 	cat header.html > $@
 	cat index.template.html 								\
 		| sed "s/#DATE#/$(shell date)/" 					\
 		| sed "s/#MOAVERSION#/$(shell 						\
-				cat ../../VERSION)/" 						\
+				cat ../../../VERSION)/" 						\
 		| sed "s/#GITVERSION#/$(shell 						\
 				git show | head -1 | cut -f 2 -d' ')/" 		\
 		| sed "s/#GITBRANCH#/$(shell 						\
@@ -72,7 +68,7 @@ temptex=$(addprefix ../../html/t__,$(addsuffix .html,$(templates)))
 		>> $@
 	cat footer.html >> $@
 
-../../html/%.html: ../md/%.md footer.html header.html
+../../html/%.html: ../../markdown/%.md footer.html header.html
 	cat header.html > $@
 	echo '<h1 id="chapterTitle">$($*_title)</h1>' >> $@
 	cat $< 										\
