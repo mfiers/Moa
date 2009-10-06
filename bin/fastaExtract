@@ -28,7 +28,8 @@ import optparse
 
 def fastareader(f):
     F = open(f)
-    name, seq = "", []
+    id, header, seq = "", "", []
+
     while True:
         l = F.readline()
         if not l: break
@@ -37,16 +38,17 @@ def fastareader(f):
         if not l: continue
 
         if l[0] == '>':
-            if name and seq:
-                yield name, "".join(seq)
+            if id  and seq:
+                yield id, header, "".join(seq)
             seq = []
-            name = l[1:].split()[0]
+            id = l[1:].split()[0]
+            header = " ".join(l[1:].split()[1:])
                         
         else:
             seq.append("".join(l.split()).lower())
 
-    if name and seq:
-        yield name, "".join(seq)
+    if id and seq:
+        yield id, header, "".join(seq)
 
     F.close()
 
@@ -71,10 +73,10 @@ ids = [x.strip().split()[0] for x in open(options.list).readlines()]
 log("read %d ids" % len(ids))
         
 i = 0
-for name,seq in fastareader(options.fasta):
-    if not name in ids: continue
+for id, header, seq in fastareader(options.fasta):
+    if not id in ids: continue
     i += 1
-    print ">%s" % name
+    print ">%s %s" % (id, header)
     print "%s" % seq
 
 log("written %d sequences" % i)

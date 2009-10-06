@@ -30,7 +30,7 @@ bdb_input_dir_default_attrib = fastadir
 bdb_input_extension_help = extension of the input sequence files, defaults to fasta
 bdb_fasta_file_help = The file with all FASTA sequences for the blastdb		\
   concatenated. This can be used as an alternative to defining			\
-  `bdb_input_dir` and `bdb_input_dir_extension`. Morover. If all your	\
+  "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your	\
   sequences are already in a single file, then using this parameter		\
   prevents duplication of that file.
 
@@ -45,6 +45,7 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 bdb_input_dir ?= ./fasta
 bdb_input_extension ?= fasta
+
 bdb_doconcat = F
 ifndef $(bdb_fasta_file)
   bdb_doconcat = T
