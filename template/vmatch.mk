@@ -25,11 +25,11 @@ moa_description_vmatch = Run VMATCH on an set of input files (query) \
 #variables
 moa_must_define += vmatch_db
 vmatch_db_help = vmatch db to compare against
-vmatch_db_cdbattr = vmatchdb
+vmatch_db_default_attrib = vmatchdb
 
 moa_must_define += vmatch_input_file
 vmatch_input_file_help = input file with the sequences to map
-vmatch_input_file_cdbattr = fastafile
+vmatch_input_file_default_attrib = fastafile
 
 moa_may_define += vmatch_extra_parameters vmatch_invert_gff
 vmatch_extra_parameters_help = extra parameters to feed to vmatch

@@ -61,7 +61,7 @@ f2g_input_extension ?= fasta
 f2g_input_files = $(wildcard $(f2g_input_dir)/*.$(f2g_input_extension))
 f2g_output_files = \
     $(addprefix $(f2g_output_dir)/, \
-        $(patsubst %.fasta, %.gff, \
+        $(patsubst %.$(f2g_input_extension), %.gff, \
             $(notdir $(f2g_input_files) )\
         )\
      )

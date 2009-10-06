@@ -65,7 +65,7 @@ blast_input_dir_help = directory containing the input sequences
 
 moa_must_define += blast_db
 blast_db_help = Location of the blast database
-blast_db_cdbattr = blastdb
+blast_db_default_attrib = blastdb
 moa_must_define +=  blast_gff_source
 blast_gff_source_help = source field to use in the gff
 

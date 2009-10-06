@@ -25,11 +25,11 @@ moa_description_gmap = Run GMAP on an set of input files (query) \
 #variables
 moa_must_define += gmap_db
 gmap_db_help = Gmap db
-gmap_db_cdbattr = gmapdb
+gmap_db_default_attrib = gmapdb
 
 moa_must_define += gmap_input_file
 gmap_input_file_help = input file with the sequences to map
-gmap_input_file_cdbattr = fastafile
+gmap_input_file_default_attrib = fastafile
 
 moa_may_define += gmap_extra_parameters gmap_invert_gff gmap_gff_source
 gmap_extra_parameters_help = extra parameters to feed to gmap

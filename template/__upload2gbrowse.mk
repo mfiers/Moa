@@ -17,25 +17,24 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_title = Library for uploading data to GBrowse
-moa_description = A library that aids in uploading FASTA and GFF		\
-  to a Generic Genome Browser database. This template is only to be		\
-  used embedded in another template. This library expects that the		\
-  following variables are preset; gup_fasta_dir, gup_gff_dir, gffsource	\
+moa_description = A library that aids in uploading FASTA and GFF	\
+  to a Generic Genome Browser database. This template is only to be	\
+  used embedded in another template. This library expects that the	\
+  following variables are preset; gup_fasta_dir, gup_gff_dir		\
   gup_upload_fasta, gup_upload_gff
 
 moa_ids += upload2gbrowse
 moa_upload2gbrowse_help = Upload to gbrowse
 
 moa_additional_targets += initGbrowse gupgo
-moa_initGbrowse_help = Clean & initalize a gbrowse database. 			\
+moa_initGbrowse_help = Clean & initalize a gbrowse database.	\
 	**Warning: all data will be lost!**
 moa_gupgo_help = Actually do the upload. upload2gbrowse NEVER does	\
 	this automatically!
 
-moa_must_define += gup_user gup_db gup_gffsource 
+moa_must_define += gup_user gup_db
 gup_user_help = gbrowse db user. If not defined, this defaults to 'moa'.
 gup_db_help = gbrowse database. If not defined, this defaults to 'moa'.
-gup_gffsource_help = the gff source field, used in batch operations
 
 moa_may_define += gup_gff_extension gup_fasta_extension
 gup_fasta_extension_help = extension of the FASTA files to upload (.fasta)

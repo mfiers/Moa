@@ -435,19 +435,19 @@ __set:
 #
 # A couchdb variable can defined on the commandline with or without an
 # attribute defined. If the attribute is ommitted, moa looks for a
-# default attribute, defined as VARNAME_cdbattr in the Makefile. If
+# default attribute, defined as VARNAME_default_attrib in the Makefile. If
 # that also doesn't exists, pwd is used as the attribute, pointing to
 # the directory where the other job lives.
 #
 ################################################################################
 
 #determines which attribute we want from couchdb - either it's defined 
-#using id:attr, or its defined in the defining Makefile via $*__cdbattr
+#using id:attr, or its defined in the defining Makefile via $*__default_attrib
 #else use pwd.
 #cdbsplit returns: coubdb_id couchdb_attribute
 #if no attribute can be determine
 cdbsplit = $(call first,$(call split,^,$(1))) \
-	$(call first, $(word 2,$(call split,^,$(1))) $($(2)_cdbattr) pwd) 
+	$(call first, $(word 2,$(call split,^,$(1))) $($(2)_default_attrib) pwd) 
 
 .PHONY: cset
 cset: set_mode=set

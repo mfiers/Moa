@@ -24,6 +24,7 @@ moa_description_bowtie = Run BOWTIE on an set of input files (query) \
 #variables
 moa_must_define += bowtie_db
 bowtie_db_help = Bowtie db
+bowtie_db_default_attrib = bowtiedb
 
 moa_must_define += bowtie_input_dir
 bowtie_input_dir_help = input dir with the query files

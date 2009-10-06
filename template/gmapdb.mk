@@ -25,7 +25,7 @@ moa_description_gmapdb = Builds gmapdb index from a reference	\
 moa_must_define += gmapdb_input_dir
 gmapdb_input_dir_help = The reference sequence to build a	\
   gmap database with.
-gmapdb_input_dir_cdbattr = fastadir
+gmapdb_input_dir_default_attrib = fastadir
 
 moa_may_define += gmapdb_input_extension
 gmapdb_input_extension_help = Extension of the input files, \

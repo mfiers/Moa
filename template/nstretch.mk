@@ -23,7 +23,7 @@ moa_description_nstretch = Run NSTRETCH on an set of input files
 #variables
 moa_may_define += nstretch_input_dir
 nstretch_input_dir_help = input dir with the fasta files
-nstretch_input_dir_cdbattr = fastadir
+nstretch_input_dir_default_attrib = fastadir
 
 moa_may_define += nstretch_input_extension
 nstretch_input_extension_help = extension of the input files

@@ -58,10 +58,11 @@ bowtiedb: $(bowtiedb_name).1.ebwt
 comma:=,
 #one of the database files
 $(bowtiedb_name).1.ebwt: $(bowtiedb_input_files)
+	-rm -f $(bowtiedb_name).*.ebwt	
 	bowtie-build $(call merge,$(comma),$^) $(bowtiedb_name)
 
 bowtiedb_clean:
-	rm -f $(bowtiedb_name).*.ebwt
+	-rm -f $(bowtiedb_name).*.ebwt
 
 
 

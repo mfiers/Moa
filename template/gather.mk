@@ -90,9 +90,9 @@ test:
 
 touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
 touch/%: %
-	@$(call echo,gatherer: considering $< - $(g_target))
+	$(call echo,gatherer: considering $< - $(g_target))
 	$(g_process)
-	@touch $@
+	touch $@
 
 gather_clean: find_exclude_args = \
 	$(foreach v, $(gather_link_noclean), -not -name $(v))

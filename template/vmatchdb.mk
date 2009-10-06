@@ -23,7 +23,7 @@ moa_description = Builds a vmatchdb index from a sequence
 #variables
 moa_must_define += vmatchdb_input_dir
 vmatchdb_input_dir_help = The sequence to build a vmatch database from.
-vmatchdb_input_dir_cdbattr = fastadir
+vmatchdb_input_dir_default_attrib = fastadir
 
 moa_may_define += vmatchdb_input_extension vmatch_pl
 vmatchdb_input_extension_help = Extension of the input files, defaults	\
