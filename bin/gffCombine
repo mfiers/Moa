@@ -1,15 +1,27 @@
 #!/usr/bin/env python
 
+help = """
+This is a fairly complex, but rather powerfull scriptx. It's best explained using an example:
+
+imagine the following command:
+   ./gffcombiner.py 
+     -r ../10.getGenes/genes.gff
+     -a ../20.getGeneBlast/blastgenes.gff
+     -f CDS 
+     -c 'note="blastx Swissprot Bacteria'
+     -R '^(?P<ref>\w*)_(?P<start>\d*)_(?P<stop>\d*)\s'
+     -X '^.*Hsp_expect=([0-9\.e-]*);.*;Note="(.*)"'
+     -Y ';note="Blastx Trembl Bacteria (Eval \1) \2"'
+     -o $$base;
+
+"""
 import re
 import os
 import sys
 import copy
+import shlex
 import logging
 import optparse
-
-logging.basicConfig(level=logging.DEBUG, 
-                    format = "%(levelname)s - %(message)s")
-l = logging #shortcut
 
 parser = optparse.OptionParser()
 parser.add_option('-r', '--reference', dest='refgff',
@@ -22,28 +34,33 @@ parser.add_option('-f', '--feature', dest='feature',
                   help="apply to features of this type")
 parser.add_option('-s', '--source', dest='source',
                   help="apply to features of this source")
-
 parser.add_option('-c', '--clearAttribs', dest='clearAttribs', action="append",
                   help="remove all these attributes from the reference set before adding")
 
 parser.add_option('-R', '--regex', dest='regex',
-                  help='regex to apply to each line in the additive gff' +
-                  'to determine how to match the reference gff')\
-                  
+                  help='regex to apply to each line in the gff to be added' +
+                  'to determine how to match the reference gff')                  
 parser.add_option('-X', '--appendRe', dest='appendRe',
-                  help='regex that determines what to append to the attribs of the refgff')
+                  help='regex that determines what to append to the attribs of the reference')
 parser.add_option('-Y', '--appendSub', dest='appendSub',
                   help='subst string that determines what to append to the attribs of the refgff')
 parser.set_defaults(appendString="")
 parser.add_option('-Z', '--appendString', dest='appendString',
                   help='append this string to the end of each line')
 
-#parser.set_defaults(appendStringEmpty="")
-#parser.add_option('-E', '--appendStringIfEmpty', dest='appendStringEmpty',
-#                  help='append this string if nothing is appended otherwise')
+parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+                  help="verbose output")
 
 #parser.add_option(
 (options, args) = parser.parse_args()
+
+if options.verbose:
+    logging.basicConfig(level=logging.DEBUG, 
+                        format = "%(levelname)s - %(message)s")
+else:
+    logging.basicConfig(level=logging.INFO, 
+                        format = "%(levelname)s - %(message)s")
+l = logging 
 
 if options.regex:
     core = re.compile(options.regex)
@@ -57,6 +74,7 @@ else:
     apre = None
 
 class GFFRECORD:
+    IDFINDER = re.compile(r'ID=([^;]*)')
     def __init__(self, line, clearAttribs = []):
         #see if we can split the line..
         line = line.strip()
@@ -67,13 +85,23 @@ class GFFRECORD:
             self._type = "record"
             self.ref = ls[0]
             self.source = ls[1]
-            self.feature = ls[2]
+            self.feature = ls[2]            
             self.start = ls[3]
             self.stop = ls[4]
             self.score = ls[5]
             self.strand = ls[6]
             self.frame = ls[7]
-            self.attribs = ls[8]
+            self.attribs = {}
+            
+            lexer = shlex.shlex(ls[8])
+            lexer.whitespace=';'
+            lexer.whitespace_split=True
+            for token in lexer:
+                key, val = token.split('=', 1)
+                #l.debug("found '%s' == '%s'" % (key, val))
+                if not self.attribs.has_key(key): self.attribs[key] = []
+                self.attribs[key] += val
+            
         else:
             self._type="string"
 
@@ -94,26 +122,46 @@ class GFFRECORD:
         
     def __str__(self):
         if self._type == "record":
+            a = []
+            if self.attribs.has_key['ID']:
+                a.append('ID=%s' % self.attribs['ID'][0])
+            for k in self.attribs.keys():
+                if k == 'ID': continue
+                a.append("%s=%s" % (k, ",".join(self.attribs[k])))
             return "\t".join([
                 self.ref, self.source, self.feature,
                 str(self.start), str(self.stop),
                 self.score, self.strand, self.frame,
-                self.attribs])
+                ";".join(a)])
         else:
             return self.line
 
 class GFFINDEX:
     def __init__(self, key):
+        if key in ['ref', 'source', 'feature', 'start', 'stop', 'score', 
+                   'strand', 'frame']:
+            self.isAttrib = False
+        else:
+            self.isAttrib = True
         self.keyName = key
         self.d = {}
         
     def add(self, rec):
-        k = rec.__dict__[self.keyName]
-        if not self.d.has_key(k):
-            self.d[k] = []
-        self.d[k].append(rec)
+        if self.isAttrib:
+            ks = rec.attribs[self.keyName]
+            for k in ks:
+                if not self.d.has_key(k): self.d[k] = []
+                self.d[k].append(rec)
+        else:    
+            k = rec.__dict__[self.keyName]
+            if not self.d.has_key(k): self.d[k] = []
+            self.d[k].append(rec)
+
     def get(self, k):
         return set(self.d.get(k, []))
+
+    def __str__(self):
+        return "index '%s' len: %d" % (self.keyName, len(self.d))
         
 class GFFSET:
     def __init__(self, fileName, indici=['ref'], clearAttribs=[]):
@@ -154,6 +202,7 @@ class GFFSET:
             i = self.indici[k]
             if not res: res = i.get(kwargs[k])
             else: res &= i.get(kwargs[k])
+            l.debug("res %s -  %s" % (k, len(res)))
         return res
         
     def _gffReader(self):
@@ -175,7 +224,7 @@ class GFFSET:
 
 
 
-refset = GFFSET(options.refgff, indici=['ref', 'start', 'stop', 'source', 'feature'],
+refset = GFFSET(options.refgff, indici=['ID', 'feature'],
                 clearAttribs=options.clearAttribs)
 refset.report()
 
@@ -195,21 +244,28 @@ i = 0
 for rec in addset.getRecords():
     query = copy.copy(querybase)
     i += 1;
+    if i % 180 == 0:
+        l.info("processed %d records" % i)
 
     if core:
         xx = core.search(rec.line)
         if xx: query.update(xx.groupdict())
 
-    appendStr = options.appendString
-    if apre:
-        appendStr += apre.sub(options.appendSub, rec.line)
-        
-    #if not appendStr:
-    #    appendStr = options.appendStringEmpty
+    l.debug("adding")
+    l.debug(rec)
+
+    #appendStr = options.appendString
+    #if apre:
+    #    appendStr += apre.sub(options.appendSub, rec.line)
+
+    l.debug("query %s" % (query))
+    #l.debug("append %s" % (appendStr))
         
     for r in refset.search(**query):
         l.debug("appending %s to %s" % (appendStr, r.ref))
-        r.attribs += appendStr
+        l.debug("to")
+        l.debug("%s" % r)
+        #r.attribs += appendStr
 
 F = open(options.outfile, 'w')
 for r in refset.records:
