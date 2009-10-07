@@ -41,6 +41,11 @@ name_sed_help = Sed substitution command that alters the filename,				\
   defaults to leaving the names untouched.
 g_output_dir_help = Output subdirectory, defaults to '.'
 
+moa_may_define += g_parallel
+g_parallel_help = allow parallel execution (T) or not (**F**). If for		\
+example concatenating to one single file, you should not have multiple	\
+threads.
+
 moa_may_define += g_process
 g_process_help = Command to process the files. If undefined, hardlink			\
 	the files.
@@ -66,6 +71,7 @@ g_powerclean ?= F
 g_limit ?= 1000000
 g_process ?= ln -f $< $(g_target)
 gather_link_noclean ?= Makefile moa.mk
+g_parallel = F
 
 .PHONY: gather_link_run
 vpath % $(g_input_dir)
@@ -80,7 +86,12 @@ gather_prepare:
 .PHONY: gather_post
 gather_post:
 
+test:
+	@echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))'
+
+ifeq ($(g_parallel),F)
 .NOTPARALLEL: gather
+endif
 .PHONY: gather
 gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))
 
