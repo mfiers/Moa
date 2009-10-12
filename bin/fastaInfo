@@ -21,8 +21,10 @@
 import re
 import os
 import sys
+import math
 import site
 import math
+import tempfile
 import optparse
 
 #moa specific libs - first set the path
@@ -45,6 +47,12 @@ parser.add_option('-x', dest='maxno', type='int',
                   help = 'max no of sequences to process')
 parser.add_option('-s', dest='stats', help = 'stats mode - generate averages',
                   action='store_true')
+parser.set_defaults(graphengine="R")
+parser.add_option('-g' dest='graphengine',
+                  help='either "R" or "gnuplot" is used to generated the graphs')
+parser.set_defaults(histogramsteps=50)
+parser.add_option('-b', dest='histogramsteps', type="int",
+                  help='no of bins to use in the histograms')
 parser.add_option('-e', dest='echo', action="store_true",
     help = 'echo unknown field ids (as opposed to raise an error)')
 
@@ -94,6 +102,13 @@ def f_length(name,seq):
 def f_fracn(name, seq):
     return float(seq.count('n')) / len(seq)
 
+def f_gcfrac(name, seq):
+    g = seq.count('g')
+    c = seq.count('c')
+    a = seq.count('a')
+    t = seq.count('t')
+    return float(g+c) / (g + c + a + t)
+
 scaf10rex = re.compile(r'n{10,}')
 scaf100rex = re.compile(r'n{100,}')
 def f_scaf10(name,seq):
@@ -111,7 +126,6 @@ for name, seq in fastareader(options.infile):
         for what in args:
             dd[what].append(eval('f_%s(name, seq)' % what))
     else:
-
         for what in args:
             if what == "name":
                 sys.stdout.write("%s" % name)
@@ -136,46 +150,209 @@ if len(dd) == 0:
     print "no results"
     sys.exit(0)
 
-def getbinrange(min, max):
-    ibinsize = str((max - min) / 20)
-    #bbin = {(ibinsize[0])+1) + ('0' * (len(ibinsize)-1))
-    #print min, max, ibinsize,   bbin
-    #binMax = int(10 ** math.ceil(math.log10(max)))
-    #binMin = int(10 ** math.floor(math.log10(min)))
-    #print binMin, binMax, ibinsize
+print "".join(["%20s" % x for x in ([""] + args)])
 
-#getbinrange(100,100000)
-#getbinrange(8000,100000)
-#getbinrange(5000,6000)
+stats = ['no', 'min', 'max', 'sum', 'mean', 'median',
+        'stdev', 'n10', 'n50', 'n90']
+stats += ['binmin', 'binmax']
 
-print '#what\tno\tmax\tmin\tsum\taverage\tmedian\tstdev\tn50'
+data = dict([(x, []) for x in stats])
+
+def statAdd(d,w,v):
+    try:
+        if abs(v) < 1e-8:
+            d[w].append("0       ")
+        elif math.log10(abs(v)) > 6:
+            d[w].append("%.2e" % v)
+        elif v == int(v):
+            d[w].append("%d       " % v)
+        elif math.log10(abs(v)) < -3:
+            d[w].append("%.2e" % v)
+        else:
+            d[w].append("%.4f  " % v)
+    except ValueError:
+        print "ERROR"
+        print "probably with a math.log10 of something close to 0"
+        print d,w,v
+
+def getNX(d, N):
+    cutoff = sum(d) * N
+    summ = 0
+    for x in d:
+        result = x
+        summ += x
+        if summ > cutoff: break
+    return result
+
+# def getbinrange(min, max, steps):
+#     if float(min) / max > 0.2:        
+#         expfact = math.floor(math.log10((float(max-min)) / steps))
+#         print "%f %f steps %d expfact %f" %( min, max, steps, expfact)
+#         sigrs = ((float(max-min)) / steps) / ( 10 ** expfact)
+#         if sigrs < 1: newstep = 10 ** expfact
+#         elif sigrs < 2: newstep = 2* (10 ** expfact)
+#         elif sigrs < 2.5: newstep = 2.5 * (10 ** expfact)
+#         elif sigrs < 5: newstep = 5 * (10 ** expfact)
+#         else: newstep = 10* (10 ** expfact)
+#         newmin = int(min / newstep) * newstep
+#         return newmin, newmin + (newstep * steps)
+#     else:
+#         expfact = math.log10((float(max)) / steps)
+#         if expfact > 0: expfact = math.ceil(expfact)
+#         else: expfact = math.floor(expfact)
+#         sigrs = ((float(max)) / steps) / ( 10 ** expfact)
+#         if sigrs < 1: newstep = 10 ** expfact
+#         elif sigrs < 2: newstep = 2* (10 ** expfact)
+#         elif sigrs < 2.5: newstep = 2.5 * (10 ** expfact)
+#         elif sigrs < 5: newstep = 5 * (10 ** expfact)
+#         else: newstep = 10* (10 ** expfact)
+#         return 0, newstep * steps
+
+binsteps = options.histogramsteps
+
+exportData = {}
+exportHist = {}
+exportHistBin = {}
+
 for what in args:
     d = dd[what]
     if type(d[0]) == type('hi'):
         continue
-    M = max(d)
-    #binMax = int(10 ** math.ceil(math.log10(max(d))))
-    #binMin = int(10 ** math.floor(math.log10(min(d))))
-    #print binMin, binMax
-    #bins = range(binMin, binMax, int((binMax - binMin)/20))
-    #print bins
-    #calc n50
-    __n50sum = 0
-    __n50half = sum(d) / 2.0
-    _n50 = d[0]
-    for i in d:
-        _n50 = i
-        __n50sum += i
-        if __n50sum > __n50half:
-            break
 
-    print "\t".join(map(str, [what, 
-                              len(d), 
-                              max(d),
-                              min(d),
-                              sum(d),
-                              s.mean(d),
-                              s.median(d),
-                              s.stdev(d),
-                              _n50]))
-    #print s.ahistogram(d, 20)
+    #sort & reverse is necessary for the NXX stats
+    d.sort()
+    d.reverse()
+    exportData[what] = d
+
+    _n50 = getNX(d, 0.5)
+    _n10 = getNX(d, 0.1)
+    _n90 = getNX(d, 0.9)
+        
+    statAdd(data, 'no', len(d))
+    statAdd(data, 'max', d[0])
+    statAdd(data, 'min', d[-1])
+    statAdd(data, 'sum', sum(d))
+    statAdd(data, 'mean', s.mean(d))
+    statAdd(data, 'median', s.median(d))
+    statAdd(data, 'stdev', s.stdev(d))
+    statAdd(data, 'n10', _n10)
+    statAdd(data, 'n50', _n50)
+    statAdd(data, 'n90', _n90)
+
+    XX = s.histogram(d, binsteps)
+    #print XX
+    binmin = XX[1]
+    binmax = binmin + (XX[2] * len(XX[0]))
+    exportHist[what] = XX[0]
+    exportHistBin[what] = [binmin + (x * (float(binmax-binmin)/binsteps))
+                           for x in range(binsteps+1)]
+    
+H,dataFile = tempfile.mkstemp()
+F = os.fdopen(H, 'w')
+for i in range(len(exportData[args[0]])):
+    for a in args:
+        F.write("%f\t" % exportData[a][i])
+    F.write("\n")
+F.close()
+
+H,histFile = tempfile.mkstemp()
+F = os.fdopen(H, 'w')
+for i in range(len(exportHist[args[0]])):
+    for a in args:
+        F.write("%f\t" % exportHistBin[a][i])
+        F.write("%f\t" % exportHist[a][i])
+    F.write("\n")
+F.close()
+
+#print stats to screen
+for stat in stats:
+    print "".join(["%20s" % x for x in ([stat] + data[stat])])
+
+#create gnuplot script
+H,plotFile = tempfile.mkstemp()
+F = os.fdopen(H, 'w')
+noplots = len(args)
+infilename = options.infile
+filebasename = os.path.basename(infilename)
+if '.' in filebasename:
+    filebasename = filebasename[:filebasename.rfind('.')]
+F.write('''
+set terminal png nocrop enhanced size 1000,600 
+set output "%(filebasename)s.stat.png"
+set logscale y
+set yrange [0.1:]
+set style fill solid
+set boxwidth 0.9
+set multiplot layout %(noplots)d, 1 title "Stats of %(infilename)s"
+''' % locals())
+
+i = 1
+for a in args:
+    j = i + 1
+    F.write('''
+    plot "%(histFile)s" using %(i)d:%(j)d w filledcurve above x1 t "%(a)s"
+    ''' % locals())
+    i += 2
+
+
+F.close()
+os.system("gnuplot %s" % plotFile)
+print "#export data %s hist %s gnuplot %s" % (dataFile, histFile,  plotFile)
+
+#now go for the scatterplots
+H,plotFile2 = tempfile.mkstemp()
+F = os.fdopen(H, 'w')
+noplots = len(args)
+infilename = options.infile
+filebasename = os.path.basename(infilename)
+if '.' in filebasename:
+    filebasename = filebasename[:filebasename.rfind('.')]
+noargs = len(args)
+F.write('''
+set terminal png nocrop enhanced size 1000,600 
+set output "%(filebasename)s.scat.png"
+set xtics font "tiny"
+set ytics font "tiny"
+set multiplot layout %(noargs)d, %(noargs)d title "scatterplots of %(infilename)s"
+
+''' % locals())
+
+i = 1
+for a in range(1, len(args)+1):
+    for b in range(1, len(args)+1):
+        if a == b:
+            currentarg = args[a-1]
+            F.write("""
+            unset title
+            unset xtics
+            unset ytics
+            unset border
+            set label 1 '%(currentarg)s' at 15,15 center 
+            plot [10:20] [10:20] sin(x) linecolor 'white' notitle
+            """ % locals()) 
+        elif a > b:
+            F.write("""
+            unset title
+            unset xtics
+            unset ytics
+            unset border
+            unset label
+            plot [10:20] [10:20] sin(x) linecolor 'white' notitle
+            """ % locals()) 
+
+        else:
+            F.write('''
+            unset title
+            unset label
+            set xtics  font "tiny"
+            set ytics font "tiny"
+            plot "%(dataFile)s" using %(b)d:%(a)d notitle
+            ''' % locals())
+        
+
+
+F.close()
+os.system("gnuplot %s" % plotFile2)
+
+print "#export data %s hist %s gnuplot histogram %s scatter %s" % (
+    dataFile, histFile,  plotFile, plotFile2)
