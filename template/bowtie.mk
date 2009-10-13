@@ -127,11 +127,12 @@ u_%: $(bowtie_input_dir)/%.$(bowtie_input_extension)
 
 imn=$(bowtie_insertsize_min)
 imx=$(bowtie_insertsize_max)
+bis=$(bowtie_insertsize_sed)
 p_%: $(bowtie_input_dir)/%_1.$(bowtie_input_extension) $(bowtie_input_dir)/%_2.$(bowtie_input_extension)
-	@IS="$(bowtie_insertsize)";\
+	IS="$(bowtie_insertsize)";\
 		sizeDef="";\
-		[ "$$IS" ] || IS=`echo "$*" | sed "$(bowtie_insertsize_sed)"`;\
-		[ "$$IS" ] && sizeDef=`python -c "print \"-I %d -X %d\" % ($$IS * $(imn), $$IS*$(imx))"`;\
+		[[ ! "$$IS" && "$(bis)" ]] && IS=`echo "$*" | sed "$(bis)"`;\
+		[[ "$$IS" ]] && sizeDef=`python -c "print \"-I %d -X %d\" % ($$IS * $(imn), $$IS*$(imx))"`;\
 		$(call echo, Executing bowtie for $<);\
 		bowtie $(bowtie_input_format_param) \
 			$(bowtie_extra_params) $$sizeDef $(bowtie_db) \
