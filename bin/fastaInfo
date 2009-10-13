@@ -48,7 +48,7 @@ parser.add_option('-x', dest='maxno', type='int',
 parser.add_option('-s', dest='stats', help = 'stats mode - generate averages',
                   action='store_true')
 parser.set_defaults(graphengine="R")
-parser.add_option('-g' dest='graphengine',
+parser.add_option('-g', dest='graphengine',
                   help='either "R" or "gnuplot" is used to generated the graphs')
 parser.set_defaults(histogramsteps=50)
 parser.add_option('-b', dest='histogramsteps', type="int",
@@ -98,6 +98,9 @@ def f_id(name, seq):
 
 def f_length(name,seq):
     return len(seq)
+
+def f_loglength(name,seq):
+    return math.log10(len(seq))
 
 def f_fracn(name, seq):
     return float(seq.count('n')) / len(seq)
@@ -150,12 +153,10 @@ if len(dd) == 0:
     print "no results"
     sys.exit(0)
 
-print "".join(["%20s" % x for x in ([""] + args)])
 
+#start gathering of overall statistics
 stats = ['no', 'min', 'max', 'sum', 'mean', 'median',
         'stdev', 'n10', 'n50', 'n90']
-stats += ['binmin', 'binmax']
-
 data = dict([(x, []) for x in stats])
 
 def statAdd(d,w,v):
@@ -183,30 +184,6 @@ def getNX(d, N):
         summ += x
         if summ > cutoff: break
     return result
-
-# def getbinrange(min, max, steps):
-#     if float(min) / max > 0.2:        
-#         expfact = math.floor(math.log10((float(max-min)) / steps))
-#         print "%f %f steps %d expfact %f" %( min, max, steps, expfact)
-#         sigrs = ((float(max-min)) / steps) / ( 10 ** expfact)
-#         if sigrs < 1: newstep = 10 ** expfact
-#         elif sigrs < 2: newstep = 2* (10 ** expfact)
-#         elif sigrs < 2.5: newstep = 2.5 * (10 ** expfact)
-#         elif sigrs < 5: newstep = 5 * (10 ** expfact)
-#         else: newstep = 10* (10 ** expfact)
-#         newmin = int(min / newstep) * newstep
-#         return newmin, newmin + (newstep * steps)
-#     else:
-#         expfact = math.log10((float(max)) / steps)
-#         if expfact > 0: expfact = math.ceil(expfact)
-#         else: expfact = math.floor(expfact)
-#         sigrs = ((float(max)) / steps) / ( 10 ** expfact)
-#         if sigrs < 1: newstep = 10 ** expfact
-#         elif sigrs < 2: newstep = 2* (10 ** expfact)
-#         elif sigrs < 2.5: newstep = 2.5 * (10 ** expfact)
-#         elif sigrs < 5: newstep = 5 * (10 ** expfact)
-#         else: newstep = 10* (10 ** expfact)
-#         return 0, newstep * steps
 
 binsteps = options.histogramsteps
 
@@ -240,21 +217,30 @@ for what in args:
     statAdd(data, 'n90', _n90)
 
     XX = s.histogram(d, binsteps)
-    #print XX
     binmin = XX[1]
     binmax = binmin + (XX[2] * len(XX[0]))
     exportHist[what] = XX[0]
     exportHistBin[what] = [binmin + (x * (float(binmax-binmin)/binsteps))
                            for x in range(binsteps+1)]
-    
+
+#print stats to screen
+print "".join(["%20s" % x for x in ([""] + args)])
+for stat in stats:
+    print "".join(["%20s" % x for x in ([stat] + data[stat])])
+
+#write the raw data to file
 H,dataFile = tempfile.mkstemp()
 F = os.fdopen(H, 'w')
+for a in args:
+    F.write("%s\t" % a)
+F.write("\n")
 for i in range(len(exportData[args[0]])):
     for a in args:
-        F.write("%f\t" % exportData[a][i])
+        F.write("%g\t" % exportData[a][i])
     F.write("\n")
 F.close()
 
+#write the histograms to a file
 H,histFile = tempfile.mkstemp()
 F = os.fdopen(H, 'w')
 for i in range(len(exportHist[args[0]])):
@@ -264,95 +250,56 @@ for i in range(len(exportHist[args[0]])):
     F.write("\n")
 F.close()
 
-#print stats to screen
-for stat in stats:
-    print "".join(["%20s" % x for x in ([stat] + data[stat])])
+print "#export data %s hist %s" % (dataFile, histFile)
 
-#create gnuplot script
-H,plotFile = tempfile.mkstemp()
-F = os.fdopen(H, 'w')
-noplots = len(args)
-infilename = options.infile
-filebasename = os.path.basename(infilename)
+filebasename = os.path.basename(options.infile)
 if '.' in filebasename:
     filebasename = filebasename[:filebasename.rfind('.')]
-F.write('''
-set terminal png nocrop enhanced size 1000,600 
-set output "%(filebasename)s.stat.png"
-set logscale y
-set yrange [0.1:]
-set style fill solid
-set boxwidth 0.9
-set multiplot layout %(noplots)d, 1 title "Stats of %(infilename)s"
-''' % locals())
-
-i = 1
-for a in args:
-    j = i + 1
+    
+if options.graphengine.lower() == 'gnuplot':
+    #create gnuplot script
+    H,plotFile = tempfile.mkstemp()
+    F = os.fdopen(H, 'w')
+    noplots = len(args)
     F.write('''
-    plot "%(histFile)s" using %(i)d:%(j)d w filledcurve above x1 t "%(a)s"
+    set terminal png nocrop enhanced size 1000,600 
+    set output "%(filebasename)s.stat.png"
+    set logscale y
+    set yrange [0.1:]
+    set style fill solid
+    set boxwidth 0.9
+    set multiplot layout %(noplots)d, 1 title "Stats of %(infilename)s"
     ''' % locals())
-    i += 2
+
+    i = 1
+    for a in args:
+        j = i + 1
+        F.write('''
+        plot "%(histFile)s" using %(i)d:%(j)d w filledcurve above x1 t "%(a)s"
+        ''' % locals())
+        i += 2
 
 
-F.close()
-os.system("gnuplot %s" % plotFile)
-print "#export data %s hist %s gnuplot %s" % (dataFile, histFile,  plotFile)
+    F.close()
+    os.system("gnuplot %s" % plotFile)
 
-#now go for the scatterplots
-H,plotFile2 = tempfile.mkstemp()
-F = os.fdopen(H, 'w')
-noplots = len(args)
-infilename = options.infile
-filebasename = os.path.basename(infilename)
-if '.' in filebasename:
-    filebasename = filebasename[:filebasename.rfind('.')]
-noargs = len(args)
-F.write('''
-set terminal png nocrop enhanced size 1000,600 
-set output "%(filebasename)s.scat.png"
-set xtics font "tiny"
-set ytics font "tiny"
-set multiplot layout %(noargs)d, %(noargs)d title "scatterplots of %(infilename)s"
-
-''' % locals())
-
-i = 1
-for a in range(1, len(args)+1):
-    for b in range(1, len(args)+1):
-        if a == b:
-            currentarg = args[a-1]
-            F.write("""
-            unset title
-            unset xtics
-            unset ytics
-            unset border
-            set label 1 '%(currentarg)s' at 15,15 center 
-            plot [10:20] [10:20] sin(x) linecolor 'white' notitle
-            """ % locals()) 
-        elif a > b:
-            F.write("""
-            unset title
-            unset xtics
-            unset ytics
-            unset border
-            unset label
-            plot [10:20] [10:20] sin(x) linecolor 'white' notitle
-            """ % locals()) 
-
-        else:
-            F.write('''
-            unset title
-            unset label
-            set xtics  font "tiny"
-            set ytics font "tiny"
-            plot "%(dataFile)s" using %(b)d:%(a)d notitle
-            ''' % locals())
-        
-
-
-F.close()
-os.system("gnuplot %s" % plotFile2)
-
-print "#export data %s hist %s gnuplot histogram %s scatter %s" % (
-    dataFile, histFile,  plotFile, plotFile2)
+    print "#gnuplot script %s" % (plotFile)
+    
+elif options.graphengine.lower() == 'r':
+    Rscript = '''
+        D <- read.table("%(dataFile)s", header=T)
+        png("%(filebasename)s.scatter.png", width=900, 700, pointsize=15)    
+        plot(D)
+        dev.off() ''' % locals()
+    for a in args:
+        Rscript += '''
+        png("%(filebasename)s.%(a)s.png", width=900, 700, pointsize=15)    
+        plot(D$%(a)s)
+        dev.off() ''' % locals()
+    
+    H,RFile = tempfile.mkstemp()
+    F = os.fdopen(H, 'w')
+    F.write(Rscript)
+    F.close()
+    os.system("R --vanilla < %(RFile)s" % locals())
+    print "#R script %s" % (RFile)
