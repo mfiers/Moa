@@ -1,0 +1,161 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import site
+import math
+import tempfile
+import optparse
+
+#process the .pth file in the $MOABASE/bin folder !
+site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
+from stats import stats
+
+parser = optparse.OptionParser()
+parser.add_option('-x', dest='maxno', type='int',                  
+                  help = 'max no of sequences to process')
+parser.add_option('-b', dest='basename', 
+                  help = 'basename of the output files')
+parser.add_option('-i', dest='infile', action='append',
+                  help = 'input fasta file')
+(options, args) = parser.parse_args()
+
+if not options.infile:
+    raise Exception("Must define an inputfile!")
+
+def pairerror(a,b):
+    print a
+    print b
+    raise Exception("odd pair?")
+
+def pairreader(file):
+    F = open(file)
+    while True:
+        l1 = F.readline()
+        l2 = F.readline()
+        if not l1: break
+        if not l2: break
+        ls1 = l1.split()
+        ls2 = l2.split()        
+        try:
+            if ls1[0][:-1] != ls1[0][:-1]: pairerror(l1, l2)
+            if ls1[1] == ls2[1]: pairerror(l1, l2)
+            if ls1[2] != ls2[2]: pairerror(l1, l2)
+        except:
+            break
+        
+        yield ls1, ls2
+
+def f_dist(l1, l2):
+    return abs(int(l1[3]) - int(l2[3]))
+
+def f_gcfrac(l1, l2):
+    x = l1[4].lower() + l2[4].lower()
+    g = x.count('g')
+    c = x.count('c')
+    a = x.count('a')
+    t = x.count('t')
+    return float(g+c) / (g + c + a + t)
+
+alldata = {}
+perfile = {}
+for filename in options.infile:
+    i=0
+    dists = []
+    dd = {}
+    for a in args:
+        dd[a] = []
+    for l1, l2 in pairreader(filename):
+        i+=1
+        if options.maxno and i > options.maxno:
+            break
+        for what in args:
+            dd[what].append(eval('f_%s(l1, l2)' % what))
+
+    for what in args:
+        dd[what].sort()
+        dd[what].reverse()
+    perfile[filename] = dd
+
+#write datafiles
+dataFiles = {}
+for fn in options.infile:
+    H,dataFiles[fn] = tempfile.mkstemp()
+    F = os.fdopen(H, 'w')
+    F.write("%s\n" % "\t".join(args))
+    for i in range(len(perfile[fn][args[0]])):
+        F.write("%s\n" % "\t".join([str(perfile[fn][what][i]) for what in args]))
+    F.close()
+
+basename = options.basename
+#write R script
+nofiles = len(options.infile)
+fileList = ','.join(['"%s"' % x for x in options.infile])
+
+H,RScript = tempfile.mkstemp()
+F = os.fdopen(H, 'w')
+F.write("#RScript %s\n\n" % RScript)
+F.write("require(RColorBrewer)\n\n")
+F.write("cols <- brewer.pal(%(nofiles)s, 'Dark2')\n" % locals())
+F.write("filelist <- c(%(fileList)s)\n\n" % locals())
+
+for fn in range(len(options.infile)):
+    tmpfile = dataFiles[options.infile[fn]]
+    F.write('A%(fn)d <- read.table("%(tmpfile)s", header=T)\n' % locals())
+F.write("\n\n")
+
+for a in args:
+    F.write('png("%(basename)s.%(a)s.png", width=1000, 700, pointsize=12)\n' % locals())
+    for fn in range(len(options.infile)):
+        fn2 = fn + 1
+        if fn == 0:
+            F.write("plot(A%(fn)d$%(a)s, col=cols[%(fn2)d], lwd=3, type='l')\n" % locals())
+        else:
+            F.write("points(A%(fn)d$%(a)s, col=cols[%(fn2)d], lwd=3, type='l')\n" % locals())
+
+    F.write('legend ("topright", filelist, lty=1, col=cols, bty="n")\n\n' % locals())
+    F.write('dev.off()\n\n')
+    
+#and the histograms
+for a in args:
+    for fn in range(len(options.infile)):
+        F.write("H%(fn)s <- hist(A%(fn)s$%(a)s, breaks=100)\n" % locals())
+
+    F.write("\n\nxMax <-max(")
+    F.write(", ".join(["H%s$mids" % fn for fn in range(len(options.infile))]))
+    F.write(")\n\n");
+    F.write("\n\nxMin <-min(")
+    F.write(", ".join(["H%s$mids" % fn for fn in range(len(options.infile))]))
+    F.write(")\n\n");
+    F.write("\n\nyMax <-max(")
+    F.write(", ".join(["H%s$count" % fn for fn in range(len(options.infile))]))
+    F.write(")\n\n");
+    F.write("\n\nyMin <-min(")
+    F.write(", ".join(["H%s$count" % fn for fn in range(len(options.infile))]))
+    F.write(")\n\n");
+    F.write("xMax\n");
+    F.write("xMin\n");
+    F.write("yMax\n");
+    F.write("yMin\n");
+
+    F.write('png("%(basename)s.%(a)s.hist.png", width=1000, 700, pointsize=12)\n' % locals())
+    for fn in range(len(options.infile)):
+        fn2 = fn + 1
+        if fn == 0:
+            F.write('''
+                plot(H%(fn)s$mids, H%(fn)s$counts,
+                     col=cols[%(fn2)d],
+                     xlim=c(xMin, xMax), ylim=c(yMin, yMax),
+                     xlab="%(a)s", ylab="frequency",
+                     lwd=1, type="l")\n
+            ''' % locals())
+        else:
+            F.write("points(H%(fn)s$mids, H%(fn)s$counts, col=cols[%(fn2)d], lwd=1, type='l')\n" % locals())
+
+    F.write('legend ("topright", filelist, lty=1, col=cols, bty="n")\n\n' % locals())
+    F.write('dev.off()\n\n')
+
+F.close()
+
+os.system('cat %s' % RScript)
+os.system("R --vanilla < %(RScript)s" % locals())

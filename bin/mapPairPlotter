@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import site
+import math
+import tempfile
+import optparse
+
+#process the .pth file in the $MOABASE/bin folder !
+site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
+from stats import stats
+
+parser = optparse.OptionParser()
+parser.add_option('-x', dest='maxno', type='int',                  
+                  help = 'max no of pairs to process')
+parser.add_option('-s', dest='seqname', 
+                  help = 'seqname to look for')
+parser.set_defaults(colors='123456789')
+parser.add_option('-c', dest='colors',
+                  help = 'colors to use i.e. 1122233')
+(options, args) = parser.parse_args()
+
+if not options.seqname:
+    raise Exception("Must define a seqname to look at!")
+
+def pairerror(a,b):
+    print a
+    print b
+    raise Exception("odd pair?")
+
+def pairreader(file):
+    F = open(file)
+    while True:
+        l1 = F.readline()
+        l2 = F.readline()
+        if not l1: break
+        if not l2: break
+        ls1 = l1.split()
+        ls2 = l2.split()        
+        try:
+            if ls1[0][:-1] != ls1[0][:-1]: pairerror(l1, l2)
+            if ls1[1] == ls2[1]: pairerror(l1, l2)
+            if ls1[2] != ls2[2]: pairerror(l1, l2)
+        except:
+            break
+        
+        yield ls1, ls2
+
+pairs = []
+fileno = 0
+for filename in args:
+    i = 0
+    fileno += 1
+    for l1, l2 in pairreader(filename):        
+        if l1[2] != options.seqname: continue
+        i += 1
+        pairs.append((l1, l2, fileno))
+        if options.maxno and i > options.maxno: break
+
+#write datafiles
+H,dataFile = tempfile.mkstemp()
+F = os.fdopen(H, 'w')
+F.write("mid\tdist\tfile\n")
+for p in pairs:
+    p1 = int(p[0][3]) + (0.5 * len(p[1][4]))
+    p2 = int(p[1][3]) + (0.5 * len(p[1][4]))
+    dist = abs(p1 - p2)
+    mid = 0.5 * (p1 + p2)
+    F.write("%g\t%g\t%d\n" % (mid, dist, p[2]))
+    dist = abs(int(p[0][3]) - int(p[1][3]))
+F.close()
+
+
+basename = options.seqname
+
+alpha='88'
+colorList = ("#73d216", "#f57900", "#3465a4",
+             "#75507b", "#cc0000", "#555753",
+             "#edd400")
+
+useColors = []
+for c in map(int, list(options.colors)):
+    useColors.append( colorList[c % len(colorList)] + alpha)
+RColorString=', '.join(['"%s"'%x for x in useColors])
+
+H,RScript = tempfile.mkstemp()
+F = os.fdopen(H, 'w')
+filenames = ", ".join(['"%s"' % x for x in args])
+F.write('''
+    #RScript %(RScript)s
+    cols <- c(%(RColorString)s)
+    fn <- c(%(filenames)s)
+    d <- read.table("%(dataFile)s", header=T)
+    png("%(basename)s.mapplot.png", width=1000, 700, pointsize=10)
+    plot(d$mid, d$dist, pch=19, cex=0.5, col=cols[d$file], main="%(basename)s")
+    abline(h=2000, col="#00ff00")
+    abline(h=10000, col="#ff0000")
+    legend ("topright", fn, lty=1, pch=19, col=cols, bty="n")
+    dev.off() ''' % locals())
+print "#data file %s R script %s " % (dataFile, RScript)
+F.close()
+
+os.system('cat %s' % RScript)
+os.system("R --vanilla < %(RScript)s" % locals())
