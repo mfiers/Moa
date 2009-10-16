@@ -1,17 +1,37 @@
 
 **NOTE:** both the software and the manual are under heavy
-development.
+development. Expect things to be incomplete or change.
 
-Moa is a set of tools build with and around [GNU
+Moa is a set of tools build around [GNU
 make](http://www.gnu.org/software/make) \citep{Gnumake} that
-facilitate the use of GNU make to run bioinformatics pipelines.
+facilitates the use of GNU make in bioinformatics data analysis.
 
-GNU Make is an excellent tool to automate repeated execution of a set
-of programs, and is mainly used in the automated compilation of
-software. Gnu make determines how a file is created, what it's
-dependencies are, and what needs to be executed. Gnu Make uses so
-called Makefiles to describe a project. A bioinformatics project is
-often of the same form as compiling software.
+GNU Make is developed to aid in compilation of software. Software
+compilation usually involves the execution of many preprocessing,
+compilation and linker steps, potentially with differing
+parameters and interdepending of each other. 
+
+Gnu make goes about a compilation process by describing what target
+files are to be created, on what source files or libraries the build
+is depending and how the target needs to be build. If a dependency
+needs to be compiled before it can be used for the final target file,
+its building process can be described as well (and so no). In big
+projects, this might result in thousands of files that are processed
+in the correct order. Moreover, Gnu Make is intelligent enough to
+repeat only the affected part of the build process if one or a few
+source files are changed.
+
+The description that Gnu Make uses to execute software compilation is
+called a Makefile. The syntax of a Makefile is not only flexible
+enough to allow Gnu Make to be used with a wide variety of programming
+languages, but it can be used to automate any series of commands (as
+long as they can be executed from the command line). It is therefore a
+good idea to use Gnu Make in bioinformatics projects (see: )
+
+A bioinformatics analysis often takes the form of a set of
+interdepending analyses, i.e..
+
+...
 
 Moa wraps a set of common bioinformatics tools as Makefiles. Using Moa
 gives you a:
@@ -41,7 +61,6 @@ Apart from a set of template Makefiles, the Moa contains several other
 
 * Couchdb interface; Moa is able to store information on each job in a
 	couchdb. See chapter XX.
-
 
 ## Example session 
 
@@ -85,25 +104,25 @@ makefile usually has one main task (in this case, download data from
 NCBI). That main task is alway executed by running Make without a
 target defined (i.e. `make`). 
 
-If you try to run `make` now, you'll get an error!. Thas is because
-you haven't told Moa yet what you want to download. This is done by
+If you try to run `make` now, you'll get an error!. This is because
+you haven't told Moa yet what you want to download. You can do that by
 setting a few parameters. `make help` gives you an overview of all
 parameters that you can set. Moa distinguishes between required and
 optional parameters. Optional parameters can usually be guessed or are
 set to reasonable default values. In the case of the "getFromNcbi"
-Makefile, there are two parameters that need setting: `ncbi_db` and
-`ncbi_query`. The easiest way to find out what these are is by doing a
-query on the NCBI website and browse until you have the page with data
-you're looking for. In this case, we will download an
-***Lactobacillus*** genome from
-[NCBI](http://www.ncbi.nlm.nih.gov/nuccore/NC_012214). If you inspect
-the URL (`http://www.ncbi.nlm.nih.gov/nuccore/NC_012214`) it is easy
-to identify the two parameters that need to be set:
+Makefile, there are two parameters that really need to be set:
+`ncbi_db` and `ncbi_query`. In this case, it is possible to discover
+what these are by doing a query on the NCBI website and browse until
+you have the page with data you're looking for. In this case, we will
+are going to download a ***Lactobacillus*** genome from
+[NCBI](http://www.ncbi.nlm.nih.gov/nuccore/NC_012214). Upon inspection
+of the URL (`http://www.ncbi.nlm.nih.gov/nuccore/NC_012214`) it is
+straightofrward identify the two parameters that need to be set:
 
     make set ncbi_db=nuccore
     make set ncbi_query=NC_004567
 
-If you execute these two commands, nothing seems to happen. You can,
+Executing these two commands do not appear to do anything. You can,
 however, check what parameters are set by running:
 
     make show
