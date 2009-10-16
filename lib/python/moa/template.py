@@ -22,6 +22,7 @@ Moa script - template related code
 """
 
 import os
+import re
 import sys
 
 import moa.utils.logger
@@ -59,6 +60,7 @@ def new(what, jid=None, force=False):
     """
     Create a new template based makefile in the current dir.
     """
+    l.debug('creating a new moa makefile with jid "%s"' % jid)
     if os.path.exists("./Makefile"):
         l.debug("Makefile exists!")
         if not force:
@@ -89,7 +91,7 @@ def new(what, jid=None, force=False):
     F.write("include $(shell echo $$MOABASE)/template/__moaBase.mk\n")
     F.close()
 
-    if jid:
+    if jid and (jid != '-'):
         if os.path.exists('moa.mk'):
             moamk = open('moa.mk').readlines()
         else:
@@ -99,10 +101,9 @@ def new(what, jid=None, force=False):
         for line in moamk:
             if not re.match("^jid *="):
                 F.write(line)
-        F.write("\n")
-        F.write("jid=%s" % jid)
-        F.close()
-        l.debug("Written jid=%s to moa.mk" % jid)
+        F.write("jid=%s\n" % jid)
+        F.close()       
+        l.debug('Written "jid=%s" to moa.mk' % jid)
     
     l.info("Written Makefile, try: make help")
 

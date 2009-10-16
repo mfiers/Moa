@@ -51,6 +51,7 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
 import moa.couchdb
 import moa.template
+import moa.roost
 import moa.graph
 import moa.conf
 
@@ -65,9 +66,10 @@ Commands:
 
 New Moa makefiles:
 
-  new: moa -j SensibleJid TEMPLATE1, TEMPLATE2, ...
+  new: moa SensibleJid TEMPLATE1, TEMPLATE2, ...
     Generate a new makefile based on the template names
-    provided. Use this in conjuntion with -j.
+    provided. Providing a (sensible sounding) JID is
+    obligatory.
 
   list: (moa list)
     List all known templates
@@ -112,6 +114,9 @@ parser.add_option("-v", "--verbose", dest="verbose",
 
 (options, args) = parser.parse_args()
 
+if options.verbose:
+    logger.setVerbose()
+
 if not os.environ.has_key("MOABASE"):
     l.critical("need to set MOABASE environment variable")
     sys.exit(1)
@@ -144,7 +149,15 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
                        
     if command == 'new':
-        moa.template.new(args[1:], jid=options.jid, force=options.force)
+        newjid = args[1]    
+        templates = args[2:]
+        if (not newjid) or (not templates):
+            l.error("Usage: moa new JID TEMPLATE(s)")
+            sys.exit(-1)
+        moa.template.new(templates, jid=newjid, force=options.force)
+
+    elif command == 'roost':
+        moa.roost.handler(options, args[1:])
 
     elif command == 'list':
         moa.template.list()
