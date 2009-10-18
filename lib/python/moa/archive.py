@@ -25,15 +25,16 @@ import os
 import re
 import sys
 
-import moa.utils.logger
-l = moa.utils.logger.l
-    
+import moa.logger
+l = moa.logger.l
+
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
 def roostError(message):
-    
-
+    """ 
+    Generate an error & exit
+    """
     if message:
         l.error(message)
     else:
@@ -56,35 +57,47 @@ def handler(options, args):
 
 
 def create(options, args):
-    
-    if len(args) != 1:
-        roostError("Usage: moa roost create [NAME]") 
-    name = args[0]
-    
-    l.debug("Create a roost")
 
-    roostfile = name + ".roost"
-    
+    """ Create a roost file - nothing more than a tar.gz with an
+    alternative extension """
+
+    l.debug("Start create roost")
+
+    if len(args) != 2:
+        roostError("Usage: moa roost create NAME DIR") 
+
+    name = args[0]
+    target = args[1]
+
+    roostfile = name + ".roost"    
     if os.path.exists(roostfile):
         if options.force:
             os.remove(roostfile)
         else:
             roostError("%s exists. Use -f to override" % roostfile)
+
+    if "/" in target[:-1]:
+        roostError('Not implemented yet - cd first to %s' %
+                   target.rsplit('/',1)[0])
+
+    if not os.path.exists(target):
+        roostError("%s does not exist" % target)
+        
+    l.debug('create roost "%s" from "%s"' % (name, target))
     
-    os.system('find . -type d  -o -name "moa.mk" -o  -name "Makefile" > moa.files')
-    os.system('tar czf %s.roost -T moa.files --no-recursion' % name)
+    os.system(('cd %s; find . -type d  -o -name "moa.mk" -o  ' + 
+              '-name "Makefile" > ../moa.files') % target)
+    os.system('cd %s; tar czf ../%s.roost -T ../moa.files --no-recursion' % 
+              (target, name))
     os.system('rm moa.files')
 
 def open(options, args):
     
-    if len(args) == 0:
-        roostError("You should specify a roost to open")
+    if len(args) != 2:
+        roostError("Usage: moa roost open roostFile targetDir")
 
     roostfile = args[0]
-    if len(args) > 1:
-        target = args[1]
-    else:
-        target = '.'
+    target = args[1]
 
     #first find the roostfile
     if not os.path.exists(roostfile):
@@ -93,13 +106,15 @@ def open(options, args):
             roostfile += '.roost'
     if not os.path.exists(roostfile):        
         #try the roost dir in moabase
-        roostfile = os.path.join(MOABASE, roostfile)
+        roostfile = os.path.join(MOABASE, roosts, roostfile)
+    
     if not os.path.exists(roostfile):
         roostError("Cannot find your roost")
 
+    roostfile = os.path.abspath(roostfile)
     l.debug("discovered roostfile at %s" % roostfile)
 
-    if (not target == '.') and (not os.path.exists(target)):
+    if not os.path.exists(target):
         os.mkdir(target)
 
     if not options.force:
@@ -108,14 +123,6 @@ def open(options, args):
             indir.remove( os.path.basename(roostfile))
         if len( indir) > 0:
             roostError("Target dir is not empty, use -f to force")
-
     
-    print roostfile
-    print target
             
-            
-    
-
-    
-        
-        
+    os.system('cd %s; tar xzf %s' % (target, roostfile))
