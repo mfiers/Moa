@@ -40,8 +40,11 @@ boldOff := \033[0m
 #a colorful mark, showing that this comes from moabase
 moamark := \033[0;30;41m \033[46m -*MOA*- \033[41m \033[0m
 moaerrr := \033[0;6;39m!!!\033[41;25;37mERROR\033[0;6;39m!!!\033[0m
+moawarn := \033[0;30;46m \033[41m WARNING \033[46m \033[0m
 echo = echo -e "$(moamark) $(1)"
+warn = echo -e "$(moawarn) $(1)"
 errr = echo -e "$(moaerrr)$(warn_on) -- $(1) -- $(warn_off)"
+
 
 ## default variables used in generating help
 moa_title ?= $(notdir $(firstword $(MAKEFILE_LIST)))
@@ -70,8 +73,8 @@ moa_preprocess target in the local Makefile.
 
 moa_may_define += moa_postcommand
 moa_postcommand_help = A single shell command to be executed after the			\
-main operation is finished. For more complex processing please					\
-override the moa_postprocess target in the local Makefile.
+Moa is finished. For more complex processing please override the				\
+moa_postprocess target in the local Makefile.
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
@@ -89,7 +92,7 @@ moa_run_postcommand:
 	fi
 	$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
 
-#display a MOA welcome message before a run
+## display a MOA welcome message before a run
 parentheses_open=(
 parentheses_close=)
 moa_welcome:
@@ -213,7 +216,7 @@ clean: $(call reverse, $(addsuffix _clean, $(moa_ids)))
 ## action=TARGET"
 moa_cruise_targets = 															\
 	$(call set_create, 															\
-		set append clean register reset targets check 							\
+		set append clean register reset targets check cruise					\
 		$(moa_additional_targets)												\
 		$(addsuffix _prepare, $(moa_ids)) 										\
 		$(moa_ids) $(addsuffix _post, $(moa_ids))								\
@@ -224,16 +227,49 @@ moa_followups ?= 																\
 	$(shell find . -maxdepth 1 -type d -regex "\..+" 							\
 				   -exec basename '{}' \; | sort -n )
 
-## all target - this sets the cruising in motion
-.PHONY: all
-all: cruise_start_here $(moa_followups)
 
-## start with executing ourselves. If no action is defined, run the
-## default target. If action is defined, and valid, use that as a
-## target. If an action is defined, but it is not valid in this
-## context, cruise on, i.e. execute make all in all subdirs. 
+#"all" is a synonym for cruise
+.PHONY: all
+all: cruise
+
+## cruise depeends on properly executing this job, using either
+## "action" as a target or the default target. Once this job is
+## finished, start traversin through all subdirectories and execyte
+## them as wll
+.PHONY: cruise
+cruise: $(if $(call seq,$(action),), 											\
+			moa_default_target,													\
+			$(if $(call set_is_member, $(action), $(moa_cruise_targets)),		\
+				$(action),														\
+				$(warning Ignoring $(action) - not a valid target) ) )
+	@$(call echo,Processing followups $(moa_followups) );
+	@for FUP in $(moa_followups); do 											\
+		$(call echo,Processing $$FUP from $(shell echo `pwd`));					\
+		if [[ -e $$FUP/Makefile ]]; then 										\
+			$(call echo,$$FUP/Makefile found);									\
+			if [[ "$(ignore_lock)" == "T" ]]; then 								\
+				$(call warn,Ignore lock checking) ;								\
+				cd $$FUP;														\
+				$(MAKE) cruise action=$(action);								\
+				cd ..;															\
+			else 																\
+				$(call echo,No lock check $$FUP);								\
+				if [[ ! -e $$FUP/lock ]]; then 									\
+					$(call warn,Executing make $(action) in $$FUP) ;			\
+					cd $$FUP;													\
+					$(MAKE) cruise action=$(action);							\
+					cd ..;														\
+				else 															\
+					$(call errr,Not going here : $$FUP is locked) ;				\
+				fi ;															\
+			fi;																	\
+		else																	\
+			$(call echo,$$FUP is not a moa directory);							\
+		fi;																		\
+	done
+
 .PHONY: cruise_start_here
-cruise_start_here: 															\
+cruise_start_here: 																\
 	$(if $(call seq,$(action),),												\
 			moa_default_target,													\
 			$(if $(call set_is_member, $(action), $(moa_cruise_targets)),		\
@@ -241,26 +277,6 @@ cruise_start_here: 															\
 				$(warning Ignoring $(action) - not a valid target)				\
 			)																	\
 	)
-
-## Execute make all in subdirs, but only if; there is a Makefile (we
-## assume the Makefile is MOA makefile) and if it is either not locked
-## or if "ignore_lock=T"
-.PHONY: $(moa_followups)
-$(moa_followups):
-	@if [[ -e $@/Makefile ]]; then 												\
-		if [[ "$(ignore_lock)" == "T" ]]; then 									\
-			$(call echo, Ignore lock checking) ;								\
-			cd $@ && $(MAKE) all action=$(action) ;								\
-		else 																	\
-			if [[ ! -e $@/lock ]]; then 										\
-				$(call echo, Executing make $(action) in $@) ;					\
-				cd $@ && $(MAKE) all action=$(action) ;							\
-			else 																\
-				$(call errr, Not going here : $@ is locked) ;					\
-			fi ;																\
-		fi ;																	\
-	fi
-
 
 # Add a few default targets to the set 
 # of possible targets
@@ -433,15 +449,17 @@ checkvar_%:
 
 .PHONY: set
 set: set_mode=set
-set: set_func=$(1)='$(value $(1))'
 set: __set
 
 .PHONY: append
 append: set_mode=append
-append: set_func=$(1)='$(value $(1))'
 append: __set
 
+## actually writing the values to set to moa.mk is deferred to the moa
+## script. This is because it's much, much easier to read & write
+## files in python than it is from a Makefile.
 .PHONY: __set
+__set: set_func=$(1)='$(value $(1))'
 __set:
 	@moa conf $(set_mode) \
 		$(foreach v, $(moa_must_define) $(moa_may_define), \
@@ -479,11 +497,12 @@ __set:
 #
 ################################################################################
 
-#determines which attribute we want from couchdb - either it's defined 
-#using id:attr, or its defined in the defining Makefile via $*__default_attrib
-#else use pwd.
-#cdbsplit returns: coubdb_id couchdb_attribute
-#if no attribute can be determine
+## determines which attribute we want from couchdb - either it's
+## defined using id:attr, or its defined in the defining Makefile via
+## $*__default_attrib else use pwd.
+##
+## cdbsplit returns: coubdb_id couchdb_attribute
+## with "pwd" as attribute if no attribute is defined
 cdbsplit = $(call first,$(call split,^,$(1))) \
 	$(call first, $(word 2,$(call split,^,$(1))) $($(2)_default_attrib) pwd) 
 
@@ -491,6 +510,8 @@ cdbsplit = $(call first,$(call split,^,$(1))) \
 cset: set_mode=set
 cset: set_func=$(1)__couchdb="$(call cdbsplit,$($(1)),$(1))"
 cset: $(if $(call seq,$(usecouchdb),T), __set, moa_couchdb_unset)
+
+## TODO: think about cappend - do we need that??
 
 ################################################################################
 ## make show ###################################################################
@@ -522,100 +543,6 @@ moa_prepare_var:
 		moa conf cache ;\
 	fi
 
-
-################################################################################
-## Help structure
-##
-## All help / documentation is written in Markdown. The markdown is
-## converted with pandoc to Man files for command line help, and also
-## using pandoc to latex for the main manual.
-##
-## To generate the manual, the latest version of pandoc is
-## required. Most users, however, will only generate manpages. If that
-## is the case, pandoc 0.46 is also sufficient (which is the version
-## under Ubuntu Jaunty)
-##
-## It is possible to define the location of the pandoc binary in:
-##    $MOABASE/etc/moa.conf.mk
-## with:
-##    pandocbin=/path/to/pandoc
-##
-## Pandoc: see http://johnmacfarlane.net/pandoc/
-## Markdown, see: http://daringfireball.net/projects/markdown/
-##
-
-.PHONY: help
-help:
-	@echo -e "$(call help_md)" 					\
-		| sed "s/^ //g"  						\
-		| sed "s/\[\[.*\]\]//g" 				\
-		| sed "s/[ \t]*$$//"					\
-		| $(pandocbin) -s -f markdown -t man	\
-		| $(mancommand)
-
-help_latex:
-	@echo -e "$(call help_md)"				\
-		| sed "s/^ //g"						\
-		| sed "s/[ \t]*$$//"				\
-		| sed "s/^#/##/"					\
-		| $(pandocbin) -f markdown -t latex		\
-		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g" 	
-
-help_man:
-	@echo $(pandocbin)
-	@echo -e "$(call help_md)" 				\
-		| sed "s/^ //g"  					\
-		| sed "s/\[\[.*\]\]//g" 			\
-		| sed "s/[ \t]*$$//"				\
-		| $(pandocbin) -s -f markdown -t man
-
-help_markdown:
-	@echo -e "$(call help_md)" 				\
-		| sed "s/^ //g"  					\
-		| sed "s/\[\[.*\]\]//g" 			\
-		| sed "s/[ \t]*$$//"
-
-empty:=
-space:= $(empty) $(empty)
-help_md = % $(subst $(space),_,$(moa_title)) \n\
-% $(moa_author)							\n\
-% $(shell date)							\n\
-										\n\
-$(moa_description)						\n\
-										\n\
-\#Targets								\n\
-(empty)									\n\
-:   Leaving the target unspecified 		\n\
-:   executes the default target(s):     \n\
-:	($(moa_ids)) 						\n\
-clean									\n\
-:	removes all results from this job   \n\
-all										\n\
-:	executes the default target and 	\n\
-:   into subdirectories to execute any  \n\
-:	other moa makefile it encounters	\n\
-$(foreach id,$(moa_ids),				  \
-$(id)									\n\
-:	$($(id)_help)						\n\
-)										\n\
-$(foreach id,$(moa_additional_targets),	  \
-$(id)									\n\
-:	$(moa_$(id)_help)					\n\
-)										\n\
-										\n\
-\#Parameters							\n\
-\#\# Required parameters				\n\
-$(foreach v,$(moa_must_define), 		  \
-$(v)									\n\
-:   $(if $($(v)_help),					\
-		$($(v)_help),					\
-		undefined)						\n\
-)										\n\
-\#\# Optional parameters				\n\
-$(foreach v,$(moa_may_define), 			\
-$(v)									\n\
-:   $(if $($(v)_help),					\
-		$($(v)_help),					\
-		undefined)						\n\
-)
-
+ifndef MOA_INCLUDE_HELP
+include $(shell echo $$MOABASE)/template/__moaBaseHelp.mk
+endif
