@@ -17,7 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-
 """
 A set of moa help functions. Hidden behind one command: moa.
 
@@ -34,11 +33,10 @@ import time
 import site
 import copy
 import errno
-import logging
 import optparse
 from pprint import pprint as pp
 
-#moa specific libs - first set the path
+#moa specific libs - first prepare for loading libs
 if not os.environ.has_key('MOABASE'):
     raise Exception("MOABASE is undefined")
 
@@ -57,8 +55,8 @@ import moa.conf
 
 
 #Logging
-from moa.utils import logger
-l = logger.l
+import moa.logger
+l = moa.logger.l
 
 usage = """Usage: %prog [options] COMMAND args
 
@@ -115,17 +113,15 @@ parser.add_option("-v", "--verbose", dest="verbose",
 (options, args) = parser.parse_args()
 
 if options.verbose:
-    logger.setVerbose()
+    moa.logger.setVerbose()
 
 if not os.environ.has_key("MOABASE"):
     l.critical("need to set MOABASE environment variable")
     sys.exit(1)
-    
 
 ##########
 # Helper functions
 ##########
-
 
 def error(d):
     l.error(simplejson.dumps(doc, sort_keys=True, indent=4))
