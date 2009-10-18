@@ -25,9 +25,9 @@ import re
 import os
 import contextlib
 
-from moa.utils import logger
+import moa.logger
 import moa.couchdb
-l = logger.l
+l = moa.logger.l
 
 # Get a file lock, borrowed from:
 #  http://code.activestate.com/recipes/576572/

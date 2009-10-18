@@ -24,8 +24,8 @@ Moa script - couchdb related code
 import httplib
 import simplejson
 
-from moa.utils import logger
-l = logger.l
+import moa.logger
+l = moa.logger.l
 
 class Couchdb:
     

@@ -25,8 +25,8 @@ import os
 import re
 import sys
 
-import moa.utils.logger
-l = moa.utils.logger.l
+import moa.logger
+l = moa.logger.l
     
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
