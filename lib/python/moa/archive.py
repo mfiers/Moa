@@ -87,45 +87,20 @@ def archive_create(options, args):
         relpath = '.' + fullpath.replace(targetpath, '')
         ball.add(fullpath, relpath, recursive=False)
         l.debug("adding %s" % relpath)
+
+        xtraFiles = []
+        if 'moa.archive' in files:
+            xtraFiles = open(os.path.join(root, 'moa.archive')).read().split()
+
         for f in files:
-            if f in ['moa.mk', 'Makefile', 'moa.archive']:
+            if f in ['moa.mk', 'Makefile', 'moa.archive'] + xtraFiles:
                 fullpath = os.path.abspath(os.path.join(root,f))
                 relpath = '.' + fullpath.replace(targetpath, '')
                 ball.add(fullpath, relpath)
                 l.debug("adding %s" % relpath)
 
-        #add anything that is in moa.archive
-        if 'moa.archive' in files:
-            xtrafile = os.path.join(root, 'moa.archive')
-            for extraFile in open(xtrafile).readlines():
-                extraFile = extraFile.strip()
-                if not extraFile: 
-                    continue
-                print files
-                print extraFile
-                if extraFile in files:
-                    fullpath = os.path.abspath(os.path.join(root,extraFile))
-                    relpath = '.' + fullpath.replace(targetpath, '')
-                    ball.add(fullpath, relpath)
-                    l.debug("adding %s" % relpath)
     ball.close()
     l.debug("closing archive")
-        
-
-    #if "/" in target[:-1]:
-    #    archiveError('Not implemented yet - cd first to %s' %
-    #               target.rsplit('/',1)[0])
-
-    #if not os.path.exists(target):
-    #    archiveError("%s does not exist" % target)
-        
-    #l.debug('create archive "%s" from "%s"' % (name, target))
-    
-    #os.system(('cd %s; find . -type d  -o -name "moa.mk" -o   ' + 
-    #          '-name "Makefile" -o -name ".*.moarch" > ../moa.files') % target)
-    #os.system('cd %s; tar czhf ../%s.tar.gz -T ../moa.files --no-recursion' % 
-    #          (target, name))
-    #os.system('rm moa.files')
 
 def archive_open(options, args):
     
@@ -138,8 +113,8 @@ def archive_open(options, args):
     #first find the archivefile
     if not os.path.exists(archivefile):
         #see if it needs an extension
-        if not '.tar.gz' == archivefile[-6:]:
-            archivefile += '.tar.gz'
+        if not '.tar.bz2' == archivefile[-6:]:
+            archivefile += '.tar.bz2'
     if not os.path.exists(archivefile):        
         #try the archive dir in moabase
         archivefile = os.path.join(MOABASE, archives, archivefile)
