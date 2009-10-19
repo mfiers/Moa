@@ -23,18 +23,12 @@ A set of moa help functions. Hidden behind one command: moa.
 Most of the functions do not have a relationship with each
 other.. Maybe I should make separate scripts out of these. Don't know
 yet.
-
 """
 
 import os
 import sys
-import re
-import time
 import site
-import copy
-import errno
 import optparse
-from pprint import pprint as pp
 
 #moa specific libs - first prepare for loading libs
 if not os.environ.has_key('MOABASE'):
@@ -43,22 +37,34 @@ if not os.environ.has_key('MOABASE'):
 #process the .pth file in the $MOABASE/bin folder !
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 
-
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
+##
+## Get some variables from the moa configutation 
+##
+ETC = {}
+for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
+    line = line.strip()
+    if not line: 
+        continue
+    if line[0] == '#': 
+        continue
+    l = [x.strip() for x in line.split('=', 1)]
+    if len(l) == 2:
+        ETC[l[0]] = l[1]
+
 import moa.couchdb
 import moa.template
-import moa.roost
+import moa.archive
 import moa.graph
 import moa.conf
-
 
 #Logging
 import moa.logger
 l = moa.logger.l
 
-usage = """Usage: %prog [options] COMMAND args
+USAGE = """Usage: %prog [options] COMMAND args
 
 Commands:
 
@@ -90,20 +96,22 @@ Configuration (in moa.mk):
     sure that multiple threads can safely write to one moa.mk.     
 """
 
-description="Utility script for use with Moa makefiles"
-              
-parser = optparse.OptionParser(usage=usage, description=description)
+DESCRIPTION = "Utility script for use with Moa makefiles"
+            
+
+## define & parse command line options  
+parser = optparse.OptionParser(usage=USAGE, description=DESCRIPTION)
 parser.add_option('-f', '--force', dest='force', action='store_true',
                   help = 'Force an action, if applicable..')
 
-parser.set_defaults(couchserver="127.0.0.1:5984")
+parser.set_defaults(couchserver=ETC.get('couchserver', '127.0.0.1:5984'))
 parser.add_option("-s", "--server", dest="couchserver",
                   help="Couchserver to connect to")
 
 parser.add_option("-j", "--jid", dest="jid",
                   help="Job id for this Moa job")
 
-parser.set_defaults(couchdb="moa")
+parser.set_defaults(couchdb=ETC.get('couchdb', 'moa'))
 parser.add_option("-d", "--db", dest="couchdb",
                   help="db to use")
 
@@ -115,35 +123,25 @@ parser.add_option("-v", "--verbose", dest="verbose",
 if options.verbose:
     moa.logger.setVerbose()
 
-if not os.environ.has_key("MOABASE"):
-    l.critical("need to set MOABASE environment variable")
-    sys.exit(1)
 
-##########
-# Helper functions
-##########
-
-def error(d):
-    l.error(simplejson.dumps(doc, sort_keys=True, indent=4))
-    sys.exit(-1)
-
-#Handle templates - 
-
+##
+## Command dispatcher
+## 
 if __name__ == "__main__":    
+
     l.debug("MOABASE : %s" % MOABASE)
-    
+
     if len(args) == 0:
         l.error("Need a command")
         parser.print_help()
         sys.exit(1)
 
-    cserver, cport = options.couchserver.split(":")
-    moa.couchdb.connect(cserver, cport, options.couchdb)
-
     command = args[0]
+    newargs = args[1:]
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
-                       
+
+    #global stuff
     if command == 'new':
         newjid = args[1]    
         templates = args[2:]
@@ -152,26 +150,24 @@ if __name__ == "__main__":
             sys.exit(-1)
         moa.template.new(templates, jid=newjid, force=options.force)
 
-    elif command == 'roost':
-        moa.roost.handler(options, args[1:])
-
+    elif command == 'archive':
+        moa.archive.handler(options, args[1:])
     elif command == 'list':
         moa.template.list()
       
+    ## chouchdb related
+    elif command == 'couchdb':
+        moa.couchdb.handler(options, newargs)
     elif command == 'register':
-        moa.couchdb.moaRegister(args[1:])
-              
-    elif command == 'get':
-        docid, query = args[1], args[2]
-        value = moa.couchdb.moaGet(docid, query)
-        print value
-      
+        #shortcut for moa couchdb register
+        moa.couchdb.handler(options, args)              
     elif command == 'jids':
-        print "\n".join(moa.couchdb.getJids())
+        #shortcut for moa couchdb jids
+        moa.couchdb.handler(options, args)
+    elif command == 'get':
+        moa.couchdb.handler(options, args)
       
-    elif command == 'doc':
-        print moa.couchdb.getDocStr(args[1])
-
+    #configuration things
     elif command == 'conf':
         subcommand = args[1]
         

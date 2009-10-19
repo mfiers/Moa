@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 #
+import sys
 import logging
 
 l = logging.getLogger('moa')
@@ -35,6 +36,10 @@ handler.setFormatter(formatter)
 l.addHandler(handler)
 
 l.setLevel(logging.INFO)
+
+def exitError(message):
+    l.fatal(message)
+    sys.exit(-1)
 
 def setVerbose():
     l.setLevel(logging.DEBUG)

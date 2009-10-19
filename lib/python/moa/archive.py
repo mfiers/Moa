@@ -24,6 +24,7 @@ Moa script - template related code
 import os
 import re
 import sys
+import tarfile
 
 import moa.logger
 l = moa.logger.l
@@ -31,98 +32,134 @@ l = moa.logger.l
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
-def roostError(message):
+def archiveError(message):
     """ 
     Generate an error & exit
     """
     if message:
         l.error(message)
     else:
-        l.error('Invalid invocation of "moa roost"')
+        l.error('Invalid invocation of "moa archive"')
 
     sys.exit(-1)
     
 def handler(options, args):
-    l.debug("roost handler with args %s" % args)
+    l.debug("archive handler with args %s" % args)
 
     if len(args) == 0:
-        roostError()
+        archiveError()
         
     command = args[0]
     
     if command == 'create':
-        create(options, args[1:])
+        archive_create(options, args[1:])
     elif command == 'open':
-        open(options, args[1:])
+        archive_open(options, args[1:])
 
+def archive_create(options, args):
 
-def create(options, args):
+    """ Create a archive file - nothing more than a tar.gz """
 
-    """ Create a roost file - nothing more than a tar.gz with an
-    alternative extension """
-
-    l.debug("Start create roost")
+    l.debug("Start create archive")
 
     if len(args) != 2:
-        roostError("Usage: moa roost create NAME DIR") 
+        archiveError("Usage: moa archive create NAME DIR") 
 
-    name = args[0]
+    archivefile = args[0]
     target = args[1]
 
-    roostfile = name + ".roost"    
-    if os.path.exists(roostfile):
+    if not ".tar.bz2" in archivefile:
+        archivefile += ".tar.bz2"
+    
+    l.debug("creating archive %s" % archivefile)
+    if os.path.exists(archivefile):
         if options.force:
-            os.remove(roostfile)
+            os.remove(archivefile)
         else:
-            roostError("%s exists. Use -f to override" % roostfile)
+            archiveError("%s exists. Use -f to override" % archivefile)
+            
+    ball = tarfile.open(archivefile, 'w:bz2')
+    targetpath = os.path.abspath(target)
+    l.debug("target path %s" % targetpath)
+    for root, dirs, files in os.walk(target):
+        #add the dir
+        fullpath = os.path.abspath(root)
+        relpath = '.' + fullpath.replace(targetpath, '')
+        ball.add(fullpath, relpath, recursive=False)
+        l.debug("adding %s" % relpath)
+        for f in files:
+            if f in ['moa.mk', 'Makefile', 'moa.archive']:
+                fullpath = os.path.abspath(os.path.join(root,f))
+                relpath = '.' + fullpath.replace(targetpath, '')
+                ball.add(fullpath, relpath)
+                l.debug("adding %s" % relpath)
 
-    if "/" in target[:-1]:
-        roostError('Not implemented yet - cd first to %s' %
-                   target.rsplit('/',1)[0])
-
-    if not os.path.exists(target):
-        roostError("%s does not exist" % target)
+        #add anything that is in moa.archive
+        if 'moa.archive' in files:
+            xtrafile = os.path.join(root, 'moa.archive')
+            for extraFile in open(xtrafile).readlines():
+                extraFile = extraFile.strip()
+                if not extraFile: 
+                    continue
+                print files
+                print extraFile
+                if extraFile in files:
+                    fullpath = os.path.abspath(os.path.join(root,extraFile))
+                    relpath = '.' + fullpath.replace(targetpath, '')
+                    ball.add(fullpath, relpath)
+                    l.debug("adding %s" % relpath)
+    ball.close()
+    l.debug("closing archive")
         
-    l.debug('create roost "%s" from "%s"' % (name, target))
-    
-    os.system(('cd %s; find . -type d  -o -name "moa.mk" -o  ' + 
-              '-name "Makefile" > ../moa.files') % target)
-    os.system('cd %s; tar czf ../%s.roost -T ../moa.files --no-recursion' % 
-              (target, name))
-    os.system('rm moa.files')
 
-def open(options, args):
+    #if "/" in target[:-1]:
+    #    archiveError('Not implemented yet - cd first to %s' %
+    #               target.rsplit('/',1)[0])
+
+    #if not os.path.exists(target):
+    #    archiveError("%s does not exist" % target)
+        
+    #l.debug('create archive "%s" from "%s"' % (name, target))
+    
+    #os.system(('cd %s; find . -type d  -o -name "moa.mk" -o   ' + 
+    #          '-name "Makefile" -o -name ".*.moarch" > ../moa.files') % target)
+    #os.system('cd %s; tar czhf ../%s.tar.gz -T ../moa.files --no-recursion' % 
+    #          (target, name))
+    #os.system('rm moa.files')
+
+def archive_open(options, args):
     
     if len(args) != 2:
-        roostError("Usage: moa roost open roostFile targetDir")
+        archiveError("Usage: moa archive open archiveFile targetDir")
 
-    roostfile = args[0]
+    archivefile = args[0]
     target = args[1]
 
-    #first find the roostfile
-    if not os.path.exists(roostfile):
+    #first find the archivefile
+    if not os.path.exists(archivefile):
         #see if it needs an extension
-        if not '.roost' == roostfile[-6:]:
-            roostfile += '.roost'
-    if not os.path.exists(roostfile):        
-        #try the roost dir in moabase
-        roostfile = os.path.join(MOABASE, roosts, roostfile)
+        if not '.tar.gz' == archivefile[-6:]:
+            archivefile += '.tar.gz'
+    if not os.path.exists(archivefile):        
+        #try the archive dir in moabase
+        archivefile = os.path.join(MOABASE, archives, archivefile)
     
-    if not os.path.exists(roostfile):
-        roostError("Cannot find your roost")
+    if not os.path.exists(archivefile):
+        archiveError("Cannot find your archive")
 
-    roostfile = os.path.abspath(roostfile)
-    l.debug("discovered roostfile at %s" % roostfile)
+    archivefile = os.path.abspath(archivefile)
+    l.debug("discovered archivefile at %s" % archivefile)
 
     if not os.path.exists(target):
         os.mkdir(target)
 
     if not options.force:
         indir = os.listdir(target)
-        if os.path.basename(roostfile) in indir:
-            indir.remove( os.path.basename(roostfile))
+        if os.path.basename(archivefile) in indir:
+            indir.remove( os.path.basename(archivefile))
         if len( indir) > 0:
-            roostError("Target dir is not empty, use -f to force")
-    
-            
-    os.system('cd %s; tar xzf %s' % (target, roostfile))
+            archiveError("Target dir is not empty, use -f to force")
+
+    #open the tarfile & dump it
+    tar = tarfile.open(archivefile)
+    tar.extractall(target)
