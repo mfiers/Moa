@@ -70,12 +70,14 @@ Commands:
 
 New Moa makefiles:
 
-  new: moa SensibleJid TEMPLATE1, TEMPLATE2, ...
-    Generate a new makefile based on the template names
-    provided. Providing a (sensible sounding) JID is
-    obligatory.
+  new: moa SensibleTitle TEMPLATE1, TEMPLATE2, ...
+
+    Generate a new makefile based on the template names provided. You
+    must provide a title for the analysis (No spaces - A-Za-z0-9_, a
+    sensible name is probably smart)
 
   list: (moa list)
+
     List all known templates
 
 Couchdb:
@@ -143,12 +145,12 @@ if __name__ == "__main__":
 
     #global stuff
     if command == 'new':
-        newjid = args[1]    
+        title = args[1]    
         templates = args[2:]
-        if (not newjid) or (not templates):
-            l.error("Usage: moa new JID TEMPLATE(s)")
+        if (not title) or (not templates):
+            l.error("Usage: moa new TITLE TEMPLATE(s)")
             sys.exit(-1)
-        moa.template.new(templates, jid=newjid, force=options.force)
+        moa.template.new(templates, title=title, force=options.force)
 
     elif command == 'archive':
         moa.archive.handler(options, args[1:])

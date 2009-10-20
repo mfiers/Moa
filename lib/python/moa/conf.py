@@ -23,31 +23,12 @@ Moa script - moa.mk configuration related code
 
 import re
 import os
-import contextlib
 
 import moa.logger
 import moa.couchdb
-l = moa.logger.l
+import moa.utils
 
-# Get a file lock, borrowed from:
-#  http://code.activestate.com/recipes/576572/
-#
-@contextlib.contextmanager
-def flock(path, wait_delay=.1):
-    while True:
-        try:
-            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
-        except OSError, e:
-            if e.errno != errno.EEXIST:
-                raise
-            time.sleep(wait_delay)
-            continue
-        else:
-            break
-    try:
-        yield fd
-    finally:
-        os.unlink(path)
+l = moa.logger.l
 
 def cache():
     """
@@ -57,7 +38,7 @@ def cache():
         l.debug("moa.mk doesn't exist. nothing to cache")
         return
 
-    with flock('moa.mk.lock'):
+    with moa.utils.flock('moa.mk.lock'):
         os.rename('moa.mk', 'moa.mk.tmp')        
         #open filehandles to both files:
         F = open('moa.mk.tmp', 'r')
@@ -105,7 +86,8 @@ def change(mode, args):
         incomingKeys.add(k)
         incomingArgs.append((k,v))
 
-    with flock('moa.mk.lock'):
+    #set a lock on moa.mk
+    with moa.utils.flock('moa.mk.lock'):
         #move moa.mk to a new location
         if os.path.exists('moa.mk'):
             os.rename('moa.mk', 'moa.mk.tmp')
@@ -130,8 +112,8 @@ def change(mode, args):
                 #an update
                 G.write(line)
             else:
-                l.debug("Omitting line - needs replacement:")
-                l.debug(" : %s " % line.strip())
+                #omit this line - it will be replaced
+                pass
                 
         if mode == 'set':
             oper = "="
@@ -139,8 +121,7 @@ def change(mode, args):
             oper = "+="
             
         for k,v in incomingArgs:
-            l.debug("writing new line to moa.mk:")
-            l.debug(" : %s%s%s" % (k, oper, v))
+            l.debug("writing: %s%s%s to moa.mk" % (k, oper, v))
             G.write("%s%s%s\n" % (k, oper, v))
 
         F.close()

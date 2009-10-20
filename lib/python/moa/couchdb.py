@@ -24,6 +24,7 @@ Moa script - couchdb related code
 import sys
 import httplib
 import simplejson
+import pprint
 
 import moa.logger
 from moa.logger import exitError
@@ -101,6 +102,12 @@ class Couchdb:
         """Open a document in a given database"""
         return self.get('/%s/%s' % (self.db, docId))
 
+    def openView(self, view):
+        """Open a view"""
+        #http://localhost:5984/moa/_design/moa/_view/projects
+        return self.get('/%s/_design/moa/_view/%s' % (
+                self.db, view))
+
     def forceSave(self, body, docId):
         """
         Force a save, if a regular save doesn't work.
@@ -113,6 +120,7 @@ class Couchdb:
         #try a regular save:
         r = self.saveDoc(self.db, body, docId)
         if r.get('error', None) == 'conflict':
+            l.debug("inital error saving")
             if not body.has_key("_rev"):
                 l.warning("save conflict - older revision and retrying")
                 olddoc = self.openDoc(self.db, docId)
@@ -207,14 +215,64 @@ def handler(options, args):
         get(options, newargs)
     elif command == 'doc':
         doc(options, newargs)
+    elif command == 'projects':
+        projects()
     else:
         exitError("Invalid invocation of: moa couchdb")
+
+#def initdb(options, args):
+    
+def _addview(name, mapfunc, reducefunc=None, force=False):
+    l.debug("checking/adding view")
+    views = couchdb.openDoc('_design/moa')
+    if not views.has_key('language'):
+        views['language'] = 'javascript'
+    if not views.has_key('views'):
+        views['views'] = {}
+    l.debug("views present %s" % views['views'].keys())
+    if not force and (views['views'].has_key(name)):
+        l.debug("view '%s' is present" % name)
+        return True
+
+    #set the new/updated view
+    views['views'][name] = {
+        'map': " ".join(mapfunc.split())}
+    if reducefunc:
+        views['views'][name]['reduce'] = \
+            " ".join(reducefunc.split())
+    l.debug("saving updated views document")
+    couchdb.saveDoc(views, '_design/moa')
+    print views['views'][name]['map']
+
+VIEWS_PROJECTS_MAP = """
+function(doc) {
+    emit(doc.owner, doc.project);
+} """
+VIEWS_PROJECTS_REDUCE = """
+function(keys, values, rereduce) {
+  if (rereduce) {
+    return 1;
+  } else {
+    return values;
+  }
+}"""
+
+def projects():
+    """
+    Get a list of all projects
+    """
+    _addview('projects', 
+             VIEWS_PROJECTS_MAP, VIEWS_PROJECTS_REDUCE,
+             force=True)
+    data = couchdb.openView('projects')
+    for d in data.keys():
+        print "###", d
+        print "---", data[d]
 
 # Handle couchdb related commands
 def register(options, args):
     """
     Register a moa node to the couchdb
-
     All variables are in the arguments
     """
     l.debug("Running moa couchdb register")
@@ -233,7 +291,7 @@ def register(options, args):
             newdoc['_rev'] = doc['_rev']
 
     for x in args[1:]:
-        l.debug("registring %s" % x)
+        l.debug("register %s" % x)
         k, v = x.split('=', 1)
         #process the moa_ids - make it a list
         if k == 'moa_ids': 

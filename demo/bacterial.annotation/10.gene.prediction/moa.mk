@@ -1,2 +1,2 @@
-project=demo.bacterial.annotation
 jid=moa_traverse_10.gene.prediction_98da00f810b9
+project=d_bacterial_genome_annotation

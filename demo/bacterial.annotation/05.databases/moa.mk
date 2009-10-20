@@ -1,1 +1,1 @@
-project=demo.bacterial.annotation
+project=d_bacterial_genome_annotation
