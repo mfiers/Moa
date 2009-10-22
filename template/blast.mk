@@ -111,9 +111,11 @@ endif
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
 
+ifdef blast_main_phase
 ifdef blast_db
 single_blast_db_file=$(shell ls $(blast_db)*.[pn]hr)
 endif 
+endif
 
 test:
 	@echo $(blast_input_dir)

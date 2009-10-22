@@ -41,7 +41,7 @@ MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
 ##
-## Get some variables from the moa configutation 
+## Read the moa configutation file 
 ##
 ETC = {}
 for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
@@ -60,7 +60,7 @@ import moa.archive
 import moa.graph
 import moa.conf
 
-#Logging
+## Init the logger
 import moa.logger
 l = moa.logger.l
 
@@ -99,7 +99,6 @@ Configuration (in moa.mk):
 """
 
 DESCRIPTION = "Utility script for use with Moa makefiles"
-            
 
 ## define & parse command line options  
 parser = optparse.OptionParser(usage=USAGE, description=DESCRIPTION)
@@ -169,22 +168,9 @@ if __name__ == "__main__":
     elif command == 'get':
         moa.couchdb.handler(options, args)
       
-    #configuration things
+    #configuration thingies
     elif command == 'conf':
-        subcommand = args[1]
-        
-        if subcommand == 'set':
-            moa.conf.change('set', args[2:])
-                      
-        elif subcommand == 'append':
-            moa.conf.change('append', args[2:])
-          
-        elif subcommand == 'cache':
-            moa.conf.cache()
-
-        else:
-            l.error("Invalud moa conf command")
-            sys.exit()
+        moa.conf.handler(options, newargs)
 
     elif command == 'graph':
         subcommand = args[1]

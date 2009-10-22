@@ -25,6 +25,7 @@ import re
 import sys
 import httplib
 import simplejson
+import random
 import pprint
 
 import moa.logger
@@ -260,6 +261,38 @@ class Couchdb:
 
 couchdb = None
 
+##
+## Couchdb views
+##
+#def initdb(options, args):
+def _projects():
+    """
+    Return a list of all projects
+    """
+    data = couchdb.openView('projects')
+    return data['rows'][0]['value']
+
+def _jids():
+    """
+    Return a list of jids
+    """
+    data = couchdb.openView('jids')
+    return data['rows'][0]['value']
+
+def projects():
+    """
+    Get a list of all projects
+    """
+    print "\n".join(_projects())
+
+def owners():
+    """
+    Get a list of all projects
+    """
+    data = couchdb.openView('owners')
+    print "\n".join(data['rows'][0]['value'])
+
+
 def connect(options):
     """ 
     Connect to the couchdb server
@@ -304,53 +337,52 @@ def handler(options, args):
     else:
         exitError("Invalid invocation of: moa couchdb")
 
+
 def generate_jid(options, args):
     """
     Generate a unique, short, jid
     """
+    #aim at a 4 letter jid
+    jidlen = 4
     allJids = _jids()
-    args = [re.sub("[^0-9A-Za-z_]", "", x) for x in args]
+
+    args = [re.sub("[^0-9A-Za-z]", "", x) for x in args]
     allargs = " ".join(args).split()
-    ccargs = "".join(allargs)
-    shargs = re.sub("[aeouiAEOUI]", "", ccargs)
-    #aim at a 5 letter jid
+    catargs = "".join(args)
 
-    if (len(shargs) >= 5) and (not shargs[:5] in allJids):
-        print shargs[:5]
+    attempt = "".join([x[0] for x in allargs])[:jidlen]
+    if (len(attempt) == jidlen) and (not attempt in allJids):
+        print attempt
         return
-    if (len(ccargs) >= 2225) and (not ccargs[:5] in allJids):
-        print ccargs[:5]
+
+    attempt = "".join([x[:2] for x in allargs])[:jidlen]
+    if (len(attempt) == jidlen) and (not attempt in allJids):
+        print attempt
         return
+
+    attempt = catargs[:jidlen]
+    if (len(attempt) == jidlen) and (not attempt in allJids):
+        print attempt
+        return
+
+    attempt = re.sub("[aeouiAEOUI]", "", catargs)[:jidlen]
+    if (len(attempt) == jidlen) and (not attempt in allJids):
+        print attempt
+        return
+
+    letters = list(catargs)
+    for x in range(0,10):
+        attempt = "".join([random.choice(letters) for x in range(4)])
+        if not attempt in allJids:
+            print attempt
+            return
         
-
-
-#def initdb(options, args):
-def _projects():
-    """
-    Return a list of all projects
-    """
-    data = couchdb.openView('projects')
-    return data['rows'][0]['value']
-
-def _jids():
-    """
-    Return a list of jids
-    """
-    data = couchdb.openView('jids')
-    return data['rows'][0]['value']
-
-def projects():
-    """
-    Get a list of all projects
-    """
-    print "\n".join(_projects())
-
-def owners():
-    """
-    Get a list of all projects
-    """
-    data = couchdb.openView('owners')
-    print "\n".join(data['rows'][0]['value'])
+    letters = list("abcdefghijklmnopqrstuvwxyz0123456789")
+    while True:
+        attempt = "".join([random.choice(letters) for x in range(4)])
+        if not attempt in allJids:
+            print attempt
+            return
 
 
 # Handle couchdb related commands
@@ -403,16 +435,19 @@ def register(options, args):
 
 def get(options, args):
     """ Get a single value from a record """
-    docid, query = args
+    docid, key = args    
+    print getValueFromDb(docid, key)
+
+def getValueFromDb(docid, key):
+    """Get a single value from the db"""
+    l.debug("Getting %s from %s" % (key, docid))
     doc = couchdb.openDoc(docid)
     if not doc:
-        l.error("Cannot find document /moa/%s" % docid)
-        sys.exit(-1)
-    if not doc.has_key(query):
-        l.error("Cannot find document /moa/%s/%s" % (docid, query))
-        sys.exit(-1)
-    print doc[query]
-
+        exitError("Cannot find document /moa/%s" % docid)
+    if not doc.has_key(key):
+        exitError("Cannot find document /moa/%s/%s" % (docid, key))
+    return doc[key]
+    
 
 ## Get some stats & info from couchdb
 def printJids():

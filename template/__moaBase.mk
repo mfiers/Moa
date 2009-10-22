@@ -95,7 +95,7 @@ moa_welcome:
 ## If moa.mk is defined, and not yet imported: do so.
 ## moa.mk is used to store job specific variables
 ifndef MOAMK_INCLUDE
-$(shell moa conf cache)
+$(shell moa conf resolve)
 -include ./moa.mk
 MOAMK_INCLUDE=done
 endif
@@ -477,6 +477,7 @@ __set:
 		$(foreach v, $(moa_must_define) $(moa_may_define), \
 			$(if $(call seq,$(origin $(v)),command line), \
 				$(call set_func,$(v)) \
+				$(if $($(v)_default_attrib),$(v)_default_attrib=$($(v)_default_attrib)) \
 			) \
 		) \
 		$(foreach v,$(must_set), \
@@ -555,7 +556,7 @@ moa_showvar_%:
 .PHONY: moa_prepare_var
 moa_prepare_var:
 	@if [ "$(usecouchdb)" == "T" ]; then \
-		moa conf cache ;\
+		moa conf resolve ;\
 	fi
 
 ifndef MOA_INCLUDE_HELP

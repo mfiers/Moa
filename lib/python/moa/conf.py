@@ -23,21 +23,43 @@ Moa script - moa.mk configuration related code
 
 import re
 import os
+import sys
 
 import moa.logger
+from moa.logger import exitError
 import moa.couchdb
 import moa.utils
 
 l = moa.logger.l
 
-def cache():
+def handler(options, args):
+    """ 
+    Handle conf related commands
     """
-    Read the coucdb variables and store them in moa.mk
+    moa.couchdb.connect(options)
+    
+    command = args[0]
+    newargs = args[1:]
+
+    if command == 'set':
+        confChange('set', newargs)                  
+    elif command == 'append':
+        confChange('append', newargs)
+    elif command == 'resolve':
+        confResolve()
+    else:
+        exitError("Invalud moa conf invocation")
+
+
+def confResolve():
+    """
+    Read the couchdb variables and store them in moa.mk
     """
     if not os.path.exists('moa.mk'):
         l.debug("moa.mk doesn't exist. nothing to cache")
         return
 
+    l.debug("Start resolving moa.conf")
     with moa.utils.flock('moa.mk.lock'):
         os.rename('moa.mk', 'moa.mk.tmp')        
         #open filehandles to both files:
@@ -51,10 +73,12 @@ def cache():
             line = line.strip()
             if not line: continue
             k,o,v = re.split(r'\s*(\+?=)\s*', line.strip())
-            if k[-9:] == "__couchdb":
-                moaCouchKeys.add(k[:-9])
-                moaCouchTerms[k[:-9]] = v
 
+            if k[-7:] == "__cache":
+                l.debug("resolving %s %s %s" % (k, o, v))
+
+                moaCouchKeys.add(k[:-7])
+                moaCouchTerms[k[:-7]] = v
 
         F.seek(0)
         for line in F.readlines():
@@ -65,26 +89,41 @@ def cache():
                 G.write("%s%s%s\n" % (k,o,v))
                 
         for k in moaCouchKeys:
-            cdbk, cdbv = moaCouchTerms[k].split()
-            val = moa.couchdb.moaGet(cdbk, cdbv)
+            v = moaCouchTerms[k]
+
+            matchobj = re.search(r'%([0-9A-Za-z]{4})/([A-Za-z0-9_]*?)%', v)
+            if matchobj:
+                docid = matchobj.groups()[0]
+                dockey = matchobj.groups()[1]
+            else:
+                matchobj = re.match("%([0-9A-Za-z]{4})%", v)
+                docid = matchobj.groups()[0]
+                dockey = 'pwd'
+
+            replaceVal = moa.couchdb.getValueFromDb(docid, dockey)
+            val = v.replace("%%%s/%s%%" % (docid, dockey), replaceVal)
             G.write("%s=%s\n" % (k,val))
             
         F.close()
         G.close()
         os.remove('moa.mk.tmp')
+  
    
-   
-def change(mode, args):
+def confChange(mode, args):
     """
     save the arguments in moa.mk
     """   
     #parse all arguments..
     incomingKeys = set()
+    defaultAttribs = {}
     incomingArgs = []
     for a in args:
         k, v = [x.strip() for x in a.split('=', 1)]
-        incomingKeys.add(k)
-        incomingArgs.append((k,v))
+        if "_default_attrib" in k:
+            defaultAttribs[k[:-15]]=v
+        else:
+            incomingKeys.add(k)
+            incomingArgs.append((k,v))
 
     #set a lock on moa.mk
     with moa.utils.flock('moa.mk.lock'):
@@ -107,13 +146,9 @@ def change(mode, args):
                 #if the mode is not 'set', write 
                 G.write(line)                
             elif (not k in incomingKeys) and \
-                 (not k.replace("__couchdb", "") in incomingKeys):
-                #write, unless the mode=='set' and the key needs
-                #an update
+                 (not k.replace("__cache", "") in incomingKeys):
+                #write
                 G.write(line)
-            else:
-                #omit this line - it will be replaced
-                pass
                 
         if mode == 'set':
             oper = "="
@@ -121,11 +156,24 @@ def change(mode, args):
             oper = "+="
             
         for k,v in incomingArgs:
-            l.debug("writing: %s%s%s to moa.mk" % (k, oper, v))
-            G.write("%s%s%s\n" % (k, oper, v))
-
+            matchObj = re.search("%([0-9A-Za-z]{4})%", v)
+            if matchObj and (k in defaultAttribs.keys()):
+                docId = matchObj.groups()[0]                
+                newRef = '%%%s/%s%%' % (docId, defaultAttribs[k])
+                newval = v.replace('%%%s%%' % docId, newRef)
+                G.write("%s__cache%s%s\n" % (k, oper, newval))
+                l.debug("writing (d): %s__cache%s%s to moa.mk" % (k, oper, newval))
+            elif matchObj:
+                G.write("%s__cache%s%s\n" % (k, oper, v))
+                l.debug("writing: %s__cache%s%s to moa.mk" % (k, oper, v))
+            elif re.match("%[0-9A-Za-z]{4}/[A-Za-z0-9_]*%", v):
+                G.write("%s__cache%s%s\n" % (k, oper, v))
+                l.debug("writing: %s__cache%s%s to moa.mk" % (k, oper, v))
+            else:
+                G.write("%s%s%s\n" % (k, oper, v))
+                l.debug("writing: %s%s%s to moa.mk" % (k, oper, v))
         F.close()
         G.close()
         os.remove('moa.mk.tmp')
-    cache()
+    confResolve()
     
