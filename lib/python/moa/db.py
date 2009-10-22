@@ -18,24 +18,286 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Wrapper for db related routines
+Moa script - couchdb related code
 """
 
 import re
 import sys
+import httplib
+import simplejson
 import random
-
-from moa.db import couchdb
-from moa.db import anydb
+import pprint
 
 import moa.logger
 from moa.logger import exitError
 l = moa.logger.l
 
+VIEWS = {
+  'language' : 'javascript',
+  'views' : {
+        'projects' : 
+        { 'map' : "function(doc) { emit(null, doc.project); }",
+          'reduce' : 
+          """ function(keys, values, rereduce) {
+                rv = [];
+                for ( var i in values ) {
+                  if (rv.indexOf(values[i]) == -1) {
+                    rv.push(values[i]);
+                  }
+                } 
+                return rv;
+              } """
+          },
+        'owners' : 
+        { 'map' : "function(doc) { emit(null, doc.owner); }",
+          'reduce' : 
+          """ function(keys, values, rereduce) {
+                rv = [];
+                for ( var i in values ) {
+                  if (rv.indexOf(values[i]) == -1) {
+                    rv.push(values[i]);
+                  }
+                } 
+                return rv;
+              } """
+          },
+        'jids' : 
+        { 'map' : "function(doc) { emit(null, doc._id); }",
+          'reduce' : 
+          """ function(keys, values, rereduce) {
+                rv = [];
+                for ( var i in values ) {
+                  if (rv.indexOf(values[i]) == -1) {
+                    rv.push(values[i]);
+                  }
+                } 
+                return rv;
+              } """
+          },
+        }
+  }
+
+def JSONError(doc):
+    """
+    Dump a JSON error to screen
+    """
+    l.error(simplejson.dumps(doc, sort_keys=True, indent=4))
+    sys.exit(-1)
+  
+class Couchdb:    
+    """ 
+    Wrapper class for operations on a couchDB. This code is gracefully
+    adapted from http://wiki.apache.org/couchdb/Getting_started_with_Python
+    """
+
+    def __init__(self,
+                 host='localhost', 
+                 port=5984,
+                 db='moa'):
+        
+        self.host = host
+        self.port = port
+        self.db = db
+
+    def connect(self):
+        """
+        Connect - (ell, create an httpconnection object)
+        """
+        # No close()???
+        return httplib.HTTPConnection(self.host, self.port)
+
+
+    # high level operations
+    def createDb(self):
+        """ Creates a new database on the server
+        """
+        l.debug("Creating db %s" % self.db)
+        r = self.put("/%s/" % self.db, '')
+
+        if r.has_key('error'):
+            if r['error'] == 'file_exists':
+                l.warning("Database already exists, ignoring/..")
+                return r
+            else:
+                JSONError(r)
+
+        self.addDefaultViews()
+        return r
+   
+    def addDefaultViews(self):
+        """
+        adds the default views to a fresh database
+        """
+        global VIEWS
+        l.debug("registering the default views")
+        self.saveDoc(VIEWS, "_design/moa")
+
+
+    def addview(self, name, mapfunc, reducefunc=None, force=False):
+        """
+        Adds a view to the default _design/moa document
+        """
+        l.debug("Adding a new view")
+        views = self.openDoc('_design/moa')
+        if not views.has_key('language'):
+            views['language'] = 'javascript'
+        if not views.has_key('views'):
+            views['views'] = {}
+        l.debug("views present %s" % views['views'].keys())
+        if not force and (views['views'].has_key(name)):
+            l.debug("view '%s' is present" % name)
+            return True
+
+        #set the new/updated view
+        views['views'][name] = {
+            'map': " ".join(mapfunc.split())}
+        if reducefunc:
+            views['views'][name]['reduce'] = \
+                " ".join(reducefunc.split())
+        self.saveDoc(views, '_design/moa')
+        l.debug("saved new view")
+
+    def deleteDb(self):
+        """Deletes the database on the server"""
+        r = self.delete('/%s/' % self.db)
+        return r
+
+    def listDb(self):
+        """List the databases on the server"""
+        return self.get('/_all_dbs')
+
+    def infoDb(self):
+        """Returns info about the couchDB"""
+        return self.get('/%s/' % self.db)
+
+    def allDocs(self):
+        """ returns all docs in a db """
+        return self.get("/%s/_all_docs" % self.db)
+        
+    # Document operations
+    def listDoc(self):
+        """List all documents in a given database"""
+        return self.get('%s/_all_docs' % self.db)
+
+    def openDoc(self, docId):
+        """Open a document in a given database"""
+        return self.get('/%s/%s' % (self.db, docId))
+
+    def openView(self, view):
+        """Open a view"""
+        #http://localhost:5984/moa/_design/moa/_view/projects
+        return self.get('/%s/_design/moa/_view/%s' % (
+                self.db, view))
+
+    def forceSave(self, body, docId):
+        """
+        Force a save, if a regular save doesn't work.
+
+        A save can fail if it should have been an update. This
+        function loads the old document and gets the revision ID.
+        
+        This is dangerous!! Shouldn't use it :P
+        """
+        #try a regular save:
+        r = self.saveDoc(self.db, body, docId)
+        if r.get('error', None) == 'conflict':
+            l.debug("inital error saving")
+            if not body.has_key("_rev"):
+                l.warning("save conflict - older revision and retrying")
+                olddoc = self.openDoc(self.db, docId)
+                body['_rev'] = olddoc['_rev']
+                r = self.saveDoc(self.db, body, docId)
+        return r
+            
+    def saveDoc(self, body, docId=None):
+        """Save/create a document to/in a given database"""
+        if not docId:
+            return self.post("/%s/" % (self.db), body)
+
+        return self.put("/%s/%s" % (self.db, docId), body)
+
+
+    def deleteDoc(self, doc):
+        """
+        Delete a document from the server
+        """
+        return self.delete('/%s/%s?rev=%s' % (
+            self.db, doc["_id"], doc["_rev"]))
+
+    #low level routines, calling get, post, put & delete
+    def get(self, uri):
+        """ Get an uri from couchdb and parse it with simpljson """
+        c = self.connect()
+        headers = {"Accept": "application/json"}
+        c.request("GET", uri, None, headers)
+        return simplejson.loads(c.getresponse().read())
+
+    def post(self, uri, body):
+        """ Post an uri to couchdb, convert the body using simplejson
+        """
+        c = self.connect()
+        headers = {"Content-type": "application/json"}
+        c.request('POST', uri,
+                  simplejson.dumps(body),
+                  headers)
+        return simplejson.loads(c.getresponse().read())
+
+    def put(self, uri, body):
+        """ As post - using PUT """
+        body = simplejson.dumps(body)
+        c = self.connect()
+        if len(body) > 0:
+            headers = {"Content-type": "application/json"}
+            c.request("PUT", uri, body, headers)
+        else:
+            c.request("PUT", uri, body)
+        return simplejson.loads(c.getresponse().read())
+
+    def delete(self, uri):
+        """ Delete request to the db """
+        c = self.connect()
+        c.request("DELETE", uri)
+        return simplejson.loads(c.getresponse().read())
+
+couchdb = None
+
+##
+## Couchdb views
+##
+#def initdb(options, args):
+def _projects():
+    """
+    Return a list of all projects
+    """
+    data = couchdb.openView('projects')
+    return data['rows'][0]['value']
+
+def _jids():
+    """
+    Return a list of jids
+    """
+    data = couchdb.openView('jids')
+    return data['rows'][0]['value']
+
+def projects():
+    """
+    Get a list of all projects
+    """
+    print "\n".join(_projects())
+
+def owners():
+    """
+    Get a list of all projects
+    """
+    data = couchdb.openView('owners')
+    print "\n".join(data['rows'][0]['value'])
+
+
 def connect(options):
     """ 
-    Connect to the current db server
+    Connect to the couchdb server
     """
+    global couchdb
     if ':' in options.couchserver:
         serverName, serverPort = \
             options.couchserver.split(':')
@@ -50,7 +312,7 @@ def connect(options):
     couchdb = Couchdb(serverName, serverPort, options.couchdb)
 
 
-def handler(conf, options, args):
+def handler(options, args):
     """
     Handler for all second level commands
     """
