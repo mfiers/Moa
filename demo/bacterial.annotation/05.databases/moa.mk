@@ -1,3 +1,3 @@
-project=d_bacterial_genome_annotation
 jid=dbac
 owner=mf
+project=demo_bacterial_annotation

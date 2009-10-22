@@ -1,10 +1,10 @@
 blast_gff_source=blast.vs.sp.bacteria
 blast_program=blastx
 blast_nohits=10
-project=d_bacterial_genome_annotation
 blast_input_dir=.
 blast_db__cache=%DEPR/blastdb%
 title=Blastp of the Glimmer3 genes vs the ecoli proteome
 jid=Bdmb
 owner=mf
 blast_db=/home/mf/project/moa/demo/bacterial.annotation/05.databases/10.ecoli.proteome/20.blastdb/ecoli_proteome
+project=demo_bacterial_annotation

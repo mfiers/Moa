@@ -33,8 +33,8 @@ moa_must_define += ncbi_db ncbi_query
 ncbi_db_help = NCBI database (for example nucest)
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
 
-moa_may_define += gfn_sequence_name
-gfn_sequence_name_help = Sequence name to download. When this			\
+moa_may_define += ncbi_sequence_name
+ncbi_sequence_name_help = Sequence name to download. When this			\
   parameter is set, the template assumes that only one sequence is to	\
   be downloaded, the rest will be discarded.
 
@@ -58,9 +58,9 @@ getFromNcbi_post:
 
 .PHONY: getFromNcbi
 getFromNcbi: tmp.fasta
-	if [[ -n "$(gfn_sequence_name)" ]]; then 								\
+	if [[ -n "$(ncbi_sequence_name)" ]]; then 								\
 		cat tmp.fasta 														\
-			| sed "s/^>.*$/>$(gfn_sequence_name)/"							\
+			| sed "s/^>.*$/>$(ncbi_sequence_name)/"							\
 			| fastaSplitter -f - -n 1 -o fasta;								\
 	else																	\
 		fastaSplitter -f tmp.fasta -o fasta;								\

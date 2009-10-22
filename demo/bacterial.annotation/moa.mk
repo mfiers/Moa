@@ -1,3 +1,2 @@
-project=d_bacterial_genome_annotation
-jid=dbac
-owner=mf
+title=traverse node
+project=demo_bacterial_annotation

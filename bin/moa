@@ -54,7 +54,6 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
     if len(l) == 2:
         ETC[l[0]] = l[1]
 
-import moa.couchdb
 import moa.template
 import moa.archive
 import moa.graph
@@ -80,17 +79,6 @@ New Moa makefiles:
 
     List all known templates
 
-Couchdb:
-
-  db get: moa couchdb get [JID] [ATTR]
-    Get and print one attribute from a document in Couchdb.
-
-  db doc: moa couchdb doc [JID]
-    Get and print a full document from the Couchdb
-
-  db jids: moa couchdb jids
-    Print a list of all known jids in the Couchdb.
-
 Configuration (in moa.mk):
 
   conf set: moa conf set [KEY]=[VALUE]
@@ -104,17 +92,6 @@ DESCRIPTION = "Utility script for use with Moa makefiles"
 parser = optparse.OptionParser(usage=USAGE, description=DESCRIPTION)
 parser.add_option('-f', '--force', dest='force', action='store_true',
                   help = 'Force an action, if applicable..')
-
-parser.set_defaults(couchserver=ETC.get('couchserver', '127.0.0.1:5984'))
-parser.add_option("-s", "--server", dest="couchserver",
-                  help="Couchserver to connect to")
-
-parser.add_option("-j", "--jid", dest="jid",
-                  help="Job id for this Moa job")
-
-parser.set_defaults(couchdb=ETC.get('couchdb', 'moa'))
-parser.add_option("-d", "--db", dest="couchdb",
-                  help="db to use")
 
 parser.add_option("-v", "--verbose", dest="verbose",
                   action="store_true", help="verbose output")
@@ -142,7 +119,7 @@ if __name__ == "__main__":
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
 
-    #global stuff
+    #Create new jobs
     if command == 'new':
         title = args[1]    
         templates = args[2:]
@@ -151,33 +128,14 @@ if __name__ == "__main__":
             sys.exit(-1)
         moa.template.new(templates, title=title, force=options.force)
 
+    #pack & unpack trees
     elif command == 'archive':
         moa.archive.handler(options, args[1:])
     elif command == 'list':
         moa.template.list()
-      
-    ## chouchdb related
-    elif command == 'db':
-        moa.couchdb.handler(options, newargs)
-    elif command == 'register':
-        #shortcut for moa couchdb register
-        moa.couchdb.handler(options, args)              
-    elif command == 'jids':
-        #shortcut for moa couchdb jids
-        moa.couchdb.handler(options, args)
-    elif command == 'get':
-        moa.couchdb.handler(options, args)
-      
-    #configuration thingies
+    #configuration stuff
     elif command == 'conf':
         moa.conf.handler(options, newargs)
-
-    elif command == 'graph':
-        subcommand = args[1]
-        if subcommand == 'test':
-            moa.graph.test()
-        else:
-            l.error("Invalid moa graph command")
     else:
         l.error("No command defined!")
         parser.print_help()

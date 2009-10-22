@@ -24,6 +24,8 @@ directory structures
 traverse_help = Do nothing - no need to call this. 
 #Include base moa code - does '*:blastn.self' variable checks & generates help
 
+title=traverse node
+
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif

@@ -1,4 +1,5 @@
+title=Download a genome from NCBI
 ncbi_db=nuccore
 ncbi_query=NC_004547
-jid=download_erwinia
-project=demo.bacterial.annotation
+ncbi_sequence_name=Erwinia_Carotovora
+project=demo_bacterial_annotation
