@@ -82,13 +82,13 @@ New Moa makefiles:
 
 Couchdb:
 
-  couchdb get: moa couchdb get [JID] [ATTR]
+  db get: moa couchdb get [JID] [ATTR]
     Get and print one attribute from a document in Couchdb.
 
-  couchdb doc: moa couchdb doc [JID]
+  db doc: moa couchdb doc [JID]
     Get and print a full document from the Couchdb
 
-  couchdb jids: moa couchdb jids
+  db jids: moa couchdb jids
     Print a list of all known jids in the Couchdb.
 
 Configuration (in moa.mk):
@@ -158,7 +158,7 @@ if __name__ == "__main__":
         moa.template.list()
       
     ## chouchdb related
-    elif command == 'couchdb':
+    elif command == 'db':
         moa.couchdb.handler(options, newargs)
     elif command == 'register':
         #shortcut for moa couchdb register

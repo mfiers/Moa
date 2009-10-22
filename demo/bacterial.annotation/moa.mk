@@ -1,2 +1,3 @@
-jid=moa_traverse_bacterial.annotation_b10c1a832830
 project=d_bacterial_genome_annotation
+jid=dbctrlgnmnnttnmftrvrs
+owner=mf

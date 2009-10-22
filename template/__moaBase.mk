@@ -112,12 +112,8 @@ ifndef owner
 owner := $(call generate_owner)
 endif
 
-generate_jid=$(shell \
-			echo -n "$(owner)"_;\
-			echo -n "$(project)"_;\
-			echo -n "$(title)"_;\
-			echo -n "moa_$(word 1 $,$(moa_ids))_"; \
-			echo "$$RANDOM" `pwd` `date` | md5sum | cut -c-10)
+generate_jid=$(shell moa db generate_jid \
+			"$(title)" "$(project)" "$(owner)" "$(moa_ids)" )
 
 ifeq ($(jid),)
 jid := $(call generate_jid)

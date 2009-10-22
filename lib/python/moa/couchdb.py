@@ -21,6 +21,7 @@
 Moa script - couchdb related code
 """
 
+import re
 import sys
 import httplib
 import simplejson
@@ -29,6 +30,51 @@ import pprint
 import moa.logger
 from moa.logger import exitError
 l = moa.logger.l
+
+VIEWS = {
+  'language' : 'javascript',
+  'views' : {
+        'projects' : 
+        { 'map' : "function(doc) { emit(null, doc.project); }",
+          'reduce' : 
+          """ function(keys, values, rereduce) {
+                rv = [];
+                for ( var i in values ) {
+                  if (rv.indexOf(values[i]) == -1) {
+                    rv.push(values[i]);
+                  }
+                } 
+                return rv;
+              } """
+          },
+        'owners' : 
+        { 'map' : "function(doc) { emit(null, doc.owner); }",
+          'reduce' : 
+          """ function(keys, values, rereduce) {
+                rv = [];
+                for ( var i in values ) {
+                  if (rv.indexOf(values[i]) == -1) {
+                    rv.push(values[i]);
+                  }
+                } 
+                return rv;
+              } """
+          },
+        'jids' : 
+        { 'map' : "function(doc) { emit(null, doc._id); }",
+          'reduce' : 
+          """ function(keys, values, rereduce) {
+                rv = [];
+                for ( var i in values ) {
+                  if (rv.indexOf(values[i]) == -1) {
+                    rv.push(values[i]);
+                  }
+                } 
+                return rv;
+              } """
+          },
+        }
+  }
 
 def JSONError(doc):
     """
@@ -64,7 +110,6 @@ class Couchdb:
     def createDb(self):
         """ Creates a new database on the server
         """
-
         l.debug("Creating db %s" % self.db)
         r = self.put("/%s/" % self.db, '')
 
@@ -74,8 +119,43 @@ class Couchdb:
                 return r
             else:
                 JSONError(r)
+
+        self.addDefaultViews()
         return r
-        
+   
+    def addDefaultViews(self):
+        """
+        adds the default views to a fresh database
+        """
+        global VIEWS
+        l.debug("registering the default views")
+        self.saveDoc(VIEWS, "_design/moa")
+
+
+    def addview(self, name, mapfunc, reducefunc=None, force=False):
+        """
+        Adds a view to the default _design/moa document
+        """
+        l.debug("Adding a new view")
+        views = self.openDoc('_design/moa')
+        if not views.has_key('language'):
+            views['language'] = 'javascript'
+        if not views.has_key('views'):
+            views['views'] = {}
+        l.debug("views present %s" % views['views'].keys())
+        if not force and (views['views'].has_key(name)):
+            l.debug("view '%s' is present" % name)
+            return True
+
+        #set the new/updated view
+        views['views'][name] = {
+            'map': " ".join(mapfunc.split())}
+        if reducefunc:
+            views['views'][name]['reduce'] = \
+                " ".join(reducefunc.split())
+        self.saveDoc(views, '_design/moa')
+        l.debug("saved new view")
+
     def deleteDb(self):
         """Deletes the database on the server"""
         r = self.delete('/%s/' % self.db)
@@ -215,59 +295,63 @@ def handler(options, args):
         get(options, newargs)
     elif command == 'doc':
         doc(options, newargs)
+    elif command == 'generate_jid':
+        generate_jid(options, newargs)
     elif command == 'projects':
         projects()
+    elif command == 'owners':
+        owners()
     else:
         exitError("Invalid invocation of: moa couchdb")
 
+def generate_jid(options, args):
+    """
+    Generate a unique, short, jid
+    """
+    allJids = _jids()
+    args = [re.sub("[^0-9A-Za-z_]", "", x) for x in args]
+    allargs = " ".join(args).split()
+    ccargs = "".join(allargs)
+    shargs = re.sub("[aeouiAEOUI]", "", ccargs)
+    #aim at a 5 letter jid
+
+    if (len(shargs) >= 5) and (not shargs[:5] in allJids):
+        print shargs[:5]
+        return
+    if (len(ccargs) >= 2225) and (not ccargs[:5] in allJids):
+        print ccargs[:5]
+        return
+        
+
+
 #def initdb(options, args):
-    
-def _addview(name, mapfunc, reducefunc=None, force=False):
-    l.debug("checking/adding view")
-    views = couchdb.openDoc('_design/moa')
-    if not views.has_key('language'):
-        views['language'] = 'javascript'
-    if not views.has_key('views'):
-        views['views'] = {}
-    l.debug("views present %s" % views['views'].keys())
-    if not force and (views['views'].has_key(name)):
-        l.debug("view '%s' is present" % name)
-        return True
+def _projects():
+    """
+    Return a list of all projects
+    """
+    data = couchdb.openView('projects')
+    return data['rows'][0]['value']
 
-    #set the new/updated view
-    views['views'][name] = {
-        'map': " ".join(mapfunc.split())}
-    if reducefunc:
-        views['views'][name]['reduce'] = \
-            " ".join(reducefunc.split())
-    l.debug("saving updated views document")
-    couchdb.saveDoc(views, '_design/moa')
-    print views['views'][name]['map']
-
-VIEWS_PROJECTS_MAP = """
-function(doc) {
-    emit(doc.owner, doc.project);
-} """
-VIEWS_PROJECTS_REDUCE = """
-function(keys, values, rereduce) {
-  if (rereduce) {
-    return 1;
-  } else {
-    return values;
-  }
-}"""
+def _jids():
+    """
+    Return a list of jids
+    """
+    data = couchdb.openView('jids')
+    return data['rows'][0]['value']
 
 def projects():
     """
     Get a list of all projects
     """
-    _addview('projects', 
-             VIEWS_PROJECTS_MAP, VIEWS_PROJECTS_REDUCE,
-             force=True)
-    data = couchdb.openView('projects')
-    for d in data.keys():
-        print "###", d
-        print "---", data[d]
+    print "\n".join(_projects())
+
+def owners():
+    """
+    Get a list of all projects
+    """
+    data = couchdb.openView('owners')
+    print "\n".join(data['rows'][0]['value'])
+
 
 # Handle couchdb related commands
 def register(options, args):
@@ -332,8 +416,8 @@ def get(options, args):
 
 ## Get some stats & info from couchdb
 def printJids():
-    """print a list of jids ot screen"""
-    print "\n".join(getJids())
+    """print a list of jids to the screen"""
+    print "\n".join(_jids())
 
 def getJids():
     """ Get a list of jids """

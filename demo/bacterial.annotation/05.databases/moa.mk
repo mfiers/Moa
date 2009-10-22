@@ -1,1 +1,2 @@
 project=d_bacterial_genome_annotation
+jid=mf_d_bacterial_genome_annotation__moa_traverse_8666fc4fb5
