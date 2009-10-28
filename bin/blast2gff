@@ -36,9 +36,9 @@ l = logging #shortcut
 parser = optparse.OptionParser()
 parser.add_option('-d', '--direction', dest='direction',
     help = 'output "query" based, "subject" based or "both"')
-parser.set_defaults(output_match = False)
-parser.add_option('-m', '--output_match', dest='output_match',
-    help = 'output a match line?')
+parser.set_defaults(output_blasthit = False)
+parser.add_option('-b', '--output_blasthit', dest='output_blasthit',
+    help = 'output a parent blasthit line?', action="store_true")
 parser.add_option('-s', '--source', dest='source',
     help = 'gff source to use, is also incorporated in the feature names/ids')
 parser.add_option('--debug', dest='debug',
@@ -96,13 +96,20 @@ def handle_blast_record(rec):
         gff_queries = []
         gff_subjects = []
         
+
+        bh_basenameQ = "%s__%s__%s" % (options.source, query_id, subject_id)
+        bh_basenameS = "%s__%s__%s" % (options.source, subject_id, query_id)
         basenameQ = "%s__%s__%s__%s" % (options.source, query_id, subject_id, count)
         basenameS = "%s__%s__%s__%s" % (options.source, subject_id, query_id, count)
         
         l.debug("basename Q is %s" % basenameQ)
         l.debug("basename S is %s" % basenameS)
         
+
         hcount = 0
+        bhss, bhse = 1e100,0
+        bhqs, bhqe = 1e100,0
+
         for h in a.hsps:
             hcount += 1
             ss,se = h.sbjct_start, h.sbjct_end 
@@ -110,7 +117,12 @@ def handle_blast_record(rec):
             
             qs,qe = h.query_start, h.query_end 
             if qe < qs: qs, qe = qe, qs
-            
+
+            if ss < bhss: bhss = ss
+            if qs < bhqs: bhqs = qs
+            if se > bhse: bhse = se
+            if qe > bhqe: bhqe = qe
+
             if h.strand[0] == h.strand[1]: strand = '+'
             else: strand = '-'
                 
@@ -122,7 +134,6 @@ def handle_blast_record(rec):
                        "Hsp_bits=%s" % h.bits,
                        'Note="%s"' % full_subject_name
                         ]
-    
             
             attribS = ["ID=%s" % basenameS,
                        "Name=%s" % basenameS,
@@ -132,13 +143,42 @@ def handle_blast_record(rec):
                         "Hsp_bits=%s" % h.bits,
                        ]
 
+            if options.output_blasthit:
+                attribQ.append("Parent=%s" %  bh_basenameQ)
+                attribS.append("Parent=%s" %  bh_basenameS)
+
+
             gff_queries.append(                
                 [query_id, options.source, 'match', qs, qe, 
                 h.score, strand, '.', ";".join(attribQ)])
             gff_subjects.append(                
                 [subject_id, options.source, 'match', ss, se, 
                 h.score, strand, '.', ";".join(attribS)])
+        
+                
+        bh_attribQ = ["ID=%s" % bh_basenameQ,
+                     "Name=%s" % bh_basenameQ,
+                     "Target=Sequence:%s %s %s" % (subject_id, bhss, bhse),
+                     "Hsp_expect=%s" % m_eval,
+                     'Note="%s"' % full_subject_name
+                        ]
+    
             
+        bh_attribS = ["ID=%s" % bh_basenameS,
+                      "Name=%s" % bh_basenameS,
+                      "Target=Sequence:%s %s %s" % (query_id, bhqs, bhqe),
+                      "Hsp_expect=%s" % m_eval
+                       ]
+
+        if options.output_blasthit:
+            gff_queries.append(                
+                [query_id, options.source, 'blasthit', bhqs, bhqe, 
+                '.', m_strand, '.', ";".join(bh_attribQ)])
+            gff_subjects.append(                
+                [subject_id, options.source, 'blasthit', bhss, bhse, 
+                '.', m_strand, '.', ";".join(bh_attribS)])
+
+
         if options.direction == 'both' or options.direction == 'query':
             for gg in gff_queries:
                 print "\t".join([str(x) for x in gg])

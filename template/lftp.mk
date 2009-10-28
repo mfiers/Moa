@@ -16,15 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_title = lftp
-moa_description = Use LFTP to download files. This template has two		\
-  modi, one is set 'lftp_mode' to 'mirror' data, in which case both		\
-  'lftp_url' and 'lftp_pattern' (default *) are used. The other modus	\
-  is 'lftp_mode=get', when one file defined by 'lftp_url' is			\
-  downloaded. In the mirror mode it is possible to download only those	\
-  files that are newer as the files already downloaded by using the		\
-  'lftp_timestamp' parameter
 
+moa_title = lftp
+moa_description = Use LFTP to download files. This template has two				\
+  modi, one is set 'lftp_mode' to 'mirror' data, in which case both				\
+  'lftp_url' and 'lftp_pattern' (default *) are used. The other modus			\
+  is 'lftp_mode=get', when one file defined by 'lftp_url' is					\
+  downloaded. In the mirror mode it is possible to download only those			\
+  files that are newer as the files already downloaded by using the				\
+  'lftp_timestamp' parameter
 lftp_help = Download using ftp
 
 # Help
@@ -80,9 +80,17 @@ else
 	lftp_mode = get
 endif 
 
-lftp_noclean +=  Makefile moa.mk 
+lftp_noclean += $(moa_system_files)
 lftp_output_dir ?= .
 run_dos2unix ?= F
+
+ifdef lftp_user
+ifdef lftp_pass
+	lftp_auth = -u $(lftp_user),$(lftp_pass)
+else
+	lftp_auth = -u $(lftp_user)
+endif
+endif
 
 #download files using LFTP
 .PHONY: lftp_prepare
@@ -91,25 +99,24 @@ lftp_prepare:
 	-mkdir $(lftp_output_dir)
 
 lftp: fexcl=$(addprefix -not -name , $(lftp_noclean))
-lftp:
+lftp: lftp_$(lftp_mode) lftp_dos2unix
+
+.PHONY: lftp_mirror
+lftp_mirror:
 	cd $(lftp_output_dir); 														\
-	if [ -z "$(lftp_user)" ]; then 												\
-		if [ "$(lftp_mode)" == "mirror" ]; then 								\
-			lftp $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;		\
-		else 																	\
-			lftp -e "get $(lftp_url); exit";									\
-		fi ;																	\
-	else 																		\
-		if [ "$(lftp_mode)" == "mirror" ]; then 								\
-			lftp -u $(lftp_user),$(lftp_pass) $(lftp_url) 						\
-				 -e "mirror -nrL -I $(lftp_pattern); exit" ;					\
-		else 																	\
-			lftp -u $(lftp_user),$(lftp_pass) -e "get $(lftp_url); exit";		\
-		fi ;																	\
-	fi
+		lftp $(lftp_au) $(lftp_url) 									\
+			-e "mirror -nrL -I $(lftp_pattern); exit" ;
 	if [ "$(lftp_timestamp)" == "F" ]; then 									\
 		touch lftp ;															\
 	fi
+
+.PHONY: lftp_get
+lftp_get:
+	cd $(lftp_output_dir); 														\
+		lftp $(lftp_au) -e "get $(lftp_url); exit";
+
+.PHONY: lftp_dos2unix
+lftp_dos2unix:
 	if [ "$(run_dos2unix)" == "T" ]; then 										\
 		find . -type f $(fexcl) | xargs -n 100 dos2unix -k ;					\
 	fi

@@ -91,9 +91,13 @@ def confChange(mode, args):
             oper = "+="
             
         for k,v in incomingArgs:
-            G.write("%s%s%s\n" % (k, oper, v))
-            l.debug("writing: %s%s%s to moa.mk" % (k, oper, v))
+            if v:
+                G.write("%s%s%s\n" % (k, oper, v))
+                l.debug("writing: %s%s%s to moa.mk" % (k, oper, v))
+            else:
+                l.debug("removing key %s" % k)
+
         F.close()
         G.close()
-        os.remove('moa.mk.tmp')
+        os.unlink('moa.mk.tmp')
     

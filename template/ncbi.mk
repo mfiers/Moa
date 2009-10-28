@@ -60,7 +60,7 @@ getFromNcbi_post:
 getFromNcbi: tmp.fasta
 	if [[ -n "$(ncbi_sequence_name)" ]]; then 								\
 		cat tmp.fasta 														\
-			| sed "s/^>.*$/>$(ncbi_sequence_name)/"							\
+			| sed "s/^>.*$$/>$(ncbi_sequence_name)/"							\
 			| fastaSplitter -f - -n 1 -o fasta;								\
 	else																	\
 		fastaSplitter -f tmp.fasta -o fasta;								\

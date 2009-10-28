@@ -18,7 +18,7 @@
 # 
 moa_ids += blastdb
 moa_title_blastdb = Create a BLAST database 
-moa_blastdb_help = Takes either a set of fasta files or a single	\
+blastdb_help = Takes either a set of fasta files or a single	\
   multi-fasta input file and creates a BLAST database.
 
 moa_must_define += bdb_name
@@ -26,13 +26,14 @@ bdb_name_help = Database name to create.
 
 moa_may_define += bdb_input_dir bdb_input_extension bdb_fasta_file
 bdb_input_dir_help = Dir with the input fasta files, defaults to ./fasta
-bdb_input_dir_default_attrib = fastadir
+bdb_input_dir_type = dir
 bdb_input_extension_help = extension of the input sequence files, defaults to fasta
 bdb_fasta_file_help = The file with all FASTA sequences for the blastdb		\
   concatenated. This can be used as an alternative to defining			\
   "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your	\
   sequences are already in a single file, then using this parameter		\
   prevents duplication of that file.
+bdb_fasta_file_type = file
 
 #Variable: protein
 moa_may_define += bdb_protein 
@@ -43,7 +44,6 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 # End of the generic part - from here on you're on your own :)
 
-bdb_input_dir ?= ./fasta
 bdb_input_extension ?= fasta
 
 bdb_doconcat = F

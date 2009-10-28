@@ -28,25 +28,33 @@ parser.add_option('-r', '--reference', dest='refgff',
                   help = 'reference gff, to map the other gff file on')
 parser.add_option('-a', '--add', dest='addgff',
                   help = 'the gff to add to the reference gff file')
+parser.set_defaults(outfile= '-')
 parser.add_option('-o', '--output', dest='outfile',
-                  help = 'output file')
-parser.add_option('-f', '--feature', dest='feature',
-                  help="apply to features of this type")
-parser.add_option('-s', '--source', dest='source',
+                  help = 'output file, defaults to stdout')
+
+parser.add_option('-f', '--featureRef', dest='featureRef',
+                  help="apply to features of the reference set of this type")
+parser.add_option('-s', '--sourceRef', dest='sourceRef',
                   help="apply to features of this source")
+
+parser.add_option('-g', '--featureAdd', dest='featureAdd',
+                  help="add only features of type to the reference set")
+
+parser.set_defaults(clearAttribs = [])
 parser.add_option('-c', '--clearAttribs', dest='clearAttribs', action="append",
                   help="remove all these attributes from the reference set before adding")
 
 parser.add_option('-R', '--regex', dest='regex',
                   help='regex to apply to each line in the gff to be added' +
                   'to determine how to match the reference gff')                  
-parser.add_option('-X', '--appendRe', dest='appendRe',
-                  help='regex that determines what to append to the attribs of the reference')
-parser.add_option('-Y', '--appendSub', dest='appendSub',
-                  help='subst string that determines what to append to the attribs of the refgff')
-parser.set_defaults(appendString="")
-parser.add_option('-Z', '--appendString', dest='appendString',
-                  help='append this string to the end of each line')
+
+parser.set_defaults(appendKey='Note')
+parser.add_option('-X', '--appendKey', dest='appendKey',
+                  help='Key of the added attribute')
+
+parser.set_defaults(appendVal='"blast hit: %(Note)s"')
+parser.add_option('-Y', '--appendVal', dest='appendVal',
+                  help='Value of the added attribute')
 
 parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                   help="verbose output")
@@ -62,16 +70,9 @@ else:
                         format = "%(levelname)s - %(message)s")
 l = logging 
 
-if options.regex:
-    core = re.compile(options.regex)
-else:
-    core = None
 
-if options.appendRe:
-    apre = re.compile(options.appendRe)
-    l.debug("compiling append regex %s"% options.appendRe)
-else:
-    apre = None
+class DUMMY:
+    pass
 
 class GFFRECORD:
     IDFINDER = re.compile(r'ID=([^;]*)')
@@ -81,7 +82,9 @@ class GFFRECORD:
         self.line = line
         
         ls = line.split("\t")
-        if len(ls) == 9:
+        if len(ls) != 9:
+            self._type = "string"
+        else:
             self._type = "record"
             self.ref = ls[0]
             self.source = ls[1]
@@ -91,43 +94,46 @@ class GFFRECORD:
             self.score = ls[5]
             self.strand = ls[6]
             self.frame = ls[7]
-            self.attribs = {}
+            self.attriblist = []
             
             lexer = shlex.shlex(ls[8])
             lexer.whitespace=';'
             lexer.whitespace_split=True
             for token in lexer:
-                key, val = token.split('=', 1)
-                #l.debug("found '%s' == '%s'" % (key, val))
-                if not self.attribs.has_key(key): self.attribs[key] = []
-                self.attribs[key] += val
-            
-        else:
-            self._type="string"
+                _key, _val = token.split('=', 1)
+                if _key not in clearAttribs:
+                    self.addAttribute(_key, _val)
+                    
+    def addAttribute(self, _key, _val):
+        """
+        Add an attribute to the record
+        """
+        _key = _key.strip()
+        _val = _val.strip()
+        if _val[0] in ['"',"'"]: _val = _val[1:]
+        if _val[-1] in ['"',"'"]: _val = _val[:-1]
+        _val = _val.replace('"',"'")
 
-        if clearAttribs and self._type == 'record':
-            for _a in clearAttribs:
-                l.info("clear attrib %s" % _a)
-                x = self.attribs
-                self.attribs = re.sub(
-                    r'%s.*?;' % _a, '', self.attribs)
-                if self.attribs != x:
-                    l.info("Something changed!!!!")
-    
-    def _processAttribs(self, attribString):
-        ls = attribString.split(';')
-        for item in ls:
-            print item
-        sys.exit()
+        if not self.__dict__.has_key(_key):
+            self.__dict__[_key] = _val
+            self.attriblist.append(_key)
+        else:
+            if type(self.__dict__[_key]) != type([]):
+                self.__dict__[_key] = [self.__dict__[_key], _val]
+            else:
+                self.__dict__[_key].append(_val)
         
     def __str__(self):
         if self._type == "record":
             a = []
-            if self.attribs.has_key['ID']:
-                a.append('ID=%s' % self.attribs['ID'][0])
-            for k in self.attribs.keys():
+            if 'ID' in self.attriblist:
+                a.append('ID=%s' % self.__dict__['ID'])
+            for k in self.attriblist:
                 if k == 'ID': continue
-                a.append("%s=%s" % (k, ",".join(self.attribs[k])))
+                v = self.__dict__[k]
+                if type(v) == type([]):
+                    v = ",".join(v)
+                a.append("%s=%s" % (k, v))
             return "\t".join([
                 self.ref, self.source, self.feature,
                 str(self.start), str(self.stop),
@@ -138,24 +144,13 @@ class GFFRECORD:
 
 class GFFINDEX:
     def __init__(self, key):
-        if key in ['ref', 'source', 'feature', 'start', 'stop', 'score', 
-                   'strand', 'frame']:
-            self.isAttrib = False
-        else:
-            self.isAttrib = True
         self.keyName = key
         self.d = {}
         
     def add(self, rec):
-        if self.isAttrib:
-            ks = rec.attribs[self.keyName]
-            for k in ks:
-                if not self.d.has_key(k): self.d[k] = []
-                self.d[k].append(rec)
-        else:    
-            k = rec.__dict__[self.keyName]
-            if not self.d.has_key(k): self.d[k] = []
-            self.d[k].append(rec)
+        k = rec.__dict__[self.keyName]
+        if not self.d.has_key(k): self.d[k] = []
+        self.d[k].append(rec)
 
     def get(self, k):
         return set(self.d.get(k, []))
@@ -165,7 +160,6 @@ class GFFINDEX:
         
 class GFFSET:
     def __init__(self, fileName, indici=['ref'], clearAttribs=[]):
-
         """
         clearAttribs : remove these attributes directly after loading
         """
@@ -223,53 +217,63 @@ class GFFSET:
         F.close()
 
 
-
+l.debug("start loading reference set")
 refset = GFFSET(options.refgff, indici=['ID', 'feature'],
                 clearAttribs=options.clearAttribs)
 refset.report()
 
-#read the add-set
+#read the add-to-set
+l.debug("start loading the add-set")
 addset = GFFSET(options.addgff, indici=['ref'])
 addset.report()
 
 querybase = {}
-if options.feature:
-    querybase['feature'] =  options.feature
-if options.source:
-    querybase['source'] =  options.feature
+if options.featureRef:
+    querybase['feature'] =  options.featureRef
+if options.sourceRef:
+    querybase['source'] =  options.sourceRef
 
 l.debug("querybase %s" % querybase)
 
 i = 0
+appK = options.appendKey
+
 for rec in addset.getRecords():
+    if options.featureAdd and rec.feature != options.featureAdd:
+        l.debug("ignoring %s" % (str(rec)[:80]))
+        continue
+
+    appV = options.appendVal % rec.__dict__
+    l.debug("appending %s -  %s" % (appK, appV))
+
+    if i < 100:
+        l.debug("%s" % rec)
+        for a in rec.attriblist:
+            l.debug("  a - %s = %s" % (a, rec.__dict__[a]))
+
     query = copy.copy(querybase)
     i += 1;
     if i % 180 == 0:
         l.info("processed %d records" % i)
 
-    if core:
-        xx = core.search(rec.line)
-        if xx: query.update(xx.groupdict())
-
-    l.debug("adding")
-    l.debug(rec)
-
-    #appendStr = options.appendString
-    #if apre:
-    #    appendStr += apre.sub(options.appendSub, rec.line)
-
+    query['ID'] = rec.ref
+    
     l.debug("query %s" % (query))
-    #l.debug("append %s" % (appendStr))
         
     for r in refset.search(**query):
-        l.debug("appending %s to %s" % (appendStr, r.ref))
-        l.debug("to")
-        l.debug("%s" % r)
-        #r.attribs += appendStr
+        r.addAttribute(appK, appV)
+        l.debug("appending to")
+        l.debug("     %s" % (r))
 
-F = open(options.outfile, 'w')
+if options.outfile == '-':
+    F = sys.stdout
+else:
+    F = open(options.outfile, 'w')
+
 for r in refset.records:
     F.write("%s\n"%r)
-F.close()
+
+if options.outfile != '-':
+    F.close()
     
 

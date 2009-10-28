@@ -31,6 +31,9 @@ include $(shell echo $$MOABASE)/template/gmsl
 ## Load moa wide configuration
 include $(shell echo $$MOABASE)/etc/moa.conf.mk
 
+## Files that moa uses
+moa_system_files = Makefile moa.mk moa.archive 
+
 ## some help variables
 warn_on := \033[0;41;37m
 warn_off := \033[0m
@@ -44,6 +47,7 @@ moawarn := \033[0;43 m>>\033[0m
 echo = echo -e "$(moamark) $(1)"
 warn = echo -e "$(moawarn) $(1)"
 errr = echo -e "$(moaerrr) $(1) $(moaerrr)"
+exer = echo -e "$(moaerrr) $(1) $(moaerrr)"; exit -1
 
 
 ## default variables used in generating help
@@ -346,16 +350,29 @@ prereq_moa_environment:
 .PHONY: check
 check: moa_check 
 
-moa_var_checklist := $(addprefix checkvar_, $(moa_must_define))
+moa_var_mustexists := $(addprefix mustexist_, $(moa_must_define))
+moa_var_checkall := $(addprefix varcheck_, $(moa_must_define) $(moa_may_define))
+
 
 .PHONY: moa_check
-moa_check: moa_check_lock prereqs $(moa_var_checklist)
+moa_check: moa_check_lock prereqs $(moa_var_mustexists) $(moa_var_checkall)
 	@$(call echo, Check - everything is fine)
 
-.PHONY: checkvar_%
-checkvar_%:
-	@if [ "$(origin $(subst checkvar_,,$@))" == "undefined" ]; then \
-		$(call errr, Error $(subst checkvar_,,$@) is undefined) ;\
+moa_var_check_dir:=[[ -d "$(2)" ]] || $(call exer,$(1)=$(2) is not a directory)
+moa_var_check_file:=[[ -f "$(2)" ]] || $(call exer,$(1)=$(2) is not a file)
+
+.PHONY: $(moa_var_all)
+varcheck_%: chtargets=
+varcheck_%: 
+	@$(foreach v,$($*_type),$(ifneq("$($*)",""), $(call echo,checking $*);$(call moa_var_check_$(v),$*,$($*)), \
+			$(call warn,$* is undefined)))
+
+
+
+.PHONY: $(moa_var_mustexists)
+mustexist_%:
+	@if [ "$(origin $*)" == "undefined" ]; then \
+		$(call errr, Error is undefined) ;\
 		exit -1; \
 	fi
 

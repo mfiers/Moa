@@ -82,8 +82,12 @@ moa_may_define += blast_nohits
 blast_nohits_help = number of hits to report
 
 moa_may_define += blast_nothreads
-blast_nothreads_help = threads to run blast with (note the \
-	overlap with the Make -j parameter)
+blast_nothreads_help = threads to run blast with (note the overlap				\
+	with the Make -j parameter)
+
+moa_may_define += blast_gff_blasthit
+blast_gff_blasthit_help = (T,**F**) - export an extra blasthit feature			\
+  to the created gff, grouping all hsp (match) features.
 
 #preparing for gbrowse upload:
 gup_gff_dir = ./gff
@@ -97,6 +101,7 @@ blast_program ?= blastn
 blast_input_extension ?= fasta
 blast_nohits ?= 100
 blast_nothreads ?= 1
+blast_gff_blasthit ?= F
 
 ifdef blast_main_phase
   blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
@@ -133,7 +138,6 @@ blast_test:
 #echo Main target for blast
 .PHONY: blast
 blast: $(blast_gff_files)
-	@echo "Done blasting!"
 
 #prepare for blast - i.e. create directories
 .PHONY: blast_prepare
@@ -144,10 +148,10 @@ blast_prepare:
 .PHONY: blast_post
 blast_post: blast_report
 
-# Convert to GFF (forward)
+# Convert to GFF
 gff/%.gff: out/%.xml
 	@echo "Create gff $@ from $<"
-	cat $< | blast2gff -s $(blast_gff_source) -d query > $@
+	cat $< | blast2gff -b $(blast_gff_blasthit) -s $(blast_gff_source) -d query > $@
 
 # create out/*xml - run BLAST 
 out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(single_blast_db_file)
@@ -162,6 +166,7 @@ out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(single_blast_db_file)
 # creating the blastreport can only be executed when 
 # all blasts are done
 blast_report: $(blast_output_files)
+	$(call echo,Creating blast reprt);
 	blastReport out/ -o $@
 
 blast_clean:
