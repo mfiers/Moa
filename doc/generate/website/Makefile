@@ -5,7 +5,6 @@ include $(shell echo $$MOABASE)/etc/moa.conf.mk
 introduction_title = Introduction
 installation_title = Installation
 using_title = Using Moa
-couchdb_title = Using Couchdb with Moa
 gbrowse_title = Using GBrowse with Moa
 extending_title = Extending Moa
 
@@ -14,7 +13,6 @@ chapters =						\
 	introduction.html 			\
 	installation.html  			\
 	using.html 					\
-	couchdb.html 				\
 	gbrowse.html 				\
 	extending.html				\
 	reference.html
@@ -42,7 +40,7 @@ imagesao: moa.css images/moa_logo_small.png  images/moa_logo_smaller.png
 		>> $@
 	cat footer.html >> $@
 
-notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk
+notemplate=__moaBase.mk moaBase.mk __moaBaseHelp.mk __upload2gbrowse.mk
 templates=$(patsubst %.mk,%,								\
 				$(sort $(filter-out $(notemplate),			\
 					$(notdir $(wildcard 					\
