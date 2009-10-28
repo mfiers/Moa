@@ -36,7 +36,6 @@
                  <a href="installation.html">Installation</a><br>
                  <a href="using.html">Usage</a><br>
                  <a href="gbrowse.html">Gbrowse</a><br>
-                 <a name="chapter_couchdb" href="couchdb.html">Couchdb</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
 			  </div>
@@ -47,11 +46,23 @@
 			
 <h1 id="chapterTitle">Introduction</h1>
 <p
->'' NOTE '' Both the software and the manual are still under heavy development.</p
+><strong
+  >NOTE:</strong
+  > both the software and the manual are under heavy development. Expect things to be incomplete or change.</p
 ><p
->Moa is a set of tools build with and around GNU Make  that allows you to use GNU make to run bioinformatics pipelines.</p
+>Moa is a set of tools build around <a href="http://www.gnu.org/software/make"
+  >GNU make</a
+  >  that facilitates the use of GNU make in bioinformatics data analysis.</p
 ><p
->GNU Make is an excellent tool to automate repeated execution of a set of programs, and is mainly used in the automated compilation of software. Gnu make determines how a file is created, what it's dependencies are, and what needs to be executed. Gnu Make uses so called Makefiles to describe a project. A bioinformatics project is often of the same form as compiling software.</p
+>GNU Make is developed to aid in compilation of software. Software compilation usually involves the execution of many preprocessing, compilation and linker steps, potentially with differing parameters and interdepending of each other.</p
+><p
+>Gnu make goes about a compilation process by describing what target files are to be created, on what source files or libraries the build is depending and how the target needs to be build. If a dependency needs to be compiled before it can be used for the final target file, its building process can be described as well (and so no). In big projects, this might result in thousands of files that are processed in the correct order. Moreover, Gnu Make is intelligent enough to repeat only the affected part of the build process if one or a few source files are changed.</p
+><p
+>The description that Gnu Make uses to execute software compilation is called a Makefile. The syntax of a Makefile is not only flexible enough to allow Gnu Make to be used with a wide variety of programming languages, but it can be used to automate any series of commands (as long as they can be executed from the command line). It is therefore a good idea to use Gnu Make in bioinformatics projects (see: )</p
+><p
+>A bioinformatics analysis often takes the form of a set of interdepending analyses, i.e..</p
+><p
+>...</p
 ><p
 >Moa wraps a set of common bioinformatics tools as Makefiles. Using Moa gives you a:</p
 ><ul
@@ -61,15 +72,15 @@
     ></li
   ><li
   ><p
-    >An easy way to track and repeat a set of analyses. With Moa pipelines are build in a uniform way and</p
+    >An easy way to track and repeat a set of analyses. Using Moa makes the creation of organized analysis structures easy.</p
     ></li
   ><li
   ><p
-    >Interaction; templates are designed to interact with each other, hence make it easy to build pipelines from these buliding blocks.</p
+    >Interaction; templates are designed to interact with each other and make it easy to build pipelines using the Moa makefiles as building blocks.</p
     ></li
   ><li
   ><p
-    >Parallel execution; Gnu make facillitates parallel execution of jobs.</p
+    >Parallel execution; Gnu make facillitates (limited) parallel execution of jobs. There is nothing however, that prevents integrations with a third party cluster solution such as Hadoop or SGE.</p
     ></li
   ></ul
 ><p
@@ -87,20 +98,18 @@
   ><p
     >Additional helper scripts; several of the template files require helper scripts that are part of the moa package.</p
     ></li
-  ><li
-  ><p
-    >Couchdb interface; Moa is able to store information on each job in a couchdb. See chapter XX.</p
-    ></li
   ></ul
 ><div id="example-session"
 ><h2
   >Example session</h2
   ><p
-  >To really understand how easy it is to use Moa, a sample session. We'll start by downloading some data to analyse from NCBI. First, we'll create a few directories to get started:</p
+  >To really understand how to use Moa, and how easy it is to do so, a sample session will be helpful.</p
+  ><p
+  >We'll start by creating directories to hold the data and analysis structure:</p
   ><pre
   ><code
-    >mkdir sample
-cd sample
+    >mkdir introduction
+cd introduction
 mkdir 10.download
 cd 10.download
 </code
@@ -108,9 +117,9 @@ cd 10.download
   ><p
   >We've created a directory called <code
     >sample</code
-    > to store the complete analysis in. In this directory we'll start to organize the components of our sample analysis. Most pipelines are sequential. Moa doesn't try to enforce this, but expects the user to organize this using a logical directory structure. Hence, the directory describing the first step - downloading data from NCBI - is prefixed with a <code
+    > to store the complete analysis structure. Within this directory we'll start to organize the components of our sample analysis. Moa doesn't enforce a sequential organizaiton of an analysis pipeline, but expects the user to do this by using a logical directory structure. Hence, the directory describing the first step - downloading data from NCBI - is prefixed with a <code
     >10.</code
-    >.</p
+    >. Other, later steps will use higher numbers.</p
   ><pre
   ><code
     >mkdir 10.genome
@@ -119,7 +128,7 @@ cd 10.download
   ><p
   >In the <code
     >10.download</code
-    > directory we do the same thing; Create numbered directories to enforce organization. We'll now go to the <code
+    > directory we repeat this; Create numbered directories to enforce organization. We'll now go to the <code
     >10.genome</code
     > directory and actually use Moa to download something from NCBI.</p
   ><pre
@@ -131,9 +140,7 @@ moa new getFromNcbi
   ><p
   >The utility script <code
     >moa</code
-    > is used in occasions where direct interaction with GNU Make is not possible (yet). In this case the <code
-    >moa</code
-    > script creates our first Moa makefile. Whenever there is a Moa makefile you can type <code
+    > is used in occasions where direct interaction with GNU Make is not possible (yet). In this case the &quot;moa&quot; script creates our first Moa makefile. Whenever there is a Moa makefile you can type <code
     >make help</code
     >. Apart from some introduction, you'll get see some targets and parameters.</p
   ><p
@@ -145,21 +152,21 @@ moa new getFromNcbi
   ><p
   >If you try to run <code
     >make</code
-    > now, you'll get an error!. Thas is because you haven't told Moa yet what you want to download. This is done by setting a few parameters. <code
+    > now, you'll get an error!. This is because you haven't told Moa yet what you want to download. You can do that by setting a few parameters. <code
     >make help</code
-    > gives you an overview of all parameters that you can set. Moa distinguishes between required and optional parameters. Optional parameters can usually be guessed or are set to reasonable default values. In the case of the &quot;getFromNcbi&quot; Makefile, there are two parameters that need setting: <code
+    > gives you an overview of all parameters that you can set. Moa distinguishes between required and optional parameters. Optional parameters can usually be guessed or are set to reasonable default values. In the case of the &quot;getFromNcbi&quot; Makefile, there are two parameters that really need to be set: <code
     >ncbi_db</code
     > and <code
     >ncbi_query</code
-    >. The easiest way to find out what these are is by doing a query on the NCBI website and browse until you have the page with data you're looking for. In this case, we will download an <strong
+    >. In this case, it is possible to discover what these are by doing a query on the NCBI website and browse until you have the page with data you're looking for. In this case, we will are going to download a <strong
     ><em
       >Lactobacillus</em
       ></strong
     > genome from <a href="http://www.ncbi.nlm.nih.gov/nuccore/NC_012214"
     >NCBI</a
-    >. If you inspect the URL (<code
+    >. Upon inspection of the URL (<code
     >http://www.ncbi.nlm.nih.gov/nuccore/NC_012214</code
-    >) it is easy to identify the two parameters that need to be set:</p
+    >) it is straightofrward identify the two parameters that need to be set:</p
   ><pre
   ><code
     >make set ncbi_db=nuccore
@@ -167,7 +174,7 @@ make set ncbi_query=NC_004567
 </code
     ></pre
   ><p
-  >If you execute these two commands, nothing seems to happen. You can, however, check what parameters are set by running:</p
+  >Executing these two commands do not appear to do anything. You can, however, check what parameters are set by running:</p
   ><pre
   ><code
     >make show
@@ -190,7 +197,7 @@ project
     >:</p
   ><pre
   ><code
-    >make set jid=download.lactobacillus.genome
+    >make set jid=lactobacillus.genome
 </code
     ></pre
   ><p
@@ -225,6 +232,7 @@ moa new lftp
   ><pre
   ><code
     >make set lftp_url=ftp://ftp.ncbi.nlm.nih.gov/sra/static/SRX002/SRX002375/SRR011133.fastq.gz
+make set jid=lactobacillus.454.reads
 </code
     ></pre
   ><p
@@ -266,7 +274,7 @@ make set g_input_pattern=*.gz
 </div>
 </div>
   
-<p>&nbsp;</p><div class="footer_text" id="footer"> © 2008 PLANT &amp; FOOD RESEARCH | <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a></div>
+<p>&nbsp;</p><div class="footer_text" id="footer">&copy 2009 PLANT &amp; FOOD RESEARCH | <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a></div>
 </div>
 </div></center>
 

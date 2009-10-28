@@ -1,3 +1,8 @@
+pre {
+	border-left: 2px solid black;
+	margin-left: 20px;
+	padding-left: 5px;
+}
 html {
 	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif, "Lucida Sans";
 }

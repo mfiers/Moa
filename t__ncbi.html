@@ -44,15 +44,17 @@
 		  <div id="center_content">
 			<div id="homepage_container">
 			
-<h1 id="chapterTitle">bowtiedb.mk</h1>
-<div id="targets"
+<h1 id="chapterTitle">ncbi.mk</h1>
+<p
+>Download a set of sequences from NCBI based on a query string (ncbi_query) and database (ncbi_db). This tempate will run only once (!), after a succesful run it creates a 'lock' file that you need to remove to rerun</p
+><div id="targets"
 ><h1
   >Targets</h1
   ><dl
   ><dt
     >(empty)</dt
     ><dd
-    >Leaving the target unspecified executes the default target(s): (bowtiedb)</dd
+    >Leaving the target unspecified executes the default target(s): (getFromNcbi)</dd
     ><dt
     >clean</dt
     ><dd
@@ -61,9 +63,11 @@
     >all</dt
     ><dd
     >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
+    ><dt
+    >getFromNcbi</dt
+    ><dd
+    >Downloads from NCBI</dd
     ></dl
-  ><p
-  >bowtiedb :</p
   ></div
 ><div id="parameters"
 ><h1
@@ -73,13 +77,13 @@
     >Required parameters</h2
     ><dl
     ><dt
-      >bowtiedb_input_dir</dt
+      >ncbi_db</dt
       ><dd
-      >The reference sequence to build a bowtie database with.</dd
+      >NCBI database (for example nucest)</dd
       ><dt
-      >bowtiedb_name</dt
+      >ncbi_query</dt
       ><dd
-      >Name of the bowtie index to create</dd
+      >NCBI query (for example txid9397[Organism%3Aexp])</dd
       ><dt
       >title</dt
       ><dd
@@ -91,9 +95,9 @@
     >Optional parameters</h2
     ><dl
     ><dt
-      >bowtiedb_input_extension</dt
+      >ncbi_sequence_name</dt
       ><dd
-      >Extension of the input files, defaults to 'fasta'</dd
+      >Sequence name to download. When this parameter is set, the template assumes that only one sequence is to be downloaded, the rest will be discarded.</dd
       ><dt
       >moa_precommand</dt
       ><dd
