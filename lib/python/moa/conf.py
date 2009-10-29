@@ -93,9 +93,9 @@ def confChange(mode, args):
         for k,v in incomingArgs:
             if v:
                 G.write("%s%s%s\n" % (k, oper, v))
-                l.debug("writing: %s%s%s to moa.mk" % (k, oper, v))
+                l.info("set %s %s %s" % (k, oper, v))
             else:
-                l.debug("removing key %s" % k)
+                l.info("removing %s" % k)
 
         F.close()
         G.close()

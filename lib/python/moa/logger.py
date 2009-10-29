@@ -23,14 +23,11 @@ import logging
 
 l = logging.getLogger('moa')
 handler = logging.StreamHandler()
-logmark = chr(27) + '[0;41m ' + \
-          chr(27) + '[43m ' + \
-          chr(27) + '[41m ' + \
+logmark = chr(27) + '[0;44mU' + \
           chr(27) + '[0m ' 
 
 formatter = logging.Formatter(
-    logmark + chr(27) + '[0;1m%(levelname)-8s' + 
-    chr(27) + '[0m %(asctime)-24s %(message)s')
+    logmark + '%(message)s')
 
 handler.setFormatter(formatter)
 l.addHandler(handler)
