@@ -1,6 +1,5 @@
-
-**NOTE:** both the software and the manual are under heavy
-development. Expect things to be incomplete or change.
+**NOTE: both the software and the manual are under heavy
+development. Expect things to change.**
 
 Moa is a set of tools build around [GNU
 make](http://www.gnu.org/software/make) \citep{Gnumake} that
@@ -8,28 +7,36 @@ facilitates the use of GNU make in bioinformatics data analysis.
 
 GNU Make is developed to aid in compilation of software. Software
 compilation usually involves the execution of many preprocessing,
-compilation and linker steps, potentially with differing
-parameters and interdepending of each other. 
+compilation and linker steps, with different parameters and
+interdependent of each other.
 
-Gnu make goes about a compilation process by describing what target
-files are to be created, on what source files or libraries the build
-is depending and how the target needs to be build. If a dependency
-needs to be compiled before it can be used for the final target file,
-its building process can be described as well (and so no). In big
-projects, this might result in thousands of files that are processed
-in the correct order. Moreover, Gnu Make is intelligent enough to
-repeat only the affected part of the build process if one or a few
-source files are changed.
+Gnu make is able to compile tens of thousands of files in large
+software projects through a detailed description of exactly what
+target files are to be created; from what source files; in what order;
+and using which libraries. If, during development, a few source files
+have changed, Gnu Make is able to repeat only the affected part of the
+build process.
 
-The description that Gnu Make uses to execute software compilation is
-called a Makefile. The syntax of a Makefile is not only flexible
-enough to allow Gnu Make to be used with a wide variety of programming
-languages, but it can be used to automate any series of commands (as
-long as they can be executed from the command line). It is therefore a
-good idea to use Gnu Make in bioinformatics projects (see: )
+The description, used by Gnu Make, that describes the build process is
+called a Makefile. The syntax of a Makefile is flexible enough to
+allow Gnu Make to be used for practically any programming
+language. Moreover, Gnu Make can be used to automate any series of
+commands (as long as they can be executed from the command line). It
+is therefore not only possible, but an excellent idea (not mine), to
+use Gnu Make in bioinformatics projects (see: X, Y, Z)
 
-A bioinformatics analysis often takes the form of a set of
-interdepending analyses, i.e..
+A bioinformatics analysis is often a set of interdependent, standard,
+steps (rather like compiling software). For example: (1) You take a
+piece of genomic DNA; (2-4) perform a set of gene predictions; (5)
+integrate the predictions and (6) run BLAST on the predicted genes.
+
+There are, apart from using Makefiles, many different ways to automate
+this [refs..], each with its own perks. A surprising number of
+bioinformaticians, however, use either the command line or small,
+tailor-made, scripts since that gives them ultimate flexibility. Using
+scripts has as advantage that it is easy to repeat an analysis by
+rerunning the script. Such a script could be written in any language
+(Bash, Perl, Python) but could also be a custom Makefile.
 
 ...
 
@@ -37,17 +44,20 @@ Moa wraps a set of common bioinformatics tools as Makefiles. Using Moa
 gives you a:
 
 * A uniform interface; all Moa makefiles use a central library that
-	provides a uniform, command line, interface to configuring and
-	executing jobs. 
+  provides a uniform, command line, interface to configuring and
+  executing jobs.
 
 * An easy way to track and repeat a set of analyses. Using Moa makes
- the creation of organized analysis structures easy.
+  the creation of organized analysis structures easy.
 
 * Interaction; templates are designed to interact with each other and
-  make it easy to build pipelines from these buliding blocks.
+  make it easy to build pipelines using the Moa makefiles as building
+  blocks.
 
-* Parallel execution; Gnu make facillitates parallel execution of
-    jobs.
+* Parallel execution; Gnu make facillitates (limited) parallel
+  execution of jobs. There is nothing however, that prevents
+  integrations with a third party cluster solution such as Hadoop or
+  SGE.
  
 Apart from a set of template Makefiles, the Moa contains several other
 
@@ -59,13 +69,9 @@ Apart from a set of template Makefiles, the Moa contains several other
 * Additional helper scripts; several of the template files require
 	helper scripts that are part of the moa package.
 
-* Couchdb interface; Moa is able to store information on each job in a
-	couchdb. See chapter XX.
-
 ## Example session 
 
-To really understand how to use Moa, and how easy it is to do so, a
-sample session will be helpful. 
+The best way to understand how to use Moa is a sample session.
 
 We'll start by creating directories to hold the data and analysis
 structure:
@@ -75,54 +81,47 @@ structure:
     mkdir 10.download
     cd 10.download
 
-We've created a directory called `sample` to store the complete
-analysis structure. Within this directory we'll start to organize the
-components of our sample analysis. Moa doesn't enforce a sequential
-organizaiton of an analysis pipeline, but expects the user to do this
-by using a logical directory structure. Hence, the directory
-describing the first step - downloading data from NCBI - is prefixed
-with a `10.`. Other, later steps will use higher numbers.
+We've created a directory called `introduction` to store the
+introductory tutorial. Within this directory we'll organize the
+components of our sample analysis. Moa doesn't enforce any
+organization your analysis pipeline, but expects the user to do so.
+An easy way to do this is by employing a logical directory
+structure. Hence, the directory describing the first step in our
+analysis, downloading data from NCBI, is prefixed with a `10.`. Later
+steps will use higher numbers. 
+
+We have will now created a new folder to hold a genome sequence we are
+about to download and set up the Moa makefile to actually do the
+download.
 
     mkdir 10.genome
-
-In the `10.download` directory we repeat this; Create numbered
-directories to enforce organization. We'll now go to the `10.genome`
-directory and actually use Moa to download something from NCBI.
-
     cd 10.genome
-    moa new getFromNcbi
+    moa new 'download ecoli from NCBI' ncbi
 	
-The utility script `moa` is used in occasions where direct interaction
-with GNU Make is not possible (yet). In this case the "moa" script
-creates our first Moa makefile. Whenever there is a Moa makefile you
-can type `make help`. Apart from some introduction, you'll get see
-some targets and parameters.
+Note that we use the a utility script called `moa`. This script takes
+some general tasks around running Moa that cannot be done using
+Makefiles. In this case, calling `moa new` a Moa Makefile is
+created. The arguments of `moa new` are a (descriptive) title and
+`ncbi`. The latter defining a template Makefile that describes how to
+download data from NCBI. 
 
-Targets are things that a Moa makefile can do. You can use GNU Make to
-execute one of these target by running `Make TARGET`. Each Moa
-makefile usually has one main task (in this case, download data from
-NCBI). That main task is alway executed by running Make without a
-target defined (i.e. `make`). 
+Before you can execute the Makefile you have to set parameters telling
+Moa what you want to download. Running `make help` gives you an
+overview of all the parameters that you can set. In the case of an
+`ncbi` Moa Makefile, there are two parameters that really need to be
+set: `ncbi_db` and `ncbi_query`. The other variables can be guessed.
 
-If you try to run `make` now, you'll get an error!. This is because
-you haven't told Moa yet what you want to download. You can do that by
-setting a few parameters. `make help` gives you an overview of all
-parameters that you can set. Moa distinguishes between required and
-optional parameters. Optional parameters can usually be guessed or are
-set to reasonable default values. In the case of the "getFromNcbi"
-Makefile, there are two parameters that really need to be set:
-`ncbi_db` and `ncbi_query`. In this case, it is possible to discover
-what these are by doing a query on the NCBI website and browse until
-you have the page with data you're looking for. In this case, we will
-are going to download a ***Lactobacillus*** genome from
-[NCBI](http://www.ncbi.nlm.nih.gov/nuccore/NC_012214). Upon inspection
-of the URL (`http://www.ncbi.nlm.nih.gov/nuccore/NC_012214`) it is
-straightofrward identify the two parameters that need to be set:
+Values for these parameters can, in this case, be found on the NCBI
+website. Once you have a found a sequence the parameters can be
+extracted from the URL. In this case, we will download a
+***Lactobacillus*** genome from
+[NCBI](http://www.ncbi.nlm.nih.gov/nuccore/NC_012214). The URL
+(`http://www.ncbi.nlm.nih.gov/nuccore/NC_012214`) reveals the two
+parameters necessary. They can be set with the following command:
 
-    make set ncbi_db=nuccore
-    make set ncbi_query=NC_004567
+    make set ncbi_db=nuccore ncbi_query=NC_004567
 
-Executing these two commands do not appear to do anything. You can,
+Nothing appears to have happened
 however, check what parameters are set by running:
 
     make show

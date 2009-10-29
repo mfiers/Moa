@@ -9,7 +9,6 @@ chapters = 						\
 	introduction.tex 			\
 	installation.tex  			\
 	using.tex 					\
-	couchdb.tex 				\
 	gbrowse.tex 				\
 	extending.tex				\
 	reference.tex				\
@@ -67,7 +66,6 @@ clean:
 		makefiles.tex 		\
 		manual.tex			\
 		reference.tex		\
-		couchdb.tex 		\
 		executing.tex		\
 		installation.tex 	\
 		extending.tex  		\
