@@ -29,6 +29,7 @@ import os
 import sys
 import site
 import optparse
+import subprocess
 
 #moa specific libs - first prepare for loading libs
 if not os.environ.has_key('MOABASE'):
@@ -69,11 +70,11 @@ Commands:
 
 New Moa makefiles:
 
-  new: moa SensibleTitle TEMPLATE1, TEMPLATE2, ...
+  new: moa new -t 'SensibleTitle' -p ProjectName TEMPLATE1 ...
 
     Generate a new makefile based on the template names provided. You
-    must provide a title for the analysis (No spaces - A-Za-z0-9_, a
-    sensible name is probably smart)
+    should provide a sensible title for your analysis (No spaces -
+    A-Za-z0-9_, a sensible name is probably smart)
 
   list: (moa list)
 
@@ -90,17 +91,23 @@ DESCRIPTION = "Utility script for use with Moa makefiles"
 
 ## define & parse command line options  
 parser = optparse.OptionParser(usage=USAGE, description=DESCRIPTION)
+
 parser.add_option('-f', '--force', dest='force', action='store_true',
-                  help = 'Force an action, if applicable..')
+                  help = 'Force an action, if applicable.')
 
 parser.add_option("-v", "--verbose", dest="verbose",
                   action="store_true", help="verbose output")
+
+parser.add_option("-p", "--project", dest="project",
+                  help="set a project name (use with moa new)")
+
+parser.add_option("-t", "--title", dest="title",
+                  help="set a project title (use with moa new)")
 
 (options, args) = parser.parse_args()
 
 if options.verbose:
     moa.logger.setVerbose()
-
 
 ##
 ## Command dispatcher
@@ -110,9 +117,10 @@ if __name__ == "__main__":
     l.debug("MOABASE : %s" % MOABASE)
 
     if len(args) == 0:
-        l.error("Need a command")
-        parser.print_help()
-        sys.exit(1)
+        l.debug('Running "make"')
+        retcode = subprocess.call(["make"])
+        l.debug("Make returned with retcode pid %s" % retcode)
+        sys.exit(0)
 
     command = args[0]
     newargs = args[1:]
@@ -120,23 +128,24 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
 
     #Create new jobs
-    if command == 'new':
-        title = args[1]    
-        templates = args[2:]
-        if (not title) or (not templates):
-            l.error("Usage: moa new TITLE TEMPLATE(s)")
-            sys.exit(-1)
-        moa.template.new(templates, title=title, force=options.force)
+    if command == 'template':
+        moa.template.handler(options, newargs)
+    elif command == 'new':
+        #shortcut for moa template net
+        moa.template.new(options, newargs)
 
     #pack & unpack trees
     elif command == 'archive':
-        moa.archive.handler(options, args[1:])
+        moa.archive.handler(options, newargs)
     elif command == 'list':
+        #shortcut for moa template list
         moa.template.list()
     #configuration stuff
     elif command == 'conf':
         moa.conf.handler(options, newargs)
     else:
-        l.error("No command defined!")
-        parser.print_help()
-        sys.exit(1)
+        #fire arguments of to make
+        l.debug('Running "make %s"' % (" ".join(args)))
+        retcode = subprocess.call(["make"]+args)
+        l.debug("Make returned with code %s" % retcode)
+        sys.exit(0)

@@ -43,73 +43,99 @@ rerunning the script. Such a script could be written in any language
 Moa wraps a set of common bioinformatics tools as Makefiles. Using Moa
 gives you a:
 
-* A uniform interface; all Moa makefiles use a central library that
-  provides a uniform, command line, interface to configuring and
-  executing jobs.
+* A uniform interface; although Moa is based around Gnu Make, all
+  commands are executed using the "moa" utility script. The "moa"
+  script often just invokes Gnu Make but is able to handle a few extra
+  cases where the use of Gnu Make is not possible.
 
-* An easy way to track and repeat a set of analyses. Using Moa makes
-  the creation of organized analysis structures easy.
+* An easy way to track and repeat a set of analyses. 
 
-* Interaction; templates are designed to interact with each other and
-  make it easy to build pipelines using the Moa makefiles as building
-  blocks.
+* Interaction; the Makefile templates are designed to interact with
+  each other and make it easy to build pipelines with the Moa
+  makefiles as building blocks.
 
 * Parallel execution; Gnu make facillitates (limited) parallel
   execution of jobs. There is nothing however, that prevents
   integrations with a third party cluster solution such as Hadoop or
   SGE.
  
-Apart from a set of template Makefiles, the Moa contains several other
-
-* moaBase; a central library describing a number of central routines used by
-	all Makefiles
-
-* The "moa" helper script; a frontend to using Moa.
-
-* Additional helper scripts; several of the template files require
-	helper scripts that are part of the moa package.
-
 ## Example session 
 
-The best way to understand how to use Moa is a sample session.
+The best way to understand how to use Moa is a sample session. 
 
 We'll start by creating directories to hold the data and analysis
 structure:
  
     mkdir introduction
     cd introduction
-    mkdir 10.download
-    cd 10.download
 
 We've created a directory called `introduction` to store the
 introductory tutorial. Within this directory we'll organize the
-components of our sample analysis. Moa doesn't enforce any
-organization your analysis pipeline, but expects the user to do so.
-An easy way to do this is by employing a logical directory
-structure. Hence, the directory describing the first step in our
-analysis, downloading data from NCBI, is prefixed with a `10.`. Later
-steps will use higher numbers. 
+components of our sample analysis. We want to initialize this
+directory so that it becomes a part of a moa pipeline. This is usefull
+later, if we want to run all analysis at once. To do this, run:
 
-We have will now created a new folder to hold a genome sequence we are
+    moa new -p introduction
+
+The "moa new" command is used to create new moa jobs. In this case,
+since it is the first the -p (or --project) parameter tells Moa that
+this project is called "introduction". Moa uses a frontend script
+(called moa) to provide uniform interaction with the system. We'll now
+create a new directory to hold the first step of the pipeline:
+
+    mkdir 10.download    
+    cd 10.download
+    moa new
+
+Moa doesn't enforce any organization of an analysis pipeline, but
+expects the user to do so.  An easy way to do this is by employing a
+logical directory structure. Hence, the directory describing the first
+step in our analysis: downloading data, is prefixed with a
+`10.`. Later steps will use higher numbers. Note that "moa new" is
+executed again, this time omitting the -p parameter. If the project
+parameter is omitted, moa tries to resolve this by reading the moa
+configuration in the parent directory.
+
+We will now created a new folder to hold a genome sequence we are
 about to download and set up the Moa makefile to actually do the
 download.
 
     mkdir 10.genome
     cd 10.genome
-    moa new 'download ecoli from NCBI' ncbi
+    moa new -t 'download a potato bac' ncbi
 	
-Note that we use the a utility script called `moa`. This script takes
-some general tasks around running Moa that cannot be done using
-Makefiles. In this case, calling `moa new` a Moa Makefile is
-created. The arguments of `moa new` are a (descriptive) title and
-`ncbi`. The latter defining a template Makefile that describes how to
-download data from NCBI. 
+This time we have added a new parameter to the 'moa new' invocation:
+"ncbi".  This tells Moa that in this directory the "ncbi" template
+should be used that allows easy downloading of information from
+NCBI. We also provide, as a good practice, a descriptive title using
+the -t (or --title) parameter. In general, once a moa makefile is
+instantiated you can call "moa help" to get some information on how to
+use this template:
 
-Before you can execute the Makefile you have to set parameters telling
-Moa what you want to download. Running `make help` gives you an
-overview of all the parameters that you can set. In the case of an
-`ncbi` Moa Makefile, there are two parameters that really need to be
-set: `ncbi_db` and `ncbi_query`. The other variables can be guessed.
+    moa help
+
+(Note that if you want help on how to use the moa frontend script, you
+should use moa --help)
+
+Before you can execute this job you have to tell what needs to be
+downloaded. This is easy if you know the Genbank accession number. In
+this case we'll download the nucleotide sequence (from the database
+nuccore) with the accession id AC237669.1
+
+   moa set ncbi_db=nuccore 
+   moa set ncbi_query=AC237669.1
+
+Moa will give a response indicating that it has set the two
+parameters. You can also check the "moa.mk" file that stores job
+specific parmaters or run:
+
+   moa show
+
+
+help` gives you an overview of all the parameters that you can set. In
+the case of an `ncbi` Moa Makefile, there are two parameters that
+really need to be set: `ncbi_db` and `ncbi_query`. The other variables
+can be guessed.
 
 Values for these parameters can, in this case, be found on the NCBI
 website. Once you have a found a sequence the parameters can be

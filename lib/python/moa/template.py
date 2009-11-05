@@ -42,14 +42,28 @@ MOAMK_INCLUDE=done
 ## moa_preprocess & moa_postprocess are targets that can
 ## be overridden here. They are executed before & after
 ## the main execution
-moa_preprocess:
-\t#write your code here
 
+.PHONY: moa_preprocess
+moa_preprocess:
+
+.PHONY: moa_postprocess
 moa_postprocess:
-\t#write your code here
 
 dont_include_moabase=true
 """
+
+
+def handler(options, args):
+    command = newargs[0]
+    newargs = newargs[1:]
+    if command == 'list':
+        list()
+    elif command == 'new':
+        new(options, newargs)
+    else:
+        l.error("Usage moa template [new|list]")
+        sys.exit()
+        
 def _check(what):
     """Check if a template exists"""
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
@@ -75,41 +89,71 @@ def list():
     r.sort()
     for r1 in r: print r1
         
-def new(what, title=None, force=False):
+def new(options, args):
     """
     Create a new template based makefile in the current dir.
     """
-    l.debug('creating a new moa makefile with title "%s"' % title)
+
+    usage = 'Usage: moa new [-p PROJECTNAME] ["TITLE"] [TEMPLATE(s)]'
+
+    if len(args) == 0:
+        templates = ['traverse']
+    else:
+        templates = args
+
+    title = options.title
+    if not title and templates != ['traverse']:
+        l.debug("no title? %s" % templates)
+        l.warning("It is strongly recommended to specify a title")
+        l.warning("You can still do so using moa set title='somthing meaningful'")
+        title = ""
+
+    if title:
+        l.debug('creating a new moa makefile with title "%s"' % title)
+    else:
+        l.debug('creating a new moa makefile')
+
     if os.path.exists("./Makefile"):
         l.debug("Makefile exists!")
-        if not force:
-            l.critical("makefile exists, use force to overwrite")
+        if not options.force:
+            l.critical("makefile exists, use -f (--force) to overwrite")
             sys.exit(1)
 
-    for t in what:
+    for t in templates:
         _check(t)
     
     #try to get a project name from the parent dir
-    project = ""
-    if os.path.exists("../moa.mk"):
-        F = open('../moa.mk', 'r')
-        for line in F.readlines():
-            matchObject = re.match("^project *=(.*)$", line)
-            if matchObject:
-                project = matchObject.groups()[0]
-        F.close()
-        
+    project = None
+    if options.project:
+        project = options.project
+        l.debug("project is %s" % project)
+    else:
+        if os.path.exists("../moa.mk"):
+            l.debug("opening ../moa.mk")
+            F = open('../moa.mk', 'r')
+            for line in F.readlines():
+                matchObject = re.match("^project *=(.*)$", line)
+                if matchObject:
+                    l.debug("found project %s" % line)
+                    project = matchObject.groups()[0]
+            F.close()
+
+    if not project:
+        l.warning("It is strongly recommended to specify a project name")
+        l.warning("You can still do so using moa set project='something meaningful'")
+        title = ""
+
     l.debug("Start writing ./Makefile") 
     F = open("./Makefile", 'w')
     F.write(NEW_MAKEFILE_HEADER)
-    for t in what:
+    for t in templates:
         F.write("include $(shell echo $$MOABASE)/template/%s.mk\n" % t)
 
-    #now include moabase
+    #include moabase
     F.write("include $(shell echo $$MOABASE)/template/__moaBase.mk\n")
     F.close()
 
-    if title and (title != '-'):
+    if title or project:
 
         with moa.utils.flock('moa.mk.lock'):    
             moamk = []
@@ -119,21 +163,22 @@ def new(what, title=None, force=False):
                 moamk = open('moa.mk').readlines()
                     
             F = open('moa.mk', 'w')
-            projectSeen = False
             for line in moamk:
-                if not re.match("^title *=", line):
-                    F.write(line)
-                if re.match("^project *=", line):
-                    #if there is already a project line - 
-                    #do not try to reset it.
-                    projectSeen = True
-
-            F.write("title=%s\n" % title)
-            if project and not projectSeen:
+                if re.match("^title *=", line) and title:
+                    continue
+                if re.match("^project *=", line) and project:
+                    continue
+                F.write(line)
+                
+            if title:
+                F.write("title=%s\n" % title)
+                l.debug("writing title=%s to moa.mk" % title)
+            if project:
                 F.write("project=%s\n" % project)
+                l.debug("Writing project=%s to moa.mk" % project)
 
             F.close()       
-            l.debug('Written "title=%s" to moa.mk' % title)
+            l.debug('Written moa.mk')
     
-    l.info("Written Makefile, try: make help")
+    l.info("Written Makefile, try: moa help")
 

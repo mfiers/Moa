@@ -46,8 +46,8 @@ moaerrr := \033[0;1;37;41m!!!\033[0m
 moawarn := \033[0;43 m>>\033[0m
 echo = echo -e "$(moamark) $(1)"
 warn = echo -e "$(moawarn) $(1)"
-errr = echo -e "$(moaerrr) $(1) $(moaerrr)"
-exer = echo -e "$(moaerrr) $(1) $(moaerrr)"; exit -1
+errr = echo -e "$(moaerrr) $(1)"
+exer = echo -e "$(moaerrr) $(1)"; exit -1
 
 
 ## default variables used in generating help
