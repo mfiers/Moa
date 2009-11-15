@@ -55,8 +55,8 @@ prereq_blast_report_installed:
 
 prereq_biopython_installed:
 	@if ! python -c "import Bio.Blast"; then \
-		echo "biopython appears not to be installed" ;\
-		false ;\
+		$(call errr, Biopython is not installed) ;\
+		exit -1 ;\
 	fi
 
 

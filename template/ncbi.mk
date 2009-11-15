@@ -38,10 +38,13 @@ ncbi_sequence_name_help = Sequence name to download. When this			\
   parameter is set, the template assumes that only one sequence is to	\
   be downloaded, the rest will be discarded.
 
-prereqlist += prereq_xml_twig_tools
+prereqlist += prereq_xml_twig_tools prereq_wget
 
 prereq_xml_twig_tools:
-	@$(call checkPrereqPath,xml_dgrep,Please install xml_grep from xml-twig-tools)
+	@$(call checkPrereqPath,xml_grep,Please install xml_grep from xml-twig-tools)
+
+prereq_wget:
+	@$(call checkPrereqPath,wget,Please install wget)
 
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk

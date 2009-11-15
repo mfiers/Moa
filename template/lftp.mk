@@ -61,11 +61,13 @@ lftp_output_dir_help = subdir to create & write all output to. If not defined, \
 lftp_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos \
   text files (default=F).
 
-moa_may_define += lftp_mode
+moa_may_define += lftp_mode lftp_get_name
 lftp_mode_help = Mode of operation - 'mirror' or 'get'. Mirror enables \
   timestamping. Get just gets a single file. If using get, consider setting \
   depend_lftp_timestamp to F. When using 'get', the full url should be in \
   lftp_url. lftp_pattern is ignored. Defaults to mirror.
+
+lftp_get_name_help = target name of the file to download
 
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
@@ -111,9 +113,10 @@ lftp_mirror:
 	fi
 
 .PHONY: lftp_get
+lftp_get: _addcl=$(if $(lftp_get_name),-o $(lftp_get_name))
 lftp_get:
 	cd $(lftp_output_dir); 														\
-		lftp $(lftp_au) -e "get $(lftp_url); exit";
+		lftp $(lftp_au) -e "get1 $(_addcl) '$(lftp_url)'; exit";
 
 .PHONY: lftp_dos2unix
 lftp_dos2unix:

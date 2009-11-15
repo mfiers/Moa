@@ -39,6 +39,12 @@ bdb_fasta_file_type = file
 moa_may_define += bdb_protein 
 bdb_protein_help = Protein database? (T)rue) or not (F)alse (default: F)
 
+prereqlist += prereq_blastdb
+
+prereq_glimmer3_installed:
+	@$(call checkPrereqPath,formatdb)
+
+
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
