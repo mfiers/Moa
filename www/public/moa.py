@@ -18,23 +18,35 @@ import os
 
 ## Main Interface Logic ##
 
-
+# get the request passed to us during URL rewriting
 raw_request=WWWMoaRW.get_request_param("request")
 
+# split the request passed to us by the defined seperator
 request_undecoded=raw_request.split("/")
 
+# the completely decoded elements will be stored here
 request=[]
 
-for r in request_undecoded:
-    request.append(WWWMoaRL.url_decode_x(r))
+# decode the elements
+for r in request_undecoded: # for each undecoded element
+    request.append(WWWMoaRL.url_decode_x(r)) # decode it and add it
 
-if len(request)<=0:
-    command=""
-else:
-    command=request[0]
+if len(request)<=0: # if there are not any decoded elements
+    obj_type="" # no object type was passed
+else: # if there was at least one decoded element
+    obj_type=request[0] # the first one is the object type
 
+
+if len(request)<=1: # if there are at most one decoded elements
+    command="" # no command was passed to us
+else: # if there are more than one decoded elements
+    command=request[len(request)-1] # the last one is the command
+
+
+# retrieve the request method used
 request_method=WWWMoaCGIEx.get_request_method()
 
+# filter out unsupported request methods
 if (request_method!="GET") and (request_method!="POST") and (request_method!="PUT") and (request_method!="DELETE"):
     WWWMoaHTMLError.throw_fatal_error("Method Not Implemented","""The method you used in your request is not implemented.  Please try one of the following request methods:
 * GET
@@ -42,14 +54,15 @@ if (request_method!="GET") and (request_method!="POST") and (request_method!="PU
 * PUT
 * DELETE""")
 
-
-if command=="resources":
+# load module by object type
+if obj_type=="resources": # if a resource was requested
     import WWWMoaMod_Resource as WWWMoaMod
-elif command=="hms":
+elif obj_type=="hms": # if a helper module was requested
     import WWWMoaMod_HM as WWWMoaMod
-elif command=="":
+elif obj_type=="": # if no object type seems to have been passed
     import WWWMoaHTMLEngine
 
+    # show geek view
     WWWMoaHTMLEngine.set_title("Geek View")
     WWWMoaHTMLEngine.start_output()
     WWWMoaHTMLEngine.start_section()
@@ -68,10 +81,10 @@ elif command=="":
     WWWMoaHTMLEngine.place_text("""Python OS Module: """+os.name+"\n")
     WWWMoaHTMLEngine.end_section()
     WWWMoaHTMLEngine.end_output()
-else:
+else: # if yet another object type was tried
     import WWWMoaMod_ErrorNF as WWWMoaMod
 
-try:
-    WWWMoaMod.run(request[1:],{"method" : request_method})
-except Exception as e:
+try: # try to run the loaded module
+    WWWMoaMod.run(request[1:],{"method" : request_method, "command" : command})
+except Exception as e: # on failure, send something useful
     WWWMoaHTMLError.throw_fatal_error("Internal Error", "I did find the item that you requested.  However, it misbehaved in such a way that it could not continue.\n\nThe Python interpreter (which I run on) supplied me with the following reason for the failure (you might find the following  useful when debugging):\n\""+str(e)+"\"")
