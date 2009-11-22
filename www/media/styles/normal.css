@@ -1,0 +1,65 @@
+/*
+  WWWMoa
+  Normal Style
+  Version 0.1
+  Date November 18, 2009
+*/
+
+body
+{
+background-color:#408060;
+font-size:12pt;
+font-family:arial, sans-serif;
+}
+
+#wrapper
+{
+background-color:#FFFFFF;
+color:#000000;
+border:2px solid #A0C0B0;
+padding:12px;
+}
+
+.title
+{
+font-weight:bold;
+font-size:36px;
+text-decoration:underline;
+}
+
+.section
+{
+background-color:#FFFFFF;
+color:#000000;
+border:1px solid #000000;
+padding:6px 4px 16px 4px;
+margin:2px 0px 16px 0px;
+}
+
+.section .title
+{
+font-weight:bold;
+font-size:14pt;
+text-decoration:underline;
+}
+
+#smallnotices
+{
+font-size:10px;
+color:#FFFFFF;
+}
+
+a
+{
+color:#0000FF;
+}
+
+a:visited
+{
+color:#800080;
+}
+
+#smallnotices a
+{
+color:#C0C0C0;
+}

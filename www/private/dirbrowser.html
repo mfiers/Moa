@@ -1,0 +1,200 @@
+### WWWMoa ###############################
+### dirbrowser.html
+### Prototype: NOT TO BE DISTRIBUTED
+
+
+## Imports ##
+
+import WWWMoaHTMLEngine
+import WWWMoaHTML
+import WWWMoaRL
+import WWWMoaRW
+import WWWMoaHTMLError
+import os
+import os.path
+
+
+## Helper Functions ##
+
+## Figures out whether or not a given path is equivalent to the psuedo-root directory.
+def is_root(path):
+    global root
+
+    return os.path.samefile(root, path)
+
+## Figures out whether or not a given path is within the psuedo-root directory.
+def in_root(path):
+    global root
+
+    return os.path.samefile(os.path.commonprefix([path, root]), root)
+
+
+
+
+## Page Logic ##
+
+# get basic page info ready
+WWWMoaHTMLEngine.set_title("Directory Browser") # set the page title
+root="/home/wsd/Moa" # [!] change this to where you want the browser to be aimed
+
+# process requested directory
+requested_dir=WWWMoaRW.get_request_param("target") # get the raw requested sub-directory
+
+browsepath_complete=os.path.join(root,requested_dir) # join the requested sub-directory with the root
+
+if os.path.islink(browsepath_complete): # if the sub-directory is actually a symb link
+    browsepath_complete=os.path.realpath(browsepath_complete) # find what the sub-directory really is
+
+browsepath_complete=os.path.normpath(browsepath_complete) # normalize the path, to make it as simple as possible
+
+
+# make sure requested path is safe
+
+if not in_root(browsepath_complete): # if requested path is not in the psuedo-root directory
+    WWWMoaHTMLError.throw_fatal_error("Access Denied", "The directory you attempted to browse cannot be accessed, because you do not have permission to access it.") # generate security error and hault
+
+if not os.path.isdir(browsepath_complete): # if the requested path does not exist
+    WWWMoaHTMLError.throw_fatal_error("Target Not Found", "The directory you attempted to browse cannot be access, because it does not exist.") # generate error and hault
+
+
+# get ready to output content
+WWWMoaRW.end_header_mode()
+
+
+# generate the relative pathname, as it is what the user will see
+browsepath=os.path.relpath(browsepath_complete,root)
+
+
+# begin HTML output
+WWWMoaHTMLEngine.start_output() 
+
+# find what directories and files are in the requested directory
+filelist=os.listdir(browsepath_complete)
+
+# start main section
+WWWMoaHTMLEngine.start_section()
+
+# prepare buffers
+file_buffer="" # will hold the HTML code corresponding to files
+dir_buffer="" # will hold the HTML code corresponding to directories
+c_buffer="" # will hold some of the HTML code for a single cycle
+
+
+for f in filelist: # for each file or directory
+    f_joined=os.path.join(browsepath_complete,f) # get the absolute path of the item
+    f_real=os.path.realpath(f_joined) # get the actual path of the item (remove symb linking)
+    f_real=os.path.normpath(f_real) # normalize the path, to make it as simple as possible
+
+
+    # [!] Security Note: The following code outputs an alert if the item cannot be accessed for security reasons.  However, the code above checks this again on the server side, so this does not create a security hole.
+
+    if in_root(f_real): # if the item is in the psuedo-root directory
+        c_buffer=WWWMoaHTML.get_tag_open("a", {"href" : "?target=" + WWWMoaRL.url_encode(os.path.relpath(f_real,root))}) # start a normal hyperlink to it
+    else: # if the item is not in the psuedo-root directory
+        c_buffer=WWWMoaHTML.get_tag_open("a", {"href" : "#"+WWWMoaRL.url_encode(WWWMoaHTMLEngine.get_unique_id()), "onclick" : "alert(\"The directory or file you are attempting to access cannot be accessed by you.\")"}) # output a link to an alert
+
+    # finish off link and get ready for item attributes
+    c_buffer+= WWWMoaHTML.translate_text(f)+WWWMoaHTML.get_tag_close("a")+WWWMoaHTML.get_simple_tag_close("td")+WWWMoaHTML.get_tag_open("td",{"style" : "padding:1px 2px 1px 8px"})
+
+    # create next attribute
+    if os.path.islink(f_joined): # if the item is actually a link
+        c_buffer+="Link" # tell the user this
+    else: # if the item is not a link
+        pass # do not output anything
+
+    # get ready for next item attribute
+    c_buffer+=WWWMoaHTML.get_simple_tag_close("td")+WWWMoaHTML.get_tag_open("td", {"style" : "padding:1px 8px 1px 8px"})
+
+    # create next attribute
+    if os.path.isfile(f_joined): # if the item is a file
+        c_buffer+=WWWMoaHTML.translate_text(str(os.path.getsize(f_joined))+" b") # output its size (in bytes)
+    else: # if the item is not a file
+        pass # do not output anything
+
+    # end item entry
+    c_buffer+=WWWMoaHTML.get_simple_tag_close("td")
+    c_buffer+=WWWMoaHTML.get_simple_tag_close("tr")+"\n"
+
+    # [!] Logic Note: c_buffer does not contain the first part of the HTML code for the item entry, as this depends on whether it is a directory or a file.
+
+    # finish up item entry code and output it to the correct buffer
+
+    if os.path.isdir(f_joined): # if the item is a directory
+        dir_buffer+=WWWMoaHTML.get_simple_tag_open("tr")+WWWMoaHTML.get_tag_open("td",{"style" : "font-weight:bold"})+WWWMoaHTML.get_tag("img", {"src" : WWWMoaRL.get_image("FSdirclA"), "alt" : "Directory"})+" "+c_buffer # output a piece of code with the directory icon, and the contents of c_buffer
+
+    if os.path.isfile(f_joined): # if the item is a file
+        file_buffer+=WWWMoaHTML.get_simple_tag_open("tr")+WWWMoaHTML.get_tag_open("td",{"style" : "font-weight:bold"})+WWWMoaHTML.get_tag("img", {"src" : WWWMoaRL.get_image("FSfileA"), "alt" : "File"})+" "+c_buffer # output a piece of code with the file icon, and the contents of c_buffer
+
+
+# output HTML code for root directory (this will always exist)
+WWWMoaHTML.send_tag("img", {"src" : WWWMoaRL.get_image("FSdiroprtA"), "alt" : "Directory"}) # root directory icon
+WWWMoaHTMLEngine.place_code(" ")
+WWWMoaHTML.send_tag_open("a", {"href" : "?target=", "style" : "font-weight:bold; font-style:italic"}) # link to psuedo-root directory
+WWWMoaHTMLEngine.place_text("[Root]")
+WWWMoaHTML.send_tag_close("a")
+
+
+# [!] Logic Note: At this point, we will switch gears and begin constructing the code for the directory hierarchy.
+
+hierarchypath=browsepath # at the beginning, we will work with the entire requested path
+hierarchypath_complete=browsepath_complete # at the beginning, we will work with the entire requested path
+hierarchy_count=0 # so far, we have not encountered any nested sub-directories
+hierarchy_buff="" # we will put HTML code for hierarchy in this buffer
+
+while not is_root(hierarchypath_complete): # while we have not made our way back to the pseudo-root directory yet
+    hierarchy_count=hierarchy_count+1 # there is a nest level between the current path and the pseudo-root
+
+    singledirbuff="" # this will hold the HTML code for one nest level
+
+    # [!] Logic Note: The next few lines of code are a little extra complicated to ensure that trailing slashes are trimmed off.
+
+    # attempt splitting of current path
+    (hierarchypath_h, hierarchypath_t)=os.path.split(hierarchypath) # split the path the user will see
+    (hierarchypath_complete_h, hierarchypath_complete_t)=os.path.split(hierarchypath_complete) # split the path we will use
+    
+    if hierarchypath_t=="": # if the tail is empty, it means that a trailing slash existed
+        (hierarchypath_h,hierarchypath_t)=os.path.split(hierarchypath_h) # the trailing slash is gauranteed to have been removed, so splitting again should do the trick
+
+    if hierarchypath_complete_t=="": # if the tail is empty, it means that a trailing slash existed
+        (hierarchypath_complete_h, hierarchypath_complete_t)=os.path.split(hierarchypath_complete_h) # the trailing slash is gauranteed to have been removed, so spliting again should do the trick
+
+    # generate HTML code for this nest level
+    singledirbuff+=WWWMoaHTML.get_tag_open("div", {"style" : "padding-left:24px"}) # we will ensure that this is matches in a little while
+    singledirbuff+=WWWMoaHTML.get_tag("img", {"src" : WWWMoaRL.get_image("FSdiropA"), "alt" : "Current Directory"})
+    singledirbuff+=" "
+    singledirbuff+=WWWMoaHTML.get_tag_open("span", {"style" : "font-weight:bold"})
+    singledirbuff+=WWWMoaHTML.get_tag_open("a", {"href" : "?target="+WWWMoaRL.url_encode(hierarchypath_complete)})
+    singledirbuff+=WWWMoaHTML.translate_text(hierarchypath_t)
+    singledirbuff+=WWWMoaHTML.get_tag_close("a")
+    singledirbuff+=WWWMoaHTML.get_tag_close("span")
+    singledirbuff+=WWWMoaHTML.get_linefeed_tag()
+    singledirbuff+="\n\n"
+
+    hierarchy_buff=singledirbuff+hierarchy_buff # add to main buffer
+    hierarchypath=hierarchypath_h # we will now work on the fragment of the path that is left
+    hierarchypath_complete=hierarchypath_complete_h # we will now work on the fragment of the path that is left
+
+# send the rest of the HTML document
+WWWMoaHTMLEngine.place_code(hierarchy_buff) # send the buffer we just generated
+WWWMoaHTML.send_tag_open("div", {"style" : "padding-left:24px"}) # add an additional level for the contents of the directory to be placed in
+WWWMoaHTMLEngine.place_code("\n")
+WWWMoaHTML.send_simple_tag_open("table")
+WWWMoaHTMLEngine.place_code("\n")
+WWWMoaHTMLEngine.place_code(dir_buffer) # place directory code
+WWWMoaHTMLEngine.place_code("\n")
+WWWMoaHTMLEngine.place_code(file_buffer) # place file code
+WWWMoaHTML.send_simple_tag_close("table")
+WWWMoaHTMLEngine.place_code("\n")
+WWWMoaHTML.send_tag_close("div") # close additional level
+
+# match nest levels
+while hierarchy_count>0: # while we still have nest levels open
+    hierarchy_count=hierarchy_count-1 # say that we have matched a level
+    WWWMoaHTML.send_tag_close("div") # match a level
+    WWWMoaHTMLEngine.place_code("\n")
+
+
+# end document
+WWWMoaHTMLEngine.end_section()
+
+WWWMoaHTMLEngine.end_output()
