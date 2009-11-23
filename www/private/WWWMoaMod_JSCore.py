@@ -63,15 +63,24 @@ var wwwmoa={ // root object
             wwwmoa.hm.state.hms[hmid].doAction(data);
         },
 
+        unlink : function (hmid) {
+            wwwmoa.hm.state.hms[hmid]=undefined;
+            wwwmoa.hm.state.next_hmid=hmid;
+        },
+
         create : function (hmrl, callback) {
             function cb(data) {
                 hmc=new Function (data);
                 new_hm=hmc();
 
+                while(wwwmoa.hm.state.hms[wwwmoa.hm.state.next_hmid]!==undefined)
+                {
+                    wwwmoa.hm.state.next_hmid++;
+                }
+                
                 new_hm.__hmid=wwwmoa.hm.state.next_hmid;
                 wwwmoa.hm.state.hms[wwwmoa.hm.state.next_hmid]=new_hm;
-                wwwmoa.hm.state.next_hmid+=1;
-
+                
                 if(new_hm.doAction===undefined) {
                     new_hm.doAction=function(data){};
                 }
@@ -80,19 +89,23 @@ var wwwmoa={ // root object
                     new_hm.doSetVisualElementAction=function(oldid){};
                 }
 
-                new_hm.visualElementId=\"\";
+                new_hm.visualElement=null;
                 new_hm.getVisualElement=function() {
-                    return document.getElementById(new_hm.visualElementId);
+                    return this.visualElement;
                 }
 
                 new_hm.setVisualElementById=function(id) {
-                    tmp=new_hm.visualElementId;
-                    new_hm.visualElementId=id;
-                    new_hm.doSetVisualElementAction(tmp);
+                    this.setVisualElement(document.getElementById(id));
+                }
+
+                new_hm.setVisualElement=function(ele) {
+                    tmp=this.visualElement;
+                    this.visualElement=ele;
+                    this.doSetVisualElementAction(tmp);
                 }
 
                 new_hm.getHMId=function() {
-                    return new_hm.__hmid;
+                    return this.__hmid;
                 }
 
                 callback(new_hm);

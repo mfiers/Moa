@@ -11,6 +11,15 @@ if(typeof wwwmoa == "undefined")
 else
 {
     wwwmoa.ui={
-	alert : function(msg) { alert(msg); }
+	alert : function(msg)
+        {
+            alert(msg);
+        },
+
+        setStatusMessage : function(msg)
+        {
+            setTimeout("document.title=\""+document.title+"\";", 2000)
+            document.title=msg;
+        }
     }
 }

@@ -83,7 +83,6 @@ wwwmoa.hm.create(\"moa/fs/browsehm\", function(obj){
     }
 
     obj.setVisualElementById(\"""" + WWWMoaJS.fix_text_for_html(id_temp_section)+"""\");
-    obj.doAction(\"anything\");
 });
 
 
