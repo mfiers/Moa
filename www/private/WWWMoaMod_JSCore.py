@@ -53,12 +53,49 @@ var wwwmoa={ // root object
 
     // Helper module utilities
     hm : {
-        create : function (hmname, callback) {
-        
+        state : {next_hmid : 0, hms : []},
+
+        contact : function (hmid, data) {
+            if(wwwmoa.hm.state.hms[hmid]===undefined) return;
+
+            if(wwwmoa.hm.state.hms[hmid].doAction===undefined) return;
+
+            wwwmoa.hm.state.hms[hmid].doAction(data);
+        },
+
+        create : function (hmrl, callback) {
             function cb(data) {
                 hmc=new Function (data);
-                hm=hmc();
-                callback(hm);
+                new_hm=hmc();
+
+                new_hm.__hmid=wwwmoa.hm.state.next_hmid;
+                wwwmoa.hm.state.hms[wwwmoa.hm.state.next_hmid]=new_hm;
+                wwwmoa.hm.state.next_hmid+=1;
+
+                if(new_hm.doAction===undefined) {
+                    new_hm.doAction=function(data){};
+                }
+
+                if(new_hm.doSetVisualElementAction===undefined) {
+                    new_hm.doSetVisualElementAction=function(oldid){};
+                }
+
+                new_hm.visualElementId=\"\";
+                new_hm.getVisualElement=function() {
+                    return document.getElementById(new_hm.visualElementId);
+                }
+
+                new_hm.setVisualElementById=function(id) {
+                    tmp=new_hm.visualElementId;
+                    new_hm.visualElementId=id;
+                    new_hm.doSetVisualElementAction(tmp);
+                }
+
+                new_hm.getHMId=function() {
+                    return new_hm.__hmid;
+                }
+
+                callback(new_hm);
             }
 
             function cbe(err) {
@@ -66,7 +103,7 @@ var wwwmoa={ // root object
             }
 
             dojo.xhrGet( {
-                      url : \"""" + WWWMoaJS.fix_text(WWWMoaRL.get_hm_base()) + """\"+wwwmoa.rl.url_encode_x(hmname),
+                      url : hmrl,
                       handleAs : \"text\",
                       timeout : 8192,
                       load : cb,
@@ -74,6 +111,8 @@ var wwwmoa={ // root object
                      } );
 
         }
+
+        
     },
 
     // RL utilities

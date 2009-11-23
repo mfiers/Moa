@@ -117,9 +117,9 @@ def end_output():
     WWWMoaHTML.send_tag_open("a", {"href" : "http://www.python.org/"})
     place_text("Python")
     WWWMoaHTML.send_tag_close("a")
-    place_text(" and ")
-    WWWMoaHTML.send_tag_open("a", {"href" : "http://www.lighttpd.net/"})
-    place_text("Lighty")
+    place_text(". Best viewed in ")
+    WWWMoaHTML.send_tag_open("a", {"href" : "http://www.mozilla.com/firefox"})
+    place_text("Firefox Web Browser")
     WWWMoaHTML.send_tag_close("a")
     place_text(".")
 

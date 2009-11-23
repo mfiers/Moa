@@ -36,13 +36,6 @@ if len(request)<=0: # if there are not any decoded elements
 else: # if there was at least one decoded element
     obj_type=request[0] # the first one is the object type
 
-
-if len(request)<=1: # if there are at most one decoded elements
-    command="" # no command was passed to us
-else: # if there are more than one decoded elements
-    command=request[len(request)-1] # the last one is the command
-
-
 # retrieve the request method used
 request_method=WWWMoaCGIEx.get_request_method()
 
@@ -57,8 +50,8 @@ if (request_method!="GET") and (request_method!="POST") and (request_method!="PU
 # load module by object type
 if obj_type=="resources": # if a resource was requested
     import WWWMoaMod_Resource as WWWMoaMod
-elif obj_type=="hms": # if a helper module was requested
-    import WWWMoaMod_HM as WWWMoaMod
+elif obj_type=="fs": # if an action on the file system was requested
+    import WWWMoaMod_FS as WWWMoaMod
 elif obj_type=="": # if no object type seems to have been passed
     import WWWMoaHTMLEngine
 
@@ -72,7 +65,7 @@ elif obj_type=="": # if no object type seems to have been passed
     WWWMoaHTMLEngine.start_section()
     WWWMoaHTMLEngine.place_section_title("Modules Currently Mapped")
     WWWMoaHTMLEngine.place_text("""WWWMoaMod_Resource => resources""")
-    WWWMoaHTMLEngine.place_text("""\nWWWMoaMod_HM => hms""")
+    WWWMoaHTMLEngine.place_text("""\nWWWMoaMod_FS => fs""")
     WWWMoaHTMLEngine.place_text("""\nWWWMoaMod_ErrorNF => (anything not caught elsewhere)""")
     WWWMoaHTMLEngine.end_section()
     WWWMoaHTMLEngine.start_section()
@@ -85,6 +78,6 @@ else: # if yet another object type was tried
     import WWWMoaMod_ErrorNF as WWWMoaMod
 
 try: # try to run the loaded module
-    WWWMoaMod.run(request[1:],{"method" : request_method, "command" : command})
+    WWWMoaMod.run(request[1:],{"method" : request_method})
 except Exception as e: # on failure, send something useful
     WWWMoaHTMLError.throw_fatal_error("Internal Error", "I did find the item that you requested.  However, it misbehaved in such a way that it could not continue.\n\nThe Python interpreter (which I run on) supplied me with the following reason for the failure (you might find the following  useful when debugging):\n\""+str(e)+"\"")

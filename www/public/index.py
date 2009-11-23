@@ -65,6 +65,8 @@ WWWMoaHTML.send_tag_open("div", {"id" : id_hidden_section, "style" : "visibility
 ## Main Content ##
 
 
+id_temp_section=WWWMoaHTMLEngine.get_unique_id()
+
 # main script body
 WWWMoaHTML.send_tag_open("script", {"type" : "text/javascript"})
 WWWMoaHTMLEngine.place_code("\n<!--\n")
@@ -72,7 +74,17 @@ WWWMoaHTMLEngine.place_code("""
 
 
 
-wwwmoa.hm.create(\"dbrowse\", function(obj) { alert(obj); })
+wwwmoa.hm.create(\"moa/fs/browsehm\", function(obj){
+
+    if(obj===null)
+    {
+        document.getElementById(\""""+WWWMoaJS.fix_text_for_html(id_temp_section)+"""\").innerHTML=\"Something went wrong: the directory browser you requested could not be supplied.\";
+        return;
+    }
+
+    obj.setVisualElementById(\"""" + WWWMoaJS.fix_text_for_html(id_temp_section)+"""\");
+    obj.doAction(\"anything\");
+});
 
 
 
@@ -81,6 +93,12 @@ WWWMoaHTMLEngine.place_code("\n//-->\n")
 WWWMoaHTML.send_tag_close("script")
 
 
+
+WWWMoaHTML.send_tag_open("div", {"id" : id_temp_section})
+WWWMoaHTML.send_tag_open("span", {"style" : "font-weight:bold"})
+WWWMoaRW.send("Loading...")
+WWWMoaHTML.send_tag_close("span")
+WWWMoaHTML.send_tag_close("div")
 
 
 ## JavaScript Display Section Logic ##
