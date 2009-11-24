@@ -74,7 +74,7 @@ WWWMoaHTMLEngine.place_code("""
 
 
 
-wwwmoa.hm.create(\"moa/fs/browsehm\", function(obj){
+wwwmoa.hm.create(\"""" + WWWMoaJS.fix_text_for_html(WWWMoaRL.get_hm("fsbrowser",[])) + """\", function(obj){
 
     if(obj===null)
     {

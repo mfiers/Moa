@@ -1,7 +1,6 @@
 ### WWWMoa ###############################
 ### RL / Resource Locator Lookup
-### Version: 0.1
-### Date: November 18, 2009
+
 
 ## Imports ##
 import urllib # will use this for URL encoding
@@ -37,24 +36,45 @@ def get_style(id):
 def get_script(id):
     return get_magic_pre()+"resources/scripts/"+url_encode_x(id)
 
-## Returns the relative pathname of a file system command for WWWMoa.
-def get_fs_command(path, command):
-    fragment=url_encode(path.strip("/")) # generate the fragment that contains the path
+## Returns the relative pathname of a API command for WWWMoa, given the commands name and the file system path it operates on (optional).
+def get_api(command, path=None):
+    if path==None: # if the path was not passed
+        path_notnone="" # assume that it was an empty string
+    else: # otherwise
+        path_notnone=path # use the path that was passed
+
+    fragment=url_encode(path_notnone.strip("/")) # generate the fragment that contains the path
     
     if len(fragment)!=0: # if the fragment is not empty
         fragment+="/" # add a seperator as appropriate
 
-    return get_magic_pre()+"fs/"+fragment+url_encode_x(command)
+    return get_magic_pre()+"api/"+fragment+url_encode_x(command)
 
+## Returns the relative pathname of a helper module for WWWMoa, given the helper modules name and argument list (optional).
+def get_hm(name, args=[]):
+    args_fixed=[] # create buffer for fixed arguments
+    for a in args: # for each argument
+        args_fixed.append(url_encode_x(a)) # fix it
+
+    fragment=url_encode("/".join(args_fixed)) # generate the argument fragment
+
+    if len(fragment)!=0: # if the fragment is not empty
+        fragment+="/" # add a seperator as appropriate
+
+    return get_magic_pre()+"hms/"+fragment+url_encode_x(name)
 
 ## Performs a standard URL encoding.
 def url_encode(txt):
-    return urllib.quote_plus(txt)
+    return urllib.quote(txt)
+
+## Performs the inverse operation of url_encode().
+def url_decode(txt):
+    return urllib.unquote(txt)
 
 ## Performs a modified version of URL encoding so that "/" will not be present in the output string.  In addition, special characters are escaped with "%" as in a usual url encoding process.
 def url_encode_x(txt):
-    return urllib.quote_plus(txt.replace("@","@@").replace("/","@x"))
+    return urllib.quote(txt.replace("@","@@").replace("/","@x"))
 
-## Performs the inverse operation of url_encode_slash().
+## Performs the inverse operation of url_encode_x().
 def url_decode_x(txt):
-    return urllib.unquote_plus(txt).replace("@x", "/").replace("@@", "@")
+    return urllib.unquote(txt).replace("@x", "/").replace("@@", "@")

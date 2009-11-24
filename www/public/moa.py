@@ -50,8 +50,10 @@ if (request_method!="GET") and (request_method!="POST") and (request_method!="PU
 # load module by object type
 if obj_type=="resources": # if a resource was requested
     import WWWMoaMod_Resource as WWWMoaMod
-elif obj_type=="fs": # if an action on the file system was requested
-    import WWWMoaMod_FS as WWWMoaMod
+elif obj_type=="api": # if an action on the file system was requested
+    import WWWMoaMod_API as WWWMoaMod
+elif obj_type=="hms": # if a helper module was requested
+    import WWWMoaMod_HM as WWWMoaMod
 elif obj_type=="": # if no object type seems to have been passed
     import WWWMoaHTMLEngine
 
@@ -65,7 +67,8 @@ elif obj_type=="": # if no object type seems to have been passed
     WWWMoaHTMLEngine.start_section()
     WWWMoaHTMLEngine.place_section_title("Modules Currently Mapped")
     WWWMoaHTMLEngine.place_text("""WWWMoaMod_Resource => resources""")
-    WWWMoaHTMLEngine.place_text("""\nWWWMoaMod_FS => fs""")
+    WWWMoaHTMLEngine.place_text("""\nWWWMoaMod_API => api""")
+    WWWMoaHTMLEngine.place_text("""\nWWWMoaMod_HM => hms""")
     WWWMoaHTMLEngine.place_text("""\nWWWMoaMod_ErrorNF => (anything not caught elsewhere)""")
     WWWMoaHTMLEngine.end_section()
     WWWMoaHTMLEngine.start_section()
