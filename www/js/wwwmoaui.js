@@ -1,8 +1,5 @@
 /// WWWMoa ///////////////////////////////
 /// wwwmoaui.js / UI Addon
-/// Version: 0.1
-/// Date: November 20, 2009
-
 
 if(typeof wwwmoa == "undefined")
 {
@@ -14,12 +11,6 @@ else
 	alert : function(msg)
         {
             alert(msg);
-        },
-
-        setStatusMessage : function(msg)
-        {
-            setTimeout("document.title=\""+document.title+"\";", 2000)
-            document.title=msg;
         }
     }
 }

@@ -175,7 +175,6 @@ def run(args=None, env=None):
 
         WWWMoaRW.send(json.dumps({ # send response
                     "dir" : path_exploded_final, # the dir path components
-                    "dir-sep" : os.sep, # the seperator between path components
                     "ls" : ls_final, # the final listing
                     "ls-available" : ls_total_count, # the total number of entries that are potentially available
                     "ls-returned" : len(ls_final), # the total number of entries that we returned

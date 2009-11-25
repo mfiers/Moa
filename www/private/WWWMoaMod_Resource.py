@@ -17,12 +17,17 @@ def file_exists(path):
 def output_error(err):
     WWWMoaHTMLError.throw_fatal_error("Resource Accessing Error", err)
 
+def request_no_cache():
+    WWWMoaRW.send_header("Cache-Control", "no-cache") # ask the browser not to cache resource
+    WWWMoaRW.send_header("Expires", "0") # ask older browsers not to cache resource
+
+def request_short_cache():
+    WWWMoaRW.send_header("Cache-Control", "max-age=3600")
+
+
 ## Main Execution ##
 
 def run(args = None, env = None):
-    WWWMoaRW.send_header("Cache-Control", "no-cache") # ask the browser not to cache resource
-    WWWMoaRW.send_header("Expires", "0") # ask older browsers not to cache resource
-    
     # check that required inputs exist
     if (args==None) or (env==None): # if not all required inputs exist
         output_error("An unexpected error occured.") # say so
@@ -76,7 +81,7 @@ def run(args = None, env = None):
         if not file_exists(path2): # if JPEG does not appear to exist at first
             path2=path+".jpeg" # try alternative pathname
         if not file_exists(path2): # if JPEG does not exist
-            exists=False # no image file exists, so remember that it does not eixst
+            exists=False # no image file exists, so remember that it does not exist
     elif type=="scripts":
         path="../js/"
 
@@ -99,6 +104,12 @@ def run(args = None, env = None):
 
     # finish up HTTP headers
     WWWMoaRW.send_header("Content-Type", mime) # tell browser what type of file it is
+
+    if type=="images":
+        request_short_cache()
+    else:
+        request_no_cache()
+
     WWWMoaRW.end_header_mode() # end header mode
 
     # read file contents
