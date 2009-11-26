@@ -1,7 +1,5 @@
 ### WWWMoa ###############################
 ### CGIEx / Extended CGI Functionality
-### Version: 0.1
-### Date: November 19, 2009
 
 
 ## Documentation ##
@@ -26,3 +24,15 @@ def get_request_method():
         return "" # return zero length string
 
     return a.strip().upper() # otherwise, return it after processing
+
+## Returns the port number that the server was accessed at.  If not found or not valid, will return -1.  The returned port will be an integer, not a string.
+def get_request_port():
+    a=os.environ["SERVER_PORT"] # get port directly from environment
+
+    if a is None: # if the variable does not exist
+        return -1 # return -1 as per specs
+
+    try: # attempt conversion to an integer
+        return int(a)
+    except: # on conversion failure
+        return -1 # return -1 as per specs

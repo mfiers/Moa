@@ -13,7 +13,13 @@ import WWWMoaRL
 import WWWMoaInfo
 import WWWMoaHTML
 import WWWMoaJS
+import WWWMoaEnv
 import os
+
+# [!] Note: The following command ensures that the environment
+# can be loaded properly, even though this specific script
+# will not actually use it.
+WWWMoaEnv.require_environment() 
 
 
 WWWMoaRW.send_header("Content-Type", "text/html; charset=UTF-8")
