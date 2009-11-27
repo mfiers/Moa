@@ -6,64 +6,65 @@
 import sys
 
 # get ready for next set of imports
-sys.path.append("../private/")
+sys.path.append("../lib/python")
 
-import WWWMoaRW
-import WWWMoaRL
-import WWWMoaInfo
-import WWWMoaHTML
-import WWWMoaJS
-import WWWMoaEnv
+from wwwmoa import rw
+from wwwmoa import rl
+from wwwmoa import info
+from wwwmoa.formats import html
+from wwwmoa.formats import js
+import wwwmoa.env
 import os
+
 
 # [!] Note: The following command ensures that the environment
 # can be loaded properly, even though this specific script
 # will not actually use it.
-WWWMoaEnv.require_environment() 
+wwwmoa.env.require_environment() 
 
 
-WWWMoaRW.send_header("Content-Type", "text/html; charset=UTF-8")
-WWWMoaRW.send_header("Cache-Control", "no-cache")
-WWWMoaRW.send_header("Expires", "0")
-WWWMoaRW.end_header_mode()
+rw.send_header("Content-Type", "text/html; charset=UTF-8")
+rw.send_header("Cache-Control", "no-cache")
+rw.send_header("Expires", "0")
+rw.end_header_mode()
 
 
-WWWMoaRW.send("""<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
+rw.send("""<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
 
 <html>
 
 <head>
 
-<title>"""+WWWMoaHTML.fix_text(WWWMoaInfo.get_string())+"""</title>
+<title>"""+html.fix_text(info.get_string())+"""</title>
 
-<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_style("normal"))+"""\">
-<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_style("normalbuttons"))+"""\">
-<link rel=\"shortcut icon\" href=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_image("MOAfavA"))+"""\">
+<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + html.fix_text(rl.get_style("normal"))+"""\">
+<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + html.fix_text(rl.get_style("normalbuttons"))+"""\">
+<link rel=\"shortcut icon\" href=\"""" + html.fix_text(rl.get_image("MOAfavA"))+"""\">
 
-<script src=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_script("dojo"))+"""\" type=\"text/javascript\"></script>
-<script src=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_script("wwwmoa"))+"""\" type=\"text/javascript\"></script>
-<script src=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_script("wwwmoaui"))+"""\" type=\"text/javascript\"></script>
+<script src=\"""" + html.fix_text(rl.get_script("dojo"))+"""\" type=\"text/javascript\"></script>
+<script src=\"""" + html.fix_text(rl.get_script("wwwmoa"))+"""\" type=\"text/javascript\"></script>
+<script src=\"""" + html.fix_text(rl.get_script("wwwmoaui"))+"""\" type=\"text/javascript\"></script>
 
-<meta name=\"Generator\" content=\"""" + WWWMoaHTML.fix_text(WWWMoaInfo.get_string())+"""\">
+<meta name=\"Generator\" content=\"""" + html.fix_text(info.get_string())+"""\">
 
 </head>
 
 """)
 
 
-WWWMoaRW.send("""
+rw.send("""
 <body>
 
 <div id=\"wrapper\">
 
-<span class=\"title\">"""+WWWMoaHTML.fix_text(WWWMoaInfo.get_string())+"""</span>
+<span class=\"title\">"""+html.fix_text(info.get_string())+"""</span>
 
 
 
 """)
 
 
-WWWMoaRW.send("""
+rw.send("""
 
 
 <noscript>
@@ -94,7 +95,7 @@ However, do not panic!  There are several ways that you can remedy this problem:
 """)
 
 
-WWWMoaRW.send("""
+rw.send("""
 
 <div id=\"jma-jsprotect\" style=\"visibility:hidden\">
 
@@ -110,7 +111,7 @@ WWWMoaRW.send("""
 <script type=\"text/javascript\">
 <!--
 
-wwwmoa.hm.create(\"""" + WWWMoaJS.fix_text_for_html(WWWMoaRL.get_hm("fsbrowser",[])) + """\", function(obj){
+wwwmoa.hm.create(\"""" + js.fix_text_for_html(rl.get_hm("fsbrowser",[])) + """\", function(obj){
 
     if(obj===null)
     {
@@ -128,7 +129,7 @@ wwwmoa.hm.create(\"""" + WWWMoaJS.fix_text_for_html(WWWMoaRL.get_hm("fsbrowser",
 
 
 <br>
-<a href=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_help()) + """\" target=\"_blank\" class=\"navbutton\">Help</a>
+<a href=\"""" + html.fix_text(rl.get_help()) + """\" target=\"_blank\" class=\"navbutton\">Help</a>
 <a href=\"#jma-ahook\" class=\"navbutton\" onclick=\"window.location.reload(false);\">Restart</a><br><br>
 
 
@@ -172,7 +173,7 @@ Loading...
 
 """)
 
-WWWMoaRW.send("""
+rw.send("""
 <script type=\"text/javascript\">
 <!--
 document.getElementById(\"jma-jsprotect\").style.visibility=\"visible\";
@@ -183,7 +184,7 @@ document.getElementById(\"jma-jsprotect\").style.visibility=\"visible\";
 
 <div id=\"smallnotices\">
 
-This is the pre-release version of """+WWWMoaHTML.fix_text(WWWMoaInfo.get_name())+""". <br>""" + WWWMoaHTML.fix_text(WWWMoaInfo.get_name())+""" is powered by <a href=\"http://www.python.org/\">Python</a>. Best viewed in <a href=\"http://www.mozilla.com/firefox\">Firefox Web Browser</a>.
+This is the pre-release version of """+html.fix_text(info.get_name())+""". <br>""" + html.fix_text(info.get_name())+""" is powered by <a href=\"http://www.python.org/\">Python</a>. Best viewed in <a href=\"http://www.mozilla.com/firefox\">Firefox Web Browser</a>.
 
 </div>
 

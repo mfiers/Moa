@@ -6,47 +6,48 @@
 import sys
 
 # get ready for next set of imports
-sys.path.append("../private/")
+sys.path.append("../lib/python")
 
-import WWWMoaRW
-import WWWMoaRL
-import WWWMoaInfo
-import WWWMoaHTML
-import WWWMoaJS
+from wwwmoa import rw
+from wwwmoa import rl
+from wwwmoa import info
+from wwwmoa import html
+from wwwmoa import js
+
 import os
 
 
-WWWMoaRW.send_header("Content-Type", "text/html; charset=UTF-8")
-WWWMoaRW.send_header("Cache-Control", "no-cache")
-WWWMoaRW.send_header("Expires", "0")
-WWWMoaRW.end_header_mode()
+rw.send_header("Content-Type", "text/html; charset=UTF-8")
+rw.send_header("Cache-Control", "no-cache")
+rw.send_header("Expires", "0")
+rw.end_header_mode()
 
 
-WWWMoaRW.send("""<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
+rw.send("""<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">
 
 <html>
 
 <head>
 
-<title>"""+WWWMoaHTML.fix_text(WWWMoaInfo.get_string())+""" Help</title>
+<title>"""+html.fix_text(info.get_string())+""" Help</title>
 
-<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_style("normal"))+"""\">
-<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_style("normalbuttons"))+"""\">
-<link rel=\"shortcut icon\" href=\"""" + WWWMoaHTML.fix_text(WWWMoaRL.get_image("MOAfavA"))+"""\">
+<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + html.fix_text(rl.get_style("normal"))+"""\">
+<link rel=\"stylesheet\" type=\"text/css\" href=\"""" + html.fix_text(rl.get_style("normalbuttons"))+"""\">
+<link rel=\"shortcut icon\" href=\"""" + html.fix_text(rl.get_image("MOAfavA"))+"""\">
 
-<meta name=\"Generator\" content=\"""" + WWWMoaHTML.fix_text(WWWMoaInfo.get_string())+"""\">
+<meta name=\"Generator\" content=\"""" + html.fix_text(info.get_string())+"""\">
 
 </head>
 
 """)
 
 
-WWWMoaRW.send("""
+rw.send("""
 <body>
 
 <div id=\"wrapper\">
 
-<span class=\"title\">"""+WWWMoaHTML.fix_text(WWWMoaInfo.get_string())+""" Help</span><br><br>
+<span class=\"title\">"""+html.fix_text(info.get_string())+""" Help</span><br><br>
 
 <a href=\"javascript:window.close();\" class=\"navbutton\">Close Help</a><br><br>
 
@@ -58,14 +59,14 @@ Help for WWWMoa is coming soon.  Please check back later.
 """)
 
 
-WWWMoaRW.send("""
+rw.send("""
 
 
 </div>
 
 <div id=\"smallnotices\">
 
-This is the pre-release version of """+WWWMoaHTML.fix_text(WWWMoaInfo.get_name())+""". <br>""" + WWWMoaHTML.fix_text(WWWMoaInfo.get_name())+""" is powered by <a href=\"http://www.python.org/\">Python</a>. Best viewed in <a href=\"http://www.mozilla.com/firefox\">Firefox Web Browser</a>.
+This is the pre-release version of """+html.fix_text(info.get_name())+""". <br>""" + html.fix_text(info.get_name())+""" is powered by <a href=\"http://www.python.org/\">Python</a>. Best viewed in <a href=\"http://www.mozilla.com/firefox\">Firefox Web Browser</a>.
 
 </div>
 

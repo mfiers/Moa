@@ -4,7 +4,7 @@
 ### Date: November 20, 2009
 
 ## Imports ##
-import WWWMoaHTML
+from wwwmoa.formats import html
 
 ## Escapes a string for embedding in a JavaScript string literal.
 def fix_text(txt):
@@ -12,4 +12,4 @@ def fix_text(txt):
 
 ## Escapes a string for embedding in a JavaScript string literal, and ensures that it can safely be placed in a <script> tag in an HTML document.
 def fix_text_for_html(txt):
-    return WWWMoaHTML.fix_text(fix_text(txt))
+    return html.fix_text(fix_text(txt))

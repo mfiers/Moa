@@ -2,10 +2,14 @@
 ### Mod_API / Main API
 
 ## Imports ##
-import WWWMoaRW
-import WWWMoaRL
-import WWWMoaEnv
-import WWWMoaHTMLError
+
+from wwwmoa import rw
+from wwwmoa import rl
+
+
+import wwwmoa.env
+from wwwmoa.formats.html import error
+
 import os
 import os.path
 import json
@@ -15,15 +19,15 @@ import time
 
 ## Figures out whether or not a given path is equivalent to the psuedo-root directory.
 def is_root(path):
-    return os.path.samefile(WWWMoaEnv.get_content_dir(), path)
+    return os.path.samefile(wwwmoa.env.get_content_dir(), path)
 
 ## Figures out whether or not a given path is within the psuedo-root directory.
 def in_root(path):
-    return os.path.samefile(os.path.commonprefix([path, WWWMoaEnv.get_content_dir()]), WWWMoaEnv.get_content_dir())
+    return os.path.samefile(os.path.commonprefix([path, wwwmoa.env.get_content_dir()]), wwwmoa.env.get_content_dir())
 
 ## Outputs a custom error message.
 def output_error(err):
-    WWWMoaHTMLError.throw_fatal_error("API Failure", "The API request you made failed so badly that it could not continue.  More details can be found below.\n\n" + err)
+    error.throw_fatal_error("API Failure", "The API request you made failed so badly that it could not continue.  More details can be found below.\n\n" + err)
 
 
 ## Main Interface Logic ##
@@ -38,7 +42,7 @@ def run(args=None, env=None):
         output_error("The API request you made cannot be completed, because you did not supply enough information.")
 
     # extract the command and file system path
-    command=WWWMoaRL.url_decode_x(args[len(args)-1])
+    command=rl.url_decode_x(args[len(args)-1])
     if len(args)>=2: # if there was a path sent
         content_path_array=args[:len(args)-1] # the subset of elements that would determine the path are all except for the last one
         content_path=("/".join(content_path_array)) # the path is directly determined by the elements
@@ -46,7 +50,7 @@ def run(args=None, env=None):
         content_path_array=[] # the element array is empty
         content_path="" # just return the root (which is not absolute, so it is an empty string)
 
-    path=os.path.join(WWWMoaEnv.get_content_dir(), content_path) # get the complete pathname
+    path=os.path.join(wwwmoa.env.get_content_dir(), content_path) # get the complete pathname
 
     path=os.path.normpath(path) # make path as simple as possible
 
@@ -56,10 +60,10 @@ def run(args=None, env=None):
     # make sure requested path is safe
     
     if not in_root(path): # if the requested path is not in the psuedo-root directory
-        WWWMoaHTMLError.throw_fatal_error("Access Denied", "The directory you attempted to access cannot be, because you do not have the permission to do so.") # say so
+        error.throw_fatal_error("Access Denied", "The directory you attempted to access cannot be, because you do not have the permission to do so.") # say so
     
     if not os.path.isdir(path): # if the request path does not exist
-        WWWMoaHTMLError.throw_fatal_error("Target Not Found", "The directory you attempted to access cannot be, because the directory does not exist.") # say so
+        error.throw_fatal_error("Target Not Found", "The directory you attempted to access cannot be, because the directory does not exist.") # say so
 
     if command=="ls" or command[:3]=="ls-": # if we are dealing with an ls request
         command_exploded=command.partition("-") # break the command into pieces
@@ -168,12 +172,12 @@ def run(args=None, env=None):
 
 
        
-        WWWMoaRW.send_header("Content-Type", "application/json") # we will be sending JSON
-        WWWMoaRW.send_header("Cache-Control", "no-cache") # this response should NOT be cached
-        WWWMoaRW.send_header("Expires", "0") # some older browsers need this to not cache a response
-        WWWMoaRW.end_header_mode() # get ready to send response
+        rw.send_header("Content-Type", "application/json") # we will be sending JSON
+        rw.send_header("Cache-Control", "no-cache") # this response should NOT be cached
+        rw.send_header("Expires", "0") # some older browsers need this to not cache a response
+        rw.end_header_mode() # get ready to send response
 
-        WWWMoaRW.send(json.dumps({ # send response
+        rw.send(json.dumps({ # send response
                     "dir" : path_exploded_final, # the dir path components
                     "ls" : ls_final, # the final listing
                     "ls-available" : ls_total_count, # the total number of entries that are potentially available

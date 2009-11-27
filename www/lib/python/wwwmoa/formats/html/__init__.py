@@ -4,7 +4,7 @@
 ### Date: November 18, 2009
 
 ## Imports ##
-import WWWMoaRW # used in convience methods that directly send HTML code
+from wwwmoa import rw # used in convience methods that directly send HTML code
 import cgi # used to make arbitrary text safe
 
 
@@ -90,31 +90,31 @@ def get_linefeed_tag():
 
 ## Convienance function that outputs the result of get_simple_tag_open().
 def send_simple_tag_open(tagname):
-    WWWMoaRW.send(get_simple_tag_open(tagname))
+    rw.send(get_simple_tag_open(tagname))
 
 ## Convienance function that outputs the result of get_simple_tag_close().
 def send_simple_tag_close(tagname):
-    WWWMoaRW.send(get_simple_tag_close(tagname))
+    rw.send(get_simple_tag_close(tagname))
 
 ## Convienance function that outputs the result of get_tag_open().
 def send_tag_open(tagname, tagdict):
-    WWWMoaRW.send(get_tag_open(tagname, tagdict))
+    rw.send(get_tag_open(tagname, tagdict))
 
 ## Convienance function that outputs the result of get_tag_close().
 def send_tag_close(tagname):
-    WWWMoaRW.send(get_tag_close(tagname))
+    rw.send(get_tag_close(tagname))
 
 ## Convienance function that outputs the result of get_simple_tag().
 def send_simple_tag(tagname):
-    WWWMoaRW.send(get_simple_tag(tagname))
+    rw.send(get_simple_tag(tagname))
 
 ## Convienance function that outputs the result of get_tag().
 def send_tag(tagname, tagdict):
-    WWWMoaRW.send(get_tag(tagname,tagdict))
+    rw.send(get_tag(tagname,tagdict))
 
 ## Convienance function that outputs the result of get_linefeed_tag().
 def send_linefeed_tag():
-    WWWMoaRW.send(get_linefeed_tag())
+    rw.send(get_linefeed_tag())
 
 
 ## HTML Safeguarding Functions ##

@@ -6,28 +6,35 @@
 ## Imports ##
 
 import os # used to access file system
-import WWWMoaRW # used to output arbitrary buffers
-import WWWMoaHTMLError # used for error messages
+import os.path
+from wwwmoa import rw # used to output arbitrary buffers
+from wwwmoa.formats.html import error # used for error messages
 import sys
+
 ## Helper Functions ##
 
 def file_exists(path):
     return os.access(path,os.R_OK)
 
 def output_error(err):
-    WWWMoaHTMLError.throw_fatal_error("Resource Accessing Error", err)
+    error.throw_fatal_error("Resource Accessing Error", err)
 
 def request_no_cache():
-    WWWMoaRW.send_header("Cache-Control", "no-cache") # ask the browser not to cache resource
-    WWWMoaRW.send_header("Expires", "0") # ask older browsers not to cache resource
+    rw.send_header("Cache-Control", "no-cache") # ask the browser not to cache resource
+    rw.send_header("Expires", "0") # ask older browsers not to cache resource
 
 def request_short_cache():
-    WWWMoaRW.send_header("Cache-Control", "max-age=3600")
+    rw.send_header("Cache-Control", "max-age=3600")
 
+## State Variables ##
+
+_file_dir=os.path.dirname(__file__)
 
 ## Main Execution ##
 
 def run(args = None, env = None):
+    global _file_dir
+
     # check that required inputs exist
     if (args==None) or (env==None): # if not all required inputs exist
         output_error("An unexpected error occured.") # say so
@@ -47,7 +54,7 @@ def run(args = None, env = None):
         output_error("The id or type you submitted is invalid.  All resource ids and types must be alpha-numeric strings of with a length of at least 1 character.") # show error message
 
     # start building relative path
-    path="../media/"
+    path=os.path.join(_file_dir, "../../../../static/")
     path2=""
 
     # set default mime-type value
@@ -83,13 +90,13 @@ def run(args = None, env = None):
         if not file_exists(path2): # if JPEG does not exist
             exists=False # no image file exists, so remember that it does not exist
     elif type=="scripts":
-        path="../js/"
+        path="../lib/js/"
 
         # [!] Note: There is a special link in for wwwmoa.
         if id=="wwwmoa":
-            import WWWMoaMod_JSCore
+            import wwwmoa.mod.jscore
 
-            WWWMoaMod_JSCore.run()        
+            wwwmoa.mod.jscore.run()        
 
         path2=path+id+".js"
         mime="text/javascript"
@@ -103,14 +110,14 @@ def run(args = None, env = None):
         output_error("The resource you attempted to access could not be found.") # show error message
 
     # finish up HTTP headers
-    WWWMoaRW.send_header("Content-Type", mime) # tell browser what type of file it is
+    rw.send_header("Content-Type", mime) # tell browser what type of file it is
 
     if type=="images":
         request_short_cache()
     else:
         request_no_cache()
 
-    WWWMoaRW.end_header_mode() # end header mode
+    rw.end_header_mode() # end header mode
 
     # read file contents
     file=open(path2, "r") # open file
@@ -118,9 +125,9 @@ def run(args = None, env = None):
     file.close() # close file
 
     if mime=="text/css":
-        pass #buff=buff.replace("\x0A", "\x0D\x0A")
+        pass
 
-    WWWMoaRW.send(buff) # send file contents
+    rw.send(buff) # send file contents
 
-    WWWMoaRW.terminate() # terminate script
+    rw.terminate() # terminate script
 

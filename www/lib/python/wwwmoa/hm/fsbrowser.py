@@ -3,18 +3,20 @@
 
 
 ## Imports ##
-import WWWMoaHTMLError
-import WWWMoaJS
-import WWWMoaRW
-import WWWMoaRL
-import WWWMoaEnv
+
+from wwwmoa.formats.html import error
+from wwwmoa.formats import js
+from wwwmoa import rw
+from wwwmoa import rl
+from wwwmoa import env
+
 
 
 ## Helper Functions ##
 
 ## Outputs a standardized error message.
 def output_error(err):
-    WWWMoaHTMLError.throw_fatal_error("File Browser Error", err)
+    error.throw_fatal_error("File Browser Error", err)
 
 ## Main Entry Point ##
 def run(args, env):
@@ -26,12 +28,12 @@ def run(args, env):
     else: # if we were handed a starting directory
         requested_path=args[0] # use it
 
-    WWWMoaRW.send_header("Content-Type", "text/javascript")
-    WWWMoaRW.send_header("Cache-Control", "no-cache")
-    WWWMoaRW.send_header("Expires", "0")
-    WWWMoaRW.end_header_mode()
+    rw.send_header("Content-Type", "text/javascript")
+    rw.send_header("Cache-Control", "no-cache")
+    rw.send_header("Expires", "0")
+    rw.end_header_mode()
 
-    WWWMoaRW.send("""
+    rw.send("""
 
 /*** FSBrowser Helper Module ***************************
 * This script was generated on the fly and is designed *
@@ -74,7 +76,7 @@ return { // our code will return an object
         this.showFiles=true;
         var a=this;
 
-        wwwmoa.ajax.get(\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_api("ls", requested_path)) + """\",function(data) { a.dataCallback.call(a, data); } , 8192);
+        wwwmoa.ajax.get(\"""" + js.fix_text(rl.get_api("ls", requested_path)) + """\",function(data) { a.dataCallback.call(a, data); } , 8192);
     },
 
     doSetVisualElementAction : function(oldid)
@@ -121,7 +123,7 @@ return { // our code will return an object
 
 
 
-        tmpvc+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FSdiroprtA")) + """\\\" alt=\\\"Directory\\\">\";
+        tmpvc+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FSdiroprtA")) + """\\\" alt=\\\"Directory\\\">\";
         tmpvc+=\" \";
         tmpvc+=\"<span style=\\\"font-weight:bold; color:#0000FF; text-decoration:underline; cursor:pointer\\\" onclick=\\\"wwwmoa.hm.contact(\" + this.\
 getHMId() + \", 'rtx');\\\">\"
@@ -135,7 +137,7 @@ getHMId() + \", 'rtx');\\\">\"
         {
             levels++;
 
-            tmpvc+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FSdiropA")) + """\\\" alt=\\\"Directory\\\">\";
+            tmpvc+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FSdiropA")) + """\\\" alt=\\\"Directory\\\">\";
             tmpvc+=\" \";
             tmpvc+=\"<span style=\\\"font-weight:bold; color:#0000FF; text-decoration:underline; cursor:pointer\\\" onclick=\\\"wwwmoa.hm.contact(\" + this.getHMId() + \", 'par-\" + x + \"');\\\">\"
             tmpvc+=wwwmoa.html.fix_text(ls_response[\"dir\"][x][\"name\"]);
@@ -156,13 +158,13 @@ getHMId() + \", 'rtx');\\\">\"
             if(!is_dir)
             {
                 tmpvc2+=\"<tr><td>\";
-                tmpvc2+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FSfileA")) + """\\\" alt=\\\"File\\\"> \";
+                tmpvc2+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FSfileA")) + """\\\" alt=\\\"File\\\"> \";
                 tmpvc2+=\"<span style=\\\"font-weight:bold; color:#0000FF; text-decoration:underline; cursor:pointer\\\" \";
             }
             else
             {
                 tmpvc+=\"<tr><td>\";
-                tmpvc+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FSdirclA")) + """\\\" alt=\\\"Directory\\\"> \";
+                tmpvc+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FSdirclA")) + """\\\" alt=\\\"Directory\\\"> \";
                 tmpvc+=\"<span style=\\\"font-weight:bold; color:#0000FF; text-decoration:underline; cursor:pointer\\\" \";
             }
 
@@ -193,20 +195,20 @@ getHMId() + \", 'rtx');\\\">\"
             tmpvc3+=\"</td><td>\";
 
             if(ls_response[\"ls\"][x][\"link\"])
-                tmpvc3+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FSlinkA")) + """\\\" alt=\\\"Link\\\" title=\\\"This item is actually a link.\\\">\";
+                tmpvc3+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FSlinkA")) + """\\\" alt=\\\"Link\\\" title=\\\"This item is actually a link.\\\">\";
 
             tmpvc3+=\"</td><td>\";
 
             if(ls_response[\"ls\"][x][\"read-allowed\"])
-                tmpvc3+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FScreadA")) + """\\\" alt=\\\"Read Allowed\\\" title=\\\"Reading this item is allowed.\\\"> \";
+                tmpvc3+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FScreadA")) + """\\\" alt=\\\"Read Allowed\\\" title=\\\"Reading this item is allowed.\\\"> \";
             else
-                tmpvc3+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FScnreadA")) + """\\\" alt=\\\"Read Not Allowed\\\" title=\\\"Reading this item is not allowed.\\\"> \";
+                tmpvc3+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FScnreadA")) + """\\\" alt=\\\"Read Not Allowed\\\" title=\\\"Reading this item is not allowed.\\\"> \";
 
 
             if(ls_response[\"ls\"][x][\"write-allowed\"])
-                tmpvc3+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FScwriteA")) + """\\\" alt=\\\"Write Allowed\\\" title=\\\"Writing this item is allowed.\\\">\";
+                tmpvc3+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FScwriteA")) + """\\\" alt=\\\"Write Allowed\\\" title=\\\"Writing this item is allowed.\\\">\";
             else
-                tmpvc3+=\"<img src=\\\"""" + WWWMoaJS.fix_text(WWWMoaRL.get_image("FScnwriteA")) + """\\\" alt=\\\"Write Not Allowed\\\" title=\\\"Writing this item is not allowed.\\\">\";
+                tmpvc3+=\"<img src=\\\"""" + js.fix_text(rl.get_image("FScnwriteA")) + """\\\" alt=\\\"Write Not Allowed\\\" title=\\\"Writing this item is not allowed.\\\">\";
 
 
             tmpvc3+=\"</td></tr>\";

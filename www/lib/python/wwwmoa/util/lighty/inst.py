@@ -1,11 +1,11 @@
-from WWWMoaLightyConf import get_config_file
-from WWWMoaLightyPrompt import print_sys_message
-from WWWMoaLightyPrompt import print_error_message
-from WWWMoaLightyPrompt import print_message
-from WWWMoaLightyPrompt import do_main_prompt
-from WWWMoaLightyPrompt import do_prompt
-from WWWMoaLightyPrompt import do_bool_prompt
-from WWWMoaLightyPrompt import do_int_prompt
+from conf import get_config_file
+from prompt import print_sys_message
+from prompt import print_error_message
+from prompt import print_message
+from prompt import do_main_prompt
+from prompt import do_prompt
+from prompt import do_bool_prompt
+from prompt import do_int_prompt
 
 
 import sys

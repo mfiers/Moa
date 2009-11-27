@@ -13,18 +13,20 @@
 
 ## Imports ##
 
-import WWWMoaRW
-import WWWMoaRL
-import WWWMoaInfo
-import WWWMoaJS
+from wwwmoa import rw
+from wwwmoa import rl
+from wwwmoa import info
+from wwwmoa.formats import js
+
+
 
 ## JS Library ##
 
 def run(args=None, env=None):
-    WWWMoaRW.send_header("Content-Type", "text/javascript")
-    WWWMoaRW.end_header_mode()
+    rw.send_header("Content-Type", "text/javascript")
+    rw.end_header_mode()
 
-    WWWMoaRW.send("""
+    rw.send("""
 /// WWWMoa ///////////////////////////////
 /// Core JS Library
 /// Version: 0.1
@@ -46,9 +48,9 @@ var wwwmoa={ // root object
 
     // WWWMoa version information
     info : {
-	version : {major : """ + str(WWWMoaInfo.get_version_major()) + """, minor : """ + str(WWWMoaInfo.get_version_minor()) + """, str : \"""" + WWWMoaJS.fix_text(WWWMoaInfo.get_version_string()) + """\"},
-	name : \"""" + WWWMoaJS.fix_text(WWWMoaInfo.get_name()) + """\",
-	str : \"""" + WWWMoaJS.fix_text(WWWMoaInfo.get_string()) + """\"
+	version : {major : """ + str(info.get_version_major()) + """, minor : """ + str(info.get_version_minor()) + """, str : \"""" + js.fix_text(info.get_version_string()) + """\"},
+	name : \"""" + js.fix_text(info.get_name()) + """\",
+	str : \"""" + js.fix_text(info.get_string()) + """\"
     },
 
     // Helper module utilities
@@ -166,19 +168,19 @@ var wwwmoa={ // root object
         },
 
         get_pre : function () {
-            return \"""" + WWWMoaJS.fix_text(WWWMoaRL.get_pre())+"""\";
+            return \"""" + js.fix_text(rl.get_pre())+"""\";
         },
 
         get_magic_pre : function () {
-            return \"""" + WWWMoaJS.fix_text(WWWMoaRL.get_magic_pre())+"""\";
+            return \"""" + js.fix_text(rl.get_magic_pre())+"""\";
         },
 
         get_home : function () {
-            return \"""" + WWWMoaJS.fix_text(WWWMoaRL.get_home())+"""\";
+            return \"""" + js.fix_text(rl.get_home())+"""\";
         },
 
         get_help : function () {
-            return \"""" + WWWMoaJS.fix_text(WWWMoaRL.get_help())+"""\";
+            return \"""" + js.fix_text(rl.get_help())+"""\";
         },
 
         get_image : function (id) {
@@ -302,4 +304,4 @@ var wwwmoa={ // root object
 
 }""")
 
-    WWWMoaRW.terminate()
+    rw.terminate()

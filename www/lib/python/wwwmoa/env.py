@@ -2,12 +2,14 @@
 ### Env / Operating Environment
 
 
-import WWWMoaHTMLError
-import WWWMoaCGIEx
-import WWWMoaInfo
+
+import os
 import xml.sax
 import os.path
-import os
+
+from wwwmoa.formats.html import error
+from wwwmoa import cgiex
+from wwwmoa import info
 
 _loaded_cleanly=False
 _loading_failed=False
@@ -29,11 +31,11 @@ class EnvHandler(xml.sax.handler.ContentHandler):
         _loading_failed=not _loaded_cleanly
 
        
-_request_port=WWWMoaCGIEx.get_request_port()
+_request_port=cgiex.get_request_port()
 
 if _request_port!=-1:
-    _env_file=os.path.join(os.getcwd(), "../conf/env/"+str(_request_port)+".xml")
-
+    _env_file=os.path.join(os.path.dirname(__file__), "../../../etc/env/"+str(_request_port)+".xml")
+    
     if not os.access(_env_file, os.R_OK):
         _loading_failed=True
     else:
@@ -47,7 +49,7 @@ def require_environment():
     global _loading_failed
 
     if _loading_failed:
-        WWWMoaHTMLError.throw_fatal_error("Environment Failure", "I cannot continue, because the environment for " + WWWMoaInfo.get_name()+" could not be loaded.  Loading this environment is important, as it includes important resources like your personal content files.\n\nIf your "+WWWMoaInfo.get_name() +" installation is managed by technical support staff, please let them know you received this message.") 
+        error.throw_fatal_error("Environment Failure", "I cannot continue, because the environment for " + info.get_name()+" could not be loaded.  Loading this environment is important, as it includes important resources like your personal content files.\n\nIf your "+info.get_name() +" installation is managed by technical support staff, please let them know you received this message.") 
 
 ## Returns the server-side file system root path, which may or may not be absolute.  The return path always ends with a slash. Returns None if the environment was not loaded successfully.
 def get_content_dir():

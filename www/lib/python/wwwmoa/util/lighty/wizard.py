@@ -1,18 +1,18 @@
-from WWWMoaLightyConf import get_config_file
-from WWWMoaLightyConf import get_env_file
+from conf import get_config_file
+from conf import get_env_file
 
-from WWWMoaLightyPrompt import print_sys_message
-from WWWMoaLightyPrompt import print_error_message
-from WWWMoaLightyPrompt import print_message
-from WWWMoaLightyPrompt import do_main_prompt
-from WWWMoaLightyPrompt import do_prompt
-from WWWMoaLightyPrompt import do_bool_prompt
-from WWWMoaLightyPrompt import do_int_prompt
+from prompt import print_sys_message
+from prompt import print_error_message
+from prompt import print_message
+from prompt import do_main_prompt
+from prompt import do_prompt
+from prompt import do_bool_prompt
+from prompt import do_int_prompt
 
-from WWWMoaLightyInst import add_instance
-from WWWMoaLightyInst import show_status
-from WWWMoaLightyInst import get_current_ids
-from WWWMoaLightyInst import _inst
+from inst import add_instance
+from inst import show_status
+from inst import get_current_ids
+from inst import _inst
 
 import sys
 import os
@@ -37,7 +37,7 @@ def get_tmp_file_path(dir_path):
 
 
 def get_env_file_path(port):
-    return os.path.join(os.getcwd(), "../conf/env/"+str(port)+".xml")
+    return os.path.join(os.path.dirname(__file__), "../../../../../etc/env/"+str(port)+".xml")
 
 
 def do_run_wizard():
@@ -119,7 +119,7 @@ def do_run_wizard():
     print_sys_message("I will now attempt to start up the instance.")
     print_sys_message("I am currently performing several steps nessesary to configure the instance.")
 
-    tmp_conf_dir=os.path.join(os.getcwd(), "conf")
+    tmp_conf_dir=os.path.join(os.path.dirname(__file__), "tmp")
 
     try:
         if not os.access(tmp_conf_dir, os.F_OK):
@@ -148,6 +148,7 @@ def do_run_wizard():
         print_error_message("Something went wrong: lighttpd could not be started.")
 
         os.unlink(tmp_conf_file_path)
+        os.unlink(param_port_path)
     else:
         add_instance(param_name, param_port, param_path, tmp_conf_file_path, param_port_path, lighttpd)
 
