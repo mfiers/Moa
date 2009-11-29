@@ -11,8 +11,8 @@ sys.path.append("../lib/python")
 from wwwmoa import rw
 from wwwmoa import rl
 from wwwmoa import info
-from wwwmoa import html
-from wwwmoa import js
+from wwwmoa.formats import html
+from wwwmoa.formats import js
 
 import os
 

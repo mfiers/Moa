@@ -1,7 +1,5 @@
 ### WWWMoa ###############################
 ### JSCore / Core JS Library
-### Version: 0.1
-### Date: November 20, 2009
 
 ### Import Note ##
 ## Normally, scripts are kept static.  However,
@@ -55,74 +53,100 @@ var wwwmoa={ // root object
 
     // Helper module utilities
     hm : {
+        // information about what helper modules have been created
         state : {next_hmid : 0, hms : []},
 
+        // Sends a given message to a helper module, addressed by its ID.
+        // The message is delivered by calling the helper module's "doContactAction"
+        // method.
+        // This method returns true on success, and false on failure.
         contact : function (hmid, data) {
-            if(wwwmoa.hm.state.hms[hmid]===undefined) return;
+            if(wwwmoa.hm.state.hms[hmid]===undefined) return false;
 
-            if(wwwmoa.hm.state.hms[hmid].doContactAction===undefined) return;
+            if(wwwmoa.hm.state.hms[hmid].doContactAction===undefined) return false;
             
             wwwmoa.hm.state.hms[hmid].doContactAction(data);
+
+            return true;
         },
 
+        // Unlinks a given helper module.  In practice, this means that
+        // the helper modules ID will be reused.  It does NOT attempt to
+        // delete the object.
         unlink : function (hmid) {
-            wwwmoa.hm.state.hms[hmid]=undefined;
-            wwwmoa.hm.state.next_hmid=hmid;
+            wwwmoa.hm.state.hms[hmid]=undefined; // remove the helper module from the list of helper modules
+            wwwmoa.hm.state.next_hmid=hmid; // remember to use this id next, since it is now free
         },
 
+        // Creates a helper module object from code at a given relative
+        // RL.  This function accepts a callback function that is called
+        // on success or failure.  On success, the callback function is
+        // passed a single argument, which is the object of the helper
+        // module.  On failure, the callback function is passed null.
+        //
+        // [!] Implementation Note: This function creates API calls to
+        // the Dojo Toolkit.
         create : function (hmrl, callback) {
+
+            // Callback function that creates the helper module object from
+            // code that is passed to it.  This callback function also
+            // provides default definitions for certain required functions,
+            // as well as overwriting certain functions so that they have
+            // the required behavior.
             function cb(data) {
-                hmc=new Function (data);
-                var new_hm=hmc();
+                hmc=new Function (data); // create a function that contains the passed code
+                var new_hm=hmc(); // the code should return a helper module, so execute it
 
-                while(wwwmoa.hm.state.hms[wwwmoa.hm.state.next_hmid]!==undefined)
+                while(wwwmoa.hm.state.hms[wwwmoa.hm.state.next_hmid]!==undefined) // while we have not found an unused id
                 {
-                    wwwmoa.hm.state.next_hmid++;
+                    wwwmoa.hm.state.next_hmid++; // try the next one
                 }
                 
-                new_hm.__hmid=wwwmoa.hm.state.next_hmid;
-                wwwmoa.hm.state.hms[wwwmoa.hm.state.next_hmid]=new_hm;
+                new_hm.__hmid=wwwmoa.hm.state.next_hmid; // set the helper module's id internally
+                wwwmoa.hm.state.hms[wwwmoa.hm.state.next_hmid]=new_hm; // add the helper module to the list of helper modules
                 
-                if(new_hm.doContactAction===undefined) {
-                    new_hm.doContactAction=function(data){};
+                if(new_hm.doContactAction===undefined) { // if doContactAction() has not been defined
+                    new_hm.doContactAction=function(data){}; // create it with a default implementation
                 }
 
-                if(new_hm.doIniAction===undefined) {
-                    new_hm.doIniAction=function() {};
+                if(new_hm.doIniAction===undefined) { // if doIniAction() has not been defined 
+                    new_hm.doIniAction=function() {}; // create it with a default implementation
                 }
 
-                if(new_hm.doSetVisualElementAction===undefined) {
-                    new_hm.doSetVisualElementAction=function(oldid){};
+                if(new_hm.doSetVisualElementAction===undefined) { // if doSetVisualElementAction() has not been defined
+                    new_hm.doSetVisualElementAction=function(oldid){}; // create it with a default implementation
                 }
 
-                new_hm.visualElement=null;
-                new_hm.getVisualElement=function() {
-                    return this.visualElement;
+                new_hm.visualElement=null; // set visualElement to null (whether it has been defined or not)
+                new_hm.getVisualElement=function() { // create getVisualElement() (whether it has been defined or not)
+                    return this.visualElement; // simply return the internal variable
                 }
 
-                new_hm.setVisualElementById=function(id) {
-                    this.setVisualElement(document.getElementById(id));
+                new_hm.setVisualElementById=function(id) { // create setVisualElementById() (whether it has been defined or not)
+                    this.setVisualElement(document.getElementById(id)); // set the visual element after making a call to getElementById()
                 }
 
-                new_hm.setVisualElement=function(ele) {
-                    tmp=this.visualElement;
-                    this.visualElement=ele;
-                    this.doSetVisualElementAction(tmp);
+                new_hm.setVisualElement=function(ele) { // create setVisualElement() (whether it has been defined or not)
+                    tmp=this.visualElement; // save the current element (as we will pass it later)
+                    this.visualElement=ele; // set the new element
+                    this.doSetVisualElementAction(tmp); // the visual element has been changed, so trigger event
                 }
 
-                new_hm.getHMId=function() {
-                    return this.__hmid;
+                new_hm.getHMId=function() { // create getHMId() (whether it has been defined or not)
+                    return this.__hmid; // simply return the internal state variable
                 }
 
-                new_hm.doIniAction();
+                new_hm.doIniAction(); // trigger startup event
 
-                callback(new_hm);
+                callback(new_hm); // pass the new helper module object to the callback function
             }
 
-            function cbe(err) {
-                callback(null);
+            // Callback function that receives errors.
+            function cbe(err) { 
+                callback(null); // on error, pass null to callback function
             }
 
+            // ask Dojo to start an AJAX request
             dojo.xhrGet( {
                       url : hmrl,
                       handleAs : \"text\",
@@ -136,7 +160,8 @@ var wwwmoa={ // root object
         
     },
 
-    // RL utilities: JavaScript clone of WWWMoaRL
+    // RL utilities: JavaScript clone of wwwmoa.rl.  Please see rl.py for
+    // more information about what these utilities do.
     rl : {
         
         url_encode : function (str) {
@@ -266,7 +291,7 @@ var wwwmoa={ // root object
 
     // HTML utilities
     html : {
-        // escapes text to make it safe for insertion into an HTML document
+        // Escapes text to make it safe for insertion into an HTML document.
         fix_text : function(txt) {
             return txt.replace(\"&\",\"&amp;\").replace(\"\\\"\", \"&quot;\").replace(\"\\'\", \"&#039;\").replace(\">\", \"&gt;\").replace(\"<\", \"&lt;\");
         }
@@ -274,7 +299,7 @@ var wwwmoa={ // root object
 
     // JSON utilities
     json : {
-          // wrapper for Dojo JSON parser
+          // Wrapper for Dojo JSON parser.
           parse : function (str) {
               return dojo.fromJson(str);
           }
@@ -282,7 +307,8 @@ var wwwmoa={ // root object
 
     // AJAX utilities
     ajax : {
-          // wrapper for Dojo AJAX system call
+          // Wrapper for Dojo AJAX system call.  The callback function is passed
+          // null on error, or a string object on success.
           get : function (relrl, callback, timeout) {
               function cb(txt) {
                   callback(txt);

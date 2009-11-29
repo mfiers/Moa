@@ -16,7 +16,6 @@ from wwwmoa.formats import js
 import wwwmoa.env
 import os
 
-
 # [!] Note: The following command ensures that the environment
 # can be loaded properly, even though this specific script
 # will not actually use it.
@@ -90,7 +89,6 @@ However, do not panic!  There are several ways that you can remedy this problem:
 </div>
 
 </noscript>
-
 
 """)
 

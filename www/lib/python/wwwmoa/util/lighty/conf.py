@@ -11,7 +11,7 @@ def get_cgi_handler_path():
     return "/usr/bin/python"
 
 def get_install_path():
-    return os.path.join(os.path.dirname(__file__),"../../../../../public")
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../../public")
 
 def escape_string(str):
     return str # [!] Placeholder
