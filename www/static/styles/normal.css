@@ -5,7 +5,10 @@
 
 body
 {
-background-color:#408060;
+background-color:#000020;
+background-image:url(../images/STYASTgradient1);
+background-position:0 0;
+background-repeat:repeat-x;
 font-size:12pt;
 font-family:arial, sans-serif;
 }
@@ -14,15 +17,25 @@ font-family:arial, sans-serif;
 {
 background-color:#FFFFFF;
 color:#000000;
-border:2px solid #A0C0B0;
+border:2px solid #808080;
 padding:12px;
 }
 
-.title
+span.title
 {
 font-weight:bold;
-font-size:36px;
+font-size:36pt;
 text-decoration:underline;
+}
+
+div.title
+{
+font-weight:bold;
+font-size:36pt;
+text-decoration:none;
+padding:6px;
+border:1px solid #F8F8F8;
+background-color:#F0F0F0
 }
 
 .section

@@ -207,7 +207,7 @@ getHMId() + \", 'rtx');\\\">\"
             tmp_shared_code=wwwmoa.html.fix_text(ls_response[\"ls\"][x][\"name\"]); // add the name of the file
             tmp_shared_code+=\"</span>\";
 
-            tmp_shared_code+=\"</td><td>\";
+            tmp_shared_code+=\"</td><td style=\\\"font-weight:normal; padding-left:4px\\\">\";
 
             if(ls_response[\"ls\"][x][\"size\"]>=0) // if the size has a meaning
                 tmp_shared_code+=ls_response[\"ls\"][x][\"size\"] + " b"; // add the size

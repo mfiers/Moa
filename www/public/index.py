@@ -56,9 +56,11 @@ rw.send("""
 
 <div id=\"wrapper\">
 
-<span class=\"title\">"""+html.fix_text(info.get_string())+"""</span>
+<div class=\"title\">
 
+<img src=\""""+ html.fix_text(rl.get_image("MOAicos1A")) +"""\" alt=\"\" style=\"vertical-align:middle\"> """+html.fix_text(info.get_string())+"""
 
+</div>
 
 """)
 
