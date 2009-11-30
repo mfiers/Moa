@@ -9,6 +9,7 @@ import os # used to access file system
 import os.path
 from wwwmoa import rw # used to output arbitrary buffers
 from wwwmoa.formats.html import error # used for error messages
+from wwwmoa.formats.mime.type import guess_from_filename # used for mimetype lookups
 import sys
 
 ## Helper Functions ##
@@ -57,19 +58,12 @@ def run(args = None, env = None):
     path=os.path.join(_file_dir, "../../../../static/")
     path2=""
 
-    # set default mime-type value
-    mime="text/plain"
-
-    # set default file extension value
-    extension=""
-
     # we will assume the file exists, and that the type is recognized
     exists=True
     typerec=True
 
     if type=="styles": # if type is style
         path2=path+"styles/"+id+".css" # we know the path will be this
-        mime="text/css" # all styles will by CSS stylesheets
 
         if not file_exists(path2): # if the file does not exist
             exists=False # remeber that it does not exist
@@ -77,14 +71,11 @@ def run(args = None, env = None):
         path+="images/"+id # start building path, but leave off extension for the moment
 
         path2=path+".png" # make path for PNG
-        mime="image/png" # set mimetype accordingly
 
         if not file_exists(path2): # if PNG does not exist
             path2=path+".gif" # make path for GIF
-            mime="image/gif" # set mimetype accordingly
         if not file_exists(path2): # if GIF does not exist
             path2=path+".jpg" # make path for JPEG
-            mime="image/jpeg" # set mimetype accordingly
         if not file_exists(path2): # if JPEG does not appear to exist at first
             path2=path+".jpeg" # try alternative pathname
         if not file_exists(path2): # if JPEG does not exist
@@ -99,18 +90,16 @@ def run(args = None, env = None):
             wwwmoa.mod.jscore.run()        
 
         path2=path+id+".js"
-        mime="text/javascript"
 
-        if not file_exists(path2):
-            exists=False
+        exists=file_exists(path2)
     else: # if type not recognized so far
         typerec=False # we will never recognize it
 
     if (not exists) or (not typerec): # if the file does not exist or the type is not recognized
         output_error("The resource you attempted to access could not be found.") # show error message
-
+    
     # finish up HTTP headers
-    rw.send_header("Content-Type", mime) # tell browser what type of file it is
+    rw.send_header("Content-Type", guess_from_filename(path2)) # tell browser what type of file it is
 
     if type=="images":
         request_short_cache()
@@ -123,9 +112,6 @@ def run(args = None, env = None):
     file=open(path2, "r") # open file
     buff=file.read() # read entire file into memory
     file.close() # close file
-
-    if mime=="text/css":
-        pass
 
     rw.send(buff) # send file contents
 
