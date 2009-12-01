@@ -94,7 +94,7 @@ def new(options, args):
     Create a new template based makefile in the current dir.
     """
 
-    usage = 'Usage: moa new [-p PROJECTNAME] ["TITLE"] [TEMPLATE(s)]'
+    usage = 'Usage: moa new  [-t "TITLE"] [TEMPLATE(s)]'
 
     if len(args) == 0:
         templates = ['traverse']
@@ -121,27 +121,6 @@ def new(options, args):
 
     for t in templates:
         _check(t)
-    
-    #try to get a project name from the parent dir
-    project = None
-    if options.project:
-        project = options.project
-        l.debug("project is %s" % project)
-    else:
-        if os.path.exists("../moa.mk"):
-            l.debug("opening ../moa.mk")
-            F = open('../moa.mk', 'r')
-            for line in F.readlines():
-                matchObject = re.match("^project *=(.*)$", line)
-                if matchObject:
-                    l.debug("found project %s" % line)
-                    project = matchObject.groups()[0]
-            F.close()
-
-    if not project:
-        l.warning("It is strongly recommended to specify a project name")
-        l.warning("You can still do so using moa set project='something meaningful'")
-        title = ""
 
     l.debug("Start writing ./Makefile") 
     F = open("./Makefile", 'w')
@@ -153,7 +132,7 @@ def new(options, args):
     F.write("include $(shell echo $$MOABASE)/template/__moaBase.mk\n")
     F.close()
 
-    if title or project:
+    if title:
 
         with moa.utils.flock('moa.mk.lock'):    
             moamk = []
@@ -166,16 +145,11 @@ def new(options, args):
             for line in moamk:
                 if re.match("^title *=", line) and title:
                     continue
-                if re.match("^project *=", line) and project:
-                    continue
                 F.write(line)
                 
             if title:
                 F.write("title=%s\n" % title)
                 l.debug("writing title=%s to moa.mk" % title)
-            if project:
-                F.write("project=%s\n" % project)
-                l.debug("Writing project=%s to moa.mk" % project)
 
             F.close()       
             l.debug('Written moa.mk')
