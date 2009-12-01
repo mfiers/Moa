@@ -18,11 +18,11 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-A set of moa help functions. Hidden behind one command: moa.
+moa frontend
 
-Most of the functions do not have a relationship with each
-other.. Maybe I should make separate scripts out of these. Don't know
-yet.
+This script serves as a command dispatcher too either a set of python
+libraries or to GNU Make
+
 """
 
 import os
@@ -43,7 +43,6 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
 ##
 ## Read the moa configutation file 
-##
 ETC = {}
 for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
     line = line.strip()
@@ -127,8 +126,14 @@ if __name__ == "__main__":
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
 
+    if command == 'run':
+        l.debug('Running default "make"')
+        retcode = subprocess.call(["make"])
+        l.debug("Make returned with retcode pid %s" % retcode)
+        sys.exit(0)
+
     #Create new jobs
-    if command == 'template':
+    elif command == 'template':
         moa.template.handler(options, newargs)
     elif command == 'new':
         #shortcut for moa template net

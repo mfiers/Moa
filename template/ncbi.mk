@@ -29,9 +29,11 @@ moa_description = Download a set of sequences from NCBI based on a		\
 
 getFromNcbi_help = Downloads from NCBI
 
-moa_must_define += ncbi_db ncbi_query
-ncbi_db_help = NCBI database (for example nucest)
+moa_must_define += ncbi_query
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
+
+moa_may_define = ncbi_db
+ncbi_db_help = NCBI database (defaults to nuccore)
 
 moa_may_define += ncbi_sequence_name
 ncbi_sequence_name_help = Sequence name to download. When this			\
@@ -50,8 +52,10 @@ prereq_wget:
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
 #define extra variables to register in couchdb
-moa_register_extra += fastadir
-moa_register_fastadir = $(shell echo `pwd`)/fasta 
+#moa_register_extra += fastadir
+#moa_register_fastadir = $(shell echo `pwd`)/fasta 
+
+ncbi_db ?= nuccore
 
 ################################################################################
 .PHONY: getFromNcbi_prepare
