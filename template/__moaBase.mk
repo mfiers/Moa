@@ -90,6 +90,26 @@ moa_run_postcommand:
 	fi
 	$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
 
+#Find project root (if there is one)
+project_root = $(shell \
+	C=`pwd`; \
+	while [[ "$$C" != "/" ]]; do \
+		if [[ -f "$$C/Makefile" ]]; then \
+			if moa -f $$C/Makefile ids | grep -q "project"; then \
+				echo $$C; \
+				break; \
+			fi; \
+		fi; \
+		C=`dirname $$C`; \
+	done; \
+)
+p=$(project_root)
+
+.PHONY: project_root
+project_root:
+	@echo $p
+
+
 ## display a MOA welcome message before a run
 parentheses_open=(
 parentheses_close=)
@@ -109,6 +129,7 @@ endif
 #
 # From here on moa.mk can be assumed to be included 
 ###############################################################################
+
 
 ###############################################################################
 # Define and executed a MOA run 
@@ -147,6 +168,10 @@ targets:
 	@for x in $(moa_all_targets); do	 					\
 		echo $$x;											\
 	done
+## print a list of all moa_ids
+.PHONY: ids
+ids:
+	@echo $(moa_ids)
 
 ## the main targets - we run these as separate make instances since I
 ## really cannot make Make to reevaluate what possible in-/output
@@ -289,9 +314,9 @@ dont_include_moabase=defined
 
 #each analysis MUST have a name
 #Variable: set_name
-moa_may_define += project
+#moa_may_define += project
 moa_must_define += title
-project_help ?= A project name - group your analyses.
+#project_help ?= A project name - group your analyses.
 title_help ?= A job name - Describe what you are doing
 
 ## author of this template

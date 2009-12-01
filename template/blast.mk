@@ -62,6 +62,7 @@ prereq_biopython_installed:
 
 moa_may_define += blast_input_dir
 blast_input_dir_help = directory containing the input sequences
+blast_input_dir_type = dir
 
 moa_must_define += blast_db
 blast_db_help = Location of the blast database
