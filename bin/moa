@@ -150,7 +150,7 @@ if __name__ == "__main__":
         moa.conf.handler(options, newargs)
     else:
         #fire arguments of to make
-        l.debug('Running "make %s"' % (" ".join(args)))
-        retcode = subprocess.call(["make"]+args)
+        l.debug('Running "make %s"' % (" ".join(sys.argv[1:])))
+        retcode = subprocess.call(["make"]+sys.argv[1:])
         l.debug("Make returned with code %s" % retcode)
         sys.exit(0)
