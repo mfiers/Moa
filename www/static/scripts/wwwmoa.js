@@ -1,30 +1,4 @@
-### WWWMoa ###############################
-### JSCore / Core JS Library
 
-### Import Note ##
-## Normally, scripts are kept static.  However,
-## this script is dynamic to allow for the
-## loading of various system information at
-## request time.  To keep the external inteface
-## uniform, it has been specially linked in
-## (see WWWMoaMod_Resource).
-
-## Imports ##
-
-from wwwmoa import rw
-from wwwmoa import rl
-from wwwmoa import info
-from wwwmoa.formats import js
-
-
-
-## JS Library ##
-
-def run(args=None, env=None):
-    rw.send_header("Content-Type", "text/javascript")
-    rw.end_header_mode()
-
-    rw.send("""
 /// WWWMoa ///////////////////////////////
 /// Core JS Library
 /// Version: 0.1
@@ -39,16 +13,16 @@ var wwwmoa={ // root object
 
     // JS library version information
     jsinfo : {
-	version : {major : 0, minor : 1, str : \"0.1\"},
-	name : \"WWWMoa JS\",
-	str : \"WWWMoa JS 0.1\"
+	version : {major : 0, minor : 1, str : "0.1"},
+	name : "WWWMoa JS",
+	str : "WWWMoa JS 0.1"
     },
 
     // WWWMoa version information
     info : {
-	version : {major : """ + str(info.get_version_major()) + """, minor : """ + str(info.get_version_minor()) + """, str : \"""" + js.fix_text(info.get_version_string()) + """\"},
-	name : \"""" + js.fix_text(info.get_name()) + """\",
-	str : \"""" + js.fix_text(info.get_string()) + """\"
+	version : {major : 0, minor : 1, str : "0.1"},
+	name : "WWWMoa",
+	str : "WWWMoa 0.1"
     },
 
     // Helper module utilities
@@ -149,7 +123,7 @@ var wwwmoa={ // root object
             // ask Dojo to start an AJAX request
             dojo.xhrGet( {
                       url : hmrl,
-                      handleAs : \"text\",
+                      handleAs : "text",
                       timeout : 8192,
                       load : cb,
                       error : cbe
@@ -160,8 +134,7 @@ var wwwmoa={ // root object
         
     },
 
-    // RL utilities: JavaScript clone of wwwmoa.rl.  Please see rl.py for
-    // more information about what these utilities do.
+    // RL utilities
     rl : {
         
         url_encode : function (str) {
@@ -193,31 +166,31 @@ var wwwmoa={ // root object
         },
 
         get_pre : function () {
-            return \"""" + js.fix_text(rl.get_pre())+"""\";
+            return "/";
         },
 
         get_magic_pre : function () {
-            return \"""" + js.fix_text(rl.get_magic_pre())+"""\";
+            return "/api/";
         },
 
         get_home : function () {
-            return \"""" + js.fix_text(rl.get_home())+"""\";
+            return "/index";
         },
 
         get_help : function () {
-            return \"""" + js.fix_text(rl.get_help())+"""\";
+            return "/about";
         },
 
-        get_image : function (id) {
-            return this.get_magic_pre()+\"resources/images/\"+this.url_encode_x(id);
+        get_image : function (rrl) {
+            return "/images/"+rrl;
         },
 
-        get_style : function (id) {
-            return this.get_magic_pre()+\"resources/styles/\"+this.url_encode_x(id);
+        get_style : function (rrl) {
+            return "/styles/"+rrl;
         },
 
-        get_script : function (id) {
-            return this.get_magic_pre()+\"resources/scripts/\"+this.url_encode_x(id);
+        get_script : function (rrl) {
+            return "/scripts/"+rrl;
         },
 
         _trim_slashes : function (str) {
@@ -227,7 +200,7 @@ var wwwmoa={ // root object
             y=0;
             for(var x=y; x<ret.length;x++)
             {
-                if(ret.substr(x,1)!=\"/\")
+                if(ret.substr(x,1)!="/")
                     break;
 
                 y=x+1;
@@ -238,7 +211,7 @@ var wwwmoa={ // root object
             y=ret.length;
             for(var x=y; x>=0; x++)
             {
-                if(ret.substr(x,1)!=\"/\")
+                if(ret.substr(x,1)!="/")
                     break;
 
                 y=x;
@@ -251,16 +224,16 @@ var wwwmoa={ // root object
 
         get_api : function (command, path) {
             if(path==null)
-                var path_notnull=\"\";
+                var path_notnull="";
             else
                 var path_notnull=path;
 
             var fragment=this.url_encode(this._trim_slashes(path_notnull));
 
             if(fragment.length!=0)
-                fragment+=\"/\";
+                fragment+="/";
 
-            return this.get_magic_pre()+\"api/\"+fragment+this.url_encode_x(command);
+            return "/api/"+fragment+this.url_encode_x(command);
         },
 
         get_hm : function (name, args) {
@@ -277,9 +250,9 @@ var wwwmoa={ // root object
             var fragment=this.url_encode(args.join("/"));
 
             if(fragment.length!=0)
-                fragment+=\"/\";
+                fragment+="/";
 
-            return this.get_magic_pre()+\"hms/\"+fragment+this.url_encode_x(name);
+            return "/hm/"+fragment+this.url_encode_x(name);
         }
 
 
@@ -293,7 +266,7 @@ var wwwmoa={ // root object
     html : {
         // Escapes text to make it safe for insertion into an HTML document.
         fix_text : function(txt) {
-            return txt.replace(\"&\",\"&amp;\").replace(\"\\\"\", \"&quot;\").replace(\"\\'\", \"&#039;\").replace(\">\", \"&gt;\").replace(\"<\", \"&lt;\");
+            return txt.replace("&","&amp;").replace("\"", "&quot;").replace("'", "&#039;").replace(">", "&gt;").replace("<", "&lt;");
         }
     },
 
@@ -320,7 +293,7 @@ var wwwmoa={ // root object
 
               dojo.xhrGet( {
                         url : relrl,
-                        handleAs : \"text\",
+                        handleAs : "text",
                         timeout : timeout,
                         load : cb,
                         error : cbe
@@ -328,6 +301,4 @@ var wwwmoa={ // root object
           }
     }
 
-}""")
-
-    rw.terminate()
+}

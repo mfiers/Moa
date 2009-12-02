@@ -21,6 +21,12 @@ border:2px solid #808080;
 padding:12px;
 }
 
+.title img
+{
+vertical-align:middle;
+border:0px solid #000000
+}
+
 span.title
 {
 font-weight:bold;
@@ -73,4 +79,10 @@ color:#800080;
 #smallnotices a
 {
 color:#C0C0C0;
+}
+
+.title a
+{
+text-decoration:inherit;
+color:inherit
 }

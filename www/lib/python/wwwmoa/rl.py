@@ -12,10 +12,6 @@ import urllib # will use this for URL encoding
 def get_pre():
     return "/"
 
-## Returns the absolute pathname of the directory that is to be used for magic queries.  Always ends with a slash.
-def get_magic_pre():
-    return get_pre()+"moa/"
-
 ## Returns the relative pathname of the home page for WWWMoa.
 def get_home():
     return get_pre()+"index.py"
@@ -25,16 +21,16 @@ def get_help():
     return get_pre()+"help.py"
 
 ## Returns the relative pathname of an image for WWWMoa.
-def get_image(id):
-    return get_magic_pre()+"resources/images/"+url_encode_x(id)
+def get_image(rrl):
+    return get_pre()+"images/"+rrl
 
 ## Returns the relative pathname of a stylesheet for WWWMoa.
-def get_style(id):
-    return get_magic_pre()+"resources/styles/"+url_encode_x(id)
+def get_style(rrl):
+    return get_pre()+"styles/"+rrl
 
 ## Returns the relative pathname of a web script for WWWMoa.
-def get_script(id):
-    return get_magic_pre()+"resources/scripts/"+url_encode_x(id)
+def get_script(rrl):
+    return get_pre()+"scripts/"+rrl
 
 ## Returns the relative pathname of a API command for WWWMoa, given the commands name and the file system path it operates on (optional).
 def get_api(command, path=None):
@@ -48,7 +44,7 @@ def get_api(command, path=None):
     if len(fragment)!=0: # if the fragment is not empty
         fragment+="/" # add a seperator as appropriate
 
-    return get_magic_pre()+"api/"+fragment+url_encode_x(command)
+    return get_pre()+"api/"+fragment+url_encode_x(command)
 
 ## Returns the relative pathname of a helper module for WWWMoa, given the helper modules name and argument list (optional).
 def get_hm(name, args=[]):
@@ -61,7 +57,7 @@ def get_hm(name, args=[]):
     if len(fragment)!=0: # if the fragment is not empty
         fragment+="/" # add a seperator as appropriate
 
-    return get_magic_pre()+"hms/"+fragment+url_encode_x(name)
+    return get_pre()+"hm/"+fragment+url_encode_x(name)
 
 ## Performs a standard URL encoding.
 def url_encode(txt):

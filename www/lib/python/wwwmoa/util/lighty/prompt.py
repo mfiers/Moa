@@ -1,10 +1,15 @@
 import os
+import sys
 
 def print_sys_message(str):
     print_message("# "+str)
 
 def print_error_message(str):
     print_message("[!] "+str)
+
+def print_fatal_error_message(str):
+    print_error_message(str)
+    sys.exit(1)
 
 def print_message(str):
     print str+os.linesep
