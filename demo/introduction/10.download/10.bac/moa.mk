@@ -1,4 +1,3 @@
 title=download a potato bac
-project=introduction
 ncbi_db=nuccore
-ncbi_query=AC237669 OR AC238277 OR AC237907
+ncbi_query=AC238049 OR AC238029 OR AC238320
