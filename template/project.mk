@@ -22,15 +22,19 @@ moa_description = Create a new project. All subdirectories of this directory are
 moa_ids += project
 project_help = This template does not do anything - it is a project placeholder.
 
+moa_may_define += project_description
+project_description_help = A short description of what this project is			\
+supposed to achieve, how to use it, and what parameters are most				\
+important to set
+
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
-
 
 .PHONY: project_clean
 project_clean:
 
-.PHONY: project_prep
-project_prep:
+.PHONY: project_prepare
+project_prepare:
 
 .PHONY: project_post
 project_post:
