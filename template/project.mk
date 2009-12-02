@@ -29,8 +29,8 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 .PHONY: project_clean
 project_clean:
 
-.PHONY: project_prep
-project_prep:
+.PHONY: project_prepare
+project_prepare:
 
 .PHONY: project_post
 project_post:
