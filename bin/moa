@@ -56,6 +56,7 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
 
 import moa.template
 import moa.archive
+from moa import dispatcher
 import moa.graph
 import moa.conf
 
@@ -132,6 +133,9 @@ if __name__ == "__main__":
         l.debug("Make returned with retcode pid %s" % retcode)
         sys.exit(0)
 
+    elif command == 'info':
+        print dispatcher.info(os.getcwd())
+        
     #Create new jobs
     elif command == 'template':
         moa.template.handler(options, newargs)
