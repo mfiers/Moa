@@ -16,5 +16,5 @@ moa_preprocess:
 moa_postprocess:
 
 dont_include_moabase=true
-include $(shell echo $$MOABASE)/template/project.mk
+include $(shell echo $$MOABASE)/template/traverse.mk
 include $(shell echo $$MOABASE)/template/__moaBase.mk

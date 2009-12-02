@@ -1,2 +1,1 @@
-title=traverse node
-project=demo_bacterial_annotation
+title=Bacterial annotation

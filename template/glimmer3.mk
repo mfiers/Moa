@@ -29,27 +29,6 @@ glimmer3_help = Glimmer3 is a open reading frame discovery program		\
   template converts the default output (predicted protein sequences)	\
   to GFF3.
 
-
-#########################################################################
-# Prerequisite testing
-
-prereqlist += prereq_glimmer3_installed prereq_elph_installed \
-			prereq_awkscripts_installed
-
-
-prereq_glimmer3_installed:
-	@$(call checkPrereqPath,glimmer3)
-
-prereq_elph_installed:
-	@$(call checkPrereqPath,elph,You can download elph from						\
-				 http://www.cbcb.umd.edu/software/ELPH/)
-
-prereq_awkscripts_installed:
-	@$(call checkPrereqPath,get-motif-counts.awk,Make sure you copied the 		\
-			glimmer3 AWK scripts into your PATH)
-	@$(call checkPrereqExec,get-motif-counts.awk --version,						\
-			Check the AWK shebang!)
-
 moa_must_define += glimmer3_input_dir
 blast_input_dir_help = directory containing the input sequences
 
@@ -64,15 +43,47 @@ glimmer3_max_overlap_help = Maximum overlap, see the glimmer	\
   documentation for the -o or --max_olap parameter
 glimmer3_gene_len_help = Minimum gene length (glimmer3 -g/--gene_len)
 glimmer3_treshold_help = treshold for calling a gene a gene (glimmer3 -t)
-moa_may_define += 
+
 
 #preparing for possible gbrowse upload:
 gup_gff_dir = ./gff
 gup_upload_gff = T
 gup_gffsource ?= $(blast_gff_source)
 
+#check if we have the ubuntu package installed - if so, prefix all commands
+#with tigr-glimmer
+ifeq ($(shell which tigr-glimmer),)
+exec_prefix=tigr_glimmer
+else
+exec_prefix=
+endif
+
+#########################################################################
+# Prerequisite testing
+
+prereqlist += prereq_glimmer3_installed prereq_elph_installed \
+			prereq_awkscripts_installed
+
+prereq_glimmer3_installed:
+	$(if exec_prefix,,@$(call checkPrereqPath,glimmer3))
+
+prereq_elph_installed:
+	@$(call checkPrereqPath,elph,You can download elph from						\
+				 http://www.cbcb.umd.edu/software/ELPH/)
+
+prereq_awkscripts_installed:
+	@$(call checkPrereqPath,get-motif-counts.awk,Make sure you copied the 		\
+			glimmer3 AWK scripts into your PATH)
+	@$(call checkPrereqExec,get-motif-counts.awk --version,						\
+			Check the AWK shebang!)
+
+
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
+
+
+
+
 
 glimmer3_max_overlap ?= 50
 glimmer3_gene_len ?= 110
