@@ -60,7 +60,7 @@ var wwwmoa={ // root object
         //
         // [!] Implementation Note: This function creates API calls to
         // the Dojo Toolkit.
-        create : function (hmrl, callback) {
+        create : function (hmrl, args, callback) {
 
             // Callback function that creates the helper module object from
             // code that is passed to it.  This callback function also
@@ -110,7 +110,10 @@ var wwwmoa={ // root object
                     return this.__hmid; // simply return the internal state variable
                 }
 
-                new_hm.doIniAction(); // trigger startup event
+		if(args===undefined)
+		    args=new Object();
+
+                new_hm.doIniAction(args); // trigger startup event / send args (args should be an object)
 
                 callback(new_hm); // pass the new helper module object to the callback function
             }
@@ -236,23 +239,8 @@ var wwwmoa={ // root object
             return "/api/"+fragment+this.url_encode_x(command);
         },
 
-        get_hm : function (name, args) {
-            if(args==null)
-                var args_notnull=[];
-            else
-                var args_notnull=[];
-
-            var args_fixed=[];
-
-            for(x=0; x<args.length; x++)
-                args_fixed[x]=this.url_encode_x(args[x]);
-
-            var fragment=this.url_encode(args.join("/"));
-
-            if(fragment.length!=0)
-                fragment+="/";
-
-            return "/hm/"+fragment+this.url_encode_x(name);
+        get_hm : function (rrl) {
+            return "/scripts/hm/"+rrl;
         }
 
 
@@ -267,6 +255,19 @@ var wwwmoa={ // root object
         // Escapes text to make it safe for insertion into an HTML document.
         fix_text : function(txt) {
             return txt.replace("&","&amp;").replace("\"", "&quot;").replace("'", "&#039;").replace(">", "&gt;").replace("<", "&lt;");
+        }
+    },
+
+    // JavaScript utilities
+    js : {
+        // Escapes text to make it safe for insertion into a JavaScript literal.
+        fix_text : function(txt) {
+            return txt.replace("\\", "\\\\").replace("\"", "\\\"").replace("'", "\\'");
+	},
+
+        // Escapes text to make it safe for insertion into a JavaScript literal, if the JavaScript is embeded in a HTML document.
+	fix_text_for_html : function(txt) {
+            return wwwmoa.html.fix_text(wwwmoa.js.fix_text(txt));
         }
     },
 

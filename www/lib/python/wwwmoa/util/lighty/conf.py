@@ -14,6 +14,9 @@ def get_install_static_path():
 def get_install_dynamic_path():
     return os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../../dynamic"))
 
+def get_install_moabase_path():
+    return os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../../../"))
+
 def escape_string(str):
     return str # [!] Placeholder
 
@@ -67,7 +70,8 @@ server.modules=(
     \"mod_expire\",
     \"mod_cgi\",
     \"mod_rewrite\",
-    \"mod_alias\"
+    \"mod_alias\",
+    \"mod_setenv\"
 )
 
 
@@ -122,6 +126,10 @@ alias.url=(
 
 expire.url=(
     \"/\" => \"access 0 seconds\"
+)
+
+setenv.add-environment=(
+    \"MOABASE\" => \""""+escape_string(get_install_moabase_path())+"""\"
 )
 
 ################################################################

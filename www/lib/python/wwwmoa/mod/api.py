@@ -3,17 +3,27 @@
 
 ## Imports ##
 
+
+
 from wwwmoa import rw
 from wwwmoa import rl
 
 
+
 import wwwmoa.env
 from wwwmoa.formats.html import error
+import wwwmoa.info.moa as moainfo
+
+
 
 import os
 import os.path
 import json
 import time
+import sys
+
+
+
 
 ## Helper Functions ##
 
@@ -37,6 +47,15 @@ def run(args=None, env=None):
     if (args==None) or (env==None):
         output_error("An unexpected error has occurred.")
 
+
+    moa_pylib_base=moainfo.get_pylib_base()
+
+    if moa_pylib_base==None:
+        output_error("A Moa implementation could not be found.")
+    else:
+        sys.path.append(moa_pylib_base)
+        from moa import dispatcher
+    
     # check to make sure we have enough parameters
     if len(args)<1: # if there is not at least one parameter
         output_error("The API request you made cannot be completed, because you did not supply enough information.")
@@ -106,7 +125,8 @@ def run(args=None, env=None):
                                         "type" : "dir", # that it is a dir
                                         "read-allowed" : in_root(path_exploded_current) and os.access(path_exploded_current, os.R_OK), # whether or not we will be able to read it using other API calls
                                         "write-allowed" : in_root(path_exploded_current) and os.access(path_exploded_current, os.W_OK), # whether or not we will be able to write it using other API calls
-                                        "path" : "" # path for later access, since simple concat may not work well
+                                        "path" : "", # path for later access, since simple concat may not work well
+                                        "x-is-moa" : dispatcher.isMoa(path_exploded_current)
                                         })
 
             for p in path_exploded_final: # for each entry in the final dir path listing
@@ -147,7 +167,8 @@ def run(args=None, env=None):
                                 "type" : "file", # that it is a file
                                 "read-allowed" : in_root(l_complete) and os.access(l_complete, os.R_OK), # whether or not we will be able to read it using other API calls
                                 "write-allowed" : in_root(l_complete) and os.access(l_complete, os.W_OK), # whether or not we will be able to write it using other API calls
-                                "path" : os.path.join(path_exploded_str_current, l) # path for later access, since simple concat may not work well
+                                "path" : os.path.join(path_exploded_str_current, l), # path for later access, since simple concat may not work well
+                                "x-is-moa" : False
                                 })
             elif os.path.isdir(l_complete): # if the entry is a dir
                 ls_dir.append({"name" : l, # the name of the file
@@ -156,7 +177,8 @@ def run(args=None, env=None):
                                "type" : "dir", # that it is a dir
                                "read-allowed" : in_root(l_complete) and os.access(l_complete, os.R_OK), # whether or not we will be able to read it using other API calls
                                "write-allowed" : in_root(l_complete) and os.access(l_complete, os.W_OK), # whether or not we will be able to write it using oher API calls
-                               "path" : os.path.join(path_exploded_str_current, l) # path for later access, since simple concat may not work well
+                               "path" : os.path.join(path_exploded_str_current, l), # path for later access, since simple concat may not work well
+                               "x-is-moa" : dispatcher.isMoa(l_complete)
                                })
         
         # add both lists to paliminary final list
@@ -179,6 +201,7 @@ def run(args=None, env=None):
 
         rw.send(json.dumps({ # send response
                     "dir" : path_exploded_final, # the dir path components
+                    "x-dir-is-moa" : dispatcher.isMoa(path),
                     "ls" : ls_final, # the final listing
                     "ls-available" : ls_total_count, # the total number of entries that are potentially available
                     "ls-returned" : len(ls_final), # the total number of entries that we returned

@@ -5,10 +5,10 @@
 
 body
 {
-background-color:#000020;
-background-image:url(../images/STYASTgradient1);
-background-position:0 0;
+background-color:#F0F0FF;
+background-image:url(../images/STYASTgradient2);
 background-repeat:repeat-x;
+background-position:0 0;
 font-size:12pt;
 font-family:arial, sans-serif;
 }
@@ -40,8 +40,9 @@ font-weight:bold;
 font-size:36pt;
 text-decoration:none;
 padding:6px;
-border:1px solid #F8F8F8;
-background-color:#F0F0F0
+border:1px solid #000000;
+background-color:#F0F0F0;
+font-family:verdana, arial, sans-serif
 }
 
 .section
@@ -63,7 +64,12 @@ text-decoration:underline;
 #smallnotices
 {
 font-size:10px;
-color:#FFFFFF;
+color:#206020;
+font-family:verdana, arial, sans-serif;
+border:1px solid #808080;
+padding:2px;
+margin-top:16px;
+background-color:#FFFFFF
 }
 
 a
@@ -78,7 +84,7 @@ color:#800080;
 
 #smallnotices a
 {
-color:#C0C0C0;
+color:#008000;
 }
 
 .title a

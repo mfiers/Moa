@@ -47,17 +47,8 @@ def get_api(command, path=None):
     return get_pre()+"api/"+fragment+url_encode_x(command)
 
 ## Returns the relative pathname of a helper module for WWWMoa, given the helper modules name and argument list (optional).
-def get_hm(name, args=[]):
-    args_fixed=[] # create buffer for fixed arguments
-    for a in args: # for each argument
-        args_fixed.append(url_encode_x(a)) # fix it
-
-    fragment=url_encode("/".join(args_fixed)) # generate the argument fragment
-
-    if len(fragment)!=0: # if the fragment is not empty
-        fragment+="/" # add a seperator as appropriate
-
-    return get_pre()+"hm/"+fragment+url_encode_x(name)
+def get_hm(rrl):
+    return get_pre()+"scripts/hm/"+rrl
 
 ## Performs a standard URL encoding.
 def url_encode(txt):

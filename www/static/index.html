@@ -71,7 +71,7 @@ However, do not panic!  There are several ways that you can remedy this problem:
 <script type="text/javascript">
 <!--
 
-wwwmoa.hm.create("/hm/fsbrowser", function(obj){
+wwwmoa.hm.create(wwwmoa.rl.get_hm("fsbrowser"), {location : "home/wsd/moaroot"}, function(obj){
 
     if(obj===null)
     {
@@ -89,8 +89,8 @@ wwwmoa.hm.create("/hm/fsbrowser", function(obj){
 
 
 <br>
-<a href="javascript:wwwmoa.ui.alert('Help does not currently exist.')" class="navbutton">Help</a>
-<a href="#jma-ahook" class="navbutton" onclick="window.location.reload(false);">Restart</a><br><br>
+<a href="javascript:wwwmoa.ui.alert('Help does not currently exist.')" class="button">Help</a>
+<a href="#jma-ahook" class="button" onclick="window.location.reload(false);">Restart</a><br><br>
 
 
 

@@ -3,34 +3,35 @@
   Normal Style (Buttons)
 */
 
-.navbutton
+.button
 {
 display:inline;
-border-top:2px solid #C0C0C0;
-border-right:2px solid #C0C0C0;
-border-bottom:2px solid #404040;
-border-left:2px solid #404040;
-padding:2px;
-background-color:#F0F0F0;
-color:#000000;
+background-image:url(../images/STYASTbutton1);
+background-repeat:repeat-x;
+background-position:0 0;
+background-color:#F0F0FF;
+padding:2px 4px 2px 4px;
+text-decoration:none;
 font-weight:bold;
-text-decoration:none
+color:#000000;
+border-top:1px solid #909090;
+border-right:1px solid #909090;
+border-bottom:1px solid #C0C0C0;
+border-left:1px solid #C0C0C0
 }
 
-.navbutton:hover
+.button:hover
 {
-background-color:#F8F8F8
+background-image:url(../images/STYASTbuttonhov1);
+background-color:#F8F8FF
 }
 
-.navbutton:active
+.button:active
 {
-border-top:2px solid #404040;
-border-right:2px solid #404040;
-border-bottom:2px solid #C0C0C0;
-border-left:2px solid #C0C0C0
+border:1px solid #404040
 }
 
-.navbutton:visited
+.button:visited
 {
 color:#000000
 }
