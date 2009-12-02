@@ -1,0 +1,36 @@
+/*
+  WWWMoa
+  Normal Style (Buttons)
+*/
+
+.navbutton
+{
+display:inline;
+border-top:2px solid #C0C0C0;
+border-right:2px solid #C0C0C0;
+border-bottom:2px solid #404040;
+border-left:2px solid #404040;
+padding:2px;
+background-color:#F0F0F0;
+color:#000000;
+font-weight:bold;
+text-decoration:none
+}
+
+.navbutton:hover
+{
+background-color:#F8F8F8
+}
+
+.navbutton:active
+{
+border-top:2px solid #404040;
+border-right:2px solid #404040;
+border-bottom:2px solid #C0C0C0;
+border-left:2px solid #C0C0C0
+}
+
+.navbutton:visited
+{
+color:#000000
+}
