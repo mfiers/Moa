@@ -1,6 +1,5 @@
 from conf import get_config_file
 from conf import get_env_file
-from conf import get_env_file_path
 
 from prompt import print_sys_message
 from prompt import print_error_message
@@ -13,12 +12,17 @@ from prompt import do_int_prompt
 
 
 
+
 import sys
 import os
 import os.path
 import subprocess
 import time
 
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
+
+import wwwmoa.info.moa as moainfo
 
 def get_new_id():
     id=1
@@ -29,7 +33,13 @@ def get_new_id():
     return id
 
 def get_var_path():
-    return os.path.normpath(os.path.join(os.path.dirname(__file__),"../../../../../../var/www/"))
+    return os.path.join(moainfo.get_base(),"var/www/")
+
+def get_etc_path():
+    return os.path.join(moainfo.get_base(),"etc/www/env/")
+
+def get_env_file_path(port):
+    return os.path.normpath(os.path.join(get_etc_path(), str(port)+".xml"))
 
 def get_instance_status_path(id):
     return os.path.join(get_var_path(),".stat."+str(int(id)))
@@ -68,12 +78,13 @@ def get_running_instances():
 def run(port, home, penv):
     print_sys_message("I will now run a new instance of lighttpd for WWWMoa.")
 
+    if moainfo.get_base()==None:
+        print_fatal_error_message("Something went wrong: the Moa base directory could not be found.")
+
+
     try:
-        if not os.access(get_var_path(), os.F_OK):
-            if os.access(os.path.normpath(os.path.join(get_var_path(),"../../")), os.F_OK):
-                os.makedirs(get_var_path())
-            else:
-                print_fatal_error_message("Something went wrong: the Moa base directory could not be found")
+        os.makedirs(get_var_path())
+        os.makedirs(get_etc_path())
     except Exception as e:
         print_fatal_error_message("Something went wrong: file system preparation failed."+str(e))
     

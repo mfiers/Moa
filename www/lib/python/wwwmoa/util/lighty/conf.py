@@ -1,6 +1,7 @@
 import os
 import os.path
 import sys
+import wwwmoa.info.moa as moainfo
 
 import wwwmoa.formats.xml as xml
 
@@ -9,13 +10,13 @@ def get_cgi_handler_path():
     return sys.executable # gets the pathname of the Python interpreter, which we will use for CGI
 
 def get_install_static_path():
-    return os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../../static"))
+    return os.path.normpath(os.path.join(moainfo.get_base(),"www/static"))
 
 def get_install_dynamic_path():
-    return os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../../dynamic"))
+    return os.path.normpath(os.path.join(moainfo.get_base(),"www/dynamic"))
 
 def get_install_moabase_path():
-    return os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),"../../../../../../"))
+    return moainfo.get_base()
 
 def escape_string(str):
     return str # [!] Placeholder
@@ -32,9 +33,6 @@ def get_env_file(home):
 </env>
 
 """
-
-def get_env_file_path(port):
-    return os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../../../etc/env/", str(port)+".xml"))
 
 def port_has_env(port):
     return os.access(get_env_file_path(port), os.F_OK)
