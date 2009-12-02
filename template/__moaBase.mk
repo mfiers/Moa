@@ -105,10 +105,16 @@ project_root = $(shell \
 )
 p=$(project_root)
 
-.PHONY: project_root
-project_root:
-	@echo $p
+.PHONY: project_info
+project_info:
+	@if [[ $p != '/' ]]; then \
+		echo $p $(shell make -s -C $p title);\
+	fi
 
+## 
+.PHONY: is_moa
+is_moa:
+	@echo "Yes"
 
 ## display a MOA welcome message before a run
 parentheses_open=(
@@ -130,6 +136,9 @@ endif
 # From here on moa.mk can be assumed to be included 
 ###############################################################################
 
+.PHONY: title
+title:
+	@echo $(title)
 
 ###############################################################################
 # Define and executed a MOA run 
@@ -351,9 +360,6 @@ checkPrereqPath = \
 
 .PHONY: prereqs $(prereqlist)
 prereqs: $(prereqlist)
-
-ter:
-	$(call errr, Hello)
 
 moa_check_lock:
 	@if [[ "$(ignore_lock)" == "T" ]]; then \
