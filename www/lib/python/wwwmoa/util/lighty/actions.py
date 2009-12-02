@@ -28,11 +28,14 @@ def get_new_id():
 
     return id
 
+def get_var_path():
+    return os.path.normpath(os.path.join(os.path.dirname(__file__),"../../../../../../var/www/"))
+
 def get_instance_status_path(id):
-    return os.path.join(os.path.dirname(__file__),".stat."+str(int(id)))
+    return os.path.join(get_var_path(),".stat."+str(int(id)))
 
 def get_instance_meta_path(id):
-    return os.path.join(os.path.dirname(__file__),".meta."+str(int(id)))
+    return os.path.join(get_var_path(),".meta."+str(int(id)))
 
 def is_instance_running(id):
     return os.access(get_instance_status_path(id), os.F_OK)
@@ -51,7 +54,7 @@ def set_instance_terminated(id):
 def get_running_instances():
     ids=[]
 
-    idf=os.listdir(os.path.dirname(__file__))
+    idf=os.listdir(get_var_path())
 
     for f in idf:
         if f[:6]==".stat.":
@@ -65,9 +68,17 @@ def get_running_instances():
 def run(port, home, penv):
     print_sys_message("I will now run a new instance of lighttpd for WWWMoa.")
 
+    try:
+        if not os.access(get_var_path(), os.F_OK):
+            if os.access(os.path.normpath(os.path.join(get_var_path(),"../../")), os.F_OK):
+                os.makedirs(get_var_path())
+            else:
+                print_fatal_error_message("Something went wrong: the Moa base directory could not be found")
+    except Exception as e:
+        print_fatal_error_message("Something went wrong: file system preparation failed."+str(e))
+    
 
-
-    conf_path=os.path.join(os.path.dirname(__file__),".conf."+str(port))
+    conf_path=os.path.join(get_var_path(),".conf."+str(port))
     
     id=get_new_id()
 
