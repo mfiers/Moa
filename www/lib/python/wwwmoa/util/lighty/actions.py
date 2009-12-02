@@ -83,8 +83,11 @@ def run(port, home, penv):
 
 
     try:
-        os.makedirs(get_var_path())
-        os.makedirs(get_etc_path())
+        if not os.access(get_var_path(), os.F_OK):
+            os.makedirs(get_var_path())
+
+        if not os.access(get_etc_path(), os.F_OK):
+            os.makedirs(get_etc_path())
     except Exception as e:
         print_fatal_error_message("Something went wrong: file system preparation failed."+str(e))
     
