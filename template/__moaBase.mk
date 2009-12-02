@@ -43,7 +43,7 @@ boldOff := \033[0m
 #a colorful mark, showing that this comes from moabase
 moamark := \033[0;42;30mm\033[0m
 moaerrr := \033[0;1;37;41m!!!\033[0m
-moawarn := \033[0;43 m>>\033[0m
+moawarn := \033[0;43m>>\033[0m
 echo = echo -e "$(moamark) $(1)"
 warn = echo -e "$(moawarn) $(1)"
 errr = echo -e "$(moaerrr) $(1)"
@@ -239,11 +239,14 @@ clean: $(call reverse, $(addsuffix _clean, $(moa_ids)))
 ## action=TARGET"
 moa_cruise_targets = 															\
 	$(call set_create, 															\
-		set append clean register reset targets check reinit		 			\
+		set append clean reset targets check						 			\
 		$(moa_additional_targets)												\
 		$(addsuffix _prepare, $(moa_ids)) 										\
 		$(moa_ids) $(addsuffix _post, $(moa_ids))								\
 	)
+
+moa_ignore_lock_targets = \
+	set append clean targets check 
 
 ## A list of all subdirectories
 moa_followups ?= 																\
@@ -260,6 +263,9 @@ all: cruise
 ## finished, start traversin through all subdirectories and execyte
 ## them as wll
 .PHONY: cruise
+cruise: ignore_lock?=$(strip $(if $(action), 											\
+			$(if $(filter $(action),$(moa_ignore_lock_targets)),				\
+				yes,)))
 cruise: $(if $(call seq,$(action),), 											\
 			moa_default_target,													\
 			$(if $(call set_is_member, $(action), $(moa_cruise_targets)),		\
@@ -267,10 +273,10 @@ cruise: $(if $(call seq,$(action),), 											\
 				$(warning Ignoring $(action) - not a valid target) ) )
 	@for FUP in $(moa_followups); do 											\
 		$(call echo,Processing $$FUP);											\
-		$(call echo, +- in $(shell echo `pwd`));									\
+		$(call echo, +- in $(shell echo `pwd`));								\
 		if [[ -e $$FUP/Makefile ]]; then 										\
-			if [[ "$(ignore_lock)" == "T" ]]; then 								\
-				$(call warn,Ignore lock checking) ;								\
+			if [[ "$(ignore_lock)" == "yes" ]]; then 							\
+				$(call warn,Ignore lock check);									\
 				cd $$FUP;														\
 				$(MAKE) cruise action=$(action);								\
 				cd ..;															\
