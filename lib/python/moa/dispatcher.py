@@ -53,7 +53,7 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
 import moa.template
 import moa.archive
 import moa.conf
-
+import moa.info
 
 def _startMake(d, args):
     """
@@ -82,10 +82,6 @@ def _runMake(d, args):
 ## API Command Dispatcher
 ## 
 
-def _isMoaDir(d):
-    if not os.path.exists(os.path.join(d, 'Makefile')):
-        return False
-
 def execute(d, args = []):
     """
     Execute 'make' in directory d
@@ -98,23 +94,12 @@ def _getProjectInfo(d):
     return out.strip().split(None, 1)
     
 
-def isMoa(d):
-    """ is directory d a 'moa' directory? """
-    
-    if not os.path.exists(os.path.join(d, 'Makefile')):
-        return False
-    rc, out, err = _runMake(d, 'is_moa')
-    
-    if not rc == 0: return False
-    if not out.strip() == "Yes": return False
-    return True
-
 def info(d):
     
     rv = { 'directory' : d,
            'isMoaDir' : True}
 
-    if not isMoa(d):
+    if not moa.info.isMoa(d):
         rv['isMoaDir'] = False
         return rv
 
