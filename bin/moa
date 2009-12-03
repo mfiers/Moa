@@ -98,6 +98,10 @@ parser.add_option('-f', '--force', dest='force', action='store_true',
 parser.add_option("-v", "--verbose", dest="verbose",
                   action="store_true", help="verbose output")
 
+parser.set_defaults(threads=1)
+parser.add_option("-j", dest="threads",
+                  help="threads to use (corresponds with the make -j parameter)")
+
 parser.add_option("-p", "--project", dest="project",
                   help="set a project name (use with moa new)")
 
@@ -108,6 +112,11 @@ parser.add_option("-t", "--title", dest="title",
 
 if options.verbose:
     moa.logger.setVerbose()
+
+#make sure the MOA_THREADS env var is set - this is used by MOA later
+#on
+os.putenv('MOA_THREADS', "%s" % options.threads)
+os.system('env | grep MOA')
 
 ##
 ## Command dispatcher
