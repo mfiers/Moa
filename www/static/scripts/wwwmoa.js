@@ -106,6 +106,57 @@ var wwwmoa={ // root object
                     this.doSetVisualElementAction(tmp); // the visual element has been changed, so trigger event
                 }
 
+                new_hm.getProperty=function(propname) {
+                    if(this.properties[propname]!==undefined)
+                        return new String(this.properties[propname].value);
+                    else
+			return "";
+                }
+
+                new_hm.setProperty=function(propname, value) {
+                    if(this.properties[propname]===undefined)
+		    {
+                        this.properties[propname]=new Object();
+		        this.properties[propname].value=value;
+                        this.properties[propname].callback=new Array();
+                    }
+                    else
+                        this.properties[propname].value=value
+
+                    this.triggerPropertyCallbacks(propname);
+                }
+
+                new_hm.triggerPropertyCallbacks=function(propname) {
+                    if(this.properties[propname]===undefined)
+                        return;
+
+                    for(var x=0; x<this.properties[propname].callback.length; x++)
+                        this.properties[propname].callback[x](propname, this.properties[propname].value);
+		}
+
+                new_hm.addPropertyCallback=function(propname, callback) {
+                    if(this.properties[propname]===undefined)
+                        this.setProperty(propname, "");
+
+		    this.properties[propname].callback.push(callback);
+                }
+
+                new_hm.removePropertyCallback=function(propname, callback) {
+                    if(this.properties[propname]===undefined)
+                        return;
+
+                    var i=this.properties[propname].callback.indexOf(callback);
+
+                    if(i!=-1) {
+                        for(var x=i; x<this.properties[propname].callback.length;x++)
+                            this.properties[propname].callback[x]=this.properties[propname].callback[x+1];
+
+			this.properties[propname].callback.pop();
+		    }
+                }
+
+                new_hm.properties=new Object();
+
                 new_hm.getHMId=function() { // create getHMId() (whether it has been defined or not)
                     return this.__hmid; // simply return the internal state variable
                 }
@@ -292,13 +343,23 @@ var wwwmoa={ // root object
                   callback(null);
               }
 
-              dojo.xhrGet( {
-                        url : relrl,
-                        handleAs : "text",
-                        timeout : timeout,
-                        load : cb,
-                        error : cbe
-              } );
+	      var args={
+		  url : relrl,
+		  handleAs : "text",
+		  timeout : timeout,
+		  load : cb,
+		  error : cbe
+	      }
+
+              dojo.xhrGet(args);
+
+              return {
+		  cancel : function()
+                  {
+                      if(args.abort!==undefined)
+		          args.abort();
+                  }
+              };
           }
     }
 

@@ -241,6 +241,13 @@ return { // our code will return an object
         this.visualCodeMain=buf_main_code; // make main code "public"
         this.visualCodeFiles=(files_exist ? buf_file_code : ""); // make file code "public"
 
+        if(ls_response["dir"].length>0)
+	    this.setProperty("directory", ls_response["dir"][ls_response["dir"].length-1]["path"]); // should always set this property before the next one
+	else
+	    this.setProperty("directory", "");
+
+        this.setProperty("in-moa-directory", ls_response["x-dir-is-moa"]);
+        
         this.refreshVisualElement(); // refresh the main visual element
         
     }

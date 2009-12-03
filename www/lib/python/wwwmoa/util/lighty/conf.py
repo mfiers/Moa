@@ -15,8 +15,18 @@ def get_install_static_path():
 def get_install_dynamic_path():
     return os.path.normpath(os.path.join(moainfo.get_base(),"www/dynamic"))
 
+def get_install_moabase_bin_path():
+    return os.path.normpath(os.path.join(moainfo.get_base(),"bin"))
+
 def get_install_moabase_path():
     return moainfo.get_base()
+
+def get_path_variable():
+    if "PATH" in os.environ:
+        if os.environ["PATH"]!="":
+            return os.environ["PATH"]+os.pathsep+get_install_moabase_bin_path()
+
+    return get_install_moabase_bin_path()
 
 def escape_string(str):
     return str # [!] Placeholder
@@ -102,12 +112,13 @@ $HTTP[\"url\"]=~\"^/direct($|(/.*))\" {
     dir-listing.active=\"enable\"
 }
 
+
+
 url.rewrite-once=(
+    \"^/api$\" => \"/dynamic/api.py?\",
+    \"^/api/([^\\\\?]*)$\" => \"/dynamic/api.py?$1\",
+    \"^/api/(([^\\\\?]*)\\\\?(.*))$\" => \"/dynamic/api.py?$1\",
     \"^/index$\" => \"/index.html\",
-    \"^/api$\" => \"/dynamic/api.py?request=\",
-    \"^/api/(.*)$\" => \"/dynamic/api.py?request=$1\",
-    \"^/hm$\" => \"/dynamic/hm.py?request=\",
-    \"^/hm/(.*)$\" => \"/dynamic/hm.py?request=$1\",
     \"^/images/([^\\\\.]*)$\" => \"/images/$1.png\",
     \"^/styles/([^\\\\.]*)$\" => \"/styles/$1.css\",
     \"^/scripts/([^\\\\.]*)$\" => \"/scripts/$1.js\",
@@ -126,8 +137,9 @@ expire.url=(
     \"/\" => \"access 0 seconds\"
 )
 
-setenv.add-environment=(
-    \"MOABASE\" => \""""+escape_string(get_install_moabase_path())+"""\"
+setenv.add-environment+=(
+    \"MOABASE\" => \""""+escape_string(get_install_moabase_path())+"""\",
+    \"PATH\" => \""""+escape_string(get_path_variable())+"""\"
 )
 
 ################################################################

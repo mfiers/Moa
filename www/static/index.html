@@ -71,6 +71,14 @@ However, do not panic!  There are several ways that you can remedy this problem:
 <script type="text/javascript">
 <!--
 
+var jma_state=new Object();
+jma_state.currentID=0;
+jma_state.getNextId=function()
+{
+    this.currentID++;
+    return "jma-unq-"+this.currentID;
+}
+
 wwwmoa.hm.create(wwwmoa.rl.get_hm("fsbrowser"), {location : ""}, function(obj){
 
     if(obj===null)
@@ -80,7 +88,50 @@ wwwmoa.hm.create(wwwmoa.rl.get_hm("fsbrowser"), {location : ""}, function(obj){
     }
 
     obj.setVisualElementById("jma-fsbrowser");
+
+    obj.addPropertyCallback("in-moa-directory", function(prop, value)
+                                                {
+                                                    triggerMoaDirectory(value);
+                                                });
+
+    jma_state.fsbrowser=obj;
 });
+
+
+function triggerMoaDirectory(inmoa)
+{
+    if(inmoa)
+    {
+        var project_info_vid=jma_state.getNextId();
+
+        document.getElementById("jma-main").innerHTML="<div class=\"section\"><span class=\"title\">You are currently in a Moa directory.</span><br>There are a number of tasks you can now do.  These tasks include:<br><br><a class=\"button\" href=\"#jma-ahook\" onclick=\"runCurrentDirectory();\">Run Pipeline</a><br><br></div><div class=\"section\"><span class=\"title\">Project Information</span><br><div id=\""+ wwwmoa.html.fix_text(project_info_vid) + "\">Loading project info...</div></div>";
+
+        if(jma_state.currentp!==undefined)
+            jma_state.currentp.cancel();
+
+        jma_state.currentp=null;
+
+        jma_state.currentp=wwwmoa.ajax.get(wwwmoa.rl.get_api("project-info", jma_state.fsbrowser.getProperty("directory")),function(txt) {
+
+                                var ele=document.getElementById(project_info_vid);
+
+                                if(ele==null)
+				    return;
+
+                                var project_info=wwwmoa.json.parse(txt);
+
+                                ele.innerHTML="";
+
+                                ele.innerHTML+="Project Title: "
+				if(project_info.title!="")
+				    ele.innerHTML+=wwwmoa.html.fix_text(project_info.title);
+                                else
+                                    ele.innerHTML+="<span style=\"font-style:italic\">Untitled</span>";
+                            }, 8192);
+    }
+    else
+        document.getElementById("jma-main").innerHTML="<div class=\"section\">Please select a Moa directory.</div>";
+}
 
 
 //-->

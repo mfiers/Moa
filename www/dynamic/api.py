@@ -10,6 +10,8 @@ from wwwmoa import rl
 from wwwmoa import cgiex
 from wwwmoa.formats.html import error
 import wwwmoa.env
+import urlparse
+import os
 
 ## Main Interface Logic ##
 
@@ -17,20 +19,29 @@ import wwwmoa.env
 wwwmoa.env.require_environment()
 
 # get the request passed to us during URL rewriting
-raw_request=rw.get_request_param("request")
+raw_request=cgiex.get_request_query()
+raw_request_part=raw_request.partition("?")
 
 # split the request passed to us by the defined seperator
-request_undecoded=raw_request.split("/")
+request_path_undecoded=raw_request_part[0].split("/")
 
 # the completely decoded elements will be stored here
-request=[]
+request_path=[]
 
 # decode the elements
-for r in request_undecoded: # for each undecoded element
-    request.append(rl.url_decode_x(r)) # decode it and add it
+for r in request_path_undecoded: # for each undecoded element
+    request_path.append(rl.url_decode_x(r)) # decode it and add it
 
 # retrieve the request method used
 request_method=cgiex.get_request_method()
+
+# retrieve the request parameters
+request_parameters_listed=urlparse.parse_qsl(raw_request_part[2])
+request_parameters={}
+
+for r in request_parameters_listed:
+    request_parameters[r[0]]=r[1]
+
 
 # filter out unsupported request methods
 if (request_method!="GET") and (request_method!="POST") and (request_method!="PUT") and (request_method!="DELETE"):
@@ -40,9 +51,9 @@ if (request_method!="GET") and (request_method!="POST") and (request_method!="PU
 * PUT
 * DELETE""")
 
-import wwwmoa.mod.api as server_mod
+import wwwmoa.api
 
 try: # try to run the loaded module
-    server_mod.run(request,{"method" : request_method})
+    wwwmoa.api.run(request_path,{"method" : request_method, "params" : request_parameters})
 except Exception as e: # on failure, send something useful
     error.throw_fatal_error("Internal API Error", "I did find the item that you requested.  However, it misbehaved in such a way that it could not continue.\n\nThe Python interpreter (which I run on) supplied me with the following reason for the failure (you might find the following  useful when debugging):\n\""+str(e)+"\"")
