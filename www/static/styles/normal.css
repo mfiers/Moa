@@ -1,24 +1,23 @@
 /*
-  WWWMoa
+  WWWMoa Client
   Normal Style
 */
 
 body
 {
-background-color:#F0F0FF;
-background-image:url(../images/STYASTgradient2);
-background-repeat:repeat-x;
-background-position:0 0;
 font-size:12pt;
-font-family:arial, sans-serif;
+font-family:arial, helvetica, sans-serif;
+padding:0px;
+margin:0px;
+width:100%;
+height:100%;
+background-color:#FFFFFF;
+color:#000000
 }
 
 #wrapper
 {
-background-color:#FFFFFF;
-color:#000000;
-border:2px solid #808080;
-padding:12px;
+
 }
 
 .title img
@@ -27,22 +26,20 @@ vertical-align:middle;
 border:0px solid #000000
 }
 
-span.title
-{
-font-weight:bold;
-font-size:36pt;
-text-decoration:underline
-}
-
 div.title
 {
 font-weight:bold;
-font-size:36pt;
+font-size:40pt;
 text-decoration:none;
 padding:6px;
+margin-bottom:4px;
 border:1px solid #000000;
-background-color:#F0F0F0;
-font-family:verdana, arial, sans-serif
+font-family:verdana, arial, sans-serif;
+background-color:#008000;
+background-image:url(../images/STYASTgradient3);
+background-position:0 0;
+background-repeat:repeat-x;
+color:#FFFFFF
 }
 
 .section
@@ -66,9 +63,7 @@ text-decoration:underline
 font-size:10px;
 color:#206020;
 font-family:verdana, arial, sans-serif;
-border:1px solid #808080;
 padding:2px;
-margin-top:16px;
 background-color:#FFFFFF
 }
 
@@ -89,6 +84,7 @@ color:#008000;
 
 .title a
 {
-text-decoration:inherit;
-color:inherit
+text-decoration:none;
+color:#FFFFFF;
+border:0px solid #000000
 }

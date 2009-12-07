@@ -10,7 +10,8 @@ target=rw.get_request_param("target")
 target_dict={"python" : "http://www.python.org/",
              "firefox" : "http://www.mozilla.com/firefox",
              "about" : "http://mfiers.github.com/Moa",
-             "moa" : "http://mfiers.github.com/Moa"
+             "moa" : "http://mfiers.github.com/Moa",
+             "dojo" : "http://www.dojotoolkit.org/"
              }
 
 if target in target_dict:

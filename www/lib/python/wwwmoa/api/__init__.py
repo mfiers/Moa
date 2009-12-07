@@ -107,7 +107,7 @@ def run(args=None, env=None):
 
 
 
-    if command=="project-info": # if we are dealing with an project-info request
+    if command=="moa-projectinfo": # if we are dealing with an project-info request
         project_info=dispatcher.info(path) # attempt to get information on path
         
         if not project_info["isMoaDir"]: # if it turns out to not be a Moa directory

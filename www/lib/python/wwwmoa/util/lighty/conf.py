@@ -125,7 +125,8 @@ url.rewrite-once=(
     \"^/about$\" => \"/dynamic/redir.py?target=about\",
     \"^/go/moa$\" => \"/dynamic/redir.py?target=moa\",
     \"^/go/firefox$\" => \"/dynamic/redir.py?target=firefox\",
-    \"^/go/python$\" => \"/dynamic/redir.py?target=python\"
+    \"^/go/python$\" => \"/dynamic/redir.py?target=python\",
+    \"^/go/dojo$\" => \"/dynamic/redir.py?target=dojo\"
 )
 
 alias.url=(

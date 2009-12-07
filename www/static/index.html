@@ -8,11 +8,13 @@
 
 <link rel="stylesheet" type="text/css" href="/styles/normal">
 <link rel="stylesheet" type="text/css" href="/styles/normal-buttons">
+<link rel="stylesheet" type="text/css" href="/scripts/dijit/themes/tundra/tundra.css">
+
 <link rel="shortcut icon" href="/images/MOAfavA">
 
-<script src="/scripts/dojo" type="text/javascript"></script>
-<script src="/scripts/wwwmoa" type="text/javascript"></script>
-<script src="/scripts/wwwmoaui" type="text/javascript"></script>
+
+<script src="/scripts/dojo/dojo.js" type="text/javascript"></script>
+
 
 </head>
 
@@ -20,14 +22,8 @@
 
 <div id="wrapper">
 
-<div class="title">
 
-<a href="/about" target="_blank"><img src="/images/MOAicos1A" alt=""> WWWMoa 0.1</a>
-
-</div>
-
-
-
+<div class="title"><a href="#wwwmoa-ahook" alt="" onclick="wwwmoa.client.showAbout();"><img src="/images/MOAicos1A" alt=""> WWWMoa 0.1</a></div>
 
 <noscript>
 
@@ -57,7 +53,15 @@ However, do not panic!  There are several ways that you can remedy this problem:
 
 
 
-<div id="jma-jsprotect" style="visibility:hidden">
+<div id="wwwmoa-vprotect" style="visibility:hidden">
+
+
+
+
+
+
+
+
 
 
 
@@ -71,133 +75,102 @@ However, do not panic!  There are several ways that you can remedy this problem:
 <script type="text/javascript">
 <!--
 
-var jma_state=new Object();
-jma_state.currentID=0;
-jma_state.getNextId=function()
-{
-    this.currentID++;
-    return "jma-unq-"+this.currentID;
-}
-
-wwwmoa.hm.create(wwwmoa.rl.get_hm("fsbrowser"), {location : ""}, function(obj){
-
-    if(obj===null)
-    {
-        document.getElementById("jma-fsbrowser").innerHTML="Something went wrong: the directory browser you requested could not be supplied.";
-        return;
-    }
-
-    obj.setVisualElementById("jma-fsbrowser");
-
-    obj.addPropertyCallback("in-moa-directory", function(prop, value)
-                                                {
-                                                    triggerMoaDirectory(value);
-                                                });
-
-    jma_state.fsbrowser=obj;
-});
+dojo.require("wwwmoa.client");
 
 
-function triggerMoaDirectory(inmoa)
-{
-    if(inmoa)
-    {
-        var project_info_vid=jma_state.getNextId();
+dojo.require("dijit.layout.BorderContainer");
+dojo.require("dijit.layout.ContentPane");
+dojo.require("dijit.layout.AccordionContainer");
+dojo.require("wwwmoa.client.dhm.FSBrowser");
+dojo.require("wwwmoa.client.dhm.PBrowser");
 
-        document.getElementById("jma-main").innerHTML="<div class=\"section\"><span class=\"title\">You are currently in a Moa directory.</span><br>There are a number of tasks you can now do.  These tasks include:<br><br><a class=\"button\" href=\"#jma-ahook\" onclick=\"runCurrentDirectory();\">Run Pipeline</a><br><br></div><div class=\"section\"><span class=\"title\">Project Information</span><br><div id=\""+ wwwmoa.html.fix_text(project_info_vid) + "\">Loading project info...</div></div>";
+//-->
+</script>
 
-        if(jma_state.currentp!==undefined)
-            jma_state.currentp.cancel();
 
-        jma_state.currentp=null;
 
-        jma_state.currentp=wwwmoa.ajax.get(wwwmoa.rl.get_api("project-info", jma_state.fsbrowser.getProperty("directory")),function(txt) {
 
-                                var ele=document.getElementById(project_info_vid);
+<!-- start main panes -->
+<div id="wwwmoa-vroot" class="tundra">
+<div dojoType="dijit.layout.BorderContainer"  style="width:100%; height:700px" liveSplitters="true">
 
-                                if(ele==null)
-				    return;
+<div dojoType="dijit.layout.ContentPane" region="top" splitter="false" id="wwwmoa-a-nav" style="height:32px"></div>
 
-                                var project_info=wwwmoa.json.parse(txt);
+<div dojoType="dijit.layout.AccordionContainer" region="leading" style="width:300px" splitter="true">
+<div dojoType="dijit.layout.ContentPane" region="leading" style="width:300px" title="File View"><div dojoType="wwwmoa.client.dhm.FSBrowser" id="wwwmoa-a-fsbrowser"></div></div>
+<div dojoType="dijit.layout.ContentPane" region="leading" style="width:300px" title="Project View"><div dojoType="wwwmoa.client.dhm.PBrowser" id="wwwmoa-a-pbrowser"></div></div>
+</div>
 
-                                ele.innerHTML="";
+<div dojoType="dijit.layout.ContentPane" region="center" splitter="true" id="wwwmoa-a-main">x</div>
 
-                                ele.innerHTML+="Project Title: "
-				if(project_info.title!="")
-				    ele.innerHTML+=wwwmoa.html.fix_text(project_info.title);
-                                else
-                                    ele.innerHTML+="<span style=\"font-style:italic\">Untitled</span>";
-                            }, 8192);
-    }
+
+<div dojoType="dijit.layout.ContentPane" region="bottom" splitter="false" id="smallnotices">This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href="/go/python">Python</a> and <a href="/go/dojo">Dojo Toolkit</a>. Best viewed in <a href="/go/firefox">Firefox Web Browser</a>.</div>
+
+</div>
+
+
+
+</div>
+<!-- end main panes -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+<script type="text/javascript">
+<!--
+
+dojo.addOnLoad(wwwmoa.client._ini());
+dojo.addOnLoad(dojo.connect(dijit.byId("wwwmoa-a-fsbrowser"), "locationChanged", {refresh : function() {
+
+    var fsbrowser=dijit.byId("wwwmoa-a-fsbrowser");
+    var pbrowser=dijit.byId("wwwmoa-a-pbrowser");
+    var isMoa=fsbrowser.attr("locationIsMoa");
+
+
+    if(isMoa)
+        dojo.doc.getElementById("wwwmoa-a-main").innerHTML="<span style=\"font-size:24pt\">You are in a Moa directory.</span><br>";
     else
-        document.getElementById("jma-main").innerHTML="<div class=\"section\">Please select a Moa directory.</div>";
-}
+        dojo.doc.getElementById("wwwmoa-a-main").innerHTML="<span style=\"font-size:24pt\">You are not in a Moa directory.</span>";
+
+    dojo.doc.getElementById("wwwmoa-a-nav").innerHTML=fsbrowser.attr("locationBreadcrumbCode");
+
+    if(fsbrowser.attr("locationIsMoa"))
+        pbrowser.attr("location", fsbrowser.attr("location"));
+    else
+        pbrowser.doNoProjectAction();
+
+}}, "refresh"));
+
 
 
 //-->
 </script>
 
-
-
-<br>
-<a href="javascript:wwwmoa.ui.alert('Help does not currently exist.')" class="button">Help</a>
-<a href="#jma-ahook" class="button" onclick="window.location.reload(false);">Restart</a><br><br>
-
-
-
-<div style="border:1px solid #808080; padding:5px; width:98%; margin-bottom:40px">
-
-<table>
-
-<tr>
-
-<td id="jma-fsbrowser" style="vertical-align:top; font-weight:bold; padding-left:12px">
-
-<div style="font-weight:bold; text-align:center">
-Loading...
-</div>
-
-</td>
-
-<td id="jma-main" style="border-left:3px solid #606060; vertical-align:top; font-weight:bold; padding-left:12px">
-
-<div style="font-weight:bold; text-align:center">
-Loading...
-</div>
-
-</td>
-
-</tr>
-
-</table>
-
 </div>
 
 
 
 
-
-
-
-
-</div>
-
-
-
-
-<script type="text/javascript">
-<!--
-document.getElementById("jma-jsprotect").style.visibility="visible";
-//-->
-</script>
-
-</div>
-
-<div id="smallnotices">
-
-This is the pre-release version of WWWMoa. <br>WWWMoa is powered by <a href="/go/python">Python</a>. Best viewed in <a href="/go/firefox">Firefox Web Browser</a>.
-
-</div>
 
 </body>
 
