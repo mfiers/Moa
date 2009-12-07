@@ -107,7 +107,7 @@ else {
             if(fragment.length!=0)
                 fragment+="/";
 
-            return "/api/"+fragment+this.url_encode_x(command);
+            return "/api/"+fragment+command;
         },
 
         get_hm : function (rrl) {

@@ -3,7 +3,6 @@ dojo.provide("wwwmoa.client.dhm.FSBrowser");
 dojo.require("dijit._Widget");
 dojo.require("wwwmoa");
 
-
 dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 
 	    _visualCode : null,
@@ -12,7 +11,8 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 	    _location : "",
 	    _locationComponents : [],
 	    _locationIsMoa : false,
-	    _startIndex : 0,
+	    _startIndex : 1,
+	    _indexCount : 15,
 
 	    _setVisualCodeAttr : function(val) {
 		this._visualCode=val;
@@ -25,7 +25,13 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 
 	    _setLockedAttr : function(val) {
 		this._locked=val;
-		this.refreshVisualElement();
+		
+		if(this.domNode==null) return;
+
+		if(this._locked)
+		    dojo.fadeOut({node:this.domNode}).play();
+		else
+		    dojo.fadeIn({node:this.domNode}).play();
 	    },
 
 	    _getLockedAttr : function() {
@@ -65,10 +71,29 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 		return this._locationIsMoa;
 	    },
 
-		_setStartIndexAttr : function(val) {
+            _setStartIndexAttr : function(val) {
+		if(val<1)
+		    this._startIndex=1;
+		else
+		    this._startIndex=val;
 	    },
 
-            _get
+	    _getStartIndexAttr : function() {
+		return this._startIndex;
+	    },
+
+	    _setIndexCountAttr : function(val) {
+		if(val<1)
+		    this._indexCount=1;
+		else if(val>200)
+		    this._indexCount=200;
+		else
+		    this._indexCount=val;
+	    },
+
+	    _getIndexCountAttr : function() {
+		return this._indexCount;
+	    },
 
 	    _getLocationBreadcrumbCodeAttr : function() {
 		var locationComponents=this.attr("locationComponents");
@@ -99,13 +124,36 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 	    doNavAction : function() {
 		var a=this;
 		var location="";
- 
+		var api_command="ls?start="+this.attr("startIndex")+"&end="+(this.attr("startIndex")+this.attr("indexCount")-1)
+		
 		if(this.attr("location")!==undefined)
 		    location=this.attr("location");
 		    
-		wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("ls", location),function(data) {
+		this.attr("locked", true);
+		
+		wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api(api_command, location),function(data) {
 			a.dataCallback.call(a, data); // use the callback function of this object
 		    } , 8192); // be somewhat patient about receiving the listing
+	    },
+
+	    doPrevNavAction : function() {
+		this.attr("startIndex", this.attr("startIndex")-this.attr("indexCount"));
+		this.doNavAction();
+	    },
+
+	    doNextNavAction : function() {
+		this.attr("startIndex", this.attr("startIndex")+this.attr("indexCount"));
+		this.doNavAction();
+	    },
+
+	    doFirstNavAction : function() {
+		this.attr("startIndex", 1);
+		this.doNavAction();
+	    },
+
+	    doLastNavAction : function() {
+		this.attr("startIndex", Math.max(1, this.attr("lsResponse")["ls-available"]-this.attr("indexCount")+1));
+		this.doNavAction();
 	    },
 
 	    // Takes the previously generated HTML and packages it for viewing.  Then,
@@ -140,7 +188,7 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 		};
 		
 		var ls_response=wwwmoa.formats.json.parse(data); // attempt a parse of the received data
-		
+		var no_read=0;
 		var buf_code=""; // buffer for visual code
 
 		var is_dir=false; // holds whether the currently processed item is a directory or not
@@ -151,6 +199,7 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 		
 		if(data==null) { // if null was passed, we have an error
 		    this.attr("visualCode", "Sorry, but the directory contents could not be loaded."); // create an error message
+		    this.attr("locked", false);
 		    return;
 		}
 		
@@ -161,9 +210,12 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 
 		var_colour="";
 
+		
 		for(var x=0; x<ls_response["ls"].length; x++) { // for each item in the current directory
-		    if(!ls_response["ls"][x]["read-allowed"]) // if we cannot read a file
+		    if(!ls_response["ls"][x]["read-allowed"]) { // if we cannot read a file
+			no_read++; // make a note of it
 			continue; // do not bother even showing it
+		    }
 
 		    is_dir=(ls_response["ls"][x]["type"]=="dir"); // find whether the item is a dir or not
 		    
@@ -213,8 +265,6 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 
 		    buf_code+="</td><td>";
 
-
-
 		    if(ls_response["ls"][x]["link"]) // if the item is a link
 			buf_code+="<img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSlinkA")) + "\" alt=\"Link\" title=\"This item is actually a link.\">"; // give it the proper annotation
 
@@ -225,7 +275,23 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 		// end both structural tables
 		buf_code+="</table>";
 
+		// print the number of unreadable files, if any were encountered
+		if(no_read>0)
+		    buf_code+="<span style=\"font-size:10pt\">("+no_read+" unreadable items)</span><br>"
+
+		// add navigation options
+		buf_code+="<span style=\"font-weight:bold\">";
 		
+		buf_code+="<a href=\"#wwwmoa-z\" style=\"font-size:10pt; color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "').doFirstNavAction();\">&lt;&lt; First "+Math.min(this.attr("indexCount"), ls_response["ls-available"])+"</a>";
+
+		if(this.attr("startIndex")>1)
+		    buf_code+=" <a href=\"#wwwmoa-z\" style=\"font-size:10pt; color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "').doPrevNavAction();\">&lt; Previous "+Math.min(this.attr("indexCount"), ls_response["ls-available"])+"</a> ";
+		if(this.attr("startIndex")+this.attr("indexCount")<ls_response["ls-available"])
+		    buf_code+=" <a href=\"#wwwmoa-z\" style=\"font-size:10pt; color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "').doNextNavAction();\">Next "+Math.min(this.attr("indexCount"), ls_response["ls-available"]-this.attr("startIndex")-this.attr("indexCount")+1)+" &gt;</a>";
+
+		buf_code+=" <a href=\"#wwwmoa-z\" style=\"font-size:10pt; color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "').doLastNavAction();\">Last "+Math.min(this.attr("indexCount"), ls_response["ls-available"])+" &gt;&gt;</a>";
+		buf_code+="</span>";
+
 		this.attr("visualCode", buf_code); // make main code "public"
 		
 		this.attr("locationComponents", ls_response["dir"]);
