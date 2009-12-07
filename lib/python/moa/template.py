@@ -94,12 +94,19 @@ def new(options, args):
     Create a new template based makefile in the current dir.
     """
 
-    usage = 'Usage: moa new  [-t "TITLE"] [TEMPLATE(s)]'
+    usage = 'Usage: moa new  [-t "TITLE"] [-d DIRECTORY] [TEMPLATE(s)]'
 
     if len(args) == 0:
         templates = ['traverse']
     else:
         templates = args
+
+    directory = options.newdir
+    if not directory:
+        directory = '.'
+    if (directory != '.') and (not os.path.isdir(directory)):
+        l.info("Creating directory %s" % directory)
+        os.makedirs(directory)
 
     title = options.title
     if not title and templates != ['traverse']:
@@ -109,11 +116,16 @@ def new(options, args):
         title = ""
 
     if title:
-        l.debug('creating a new moa makefile with title "%s"' % title)
+        l.debug('creating a new moa makefile with title "%s" in %s' % (
+            title, directory))
     else:
-        l.debug('creating a new moa makefile')
+        l.debug('creating a new moa makefile in %s' % ( directory))
 
-    if os.path.exists("./Makefile"):
+    makefile = os.path.join(directory, 'Makefile')
+    moamk = os.path.join(directory, 'moa.mk')
+    moamklock = os.path.join(directory, 'moa.mk.lock')
+    
+    if os.path.exists(makefile):
         l.debug("Makefile exists!")
         if not options.force:
             l.critical("makefile exists, use -f (--force) to overwrite")
@@ -122,8 +134,8 @@ def new(options, args):
     for t in templates:
         _check(t)
 
-    l.debug("Start writing ./Makefile") 
-    F = open("./Makefile", 'w')
+    l.debug("Start writing %s" % makefile)
+    F = open(makefile, 'w')
     F.write(NEW_MAKEFILE_HEADER)
     for t in templates:
         F.write("include $(shell echo $$MOABASE)/template/%s.mk\n" % t)
@@ -133,16 +145,15 @@ def new(options, args):
     F.close()
 
     if title:
-
-        with moa.utils.flock('moa.mk.lock'):    
-            moamk = []
+        with moa.utils.flock(moamklock):    
+            moamkdata = []
 
             #open & rewrite an older moa.mk
-            if os.path.exists('moa.mk'):
-                moamk = open('moa.mk').readlines()
+            if os.path.exists(moamk):
+                moamkdata = open(moamk).readlines()
                     
-            F = open('moa.mk', 'w')
-            for line in moamk:
+            F = open(moamk, 'w')
+            for line in moamkdata:
                 if re.match("^title *=", line) and title:
                     continue
                 F.write(line)
@@ -154,5 +165,5 @@ def new(options, args):
             F.close()       
             l.debug('Written moa.mk')
     
-    l.info("Written Makefile, try: moa help")
+    l.info("Written %s, try: moa help" % makefile)
 

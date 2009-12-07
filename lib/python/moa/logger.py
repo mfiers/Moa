@@ -21,13 +21,58 @@
 import sys
 import logging
 
+class XTRFormatter(logging.Formatter):
+    """
+    A somewhat more advanced formatter
+    """
+
+    def format(self, record):
+        """
+        Defines two extra fields in the record class, upon formatting:
+         - visual, a visual indication of the severity of the message
+         - tb, a formatted traceback, used when sending mail
+         
+        @param record: the log message record 
+        """
+        record.coloff = chr(27) + "[0m"
+        record.colon = chr(27) + "[1m"
+        
+        if   record.levelno <= logging.DEBUG:
+            record.colon = chr(27) + "[30m" + chr(27) + "[47m"
+            record.visual = "#DBUG "
+            record.vis1 = "D"
+        elif record.levelno <= logging.INFO:
+            record.colon = chr(27) + "[30m" + chr(27) + "[42m"
+            record.visual = "#INFO "
+            record.vis1 = "I"
+        elif record.levelno <= logging.WARNING:
+            record.visual = "#WARN "
+            record.colon = chr(27) + "[30m" + chr(27) + "[46m"
+            record.vis1 = "W"
+        elif record.levelno <= logging.ERROR:
+            record.visual = "#ERRR "
+            record.vis1 = "E"
+            record.colon = chr(27) + "[30m" + chr(27) + "[43m"
+        else:
+            record.colon = chr(27) + "[30m" + chr(27) + "[41m"
+            record.visual = "#CRIT "
+            record.vis1 = "C"
+
+        #check if we're on a tty, if not, reset colon/coloff
+        if not sys.stdout.isatty():
+            record.colon = ""
+            record.coloff = ""
+            
+        return logging.Formatter.format(self, record)
+
+
 l = logging.getLogger('moa')
 handler = logging.StreamHandler()
 logmark = chr(27) + '[0;44mU' + \
           chr(27) + '[0m ' 
 
-formatter = logging.Formatter(
-    logmark + '%(message)s')
+formatter = XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(message)s')
+#    logmark + '%(message)s')
 
 handler.setFormatter(formatter)
 l.addHandler(handler)

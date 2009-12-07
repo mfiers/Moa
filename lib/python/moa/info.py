@@ -25,6 +25,10 @@ import os
 import re
 import sys
 
+from moa.logger import l
+from moa import dispatcher
+
+
 def isMoa(d):
     """ is directory d a 'moa' directory? """
 
@@ -43,5 +47,42 @@ def isMoa(d):
     F.close()
         
     return isMoa
+
+def info(d):
+    """ Retrieve a lot of information """
+    rv = {'parameters' : {}}
+    rc, out, err = dispatcher.runMake(directory = d, args='info', catchOut=True)
+    if rc != 0:
+        print err
+        raise('Error running make %d' % rc)
+    
+    for line in out.split("\n"):
+        if not line: continue
+        ls = line.split("\t")
+        what = ls[0]
+        if what == 'moa_title':
+            rv['moa_title'] = ls[1]
+        elif what == 'moa_description':
+            rv[what] = ls[1]
+        elif what == 'moa_targets':
+            rv[what] = ls[1].split()
+        elif what == 'parameter':
+            pob = {}
+            if ls[1] == 'required':
+                pob['mandatory'] = True
+            else:
+                pob['mandatory'] = False
+            pob['type'] = ls[2]
+            pob['value'] = ls[3]
+            pob['description'] = ls[4]            
+            rv['parameters'][ls[1]] = pob
+
+        
+
+    return rv
+
+    
+    
+
 
 
