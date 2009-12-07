@@ -91,25 +91,29 @@ moa_run_postcommand:
 	$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
 
 #Find project root (if there is one)
-project_root = $(shell \
-	C=`pwd`; \
-	while [[ "$$C" != "/" ]]; do \
-		if [[ -f "$$C/Makefile" ]]; then \
-			if moa -f $$C/Makefile ids | grep -q "project"; then \
-				echo $$C; \
-				break; \
-			fi; \
-		fi; \
-		C=`dirname $$C`; \
-	done; \
-)
-p=$(project_root)
+# ifndef in_project_loop
+# project_root = $(shell \
+# 	C=`pwd`; \
+# 	$(warning processing $C);\
+# 	while [[ "$$C" && ("$$C" != "/") ]]; do \
+# 		if [[ -f "$$C/Makefile" ]]; then \
+# 			if moa  -f $$C/Makefile ids in_project_loop=T | grep -q "project"; then \
+# 				echo $$C; \
+# 				break; \
+# 			fi; \
+# 		fi; \
+# 		C=`dirname $$C`; \
+# 	done; 			\
+# 	echo "/";		\
+# )
+# endif
 
-.PHONY: project_info
-project_info:
-	@if [[ $p != '/' ]]; then \
-		echo $p $(shell make -s -C $p title);\
-	fi
+
+# .PHONY: project_info
+# project_info:
+# 	@if [[ "$(project_root)" != '/' ]]; then \
+# 		$(shell make -s -C $(project_root) title);\
+# 	fi
 
 ## 
 .PHONY: is_moa
@@ -332,7 +336,6 @@ dont_include_moabase=defined
 #Variable: set_name
 #moa_may_define += project
 moa_must_define += title
-#project_help ?= A project name - group your analyses.
 title_help ?= A job name - Describe what you are doing
 
 ## author of this template
@@ -483,3 +486,39 @@ moa_showvar_%:
 ifndef MOA_INCLUDE_HELP
 include $(shell echo $$MOABASE)/template/__moaBaseHelp.mk
 endif
+
+################################################################################
+## make info ###################################################################
+#
+#### Show lots of information on the current job
+#
+################################################################################
+
+
+comma=,
+info_keyval = "$(1)" : "$(subst '"',"'",$(2))"
+info_keyvallist = "$(1)" : [$(call merge,$(comma),$(foreach v,$(2),"$(subst '"',"'",$(v))"))]
+
+.PHONY: info info_header 
+		info_parameters 			\
+		info_parameters_optional 	\
+		info_parameters_required 
+
+info: info_header info_parameters
+
+info_header:
+	@echo -e 'moa_title\t$(moa_title)'
+	@echo -e 'moa_description\t$(moa_description)'
+	@echo -e 'moa_targets\t$(moa_ids) all clean $(moa_additional_targets)'
+
+info_parameters: info_parameters_required info_parameters_optional
+
+info_parameters_required: $(addprefix: info_par_req_,$(moa_must_define))
+info_parameters_optional: $(addprefix info_par_opt_,$(moa_may_define))
+
+info_par_req_%:
+	@echo -e 'parameter\t$*\trequired\t$($*_type)\t$($*)\t$($*_help)'
+
+info_par_opt_%:
+	@echo -e 'parameter\t$*\toptional\t$($*_type)\t$($*)\t$($*_help)'
+

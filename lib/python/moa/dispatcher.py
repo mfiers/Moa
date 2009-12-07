@@ -27,6 +27,9 @@ import site
 import optparse
 import subprocess
 
+from  moa.logger import l
+
+
 #moa specific libs - first prepare for loading libs
 if not os.environ.has_key('MOABASE'):
     raise Exception("MOABASE is undefined")
@@ -46,16 +49,13 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
         continue
     if line[0] == '#': 
         continue
-    l = [x.strip() for x in line.split('=', 1)]
-    if len(l) == 2:
-        ETC[l[0]] = l[1]
+    ls = [x.strip() for x in line.split('=', 1)]
+    if len(ls) == 2:
+        ETC[ls[0]] = ls[1]
 
-import moa.template
-import moa.archive
-import moa.conf
-import moa.info
-
-def _startMake(d, args):
+def _startMake(d, args,
+               pipeOut = subprocess.PIPE,
+               pipeErr = subprocess.PIPE):
     """
     A function to run Make in a certain directory d with specific args
     """
@@ -65,18 +65,35 @@ def _startMake(d, args):
         ["make"] + args,
         shell=False,
         cwd = d,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.PIPE)
+        stdout = pipeOut,
+        stderr = pipeErr)
     return p
 
-def _runMake(d, args):
+def runMake(directory = None, args = [], catchOut=False):
     """
-    Do a full make run
+    Complete a make run
     """
-    p = _startMake(d, args)
-    out, err = p.communicate()
+    if not directory: directory = os.getcwd()
+    if type(args) == type('hi'): args = [args]
+    l.debug('Starting "make %s" in %s' % (" ".join(args), directory))
+    if catchOut:
+        catchOut = subprocess.PIPE
+    p = _startMake(directory, args, pipeOut=catchOut)
+    (out, err) = p.communicate()
     rc = p.returncode
+    if err:
+        print err
+        
+    l.debug("Finished make in %s with return code %s" % (directory, rc))
     return rc, out, err
+
+def runMakeAndExit(directory = None, args = []):
+    """
+    Convenience function - run, report & exit
+    """
+    l.debug("ji %s %s" % (directory, args))
+    rc, out, err = runMake(directory=directory, args=args)
+    sys.exit(rc)
 
 ##
 ## API Command Dispatcher
@@ -87,51 +104,3 @@ def execute(d, args = []):
     Execute 'make' in directory d
     """
     _startMake(d, args)
-
-def _getProjectInfo(d):
-    rc, out, err = _runMake(d, 'project_info')
-    if rc != 0: return "", ""
-    return out.strip().split(None, 1)
-    
-
-def info(d):
-    
-    rv = { 'directory' : d,
-           'isMoaDir' : True}
-
-    if not moa.info.isMoa(d):
-        rv['isMoaDir'] = False
-        return rv
-
-    projectRoot, projectTitle = _getProjectInfo(d)
-    rv['projectRoot'] = projectRoot
-    rv['projectTitle'] = projectTitle
-
-    return rv
-    
-    
-
-
-    
-#     #Create new jobs
-#     elif command == 'template':
-#         moa.template.handler(options, newargs)
-#     elif command == 'new':
-#         #shortcut for moa template net
-#         moa.template.new(options, newargs)
-
-#     #pack & unpack trees
-#     elif command == 'archive':
-#         moa.archive.handler(options, newargs)
-#     elif command == 'list':
-#         #shortcut for moa template list
-#         moa.template.list()
-#     #configuration stuff
-#     elif command == 'conf':
-#         moa.conf.handler(options, newargs)
-#     else:
-#         #fire arguments of to make
-#         l.debug('Running "make %s"' % (" ".join(sys.argv[1:])))
-#         retcode = subprocess.call(["make"]+sys.argv[1:])
-#         l.debug("Make returned with code %s" % retcode)
-#         sys.exit(0)

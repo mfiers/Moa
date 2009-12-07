@@ -59,6 +59,7 @@ import moa.archive
 from moa import dispatcher
 import moa.graph
 import moa.conf
+import moa.info
 
 ## Init the logger
 import moa.logger
@@ -100,13 +101,20 @@ parser.add_option("-v", "--verbose", dest="verbose",
 
 parser.set_defaults(threads=1)
 parser.add_option("-j", dest="threads",
-                  help="threads to use (corresponds with the make -j parameter)")
+                  help="threads to use when running Make (corresponds " +
+                  "to the make -j parameter)")
 
-parser.add_option("-p", "--project", dest="project",
-                  help="set a project name (use with moa new)")
+#deprecated:
+#parser.add_option("-p", "--project", dest="project",
+#                  help="set a project name (use with moa new)")
 
-parser.add_option("-t", "--title", dest="title",
-                  help="set a project title (use with moa new)")
+parserN = optparse.OptionGroup(parser, "For use with moa new")
+
+parserN.add_option("-t", "--title", dest="title",
+                  help="Node title")
+parserN.add_option("-d", "--directory", dest="newdir",
+                  help="Directory to create the new template in")
+parser.add_option_group(parserN)
 
 (options, args) = parser.parse_args()
 
@@ -116,20 +124,15 @@ if options.verbose:
 #make sure the MOA_THREADS env var is set - this is used by MOA later
 #on
 os.putenv('MOA_THREADS', "%s" % options.threads)
-os.system('env | grep MOA')
 
 ##
 ## Command dispatcher
 ## 
 if __name__ == "__main__":    
-
     l.debug("MOABASE : %s" % MOABASE)
 
     if len(args) == 0:
-        l.debug('Running "make"')
-        retcode = subprocess.call(["make"])
-        l.debug("Make returned with retcode pid %s" % retcode)
-        sys.exit(0)
+        dispatcher.runMakeAndExit()
 
     command = args[0]
     newargs = args[1:]
@@ -137,13 +140,9 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
 
     if command == 'run':
-        l.debug('Running default "make"')
-        retcode = subprocess.call(["make"])
-        l.debug("Make returned with retcode pid %s" % retcode)
-        sys.exit(0)
-
+        dispatcher.runMakeAndExit(args=newargs)
     elif command == 'info':
-        print dispatcher.info(os.getcwd())
+        print moa.info.info(os.getcwd())
         
     #Create new jobs
     elif command == 'template':
@@ -163,7 +162,4 @@ if __name__ == "__main__":
         moa.conf.handler(options, newargs)
     else:
         #fire arguments of to make
-        l.debug('Running "make %s"' % (" ".join(sys.argv[1:])))
-        retcode = subprocess.call(["make"]+sys.argv[1:])
-        l.debug("Make returned with code %s" % retcode)
-        sys.exit(0)
+        dispatcher.runMakeAndExit(args=args)
