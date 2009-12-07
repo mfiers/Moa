@@ -1,0 +1,223 @@
+#!/usr/bin/env python
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
+"""
+Convert blastn output to gff
+"""
+import os
+import sys
+import optparse
+import logging
+
+from Bio.Blast import NCBIStandalone
+from Bio.Blast import NCBIXML
+
+LOGLEVEL = logging.INFO
+
+################################################################################
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action='store_true')
+
+parser.set_defaults(separator="\t")
+parser.add_option('-s', dest='separator')
+
+parser.add_option('--reckeys', dest='reckeys', action='store_true',                  
+                  help = 'show all keys that can be used for a record - note, these '+
+                  'are generated dynamically - so you must define at least one blast '+
+                  'report')
+
+parser.add_option('--alignkeys', dest='alignkeys', action='store_true',                  
+                  help = 'show all keys that can be used for an alignment - note, these '+
+                  'are generated dynamically - so you must define at least one blast '+
+                  'report')
+
+parser.add_option('-e', dest='e', action='store', type='float',              
+                  help = 'print only records, alignments or hsps  with an expect value '+
+                  'better than this')
+
+parser.add_option('-R', dest='recs', action='store',                  
+                  help = 'record mode - produce one line per record, output the '+
+                  'defined fields, separated by colons')
+
+parser.add_option('-A', dest='alignments', action='store',                  
+                  help = 'alignment mode - produce one line per alignment, output the '+
+                  'defined fields, separated by colons')
+
+parser.add_option('-H', dest='hsps', action='store_true',
+                  help = 'hsp mode - produce one line per hsp, output the '+
+                  'defined fields, separated by colons')
+
+(options, args) = parser.parse_args()
+
+if options.verbose:
+    LOGLEVEL = logging.DEBUG
+
+logging.basicConfig(level=LOGLEVEL, format = "%(levelname)s - %(message)s")
+l = logging #shortcut
+
+inFiles = args
+l.debug("processing %d input files" % len(inFiles))
+l.debug("processing %s .. %s" % (inFiles[:2], inFiles[-2:]))
+
+
+
+################################################################################
+#blast_parser = NCBIStandalone.BlastParser()
+
+def cleanup_name(name):
+    """
+    Clean a name from forbidden characters
+    """
+    return name.replace(';', ','
+            ).replace('=', '_'
+            ).replace('%', '_'
+            ).replace(',', '_'
+            ).replace('__', '_')
+
+class DUMMY:
+    pass
+
+def preprocess(rec):
+    """
+    Add some aditional data to a blast record
+    """
+    
+    rec.expect = 1e33
+    rec.best_alignment = None
+    
+    for alignment in rec.alignments:
+        alignment.query_id = rec.query_id
+        alignment.query = rec.query
+        
+        alignment.expect = 1e33
+        alignment.best_hsp = None
+
+        alignment.query_start = 1e33
+        alignment.sbjct_start = 1e33
+        alignment.query_end = 0
+        alignment.sbjct_end = 0
+        
+        for hsp in alignment.hsps:
+            eval = hsp.expect
+            if alignment.expect > eval:
+                alignment.expect = eval
+                alignment.best_hsp = hsp
+
+            if alignment.query_start > hsp.query_start:
+                alignment.query_start = hsp.query_start
+            if alignment.sbjct_start > hsp.sbjct_start:
+                alignment.sbjct_start = hsp.sbjct_start
+            if alignment.query_end < hsp.query_end:
+                alignment.query_end = hsp.query_end
+            if alignment.sbjct_end < hsp.sbjct_end:
+                alignment.sbjct_end = hsp.sbjct_end
+
+        if rec.expect > alignment.expect:
+            rec.expect = alignment.expect
+            rec.best_alignment = alignment
+            
+
+def output_keys(r):
+    ks = [x for x in dir(r) if x[0] != '_']
+    ks.sort()
+    print "\n".join(ks)
+        
+def output(r, kys):
+    rv=[]
+    for k in kys.split(':'):
+        v = r.__dict__[k]
+        if type(v) == type(0.18):
+            rv.append("%.5g" % v)
+        else:
+            rv.append("%s" % v)
+    
+    print options.separator.join(rv)
+
+def process_hsp(hsp):
+    #ignore hsp based on expect, but
+    #only if the corresponding alignment
+    #has not been printed
+    if options.e and \
+           not options.alignments and \
+           hsp.expect > options.e:
+        return
+
+    if options.hspkeys:
+        output_keys(hsp)
+        sys.exit()
+                    
+    if options.hsps:
+        output(alignment, options.hsps)
+    
+def process_alignment(alignmeht):
+    #ignore alignment based on expect, but
+    #only if the corresponding record
+    #has not been printed
+    if options.e and \
+           not options.recs and \
+           alignment.expect > options.e:
+        continue
+
+    if options.alignkeys:
+        output_keys(alignment)
+        sys.exit()
+                    
+    if options.alignments:
+        output(alignment, options.alignments)
+
+    if options.hsps:
+        for hsp in alignment.hsps:
+            process_hsp(hsp)
+
+
+def process_record(record):
+    """
+    Process & output information on a record 
+    """
+    if options.reckeys:
+        output_reckeys(record)
+        sys.exit()
+
+    #print or proceed only if the evalue is better than
+    #the requested value
+    if options.e and \
+           record.expect > options.e:
+        continue
+
+    #output - if requested
+    if options.recs: output(record, options.recs)
+            
+    #are we printing more info? If not, return
+    if not (options.alignments or options.hsps):                
+        return
+
+    #browse through all alignments
+    for alignment in blast_record.alignments:
+        process_alignment(alignment)
+
+    
+            
+if __name__ == '__main__':
+    for infile in inFiles:
+        l.debug("processing %s" % infile)
+        I = open(infile, 'r')
+        for blast_record in NCBIXML.parse(I):
+            blast_record.file=os.path.basename(infile)
+            preprocess(blast_record)
+            process_record(blast_record)

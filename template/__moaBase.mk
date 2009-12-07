@@ -185,10 +185,11 @@ ids:
 ## the main targets - we run these as separate make instances since I
 ## really cannot make Make to reevaluate what possible in-/output
 ## files are created inbetween steps
+moa_main_targets: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
 moa_main_targets:
 	@for moa_main_target in $(moa_ids); do 										\
 		$(call echo,calling $$moa_main_target) ;								\
-		$(MAKE) $$moa_main_target 												\
+		$(MAKE) $(minj) $$moa_main_target 												\
 				$${moa_main_target}_main_phase=T ;								\
 	done
 
