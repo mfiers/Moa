@@ -17,12 +17,12 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_title = Blast
-moa_description = Wraps BLAST [[Alt90]], the most popular	\
+moa_description = Wraps BLAST [[Alt90]], the most popular				\
   similarity search tool in bioinformatics
-moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)	\
+moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
   [[Alt90]] suite of tools
 moa_ids += blast
-blast_help = Running BLAST takes an input directory					\
+blast_help = Running BLAST takes an input directory						\
   (*blast_input_dir*), determines what sequence files are present		\
   (with the parameter *blast_input_extension*) and executes BLAST on	\
   each of these. Moa BLAST is configured to create XML output (as		\
@@ -65,7 +65,9 @@ blast_input_dir_help = directory containing the input sequences
 blast_input_dir_type = dir
 
 moa_must_define += blast_db
-blast_db_help = Location of the blast database
+blast_db_help = Location of the blast database. You can either define			\
+the blast db parameter as used by blast, or any of the blast database			\
+files, in which case the extension will be removed before use
 blast_db_default_attrib = blastdb
 moa_must_define +=  blast_gff_source
 blast_gff_source_help = source field to use in the gff
@@ -104,6 +106,9 @@ blast_nohits ?= 100
 blast_nothreads ?= 1
 blast_gff_blasthit ?= F
 
+
+real_blast_db = $(if $(blast_db), $(shell echo "$(blast_db)" | sed "s/\.[pn]..$$//"))
+
 ifdef blast_main_phase
   blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
 
@@ -117,11 +122,9 @@ endif
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
 
-ifdef blast_main_phase
-ifdef blast_db
-single_blast_db_file=$(shell ls $(blast_db)*.[pn]hr)
+ifdef real_blast_db
+single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]hr)
 endif 
-endif
 
 test:
 	@echo $(blast_input_dir)
@@ -132,6 +135,7 @@ test:
 blast_test:
 	@echo "Input extension: '$(blast_input_extension)'"
 	@echo "a blastdb file: '$(single_blast_db_file)'"
+	@echo "real blast db: '$(real_blast_db)'"
 	@echo "No inp files $(words $(blast_input_files))"
 	@echo "No xml files $(words $(blast_output_files))"
 	@echo "No gff files $(words $(blast_gff_files))"
@@ -160,7 +164,7 @@ out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(single_blast_db_file)
 	@echo "Creating out.xml $@ from $<"
 	@echo "Params $(blast_program) $(blast_db)"
 	blastall -i $< -p $(blast_program) -e $(blast_eval) -m 7 \
-		-a $(blast_nothreads) -d $(blast_db) \
+		-a $(blast_nothreads) -d $(real_blast_db) \
 		-b $(blast_nohits) -v $(blast_nohits) \
 		-o $@
 
