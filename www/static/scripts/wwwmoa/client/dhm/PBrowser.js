@@ -178,7 +178,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 			continue;
 		
 
-		    buf_final+="<br><span style=\"font-weight:bold; text-decoration:underline\">&quot;"+wwwmoa.formats.html.fix_text(x)+"&quot; Parameters</span><br>";
+		    buf_final+="<br><span style=\"font-weight:bold; text-decoration:underline\">"+wwwmoa.formats.html.fix_text(wwwmoa.util.str.title_case(x))+" Parameters</span><br>";
 
 		    for(var y=0; y<buf_cat[x].length; y++)
 			buf_final+=buf_cat[x][y];
