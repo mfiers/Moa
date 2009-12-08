@@ -73,6 +73,13 @@ help_markdown:
 
 empty:=
 space:= $(empty) $(empty)
+comma:=,
+sep:=|
+parO:=(
+parC:=)
+#return the type of a parameter
+ptype=$(if $($(1)_type),$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if $($(1)_default),$(comma) default:$($(1)_default)))$(parC))
+
 help_md = % $(subst $(space),_,$(moa_title)) \n\
 % $(moa_author)							\n\
 % $(shell date)							\n\
@@ -103,15 +110,13 @@ $(id)									\n\
 \#\# Required parameters				\n\
 $(foreach v,$(moa_must_define), 		  \
 $(v)									\n\
-:   $(if $($(v)_help),					\
+:   $(call ptype,$(v))$(if $($(v)_help),					\
 		$($(v)_help),					\
 		undefined)						\n\
 )										\n\
 \#\# Optional parameters				\n\
 $(foreach v,$(moa_may_define), 			\
 $(v)									\n\
-:   $(if $($(v)_help),					\
-		$($(v)_help),					\
-		undefined)						\n\
+:   $(if $($(v)_help),$($(v)_help),undefined)	$(call ptype,$(v)) \n\
 )
 
