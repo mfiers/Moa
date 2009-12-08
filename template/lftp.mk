@@ -39,42 +39,72 @@ moa_output_lftp_output_help = anything you define
 #varables that NEED to be defined
 moa_must_define += lftp_url
 lftp_url_help = The base url to download from
+lftp_url_type = string
 
 #variables that may be defined
 moa_may_define += lftp_timestamp lftp_powerclean lftp_noclean lftp_pattern
 lftp_pattern_help = glob pattern to download
+lftp_pattern_default=*
+lftp_pattern_type = string
+
 lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
  else a touchfile is created that you need to delete or touch before updating \
  (T/*F*)
+lftp_timestamp_type = set
+lftp_timestamp_allowed = T F
+lftp_timestamp_default = F
+
 lftp_powerclean_help = Do brute force cleaning (T/F). Remove all files, \
   except moa.mk & Makefile when calling make clean. Defaults to F.
+lftp_powerclean_type = set
+lftp_powerclean_default = F
+lftp_powerclean_allowed= T F
+
 lftp_noclean_help = set of files not to be deleted by the powerclean
+lftp_noclean_cardinality = many
+lftp_noclean_type = string
 
 moa_may_define += lftp_user lftp_pass
 lftp_user_help = username for the remote site
+lftp_user_type = string
+
 lftp_pass_help = password for the remote site, note that this can be \
   defined on the commandline using: 'make lftp_pass=PASSWORD'
+lftp_pass_type = password
 
 moa_may_define += lftp_output_dir lftp_dos2unix
+
 lftp_output_dir_help = subdir to create & write all output to. If not defined, \
   data will be downloaded to directory containing the Makefile
-lftp_dos2unix_help = (T/F) Run dos2unix to prevent problems with possible dos \
-  text files (default=F).
+lftp_output_dir_type = directory
+lftp_output_dir_default = .
+
+lftp_dos2unix_help = Run dos2unix to prevent problems with possible dos \
+  text files
+lftp_dos2unix_type = set
+lftp_dos2unix_allowed = T F
+lftp_dos2unix_default =  F
 
 moa_may_define += lftp_mode lftp_get_name
+
 lftp_mode_help = Mode of operation - 'mirror' or 'get'. Mirror enables \
   timestamping. Get just gets a single file. If using get, consider setting \
   depend_lftp_timestamp to F. When using 'get', the full url should be in \
   lftp_url. lftp_pattern is ignored. Defaults to mirror.
+lftp_mode_type = set
+lftp_mode_default = mirror
+lftp_mode_allowed = mirror get
 
 lftp_get_name_help = target name of the file to download
+lftp_get_name_type = string
 
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
 ################################################################################
-lftp_timestamp ?= T
-lftp_powerclean ?= F
+
+lftp_timestamp ?= $(lftp_timestamp_default)
+lftp_powerclean ?= $(lftp_powerclean_default)
 
 ifdef lftp_pattern
 	lftp_mode = mirror
@@ -82,9 +112,11 @@ else
 	lftp_mode = get
 endif 
 
+lftp_mode ?= $(lftp_mode_default)
+
 lftp_noclean += $(moa_system_files)
-lftp_output_dir ?= .
-run_dos2unix ?= F
+lftp_output_dir ?= $(lftp_output_dir_default)
+lftp_dos2unix ?= $(lftp_dos2unix_default)
 
 ifdef lftp_user
 ifdef lftp_pass
