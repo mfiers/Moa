@@ -31,12 +31,12 @@ piece of genomic DNA; (2-4) perform a set of gene predictions; (5)
 integrate the predictions and (6) run BLAST on the predicted genes.
 
 There are, apart from using Makefiles, many different ways to automate
-this [refs..], each with its own perks. A surprising number of
+this [refs..], each with its advantages. A surprising number of
 bioinformaticians, however, use either the command line or small,
-tailor-made, scripts since that gives them ultimate flexibility. Using
-scripts has as advantage that it is easy to repeat an analysis by
-rerunning the script. Such a script could be written in any language
-(Bash, Perl, Python) but could also be a custom Makefile.
+tailor-made, scripts to retain ultimate flexibility. Using scripts has
+as advantage that it is easy to repeat an analysis by rerunning the
+script. Such a script could be written in any language (Bash, Perl,
+Python) but could also be a custom Makefile.
 
 ...
 
