@@ -1,29 +1,44 @@
 
 dojo.provide("wwwmoa.client.dhm.PBrowser");
 dojo.require("dijit._Widget");
+dojo.require("dijit.Tooltip");
 
 
 dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Widget, {
 
-	    _visualCode : null,
+	    _visualDOM : null,
 	    _locked : false,
 	    _response : null,
 	    _location : "",
 	    _assumeNoProject : false,
 	    
 
-	    _setVisualCodeAttr : function(val) {
-		this._visualCode=val;
+	    _setVisualDOMAttr : function(val) {
+		this._visualDOM=val;
 		this.refreshVisualElement();
 	    },
 
+	    _getVisualDOMAttr : function() {
+		return this._visualDOM;
+	    },
+
+	    _setVisualCodeAttr : function(val) {
+		if(val==null) {
+		    this.attr("visualDOM", null);
+		    return;
+		}
+		this.attr("visualDOM", dojo.create("div", {innerHTML : val}));
+	    },
+
 	    _getVisualCodeAttr : function() {
-		return this._visualCode;
+	        if(this.attr("visualDOM")==null)
+		    return null;
+
+		return this.attr("visualDOM").innerHTML;
 	    },
 
 	    _setLockedAttr : function(val) {
 		this._locked=val;
-		this.refreshVisualElement();
 	    },
 
 	    _getLockedAttr : function() {
@@ -65,7 +80,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 	    },
 
 
-	    // Implementation for receiving instruction to find project information for current location.
+	    // Implementation for receiving instruction to find job information for current location.
 	    doNavAction : function() {
 		var a=this;
 		
@@ -92,24 +107,27 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		
 		if(this.domNode==null) // if we do not have a visual element
 		    return; // there is no reason to proceed
-
-		if(this.attr("visualCode")==null) // if either the main code or the current directory item code is not present
+		
+		if(this.attr("visualDOM")==null) // if either the main code or the current directory item code is not present
 		    this.domNode.innerHTML="Loading job information..."; // create loading message
-		else // if both the main code and the current directory item code is present
-		    this.domNode.innerHTML=this.attr("visualCode");
+		else { // if both the main code and the current directory item code is present
+		    this.domNode.innerHTML="";
+		    this.domNode.appendChild(this.attr("visualDOM"));
+		}
 	    },
 
 	    
             // Receives data from the API request.  Then, it creates the HTML code that
-            // will be used to display the directory contents.  Finally, it request an
+            // will be used to display the job view contents.  Finally, it requests an
             // update of the visual element.
             dataCallback : function(data) {
 		var response=wwwmoa.formats.json.parse(data); // attempt a parse of the received data
-		
-		var buf_code=""; // buffer for visual code
-		var cur_node=null; // holds a DOM node temporarily
-		var is_dir=false; // holds whether the currently processed item is a directory or not
-		var files_exist=false;  // holds whether or not the current directory has any items
+		var buf_tmp=""; // temporary buffer for visual code
+		var buf_final=""; // buffer for the final visual code
+		var cur_param=""; // holds the current parameter dictionary
+		var cur_value_esc=""; // holds the current parameter's value, after being HTML escaped
+		var buf_cat={}; // dictionary for category visual code
+
 
 		this.attr("response", response); // save the parsed response we have received for later use
 		
@@ -118,22 +136,62 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		    return;
 		}
 		
-		buf_code+="<span style=\"font-weight:bold; text-decoration:underline\">General Information</span>";
-		buf_code+="<br>Title: "+(response["moa_title"]=="" ? "<span style=\"font-style:italic\">Untitled</span>" : wwwmoa.formats.html.fix_text(response["moa_title"]));
-		buf_code+="<br>Description: "+(response["moa_description"]=="" ? "<span style=\"font-style:italic\">No Summary</span>" : wwwmoa.formats.html.fix_text(response["moa_description"]));
-		buf_code+="<br><br><span style=\"font-weight:bold; text-decoration:underline\">Parameters</span><br>";
-
-       		for(var x in response["parameters"]) {
-		    buf_code+="<span title=\""+wwwmoa.formats.html.fix_text(response["parameters"][x]["description"])+"\">";
-		    buf_code+=wwwmoa.formats.html.fix_text(x)+(response["parameters"].mandatory ? "<span style=\"font-weight:bold; color:#FF0000\">*</span>" : "")+"</span><br>";
-		}
-
-		buf_code+="<span style=\"font-weight:bold; color:#FF0000\">*</span> denotes mandatory parameter";
-
-		this.attr("visualCode", buf_code); // make main code "public"
 		
 
-		this.attr("locked", false); // requests can now be sent again without a problem
+		buf_final+="<span style=\"font-weight:bold; text-decoration:underline\">General Information</span>";
+		buf_final+="<br>Title: "+(response["moa_title"]=="" ? "<span style=\"font-style:italic\">Untitled</span>" : wwwmoa.formats.html.fix_text(response["moa_title"]));
+		buf_final+="<br>Description: "+(response["moa_description"]=="" ? "<span style=\"font-style:italic\">No Summary</span>" : wwwmoa.formats.html.fix_text(response["moa_description"]));
+
+
+       		for(var x in response["parameters"]) {
+
+		    cur_param=response["parameters"][x];
+
+		    cur_value_esc=wwwmoa.formats.html.fix_text(cur_param.value);
+
+		    buf_tmp="<div style=\"border:1px solid #A0A0A0; padding:1px; margin-bottom:2px; margin-top:1px\">";
+		    buf_tmp+="<span style=\"font-weight:bold\">"+wwwmoa.formats.html.fix_text(x)+"</span>";
+		    buf_tmp+=(cur_param.mandatory ? "<span style=\"font-weight:bold; color:#FF0000\">*</span>" : "")+"</span><br>";
+
+		    if(cur_param.type=="string")
+			buf_tmp+="<input type=\"text\" value=\""+cur_value_esc+"\" style=\"width:80%\">";
+		    else
+			buf_tmp+="<input type=\"text\" value=\"(format unknown)\" disabled=\"true\" style=\"width:80%\">";
+		    
+		    buf_tmp+="<br><span style=\"font-style:italic; font-size:12px; font-weight:bold; color:#008000; cursor:help\" onmouseout=\"this.innerHTML='[Mouse Over To View Description]';\" onmouseover=\"this.innerHTML='"+wwwmoa.formats.js.fix_text_for_html(cur_param.help)+"';\">[Mouse Over To View Description]</span>";
+
+		    buf_tmp+="</div>";
+
+		    if(buf_cat[cur_param.category]==null)
+			buf_cat[cur_param.category]=[];
+		    
+		    buf_cat[cur_param.category].push(buf_tmp);
+
+		    		    
+		}
+		
+		buf_final+="<br><br><span style=\"font-weight:bold; text-decoration:underline\">General Parameters</span><br>";
+		buf_final+=buf_cat[""];
+
+		for(var x in buf_cat) {
+		    if(x=="")
+			continue;
+		
+
+		    buf_final+="<br><span style=\"font-weight:bold; text-decoration:underline\">&quot;"+wwwmoa.formats.html.fix_text(x)+"&quot; Parameters</span><br>";
+
+		    for(var y=0; y<buf_cat[x].length; y++)
+			buf_final+=buf_cat[x][y];
+		}
+
+
+
+	        buf_final+="<br><span style=\"font-weight:bold; color:#FF0000\">*</span> denotes mandatory parameter";
+
+		
+
+		this.attr("visualCode", buf_final); // make main code "public"
+
 	    }
 
 

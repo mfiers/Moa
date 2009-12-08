@@ -47,9 +47,14 @@ dojo.addOnLoad(function() {
 
 		    this.uiComp.main=new dijit.layout.ContentPane({title : "Home", style : "padding:6px"});
 
-		    this.uiComp.pbrowser=new wwwmoa.client.dhm.PBrowser({title : "Job View", style : "padding:6px"});
+		    this.uiComp.pbrowserpane=new dijit.layout.ContentPane({title : "Job View", region : "leading", style : "width:300px", splitter : true});
 
-		    this.uiComp.tab.addChild(this.uiComp.pbrowser);
+		    this.uiComp.tab.addChild(this.uiComp.pbrowserpane);
+
+		    this.uiComp.pbrowser=new wwwmoa.client.dhm.PBrowser({});
+
+		    dojo.place(this.uiComp.pbrowser.domNode, this.uiComp.pbrowserpane.domNode);
+
 		   
 		    this.uiComp.parent.addChild(new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."}));
 
