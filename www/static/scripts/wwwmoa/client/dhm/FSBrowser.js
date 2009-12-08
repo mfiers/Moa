@@ -27,7 +27,10 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 		
 		if(this.domNode==null) return;
 
-		if(this._locked)
+		// [!] Note: In certain browsers (including some versions of MSIE),
+		// fading does not work well.  Therefore, we will only perform
+                // fading if the browser we appear to be running in is Firefox.
+		if((this._locked)&&(dojo.isFF!=null))
 		    dojo.fadeOut({node:this.domNode}).play();
 		else
 		    dojo.fadeIn({node:this.domNode}).play();
