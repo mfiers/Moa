@@ -97,7 +97,10 @@ F.write('''
     abline(h=2000, col="#00ff00")
     abline(h=10000, col="#ff0000")
     legend ("topright", fn, lty=1, pch=19, col=cols, bty="n")
-    dev.off() ''' % locals())
+    dev.off()
+
+    ''' % locals())
+
 print "#data file %s R script %s " % (dataFile, RScript)
 F.close()
 

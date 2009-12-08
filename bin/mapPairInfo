@@ -27,19 +27,7 @@ parser.add_option('-a', dest='analysis', action='append',
 if not options.analysis:
     raise Exception("Must define an analysis field!")
 
-#scafin = {}
-#if options.scaffoldinfo:
-#    F = open(options.scaffoldinfo)
-#    while True:
-#        line = F.readline()
-#        if not line: break
-#        l = line.strip().split()
-#        if not l: continue
-#        scafin[l[0]] = {'len' : l[1],
-#                        'fracn' : l[2]}
 
-print "#read info on %d scaffolds" % len(scafin)    
-    
 def pairerror(a,b):
     print a
     print b
