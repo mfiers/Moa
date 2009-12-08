@@ -23,11 +23,15 @@ blastdb_help = Takes either a set of fasta files or a single	\
 
 moa_must_define += bdb_name
 bdb_name_help = Database name to create.
+bdb_name_type = string
 
 moa_may_define += bdb_input_dir bdb_input_extension bdb_fasta_file
 bdb_input_dir_help = Dir with the input fasta files, defaults to ./fasta
 bdb_input_dir_type = dir
+
 bdb_input_extension_help = extension of the input sequence files, defaults to fasta
+bdb_input_extension_type = string
+
 bdb_fasta_file_help = The file with all FASTA sequences for the blastdb		\
   concatenated. This can be used as an alternative to defining			\
   "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your	\

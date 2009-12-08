@@ -68,7 +68,6 @@ moa_must_define += blast_db
 blast_db_help = Location of the blast database. You can either define			\
 the blast db parameter as used by blast, or any of the blast database			\
 files, in which case the extension will be removed before use
-blast_db_default_attrib = blastdb
 moa_must_define +=  blast_gff_source
 blast_gff_source_help = source field to use in the gff
 
