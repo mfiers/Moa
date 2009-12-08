@@ -490,6 +490,10 @@ ifndef MOA_INCLUDE_HELP
 include $(shell echo $$MOABASE)/template/__moaBaseHelp.mk
 endif
 
+ifndef MOA_INCLUDE_VAR
+include $(shell echo $$MOABASE)/template/__moaBaseVar.mk
+endif
+
 ################################################################################
 ## make info ###################################################################
 #
