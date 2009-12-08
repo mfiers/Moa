@@ -120,6 +120,16 @@ def run(args=None, env=None):
 
         rw.send(json.dumps({"title" : project_info["projectTitle"]})) # send response
 
+    elif command=="moa-jobinfo":
+        if not moachecker.isMoa(path):
+            output_error("The directory or file you attempted to retrieve job information on is not a Moa directory.") # say so            
+
+        job_info=moachecker.info(path)
+
+        output_json_headers(0);
+        rw.end_header_mode();
+        rw.send(json.dumps(add_timestamp(job_info, 0)));
+
     elif command=="ls":
         wwwmoa.api.ls.run(args, env, path)
     else: # if the request type is unknown

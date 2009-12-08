@@ -25,36 +25,53 @@ moa_title_gather = gather files
 moa_description_gather = gather a set of files and create hardlinks				\
  to. Hardlinks have as advantage that updates are noticed via the				\
  timestamp. Hence, make recognizes them.
- 
-# Output definition
-moa_outputs += gather
-moa_output_gather = *
-moa_output_gather_help = Gathered files - can be anything you define.
+
 
 #varables that NEED to be defined
-moa_must_define += g_input_dir g_input_pattern 
+moa_must_define += g_input_dir
 g_input_dir_help = list of directories with the input files
-g_input_pattern_help = glob pattern to download
+g_input_dir_type = directory
+g_input_dir_cardinality = many
 
-moa_may_define += g_name_sed g_output_dir
+moa_may_define += g_input_pattern 
+g_input_pattern_help = glob pattern to download
+g_input_pattern_type = string
+g_input_pattern_default = *
+
+moa_may_define += g_name_sed 
 name_sed_help = Sed substitution command that alters the filename,				\
   defaults to leaving the names untouched.
 g_output_dir_help = Output subdirectory, defaults to '.'
 
+moa_may_define += g_output_dir
+g_output_dir_type = directory
+g_output_dir_default = .
+
 moa_may_define += g_parallel
 g_parallel_help = allow parallel execution (T) or not (**F**). If for		\
-example concatenating to one single file, you should not have multiple	\
-threads.
+  example concatenating to one single file, you should not have multiple	\
+  threads.
+g_parallel_type = set
+g_parallel_default = F
+g_parallel_allowed = T F
 
 moa_may_define += g_process
 g_process_help = Command to process the files. If undefined, hardlink			\
 	the files.
+g_process_type = string
+g_process_default = ln -f $< $(g_target)
 
 moa_may_define += g_limit g_powerclean
 g_limit_help = limit the number of files gathered (with the most				\
   recent files first, defaults to 1mln)
+g_limit_default = 1000000
+g_limit_type = integer
+
 g_powerclean_help = Do brute force cleaning (T/F). Remove all files,			\
   except moa.mk & Makefile when calling make clean. Defaults to F.
+g_powerclean_type = set
+g_powerclean_allowed = T F
+g_powerclean_default = F
 
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
@@ -66,12 +83,13 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 g_name_sed ?= 's/a/a/'
 #name_sed ?= s/\.genbank\.htg\.[0-9]/.fasta/
-g_output_dir ?= .
-g_powerclean ?= F
-g_limit ?= 1000000
-g_process ?= ln -f $< $(g_target)
+g_input_pattern ?= $(g_input_pattern_default)
+g_output_dir ?= $(g_output_dir_default)
+g_powerclean ?= $(g_powerclean_default)
+g_limit ?= $(g_limit_default)
+g_process ?= $(g_process_default)
 gather_link_noclean ?= Makefile moa.mk
-g_parallel = F
+g_parallel ?= $(g_parallel_default)
 
 .PHONY: gather_link_run
 vpath % $(g_input_dir)
@@ -87,13 +105,17 @@ gather_prepare:
 gather_post:
 
 test:
-	@echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))'
+	@echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
+		$(shell find $(dir) -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
+		| sort -nr | head -$(g_limit) | cut -f 2 ))))'
 
 ifeq ($(g_parallel),F)
 .NOTPARALLEL: gather
 endif
 .PHONY: gather
-gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))
+gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
+	$(shell find $(dir) -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
+		| sort -nr | head -$(g_limit) | cut -f 2 ))))
 
 touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
 touch/%: %

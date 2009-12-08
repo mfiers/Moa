@@ -68,11 +68,15 @@ moa_may_define += moa_precommand
 moa_precommand_help = A single command to be executed before the main			\
 operation starts. For more complicated processing, please override the			\
 moa_preprocess target in the local Makefile.
+moa_precommand_type = string
+moa_precommand_category = advanced
 
 moa_may_define += moa_postcommand
 moa_postcommand_help = A single shell command to be executed after the			\
 Moa is finished. For more complex processing please override the				\
 moa_postprocess target in the local Makefile.
+moa_postcommand_category = advanced
+moa_postcommand_type = string
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
@@ -107,8 +111,6 @@ moa_run_postcommand:
 # 	echo "/";		\
 # )
 # endif
-
-
 # .PHONY: project_info
 # project_info:
 # 	@if [[ "$(project_root)" != '/' ]]; then \
@@ -336,6 +338,7 @@ dont_include_moabase=defined
 #Variable: set_name
 #moa_may_define += project
 moa_must_define += title
+title_type = string
 title_help ?= A job name - Describe what you are doing
 
 ## author of this template
@@ -513,12 +516,25 @@ info_header:
 
 info_parameters: info_parameters_required info_parameters_optional
 
-info_parameters_required: $(addprefix: info_par_req_,$(moa_must_define))
-info_parameters_optional: $(addprefix info_par_opt_,$(moa_may_define))
+info_parameters_required: mandatory=yes
+info_parameters_required: $(addprefix info_par_,$(moa_must_define))
 
-info_par_req_%:
-	@echo -e 'parameter\t$*\trequired\t$($*_type)\t$($*)\t$($*_help)'
+info_parameters_optional: mandatory=no
+info_parameters_optional: $(addprefix info_par_,$(moa_may_define))
 
-info_par_opt_%:
-	@echo -e 'parameter\t$*\toptional\t$($*_type)\t$($*)\t$($*_help)'
+info_par_%:
+	@echo -en 'parameter'
+	@echo -en '\tname=$*'
+	@echo -en '\tmandatory=$(mandatory)'
+	@echo -en '\ttype=$*'
+	@echo -en '\tvalue=$($*)'
+	@echo -en '\tdefault=$($*_default)'
+	@echo -en '\tallowed=$($*_allowed)'
+	@echo -en '\ttype=$($*_type)'
+	@echo -en '\tcardinality=$(if $($*_cardinality),$($*_cardinality),one)'
+	@echo -en '\tcategory=$($*_category)'
+	@echo -en '\thelp=$($*_help)'
+	@echo
+
+
 

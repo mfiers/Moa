@@ -1,9 +1,8 @@
 
 dojo.provide("wwwmoa.client.dhm.FSBrowser");
 dojo.require("dijit._Widget");
-dojo.require("wwwmoa");
 
-dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
+dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 
 	    _visualCode : null,
 	    _locked : false,
@@ -28,7 +27,10 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 		
 		if(this.domNode==null) return;
 
-		if(this._locked)
+		// [!] Note: In certain browsers (including some versions of MSIE),
+		// fading does not work well.  Therefore, we will only perform
+                // fading if the browser we appear to be running in is Firefox.
+		if((this._locked)&&(dojo.isFF!=null))
 		    dojo.fadeOut({node:this.domNode}).play();
 		else
 		    dojo.fadeIn({node:this.domNode}).play();
@@ -336,5 +338,5 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 	    locationChanged : function() { }
 
 
-}));
+	    })});
 

@@ -55,27 +55,41 @@ def info(d):
     if rc != 0:
         print err
         raise('Error running make %d' % rc)
-    
-    for line in out.split("\n"):
+
+    outlines = out.split("\n")
+    while True:
+        if len(outlines) == 0: break
+        line = outlines.pop(0).strip()
         if not line: continue
+
         ls = line.split("\t")
         what = ls[0]
+        val = ls[1]
+        
         if what == 'moa_title':
-            rv['moa_title'] = ls[1]
+            rv['moa_title'] = val
         elif what == 'moa_description':
-            rv[what] = ls[1]
+            rv[what] = val
         elif what == 'moa_targets':
-            rv[what] = ls[1].split()
+            rv[what] = val.split()
         elif what == 'parameter':
+            parname = None            
             pob = {}
-            if ls[1] == 'required':
-                pob['mandatory'] = True
-            else:
-                pob['mandatory'] = False
-            pob['type'] = ls[2]
-            pob['value'] = ls[3]
-            pob['description'] = ls[4]            
-            rv['parameters'][ls[1]] = pob
+            for v in ls[1:]:
+                k,v = v.split('=', 1)
+                if k == 'mandatory':
+                    if v == 'yes': pob[k] = True
+                    else: pob[k] = False
+                elif k == 'name':
+                    parname=v
+                elif k in ['value', 'help', 'default', 'type',
+                           'category', 'cardinality']:
+                    pob[k] = v
+                elif k == 'allowed':
+                    pob[k] = v.split()
+                else:
+                    raise ("invalid key in %s" %line)
+            rv['parameters'][parname] = pob
 
         
 

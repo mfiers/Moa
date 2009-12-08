@@ -4,11 +4,14 @@ if(typeof dojo=="undefined") {
     alert("Some aspects of the current page may not function, as a core library could not be loaded.");
 }
 else {
-    dojo.provide("wwwmoa.io");
 
     if(!dojo.isObject(wwwmoa)) {
 	var wwwmoa=new Object();
-	};
+    };
+
+    if(!dojo.isObject(wwwmoa.io)) {
+	wwwmoa.io=new Object();
+    };
 
     wwwmoa.io.rl={        
         url_encode : function (str) {

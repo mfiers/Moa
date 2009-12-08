@@ -51,7 +51,7 @@ test:
 bowtiedb_prepare:
 
 .PHONY: bowtiedb_post
-bowtiedb_post: bowtiedb_report
+bowtiedb_post:
 
 bowtiedb: $(bowtiedb_name).1.ebwt
 

@@ -8,12 +8,11 @@ imagine the following command:
      -r ../10.getGenes/genes.gff
      -a ../20.getGeneBlast/blastgenes.gff
      -f CDS 
-     -c 'note="blastx Swissprot Bacteria'
+     -c 'note="blastx Swissprot Bacteria"'
      -R '^(?P<ref>\w*)_(?P<start>\d*)_(?P<stop>\d*)\s'
      -X '^.*Hsp_expect=([0-9\.e-]*);.*;Note="(.*)"'
      -Y ';note="Blastx Trembl Bacteria (Eval \1) \2"'
      -o $$base;
-
 """
 import re
 import os
@@ -98,9 +97,20 @@ class GFFRECORD:
             
             lexer = shlex.shlex(ls[8])
             lexer.whitespace=';'
-            lexer.whitespace_split=True
+            lexer.whitespace_split=True            
             for token in lexer:
-                _key, _val = token.split('=', 1)
+                try:
+                    ls = token.split('=', 1)
+                    if len(ls) == 1:
+                        _key = ls[0]
+                        _token = ""
+                    else:
+                        _key, _val = ls
+                except ValueError:
+                    l.error("Invalid token '%s'" % token)
+                    raise
+                except:
+                    raise
                 if _key not in clearAttribs:
                     self.addAttribute(_key, _val)
                     
