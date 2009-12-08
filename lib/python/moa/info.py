@@ -82,7 +82,8 @@ def info(d):
                     else: pob[k] = False
                 elif k == 'name':
                     parname=v
-                elif k in ['value', 'help', 'default', 'type', 'category']:
+                elif k in ['value', 'help', 'default', 'type',
+                           'category', 'cardinality']:
                     pob[k] = v
                 elif k == 'allowed':
                     pob[k] = v.split()

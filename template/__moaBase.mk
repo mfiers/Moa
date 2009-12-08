@@ -531,6 +531,7 @@ info_par_%:
 	@echo -en '\tdefault=$($*_default)'
 	@echo -en '\tallowed=$($*_allowed)'
 	@echo -en '\ttype=$($*_type)'
+	@echo -en '\tcardinality=$(if $($*_cardinality),$($*_cardinality),one)'
 	@echo -en '\tcategory=$($*_category)'
 	@echo -en '\thelp=$($*_help)'
 	@echo
