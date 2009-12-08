@@ -163,7 +163,7 @@ def process_hsp(hsp):
         sys.exit()
                     
     if options.hsps:
-        output(alignment, options.hsps)
+        output(alignment, options.hspsgitst)
     
 def process_alignment(alignmeht):
     #ignore alignment based on expect, but

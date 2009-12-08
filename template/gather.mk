@@ -87,13 +87,17 @@ gather_prepare:
 gather_post:
 
 test:
-	@echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))'
+	@echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
+		$(shell find $(dir) -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
+		| sort -nr | head -$(g_limit) | cut -f 2 ))))'
 
 ifeq ($(g_parallel),F)
 .NOTPARALLEL: gather
 endif
 .PHONY: gather
-gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), $(shell find $(dir) -name "$(g_input_pattern)" -printf "%A@\t%p\n" | sort -nr | head -$(g_limit) | cut -f 2 ))))
+gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
+	$(shell find $(dir) -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
+		| sort -nr | head -$(g_limit) | cut -f 2 ))))
 
 touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
 touch/%: %

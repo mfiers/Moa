@@ -40,11 +40,17 @@ bowtie_input_format_help = Format of the input files, defaults \
 moa_may_define += bowtie_extra_params
 bowtie_extra_params_help = extra parameters to feed bowtie
 
-moa_may_define += bowtie_paired_ends
+moa_may_define += bowtie_paired_ends 
 bowtie_paired_ends_help = perform a paired end analysis. If so, the	\
 input files are expected to be of the form							\
  '\*_1.$(bowtie_input_extension)' and 								\
 '\*_2.$(bowtie_input_extension)'
+
+moa_may_define += bowtie_forward_name bowtie_reverse_name
+bowtie_forward_name_help = Last part of the sequence name 			\
+identifying a file with forward reads (default _1)
+bowtie_reverse_name_help = Last part of the sequence name 			\
+identifying a file with reverse reads (default _1)
 
 moa_may_define += bowtie_output_name
 bowtie_output_name_help = output file name, defaults to 'output'
@@ -76,6 +82,13 @@ bowtie_input_extension ?= fastq
 bowtie_input_format ?= fastq
 bowtie_output_name ?= output
 
+bowtie_forward_name ?= _1
+bowtie_reverse_name ?= _2
+
+#shortcuts
+bfn = $(bowtie_forward_name)
+brn = $(bowtie_reverse_name)
+
 bowtie_paired_ends ?= F
 
 moa_register_extra += bowtie_output
@@ -92,9 +105,9 @@ $(error Invalid input format)
 endif
 
 ifeq ($(bowtie_paired_ends),T) 
-bowtie_input_files = $(wildcard $(bowtie_input_dir)/*_1.$(bowtie_input_extension))
+bowtie_input_files = $(wildcard $(bowtie_input_dir)/*$(bfn).$(bowtie_input_extension))
 bowtie_output_files = $(addprefix p_,\
-		$(patsubst %_1.$(bowtie_input_extension), %, $(notdir $(bowtie_input_files))))
+		$(patsubst %$(bfn).$(bowtie_input_extension), %, $(notdir $(bowtie_input_files))))
 else
 bowtie_input_files = $(wildcard $(bowtie_input_dir)/*.$(bowtie_input_extension))
 bowtie_output_files = $(addprefix u_,\
@@ -128,14 +141,15 @@ u_%: $(bowtie_input_dir)/%.$(bowtie_input_extension)
 imn=$(bowtie_insertsize_min)
 imx=$(bowtie_insertsize_max)
 bis=$(bowtie_insertsize_sed)
-p_%: $(bowtie_input_dir)/%_1.$(bowtie_input_extension) $(bowtie_input_dir)/%_2.$(bowtie_input_extension)
-	IS="$(bowtie_insertsize)";\
+p_%: $(bowtie_input_dir)/%$(bfn).$(bowtie_input_extension) $(bowtie_input_dir)/%$(brn).$(bowtie_input_extension)
+	@IS="$(bowtie_insertsize)";\
 		sizeDef="";\
 		[[ ! "$$IS" && "$(bis)" ]] && IS=`echo "$*" | sed "$(bis)"`;\
 		[[ "$$IS" ]] && sizeDef=`python -c "print \"-I %d -X %d\" % ($$IS * $(imn), $$IS*$(imx))"`;\
 		$(call echo, Executing bowtie for $<);\
-		bowtie $(bowtie_input_format_param) \
-			$(bowtie_extra_params) $$sizeDef $(bowtie_db) \
+		echo bowtie $(bowtie_input_format_param) $(bowtie_extra_params) $$sizeDef $(bowtie_db) \
+			 -1 $(word 1,$^) -2 $(word 2,$^) $@ ;\
+		bowtie $(bowtie_input_format_param) $(bowtie_extra_params) $$sizeDef $(bowtie_db) \
 			 -1 $(word 1,$^) -2 $(word 2,$^) $@
 
 bowtie_clean:
