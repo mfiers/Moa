@@ -1,9 +1,8 @@
 
 dojo.provide("wwwmoa.client.dhm.FSBrowser");
 dojo.require("dijit._Widget");
-dojo.require("wwwmoa");
 
-dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
+dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 
 	    _visualCode : null,
 	    _locked : false,
@@ -336,5 +335,5 @@ dojo.addOnLoad(dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
 	    locationChanged : function() { }
 
 
-}));
+	    })});
 
