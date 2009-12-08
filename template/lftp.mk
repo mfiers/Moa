@@ -47,6 +47,15 @@ lftp_pattern_help = glob pattern to download
 lftp_pattern_default=*
 lftp_pattern_type = string
 
+moa_may_define += lftp_lock
+lftp_lock_help = Lock this job after running. This means that you will			\
+have to manually unlock the job before lftp actually reruns. This is a			\
+good choice if your downloading large datasets or have a slow					\
+connection
+lftp_lock_type = set
+lftp_lock_default = T
+lftp_lock_allowed = T F
+
 lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
  else a touchfile is created that you need to delete or touch before updating \
  (T/*F*)
@@ -113,7 +122,7 @@ else
 endif 
 
 lftp_mode ?= $(lftp_mode_default)
-
+lftp_lock ?=$(lftp_lock_default)
 lftp_noclean += $(moa_system_files)
 lftp_output_dir ?= $(lftp_output_dir_default)
 lftp_dos2unix ?= $(lftp_dos2unix_default)
@@ -129,7 +138,6 @@ endif
 #download files using LFTP
 .PHONY: lftp_prepare
 lftp_prepare:
-	-if [ "$(lftp_timestamp)" == "T" ]; then rm lftp; fi
 	-mkdir $(lftp_output_dir)
 
 lftp: fexcl=$(addprefix -not -name , $(lftp_noclean))
@@ -138,17 +146,15 @@ lftp: lftp_$(lftp_mode) lftp_dos2unix
 .PHONY: lftp_mirror
 lftp_mirror:
 	cd $(lftp_output_dir); 														\
-		lftp $(lftp_au) $(lftp_url) 									\
-			-e "mirror -nrL -I $(lftp_pattern); exit" ;
-	if [ "$(lftp_timestamp)" == "F" ]; then 									\
-		touch lftp ;															\
-	fi
+		lftp $(lftp_au) $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;
+	if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
 .PHONY: lftp_get
 lftp_get: _addcl=$(if $(lftp_get_name),-o $(lftp_get_name))
 lftp_get:
 	cd $(lftp_output_dir); 														\
 		lftp $(lftp_au) -e "get1 $(_addcl) '$(lftp_url)'; exit";
+	if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
 .PHONY: lftp_dos2unix
 lftp_dos2unix:
