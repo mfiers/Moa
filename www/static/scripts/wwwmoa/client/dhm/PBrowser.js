@@ -127,7 +127,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		var cur_param=""; // holds the current parameter dictionary
 		var cur_value_esc=""; // holds the current parameter's value, after being HTML escaped
 		var buf_cat={}; // dictionary for category visual code
-
+		var buf_req=[]; // temporary array for holding required parameters in the current category
+		var buf_notreq=[]; // temporary array for hold paramters that are not required in the current category
 
 		this.attr("response", response); // save the parsed response we have received for later use
 		
@@ -158,20 +159,33 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		    else
 			buf_tmp+="<input type=\"text\" value=\"(format unknown)\" disabled=\"true\" style=\"width:80%\">";
 		    
-		    buf_tmp+="<br><span style=\"font-style:italic; font-size:12px; font-weight:bold; color:#008000; cursor:help\" onmouseout=\"this.innerHTML='[Mouse Over To View Description]';\" onmouseover=\"this.innerHTML='"+wwwmoa.formats.js.fix_text_for_html(cur_param.help)+"';\">[Mouse Over To View Description]</span>";
+		    buf_tmp+="<br><div style=\"font-style:italic; font-size:12px; font-weight:bold; color:#008000; cursor:help\" onmouseout=\"this.innerHTML='[Mouse Over To View Description]';\" onmouseover=\"this.innerHTML='"+wwwmoa.formats.js.fix_text_for_html(cur_param.help)+"';\">[Mouse Over To View Description]</div>";
 
 		    buf_tmp+="</div>";
 
 		    if(buf_cat[cur_param.category]==null)
 			buf_cat[cur_param.category]=[];
 		    
-		    buf_cat[cur_param.category].push(buf_tmp);
-
+		    buf_cat[cur_param.category].push({code : buf_tmp, orig : cur_param});
 		    		    
 		}
 		
+		for(var x in buf_cat) {
+		    buf_req=[];
+		    buf_notreq=[];
+
+		    for(var y=0; y<buf_cat[x].length; y++) {
+			if(buf_cat[x][y].orig.mandatory)
+			    buf_req.push(buf_cat[x][y].code);
+			else
+			    buf_notreq.push(buf_cat[x][y].code);
+		    }
+
+		    buf_cat[x]=buf_req.concat(buf_notreq);
+		}
+
 		buf_final+="<br><br><span style=\"font-weight:bold; text-decoration:underline\">General Parameters</span><br>";
-		buf_final+=buf_cat[""];
+		buf_final+=buf_cat[""].join("");
 
 		for(var x in buf_cat) {
 		    if(x=="")
@@ -180,8 +194,9 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 		    buf_final+="<br><span style=\"font-weight:bold; text-decoration:underline\">"+wwwmoa.formats.html.fix_text(wwwmoa.util.str.title_case(x))+" Parameters</span><br>";
 
-		    for(var y=0; y<buf_cat[x].length; y++)
-			buf_final+=buf_cat[x][y];
+
+
+		    buf_final+=buf_cat[x].join("");
 		}
 
 
