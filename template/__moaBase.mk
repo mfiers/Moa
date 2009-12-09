@@ -44,10 +44,11 @@ boldOff := \033[0m
 moamark := \033[0;42;30mm\033[0m
 moaerrr := \033[0;1;37;41m!!!\033[0m
 moawarn := \033[0;43m>>\033[0m
+moatest := \033[0;43m>>\033[0m
 echo = echo -e "$(moamark) $(1)"
 warn = echo -e "$(moawarn) $(1)"
 errr = echo -e "$(moaerrr) $(1)"
-exer = echo -e "$(moaerrr) $(1)"; exit -1
+exer = ( echo -e "$(moaerrr) $(1)"; exit -1 )
 
 
 ## default variables used in generating help
@@ -270,7 +271,7 @@ all: cruise
 ## finished, start traversin through all subdirectories and execyte
 ## them as wll
 .PHONY: cruise
-cruise: ignore_lock?=$(strip $(if $(action), 											\
+cruise: ignore_lock?=$(strip $(if $(action), 									\
 			$(if $(filter $(action),$(moa_ignore_lock_targets)),				\
 				yes,)))
 cruise: $(if $(call seq,$(action),), 											\
@@ -380,7 +381,7 @@ moa_check_lock:
 	else \
 		if [[ -f lock ]]; then \
 	    	$(call errr, Job is locked!) ;\
-		    exit 2 ; \
+			exit 2 ;\
 		fi;\
 	fi
 
@@ -492,6 +493,10 @@ endif
 
 ifndef MOA_INCLUDE_VAR
 include $(shell echo $$MOABASE)/template/__moaBaseVar.mk
+endif
+
+ifndef MOA_INCLUDE_TEST
+include $(shell echo $$MOABASE)/template/__moaBaseTest.mk
 endif
 
 ################################################################################
