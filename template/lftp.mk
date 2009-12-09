@@ -31,11 +31,6 @@ lftp_help = Download using ftp
 moa_ids += lftp
 lftp_help = execute the download
 
-# Output definition
-moa_outputs += lftp_output
-moa_output_lftp_output = *
-moa_output_lftp_output_help = anything you define
-
 #varables that NEED to be defined
 moa_must_define += lftp_url
 lftp_url_help = The base url to download from
@@ -101,7 +96,7 @@ lftp_mode_help = Mode of operation - 'mirror' or 'get'. Mirror enables \
   depend_lftp_timestamp to F. When using 'get', the full url should be in \
   lftp_url. lftp_pattern is ignored. Defaults to mirror.
 lftp_mode_type = set
-lftp_mode_default = mirror
+lftp_mode_default = get
 lftp_mode_allowed = mirror get
 
 lftp_get_name_help = target name of the file to download
@@ -118,10 +113,9 @@ lftp_powerclean ?= $(lftp_powerclean_default)
 ifdef lftp_pattern
 	lftp_mode = mirror
 else
-	lftp_mode = get
+	lftp_mode = $(lftp_mode_default)
 endif 
 
-lftp_mode ?= $(lftp_mode_default)
 lftp_lock ?=$(lftp_lock_default)
 lftp_noclean += $(moa_system_files)
 lftp_output_dir ?= $(lftp_output_dir_default)
@@ -138,7 +132,9 @@ endif
 #download files using LFTP
 .PHONY: lftp_prepare
 lftp_prepare:
-	-mkdir $(lftp_output_dir)
+	if [[ "$(lftp_output_dir)" != "." ]]; then		\
+		mkdir $(lftp_output_dir);					\
+	fi
 
 lftp: fexcl=$(addprefix -not -name , $(lftp_noclean))
 lftp: lftp_$(lftp_mode) lftp_dos2unix
@@ -174,3 +170,25 @@ lftp_clean:
 		find . -maxdepth 1 -type f $(find_exclude_args) \
 			| xargs -n 20 rm -f ;\
 	fi
+
+
+################################################################################
+## Test fixture
+################################################################################
+.PHONY: unittest_lftp
+unittest_lftp:
+	@$(call moa_unittest_var,title,lftp unittest new title)
+	@$(call moa_unittest_var,lftp_output_dir,out)
+	@$(call moa_unittest_var,lftp_lock,T)
+	@$(call moa_unittest_var,lftp_timestamp,F)
+	@$(call moa_unittest_var,lftp_powerclean,F)
+	@$(call moa_unittest_var,lftp_dos2unix,F)
+	@$(call moa_unittest_var,lftp_mode,get)
+	@$(call moa_unittest_var,lftp_url,ftp://ftp.arabidopsis.org/Sequences/blast_datasets/README)
+	moa
+	@$(call moa_unittest_direxists,out/)
+	@$(call moa_unittest_fileexists,out/README)
+	moa clean
+	@$(call moa_unittest_filenotexists,out/README)
+	@$(call moa_unittest_dirnotexists,out/)
+	ls -Rl
