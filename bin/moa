@@ -28,6 +28,7 @@ libraries or to GNU Make
 import os
 import sys
 import site
+import pprint
 import optparse
 import subprocess
 
@@ -60,6 +61,7 @@ from moa import dispatcher
 import moa.graph
 import moa.conf
 import moa.info
+from moa import utils
 
 ## Init the logger
 import moa.logger
@@ -120,7 +122,7 @@ parser.add_option_group(parserN)
 
 if options.verbose:
     moa.logger.setVerbose()
-
+    
 #make sure the MOA_THREADS env var is set - this is used by MOA later
 #on
 os.putenv('MOA_THREADS', "%s" % options.threads)
@@ -142,7 +144,7 @@ if __name__ == "__main__":
     if command == 'run':
         dispatcher.runMakeAndExit(args=newargs)
     elif command == 'info':
-        print moa.info.info(os.getcwd())
+        pprint.pprint(moa.info.info(os.getcwd()))
         
     #Create new jobs
     elif command == 'template':
@@ -163,3 +165,5 @@ if __name__ == "__main__":
     else:
         #fire arguments of to make
         dispatcher.runMakeAndExit(args=args)
+
+    utils.exit()

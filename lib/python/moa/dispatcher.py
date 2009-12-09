@@ -28,7 +28,7 @@ import optparse
 import subprocess
 
 from  moa.logger import l
-
+from moa import utils
 
 #moa specific libs - first prepare for loading libs
 if not os.environ.has_key('MOABASE'):
@@ -69,21 +69,24 @@ def _startMake(d, args,
         stderr = pipeErr)
     return p
 
-def runMake(directory = None, args = [], catchOut=False):
+def runMake(directory = None, args = [], catchout=False):
     """
     Complete a make run
     """
     if not directory: directory = os.getcwd()
     if type(args) == type('hi'): args = [args]
     l.debug('Starting "make %s" in %s' % (" ".join(args), directory))
-    if catchOut:
-        catchOut = subprocess.PIPE
-    p = _startMake(directory, args, pipeOut=catchOut)
+
+    if catchout:
+        outpipe = subprocess.PIPE
+        errpipe = subprocess.PIPE
+    else:
+        outpipe = None
+        errpipe = None
+    
+    p = _startMake(directory, args, pipeOut=outpipe, pipeErr = errpipe)
     (out, err) = p.communicate()
     rc = p.returncode
-    if err:
-        print err
-        
     l.debug("Finished make in %s with return code %s" % (directory, rc))
     return rc, out, err
 
@@ -93,7 +96,7 @@ def runMakeAndExit(directory = None, args = []):
     """
     l.debug("ji %s %s" % (directory, args))
     rc, out, err = runMake(directory=directory, args=args)
-    sys.exit(rc)
+    utils.exit(rc)
 
 ##
 ## API Command Dispatcher

@@ -50,8 +50,12 @@ def isMoa(d):
 
 def info(d):
     """ Retrieve a lot of information """
-    rv = {'parameters' : {}}
-    rc, out, err = dispatcher.runMake(directory = d, args='info', catchOut=True)
+    rv = {
+        'parameters' : {}
+
+        }
+    rc, out, err = dispatcher.runMake(directory = d, args='info', catchout=True)
+
     if rc != 0:
         print err
         raise('Error running make %d' % rc)
@@ -64,7 +68,10 @@ def info(d):
 
         ls = line.split("\t")
         what = ls[0]
-        val = ls[1]
+        if len(ls) > 1:
+            val = ls[1]
+        else:
+            val = ""
         
         if what == 'moa_title':
             rv['moa_title'] = val
@@ -89,10 +96,9 @@ def info(d):
                     pob[k] = v.split()
                 else:
                     raise ("invalid key in %s" %line)
+            if pob.get('cardinality') == 'many':
+                pob['value'] = pob.get('value').split()
             rv['parameters'][parname] = pob
-
-        
-
     return rv
 
     
