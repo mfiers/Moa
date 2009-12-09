@@ -28,6 +28,8 @@ import time
 import errno
 import contextlib
 
+from moa.logger import l
+
 # Get a file lock, borrowed from:
 #  http://code.activestate.com/recipes/576572/
 #
@@ -47,3 +49,8 @@ def flock(path, wait_delay=.1):
         yield fd
     finally:
         os.unlink(path)
+
+def exit(rc=0):
+    for h in l.handlers:
+        h.flush()
+    sys.exit(rc)

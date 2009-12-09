@@ -37,7 +37,7 @@ class XTRFormatter(logging.Formatter):
         record.coloff = chr(27) + "[0m"
         record.colon = chr(27) + "[1m"
         
-        if   record.levelno <= logging.DEBUG:
+        if record.levelno <= logging.DEBUG:
             record.colon = chr(27) + "[30m" + chr(27) + "[47m"
             record.visual = "#DBUG "
             record.vis1 = "D"
@@ -72,7 +72,6 @@ logmark = chr(27) + '[0;44mU' + \
           chr(27) + '[0m ' 
 
 formatter = XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(message)s')
-#    logmark + '%(message)s')
 
 handler.setFormatter(formatter)
 l.addHandler(handler)
