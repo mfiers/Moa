@@ -139,8 +139,9 @@ endif
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
 
+
 ifdef real_blast_db
-single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]hr)
+single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]hr 2>/dev/null || true)
 endif 
 
 test:
