@@ -69,14 +69,17 @@ blast_db_help = Location of the blast database. You can either define			\
 the blast db parameter as used by blast, or any of the blast database			\
 files, in which case the extension will be removed before use
 blast_db_type = file
-moa_must_define +=  blast_gff_source
-blast_gff_source_help = source field to use in the gff
-blast_db_type = string
 
-moa_may_define += input_extension
-input_extension_help = Input file extension
-input_extension_type = string
-input_extension_default = fasta
+moa_may_define +=  blast_gff_source
+blast_gff_source_help = source field to use in the gff
+blast_gff_source_type = string
+blast_gff_source_default = BLAST
+
+
+moa_may_define += blast_input_extension
+blast_input_extension_help = Input file extension
+blast_input_extension_type = string
+blast_input_extension_default = fasta
 
 moa_may_define += blast_program
 blast_program_help = blast program to use (default: blastn)
@@ -113,21 +116,16 @@ blast_gff_blasthit_category = advanced
 gup_gff_dir = ./gff
 gup_upload_gff = T
 gup_gffsource ?= $(blast_gff_source)
-#include moabase, if it isn't already done yet..
+
+#include moabasemoa	
 include $(shell echo $$MOABASE)/template/moaBase.mk
-
-blast_eval ?= $(blast_eval_default)
-blast_program ?= $(blast_program_default)
-blast_input_extension ?= $(blast_input_extension_default)
-blast_nohits ?= $(blast_nohits_default)
-blast_nothreads ?= $(blast_nothreads_default)
-blast_gff_blasthit ?= $(blast_gff_blasthit_default)
-
 
 real_blast_db = $(if $(blast_db), $(shell echo "$(blast_db)" | sed "s/\.[pn]..$$//"))
 
 ifdef blast_main_phase
+  $(warning HI)
   blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
+  $(warning XXX indir $(blast_input_dir) inext $(blast_input_extension)  inf $(blast_input_files))
 
   blast_output_files = $(addprefix out/, \
 	  $(notdir $(patsubst %.$(blast_input_extension), %.xml, $(blast_input_files))))
@@ -141,22 +139,23 @@ endif
 
 
 ifdef real_blast_db
-single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]hr 2>/dev/null || true)
+single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]s[dq] 2>/dev/null || true)
 endif 
 
 test:
-	@echo $(blast_input_dir)
-	@echo $(blast_input_extension)
-	@echo $(blast_input_dir)/*.$(blast_input_extension)
-	@echo $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
+	$(e)echo $(blast_input_dir)
+	$(e)echo $(blast_input_extension)
+	$(e)echo $(blast_input_dir)/*.$(blast_input_extension)
+	$(e)echo $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
 
 blast_test:
-	@echo "Input extension: '$(blast_input_extension)'"
-	@echo "a blastdb file: '$(single_blast_db_file)'"
-	@echo "real blast db: '$(real_blast_db)'"
-	@echo "No inp files $(words $(blast_input_files))"
-	@echo "No xml files $(words $(blast_output_files))"
-	@echo "No gff files $(words $(blast_gff_files))"
+	$(e)echo "Input extension: '$(blast_input_extension)'"
+	$(e)echo "Real blast db  '$(real_blast_db)'"
+	$(e)echo "a blastdb file: '$(single_blast_db_file)'"
+	$(e)echo "real blast db: '$(real_blast_db)'"
+	$(e)echo "No inp files $(words $(blast_input_files))"
+	$(e)echo "No xml files $(words $(blast_output_files))"
+	$(e)echo "No gff files $(words $(blast_gff_files))"
 
 #echo Main target for blast
 .PHONY: blast
@@ -173,14 +172,15 @@ blast_post: blast_report
 
 # Convert to GFF
 gff/%.gff: out/%.xml
-	@echo "Create gff $@ from $<"
+	$(e)echo "Create gff $@ from $<"
 	cat $< | blast2gff -b $(blast_gff_blasthit) -s $(blast_gff_source) -d query > $@
 
 # create out/*xml - run BLAST 
 out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(single_blast_db_file)
-	@echo "Processing blast $*"
-	@echo "Creating out.xml $@ from $<"
-	@echo "Params $(blast_program) $(blast_db)"
+	$(e) $(call echo,Running BLAST on $<)
+	$(e)echo "Processing blast $*"
+	$(e)echo "Creating out.xml $@ from $<"
+	$(e)echo "Params $(blast_program) $(blast_db)"
 	blastall -i $< -p $(blast_program) -e $(blast_eval) -m 7 \
 		-a $(blast_nothreads) -d $(real_blast_db) \
 		-b $(blast_nohits) -v $(blast_nohits) \
@@ -195,4 +195,5 @@ blast_report: $(blast_output_files)
 blast_clean:
 	-rm -rf ./gff/
 	-rm -rf ./out/
+	-rm -rf error.log
 	-rm blast_report

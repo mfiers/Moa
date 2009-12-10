@@ -32,38 +32,48 @@ import moa.utils
 l = moa.logger.l
 
 def handler(options, args):
-    """ 
-    Handle conf related commands
     """
-    command = args[0]
-    newargs = args[1:]
-
-    if command == 'set':
-        confChange('set', newargs)                  
-    elif command == 'append':
-        confChange('append', newargs)
-    else:
-        exitError("Invalud moa conf invocation")
-
-def confChange(mode, args):
+    parse the command line and save the arguments into moa.mk
     """
-    save the arguments in moa.mk
-    """   
-    #parse all arguments..
-    incomingKeys = set()
-    incomingArgs = []
+    l.debug("start parsing the commandline")
+    #parse all arguments
+    data = []
     for a in args:
-        k, v = [x.strip() for x in a.split('=', 1)]
-        incomingKeys.add(k)
-        incomingArgs.append((k,v))
-    l.debug("Incoming keys : %s" % incomingKeys)
+        if not '=' in a:
+            l.error("Invalid key/value pair %s" % a)
+        if '+=' in a:
+            k, v = [x.strip() for x in a.split('+=', 1)]
+            o = '+='
+        else:
+            o = '='
+            k, v = [x.strip() for x in a.split('=', 1)]
+            
+        data.append({ 'key' : k,
+                      'operator' : o,
+                      'value' : v })
+    writeToConf( data)
 
-    #set a lock on moa.mk
-    if os.path.exists('moa.mk.tmp'):
-        l.debug("removing an older?? moa.mk.tmp")
-        os.unlink('moa.mk.tmp')
+def set(key, value):
+    """
+    Convenience function - set the variable 'key' to a value
+    """    
+    writeToConf([{'key' : key,
+                  'operator' : '=',
+                  'value' : value}])
 
+    
+def writeToConf(data):
+
+    #refd is a refactoring of data - allows easy checking
+    refd = dict([(x['key'],x) for x in data])
+    l.debug("Changing variables: %s" % ", ".join(refd.keys()))
+    #get a lock on moa.mk
     with moa.utils.flock('moa.mk.lock'):
+        
+        if os.path.exists('moa.mk.tmp'):
+            l.debug("removing an older?? moa.mk.tmp")
+            os.unlink('moa.mk.tmp')
+
         #move moa.mk to a new location
         if os.path.exists('moa.mk'):
             os.rename('moa.mk', 'moa.mk.tmp')
@@ -77,23 +87,19 @@ def confChange(mode, args):
         
         #parse through the old file
         for line in F.readlines():
-            l.debug("trying line %s" % line)
             k,o,v = re.split(r'\s*(\+?=)\s*', line.strip())
-            if mode == 'set' and k not in incomingKeys:
-                G.write(line)                
-            if mode != 'set':
+            l.debug("read %s %s %s" % (k,o,v))
+            if refd.get(k, {}).get('operator') == '=':
+                #do not rewrite this line - it is being replaced
+                l.debug("ignoring %s" % k)
+            else:
                 #if the mode is not 'set', write 
-                G.write(line)                
-
-        if mode == 'set':
-            oper = "="
-        else:
-            oper = "+="
-            
-        for k,v in incomingArgs:
-            if v:
-                G.write("%s%s%s\n" % (k, oper, v))
-                l.info("set %s %s %s" % (k, oper, v))
+                G.write(line)
+                
+        for v in data:
+            if v['value']:
+                G.write("%(key)s%(operator)s%(value)s\n" % v)
+                l.info("%(key)s%(operator)s%(value)s\n" % v)
             else:
                 l.info("removing %s" % k)
 

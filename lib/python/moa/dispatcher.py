@@ -53,7 +53,7 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
     if len(ls) == 2:
         ETC[ls[0]] = ls[1]
 
-def _startMake(d, args,
+def _startMake(d, args, verbose = True,
                pipeOut = subprocess.PIPE,
                pipeErr = subprocess.PIPE):
     """
@@ -61,6 +61,10 @@ def _startMake(d, args,
     """
     if type(args) == type("str"):
         args = [args]
+        
+    if not verbose:
+        args.append('-s')
+        
     p = subprocess.Popen(
         ["make"] + args,
         shell=False,
@@ -69,7 +73,8 @@ def _startMake(d, args,
         stderr = pipeErr)
     return p
 
-def runMake(directory = None, args = [], catchout=False):
+def runMake(directory = None, args = [], verbose=True,
+            catchout=False):
     """
     Complete a make run
     """
@@ -84,18 +89,19 @@ def runMake(directory = None, args = [], catchout=False):
         outpipe = None
         errpipe = None
     
-    p = _startMake(directory, args, pipeOut=outpipe, pipeErr = errpipe)
+    p = _startMake(directory, args, verbose=verbose,
+                   pipeOut=outpipe, pipeErr = errpipe)
     (out, err) = p.communicate()
     rc = p.returncode
     l.debug("Finished make in %s with return code %s" % (directory, rc))
     return rc, out, err
 
-def runMakeAndExit(directory = None, args = []):
+def runMakeAndExit(directory = None, verbose=True, args = []):
     """
     Convenience function - run, report & exit
     """
     l.debug("ji %s %s" % (directory, args))
-    rc, out, err = runMake(directory=directory, args=args)
+    rc, out, err = runMake(directory=directory, verbose=verbose, args=args)
     utils.exit(rc)
 
 ##

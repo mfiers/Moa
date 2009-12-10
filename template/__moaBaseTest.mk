@@ -20,35 +20,70 @@
 MOA_INCLUDE_TEST = yup
 
 ################################################################################
-## template unit testing
+## Variables & functions
 
-.PHONY: unittest
-unittest: $(addprefix unittest_wrapper_,$(moa_ids))
-
-moa_unittest_var=moa -vv set $(1)='$(2)'; \
-	grep -e '^$(1)=$(2)' moa.mk \
+moa_unittest_var=\
+	$(call tstm,Set variable $(1) to '$(2)');\
+	moa $(MOA_VERBOSE) set $(1)='$(2)'; \
+	grep -qe '^$(1)=$(2)' moa.mk \
 		|| (cat moa.mk; $(call exer,Cannot find $(1)=$(2) in moa.mk))
 
-moa_unittest_fileexists=[[ -f "$(1)" ]] \
+moa_unittest_fileexists==\
+		$(call tstm,Check if file $(1) exists);\
+		[[ -f "$(1)" ]] \
 		|| (ls -l $(1); $(call exer,File $(1) does not exist))
 
-moa_unittest_filenotexists=[[ ! -f "$(1)" ]] \
+moa_unittest_filenotexists=\
+		$(call tstm,Check if file $(1) does not exist);\
+		[[ ! -f "$(1)" ]] \
 		|| (ls -l $(1); $(call exer,File $(1) exist - should not be there!))
 
-moa_unittest_direxists=[[ -d "$(1)" ]] \
+moa_unittest_direxists=\
+		$(call tstm,Check if directory $(1) exists);\
+		[[ -d "$(1)" ]] \
 		|| (ls -l $(1); $(call exer,Directory $(1) does not exist))
 
-moa_unittest_filenotexists=[[ ! -d "$(1)" ]] \
+moa_unittest_filenotexists=\
+		$(call tstm,Check if directory $(1) does not exist);\
+		[[ ! -d "$(1)" ]] \
 		|| (ls -l $(1); $(call exer,Directory $(1) exist - should not be there!))
 
-unittest_wrapper_%:
-	RANDOMDIR=`mktemp -d`;											\
+
+
+################################################################################
+## template unit testing
+
+moa_default_unittests += moabase_var
+
+.PHONY: unittest
+unittest: unittest_template
+
+.PHONY: unittest_all
+unittest_all: base_unittest unittest_template
+
+.PHONY: unittest_template
+unittest_template: $(addprefix unittest_template_wrapper_,$(moa_ids))
+
+base_unittest:
+	$(e)RANDOMDIR=`mktemp -d`;												\
+		$(call warn,Executing base unittest in $$RANDOMDIR);			\
+		cd $$RANDOMDIR;													\
+		moa new -t 'unittest' test;										\
+		moa $(minv) unittests;												\
+		if [[ "$$?" != "0" ]]; then 									\
+			$(call exer,unittest failed); 								\
+		fi;																\
+		$(call warn,Finished executing base unittests);					\
+		rm -rf $$RANDOMDIR
+
+unittest_template_wrapper_%:
+	$(e)RANDOMDIR=`mktemp -d`;											\
 		$(call warn,Executing unittest $* in $$RANDOMDIR);			\
 		cd $$RANDOMDIR;												\
 		moa new -t 'unittest' $*;									\
-		moa -v unittest_$* ;										\
-		if [[ "$$?" != "0" ]]; then \
-			$(call exer,unittest failed); \
-		fi;	\
+		moa $(minv) unittest_$* ;							\
+		if [[ "$$?" != "0" ]]; then 								\
+			$(call exer,unittest failed); 							\
+		fi;															\
 		$(call warn,Finished executing unittest $*);				\
 		rm -rf $$RANDOMDIR

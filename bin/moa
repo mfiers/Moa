@@ -26,8 +26,10 @@ libraries or to GNU Make
 """
 
 import os
+import re
 import sys
 import site
+import shutil
 import pprint
 import optparse
 import subprocess
@@ -126,6 +128,54 @@ if options.verbose:
 #make sure the MOA_THREADS env var is set - this is used by MOA later
 #on
 os.putenv('MOA_THREADS', "%s" % options.threads)
+if options.verbose:
+    os.putenv('MOA_VERBOSE', "-v")
+
+##
+## Check for deprecated style makefile
+
+_check = subprocess.Popen("cat Makefile |grep dont_include_moabase",
+                          shell=True,
+                          stdout=subprocess.PIPE).communicate()[0].strip()
+if 'dont_include_moabase=true' in _check:
+    includeline=re.compile(r'include \$\(shell echo \$\$MOABASE\)/template/.*\.mk$')
+    l.warning("Old style Makefile, automatically updating!")
+    l.warning("The old Makefile will be copied to Makefile.old")
+    shutil.move('Makefile', 'Makefile.old')
+    F = open('Makefile.old')
+    G = open('Makefile', 'w')
+    count_includes = 0
+    dim_removed = False
+    imb_removed = False
+    for line in F.readlines():
+        if line.strip() == 'dont_include_moabase=true':
+            dim_removed = True
+            l.debug("Removing %s" % line)
+            continue
+        if line.strip() == 'include $(shell echo $$MOABASE)/template/__moaBase.mk':
+            imb_removed = True
+            l.debug("Removing %s" % line)
+            continue
+        if includeline.match(line.strip()):
+            l.debug("found an include line")
+            l.debug(line)
+            count_includes += 1
+        G.write(line)
+    F.close()
+    G.close()
+    if count_includes > 1:
+        l.critical("This makefile might NOT work - including more than one template")
+        l.critical("is not allowed (anymore :( )")
+        sys.exit(1)
+    if count_includes == 0:
+        l.warning("Odd - you dont' seem to be including any template, have a look")
+        sys.exit(1)
+    if not dim_removed and imb_removed:
+        l.error("Updated Makefile - unsure of success - please check")
+        sys.exit(1)
+    l.error("Updated Makefile - everything looks fine (check anyway)")
+    sys.exit()
+
 
 ##
 ## Command dispatcher
@@ -134,7 +184,7 @@ if __name__ == "__main__":
     l.debug("MOABASE : %s" % MOABASE)
 
     if len(args) == 0:
-        dispatcher.runMakeAndExit()
+        dispatcher.runMakeAndExit(verbose=options.verbose)
 
     command = args[0]
     newargs = args[1:]
@@ -142,8 +192,8 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
 
     if command == 'run':
-        dispatcher.runMakeAndExit(args=newargs)
-    elif command == 'info':
+        dispatcher.runMakeAndExit(args=newargs, verbose=options.verbose)
+    elif command == 'rawinfo':
         pprint.pprint(moa.info.info(os.getcwd()))
         
     #Create new jobs
@@ -160,10 +210,10 @@ if __name__ == "__main__":
         #shortcut for moa template list
         moa.template.list()
     #configuration stuff
-    elif command == 'conf':
+    elif command == 'set':
         moa.conf.handler(options, newargs)
     else:
         #fire arguments of to make
-        dispatcher.runMakeAndExit(args=args)
+        dispatcher.runMakeAndExit(args=args, verbose=options.verbose)
 
     utils.exit()

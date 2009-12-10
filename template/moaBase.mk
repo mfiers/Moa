@@ -16,6 +16,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/__moaBase.mk
+
+##old include statement
+#ifndef dont_include_moabase
+#  include $(shell echo $$MOABASE)/template/__moaBase.mk
+#endif
+
+## for the time being, mixing two templates is not allowed anymore
+## this becomes too complex since Make really needs to be able to depend
+## on moaBase included in exactly that spot. This also means that we're not
+## using the variable dont_include_moabase anymore. And hence moaBase will allways
+## be included from the Makefiles that were created until now. We use a new 
+## variable to make sure that we don't inlcue moabase twice, accidentallly
+
+ifndef HAVE_INCLUDED_MOABASE
+ include $(shell echo $$MOABASE)/template/__moaBase.mk
 endif

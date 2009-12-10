@@ -39,7 +39,7 @@ lftp_url_type = string
 #variables that may be defined
 moa_may_define += lftp_timestamp lftp_powerclean lftp_noclean lftp_pattern
 lftp_pattern_help = glob pattern to download
-lftp_pattern_default=*
+lftp_pattern_default='*'
 lftp_pattern_type = string
 
 moa_may_define += lftp_lock
@@ -67,6 +67,8 @@ lftp_powerclean_allowed= T F
 lftp_noclean_help = set of files not to be deleted by the powerclean
 lftp_noclean_cardinality = many
 lftp_noclean_type = string
+lftp_noclean_default = moa.mk Makefile
+lftp_noclean_category = advanced
 
 moa_may_define += lftp_user lftp_pass
 lftp_user_help = username for the remote site
@@ -102,24 +104,10 @@ lftp_mode_allowed = mirror get
 lftp_get_name_help = target name of the file to download
 lftp_get_name_type = string
 
+################################################################################
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
-
 ################################################################################
-
-lftp_timestamp ?= $(lftp_timestamp_default)
-lftp_powerclean ?= $(lftp_powerclean_default)
-
-ifdef lftp_pattern
-	lftp_mode = mirror
-else
-	lftp_mode = $(lftp_mode_default)
-endif 
-
-lftp_lock ?=$(lftp_lock_default)
-lftp_noclean += $(moa_system_files)
-lftp_output_dir ?= $(lftp_output_dir_default)
-lftp_dos2unix ?= $(lftp_dos2unix_default)
 
 ifdef lftp_user
 ifdef lftp_pass
@@ -148,9 +136,9 @@ lftp_mirror:
 .PHONY: lftp_get
 lftp_get: _addcl=$(if $(lftp_get_name),-o $(lftp_get_name))
 lftp_get:
-	cd $(lftp_output_dir); 														\
-		lftp $(lftp_au) -e "get1 $(_addcl) '$(lftp_url)'; exit";
-	if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
+	$e cd $(lftp_output_dir); 														\
+		lftp $(lftp_au) -e "get $(_addcl) '$(lftp_url)'; exit";
+	$e if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
 .PHONY: lftp_dos2unix
 lftp_dos2unix:

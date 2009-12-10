@@ -23,6 +23,7 @@
 ###############################################################################
 
 SHELL := /bin/bash
+HAVE_INCLUDED_MOABASE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
@@ -34,6 +35,16 @@ include $(shell echo $$MOABASE)/etc/moa.conf.mk
 ## Files that moa uses
 moa_system_files = Makefile moa.mk moa.archive 
 
+## Define a variable that can be used to hide
+## output if the moa/make is not called with the -v flag
+ifdef MOA_VERBOSE
+e=
+minv=-v
+else
+e=@
+minv=
+endif
+
 ## some help variables
 warn_on := \033[0;41;37m
 warn_off := \033[0m
@@ -44,11 +55,28 @@ boldOff := \033[0m
 moamark := \033[0;42;30mm\033[0m
 moaerrr := \033[0;1;37;41m!!!\033[0m
 moawarn := \033[0;43m>>\033[0m
-moatest := \033[0;43m>>\033[0m
+moatest := \033[0;42mTEST:\033[0m
 echo = echo -e "$(moamark) $(1)"
 warn = echo -e "$(moawarn) $(1)"
+tstm = echo -e "$(moatest) $(1)"
 errr = echo -e "$(moaerrr) $(1)"
 exer = ( echo -e "$(moaerrr) $(1)"; exit -1 )
+
+##			$(warning Setting $v to default value $($v_default)) \
+#fill in the default values of each variable
+$(foreach v,$(moa_must_define) $(moa_may_define),				\
+	$(if $($v),,												\
+		$(if $($v_default),										\
+			$(eval $v=$($v_default)))							\
+	)															\
+)
+
+#moa_prepare_var: $(addprefix moa_prepare_var_, $(moa_must_define) $(moa_may_define))
+moa_prepare_var:
+
+#moa_prepare_var_%:
+#	$e $(if $($*),,$(if $($*_default),$(eval $*=$($*_default))))
+
 
 
 ## default variables used in generating help
@@ -124,10 +152,10 @@ is_moa:
 	@echo "Yes"
 
 ## display a MOA welcome message before a run
-parentheses_open=(
-parentheses_close=)
+p_open=(
+p_close=)
 moa_welcome:
-	@$(call echo, Welcome to MOA $(parentheses_open)$(shell pwd)$(parentheses_close))
+	@$(call echo, Welcome to MOA $(p_open)$(shell pwd)$(p_close))
 
 ## If moa.mk is defined, and not yet imported: do so.
 ## moa.mk is used to store job specific variables
@@ -153,7 +181,9 @@ title:
 
 ## These targets need to be executed for a normal MOA run
 moa_execute_targets =										\
+	moa_check_lock											\
 	moa_welcome 											\
+	moa_prepare_var											\
 	moa_check 												\
 	moa_run_precommand										\
 	moa_preprocess 											\
@@ -196,7 +226,7 @@ moa_main_targets: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
 moa_main_targets:
 	@for moa_main_target in $(moa_ids); do 										\
 		$(call echo,calling $$moa_main_target) ;								\
-		$(MAKE) $(minj) $$moa_main_target 												\
+		$(MAKE) $(minj) moa_prepare_var $$moa_main_target 						\
 				$${moa_main_target}_main_phase=T ;								\
 	done
 
@@ -204,6 +234,7 @@ moa_main_targets:
 ## executed
 execorder:
 	@echo "moa_welcome"
+	@echo "moa_prepare_var"
 	@echo "moa_preprocess"
 	@echo "$(addsuffix _prepare, $(moa_ids))"
 	@echo "moa_check"
@@ -242,10 +273,10 @@ clean: $(call reverse, $(addsuffix _clean, $(moa_ids)))
 #
 ################################################################################
 
-## A list of all valid targets that can be used to cruise a tree. In
+## A list of all valid targets that can be used to all a tree. In
 ## other words, these targets can be used with "make all
 ## action=TARGET"
-moa_cruise_targets = 															\
+moa_all_targets = 																\
 	$(call set_create, 															\
 		set append clean reset targets check						 			\
 		$(moa_additional_targets)												\
@@ -262,37 +293,34 @@ moa_followups ?= 																\
 				   -exec basename '{}' \; | sort -n )
 
 
-#"all" is a synonym for cruise
-.PHONY: all
-all: cruise
 
-## cruise depeends on properly executing this job, using either
+## all depeends on properly executing this job, using either
 ## "action" as a target or the default target. Once this job is
 ## finished, start traversin through all subdirectories and execyte
 ## them as wll
-.PHONY: cruise
-cruise: ignore_lock?=$(strip $(if $(action), 									\
+.PHONY: all
+all:  ignore_lock?=$(strip $(if $(action), 										\
 			$(if $(filter $(action),$(moa_ignore_lock_targets)),				\
 				yes,)))
-cruise: $(if $(call seq,$(action),), 											\
+all: moa_prepare_var $(if $(call seq,$(action),), 								\
 			moa_default_target,													\
-			$(if $(call set_is_member, $(action), $(moa_cruise_targets)),		\
+			$(if $(call set_is_member, $(action), $(moa_all_targets)),			\
 				$(action),														\
 				$(warning Ignoring $(action) - not a valid target) ) )
-	@for FUP in $(moa_followups); do 											\
-		$(call echo,Processing $$FUP);											\
+	$e for FUP in $(moa_followups); do 											\
+		$(call echo,Processing $$FUP 											\
+			$(if $(call seq,$(ignore_lock),yes),								\
+				$(p_open)IGNORING LOCK!$(p_close))); 							\
 		$(call echo, +- in $(shell echo `pwd`));								\
 		if [[ -e $$FUP/Makefile ]]; then 										\
 			if [[ "$(ignore_lock)" == "yes" ]]; then 							\
-				$(call warn,Ignore lock check);									\
 				cd $$FUP;														\
-				$(MAKE) cruise action=$(action);								\
+				$(MAKE) all action=$(action);									\
 				cd ..;															\
 			else 																\
 				if [[ ! -e $$FUP/lock ]]; then 									\
-					$(call echo,Executing make $(action) in $$FUP) ;			\
 					cd $$FUP;													\
-					$(MAKE) cruise action=$(action);							\
+					$(MAKE) all action=$(action);								\
 					cd ..;														\
 				else 															\
 					$(call warn,Not going here : $$FUP is locked) ;				\
@@ -303,15 +331,8 @@ cruise: $(if $(call seq,$(action),), 											\
 		fi;																		\
 	done
 
-.PHONY: cruise_start_here
-cruise_start_here: 																\
-	$(if $(call seq,$(action),),												\
-			moa_default_target,													\
-			$(if $(call set_is_member, $(action), $(moa_cruise_targets)),		\
-				$(action),														\
-				$(warning Ignoring $(action) - not a valid target)				\
-			)																	\
-	)
+
+
 
 # Add a few default targets to the set 
 # of possible targets
@@ -380,8 +401,7 @@ moa_check_lock:
 		$(call echo, Ignore lock checking);\
 	else \
 		if [[ -f lock ]]; then \
-	    	$(call errr, Job is locked!) ;\
-			exit 2 ;\
+	    	$(call exer, Job is locked!) ;\
 		fi;\
 	fi
 
@@ -398,10 +418,9 @@ check: moa_check
 moa_var_mustexists := $(addprefix mustexist_, $(moa_must_define))
 moa_var_checkall := $(addprefix varcheck_, $(moa_must_define) $(moa_may_define))
 
-
 .PHONY: moa_check
-moa_check: moa_check_lock prereqs $(moa_var_mustexists) $(moa_var_checkall)
-	@$(call echo, Check - everything is fine)
+moa_check: moa_prepare_var prereqs $(moa_var_mustexists) $(moa_var_checkall)
+	@$(call echo,everything is fine)
 
 moa_var_check_dir:=[[ -d "$(2)" ]] || $(call exer,$(1)=$(2) is not a directory)
 moa_var_check_file:=[[ -f "$(2)" ]] || $(call exer,$(1)=$(2) is not a file)
@@ -412,66 +431,11 @@ varcheck_%:
 	@$(foreach v,$($*_type),$(ifneq("$($*)",""), $(call echo,checking $*);$(call moa_var_check_$(v),$*,$($*)), \
 			$(call warn,$* is undefined)))
 
-
-
-.PHONY: $(moa_var_mustexists)
-mustexist_%:
+mustexist_%:	
 	@if [ "$(origin $*)" == "undefined" ]; then \
-		$(call errr, Error is undefined) ;\
+		$(call errr,Error: $* is undefined) ;\
 		exit -1; \
 	fi
-
-################################################################################
-## make set/append #############################################################
-#
-#### Store regular variables in moa.mk
-#
-# Usage: make set var=value
-#   or:
-# Usage: make append var=value
-#
-# Regular variables are stored in moa.mk in the following way:
-#
-# VARNME = VALUE
-#
-# or, if append is called:
-#
-# VARNAME += VALUE
-#
-# make set/append can be used to store any definable variable (from
-# moa_must_define & moa_may_define and stores them as key-value pairs
-# in moa.mk
-#
-# To make writing to the moa.mk file safe for parallel operations,
-# it's being done by the moa utility script. I could not come up with
-# a satisfactory locking mechanism that plays well with make/bash 
-#
-################################################################################
-
-.PHONY: set
-set: set_mode=set
-set: __set
-
-.PHONY: append
-append: set_mode=append
-append: __set
-
-## actually writing the values to set to moa.mk is deferred to the moa
-## script. This is because it's much, much easier to read & write
-## files in python than it is from a Makefile.
-.PHONY: __set
-__set: set_func=$(1)='$(value $(1))'
-__set:
-	@moa conf  $(set_mode) \
-		$(foreach v, $(moa_must_define) $(moa_may_define), \
-			$(if $(call seq,$(origin $(v)),command line), \
-				$(call set_func,$(v)) \
-				$(if $($(v)_default_attrib),$(v)_default_attrib=$($(v)_default_attrib)) \
-			) \
-		) \
-		$(foreach v,$(must_set), \
-			$(call set_func,$(v)) \
-		)
 
 ################################################################################
 ## make show ###################################################################
@@ -481,11 +445,13 @@ __set:
 ################################################################################
 
 .PHONY: show showvar_%
-show: $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
+show: moa_prepare_var $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 
 moa_showvar_%:		 
-	@echo -ne '$*\t'
-	@echo '$(value $*)'
+	@echo -ne '$*\t'	
+	@echo $($*)
+
+#'$(value $*)'
 
 ifndef MOA_INCLUDE_HELP
 include $(shell echo $$MOABASE)/template/__moaBaseHelp.mk
@@ -516,7 +482,7 @@ info_keyvallist = "$(1)" : [$(call merge,$(comma),$(foreach v,$(2),"$(subst '"',
 		info_parameters_optional 	\
 		info_parameters_required 
 
-info: info_header info_parameters
+info: moa_prepare_var info_header info_parameters
 
 info_header:
 	@echo -e 'moa_title\t$(moa_title)'
