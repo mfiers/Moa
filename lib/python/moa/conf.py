@@ -35,6 +35,7 @@ def handler(options, args):
     """
     parse the command line and save the arguments into moa.mk
     """
+    cwd = os.getcwd()    
     l.debug("start parsing the commandline")
     #parse all arguments
     data = []
@@ -51,39 +52,52 @@ def handler(options, args):
         data.append({ 'key' : k,
                       'operator' : o,
                       'value' : v })
-    writeToConf( data)
+    writeToConf(cwd, data)
 
-def set(key, value):
+
+def setVar(wd, key, value):
     """
-    Convenience function - set the variable 'key' to a value
+    Convenience function - set the variable 'key' to a value in directory wd
     """    
-    writeToConf([{'key' : key,
+    writeToConf(wd, [{'key' : key,
                   'operator' : '=',
                   'value' : value}])
-
     
-def writeToConf(data):
+def appendVar(wd, key, value):
+    """
+    Convenience function - append the value to variable 'key' in directory wd
+    """    
+    writeToConf(wd, [{'key' : key,
+                  'operator' : '+=',
+                  'value' : value}])
+    
+def writeToConf(wd, data):
 
+    moamk = os.path.join(wd, 'moa.mk')
+    moamktmp = os.path.join(wd, 'moa.mk.tmp')
+    moamklock = os.path.join(wd, 'moa.mk.lock')
+    
     #refd is a refactoring of data - allows easy checking
     refd = dict([(x['key'],x) for x in data])
     l.debug("Changing variables: %s" % ", ".join(refd.keys()))
+    
     #get a lock on moa.mk
-    with moa.utils.flock('moa.mk.lock'):
+    with moa.utils.flock(moamklock):
         
-        if os.path.exists('moa.mk.tmp'):
+        if os.path.exists(moamktmp):
             l.debug("removing an older?? moa.mk.tmp")
-            os.unlink('moa.mk.tmp')
+            os.unlink(moamktmp)
 
         #move moa.mk to a new location
-        if os.path.exists('moa.mk'):
-            os.rename('moa.mk', 'moa.mk.tmp')
+        if os.path.exists(moamk):
+            os.rename(moamk, moamktmp)
         else:
             #create an empty dummy file
-            open('moa.mk.tmp', 'w').close()
+            open(moamktmp, 'w').close()
         
         #open filehandles to both files:
-        F = open('moa.mk.tmp', 'r')
-        G = open('moa.mk', 'w')
+        F = open(moamktmp, 'r')
+        G = open(moamk, 'w')
         
         #parse through the old file
         for line in F.readlines():
@@ -105,5 +119,5 @@ def writeToConf(data):
 
         F.close()
         G.close()
-        os.unlink('moa.mk.tmp')
+        os.unlink(moamktmp)
     
