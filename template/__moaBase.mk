@@ -447,9 +447,14 @@ mustexist_%:
 .PHONY: show showvar_%
 show: moa_prepare_var $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 
+#@echo -ne '$(if $(call seq,$($*_show_expanded),F),$(value $*),$($*))'
+#	@echo '$($*_show_expanded) $(call seq,$($*_show_expanded),F) $(value $*)'
 moa_showvar_%:		 
 	@echo -ne '$*\t'	
-	@echo $($*)
+	@echo '$(value $*)'
+
+
+
 
 #'$(value $*)'
 
