@@ -39,9 +39,11 @@ def isMoa(d):
     #is a proper Makefile - so, we' quickly reading the Makefile to see if
     #it imports __moaBase.mk. If it does - it's probably a Moa Makefile
 
+    isMoa = False
+    
     F = open(os.path.join(d, 'Makefile'))
     for l in F.readlines():
-        if '__moaBase' in l:
+        if 'include $(shell echo $$MOABASE)/template/' in l:
             isMoa = True
             break
     F.close()
