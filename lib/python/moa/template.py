@@ -49,7 +49,6 @@ moa_preprocess:
 .PHONY: moa_postprocess
 moa_postprocess:
 
-dont_include_moabase=true
 """
 
 
@@ -141,7 +140,6 @@ def new(options, args):
         F.write("include $(shell echo $$MOABASE)/template/%s.mk\n" % t)
 
     #include moabase
-    F.write("include $(shell echo $$MOABASE)/template/__moaBase.mk\n")
     F.close()
 
     if title:
