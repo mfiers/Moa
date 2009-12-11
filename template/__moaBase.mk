@@ -200,7 +200,7 @@ moa_main_targets: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
 moa_main_targets:
 	@for moa_main_target in $(moa_ids); do 										\
 		$(call echo,calling $$moa_main_target) ;								\
-		$(MAKE) $(minj) $$moa_main_target 						\
+		$(MAKE) $(mins) $(minj) $$moa_main_target 						\
 				$${moa_main_target}_main_phase=T ;								\
 	done
 
@@ -289,12 +289,12 @@ all: $(if $(call seq,$(action),), 								\
 		if [[ -e $$FUP/Makefile ]]; then 										\
 			if [[ "$(ignore_lock)" == "yes" ]]; then 							\
 				cd $$FUP;														\
-				$(MAKE) all action=$(action);									\
+				$(MAKE) $(mins) all action=$(action);									\
 				cd ..;															\
 			else 																\
 				if [[ ! -e $$FUP/lock ]]; then 									\
 					cd $$FUP;													\
-					$(MAKE) all action=$(action);								\
+					$(MAKE) $(mins) all action=$(action);								\
 					cd ..;														\
 				else 															\
 					$(call warn,Not going here : $$FUP is locked) ;				\
@@ -304,6 +304,7 @@ all: $(if $(call seq,$(action),), 								\
 			$(call echo,$$FUP is not a moa directory);							\
 		fi;																		\
 	done
+	$(call echo,Successfully finished moa all run $(if $(action),action=$(action)))
 
 
 

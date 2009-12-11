@@ -57,9 +57,11 @@ exer = ( echo -e "$(moaerrr) $(1)"; exit -1 )
 ifdef MOA_VERBOSE
 e=
 minv=-v
+mins=
 else
 e=@
 minv=
+mins=-s
 endif
 
 moa_fileset_define = \
