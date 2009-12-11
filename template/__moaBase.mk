@@ -308,6 +308,7 @@ all: moa_prepare_var $(if $(call seq,$(action),), 								\
 				$(action),														\
 				$(warning Ignoring $(action) - not a valid target) ) )
 	$e for FUP in $(moa_followups); do 											\
+		set -e																	\
 		$(call echo,Processing $$FUP 											\
 			$(if $(call seq,$(ignore_lock),yes),								\
 				$(p_open)IGNORING LOCK!$(p_close))); 							\
@@ -380,7 +381,7 @@ checkPrereqExec = \
 			if [[ -n "$(2)" ]]; then 											\
 				$(call errr,$(2)); 												\
 			fi;																	\
-			false ;																\
+			exit -1 ;																\
 	fi
 
 checkPrereqPath = \
@@ -390,7 +391,7 @@ checkPrereqPath = \
 		if [[ -n "$(2)" ]]; then 												\
 			$(call errr,$(2)); 													\
 		fi;																		\
-		false ;																	\
+		exit -1 ;																	\
 	fi
 
 .PHONY: prereqs $(prereqlist)
