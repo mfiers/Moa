@@ -22,7 +22,6 @@
 ## define all variables here that are not depending on moa.mk
 ###############################################################################
 
-$(warning $(MOABASE))
 include $(shell echo $$MOABASE)/template/moaBasePre.mk
 
 SHELL := /bin/bash
