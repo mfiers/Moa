@@ -104,6 +104,10 @@ lftp_mode_allowed = mirror get
 lftp_get_name_help = target name of the file to download
 lftp_get_name_type = string
 
+prereqlist += prereq_lftp_installed
+prereq_lftp_installed:
+	$(call checkPrereqPath,lftp)
+
 ################################################################################
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
