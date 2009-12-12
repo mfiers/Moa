@@ -87,14 +87,19 @@ def run(args=None, env=None, path=None):
     ls_final=[] # create the final list that will be sent back to the user
 
 
+    # for efficiency, switch working directories
+    wd_old=os.getcwd() # save old working directory
+    os.chdir(path) # select new working directory
         
     for l in ls: # for each entry in the raw directory listing
-        l_complete=os.path.join(path,l) # create the full pathname for the entry
-
-        if os.path.isfile(l_complete): # if the entry is a file
+        if os.path.isfile(l): # if the entry is a file
             ls_file.append(l) # add it to the file list
-        elif os.path.isdir(l_complete): # if the entry is a dir
+        elif os.path.isdir(l): # if the entry is a dir
             ls_dir.append(l) # add it to the dir list
+
+
+    os.chdir(wd_old) # select old working directory
+
 
     # place the entries in the correct order
     ls=[]
