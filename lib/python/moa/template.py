@@ -27,6 +27,8 @@ import sys
 
 import moa.utils
 import moa.logger
+import moa.conf
+
 l = moa.logger.l
     
 MOABASE = os.environ["MOABASE"]
@@ -96,10 +98,17 @@ def new(options, args):
     usage = 'Usage: moa new  [-t "TITLE"] [-d DIRECTORY] [TEMPLATE(s)]'
 
     if len(args) == 0:
-        templates = ['traverse']
+        template = 'traverse'
+        parameters = []
     else:
-        templates = args
+        template = args[0]
+        parameters = args[1:]
 
+    l.debug("Creating template %s" % template)
+
+    #is this a valid template??
+    _check(template)
+            
     directory = options.newdir
     if not directory:
         directory = '.'
@@ -108,8 +117,8 @@ def new(options, args):
         os.makedirs(directory)
 
     title = options.title
-    if not title and templates != ['traverse']:
-        l.debug("no title? %s" % templates)
+    if not title and template != 'traverse':
+        l.debug("no title (template %s)" % template)
         l.warning("It is strongly recommended to specify a title")
         l.warning("You can still do so using moa set title='somthing meaningful'")
         title = ""
@@ -130,14 +139,11 @@ def new(options, args):
             l.critical("makefile exists, use -f (--force) to overwrite")
             sys.exit(1)
 
-    for t in templates:
-        _check(t)
 
     l.debug("Start writing %s" % makefile)
     F = open(makefile, 'w')
     F.write(NEW_MAKEFILE_HEADER)
-    for t in templates:
-        F.write("include $(shell echo $$MOABASE)/template/%s.mk\n" % t)
+    F.write("include $(shell echo $$MOABASE)/template/%s.mk\n" % template)
 
     #include moabase
     F.close()
@@ -162,6 +168,10 @@ def new(options, args):
 
             F.close()       
             l.debug('Written moa.mk')
-    
+
+    if parameters:
+        l.debug("and setting parameters %s" % parameters)        
+        moa.conf.commandLineHandler(directory, parameters)
+            
     l.info("Written %s, try: moa help" % makefile)
 

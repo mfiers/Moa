@@ -36,6 +36,9 @@ def handler(options, args):
     parse the command line and save the arguments into moa.mk
     """
     cwd = os.getcwd()    
+    commandLineHandler(cwd, args)
+    
+def commandLineHandler(wd, args):
     l.debug("start parsing the commandline")
     #parse all arguments
     data = []
@@ -52,7 +55,7 @@ def handler(options, args):
         data.append({ 'key' : k,
                       'operator' : o,
                       'value' : v })
-    writeToConf(cwd, data)
+    writeToConf(wd, data)
 
 
 def setVar(wd, key, value):

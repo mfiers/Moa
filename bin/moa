@@ -134,7 +134,7 @@ if options.verbose:
 ##
 ## Check for deprecated style makefile
 
-_check = subprocess.Popen("cat Makefile |grep dont_include_moabase",
+_check = subprocess.Popen("cat Makefile 2>/dev/null |grep dont_include_moabase ",
                           shell=True,
                           stdout=subprocess.PIPE).communicate()[0].strip()
 if 'dont_include_moabase=true' in _check:
