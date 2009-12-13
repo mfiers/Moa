@@ -19,7 +19,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 	    _location : "",
 	    _assumeNoProject : false,
 	    _params : null,
-	    
+	    _dhmManager : null,
+
 
 	    _setVisualDOMAttr : function(val) {
 		this._visualDOM=val;
@@ -99,6 +100,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 		this.attr("visualCode", null);
     
+		this.attr("locked", true);
+
 		wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-jobinfo", this.attr("location")),function(data) {
 			a.dataCallback.call(a, data); // use the callback function of this object
 		    } , 8192); // be somewhat patient about receiving the listing
@@ -152,7 +155,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		this.attr("response", response); // save the parsed response we have received for later use
 		
 		if(data==null) { // if null was passed, we have an error
-		    this.attr("visualCode", "Sorry, but the project information could not be loaded."); // create an error message
+		    this.attr("visualCode", "No job information is available."); // create an error message
+		    this.attr("locked", false);
 		    return;
 		}
 
@@ -313,6 +317,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		
 		
 		this.attr("visualDOM", dom_final); // make main code "public"
+		this.attr("locked", false);
 
 		},
 
@@ -397,6 +402,22 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 			    return dojo.attr(inputs[i], "value");
 
 		    return "";
+		},
+
+		dhmNotify : function(message) {
+		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
+			this.attr("location", message.args.path);
+		},
+
+		dhmPoll : function(poll) {
+		    if(poll.type==wwwmoa.dhm.DHM_PLL_SHUTDOWN)
+			return true;
+		    else if(poll.type==wwwmoa.dhm.DHM_PLL_WDNAV)
+			return !this.attr("locked");
+		},
+
+		dhmPoint : function(manager) {
+		    this._dhmManager=manager;
 		}
 
 
