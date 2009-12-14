@@ -11,7 +11,7 @@ from wwwmoa import rl
 import wwwmoa.env
 from wwwmoa.formats.html import error
 import wwwmoa.info.moa as moainfo
-
+import wwwmoa.api.mwr
 
 import os
 import os.path
@@ -121,14 +121,43 @@ def run(args=None, env=None):
         rw.send(json.dumps({"title" : project_info["projectTitle"]})) # send response
 
     elif command=="moa-jobinfo":
-        if not moachecker.isMoa(path):
+        if not wwwmoa.api.mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
             output_error("The directory or file you attempted to retrieve job information on is not a Moa directory.") # say so            
 
-        job_info=moachecker.info(path)
+        job_info=wwwmoa.api.mwr.get_moa_info(path)
 
         output_json_headers(0);
         rw.end_header_mode();
         rw.send(json.dumps(add_timestamp(job_info, 0)));
+
+    elif command=="moa-jobparam":
+        if not wwwmoa.api.mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
+            output_error("The directory or file you attempted to retrieve and/or set job information on is not a Moa directory.") # say so
+
+        if "key" in env["params"]:
+            var_key=env["params"]["key"]
+        else:
+            output_error("The parameter key was not specified in the API request. The parameter key must be included in the API request.")
+
+        if (env["method"]=="POST") or (env["method"]=="PUT"): # if a set was requested
+
+            if "value" in env["params"]:
+                var_value=env["params"]["value"]
+            else:
+                var_value=""
+           
+            wwwmoa.api.mwr.set_moa_parameter(path, var_key, var_value)
+
+        elif env["method"]=="GET": # if a get was requested
+            var_value=wwwmoa.api.mwr.get_moa_parameter(path, var_key)
+        elif env["method"]=="DELETE" : # if a delete was requested
+            wwwmoa.api.mwr.set_moa_parameter(path, var_key, "")
+
+    
+        output_json_headers(0);
+        rw.end_header_mode();
+        rw.send(json.dumps(add_timestamp({"key" : var_key, "value" : var_value}, 0)));
+
 
     elif command=="ls":
         wwwmoa.api.ls.run(args, env, path)

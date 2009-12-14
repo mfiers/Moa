@@ -15,6 +15,12 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.job.Params", null, {
 		    return this._params;
 		},
 
+		rewriteParam : function(name, values) {
+		    for(var x=0; x<this._params.length; x++)
+			if(this._params[x].name==name)
+			    this._params[x].values=this.transValuesOTI(values, this._params[x].type);
+		},
+
 		getParamCount : function() {
 		    if(dojo.isArray(this._params))
 			return this._params.length;
