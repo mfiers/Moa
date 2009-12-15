@@ -25,7 +25,7 @@
 include $(shell echo $$MOABASE)/template/moaBasePre.mk
 
 SHELL := /bin/bash
-HAVE_INCLUDED_MOABASE = yes
+INCLUDE_MOABASE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
@@ -43,15 +43,17 @@ $(foreach v,$(moa_must_define) $(moa_may_define),				\
 	)															\
 )
 
-define moa_fileset_define
-  $(eval moa_must_define += $(1)_dir),		\
-  $(eval moa_may_define += $(1)_extension)
-  $(eval $(1)_dir_help = $(3)
-  $(eval $(1)_dir_type = directory
-  $(eval $(1)_extension_help = file extension for the files in $(1)_dir)
-  $(eval $(1)_extension_type = string
-  $(eval $(1)_default = $(2)  
-endef
+$(foreach v,$(_moa_filesets), \
+	$(eval $(v)_files = $(wildcard $($(v)_dir)/*.$($(v)_extension))))
+
+
+moa_fileset_init = $(warning use of moa_fileset_init is depreacted)
+
+moa_fileset_remap = \
+	$(eval $(2)_files=$(addprefix $(3)/,$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files)))))
+
+moa_fileset_remap_nodir = \
+	$(eval $(2)_files=$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files))))
 
 ## default variables used in generating help
 
@@ -354,11 +356,11 @@ checkPrereqExec = \
 			if [[ -n "$(2)" ]]; then 											\
 				$(call errr,$(2)); 												\
 			fi;																	\
-			exit -1 ;																\
+			exit -1 ;															\
 	fi
 
 checkPrereqPath = \
-	if ! which $(1) >/dev/null; then 											\
+	if ! which $(1) >/dev/null 2>/dev/null; then 								\
 		$(call errr,Prerequisite check);										\
 		$(call errr,Cannot find $(1) in your PATH, is it installed?); 			\
 		if [[ -n "$(2)" ]]; then 												\
@@ -368,7 +370,11 @@ checkPrereqPath = \
 	fi
 
 .PHONY: prereqs $(prereqlist)
-prereqs: $(prereqlist)
+prereqs: $(prereqlist) \
+	$(addprefix moa_prereq_simple_check_,$(moa_prereq_simplec))
+
+moa_prereq_simple_check_%:
+	$e $(call checkPrereqPath,$*)
 
 moa_check_lock:
 	@if [[ "$(ignore_lock)" == "T" ]]; then \
@@ -411,6 +417,10 @@ mustexist_%:
 		exit -1; \
 	fi
 
+#defer this to MOA
+set:
+	$(call echo,setting: $(filter-out s -- action=set,$(MAKEFLAGS)))
+	moa $(minv) set $(filter-out s -- action=set,$(MAKEFLAGS))
 ################################################################################
 ## make show ###################################################################
 #

@@ -25,7 +25,7 @@
 ###############################################################################
 
 SHELL := /bin/bash
-HAVE_INCLUDED_MOABASEPRE = yes
+INCLUDE_MOABASE_PRE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
@@ -71,10 +71,7 @@ moa_fileset_define = \
 	$(eval $(1)_dir_type = directory) \
 	$(eval $(1)_extension_help = file extension for the files in $(1)_dir) \
 	$(eval $(1)_extension_type = string) \
-	$(eval $(1)_extension_default = $(2))
+	$(eval $(1)_extension_default = $(2)) \
+	$(eval _moa_filesets += $(1))
 
 
-moa_fileset_init = \
-	$(eval $(1)_files = $(wildcard $($(1)_dir)/*.$($(1)_extension)))
-moa_fileset_remap = \
-	$(eval $(2)_files=$(addprefix $(3)/,$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files)))))
