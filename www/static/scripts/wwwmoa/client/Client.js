@@ -13,6 +13,7 @@ dojo.addOnLoad(function() {
 	dojo.declare("wwwmoa.client.Client", dijit._Widget, {
 
 		uiComp : {},
+		uiCompDHM : [],
 
 		startup : function() {
 		    if(this.uiComp.parent==null)
@@ -36,6 +37,7 @@ dojo.addOnLoad(function() {
 		    this.uiComp.parent.addChild(this.uiComp.fsbrowserpane);
 
 		    this.uiComp.fsbrowser=new wwwmoa.client.dhm.FSBrowser({style : "padding:6px"});
+		    this.uiCompDHM.push(this.uiComp.fsbrowser);
 
 		    dojo.place(this.uiComp.fsbrowser.domNode, this.uiComp.fsbrowserpane.domNode);
 
@@ -52,6 +54,7 @@ dojo.addOnLoad(function() {
 		    this.uiComp.tab.addChild(this.uiComp.pbrowserpane);
 
 		    this.uiComp.pbrowser=new wwwmoa.client.dhm.PBrowser({});
+		    this.uiCompDHM.push(this.uiComp.pbrowser);
 
 		    dojo.place(this.uiComp.pbrowser.domNode, this.uiComp.pbrowserpane.domNode);
 
@@ -59,34 +62,50 @@ dojo.addOnLoad(function() {
 		    this.uiComp.parent.addChild(new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."}));
 
 
-		   
+		    for(var x=0; x<this.uiCompDHM.length; x++) 
+			this.uiCompDHM[x].dhmPoint(this);
 		},
 
-		postCreate : function() {
+	        dhmRequest : function(request) {
+		    var poll_good;
+		    var poll_ret;
 
-		    var fsbrowser=this.uiComp.fsbrowser;
-		    var pbrowser=this.uiComp.pbrowser;
-		    var main=this.uiComp.main;
-		    var nav=this.uiComp.nav;
+		    if(request.type==wwwmoa.dhm.DHM_REQ_MODAL) {
+			return null;
+		    }
+		    else if(request.type==wwwmoa.dhm.DHM_REQ_WDNAV) {
+			if(request.args.path==null)
+			    return null;
+			
+			poll_good=true;
 
-		    dojo.connect(this.uiComp.fsbrowser, "locationChanged", {refresh : function() {
+			for(var x=0; x<this.uiCompDHM.length; x++) {
+			    poll_ret=this.uiCompDHM[x].dhmPoll({type : wwwmoa.dhm.DHM_PLL_WDNAV, args : { path : request.args.path }});
 
-				var buf;
-				var isMoa=fsbrowser.attr("locationIsMoa");
+			    if(poll_ret==null)
+				poll_good=false;
+			    else
+				poll_good=poll_good&&poll_ret;
+			}
 
-				
-				buf="You are" + (isMoa ? "" : " not") + " in a Moa directory.";
+			if(poll_good)
+			    for(var x=0; x<this.uiCompDHM.length; x++)
+				this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_WDNAV, args : { path : request.args.path }});
 
-				main.domNode.innerHTML=buf;
+			return poll_good;
+		    }
+		    else {
+			return null;
+		    }
+		},
 
-				nav.domNode.innerHTML=fsbrowser.attr("locationBreadcrumbCode");
-
-				if(isMoa)
-				    pbrowser.attr("location", fsbrowser.attr("location"));
-				else
-				    pbrowser.doNoProjectAction();
-
-			    }}, "refresh");
+		dhmNotify : function(message, dhm) {
+		    if(message.type==wwwmoa.dhm.DHM_MSG_DATA) {
+			if(dhm==this.uiComp.fsbrowser) {
+			    if(message.args.key=="locationBreadcrumbCode")
+				this.uiComp.nav.domNode.innerHTML=message.args.data;
+			}
+		    }
 		},
 
 		showAbout : function() {

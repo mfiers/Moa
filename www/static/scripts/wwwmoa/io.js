@@ -148,6 +148,41 @@ else {
 		          args.abort();
                   }
               };
+	},
+
+
+
+          // Wrapper for Dojo AJAX system call.  The callback function is passed
+          // null on error, or a string object on success.
+	post : function (relrl, callback, timeout) {
+	    function cb(txt) {
+		callback(txt);
+	    }
+
+	    function cbe(err) {
+		callback(null);
+	    }
+
+	    var args={
+		url : relrl,
+		handleAs : "text",
+		timeout : timeout,
+		load : cb,
+		error : cbe
+	    }
+
+	    dojo.xhrPost(args);
+	    
+	    return {
+		cancel : function() {
+		    if(args.abort!==undefined)
+			args.abort();
+		}
+	    };
 	}
+
+
+
+
     }
 }

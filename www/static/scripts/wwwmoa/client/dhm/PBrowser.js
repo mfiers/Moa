@@ -19,7 +19,12 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 	    _location : "",
 	    _assumeNoProject : false,
 	    _params : null,
-	    
+	    _localParams : {},
+	    _saveButtons : [],
+	    _savesCompleted : 0,
+	    _savesTotal : 0,
+	    _dhmManager : null,
+
 
 	    _setVisualDOMAttr : function(val) {
 		this._visualDOM=val;
@@ -99,6 +104,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 		this.attr("visualCode", null);
     
+		this.attr("locked", true);
+
 		wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-jobinfo", this.attr("location")),function(data) {
 			a.dataCallback.call(a, data); // use the callback function of this object
 		    } , 8192); // be somewhat patient about receiving the listing
@@ -148,11 +155,13 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		var groups;
 		var group_params;
 		var param;
+		var a=this;
 
 		this.attr("response", response); // save the parsed response we have received for later use
 		
 		if(data==null) { // if null was passed, we have an error
-		    this.attr("visualCode", "Sorry, but the project information could not be loaded."); // create an error message
+		    this.attr("visualCode", "No job information is available."); // create an error message
+		    this.attr("locked", false);
 		    return;
 		}
 
@@ -171,7 +180,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		                    fontWeight : "bold",
 				    textDecoration : "underline"
 				},
-				innerHTML : "General Information"
+				innerHTML : "Template Information"
 			    })); // create section heading
 		dom_final.appendChild(dojo.create("br", null));
 
@@ -198,13 +207,29 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		    dom_final.appendChild(document.createTextNode(response["moa_description"])); // use it
 
 		groups=this._params.getParamGroups();
-		
-       		for(var x=0; x<groups.length; x++) {
 
-		    group_params=this._params.getParamsByGroup(groups[x]);
+		dom_final.appendChild(dojo.create("br", null));
+		dom_final.appendChild(dojo.create("br", null));
+
+
+		this._saveButtons[0]=dojo.create("button", {
+			    innerHTML : "No Changes Made Yet",
+			    onclick : function() {a._saveParameters()},
+			    disabled : true
+			});
+
+		dom_final.appendChild(this._saveButtons[0]);
+
+
+
+ 		dom_final.appendChild(dojo.create("br", null));		
+
+
+      		for(var x=0; x<groups.length; x++) {
+
+ 		    group_params=this._params.getParamsByGroup(groups[x]);
 		    
 
-		    dom_final.appendChild(dojo.create("br", null));
 		    dom_final.appendChild(dojo.create("br", null));
 
 		    dom_final.appendChild(dojo.create("span", {
@@ -215,9 +240,11 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 				    innerHTML : wwwmoa.formats.html.fix_text((groups[x]=="" ? "General" : wwwmoa.util.str.title_case(groups[x]))+" Parameters")
 				}));
 
-		    dom_final.appendChild(dojo.create("br", null));
 
 		    
+
+		    dom_final.appendChild(dojo.create("br", null));
+
 		    for(var y=0; y<group_params.length; y++) {
 
 			param=group_params[y];
@@ -268,7 +295,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 		    
 			for(var z=0; z<( param.cardinality==this._params.CARD_MANY ? param.values.length : Math.min(param.values.length, 1)); z++) {
-			    dom_tmp.appendChild(this._createParameterWidgetGroup(param.values[z], param["default"], param.type));
+			    dom_tmp.appendChild(this._createParameterWidgetGroup(param.name, param.values[z], param["default"], param.type));
 			}
 		    
 
@@ -297,8 +324,6 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 
 
-
-
 		dom_final.appendChild(dojo.create("br", null));
 
 		dom_final.appendChild(dojo.create("span", {
@@ -311,8 +336,23 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		
 		dom_final.appendChild(document.createTextNode("denotes mandatory parameter"));
 		
+		dom_final.appendChild(dojo.create("br", null));
+		dom_final.appendChild(dojo.create("br", null));
+
+
+
+		this._saveButtons[1]=dojo.create("button", {
+			    innerHTML : "No Changes Made Yet",
+			    onclick : function() {a._saveParameters()},
+			    disabled : true
+			});
+
+		dom_final.appendChild(this._saveButtons[1]);
+
+
 		
 		this.attr("visualDOM", dom_final); // make main code "public"
+		this.attr("locked", false);
 
 		},
 
@@ -346,44 +386,128 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 		_createParameterWidget : function(val, type) {
 		   
+		    var cur_widget;
+
+		    var style_obj= {border : "0px solid #000000", width : "85%"};
+
 		    if(type==this._params.TYPE_STRING) {
-			return new dijit.form.TextBox({value : val, style : {width : "80%"}});
+			cur_widget=new dijit.form.TextBox({value : val, style : style_obj});
 		    }
 		    else if(type==this._params.TYPE_INTEGER) {
-			return new dijit.form.NumberTextBox({
+			cur_widget=new dijit.form.NumberTextBox({
 				constraints: {places : 0},
 				invalidMessage : "This parameter must be an integer.",
 				value : val, 
-				style : {width : "80%"}
+				style : style_obj
 			    });
 		    }
 		    else {
-			return new dijit.form.TextBox({
+			cur_widget=new dijit.form.TextBox({
 				value : "(format unknown)",
-				style : {width : "80%"},
+				style : style_obj,
 				disabled : "true"
 			    });
 		    }
+
+		    cur_widget.attr("onFocus", function() {
+			     style_obj.border="1px solid #303060";
+			     cur_widget.attr("style", style_obj);
+			});
+
+		    cur_widget.attr("onBlur", function() {
+			     style_obj.border="0px solid #000000";
+			     cur_widget.attr("style", style_obj);
+			});
+
+		    return cur_widget;
 		},
 
-		_createParameterWidgetGroup : function(val, deflt, type) {
+		_getNewParameterValue : function(name) {
+		    if(this._localParams[name]!=null)
+			return this._localParams[name]();
 
+		    return null;
+		},
+
+		_saveParameters : function() {
+		    var par_names=this._params.getParamNames();
+		    var par;
+		    var par_changed=0;
+
+		    this._registerSaveAttempt();
+
+		    for(var x=0; x<par_names.length; x++) {
+			par=this._params.getParam(par_names[x]);
+
+			if((this._getNewParameterValue(par_names[x])!=null)&&(par.values[0]!=this._getNewParameterValue(par_names[x]))) {
+			    this._saveParameter(par_names[x], this._getNewParameterValue(par_names[x]));
+			    par_changed++;
+			}
+		    }
+
+		},
+
+		_registerChange : function() {
+		    for(var x=0; x<this._saveButtons.length; x++) {
+			this._saveButtons[x].disabled=false;
+			this._saveButtons[x].innerHTML="Save Changes";
+		    }
+		},
+
+		_registerSaveAttempt : function() {
+		    for(var x=0; x<this._saveButtons.length; x++) {
+			this._saveButtons[x].disabled=true;
+			this._saveButtons[x].innerHTML="Saving...";
+		    }
+		},
+
+		_registerSave : function() {
+		    for(var x=0; x<this._saveButtons.length; x++) {
+			if(this._saveButtons[x].disabled)
+			    this._saveButtons[x].innerHTML="Saved";
+		    }
+		},
+
+		_saveParameter : function(name, val) {
+		    var a=this;
+
+		    this._params.rewriteParam(name, val);
+
+		    wwwmoa.io.ajax.post(wwwmoa.io.rl.get_api("moa-jobparam?key="+wwwmoa.io.rl.url_encode(name)+"&value="+wwwmoa.io.rl.url_encode(val), this.attr("location")),function(data) {
+			    a._registerSave();
+			} , 8192); // be somewhat patient about receiving the listing
+		},
+
+		_createParameterWidgetGroup : function(name, val, deflt, type) {
+		    var a=this;
 		    var par_dom=dojo.create("div", null);
 		    var cur_widget;
 		    var obj_tmp;
 
 		    cur_widget=this._createParameterWidget(val, type);
-			
+		    
+		    dojo.connect(cur_widget.domNode, "keypress", function() {
+			a._registerChange();
+			});
+
 		    par_dom.appendChild(cur_widget.domNode);
 			
 		    if(type!=this._params.TYPE_UNKNOWN) {
-			    
+			
+			this._localParams[name]=function() { return cur_widget.attr("value"); };
+		        
 			obj_tmp=dojo.create("button", {
-				innerHTML : "Use Default",
-				onclick : new Function("dijit.byId('"+wwwmoa.formats.js.fix_text(cur_widget.id)+"').attr('value', '"+wwwmoa.formats.js.fix_text(deflt)+"');")
+				innerHTML : "<span style=\"color:#0000FF; font-weight:bold; font-family:arial\">D</span>",
+				title : "Click to use the default value.",
+				onclick : new Function("dijit.byId('"+wwwmoa.formats.js.fix_text(this.id)+"')._registerChange(); dijit.byId('"+wwwmoa.formats.js.fix_text(cur_widget.id)+"').attr('value', '"+wwwmoa.formats.js.fix_text(deflt)+"');")
 			    });
 
 			par_dom.appendChild(obj_tmp);			    
+
+
+		    }
+		    else {
+			this._localParams[name]=null;
 		    }
 
 		    return par_dom;
@@ -397,6 +521,22 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 			    return dojo.attr(inputs[i], "value");
 
 		    return "";
+		},
+
+		dhmNotify : function(message) {
+		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
+			this.attr("location", message.args.path);
+		},
+
+		dhmPoll : function(poll) {
+		    if(poll.type==wwwmoa.dhm.DHM_PLL_SHUTDOWN)
+			return true;
+		    else if(poll.type==wwwmoa.dhm.DHM_PLL_WDNAV)
+			return !this.attr("locked");
+		},
+
+		dhmPoint : function(manager) {
+		    this._dhmManager=manager;
 		}
 
 

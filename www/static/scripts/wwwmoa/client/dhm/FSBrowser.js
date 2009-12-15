@@ -12,6 +12,7 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 	    _locationIsMoa : false,
 	    _startIndex : 1,
 	    _indexCount : 15,
+	    _dhmManager : null,
 
 	    _setVisualCodeAttr : function(val) {
 		this._visualCode=val;
@@ -100,10 +101,10 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 
 	    _getLocationBreadcrumbCodeAttr : function() {
 		var locationComponents=this.attr("locationComponents");
-		var code="<span style=\"font-weight:bold\"><img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSdiroprtA")) + "\" alt=\"Directory\"> <a href=\"#wwwmoa-z\" style=\"color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "').attr('location', '');\">Root</a>";
+		var code="<span style=\"font-weight:bold\"><img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSdiroprtA")) + "\" alt=\"Directory\"> <a href=\"#wwwmoa-z\" style=\"color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._passBack('');\">Root</a>";
 		
 		for(var x=0; x<locationComponents.length; x++) {
-		    code+=" / <a href=\"#wwwmoa-z\" style=\"color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "').attr('location', '"+wwwmoa.formats.js.fix_text_for_html(locationComponents[x]["path"]) +"');\">"+locationComponents[x]["name"]+"</a>";
+		    code+=" / <a href=\"#wwwmoa-z\" style=\"color:#0000FF\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._passBack('"+wwwmoa.formats.js.fix_text_for_html(locationComponents[x]["path"]) +"');\">"+locationComponents[x]["name"]+"</a>";
 		}
 
 		code+="</span>";
@@ -304,7 +305,7 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 
 		this.attr("locked", false); // requests can now be sent again without a problem
 
-		this.locationChanged(); // fire the event for other methods to use
+		this._dhmManager.dhmNotify({type : wwwmoa.dhm.DHM_MSG_DATA, args : { key : "locationBreadcrumbCode", data : this.attr("locationBreadcrumbCode") }}, this);
 	    },
 
 
@@ -329,15 +330,30 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 		else // if the message has not yet been recognized
 		    return; // we should just exit
 
-		this.attr("locked", true); // ensure that requests do not "pile up"
-
-		this.attr("location", path); // set the new location
-
+		this._passBack(path);
 	    },
 
-	    // Event entrypoint for other objects to attach to.
-	    locationChanged : function() { }
+	    _passBack : function(path) {
+		this._dhmManager.dhmRequest({type : wwwmoa.dhm.DHM_REQ_WDNAV, args : { path : path}});		    
+	    },
 
+	    dhmNotify : function(message) {
+		if(message.type == wwwmoa.dhm.DHM_MSG_WDNAV) {
+		    this.attr("locked", true); // ensure that requests do not "pile up"
+		    this.attr("location", message.args.path); // set the new location
+		}
+	    },
 
-	    })});
+	    dhmPoll : function(poll) {
+		if(poll.type == wwwmoa.dhm.DHM_PLL_SHUTDOWN)
+		    return true;
+		else if(poll.type == wwwmoa.dhm.DHM_PLL_WDNAV)
+		    return !this.attr("locked");
+ 	    },
+
+	    dhmPoint : function(manager) {
+		this._dhmManager=manager;
+	    }
+
+	})});
 
