@@ -64,107 +64,83 @@ def f_gcfrac(l1, l2):
     t = x.count('t')
     return float(g+c) / (g + c + a + t)
 
-alldata = {}
 perfile = {}
 for filename in args:
+    l.info("processing %s" % filename)
     i=0
     dists = []
     dd = {}
     for a in options.analysis:
+        l.debug("preparing stat %s" % a)
         dd[a] = []
     for l1, l2 in pairreader(filename):
         i+=1
         if options.maxno and i > options.maxno:
             break
         for what in options.analysis:
-            dd[what].append(eval('f_%s(l1, l2)' % what))
+            val = eval('f_%s(l1, l2)' % what)
+            dd[what].append(val)
+            if i < 5:
+                l.debug("adding %s %s" % (what, val))
 
     for what in options.analysis:
+        l.debug("collating %s for file %s" % (what, filename))
         dd[what].sort()
         dd[what].reverse()
+    l.debug("storing data for %s" % filename)
     perfile[filename] = dd
 
-#write datafiles
-dataFiles = {}
-for fn in args:
-    H,dataFiles[fn] = tempfile.mkstemp()
-    l.info("writing datafile %s" % dataFiles[fn])
+l.info("Data collection complete")
+l.debug("I have info on these files:")
+for f in perfile.keys():
+    l.debug(" -  %s" % f)
 
-    F = os.fdopen(H, 'w')
-    F.write("%s\n" % "\t".join(options.analysis))
-    for i in range(len(perfile[fn][options.analysis[0]])):
-        F.write("%s\n" % "\t".join([str(perfile[fn][what][i]) for what in options.analysis]))
-    F.close()
 
-basename = options.basename
-#write R script
-nofiles = len(args)
-fileList = ','.join(['"%s"' % x for x in args])
+#start gathering of overall statistics
 
-H,RScript = tempfile.mkstemp()
-F = os.fdopen(H, 'w')
-F.write("#RScript %s\n\n" % RScript)
-F.write("require(RColorBrewer)\n\n")
-F.write("cols <- brewer.pal(%(nofiles)s, 'Dark2')\n" % locals())
-F.write("filelist <- c(%(fileList)s)\n\n" % locals())
+statlist = ['no', 'min', 'max', 'sum', 'mean', 'median',
+        'stdev', 'n10', 'n50', 'n90']
 
-for fn in range(len(args)):
-    tmpfile = dataFiles[args[fn]]
-    F.write('A%(fn)d <- read.table("%(tmpfile)s", header=T)\n' % locals())
-F.write("\n\n")
+statlist = ['no', 'min', 'max', 'sum', 'mean', 'median', 'stdev']
 
+def get_no(data):
+    return len(data)
+def get_min(data):
+    return min(data)
+def get_max(data):
+    return max(data)
+def get_sum(data):
+    return sum(data)
+def get_mean(data):
+    return stats.mean(data)
+def get_median(data):
+    return stats.median(data)
+def get_stdev(data):
+    return stats.stdev(data)
+
+print '-' * 80
 for a in options.analysis:
-    F.write('png("%(basename)s.%(a)s.png", width=1000, 700, pointsize=12)\n' % locals())
-    for fn in range(len(args)):
-        fn2 = fn + 1
-        if fn == 0:
-            F.write("plot(A%(fn)d$%(a)s, col=cols[%(fn2)d], lwd=3, type='l')\n" % locals())
-        else:
-            F.write("points(A%(fn)d$%(a)s, col=cols[%(fn2)d], lwd=3, type='l')\n" % locals())
+    print "|", a
 
-    F.write('legend ("topright", filelist, lty=1, col=cols, bty="n")\n\n' % locals())
-    F.write('dev.off()\n\n')
-    
-#and the histograms
-for a in options.analysis:
-    for fn in range(len(args)):
-        F.write("H%(fn)s <- hist(A%(fn)s$%(a)s, breaks=100)\n" % locals())
+    print " " * 45,
+    for s in statlist:
+        print "%15s" % s,
+    print
 
-    F.write("\n\nxMax <-max(")
-    F.write(", ".join(["H%s$mids" % fn for fn in range(len(args))]))
-    F.write(")\n\n");
-    F.write("\n\nxMin <-min(")
-    F.write(", ".join(["H%s$mids" % fn for fn in range(len(args))]))
-    F.write(")\n\n");
-    F.write("\n\nyMax <-max(")
-    F.write(", ".join(["H%s$count" % fn for fn in range(len(args))]))
-    F.write(")\n\n");
-    F.write("\n\nyMin <-min(")
-    F.write(", ".join(["H%s$count" % fn for fn in range(len(args))]))
-    F.write(")\n\n");
-    F.write("xMax\n");
-    F.write("xMin\n");
-    F.write("yMax\n");
-    F.write("yMin\n");
+    for p in perfile.keys():
+        print "%-45s" % os.path.basename(p),
+        data = perfile[p][a]
+        for s in statlist:            
+            res =  eval('get_%s(data)' % s)
+            print '%15s' % res,
+        print
 
-    F.write('png("%(basename)s.%(a)s.hist.png", width=1000, 700, pointsize=12)\n' % locals())
-    for fn in range(len(args)):
-        fn2 = fn + 1
-        if fn == 0:
-            F.write('''
-                plot(H%(fn)s$mids, H%(fn)s$counts,
-                     col=cols[%(fn2)d],
-                     xlim=c(xMin, xMax), ylim=c(yMin, yMax),
-                     xlab="%(a)s", ylab="frequency",
-                     lwd=1, type="l")\n
-            ''' % locals())
-        else:
-            F.write("points(H%(fn)s$mids, H%(fn)s$counts, col=cols[%(fn2)d], lwd=1, type='l')\n" % locals())
-
-    F.write('legend ("topright", filelist, lty=1, col=cols, bty="n")\n\n' % locals())
-    F.write('dev.off()\n\n')
-
-F.close()
-
-#os.system('cat %s' % RScript)
-os.system("R --vanilla < %(RScript)s >> R.out 2>> R.err" % locals())
+    print
+    print "%-45s" % "total",
+    data = []
+    for p in perfile.keys():
+        data.extend(perfile[p][a])
+    for s in statlist:
+        res = eval('get_%s(data)' % s)
+        print '%15s' % res,
+    print
