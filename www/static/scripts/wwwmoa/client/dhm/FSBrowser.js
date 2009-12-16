@@ -257,6 +257,26 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 		    this.attr("startIndex", newsi);
 	    },
 
+	    // Checks whether or not navigating to the given index count can be done successfully.
+	    _isIndexCountOpValid : function(newic) {
+		if((typeof newic != "number")&& (typeof newic != "Number"))
+		    return false;
+
+		if(newic==Number.NaN)
+		    return false;
+
+		if(newic<1) 
+		    return false;
+		
+		return true;
+	    },
+
+	    // Updates the "indexCount" attribute, if navigating to the given index count can be done successfully.
+	    _indexCountOp : function(newic) {
+	        if(this._isIndexCountOpValid(newic))
+		    this.attr("indexCount", newic);
+	    },
+
 	    // Checks whether or not navigating to the given column count can be done successfully.
 	    _isColCountOpValid : function(newic) {
 		if((typeof newic != "number")&& (typeof newic != "Number"))
