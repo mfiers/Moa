@@ -29,7 +29,7 @@ INCLUDE_MOABASE_PRE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
-include $(shell echo $$MOABASE)/template/gmsl
+include $(MOABASE)/template/gmsl
 
 ## Files that moa uses
 moa_system_files = Makefile moa.mk moa.archive 
@@ -67,11 +67,15 @@ endif
 moa_fileset_define = \
 	$(eval moa_must_define += $(1)_dir) \
 	$(eval moa_may_define += $(1)_extension) \
+	$(eval moa_may_define += $(1)_glob) \
 	$(eval $(1)_dir_help = $(3)) \
 	$(eval $(1)_dir_type = directory) \
 	$(eval $(1)_extension_help = file extension for the files in $(1)_dir) \
 	$(eval $(1)_extension_type = string) \
 	$(eval $(1)_extension_default = $(2)) \
+	$(eval $(1)_glob_help = glob to select a subset of files from $(1)_dir) \
+	$(eval $(1)_glob_type = string) \
+	$(eval $(1)_glob_default=*) \
 	$(eval _moa_filesets += $(1))
 
 

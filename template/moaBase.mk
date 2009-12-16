@@ -30,5 +30,5 @@
 ## variable to make sure that we don't inlcue moabase twice, accidentallly
 
 ifndef INCLUDE_MOABASE
- include $(shell echo $$MOABASE)/template/__moaBase.mk
+ include $(MOABASE)/template/__moaBase.mk
 endif

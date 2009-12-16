@@ -22,17 +22,17 @@
 ## define all variables here that are not depending on moa.mk
 ###############################################################################
 
-include $(shell echo $$MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moaBasePre.mk
 
 SHELL := /bin/bash
 INCLUDE_MOABASE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
-include $(shell echo $$MOABASE)/template/gmsl
+include $(MOABASE)/template/gmsl
 
 ## Load moa wide configuration
-include $(shell echo $$MOABASE)/etc/moa.conf.mk
+include $(MOABASE)/etc/moa.conf.mk
 
 ##			$(warning Setting $v to default value $($v_default)) \
 #fill in the default values of each variable
@@ -44,7 +44,7 @@ $(foreach v,$(moa_must_define) $(moa_may_define),				\
 )
 
 $(foreach v,$(_moa_filesets), \
-	$(eval $(v)_files = $(wildcard $($(v)_dir)/*.$($(v)_extension))))
+	$(eval $(v)_files = $(wildcard $($(v)_dir)/$($(v)_glob).$($(v)_extension))))
 
 
 moa_fileset_init = $(warning use of moa_fileset_init is depreacted)
@@ -136,7 +136,6 @@ moa_welcome:
 ## If moa.mk is defined, and not yet imported: do so.
 ## moa.mk is used to store job specific variables
 ifndef MOAMK_INCLUDE
-$(shell moa conf resolve)
 -include ./moa.mk
 MOAMK_INCLUDE=done
 endif
