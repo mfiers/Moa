@@ -35,7 +35,6 @@ endif
 
 ##### Derived variables for this run
 
-$(call moa_fileset_init,f2b_input)
 $(call moa_fileset_remap,f2b_input,f2b_bfa,bfa)
 
 test:
