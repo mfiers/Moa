@@ -162,10 +162,8 @@ def kill(id):
 def status():
     ids=get_running_instances()
 
-    print "Instance Listing"
-    print "----------------------------------------------------------"
-    print " ID   |  Port  |  Content Directory"
-    print "----------------------------------------------------------"
+
+    print "ID      Port    Content Directory"
 
     for i in ids:
         p=get_instance_meta_path(i)
@@ -177,7 +175,7 @@ def status():
             pf.close()
 
 
-        print str(i).center(5)[:5]+"   "+marr[0].center(5)[:5]+"   "+marr[1].center(42)[:42]
+        print str(i).ljust(5)[:5]+"   "+marr[0].ljust(5)[:5]+"   "+marr[1]
 
 def killall():
     print_sys_message("I will now kill all instances.")
