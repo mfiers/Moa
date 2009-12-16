@@ -120,6 +120,9 @@ if opt.act_run:
     if opt.home==None and not opt.flag_preserve:
         print_fatal_error_message("Sorry, but you did not specify a content directory using -m.  This is required when using -r.  Please use -h for more information.")
 
+
+    opt.home=os.path.expanduser(opt.home)
+
     if opt.port<1 or opt.port>65535:
         print_fatal_error_message("Sorry, but the TCP port you specified is outside the range allowed.")
     elif opt.port<1024:
