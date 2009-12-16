@@ -23,76 +23,94 @@ moa_description_bowtie = Run BOWTIE on an set of input files (query) \
 
 #variables
 moa_must_define += bowtie_db
-bowtie_db_help = Bowtie db
-bowtie_db_default_attrib = bowtiedb
+bowtie_db_help = The bowtie database to use. It is allowed to define	\
+one of the bowtie database files (.[0-9].ebwt).
+bowtie_db_type = file
 
 moa_must_define += bowtie_input_dir
 bowtie_input_dir_help = input dir with the query files
-bowtie_input_dir_default_attrib = pwd
+bowtie_input_type = directory
+
 moa_may_define += bowtie_input_extension
-bowtie_input_extension_help = Extension of the input files, \
-  defaults to fastq
+bowtie_input_extension_help = Extension of the input files
+bowtie_input_extension_type = string
+bowtie_input_extension_default = fastq
 
 moa_may_define += bowtie_input_format
-bowtie_input_format_help = Format of the input files, defaults \
-  to fastq
+bowtie_input_format_help = Format of the input files
+bowtie_input_format_default = fastq
+bowtie_input_format_type = set
+bowtie_input_format_allowed = fastq fasta
 
 moa_may_define += bowtie_extra_params
 bowtie_extra_params_help = extra parameters to feed bowtie
+bowtie_extra_params_type = string
 
 moa_may_define += bowtie_paired_ends 
 bowtie_paired_ends_help = perform a paired end analysis. If so, the	\
 input files are expected to be of the form							\
- '\*_1.$(bowtie_input_extension)' and 								\
-'\*_2.$(bowtie_input_extension)'
+ '\*$(bowtie_forward_suffix).$(bowtie_input_extension)' and			\
+'\*$(bowtie_reverse_suffix).$(bowtie_input_extension)'
+bowtie_paired_ends_type = set
+bowtie_paired_ends_allowed = T F
+bowtie_paired_ends_default = F
 
-moa_may_define += bowtie_forward_name bowtie_reverse_name
-bowtie_forward_name_help = Last part of the sequence name 			\
-identifying a file with forward reads (default _1)
-bowtie_reverse_name_help = Last part of the sequence name 			\
-identifying a file with reverse reads (default _1)
+moa_may_define += bowtie_forward_suffix
+bowtie_forward_suffix_help = Last part of the sequence name 			\
+identifying a file with forward reads
+bowtie_forward_suffix_default=_1
+bowtie_forward_suffix_type=string
 
-moa_may_define += bowtie_output_name
-bowtie_output_name_help = output file name, defaults to 'output'
+moa_may_define += bowtie_reverse_suffix
+bowtie_reverse_suffix_help = Last part of the sequence name 			\
+identifying a file with reverse reads
+bowtie_reverse_suffix_default=_2
+bowtie_reverse_suffix_type=string
+
+moa_may_define += bowtie_output_format
+bowtie_output_format_help = Format of the output file
+bowtie_output_format_type = set 
+bowtie_output_format_allowed = bowtie bam sam
+bowtie_output_format_default = bam
 
 moa_may_define += bowtie_insertsize
 bowtie_insertsize_help = Expected insertsize
+bowtie_insertsize_type = integer
 
 moa_may_define += bowtie_insertsize_sed
-bowtie_insertsize_sed_help += A sed expression that filters the insert size	\
-from the input file name. Ignored if bowtie_insertsize is defined.s
+bowtie_insertsize_sed_help += A sed expression that filters the insert	\
+size from the input file name. Ignored if bowtie_insertsize is			\
+defined.
+bowtie_insertsize_sed_type = string
+
 
 moa_may_define += bowtie_insertsize_min bowtie_insertsize_max
 bowtie_insertsize_min_help = multiplier determining the minimal		\
 acceptable value for two paired reads to be apart. If the			\
 bowtie_insertsize is 10000 and this parameter is set at 0.8, than	\
-reads that are closer together than 8000 nt are rejected
+reads that are closer together than 8000 nt are rejecte
+dbowtie_insertsize_min_type = float
+bowtie_insertsize_min_default = 0.1
+
+moa_may_define += bowtie_insertsize_max
 bowtie_insertsize_max_help += as bowtie_insert_min, but setting a max	\
-insert size
+  insert size
+bowtie_insertsize_max_type = float
+bowtie_insertsize_max_default = 10
 
+#########################################################################
+# Prerequisite testing
+moa_prereq_simple += samtools bowtie
 
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
-endif
+include $(shell echo $$MOABASE)/template/moaBase.mk
 
 ##### Derived variables for this run
 
-
-bowtie_input_extension ?= fastq
-bowtie_input_format ?= fastq
-bowtie_output_name ?= output
-
-bowtie_forward_name ?= _1
-bowtie_reverse_name ?= _2
-
 #shortcuts
-bfn = $(bowtie_forward_name)
-brn = $(bowtie_reverse_name)
+bfn = $(bowtie_forward_suffix)
+brn = $(bowtie_reverse_suffix)
 
 bowtie_paired_ends ?= F
-
-moa_register_extra += bowtie_output
-moa_register_bowtie_output = $(shell echo `pwd`)/$(bowtie_output_name)
 
 ifeq ($(bowtie_input_format),fastq)
 bowtie_input_format_param = -q
@@ -100,33 +118,46 @@ endif
 ifeq ($(bowtie_input_format),fasta)
 bowtie_input_format_param = -f
 endif
-ifndef bowtie_input_format_param
-$(error Invalid input format)
+
+ifeq ($(bowtie_output_format),bam)
+bowtie_output_format_param=-S
+bowtie_output_convert=| samtools view -bS - 
+endif
+ifeq ($(bowtie_output_format),sam)
+bowtie_output_format_param=-S
+bowtie_output_convert=
+endif
+ifeq ($(bowtie_output_format),bowtie)
+$(warning, set output format to default bowtie)
+bowtie_output_format_param =
+bowtie_output_convert = 
 endif
 
 ifeq ($(bowtie_paired_ends),T) 
 bowtie_input_files = $(wildcard $(bowtie_input_dir)/*$(bfn).$(bowtie_input_extension))
-bowtie_output_files = $(addprefix p_,\
-		$(patsubst %$(bfn).$(bowtie_input_extension), %, $(notdir $(bowtie_input_files))))
+bowtie_output_files = $(addprefix pair_, $(addsuffix .$(bowtie_output_format),\
+		$(patsubst %$(bfn).$(bowtie_input_extension), %, $(notdir $(bowtie_input_files)))))
 else
 bowtie_input_files = $(wildcard $(bowtie_input_dir)/*.$(bowtie_input_extension))
-bowtie_output_files = $(addprefix u_,\
-	$(patsubst %.$(bowtie_input_extension), %, $(notdir $(bowtie_input_files))))
+bowtie_output_files = $(addprefix single_, $(addsuffix .$(bowtie_output_format),\
+		$(patsubst %$(bfn).$(bowtie_input_extension), %, $(notdir $(bowtie_input_files)))))
 endif
 
-# -u 30 --solexa1.3-quals 
-# 
 .PHONY: bowtie_prepare
 bowtie_prepare:
 
 .PHONY: bowtie_post
 bowtie_post: 
 
-test:
+test: test_input $(addprefix check_exists_, $(bowtie_output_files))
+
+test_input:
 	@echo "INPUT"
 	@for x in $(bowtie_input_files); do echo $$x; done
-	@echo "OUTPUT"
-	@for x in $(bowtie_output_files); do echo $$x; done
+
+check_exists_%:
+	$e if [[ -f '*x' ]]; then echo -n "* "; fi
+	$e echo $*
 
 comma:=,
 .PHONY: bowtie
@@ -134,25 +165,27 @@ bowtie: $(bowtie_output_files)
 	@echo Processed $(bowtie_output_files)
 
 
-u_%: $(bowtie_input_dir)/%.$(bowtie_input_extension)
+single_%.$(bowtie_output_format): \
+		$(bowtie_input_dir)/%.$(bowtie_input_extension)
 	echo bowtie $(bowtie_input_format_param) \
-		$(bowtie_extra_params) $(bowtie_db) $< $@
+		$(bowtie_extra_params) $(bowtie_db) $< $(bowtie_output_convert) > $@ 
 
 imn=$(bowtie_insertsize_min)
 imx=$(bowtie_insertsize_max)
 bis=$(bowtie_insertsize_sed)
-p_%: $(bowtie_input_dir)/%$(bfn).$(bowtie_input_extension) $(bowtie_input_dir)/%$(brn).$(bowtie_input_extension)
-	@IS="$(bowtie_insertsize)";\
+ls -l pair_%.$(bowtie_output_format): \
+		$(bowtie_input_dir)/%$(bfn).$(bowtie_input_extension) \
+		$(bowtie_input_dir)/%$(brn).$(bowtie_input_extension)
+	$e IS="$(bowtie_insertsize)";\
 		sizeDef="";\
 		[[ ! "$$IS" && "$(bis)" ]] && IS=`echo "$*" | sed "$(bis)"`;\
 		[[ "$$IS" ]] && sizeDef=`python -c "print \"-I %d -X %d\" % ($$IS * $(imn), $$IS*$(imx))"`;\
 		$(call echo, Executing bowtie for $<);\
-		echo bowtie $(bowtie_input_format_param) $(bowtie_extra_params) $$sizeDef $(bowtie_db) \
-			 -1 $(word 1,$^) -2 $(word 2,$^) $@ ;\
-		bowtie $(bowtie_input_format_param) $(bowtie_extra_params) $$sizeDef $(bowtie_db) \
-			 -1 $(word 1,$^) -2 $(word 2,$^) $@
+		bowtie $(bowtie_input_format_param) $(bowtie_output_format_param) 			\
+			$(bowtie_extra_params) $$sizeDef $(bowtie_db) 							\
+			 -1 $(word 1,$^) -2 $(word 2,$^) $(bowtie_output_convert) > $@
 
 bowtie_clean:
-	-rm -f $(bowtie_output_name)
+	-rm -f $(bowtie_output_file)
 
 
