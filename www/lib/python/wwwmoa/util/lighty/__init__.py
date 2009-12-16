@@ -12,7 +12,7 @@ from prompt import print_fatal_error_message
 from prompt import print_message
 from prompt import do_bool_prompt
 
-from conf import port_has_env
+from actions import port_has_env
 
 import os
 import os.path
@@ -59,14 +59,14 @@ cl_parser.add_option(
     )
 
 cl_parser.add_option(
-    "-s", "--status",
+    "-l", "-s", "--status",
     action="store_true",
     dest="act_status",
     help="display the currently running instances of lighttpd that were started using this utility"
     )
 
 cl_parser.add_option(
-    "-l", "--kill-all",
+    "-K", "--kill-all",
     action="store_true",
     dest="act_kill_all",
     help="terminate all instances of lighttpd that were started using this utility"
