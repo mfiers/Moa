@@ -16,10 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-maintarget: check mummer
 
 ################################################################################
 # Variable checks & definition & help
+
+include $(shell echo $$MOABASE)/template/moaBasePre.mk
+
 moa_ids += mummer
 moa_title_mummer = mummer
 moa_description_mummer = Run mummer between two sequences
@@ -29,30 +31,19 @@ moa_targets += mummer clean
 mummer2seq_help = run Mummer
 
 #variables
-moa_must_define += mum_input_dir_a mum_input_dir_b
-mum_input_dir_a_help= This set is compared to the sequences in input_dir_b. \
-  only a forward comparison is made (a against b, not the other way \
-  round )
-mum_input_dir_b_help= The set to compare against
+$(call moa_fileset_define,mum_input_a,fasta,Set 1 input fasta files)
+$(call moa_fileset_define,mum_input_b,fasta,Set 1 input fasta files)
 
-
-moa_may_define += mum_input_extension mum_breaklen
+moa_may_define += mum_breaklen
 mum_breaklen_help = Set the distance an alignment extension will attempt \
 	to extend poor scoring regions before giving up (default 200)
+mum_breaklen_default = 200
+mum_breaklen_type = integer
 
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
-ifdef $(input_extension)
-	$(error Deprecated variable used)
-endif
-
-mum_breaklen ?= 200
-mum_input_extension ?= fasta
-ix = $(mum_input_extension)
-mum_input_files_a = $(addprefix a__, \
-		$(wildcard $(mum_input_dir_a)/*.$(mum_input_extension)))
-mum_input_files_b = $(wildcard \
-		$(mum_input_dir_b)/*.$(mum_input_extension))
+mum_a_set = $(addprefix a__, $(mum_input_a_files))
+mum_b_set = $(mum_input_b_files)
 
 .PHONY: mummer_prepare
 mummer_prepare:
@@ -61,17 +52,18 @@ mummer_prepare:
 mummer_post: 
 
 mummer_debug:
-	@echo $(mum_input_dir_a)	
-	@echo $(mum_input_dir_b)	
-	@echo $(mum_input_files_a)
-	@echo $(mum_input_files_b)
+	@echo $(mum_a_set)
+	@echo $(mum_b_set)
 
 .PHONY: mummer
-mummer: $(mum_input_files_a)
+mummer: $(mum_a_set)
 
-$(mum_input_files_a): a__%: $(mum_input_files_b)
-	for against in $?; do \
-		prefix=`basename $* .$(ix)`__`basename $$against .$(ix)` ;	\
+aix = $(mum_input_a_extension)
+bix = $(mum_input_b_extension)
+
+$(mum_a_set): a__%: $(mum_b_set)
+	$e for against in $?; do \
+		prefix=`basename $* .$(aix)`__`basename $$against .$(bix)` ;	\
 		nucmer --maxmatch -b $(mum_breaklen) --prefix=$$prefix 		\
 				$* $$against || true ;								\
 		show-coords -rcl $$prefix.delta > $$prefix.coords || true;	\
@@ -81,7 +73,6 @@ $(mum_input_files_a): a__%: $(mum_input_files_b)
 				-t postscript -p $$prefix $$prefix.delta || true; 	\
 		mummerplot -t png -p Raw_$$prefix $$prefix.delta || true;			\
 		mummerplot -t postscript -p Raw_$$prefix $$prefix.delta || true; 	\
-		ps2pdf Raw_$$prefix.ps;											\
 		ps2pdf Raw_$$prefix.ps;											\
 	done
 
