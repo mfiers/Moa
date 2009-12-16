@@ -50,7 +50,7 @@ def do_int_prompt(instructions=""):
             return response_int
         except:
             print_message("""Sorry, but you did not enter an integer,
-                or something that could be converted to an integer.")
+                or something that could be converted to an integer.""")
 
 def show_help():
 
