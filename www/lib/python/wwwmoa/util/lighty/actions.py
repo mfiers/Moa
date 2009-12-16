@@ -75,6 +75,9 @@ def get_running_instances():
 
     return ids
 
+def port_has_env(port):
+    return os.access(get_env_file_path(port), os.F_OK)
+
 def run(port, home, penv):
     print_sys_message("I will now run a new instance of lighttpd for WWWMoa.")
 

@@ -44,9 +44,6 @@ def get_env_file(home):
 
 """
 
-def port_has_env(port):
-    return os.access(get_env_file_path(port), os.F_OK)
-
 def get_config_file(port, home):
     return """
 
