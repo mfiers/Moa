@@ -1,9 +1,9 @@
 
-dojo.provide("wwwmoa.client.job.Params");
+dojo.provide("wwwmoa.client.store.Params");
 dojo.require("dojo.string");
 
 
-dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.job.Params", null, {
+dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.store.Params", null, {
 		
 		_params : null,
 

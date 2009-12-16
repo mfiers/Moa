@@ -1,7 +1,7 @@
 
 dojo.provide("wwwmoa.client.dhm.PBrowser");
 
-dojo.require("wwwmoa.client.job.Params");
+dojo.require("wwwmoa.client.store.Params");
 dojo.require("dijit._Widget");
 
 dojo.require("dijit.Tooltip");
@@ -95,8 +95,6 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 	    // Implementation for receiving instruction to find job information for current location.
 	    doNavAction : function() {
-		var a=this;
-		
 		if(this.attr("assumeNoProject")) {
 		    this.doNoProjectAction();
 		    return;
@@ -106,9 +104,9 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
     
 		this.attr("locked", true);
 
-		wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-jobinfo", this.attr("location")),function(data) {
-			a.dataCallback.call(a, data); // use the callback function of this object
-		    } , 8192); // be somewhat patient about receiving the listing
+		wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-jobinfo", this.attr("location")),dojo.hitch(this,function(data) {
+			    this.dataCallback(data); // use the callback function of this object
+		    }) , 8192); // be somewhat patient about receiving the listing
 	    },
 
 	    // Implementation for handling the case when a project has not be selected.
@@ -155,7 +153,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		var groups;
 		var group_params;
 		var param;
-		var a=this;
+
 
 		this.attr("response", response); // save the parsed response we have received for later use
 		
@@ -166,7 +164,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		}
 
 		// create params store
-		this._params=new wwwmoa.client.job.Params();
+		this._params=new wwwmoa.client.store.Params();
 
 		// decode params
 		this._params.setParams(this._params.transParamsOTI(response["parameters"]));
@@ -214,7 +212,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 		this._saveButtons[0]=dojo.create("button", {
 			    innerHTML : "No Changes Made Yet",
-			    onclick : function() {a._saveParameters()},
+			    onclick : dojo.hitch(this, function() {this._saveParameters();}),
 			    disabled : true
 			});
 
@@ -343,7 +341,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 
 		this._saveButtons[1]=dojo.create("button", {
 			    innerHTML : "No Changes Made Yet",
-			    onclick : function() {a._saveParameters()},
+			    onclick : dojo.hitch(this,function() {this._saveParameters();}),
 			    disabled : true
 			});
 
@@ -469,26 +467,23 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 		},
 
 		_saveParameter : function(name, val) {
-		    var a=this;
-
 		    this._params.rewriteParam(name, val);
 
-		    wwwmoa.io.ajax.post(wwwmoa.io.rl.get_api("moa-jobparam?key="+wwwmoa.io.rl.url_encode(name)+"&value="+wwwmoa.io.rl.url_encode(val), this.attr("location")),function(data) {
-			    a._registerSave();
-			} , 8192); // be somewhat patient about receiving the listing
+		    wwwmoa.io.ajax.post(wwwmoa.io.rl.get_api("moa-jobparam?key="+wwwmoa.io.rl.url_encode(name)+"&value="+wwwmoa.io.rl.url_encode(val), this.attr("location")),dojo.hitch(this,function(data) {
+			    this._registerSave();
+			}) , 8192); // be somewhat patient about receiving the listing
 		},
 
 		_createParameterWidgetGroup : function(name, val, deflt, type) {
-		    var a=this;
 		    var par_dom=dojo.create("div", null);
 		    var cur_widget;
 		    var obj_tmp;
 
 		    cur_widget=this._createParameterWidget(val, type);
 		    
-		    dojo.connect(cur_widget.domNode, "keypress", function() {
-			a._registerChange();
-			});
+		    dojo.connect(cur_widget.domNode, "keypress", dojo.hitch(this,function() {
+			this._registerChange();
+			}));
 
 		    par_dom.appendChild(cur_widget.domNode);
 			
@@ -499,7 +494,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", dijit._Wid
 			obj_tmp=dojo.create("button", {
 				innerHTML : "<span style=\"color:#0000FF; font-weight:bold; font-family:arial\">D</span>",
 				title : "Click to use the default value.",
-				onclick : new Function("dijit.byId('"+wwwmoa.formats.js.fix_text(this.id)+"')._registerChange(); dijit.byId('"+wwwmoa.formats.js.fix_text(cur_widget.id)+"').attr('value', '"+wwwmoa.formats.js.fix_text(deflt)+"');")
+				onclick : dojo.hitch(this,  new Function("this._registerChange(); dijit.byId('"+wwwmoa.formats.js.fix_text(cur_widget.id)+"').attr('value', '"+wwwmoa.formats.js.fix_text(deflt)+"');"))
 			    });
 
 			par_dom.appendChild(obj_tmp);			    

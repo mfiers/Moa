@@ -14,6 +14,7 @@ dojo.addOnLoad(function() {
 
 		uiComp : {},
 		uiCompDHM : [],
+		_isCurrentlyModal : false,
 
 		startup : function() {
 		    if(this.uiComp.parent==null)
@@ -24,9 +25,11 @@ dojo.addOnLoad(function() {
 		},
 
 		buildRendering : function() {
+
 		    this.uiComp.parent=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
 
-		    this.domNode=this.uiComp.parent.domNode;
+		    this.domNode=dojo.create("div", null);
+		    this.domNode.appendChild(this.uiComp.parent.domNode);
 
 		    this.uiComp.nav=new dijit.layout.ContentPane({region : "top", splitter : false, style : "height:32px"});
 
@@ -59,19 +62,71 @@ dojo.addOnLoad(function() {
 		    dojo.place(this.uiComp.pbrowser.domNode, this.uiComp.pbrowserpane.domNode);
 
 		   
-		    this.uiComp.parent.addChild(new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."}));
+		    this.uiComp.bottom=new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."});
 
+		    this.uiComp.parent.addChild(this.uiComp.bottom);
 
 		    for(var x=0; x<this.uiCompDHM.length; x++) 
 			this.uiCompDHM[x].dhmPoint(this);
 		},
 
-	        dhmRequest : function(request) {
+                dhmRequest : function(request, dhm) {
 		    var poll_good;
 		    var poll_ret;
 
 		    if(request.type==wwwmoa.dhm.DHM_REQ_MODAL) {
-			return null;
+
+			var modal_layout;
+			var modal_container;
+			var modal_exit;
+
+			if(this._isCurrentlyModal)
+			    return false;
+
+
+			modal_layout=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
+
+			modal_container=new dijit.layout.ContentPane({region : "center", splitter : false, style : ""});
+
+			modal_exit=new dijit.layout.ContentPane({region : "leading", splitter : false, style : "width:100px; font-size:36pt; font-weight:bold; cursor:pointer; text-align:center", content : "<div style=\"font-size:14pt\">CLICK<br>TO<br>RETURN</div><div title=\"Click to return to main view.\">&laquo;<br>&laquo;<br>&laquo;</div>"});
+
+			modal_layout.addChild(modal_container);
+
+			modal_layout.addChild(modal_exit);
+
+
+			this._isCurrentlyModal=true;
+
+			for(var x=0; x<this.uiCompDHM.length; x++) 
+			    this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_DISPLAY_LOCK, args : {}});
+
+
+			this.domNode.removeChild(this.uiComp.parent.domNode);
+			this.domNode.appendChild(modal_layout.domNode);
+
+
+			modal_layout.startup();
+
+			if(dhm!=null)
+			    dhm.dhmNotify({type : wwwmoa.dhm.DHM_MSG_MODAL_GAIN_CTRL, args : {node : modal_container.containerNode}});
+
+			dojo.connect(modal_exit, "onMouseEnter", function() { this.domNode.style.color="#808080"; });
+			dojo.connect(modal_exit, "onMouseLeave", function() { this.domNode.style.color="#000000"; });
+
+			dojo.connect(modal_exit, "onClick", dojo.hitch(this, function() {
+				modal_layout.destroy(false);
+
+				this.domNode.appendChild(this.uiComp.parent.domNode);
+
+				this._isCurrentlyModal=false;
+
+				dhm.dhmNotify({type : wwwmoa.dhm.DHM_MSG_MODAL_LOOSE_CTRL, args : {node : modal_container.containerNode}});
+
+				for(var x=0; x<this.uiCompDHM.length; x++)
+				    this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_DISPLAY_UNLOCK, args : {}});
+			    }));
+
+			return true;
 		    }
 		    else if(request.type==wwwmoa.dhm.DHM_REQ_WDNAV) {
 			if(request.args.path==null)
@@ -106,16 +161,7 @@ dojo.addOnLoad(function() {
 				this.uiComp.nav.domNode.innerHTML=message.args.data;
 			}
 		    }
-		},
-
-		showAbout : function() {
-		    
-		    var dialog=new dijit.Dialog({title : "About WWWMoa", content : "<img src=\""+wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("MOAfavA"))+"\" alt=\"\"> WWWMoa 0.1<br><br><a href=\"/about\">Click here</a> to visit the official website for Moa."});
-		    this.uiComp.parent.addChild(dialog);
-
-		    dialog.show();
-		}
-		
+		}		
 
 
 	    })});

@@ -15,6 +15,8 @@ import os.path
 import json
 import time
 import sys
+import stat
+import subprocess
 
 from wwwmoa.api import output_error
 from wwwmoa.api import in_root
@@ -28,6 +30,28 @@ from wwwmoa.api import output_json_headers
 def run(args=None, env=None, path=None):
 
     (command_min, command_max)=(None, None) # we will start off by assuming that a valid min and max was NOT passed
+    (command_filter, command_filter_type, command_filtered)=(None, None, False)
+
+    try:
+        command_filter=env["params"]["filter"]
+        command_filter_type=env["params"]["filter-type"]
+
+        if command_filter_type==None:
+            raise
+
+        if command_filter==None:
+            raise
+
+        command_filter=command_filter.strip()
+        command_filter_type=command_filter_type.strip().lower()
+        
+        if command_filter_type!="exactly" and command_filter_type!="contains":
+            raise
+
+        command_filtered=True
+
+    except:
+        (command_filter, command_filter_type)=(None, None)
 
     try: # the inputs may be invalid (or non-existant), so we need to be careful
         command_min=int(env["params"]["start"]) # attempt to retrieve min
@@ -85,29 +109,22 @@ def run(args=None, env=None, path=None):
     ls_file=[] # create list that will contain just the files
     ls_dir=[] # create list that will contain just the dirs
     ls_final=[] # create the final list that will be sent back to the user
+    ls_filter=[]
 
 
-    # for efficiency, switch working directories
-    wd_old=os.getcwd() # save old working directory
-    os.chdir(path) # select new working directory
-        
-    for l in ls: # for each entry in the raw directory listing
-        if os.path.isfile(l): # if the entry is a file
-            ls_file.append(l) # add it to the file list
-        elif os.path.isdir(l): # if the entry is a dir
-            ls_dir.append(l) # add it to the dir list
+    if command_filtered:
+        if command_filter_type=="contains":
+            for l in ls:
+                if l.find(command_filter)!=-1:
+                    ls_filter.append(l)
 
+        if command_filter_type=="exactly":
+            for l in ls:
+                if l==command_filter:
+                    ls_filter.append(l)
 
-    os.chdir(wd_old) # select old working directory
+        ls=ls_filter
 
-
-    # place the entries in the correct order
-    ls=[]
-    ls.extend(ls_dir) # directories go first
-    ls.extend(ls_file) # files come after directories
-    ls_dir=[] # reset dir list
-    ls_file=[] # reset file list
-    
 
     # before we cut out some entries, we should capture the size of the listing
     ls_total_count=len(ls)
@@ -160,5 +177,6 @@ def run(args=None, env=None, path=None):
                 "x-dir-is-moa" : moachecker.isMoa(path),
                 "ls" : ls_final, # the final listing
                 "ls-available" : ls_total_count, # the total number of entries that are potentially available
-                "ls-returned" : len(ls_final) # the total number of entries that we returned
+                "ls-returned" : len(ls_final), # the total number of entries that we returned
+                "ls-filtered" : command_filtered
                 }, 0))) # the ttl is 0
