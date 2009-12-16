@@ -1,31 +1,38 @@
 import os
 import sys
 
+from moa.logger import l
+
+def formatText(t):
+    return " ".join(t.split())
+
 def print_sys_message(str):
-    print_message("# "+str)
+    l.info(formatText(str))
 
 def print_error_message(str):
-    print_message("[!] "+str)
+    l.error(formatText(str))
 
 def print_fatal_error_message(str):
-    print_error_message(str)
+    l.critical(formatText(str))
     sys.exit(1)
 
 def print_message(str):
-    print str+os.linesep
+    l.info(formatText(str)+os.linesep)
 
 def do_main_prompt():
-    return do_prompt("Please enter a command.  For a listing of commands, please enter \"h\".  To exit, type \"q\".")
+    return do_prompt(formatText("""Please enter a command.  For a
+         listing of commands, please enter \"h\".  To exit, type \"q\"."""))
 
 def do_prompt(instructions=""):
     r=raw_input(instructions+os.linesep+">> ")
-    print ""
-
+    print 
     return r
 
 def do_bool_prompt(instructions=""):
     while True:
-        response=do_prompt(instructions + " Please type \"y\"/\"yes\" or \"n\"/\"no\".")
+        response=do_prompt(
+            formatText(instructions +
+                       " Please type 'y'/'yes' or 'n'/'no'."))
 
         if response=="y" or response=="yes":
             return True
@@ -36,13 +43,14 @@ def do_bool_prompt(instructions=""):
 
 def do_int_prompt(instructions=""):
     while True:
-        response=do_prompt(instructions)
+        response=do_prompt(formatText(instructions))
 
         try:
             response_int=int(response)
             return response_int
         except:
-            print_message("Sorry, but you did not enter an integer, or something that could be converted to an integer.")
+            print_message("""Sorry, but you did not enter an integer,
+                or something that could be converted to an integer.")
 
 def show_help():
 

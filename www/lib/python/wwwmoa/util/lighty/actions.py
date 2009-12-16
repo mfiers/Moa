@@ -10,8 +10,7 @@ from prompt import do_prompt
 from prompt import do_bool_prompt
 from prompt import do_int_prompt
 
-
-
+from  moa.logger import l
 
 import sys
 import os
@@ -79,7 +78,8 @@ def port_has_env(port):
     return os.access(get_env_file_path(port), os.F_OK)
 
 def run(port, home, penv):
-    print_sys_message("I will now run a new instance of lighttpd for WWWMoa.")
+    
+    l.info("I will now run a new instance of lighttpd for WWWMoa.")
 
     if moainfo.get_base()==None:
         print_fatal_error_message("Something went wrong: the Moa base directory could not be found.")
@@ -97,15 +97,21 @@ def run(port, home, penv):
 
     conf_path=os.path.join(get_var_path(),".conf."+str(port))
     
-    id=get_new_id()
+    l.debug("Configuration path %s" % conf_path)
 
+    id=get_new_id()
+    l.debug("server id %s" % id)
+     
     if not penv:
         try:
             env_file=open(get_env_file_path(port), "w+b")
             env_file.write(get_env_file(home))
             env_file.close()
         except:
-            print_fatal_error_message("Something went wrong: the environment could not be configured. This may be because of your file system permissions.")
+            
+            print_fatal_error_message("""Something went wrong: the
+                environment could not be configured. This may be
+                because of your file system permissions.""")
 
     try:
         meta_file=open(get_instance_meta_path(id), "w+b")
@@ -119,6 +125,7 @@ def run(port, home, penv):
 
 
     try:
+        l.debug("start writing configuration")
         conf=open(conf_path, "w+b")
         conf.write(get_config_file(port, home))
         conf.close()
