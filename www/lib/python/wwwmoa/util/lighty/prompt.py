@@ -1,27 +1,30 @@
 import os
 import sys
+import textwrap
 
 from moa.logger import l
 
 def formatText(t):
-    return " ".join(t.split())
+    return "\n".join(textwrap.wrap(" ".join(t.split())))
 
 def print_sys_message(str):
-    l.info(formatText(str))
+    l.info(str)
 
 def print_error_message(str):
-    l.error(formatText(str))
+    l.error(str)
 
 def print_fatal_error_message(str):
-    l.critical(formatText(str))
+    l.critical(str)
     sys.exit(1)
 
 def print_message(str):
-    l.info(formatText(str)+os.linesep)
+    l.info(str+os.linesep)
 
 def do_main_prompt():
-    return do_prompt(formatText("""Please enter a command.  For a
-         listing of commands, please enter \"h\".  To exit, type \"q\"."""))
+    
+    return do_prompt(        
+        formatText("""Please enter a command.  For a listing of
+         commands, please enter 'h'.  To exit, type 'q'."""))
 
 def do_prompt(instructions=""):
     r=raw_input(instructions+os.linesep+">> ")
@@ -49,7 +52,7 @@ def do_int_prompt(instructions=""):
             response_int=int(response)
             return response_int
         except:
-            print_message("""Sorry, but you did not enter an integer,
+            l.info("""Sorry, but you did not enter an integer,
                 or something that could be converted to an integer.""")
 
 def show_help():
