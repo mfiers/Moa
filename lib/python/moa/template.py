@@ -143,7 +143,7 @@ def new(options, args):
     l.debug("Start writing %s" % makefile)
     F = open(makefile, 'w')
     F.write(NEW_MAKEFILE_HEADER)
-    F.write("include $(shell echo $$MOABASE)/template/%s.mk\n" % template)
+    F.write("include $(MOABASE)/template/%s.mk\n" % template)
 
     #include moabase
     F.close()
