@@ -11,7 +11,6 @@ from wwwmoa import rl
 import wwwmoa.env
 from wwwmoa.formats.html import error
 import wwwmoa.info.moa as moainfo
-import wwwmoa.api.mwr
 
 import os
 import os.path
@@ -70,8 +69,7 @@ def run(args=None, env=None):
     else:
         sys.path.append(moa_pylib_base)
 
-        from moa import dispatcher
-        import moa.info as moachecker
+        import moa.api as mwr
 
     
     # check to make sure we have enough parameters
@@ -121,17 +119,17 @@ def run(args=None, env=None):
         rw.send(json.dumps({"title" : project_info["projectTitle"]})) # send response
 
     elif command=="moa-jobinfo":
-        if not wwwmoa.api.mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
+        if not mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
             output_error("The directory or file you attempted to retrieve job information on is not a Moa directory.") # say so            
 
-        job_info=wwwmoa.api.mwr.get_moa_info(path)
+        job_info=mwr.get_moa_info(path)
 
         output_json_headers(0);
         rw.end_header_mode();
         rw.send(json.dumps(add_timestamp(job_info, 0)));
 
     elif command=="moa-jobparam":
-        if not wwwmoa.api.mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
+        if not mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
             output_error("The directory or file you attempted to retrieve and/or set job information on is not a Moa directory.") # say so
 
         if "key" in env["params"]:
@@ -146,12 +144,12 @@ def run(args=None, env=None):
             else:
                 var_value=""
            
-            wwwmoa.api.mwr.set_moa_parameter(path, var_key, var_value)
+            mwr.set_moa_parameter(path, var_key, var_value)
 
         elif env["method"]=="GET": # if a get was requested
-            var_value=wwwmoa.api.mwr.get_moa_parameter(path, var_key)
+            var_value=mwr.get_moa_parameter(path, var_key)
         elif env["method"]=="DELETE" : # if a delete was requested
-            wwwmoa.api.mwr.set_moa_parameter(path, var_key, "")
+            mwr.set_moa_parameter(path, var_key, "")
 
     
         output_json_headers(0);
