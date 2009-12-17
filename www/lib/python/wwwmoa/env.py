@@ -34,15 +34,18 @@ class EnvHandler(xml.sax.handler.ContentHandler):
        
 _request_port=cgiex.get_request_port()
 
-if _request_port!=-1 and moainfo.get_base()!=None:
-    _env_file=os.path.join(moainfo.get_base(), "etc/www/env/"+str(_request_port)+".xml")
+try:
+    if _request_port!=-1:
+        _env_file=os.path.join(moainfo.get_base(True), "etc/www/env/"+str(_request_port)+".xml")
     
-    if not os.access(_env_file, os.R_OK):
-        _loading_failed=True
+        if not os.access(_env_file, os.R_OK):
+            _loading_failed=True
+        else:
+            _handler=EnvHandler()
+            xml.sax.parse(_env_file, _handler)
     else:
-        _handler=EnvHandler()
-        xml.sax.parse(_env_file, _handler)
-else:
+        _loading_failed=True
+except MoaNotFoundError:
     _loading_failed=True
 
 ## Triggers an HTTP level error if the environment did not load properly.

@@ -42,7 +42,10 @@ def get_request_query():
 
 ## Returns the port number that the server was accessed at.  If not found or not valid, will return -1.  The returned port will be an integer, not a string.
 def get_request_port():
-    a=os.environ["SERVER_PORT"] # get port directly from environment
+    if "SERVER_PORT" in os.environ:
+        a=os.environ["SERVER_PORT"] # get port directly from environment
+    else:
+        return -1 # return -1 as per specs
 
     if a is None: # if the variable does not exist
         return -1 # return -1 as per specs
