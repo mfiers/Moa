@@ -31,14 +31,16 @@ import time
 cl_parser=OptionParser()
 
 cl_parser.set_defaults(port=8080, instance=None, home_dir=None,
-                       act_run=False, act_kill=False, act_status=False, act_kill_all=False,
-                       flag_noconf=False, flag_preserve=False)
+                       act_run=False, act_kill=False, act_status=False,
+                       act_kill_all=False, flag_noconf=False,
+                       flag_preserve=False)
 
 cl_parser.add_option(
     "-r", "--run",
     action="store_true",
     dest="act_run",
-    help="run an instance of lighttpd that hosts "+info.get_name()
+    help="run an instance of lighttpd that hosts "+
+    info.get_name()
     )
 
 cl_parser.add_option(
@@ -53,7 +55,8 @@ cl_parser.add_option(
     action="store",
     dest="home",
     type="string",
-    help="specifies the content directory to use for "+info.get_name()+"; required for -r"
+    help="specifies the content directory to use for "+
+    info.get_name()+"; required for -r"
     )
 
 cl_parser.add_option(
@@ -61,35 +64,40 @@ cl_parser.add_option(
     action="store",
     dest="port",
     type="int",
-    help="specifies the TCP port to start the instance of lighttpd on"
+    help="specifies the TCP port to start the instance of "+
+    "lighttpd on"
     )
 
 cl_parser.add_option(
     "-k", "--kill",
     action="store_true",
     dest="act_kill",
-    help="terminate an instance of lighttpd that was started using this utility"
+    help="terminate an instance of lighttpd that was started "+
+    "using this utility"
     )
 
 cl_parser.add_option(
     "-l", "-s", "--status",
     action="store_true",
     dest="act_status",
-    help="display the currently running instances of lighttpd that were started using this utility"
+    help="display the currently running instances of lighttpd " +
+    "that were started using this utility"
     )
 
 cl_parser.add_option(
     "-K", "--kill-all",
     action="store_true",
     dest="act_kill_all",
-    help="terminate all instances of lighttpd that were started using this utility"
+    help="terminate all instances of lighttpd that were started "+
+    "using this utility"
     )
 
 cl_parser.add_option(
     "-q", "--no-conf",
     action="store_true",
     dest="flag_noconf",
-    help="do not prompt for confirmations or additional information"
+    help="do not prompt for confirmations or additional "+
+    "information"
     )
 
 cl_parser.add_option(
@@ -97,14 +105,17 @@ cl_parser.add_option(
     action="store",
     type="int",
     dest="instance",
-    help="specifies the lighttpd instance id to use when altering an existing instance; this may or may not be the process id associated with the instance"
+    help="specifies the lighttpd instance id to use when "+
+    "altering an existing instance; this may or may not be "+
+    "the process id associated with the instance"
     )
 
 cl_parser.add_option(
     "-e", "--preserve-env",
     action="store_true",
     dest="flag_preserve",
-    help="preserves the environment currently associated with the given port; causes -m to be ignored"
+    help="preserves the environment currently associated "+
+    "with the given port; causes -m to be ignored"
     )
 
 (opt, leftover_args)=cl_parser.parse_args()
@@ -125,20 +136,17 @@ if action_count==0:
     print_fatal_error_message("""Sorry, but you did not include any
     action to complete.  Please use -h for more information.""")
         
-elif action_count>1:    
-    print_fatal_error_message("""Sorry, but you specified too many
-        actions to complete at once.  Please use -h for more
-        information.""")
+elif action_count>1:
+    
+    print_fatal_error_message("""Please, specify only one action to
+        perform. Run '%s -h' for more information.""" % sys.argv[0])
 
 inter=not opt.flag_noconf
 
 if not inter:    
-    print_sys_message("""No confirmations or additional information
-        will be requested.""")
+    l.warning("Quick mode; no additional questions will be asked!")
 
-
-if opt.act_run:
-    
+if opt.act_run:    
     if opt.home==None and not opt.flag_preserve:        
         print_fatal_error_message("""Sorry, but you did not specify a
             content directory using -m.  This is required when using
@@ -165,12 +173,12 @@ if opt.act_run:
             --preserve-env.""" % opt.port)
 
     if opt.flag_preserve:        
-        print_sys_message("""The content directory will not be
+        l.info("""The content directory will not be
             modified from its current value for port %d.""" %
             str(opt.port))
         
     else:        
-        print_sys_message("""The content directory that will be used
+        l.info("""The content directory that will be used
             is '%s'""" % opt.home)
 
     print_sys_message("""The TCP port that the server will listen on

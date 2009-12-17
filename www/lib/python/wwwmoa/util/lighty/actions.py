@@ -82,17 +82,22 @@ def run(port, home, penv):
     l.info("I will now run a new instance of lighttpd for WWWMoa.")
 
     if moainfo.get_base()==None:
-        print_fatal_error_message("Something went wrong: the Moa base directory could not be found.")
-
+        
+        l.critical("""Something went wrong: the Moa base directory
+            could not be found.""")
+        sys.exit(1)
 
     try:
         if not os.access(get_var_path(), os.F_OK):
             os.makedirs(get_var_path())
-
         if not os.access(get_etc_path(), os.F_OK):
             os.makedirs(get_etc_path())
     except Exception as e:
-        print_fatal_error_message("Something went wrong: file system preparation failed."+str(e))
+        
+        l.critical("Something went wrong: file system preparation "+
+                   "failed.")
+        l.critical(str(e))
+        sys.exit(1)
     
 
     conf_path=os.path.join(get_var_path(),".conf."+str(port))
@@ -109,9 +114,10 @@ def run(port, home, penv):
             env_file.close()
         except:
             
-            print_fatal_error_message("""Something went wrong: the
+            l.critical("""Something went wrong: the
                 environment could not be configured. This may be
                 because of your file system permissions.""")
+            sys.exit()
 
     try:
         meta_file=open(get_instance_meta_path(id), "w+b")
@@ -125,7 +131,7 @@ def run(port, home, penv):
 
 
     try:
-        l.debug("start writing configuration")
+        l.debug("start writing configuration to %s" % conf_path)
         conf=open(conf_path, "w+b")
         conf.write(get_config_file(port, home))
         conf.close()
@@ -135,7 +141,13 @@ def run(port, home, penv):
         me=os.fork()
 
         if me==0: # i am a child
-            lighttpd=subprocess.Popen(["lighttpd", "-D", "-f", conf_path],0,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            commandline = ["lighttpd", "-D", "-f", conf_path]
+            l.debug("executing %s" % " ".join(commandline))
+            lighttpd=subprocess.Popen(
+                commandline,0,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
 
             while True:
                 time.sleep(1)
@@ -147,14 +159,29 @@ def run(port, home, penv):
                 lighttpd.poll()
 
                 if lighttpd.returncode!=None:
+                    out, err = lighttpd.communicate()
+                    
+                    #print one newline - better output of the error
+                    #message
+                    sys.stderr.write("\n")
+                    l.critical('lighthttpd terminated with rc %s' %
+                            lighttpd.returncode)
+                    if out:
+                        l.info(out)
+                    if err:
+                        l.critical(err)
                     set_instance_terminated(id)
                     break
 
             sys.exit(0)
-        else: # i am a parent
+        else: # i am parent
             pass
+        
     except Exception as e:
-        print_fatal_error_message("Something went wrong: lighttpd could not be started. "+str(e))
+        l.critical("Something went wrong: lighttpd could not "+
+                   " be started."),
+        l.critical(str(e))
+        raise
     
 
 def kill(id):
