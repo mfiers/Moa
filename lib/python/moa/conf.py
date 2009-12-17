@@ -65,6 +65,38 @@ def setVar(wd, key, value):
     writeToConf(wd, [{'key' : key,
                   'operator' : '=',
                   'value' : value}])
+
+def appendVar(wd, key, value):
+    """
+    Convenience function - set the variable 'key' to a value in directory wd
+    """    
+    writeToConf(wd, [{'key' : key,
+                      'operator' : '+=',
+                      'value' : value}])
+
+
+def getVar(wd, key):
+    """
+    Get a single parameter from a moa directory    
+    """
+    if not os.path.exists(wd):
+        return False
+    moamk = os.path.join(wd, 'moa.mk')
+    if not os.path.exists(moamk):
+        return False
+    F = open(moamk, 'r')
+
+    rv = []
+    for line in F.readlines():
+        line = line.strip()
+        if not line: continue        
+        if line.find(key) == 0:            
+            #this also captures '+=' moa.mk lines!
+            if '=' in line:
+                value = line.split('=',1)[1]
+                rv.append(value)
+    F.close()
+    return " ".join(rv)    
     
 def appendVar(wd, key, value):
     """
