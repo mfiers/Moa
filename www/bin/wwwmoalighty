@@ -8,9 +8,12 @@ import os.path
 ## Main Logic ##
 
 if "MOABASE" in os.environ: # if a MOABASE exists
-    sys.path.append(os.path.join(os.environ["MOABASE"], "www/lib/python")) # add the WWWMoa library path
+    # add the WWWMoa library path
+    sys.path.append(os.path.join(os.environ["MOABASE"], "www/lib/python"))
+    
 else: # if a MOABASE does not exist
-    print "Sorry, but a Moa implementation could not be found." # say so
+    print "Sorry, but a Moa implementation could not be found." 
     sys.exit(0x02); # terminate with an error code
 
-import wwwmoa.util.lighty # run utility
+ # run utility
+import wwwmoa.util.lighty
