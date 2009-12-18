@@ -28,6 +28,8 @@ import sys
 import moa.logger
 from moa.logger import exitError
 import moa.utils
+import moa.info
+from moa.exceptions import *
 
 l = moa.logger.l
 
@@ -58,27 +60,59 @@ def commandLineHandler(wd, args):
     writeToConf(wd, data)
 
 
-def setVar(wd, key, value):
+def setVar(wd, key, value, silent=False):
     """
     Convenience function - set the variable 'key' to a value in directory wd
+
+        >>> import random
+        >>> testTitle = 'title %d' % random.randint(0,10000)
+        >>> setVar(TESTPATH, 'title', testTitle, silent=True)
+        >>> title = getVar(TESTPATH, 'title')
+        >>> title == testTitle
+        True
+        >>> try: setVar(NOTMOADIR, 'title', 'test setvar in a non-moa dir')
+        ... except NotAMoaDirectory:
+        ...   'Fine'
+        'Fine'
+
+
     """    
     writeToConf(wd, [{'key' : key,
                   'operator' : '=',
-                  'value' : value}])
+                  'value' : value}],
+                silent = silent)
 
-def appendVar(wd, key, value):
+def appendVar(wd, key, value, silent=False):
     """
     Convenience function - set the variable 'key' to a value in directory wd
+    
+        >>> setVar(TESTPATH, 'title', 'one', silent=True)
+        >>> getVar(TESTPATH, 'title')
+        'one'
+        >>> appendVar(TESTPATH, 'title', 'two', silent=True)
+        >>> appendVar(TESTPATH, 'title', 'three', silent=True)
+        >>> getVar(TESTPATH, 'title')
+        'one two three'
+        >>> try: appendVar(NOTMOADIR, 'title', 'test setvar in a non-moa dir')
+        ... except NotAMoaDirectory:
+        ...   'Fine'
+        'Fine'
+
     """    
     writeToConf(wd, [{'key' : key,
                       'operator' : '+=',
-                      'value' : value}])
+                      'value' : value}],
+                silent=silent)
 
 
 def getVar(wd, key):
     """
-    Get a single parameter from a moa directory    
-    """
+    Get a single parameter from a moa directory
+
+        >>> setVar(TESTPATH, 'title', 'test getVar', silent=True)
+        >>> getVar(TESTPATH, 'title')
+        'test getVar'
+    """    
     if not os.path.exists(wd):
         return False
     moamk = os.path.join(wd, 'moa.mk')
@@ -98,27 +132,30 @@ def getVar(wd, key):
     F.close()
     return " ".join(rv)    
     
-def appendVar(wd, key, value):
+def writeToConf(wd, data, silent=False):
     """
-    Convenience function - append the value to variable 'key' in directory wd
-    """    
-    writeToConf(wd, [{'key' : key,
-                  'operator' : '+=',
-                  'value' : value}])
+    writeToConf - actually write something to moa.mk
     
-def writeToConf(wd, data):
+    """
 
+    if not moa.info.isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+
+    
     moamk = os.path.join(wd, 'moa.mk')
     moamktmp = os.path.join(wd, 'moa.mk.tmp')
     moamklock = os.path.join(wd, 'moa.mk.lock')
+
+    
     
     #refd is a refactoring of data - allows easy checking
     refd = dict([(x['key'],x) for x in data])
-    l.debug("Changing variables: %s" % ", ".join(refd.keys()))
-    
+    l.debug("Changing variable: %s" % ", ".join(refd.keys()))
+    l.debug("starting to write a new moa.mk in %s" % wd)
+
     #get a lock on moa.mk
     with moa.utils.flock(moamklock):
-        
+        l.debug("got a lock on moa.mk in %s" % wd)
         if os.path.exists(moamktmp):
             l.debug("removing an older?? moa.mk.tmp")
             os.unlink(moamktmp)
@@ -148,9 +185,15 @@ def writeToConf(wd, data):
         for v in data:
             if v['value']:
                 G.write("%(key)s%(operator)s%(value)s\n" % v)
-                l.info("%(key)s%(operator)s%(value)s\n" % v)
+                if silent:
+                    l.debug("%(key)s%(operator)s%(value)s\n" % v)
+                else:
+                    l.info("%(key)s%(operator)s%(value)s\n" % v)
             else:
-                l.info("removing %s" % k)
+                if silent:
+                    l.debug("removing %s" % k)
+                else:
+                    l.info("removing %s" % k)
 
         F.close()
         G.close()

@@ -21,6 +21,11 @@
 moa API
 
 A collection of functions that serve an API
+
+Note that all doctests here are extremely basic - we only test if the
+functions can be called - without error. Real testing of functionality
+is in the respective modules
+
 """
 
 import os
@@ -29,38 +34,46 @@ import sys
 import moa.info
 import moa.dispatcher
 import moa.conf
+import moa.template
 from moa.logger import l
 
-MOABASE = os.environ["MOABASE"]
+MOABASE = os.environ['MOABASE']
 
 def getMoaBase():
     """
     Returns MOABASE
 
-        >>> mb = getMoaBase()
-        >>> os.path.exists(mb)
-        True
+        >>> result = getMoaBase()
     
     """
-    return MOABASE
+    return moa.info.getMoaBase()
 
 
 def isMoaDir(path):
     """
     Is directory 'path' a Moa directory?
-
-        >>> isMoaDir('/')
-        False
-        >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
-        >>> isMoaDir(demoPath)
-        True
+    
+        >>> result = isMoaDir(TESTPATH)
         
     """
-    return moa.info.isMoa(path)
+    return moa.info.isMoaDir(path)
 
+def isLocked(path):
+    """
+    Is a moa directory locked? (i.e. not allowed to execute)
+
+        >>> result = isLocked(TESTPATH)
+        
+    """
+    return moa.info.isLocked(path)
+    
+    
 def getInfo(path):
     """
     Return information on a moa directory
+
+        >>> result = getInfo(TESTPATH)
+
     """
     return moa.info.info(path)
 
@@ -68,7 +81,7 @@ def getInfo(path):
 def getParameter(path, key):
     """
     Get a parameter
-    
+
         >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
         >>> title = getParameter(demoPath, 'title')
         >>> type(title) == type('string')
@@ -93,37 +106,30 @@ def getParameter(path, key):
 def setParameter(path, key, value):
     """
     Set the parameter 'key' (in path x) to a cerain value
-
-        >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
-        >>> import random
-        >>> testTitle = 'title %d' % random.randint(0,10000)
-        >>> setParameter(demoPath, 'title', testTitle)
-        >>> title = getParameter(demoPath, 'title')
-        >>> title == testTitle
-        True
+    
+        >>> setParameter(TESTPATH, 'title', 'test setParameter')
+        
     """    
-    moa.conf.setVar(path, key, value)
+    moa.conf.setVar(path, key, value, silent=True)
 
 
 def appendParameter(path, key, value):
     """
     Append the value to parameter 'key' (in path x)
 
-        >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
-        >>> import random
-        >>> testTitle = 'title %d' % random.randint(0,10000)
-        >>> setParameter(demoPath, 'title', testTitle)
-        >>> title = getParameter(demoPath, 'title')
-        >>> title == testTitle
-        True
+        >>> result = appendParameter(TESTPATH, 'title', 'b')
     """    
-    moa.conf.setVar(path, key, value)
+    moa.conf.setVar(path, key, value, silent=True)
 
 
 def templateList():
     """
+    Return a list of valid moa templates
+
+        >>> result = templateList()
+        
     """
-    return "hi"
+    return moa.template.list()
 
 
 

@@ -26,25 +26,36 @@ import re
 import sys
 import time
 import errno
+import shutil
 import contextlib
 
 from moa.logger import l
+from moa.exceptions import *
 
-# Get a file lock, borrowed from:
+# Get a file lock, adapted from:
 #  http://code.activestate.com/recipes/576572/
 #
 @contextlib.contextmanager
-def flock(path, wait_delay=.1):
+def flock(path, wait_delay=.1, max_wait=100):
+    waited = 0
+    waited_too_long = False
     while True:
         try:
             fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
         except OSError, e:
             if e.errno != errno.EEXIST:
                 raise
+            waited += wait_delay
             time.sleep(wait_delay)
-            continue
+            if waited > max_wait:
+                waited_too_long = True
+                break
+            else:
+                continue
         else:
             break
+    if waited_too_long:
+        raise CannotGetAFileLock(path)
     try:
         yield fd
     finally:
@@ -54,3 +65,31 @@ def exit(rc=0):
     for h in l.handlers:
         h.flush()
     sys.exit(rc)
+
+def removeDirectory(path, silent=False):
+    """
+    dangerous utility - it complete deletes a directory
+
+       >>> import tempfile
+       >>> tempdir = tempfile.mkdtemp()
+       >>> os.path.exists(tempdir)
+       True
+       >>> os.path.isdir(tempdir)
+       True
+       >>> removeDirectory(tempdir, silent=True)
+       >>> os.path.exists(tempdir)
+       False
+       
+    """
+    if silent:
+        l.debug("Removing %s" % path)
+    else:
+        l.warning("Removing %s" % path)
+        
+    shutil.rmtree(path)
+
+    if silent:
+        l.debug("Finished removing %s" % path)
+    else:
+        l.warning("Finished removing %s" % path)
+

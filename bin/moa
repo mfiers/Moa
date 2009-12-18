@@ -62,7 +62,9 @@ import moa.archive
 from moa import dispatcher
 import moa.conf
 import moa.info
+import moa.unittests
 from moa import utils
+from moa.exceptions import *
 
 ## Init the logger
 import moa.logger
@@ -107,16 +109,13 @@ parser.add_option("-j", dest="threads",
                   help="threads to use when running Make (corresponds " +
                   "to the make -j parameter)")
 
-#deprecated:
-#parser.add_option("-p", "--project", dest="project",
-#                  help="set a project name (use with moa new)")
 
 parserN = optparse.OptionGroup(parser, "For use with moa new")
+parser.set_defaults(title="", directory=".")
 
-parserN.add_option("-t", "--title", dest="title",
-                  help="Node title")
-parserN.add_option("-d", "--directory", dest="newdir",
-                  help="Directory to create the new template in")
+parserN.add_option("-t", "--title", dest="title", help="Job title")
+parserN.add_option("-d", "--directory", dest="directory",
+                  help="Directory to create the new template in (default: .)")
 parser.add_option_group(parserN)
 
 (options, args) = parser.parse_args()
@@ -209,10 +208,14 @@ if __name__ == "__main__":
         moa.archive.handler(options, newargs)
     elif command == 'list':
         #shortcut for moa template list
-        moa.template.list()
+        for template in moa.template.list():
+            print template
     #configuration stuff
     elif command == 'set':
         moa.conf.handler(options, newargs)
+    #unittests
+    elif command == 'run_unittests':
+        moa.unittests.run()
     else:
         #fire arguments of to make
         dispatcher.runMakeAndExit(args=args, verbose=options.verbose)

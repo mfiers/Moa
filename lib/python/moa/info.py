@@ -27,10 +27,39 @@ import sys
 
 from moa.logger import l
 from moa import dispatcher
+from moa.exceptions import *
+import moa.lock
+
+MOABASE = os.environ["MOABASE"]
+
+def getMoaBase():
+    """
+    Return the MOABASE
+    
+        >>> mb = getMoaBase()
+        >>> type(mb) == type('string')
+        True
+        >>> os.path.exists(mb)
+        True
+        >>> os.path.exists(os.path.join(mb, 'bin', 'moa'))
+        True
+        
+    """
+    return MOABASE
 
 
-def isMoa(d):
-    """ is directory d a 'moa' directory? """
+def isMoaDir(d):
+    """
+    Is directory d a 'moa' directory?
+
+        >>> isMoaDir('/')
+        False
+        >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
+        >>> isMoaDir(demoPath)
+        True
+
+        
+    """
 
     if not os.path.exists(os.path.join(d, 'Makefile')):
         return False
@@ -38,20 +67,54 @@ def isMoa(d):
     #we could run make, but that is rather slow just to check if a Makefile
     #is a proper Makefile - so, we' quickly reading the Makefile to see if
     #it imports __moaBase.mk. If it does - it's probably a Moa Makefile
-
     isMoa = False
     
     F = open(os.path.join(d, 'Makefile'))
     for l in F.readlines():
-        if 'include $(shell echo $$MOABASE)/template/' in l:
+        if '$(MOABASE)' in l:
             isMoa = True
             break
-    F.close()
-        
+    F.close()        
     return isMoa
 
+def isLocked(d):
+    """
+    Is this directory locked?
+
+        >>> result = isLocked(TESTPATH)
+        >>> type(result) == type(True)
+        True
+        >>> moa.lock.lockJob(TESTPATH)
+        >>> isLocked(TESTPATH)
+        True
+        >>> moa.lock.unlockJob(TESTPATH)
+        >>> isLocked(TESTPATH)
+        False
+        >>> try: isLocked(NOTMOADIR)
+        ... except NotAMoaDirectory:
+        ...   'Fine'
+        'Fine'
+        
+    """    
+    if not isMoaDir(d):
+        raise NotAMoaDirectory(d)
+
+    if os.path.exists(os.path.join(d, 'lock')):
+        return True
+    return False
+    
+
 def info(d):
-    """ Retrieve a lot of information """
+    """
+    Retrieve a lot of information on a job
+
+        >>> result = info(TESTPATH)
+        >>> type(result) == type({})
+        True
+
+    """
+
+
     rv = {
         'parameters' : {}
 

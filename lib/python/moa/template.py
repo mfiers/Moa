@@ -28,6 +28,7 @@ import sys
 import moa.utils
 import moa.logger
 import moa.conf
+from moa.exceptions import *
 
 l = moa.logger.l
     
@@ -59,24 +60,56 @@ def handler(options, args):
     newargs = newargs[1:]
     if command == 'list':
         list()
-    elif command == 'new':
-        new(options, newargs)
+    elif command == 'new':        
+        directory = options.directory
+        title = options.title
+
+        if len(args) == 0:
+            template = 'traverse'
+            params = []
+        elif '=' in args[0]:
+            template = 'traverse'
+            params = args
+        else:
+            template = args[0]
+            params = args[1:]
+            
+        newTemplate(template,
+            title = title,
+            directory = directory,
+            parameters = params)
     else:
         l.error("Usage moa template [new|list]")
         sys.exit()
         
-def _check(what):
-    """Check if a template exists"""
+def check(what):
+    """
+    Check if a template exists
+
+        >>> check('gather')
+        True
+        >>> check('nonexistingtemplate')
+        False
+
+    """
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
     if not os.path.exists(templatefile):
-        l.debug("cannot find %s" % templatefile)
-        l.error("No template for %s exists" % what)
-        sys.exit(1)        
+        return False
     return True
 
 def list():
     """
     List all known templates
+
+        >>> result = list()
+        >>> len(result) > 0
+        True
+        >>> '__moaBase' in result
+        False
+        >>> type(result) == type([])
+        True
+        >>> 'gather' in result
+        True
     """
     r = []
     for f in os.listdir(TEMPLATEDIR):
@@ -88,28 +121,22 @@ def list():
         if not '.mk' in f: continue
         r.append(f.replace('.mk', ''))
     r.sort()
-    for r1 in r: print r1
+    return r
         
-def new(options, args):
+def newTemplate(template, title = None, directory = '.', parameters = []):
     """
     Create a new template based makefile in the current dir.
+
+        >>> import tempfile
+        >>> tempdir = tempfile.mkdtemp()
+        >>> 
+    
     """
-
-    usage = 'Usage: moa new  [-t "TITLE"] [-d DIRECTORY] [TEMPLATE(s)]'
-
-    if len(args) == 0:
-        template = 'traverse'
-        parameters = []
-    else:
-        template = args[0]
-        parameters = args[1:]
-
-    l.debug("Creating template %s" % template)
+    l.debug("Creating template %s in directory %s" % (template, directory))
 
     #is this a valid template??
-    _check(template)
+    check(template)
             
-    directory = options.newdir
     if not directory:
         directory = '.'
     if (directory != '.') and (not os.path.isdir(directory)):
