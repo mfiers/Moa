@@ -74,8 +74,6 @@ logmark = chr(27) + '[0;44mU' + \
           chr(27) + '[0m ' 
 
 
-_oldLevel = None
-
 formatter = XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(message)s')
 
 handler.setFormatter(formatter)
@@ -91,10 +89,7 @@ def setVerbose():
     l.setLevel(logging.DEBUG)
 
 def setSilent():
-    global _oldLevel
-    _oldLevel = l.level
     l.setLevel(logging.WARNING)
 
-def resetSilent():    
-    l.setLevel(_oldLevel)
-
+def setInfo():
+    l.setLevel(logging.INFO)

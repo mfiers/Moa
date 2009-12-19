@@ -34,7 +34,7 @@ import sys
 import moa.info
 import moa.dispatcher
 import moa.conf
-import moa.template
+import moa.job
 from moa.logger import l
 
 MOABASE = os.environ['MOABASE']
@@ -58,15 +58,22 @@ def isMoaDir(path):
     """
     return moa.info.isMoaDir(path)
 
-def isLocked(path):
+def status(path):
     """
-    Is a moa directory locked? (i.e. not allowed to execute)
+    Returns the status of a directory. It will return a one of the following status messages:
 
-        >>> result = isLocked(TESTPATH)
-        
+       - notadir - this is not an accessible directory
+       - notmoa - this is not a moa directory
+       - waiting - a moa job, not doing anything
+       - running - this is a moa job & currently executing (runlock exists)       
+       - locked - this job is locked (i.e. a lock file exists)
+
+       >>> result = status(TESTPATH)
+       >>> result in ['notadir', 'notmoa', 'waiting', 'running', 'locked']
+       True
+       
     """
-    return moa.info.isLocked(path)
-    
+    return moa.info.status(path)
     
 def getInfo(path):
     """
@@ -110,7 +117,7 @@ def setParameter(path, key, value):
         >>> setParameter(TESTPATH, 'title', 'test setParameter')
         
     """    
-    moa.conf.setVar(path, key, value, silent=True)
+    moa.conf.setVar(path, key, value)
 
 
 def appendParameter(path, key, value):
@@ -119,7 +126,7 @@ def appendParameter(path, key, value):
 
         >>> result = appendParameter(TESTPATH, 'title', 'b')
     """    
-    moa.conf.setVar(path, key, value, silent=True)
+    moa.conf.setVar(path, key, value)
 
 
 def templateList():
@@ -129,8 +136,29 @@ def templateList():
         >>> result = templateList()
         
     """
-    return moa.template.list()
+    return moa.job.list()
 
+def newJob(*args, **kwargs):
+    """
+    Creates a new job
+
+        >>> removeMoaFiles(EMPTYDIR)
+        >>> newJob('traverse',
+        ...        title = 'test creating of jobs',
+        ...        directory=EMPTYDIR)
+        >>> removeMoaFiles(EMPTYDIR)
+        
+    """
+    moa.job.newJob(*args, **kwargs)
+
+def removeMoaFiles(path):
+    """
+    Removes moa related files from a directory (but leaves all other
+    files in place)
+
+        >>> removeMoaFiles(EMPTYDIR)
+    """
+    moa.utils.removeMoaFiles(path)
 
 
 #Depreacted - for a more uniform style of naming

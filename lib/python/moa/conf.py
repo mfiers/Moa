@@ -39,11 +39,37 @@ def handler(options, args):
     """
     cwd = os.getcwd()    
     commandLineHandler(cwd, args)
-    
-def commandLineHandler(wd, args):
-    l.debug("start parsing the commandline")
-    #parse all arguments
-    data = []
+
+def parseClArgs(args):
+    """
+    Parse the arguments defined on a commandline.
+
+    :Parameters:
+      args
+        command line arguments, as passed on by sys.argv or
+        optparse. It is expected to be a list of strings of the
+        following format; 'param=value' or 'param+=value' No spaces
+        are allowed between the parameter name, value and operator.
+
+        >>> r = parseClArgs(['aap=1', 'noot=2', 'noot=3',
+        ...                  'mies=test', 'mies+=roos'])
+        >>> type(r) == type([])
+        True
+        >>> type(r[0]) == type({})
+        True
+        >>> r[0]['key'] == 'aap'
+        True
+        >>> r[1]['operator'] == '='
+        True
+        >>> r[2]['value'] == '3'
+        True
+        >>> r[4]['operator'] == '+='
+        True
+        >>> len(r) == 5
+        True
+        
+    """
+    rv = []
     for a in args:
         if not '=' in a:
             l.error("Invalid key/value pair %s" % a)
@@ -54,19 +80,25 @@ def commandLineHandler(wd, args):
             o = '='
             k, v = [x.strip() for x in a.split('=', 1)]
             
-        data.append({ 'key' : k,
-                      'operator' : o,
-                      'value' : v })
+        rv.append({ 'key' : k,
+                    'operator' : o,
+                    'value' : v })
+    return rv
+    
+def commandLineHandler(wd, args):
+    l.debug("start parsing the commandline")
+    #parse all arguments
+    data = parseClArgs(args)
     writeToConf(wd, data)
 
 
-def setVar(wd, key, value, silent=False):
+def setVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
 
         >>> import random
         >>> testTitle = 'title %d' % random.randint(0,10000)
-        >>> setVar(TESTPATH, 'title', testTitle, silent=True)
+        >>> setVar(TESTPATH, 'title', testTitle)
         >>> title = getVar(TESTPATH, 'title')
         >>> title == testTitle
         True
@@ -79,18 +111,17 @@ def setVar(wd, key, value, silent=False):
     """    
     writeToConf(wd, [{'key' : key,
                   'operator' : '=',
-                  'value' : value}],
-                silent = silent)
+                  'value' : value}])
 
-def appendVar(wd, key, value, silent=False):
+def appendVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
     
-        >>> setVar(TESTPATH, 'title', 'one', silent=True)
+        >>> setVar(TESTPATH, 'title', 'one')
         >>> getVar(TESTPATH, 'title')
         'one'
-        >>> appendVar(TESTPATH, 'title', 'two', silent=True)
-        >>> appendVar(TESTPATH, 'title', 'three', silent=True)
+        >>> appendVar(TESTPATH, 'title', 'two')
+        >>> appendVar(TESTPATH, 'title', 'three')
         >>> getVar(TESTPATH, 'title')
         'one two three'
         >>> try: appendVar(NOTMOADIR, 'title', 'test setvar in a non-moa dir')
@@ -101,15 +132,14 @@ def appendVar(wd, key, value, silent=False):
     """    
     writeToConf(wd, [{'key' : key,
                       'operator' : '+=',
-                      'value' : value}],
-                silent=silent)
+                      'value' : value}])
 
 
 def getVar(wd, key):
     """
     Get a single parameter from a moa directory
 
-        >>> setVar(TESTPATH, 'title', 'test getVar', silent=True)
+        >>> setVar(TESTPATH, 'title', 'test getVar')
         >>> getVar(TESTPATH, 'title')
         'test getVar'
     """    
@@ -132,7 +162,7 @@ def getVar(wd, key):
     F.close()
     return " ".join(rv)    
     
-def writeToConf(wd, data, silent=False):
+def writeToConf(wd, data):
     """
     writeToConf - actually write something to moa.mk
     
@@ -185,15 +215,9 @@ def writeToConf(wd, data, silent=False):
         for v in data:
             if v['value']:
                 G.write("%(key)s%(operator)s%(value)s\n" % v)
-                if silent:
-                    l.debug("%(key)s%(operator)s%(value)s\n" % v)
-                else:
-                    l.info("%(key)s%(operator)s%(value)s\n" % v)
+                l.info("%(key)s%(operator)s%(value)s\n" % v)
             else:
-                if silent:
-                    l.debug("removing %s" % k)
-                else:
-                    l.info("removing %s" % k)
+                l.info("removing %s" % k)
 
         F.close()
         G.close()

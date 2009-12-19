@@ -66,7 +66,36 @@ def exit(rc=0):
         h.flush()
     sys.exit(rc)
 
-def removeDirectory(path, silent=False):
+def removeMoaFiles(path):
+    """
+    Removes all moa related files from a directory
+
+
+        >>> open(os.path.join(EMPTYDIR, 'Makefile'),'a').close()
+        >>> open(os.path.join(EMPTYDIR, 'moa.mk'), 'a').close()
+        >>> open(os.path.join(EMPTYDIR, 'lock'), 'a').close()
+        >>> open(os.path.join(EMPTYDIR, 'moa.runlock'), 'a').close()
+        >>> open(os.path.join(EMPTYDIR, 'test.file'), 'a').close()
+        >>> removeMoaFiles(EMPTYDIR)
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+        False
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+        False
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'lock'))
+        False
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.runlock'))
+        False
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'test.file'))
+        True
+        >>> os.unlink(os.path.join(EMPTYDIR, 'test.file'))
+        
+    """
+    for name in ['Makefile', 'moa.mk', 'lock', 'moa.runlock']:
+        ff = os.path.join(path, name)
+        if os.path.isfile(ff):
+            os.unlink(ff)
+    
+def removeDirectory(path):
     """
     dangerous utility - it complete deletes a directory
 
@@ -76,20 +105,14 @@ def removeDirectory(path, silent=False):
        True
        >>> os.path.isdir(tempdir)
        True
-       >>> removeDirectory(tempdir, silent=True)
+       >>> removeDirectory(tempdir)
        >>> os.path.exists(tempdir)
        False
        
     """
-    if silent:
-        l.debug("Removing %s" % path)
-    else:
-        l.warning("Removing %s" % path)
+    l.info("Removing %s" % path)
         
     shutil.rmtree(path)
 
-    if silent:
-        l.debug("Finished removing %s" % path)
-    else:
-        l.warning("Finished removing %s" % path)
+    l.info("Finished removing %s" % path)
 

@@ -57,11 +57,11 @@ def isMoaDir(d):
         >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
         >>> isMoaDir(demoPath)
         True
-
         
     """
+    makefile = os.path.join(d, 'Makefile')
 
-    if not os.path.exists(os.path.join(d, 'Makefile')):
+    if not os.path.exists(makefile):
         return False
     
     #we could run make, but that is rather slow just to check if a Makefile
@@ -77,33 +77,33 @@ def isMoaDir(d):
     F.close()        
     return isMoa
 
-def isLocked(d):
+def status(d):
     """
-    Is this directory locked?
+    Returns the status of a directory. It will return a one of the following status messages:
 
-        >>> result = isLocked(TESTPATH)
-        >>> type(result) == type(True)
-        True
-        >>> moa.lock.lockJob(TESTPATH)
-        >>> isLocked(TESTPATH)
-        True
-        >>> moa.lock.unlockJob(TESTPATH)
-        >>> isLocked(TESTPATH)
-        False
-        >>> try: isLocked(NOTMOADIR)
-        ... except NotAMoaDirectory:
-        ...   'Fine'
-        'Fine'
-        
-    """    
+       - notmoa - this is not a moa directory
+       - waiting - a moa job, not doing anything
+       - running - this is a moa job & currently executing (runlock exists)       
+       - locked - this job is locked (i.e. a lock file exists)
+
+           >>> status(TESTPATH)
+           'waiting'
+           >>> status(NOTMOADIR)
+           'notmoa'
+           >>> status(LOCKEDMOADIR)
+           'locked'
+       
+    """
     if not isMoaDir(d):
-        raise NotAMoaDirectory(d)
-
-    if os.path.exists(os.path.join(d, 'lock')):
-        return True
-    return False
+        return "notmoa"
+    lockfile = os.path.join(d, 'lock')
+    runlockfile = os.path.join(d, 'moa.runlock')
+    if os.path.exists(runlockfile):
+        return "running"
+    if os.path.exists(lockfile):
+        return "locked"
+    return "waiting"
     
-
 def info(d):
     """
     Retrieve a lot of information on a job
@@ -165,6 +165,7 @@ def info(d):
                 pob['value'] = pob.get('value').split()
             rv['parameters'][parname] = pob
     return rv
+
 
     
     
