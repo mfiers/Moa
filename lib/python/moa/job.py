@@ -18,7 +18,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa script - template related code
+Create new jobs.
 """
 
 import os
@@ -54,32 +54,36 @@ moa_postprocess:
 
 """
 
-
 def handler(options, args):
-    command = newargs[0]
-    newargs = newargs[1:]
+    l.debug("running job.handler with ")
+    l.debug("  - with args %s" % args)
+    command = args[0]
+    newargs = args[1:]
     if command == 'list':
         list()
     elif command == 'new':        
         directory = options.directory
         title = options.title
 
-        if len(args) == 0:
+        if len(newargs) == 0:
             template = 'traverse'
             params = []
-        elif '=' in args[0]:
+        elif '=' in newargs[0]:
             template = 'traverse'
-            params = args
+            params = moa.conf.parseClArgs(newargs)
         else:
-            template = args[0]
-            params = args[1:]
+            template = newargs[0]
+            params = moa.conf.parseClArgs(newargs[1:])
             
-        newTemplate(template,
+        newJob(
+            template,
             title = title,
             directory = directory,
-            parameters = params)
+            parameters = params,
+            force = options.force,
+            )
     else:
-        l.error("Usage moa template [new|list]")
+        l.error("Usage moa job [new|list]")
         sys.exit()
         
 def check(what):
@@ -123,16 +127,35 @@ def list():
     r.sort()
     return r
         
-def newTemplate(template, title = None, directory = '.', parameters = []):
+def newJob(template,
+                title = None,
+                directory = '.',
+                parameters = [],
+                force = False):
     """
     Create a new template based makefile in the current dir.
 
-        >>> import tempfile
-        >>> tempdir = tempfile.mkdtemp()
-        >>> 
-    
+    :parameters:
+
+
+        >>> moa.utils.removeMoaFiles(EMPTYDIR)
+        >>> newJob('traverse',
+        ...             title = 'test job creation',
+        ...             directory=EMPTYDIR,
+        ...             parameters=['moa_precommand="ls"'])
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+        True
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+        True
+        >>> moa.conf.getVar(EMPTYDIR, 'title')
+        'test job creation'
+        >>> moa.conf.getVar(EMPTYDIR, 'moa_precommand')
+        '"ls"'
+        >>> moa.utils.removeMoaFiles(EMPTYDIR)
+        
     """
-    l.debug("Creating template %s in directory %s" % (template, directory))
+    l.debug("Creating template '%s'" % template)
+    l.debug("- in directory %s" % directory)
 
     #is this a valid template??
     check(template)
@@ -143,11 +166,10 @@ def newTemplate(template, title = None, directory = '.', parameters = []):
         l.info("Creating directory %s" % directory)
         os.makedirs(directory)
 
-    title = options.title
     if not title and template != 'traverse':
         l.debug("no title (template %s)" % template)
         l.warning("It is strongly recommended to specify a title")
-        l.warning("You can still do so using moa set title='somthing meaningful'")
+        l.warning("You can still do so by using moa set title='somthing meaningful'")
         title = ""
 
     if title:
@@ -162,7 +184,7 @@ def newTemplate(template, title = None, directory = '.', parameters = []):
     
     if os.path.exists(makefile):
         l.debug("Makefile exists!")
-        if not options.force:
+        if not force:
             l.critical("makefile exists, use -f (--force) to overwrite")
             sys.exit(1)
 
