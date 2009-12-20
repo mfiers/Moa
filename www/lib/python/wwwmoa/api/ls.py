@@ -23,7 +23,7 @@ from wwwmoa.api import in_root
 from wwwmoa.api import is_root
 from wwwmoa.api import add_timestamp
 from wwwmoa.api import output_json_headers
-
+from quickls import listdir
 
 ## Main Interface Logic ##
 
@@ -104,8 +104,7 @@ def run(args=None, env=None, path=None):
 
     
     # create directory listing
-    ls=os.listdir(path) # get raw listing
-    ls.sort() # sort the listing (alpha and ascending)
+    ls=listdir(path) # get raw listing
     ls_file=[] # create list that will contain just the files
     ls_dir=[] # create list that will contain just the dirs
     ls_final=[] # create the final list that will be sent back to the user
