@@ -28,7 +28,7 @@ import re
 import sys
 
 from moa.logger import l
-from moa import dispatcher
+from moa import runMake
 from moa.exceptions import *
 import moa.lock
 
@@ -62,7 +62,7 @@ def isMoaDir(d):
         
     """
     makefile = os.path.join(d, 'Makefile')
-
+    l.debug('isMoaDir: checking %s' % makefile)
     if not os.path.exists(makefile):
         return False
     
@@ -72,8 +72,8 @@ def isMoaDir(d):
     isMoa = False
     
     F = open(os.path.join(d, 'Makefile'))
-    for l in F.readlines():
-        if '$(MOABASE)' in l:
+    for line in F.readlines():
+        if 'MOABASE' in line:
             isMoa = True
             break
     F.close()        
@@ -136,12 +136,8 @@ def info(wd):
         'parameters' : {}
         }
     
-    rc, out, err = \
-        dispatcher.runMake(directory = wd, args='info', catchout=True)
-
-    if rc != 0:
-        print err
-        raise('Error running make %d' % rc)
+    out = \
+        runMake.runMakeGetOutput(wd = wd, args='info')
 
     outlines = out.split("\n")
     while True:

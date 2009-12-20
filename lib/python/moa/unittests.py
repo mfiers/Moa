@@ -64,7 +64,7 @@ def run():
     testModule(moa.info)
     testModule(moa.conf)
     testModule(moa.job)
-    testModule(moa.dispatch)
+    testModule(moa.runMake)
     setInfo()
     
     l.info("Finished running of unittests")

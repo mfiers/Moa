@@ -18,7 +18,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-moa wrapper for the API 
+Run GNU Make
 """
 
 import os
@@ -28,12 +28,16 @@ import optparse
 import subprocess
 
 from  moa.logger import l
-from moa import utils
+import moa.info
+from moa.exceptions import *
 
 def _startMake(wd, args, verbose = True,
                captureOut = False):
     """
-    A function to start Make in a certain directory d with specific args
+    Start Make
+
+    A function that starts Make (but does not wait for it to finish)
+    in directory `wd`
     
     :param wd: Directory in which to execute make
     :type wd: String
@@ -43,9 +47,15 @@ def _startMake(wd, args, verbose = True,
     :type verbose: Boolean
     :param captureOut: If True the output will be written to moa.out
     and moa.err
-    :type captureOut: Boolean    
+    :type captureOut: Boolean
+    :raises NotMoaDirectory: If ``wd`` is not a Moa directory    
     """
-    l.critical("start execute of make in %s" % wd)
+
+    l.debug("attempting to start make in %s" % wd)
+
+    if not moa.info.isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+
     if type(args) == type("str"):
         args = args.split()
 
@@ -60,6 +70,7 @@ def _startMake(wd, args, verbose = True,
     else:
         FOUT = None
         FERR = None
+
         os.putenv('MOAANSI', 'yes')
         
     args.insert(0, 'make')
@@ -71,27 +82,55 @@ def _startMake(wd, args, verbose = True,
         stderr = FERR)
     return p
 
-def runMake(wd = None, args = [], verbose=True,
-            captureOut = False):
+def runMake(wd = None, args = [], verbose=True, captureOut = False):
     """
-    Complete a make run
-    """
+    Run Make and wait for it to finish
+    """    
     if not wd: wd = os.getcwd()
-    p = _startMake(wd = wd, args = args, verbose=verbose,
-                   captureOut = True)
-    (out, err) = p.communicate()
-    l.critical("%s" %out)
-    l.critical("%s" %err)
+    try:
+        p = _startMake(wd = wd, args = args, verbose=verbose,
+                       captureOut = captureOut)
+    except NotAMoaDirectory:
+        l.critical("Attempt to execute Moa in a non-moa directory")
+        sys.exit(1)        
+        
+    p.communicate()
     rc = p.returncode
     l.debug("Finished make in %s with return code %s" % (wd, rc))
     return rc
+
+def runMakeGetOutput(wd = None, args = [], verbose=True):
+    """
+    Run Make and wait for it to finish
+    """    
+    if not wd: wd = os.getcwd()
+    try:
+        p = _startMake(wd = wd, args = args, verbose=verbose, captureOut = True)
+    except NotAMoaDirectory:
+        l.critical("Attempt to execute Moa in a non-moa directory")
+        sys.exit(1)        
+        
+    p.communicate()
+    rc = p.returncode
+    if rc == 0:
+        l.debug("Finished make in %s with return code %s" % (wd, rc))
+    else:
+        l.critical("Finished make in %s with non zero rc %s" % (wd, rc))
+        sys.exit(rc)
+
+    output = open(os.path.join(wd, 'moa.out')).read()
+    return output
 
 def runMakeAndExit(wd = None, args = [], verbose=True):
     """
     Convenience function - run, report & exit
     """
     l.debug("ji %s %s" % (wd, args))
-    rc = runMake(wd=wd, verbose=verbose, args=args)
+    try:
+        rc = runMake(wd=wd, verbose=verbose, args=args)
+    except NotAMoaDirectory:
+        l.critical("Attempt to execute Moa in a non-moa directory")
+        sys.exit(1)        
     sys.exit(rc)
 
 

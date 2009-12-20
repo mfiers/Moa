@@ -20,8 +20,7 @@
 """
 moa frontend
 
-This script serves as a command dispatch too either a set of python
-libraries or to GNU Make
+This script serves as a command dispatcher for all moa functionality
 
 """
 
@@ -59,7 +58,7 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
 
 import moa.job
 import moa.archive
-from moa import dispatch
+from moa import runMake
 import moa.conf
 import moa.info
 import moa.unittests
@@ -184,7 +183,7 @@ if __name__ == "__main__":
     l.debug("MOABASE : %s" % MOABASE)
 
     if len(args) == 0:
-        dispatch.runMakeAndExit(verbose=options.verbose)
+        runMake.runMakeAndExit(verbose=options.verbose)
 
     command = args[0]
     newargs = args[1:]
@@ -192,7 +191,7 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
 
     if command == 'run':
-        dispatch.runMakeAndExit(args=newargs, verbose=options.verbose)
+        runMake.runMakeAndExit(args=newargs, verbose=options.verbose)
     elif command == 'rawinfo':
         pprint.pprint(moa.info.info(os.getcwd()))
         
@@ -218,6 +217,5 @@ if __name__ == "__main__":
         moa.unittests.run()
     else:
         #fire arguments of to make
-        dispatch.runMakeAndExit(args=args, verbose=options.verbose)
-    
+        runMake.runMakeAndExit(args=args, verbose=options.verbose)    
     utils.exit()

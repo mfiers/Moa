@@ -30,7 +30,7 @@ import os
 import sys
 
 import moa.info
-import moa.dispatcher
+import moa.runMake
 import moa.conf
 import moa.job
 from moa.exceptions import *
@@ -247,8 +247,12 @@ def templateList():
     """
     Return a list of valid moa templates
 
-        >>> result = templateList()
-        
+    >>> result = templateList()
+
+    :param wd: the Moa directory to use
+    :type wd: String
+    :returns: A list of moa templates
+    :rtype: List of Strings
     """
     return moa.job.list()
 
@@ -256,11 +260,15 @@ def newJob(*args, **kwargs):
     """
     Creates a new job
 
-        >>> removeMoaFiles(EMPTYDIR)
-        >>> newJob('traverse',
-        ...        title = 'test creating of jobs',
-        ...        directory=EMPTYDIR)
-        >>> removeMoaFiles(EMPTYDIR)
+    >>> removeMoaFiles(EMPTYDIR)
+    >>> newJob('traverse',
+    ...        title = 'test creating of jobs',
+    ...        directory=EMPTYDIR)
+    >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+    True
+    >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+    True
+    >>> removeMoaFiles(EMPTYDIR)
         
     """
     moa.job.newJob(*args, **kwargs)
