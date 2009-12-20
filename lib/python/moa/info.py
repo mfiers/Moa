@@ -18,8 +18,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Directory info utilities
+Functions to retrieve information from Moa directories
 """
+__docformat__ = "restructuredtext en"
+
 
 import os
 import re
@@ -104,22 +106,38 @@ def status(d):
         return "locked"
     return "waiting"
     
-def info(d):
+def info(wd):
     """
     Retrieve a lot of information on a job
 
-        >>> result = info(TESTPATH)
-        >>> type(result) == type({})
-        True
+    >>> result = info(TESTPATH)
+    >>> type(result) == type({})
+    True
+    >>> result.has_key('moa_targets')
+    True
+    >>> result.has_key('moa_description')
+    True
+    >>> try: result2 = info('NOTAMOADIR')
+    ... except NotAMoaDirectory: 'ok!'
+    'ok!'
 
+    :param wd: Moa directory to retrieve info from
+    :type wd: String
+    
+    :raises NotAMoaDirectory: when wd is not a Moa directory or does
+       not exists
+    
     """
 
-
+    if not isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+    
     rv = {
         'parameters' : {}
-
         }
-    rc, out, err = dispatcher.runMake(directory = d, args='info', catchout=True)
+    
+    rc, out, err = \
+        dispatcher.runMake(directory = wd, args='info', catchout=True)
 
     if rc != 0:
         print err

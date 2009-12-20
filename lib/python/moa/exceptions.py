@@ -19,3 +19,4 @@ class NotAMoaTemplate(Exception):
         self.template = template
     def __str__(self):
         return "%s is not a MOA template" % self.template
+

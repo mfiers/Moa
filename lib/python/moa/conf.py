@@ -18,8 +18,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa script - moa.mk configuration related code
+Moa script - get and set variables to the moa.mk file
 """
+__docformat__ = "restructuredtext en"
 
 import re
 import os
@@ -44,29 +45,29 @@ def parseClArgs(args):
     """
     Parse the arguments defined on a commandline.
 
-    :Parameters:
-      args
-        command line arguments, as passed on by sys.argv or
+    :param args: command line arguments, as passed on by sys.argv or
         optparse. It is expected to be a list of strings of the
         following format; 'param=value' or 'param+=value' No spaces
         are allowed between the parameter name, value and operator.
+    :type args: String of List of Strings
+    
 
-        >>> r = parseClArgs(['aap=1', 'noot=2', 'noot=3',
-        ...                  'mies=test', 'mies+=roos'])
-        >>> type(r) == type([])
-        True
-        >>> type(r[0]) == type({})
-        True
-        >>> r[0]['key'] == 'aap'
-        True
-        >>> r[1]['operator'] == '='
-        True
-        >>> r[2]['value'] == '3'
-        True
-        >>> r[4]['operator'] == '+='
-        True
-        >>> len(r) == 5
-        True
+    >>> r = parseClArgs(['aap=1', 'noot=2', 'noot=3',
+    ...                  'mies=test', 'mies+=roos'])
+    >>> type(r) == type([])
+    True
+    >>> type(r[0]) == type({})
+    True
+    >>> r[0]['key'] == 'aap'
+    True
+    >>> r[1]['operator'] == '='
+    True
+    >>> r[2]['value'] == '3'
+    True
+    >>> r[4]['operator'] == '+='
+    True
+    >>> len(r) == 5
+    True
         
     """
     rv = []
@@ -139,10 +140,20 @@ def getVar(wd, key):
     """
     Get a single parameter from a moa directory
 
-        >>> setVar(TESTPATH, 'title', 'test getVar')
-        >>> getVar(TESTPATH, 'title')
-        'test getVar'
-    """    
+    >>> setVar(TESTPATH, 'title', 'test getVar')
+    >>> getVar(TESTPATH, 'title')
+    'test getVar'
+
+    :param wd: Directory to retrieve the variable from
+    :type wd: String
+    :param key: The name of the parameter to retrieve
+    :type key: String
+    :returns: The value of the parameter
+    :rtype: String
+    """
+
+    if not moa.info.isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
     if not os.path.exists(wd):
         return False
     moamk = os.path.join(wd, 'moa.mk')

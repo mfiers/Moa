@@ -30,79 +30,57 @@ import subprocess
 from  moa.logger import l
 from moa import utils
 
-#moa specific libs - first prepare for loading libs
-if not os.environ.has_key('MOABASE'):
-    raise Exception("MOABASE is undefined")
-
-#process the .pth file in the $MOABASE/bin folder !
-site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
-
-MOABASE = os.environ["MOABASE"]
-TEMPLATEDIR = os.path.join(MOABASE, 'template')
-
-##
-## Read the moa configutation file 
-ETC = {}
-for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
-    line = line.strip()
-    if not line: 
-        continue
-    if line[0] == '#': 
-        continue
-    ls = [x.strip() for x in line.split('=', 1)]
-    if len(ls) == 2:
-        ETC[ls[0]] = ls[1]
-
-def _startMake(d, args, verbose = True,
-               pipeOut = subprocess.PIPE,
-               pipeErr = subprocess.PIPE):
+def _startMake(wd, args, verbose = True,
+               captureOut = False):
     """
-    A function to run Make in a certain directory d with specific args
+    A function to start Make in a certain directory d with specific args
+    
+    :param wd: Directory in which to execute make
+    :type wd: String
+    :param args: Arguments to pass to make
+    :type args: String or List of Strings
+    :param verbose: Have make be silent or generate lots of output
+    :type verbose: Boolean
+    :param captureOut: If True the output will be written to moa.out
+    and moa.err
+    :type captureOut: Boolean    
     """
+    l.debug("start execute of make in %s" % wd)
     if type(args) == type("str"):
-        args = [args]
-        
+        args = args.split()
+
+    args.insert(0, '-r')
     if not verbose:
-        args.append('-s')
-        
+        args.insert(0, '-s')
+
+    args.insert(0, 'make')
     p = subprocess.Popen(
-        ["make"] + args,
+        args,
         shell=False,
-        cwd = d,
-        stdout = pipeOut,
-        stderr = pipeErr)
+        cwd = wd)
     return p
 
-def runMake(directory = None, args = [], verbose=True,
-            catchout=False):
+def runMake(wd = None, args = [], verbose=True,
+            captureOut = False):
     """
     Complete a make run
     """
-    if not directory: directory = os.getcwd()
-    if type(args) == type('hi'): args = [args]
-    l.debug('Starting "make %s" in %s' % (" ".join(args), directory))
-
-    if catchout:
-        outpipe = subprocess.PIPE
-        errpipe = subprocess.PIPE
-    else:
-        outpipe = None
-        errpipe = None
-    
-    p = _startMake(directory, args, verbose=verbose,
-                   pipeOut=outpipe, pipeErr = errpipe)
+    if not wd: wd = os.getcwd()
+    p = _startMake(wd = wd, args = args, verbose=verbose,
+                   captureOut = True)
     (out, err) = p.communicate()
     rc = p.returncode
-    l.debug("Finished make in %s with return code %s" % (directory, rc))
-    return rc, out, err
+    l.debug("Finished make in %s with return code %s" % (wd, rc))
+    return rc
 
-def runMakeAndExit(directory = None, verbose=True, args = []):
+def runMakeAndExit(wd = None, args = [], verbose=True):
     """
     Convenience function - run, report & exit
     """
-    l.debug("ji %s %s" % (directory, args))
-    rc, out, err = runMake(directory=directory, verbose=verbose, args=args)
-    utils.exit(rc)
+    l.debug("ji %s %s" % (wd, args))
+    rc = runMake(wd=wd, verbose=verbose, args=args)
+    sys.exit(rc)
+
 
 ##
 ## API Command Dispatcher
@@ -112,4 +90,4 @@ def execute(d, args = []):
     """
     Execute 'make' in directory d
     """
-    _startMake(d, args)
+    __startupMake(d, args)
