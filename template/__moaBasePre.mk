@@ -46,11 +46,12 @@ moamark := \033[0;42;30mm\033[0m
 moaerrr := \033[0;1;37;41m!!!\033[0m
 moawarn := \033[0;43m>>\033[0m
 moatest := \033[0;42mTEST:\033[0m
-echo = echo -e "$(moamark) $(1)"
-warn = echo -e "$(moawarn) $(1)"
-tstm = echo -e "$(moatest) $(1)"
-errr = echo -e "$(moaerrr) $(1)"
+echo = echo -e "$(moamark) $(strip $(1))"
+warn = echo -e "$(moawarn) $(strip $(1))"
+tstm = echo -e "$(moatest) $(strip $(1))"
+errr = echo -e "$(moaerrr) $(strip $(1))"
 exer = ( echo -e "$(moaerrr) $(1)"; exit -1 )
+exerUnlock = ( echo -e "$(moaerrr) $(1)"; rm moa.runlock || true; exit -1 )
 
 ## Define a variable that can be used to hide
 ## output if the moa/make is not called with the -v flag

@@ -73,6 +73,7 @@ handler = logging.StreamHandler()
 logmark = chr(27) + '[0;44mU' + \
           chr(27) + '[0m ' 
 
+
 formatter = XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(message)s')
 
 handler.setFormatter(formatter)
@@ -87,4 +88,8 @@ def exitError(message):
 def setVerbose():
     l.setLevel(logging.DEBUG)
 
+def setSilent():
+    l.setLevel(logging.WARNING)
 
+def setInfo():
+    l.setLevel(logging.INFO)

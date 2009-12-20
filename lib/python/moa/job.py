@@ -18,7 +18,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa script - template related code
+Create new jobs.
 """
 
 import os
@@ -28,6 +28,7 @@ import sys
 import moa.utils
 import moa.logger
 import moa.conf
+from moa.exceptions import *
 
 l = moa.logger.l
     
@@ -53,30 +54,66 @@ moa_postprocess:
 
 """
 
-
 def handler(options, args):
-    command = newargs[0]
-    newargs = newargs[1:]
+    l.debug("running job.handler with ")
+    l.debug("  - with args %s" % args)
+    command = args[0]
+    newargs = args[1:]
     if command == 'list':
         list()
-    elif command == 'new':
-        new(options, newargs)
+    elif command == 'new':        
+        directory = options.directory
+        title = options.title
+
+        if len(newargs) == 0:
+            template = 'traverse'
+            params = []
+        elif '=' in newargs[0]:
+            template = 'traverse'
+            params = moa.conf.parseClArgs(newargs)
+        else:
+            template = newargs[0]
+            params = moa.conf.parseClArgs(newargs[1:])
+            
+        newJob(
+            template,
+            title = title,
+            directory = directory,
+            parameters = params,
+            force = options.force,
+            )
     else:
-        l.error("Usage moa template [new|list]")
+        l.error("Usage moa job [new|list]")
         sys.exit()
         
-def _check(what):
-    """Check if a template exists"""
+def check(what):
+    """
+    Check if a template exists
+
+        >>> check('gather')
+        True
+        >>> check('nonexistingtemplate')
+        False
+
+    """
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
     if not os.path.exists(templatefile):
-        l.debug("cannot find %s" % templatefile)
-        l.error("No template for %s exists" % what)
-        sys.exit(1)        
+        return False
     return True
 
 def list():
     """
     List all known templates
+
+        >>> result = list()
+        >>> len(result) > 0
+        True
+        >>> '__moaBase' in result
+        False
+        >>> type(result) == type([])
+        True
+        >>> 'gather' in result
+        True
     """
     r = []
     for f in os.listdir(TEMPLATEDIR):
@@ -88,39 +125,51 @@ def list():
         if not '.mk' in f: continue
         r.append(f.replace('.mk', ''))
     r.sort()
-    for r1 in r: print r1
+    return r
         
-def new(options, args):
+def newJob(template,
+                title = None,
+                directory = '.',
+                parameters = [],
+                force = False):
     """
     Create a new template based makefile in the current dir.
+
+    :parameters:
+
+
+        >>> moa.utils.removeMoaFiles(EMPTYDIR)
+        >>> newJob('traverse',
+        ...             title = 'test job creation',
+        ...             directory=EMPTYDIR,
+        ...             parameters=['moa_precommand="ls"'])
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+        True
+        >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+        True
+        >>> moa.conf.getVar(EMPTYDIR, 'title')
+        'test job creation'
+        >>> moa.conf.getVar(EMPTYDIR, 'moa_precommand')
+        '"ls"'
+        >>> moa.utils.removeMoaFiles(EMPTYDIR)
+        
     """
-
-    usage = 'Usage: moa new  [-t "TITLE"] [-d DIRECTORY] [TEMPLATE(s)]'
-
-    if len(args) == 0:
-        template = 'traverse'
-        parameters = []
-    else:
-        template = args[0]
-        parameters = args[1:]
-
-    l.debug("Creating template %s" % template)
+    l.debug("Creating template '%s'" % template)
+    l.debug("- in directory %s" % directory)
 
     #is this a valid template??
-    _check(template)
+    check(template)
             
-    directory = options.newdir
     if not directory:
         directory = '.'
     if (directory != '.') and (not os.path.isdir(directory)):
         l.info("Creating directory %s" % directory)
         os.makedirs(directory)
 
-    title = options.title
     if not title and template != 'traverse':
         l.debug("no title (template %s)" % template)
         l.warning("It is strongly recommended to specify a title")
-        l.warning("You can still do so using moa set title='somthing meaningful'")
+        l.warning("You can still do so by using moa set title='somthing meaningful'")
         title = ""
 
     if title:
@@ -135,7 +184,7 @@ def new(options, args):
     
     if os.path.exists(makefile):
         l.debug("Makefile exists!")
-        if not options.force:
+        if not force:
             l.critical("makefile exists, use -f (--force) to overwrite")
             sys.exit(1)
 

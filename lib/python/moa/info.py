@@ -18,8 +18,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Directory info utilities
+Functions to retrieve information from Moa directories
 """
+__docformat__ = "restructuredtext en"
+
 
 import os
 import re
@@ -27,36 +29,115 @@ import sys
 
 from moa.logger import l
 from moa import dispatcher
+from moa.exceptions import *
+import moa.lock
+
+MOABASE = os.environ["MOABASE"]
+
+def getMoaBase():
+    """
+    Return the MOABASE
+    
+        >>> mb = getMoaBase()
+        >>> type(mb) == type('string')
+        True
+        >>> os.path.exists(mb)
+        True
+        >>> os.path.exists(os.path.join(mb, 'bin', 'moa'))
+        True
+        
+    """
+    return MOABASE
 
 
-def isMoa(d):
-    """ is directory d a 'moa' directory? """
+def isMoaDir(d):
+    """
+    Is directory d a 'moa' directory?
 
-    if not os.path.exists(os.path.join(d, 'Makefile')):
+        >>> isMoaDir('/')
+        False
+        >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
+        >>> isMoaDir(demoPath)
+        True
+        
+    """
+    makefile = os.path.join(d, 'Makefile')
+
+    if not os.path.exists(makefile):
         return False
     
     #we could run make, but that is rather slow just to check if a Makefile
     #is a proper Makefile - so, we' quickly reading the Makefile to see if
     #it imports __moaBase.mk. If it does - it's probably a Moa Makefile
-
     isMoa = False
     
     F = open(os.path.join(d, 'Makefile'))
     for l in F.readlines():
-        if 'include $(shell echo $$MOABASE)/template/' in l:
+        if '$(MOABASE)' in l:
             isMoa = True
             break
-    F.close()
-        
+    F.close()        
     return isMoa
 
-def info(d):
-    """ Retrieve a lot of information """
+def status(d):
+    """
+    Returns the status of a directory. It will return a one of the following status messages:
+
+       - notmoa - this is not a moa directory
+       - waiting - a moa job, not doing anything
+       - running - this is a moa job & currently executing (runlock exists)       
+       - locked - this job is locked (i.e. a lock file exists)
+
+           >>> status(TESTPATH)
+           'waiting'
+           >>> status(NOTMOADIR)
+           'notmoa'
+           >>> status(LOCKEDMOADIR)
+           'locked'
+       
+    """
+    if not isMoaDir(d):
+        return "notmoa"
+    lockfile = os.path.join(d, 'lock')
+    runlockfile = os.path.join(d, 'moa.runlock')
+    if os.path.exists(runlockfile):
+        return "running"
+    if os.path.exists(lockfile):
+        return "locked"
+    return "waiting"
+    
+def info(wd):
+    """
+    Retrieve a lot of information on a job
+
+    >>> result = info(TESTPATH)
+    >>> type(result) == type({})
+    True
+    >>> result.has_key('moa_targets')
+    True
+    >>> result.has_key('moa_description')
+    True
+    >>> try: result2 = info('NOTAMOADIR')
+    ... except NotAMoaDirectory: 'ok!'
+    'ok!'
+
+    :param wd: Moa directory to retrieve info from
+    :type wd: String
+    
+    :raises NotAMoaDirectory: when wd is not a Moa directory or does
+       not exists
+    
+    """
+
+    if not isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+    
     rv = {
         'parameters' : {}
-
         }
-    rc, out, err = dispatcher.runMake(directory = d, args='info', catchout=True)
+    
+    rc, out, err = \
+        dispatcher.runMake(directory = wd, args='info', catchout=True)
 
     if rc != 0:
         print err
@@ -102,6 +183,7 @@ def info(d):
                 pob['value'] = pob.get('value').split()
             rv['parameters'][parname] = pob
     return rv
+
 
     
     

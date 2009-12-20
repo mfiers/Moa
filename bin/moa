@@ -20,7 +20,7 @@
 """
 moa frontend
 
-This script serves as a command dispatcher too either a set of python
+This script serves as a command dispatch too either a set of python
 libraries or to GNU Make
 
 """
@@ -57,12 +57,14 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
     if len(l) == 2:
         ETC[l[0]] = l[1]
 
-import moa.template
+import moa.job
 import moa.archive
-from moa import dispatcher
+from moa import dispatch
 import moa.conf
 import moa.info
+import moa.unittests
 from moa import utils
+from moa.exceptions import *
 
 ## Init the logger
 import moa.logger
@@ -107,16 +109,13 @@ parser.add_option("-j", dest="threads",
                   help="threads to use when running Make (corresponds " +
                   "to the make -j parameter)")
 
-#deprecated:
-#parser.add_option("-p", "--project", dest="project",
-#                  help="set a project name (use with moa new)")
 
 parserN = optparse.OptionGroup(parser, "For use with moa new")
+parser.set_defaults(title="", directory=".")
 
-parserN.add_option("-t", "--title", dest="title",
-                  help="Node title")
-parserN.add_option("-d", "--directory", dest="newdir",
-                  help="Directory to create the new template in")
+parserN.add_option("-t", "--title", dest="title", help="Job title")
+parserN.add_option("-d", "--directory", dest="directory",
+                  help="Directory to create the new template in (default: .)")
 parser.add_option_group(parserN)
 
 (options, args) = parser.parse_args()
@@ -179,13 +178,13 @@ if 'dont_include_moabase' in _check:
 
 
 ##
-## Command dispatcher
+## Command dispatch
 ## 
 if __name__ == "__main__":    
     l.debug("MOABASE : %s" % MOABASE)
 
     if len(args) == 0:
-        dispatcher.runMakeAndExit(verbose=options.verbose)
+        dispatch.runMakeAndExit(verbose=options.verbose)
 
     command = args[0]
     newargs = args[1:]
@@ -193,28 +192,32 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
 
     if command == 'run':
-        dispatcher.runMakeAndExit(args=newargs, verbose=options.verbose)
+        dispatch.runMakeAndExit(args=newargs, verbose=options.verbose)
     elif command == 'rawinfo':
         pprint.pprint(moa.info.info(os.getcwd()))
         
     #Create new jobs
-    elif command == 'template':
-        moa.template.handler(options, newargs)
+    elif command == 'job':
+        moa.job.handler(options, newargs)
     elif command == 'new':
-        #shortcut for moa template net
-        moa.template.new(options, newargs)
+        #shortcut for moa job new
+        moa.job.handler(options, args)
 
     #pack & unpack trees
     elif command == 'archive':
         moa.archive.handler(options, newargs)
     elif command == 'list':
-        #shortcut for moa template list
-        moa.template.list()
+        #shortcut for moa job list
+        for job in moa.job.list():
+            print job
     #configuration stuff
     elif command == 'set':
         moa.conf.handler(options, newargs)
+    #unittests
+    elif command == 'test':
+        moa.unittests.run()
     else:
         #fire arguments of to make
-        dispatcher.runMakeAndExit(args=args, verbose=options.verbose)
+        dispatch.runMakeAndExit(args=args, verbose=options.verbose)
     
     utils.exit()

@@ -18,8 +18,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa script - moa.mk configuration related code
+Moa script - get and set variables to the moa.mk file
 """
+__docformat__ = "restructuredtext en"
 
 import re
 import os
@@ -28,6 +29,8 @@ import sys
 import moa.logger
 from moa.logger import exitError
 import moa.utils
+import moa.info
+from moa.exceptions import *
 
 l = moa.logger.l
 
@@ -37,11 +40,37 @@ def handler(options, args):
     """
     cwd = os.getcwd()    
     commandLineHandler(cwd, args)
+
+def parseClArgs(args):
+    """
+    Parse the arguments defined on a commandline.
+
+    :param args: command line arguments, as passed on by sys.argv or
+        optparse. It is expected to be a list of strings of the
+        following format; 'param=value' or 'param+=value' No spaces
+        are allowed between the parameter name, value and operator.
+    :type args: String of List of Strings
     
-def commandLineHandler(wd, args):
-    l.debug("start parsing the commandline")
-    #parse all arguments
-    data = []
+
+    >>> r = parseClArgs(['aap=1', 'noot=2', 'noot=3',
+    ...                  'mies=test', 'mies+=roos'])
+    >>> type(r) == type([])
+    True
+    >>> type(r[0]) == type({})
+    True
+    >>> r[0]['key'] == 'aap'
+    True
+    >>> r[1]['operator'] == '='
+    True
+    >>> r[2]['value'] == '3'
+    True
+    >>> r[4]['operator'] == '+='
+    True
+    >>> len(r) == 5
+    True
+        
+    """
+    rv = []
     for a in args:
         if not '=' in a:
             l.error("Invalid key/value pair %s" % a)
@@ -52,15 +81,34 @@ def commandLineHandler(wd, args):
             o = '='
             k, v = [x.strip() for x in a.split('=', 1)]
             
-        data.append({ 'key' : k,
-                      'operator' : o,
-                      'value' : v })
+        rv.append({ 'key' : k,
+                    'operator' : o,
+                    'value' : v })
+    return rv
+    
+def commandLineHandler(wd, args):
+    l.debug("start parsing the commandline")
+    #parse all arguments
+    data = parseClArgs(args)
     writeToConf(wd, data)
 
 
 def setVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
+
+        >>> import random
+        >>> testTitle = 'title %d' % random.randint(0,10000)
+        >>> setVar(TESTPATH, 'title', testTitle)
+        >>> title = getVar(TESTPATH, 'title')
+        >>> title == testTitle
+        True
+        >>> try: setVar(NOTMOADIR, 'title', 'test setvar in a non-moa dir')
+        ... except NotAMoaDirectory:
+        ...   'Fine'
+        'Fine'
+
+
     """    
     writeToConf(wd, [{'key' : key,
                   'operator' : '=',
@@ -69,6 +117,19 @@ def setVar(wd, key, value):
 def appendVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
+    
+        >>> setVar(TESTPATH, 'title', 'one')
+        >>> getVar(TESTPATH, 'title')
+        'one'
+        >>> appendVar(TESTPATH, 'title', 'two')
+        >>> appendVar(TESTPATH, 'title', 'three')
+        >>> getVar(TESTPATH, 'title')
+        'one two three'
+        >>> try: appendVar(NOTMOADIR, 'title', 'test setvar in a non-moa dir')
+        ... except NotAMoaDirectory:
+        ...   'Fine'
+        'Fine'
+
     """    
     writeToConf(wd, [{'key' : key,
                       'operator' : '+=',
@@ -77,8 +138,22 @@ def appendVar(wd, key, value):
 
 def getVar(wd, key):
     """
-    Get a single parameter from a moa directory    
+    Get a single parameter from a moa directory
+
+    >>> setVar(TESTPATH, 'title', 'test getVar')
+    >>> getVar(TESTPATH, 'title')
+    'test getVar'
+
+    :param wd: Directory to retrieve the variable from
+    :type wd: String
+    :param key: The name of the parameter to retrieve
+    :type key: String
+    :returns: The value of the parameter
+    :rtype: String
     """
+
+    if not moa.info.isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
     if not os.path.exists(wd):
         return False
     moamk = os.path.join(wd, 'moa.mk')
@@ -98,27 +173,30 @@ def getVar(wd, key):
     F.close()
     return " ".join(rv)    
     
-def appendVar(wd, key, value):
-    """
-    Convenience function - append the value to variable 'key' in directory wd
-    """    
-    writeToConf(wd, [{'key' : key,
-                  'operator' : '+=',
-                  'value' : value}])
-    
 def writeToConf(wd, data):
+    """
+    writeToConf - actually write something to moa.mk
+    
+    """
 
+    if not moa.info.isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+
+    
     moamk = os.path.join(wd, 'moa.mk')
     moamktmp = os.path.join(wd, 'moa.mk.tmp')
     moamklock = os.path.join(wd, 'moa.mk.lock')
+
+    
     
     #refd is a refactoring of data - allows easy checking
     refd = dict([(x['key'],x) for x in data])
-    l.debug("Changing variables: %s" % ", ".join(refd.keys()))
-    
+    l.debug("Changing variable: %s" % ", ".join(refd.keys()))
+    l.debug("starting to write a new moa.mk in %s" % wd)
+
     #get a lock on moa.mk
     with moa.utils.flock(moamklock):
-        
+        l.debug("got a lock on moa.mk in %s" % wd)
         if os.path.exists(moamktmp):
             l.debug("removing an older?? moa.mk.tmp")
             os.unlink(moamktmp)

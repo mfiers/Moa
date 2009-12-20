@@ -157,6 +157,7 @@ title:
 ## These targets need to be executed for a normal MOA run
 moa_execute_targets =										\
 	moa_check_lock											\
+	moa_set_runlock											\
 	moa_welcome 											\
 	moa_check 												\
 	moa_run_precommand										\
@@ -166,11 +167,27 @@ moa_execute_targets =										\
 	$(addsuffix _post, $(moa_ids)) 							\
 	moa_postprocess 										\
 	moa_run_postcommand										\
+	moa_clean_runlock										\
 	moa_finished
+
+
+.PHONY: moa_set_runlock
+moa_set_runlock:
+	if [[ -f 'moa.runlock' ]]; then							\
+		$(call exer,This job is already running);			\
+	else 													\
+		$(call echo,Locking job for this run);				\
+		touch moa.runlock;									\
+	fi
+
+.PHONY: moa_clean_runlock
+moa_clean_runlock:
+	$(call echo,Removing run lock)
+	-rm moa.runlock
 
 .PHONY: moa_finished
 moa_finished:
-	@$(call echo, Moa finished - Succes!)
+	@$(call echo,Moa finished - Succes!)
 
 ## The default Moa target - A single moa invocation calls a set of targets
 .PHONY: moa_default_target
@@ -355,7 +372,7 @@ checkPrereqExec = \
 			if [[ -n "$(2)" ]]; then 											\
 				$(call errr,$(2)); 												\
 			fi;																	\
-			exit -1 ;															\
+			$(call exerUnlock);													\
 	fi
 
 checkPrereqPath = \
@@ -365,7 +382,7 @@ checkPrereqPath = \
 		if [[ -n "$(2)" ]]; then 												\
 			$(call errr,$(2)); 													\
 		fi;																		\
-		exit -1 ;																	\
+		$(call exerUnlock);														\
 	fi
 
 .PHONY: prereqs $(prereqlist)
@@ -383,6 +400,17 @@ moa_check_lock:
 	    	$(call exer, Job is locked!) ;\
 		fi;\
 	fi
+
+.PHONY: moa_lock lock
+lock: moa_lock
+moa_lock:
+	touch lock
+
+.PHONY: moa_unlock unlock
+unlock: moa_unlock
+moa_unlock:
+	-rm lock
+
 
 #check if MOABASE is defined
 prereq_moa_environment:
@@ -412,8 +440,7 @@ varcheck_%:
 
 mustexist_%:	
 	@if [ "$(origin $*)" == "undefined" ]; then \
-		$(call errr,Error: $* is undefined) ;\
-		exit -1; \
+		$(call exerUnlock,Error: $* is undefined) ;\
 	fi
 
 #defer this to MOA
