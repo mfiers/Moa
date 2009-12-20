@@ -64,8 +64,8 @@ def _startMake(wd, args, verbose = True,
         args.insert(0, '-s')
 
     if captureOut:
-        FOUT = open(os.path.join(wd, 'moa.out'), 'a')
-        FERR = open(os.path.join(wd, 'moa.err'), 'a')
+        FOUT = open(os.path.join(wd, 'moa.out'), 'w')
+        FERR = open(os.path.join(wd, 'moa.err'), 'w')
         os.putenv('MOAANSI', 'no')
     else:
         FOUT = None
@@ -118,8 +118,16 @@ def runMakeGetOutput(wd = None, args = [], verbose=True):
         l.critical("Finished make in %s with non zero rc %s" % (wd, rc))
         sys.exit(rc)
 
-    output = open(os.path.join(wd, 'moa.out')).read()
-    return output
+    return getOutput(wd)
+
+def getOutput(wd):
+    """
+    Get the output from a moa run
+    """
+    outfile = os.path.join(wd, 'moa.out')
+    if not os.path.exists(outfile):
+        return ""    
+    return open(outfile).read()
 
 def runMakeAndExit(wd = None, args = [], verbose=True):
     """

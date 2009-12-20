@@ -76,9 +76,9 @@ def handler(options, args):
             params = moa.conf.parseClArgs(newargs[1:])
             
         newJob(
-            template,
+            template = template,
             title = title,
-            directory = directory,
+            wd = directory,
             parameters = params,
             force = options.force,
             )
@@ -128,43 +128,41 @@ def list():
     return r
         
 def newJob(template,
-                title = None,
-                directory = '.',
-                parameters = [],
-                force = False):
+           title = None,
+           wd = '.',
+           parameters = [],
+           force = False):
     """
     Create a new template based makefile in the current dir.
 
-    :parameters:
 
-
-        >>> moa.utils.removeMoaFiles(EMPTYDIR)
-        >>> newJob('traverse',
-        ...             title = 'test job creation',
-        ...             directory=EMPTYDIR,
-        ...             parameters=['moa_precommand="ls"'])
-        >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
-        True
-        >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
-        True
-        >>> moa.conf.getVar(EMPTYDIR, 'title')
-        'test job creation'
-        >>> moa.conf.getVar(EMPTYDIR, 'moa_precommand')
-        '"ls"'
-        >>> moa.utils.removeMoaFiles(EMPTYDIR)
+    >>> moa.utils.removeMoaFiles(EMPTYDIR)
+    >>> newJob(template = 'traverse',
+    ...        title = 'test job creation',
+    ...        wd=EMPTYDIR,
+    ...        parameters=['moa_precommand="ls"'])
+    >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+    True
+    >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+    True
+    >>> moa.conf.getVar(EMPTYDIR, 'title')
+    'test job creation'
+    >>> moa.conf.getVar(EMPTYDIR, 'moa_precommand')
+    '"ls"'
+    >>> moa.utils.removeMoaFiles(EMPTYDIR)
         
     """
     l.debug("Creating template '%s'" % template)
-    l.debug("- in directory %s" % directory)
+    l.debug("- in wd %s" % wd)
 
     #is this a valid template??
     check(template)
             
-    if not directory:
-        directory = '.'
-    if (directory != '.') and (not os.path.isdir(directory)):
-        l.info("Creating directory %s" % directory)
-        os.makedirs(directory)
+    if not wd:
+        wd = '.'
+    if (wd != '.') and (not os.path.isdir(wd)):
+        l.info("Creating wd %s" % wd)
+        os.makedirs(wd)
 
     if not title and template != 'traverse':
         l.debug("no title (template %s)" % template)
@@ -174,13 +172,13 @@ def newJob(template,
 
     if title:
         l.debug('creating a new moa makefile with title "%s" in %s' % (
-            title, directory))
+            title, wd))
     else:
-        l.debug('creating a new moa makefile in %s' % ( directory))
+        l.debug('creating a new moa makefile in %s' % ( wd))
 
-    makefile = os.path.join(directory, 'Makefile')
-    moamk = os.path.join(directory, 'moa.mk')
-    moamklock = os.path.join(directory, 'moa.mk.lock')
+    makefile = os.path.join(wd, 'Makefile')
+    moamk = os.path.join(wd, 'moa.mk')
+    moamklock = os.path.join(wd, 'moa.mk.lock')
     
     if os.path.exists(makefile):
         l.debug("Makefile exists!")
@@ -220,7 +218,7 @@ def newJob(template,
 
     if parameters:
         l.debug("and setting parameters %s" % parameters)        
-        moa.conf.commandLineHandler(directory, parameters)
+        moa.conf.commandLineHandler(wd, parameters)
             
     l.info("Written %s, try: moa help" % makefile)
 

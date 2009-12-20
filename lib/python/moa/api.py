@@ -263,7 +263,7 @@ def newJob(*args, **kwargs):
     >>> removeMoaFiles(EMPTYDIR)
     >>> newJob('traverse',
     ...        title = 'test creating of jobs',
-    ...        directory=EMPTYDIR)
+    ...        wd=EMPTYDIR)
     >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
     True
     >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
@@ -287,8 +287,8 @@ def removeMoaFiles(wd):
 
     >>> makefile = os.path.join(EMPTYDIR, 'Makefile')
     >>> moamk = os.path.join(EMPTYDIR, 'moa.mk')
-    >>> newJob('traverse',
-    ...        directory=EMPTYDIR,
+    >>> newJob(template = 'traverse',
+    ...        wd=EMPTYDIR,
     ...        title='test removeMoaFiles')
     >>> removeMoaFiles(EMPTYDIR)
     >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
@@ -304,6 +304,43 @@ def removeMoaFiles(wd):
     """
     moa.utils.removeMoaFiles(wd)
 
+
+def getMoaOut(wd):
+    """
+    Return moa output    
+    """
+    
+    return moa.runMake.getOutput(wd)
+    
+def runMoa(wd):
+    """
+    execute Moa
+
+    This function executes moa in path ``wd``.
+
+    >>> removeMoaFiles(EMPTYDIR)
+    >>> newJob('traverse',
+    ...        wd = EMPTYDIR,
+    ...        title = 'Test moa run')
+    >>> runMoa(EMPTYDIR)
+    >>> output = getMoaOut(EMPTYDIR)
+    >>> l.critical(output)
+    >>> len(output) > 0
+    True
+
+    :param wd: The pathname of the directory from which the Moa
+        files are to be removed
+    :type wd: String
+    :raises NotAMoaDirectory: if ``wd`` is not a moa directory
+    """
+    moa.runMake.runMake(wd = wd,
+                        verbose = False,
+                        captureOut = True)
+
+
+    
+
+    
 
 #Depreacted, these will be removed once William has changed his code
 def is_directory_moa(wd):
