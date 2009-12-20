@@ -42,10 +42,17 @@ boldOn := \033[0;1;47;0;32;4m
 boldOff := \033[0m
 
 #a colorful mark, showing that this comes from moabase
+ifeq ($(MOAANSI),no)
+moamark := MOA:
+moaerrr := MOAERROR:
+moawarn := MOAWARN:
+moatest := MOATEST:
+else
 moamark := \033[0;42;30mm\033[0m
 moaerrr := \033[0;1;37;41m!!!\033[0m
 moawarn := \033[0;43m>>\033[0m
 moatest := \033[0;42mTEST:\033[0m
+endif
 echo = echo -e "$(moamark) $(strip $(1))"
 warn = echo -e "$(moawarn) $(strip $(1))"
 tstm = echo -e "$(moatest) $(strip $(1))"
