@@ -104,32 +104,18 @@ def run(args=None, env=None):
         error.throw_fatal_error("Target Not Found", "The directory you attempted to access does not exist.") # say so
 
 
-
-    if command=="moa-projectinfo": # if we are dealing with an project-info request
-        project_info=dispatcher.info(path) # attempt to get information on path
-        
-        if not project_info["isMoaDir"]: # if it turns out to not be a Moa directory
-            output_error("The directory or file you attempted to retrieve project information on is not a Moa directory.") # say so
-
-        rw.send_header("Content-Type", "application/json") # we will be sending JSON
-        rw.send_header("Cache-Control", "no-cache") # this response should NOT be cached
-        rw.send_header("Expires", "0") # some older browsers need this to not cache a response
-        rw.end_header_mode() # get ready to send response
-
-        rw.send(json.dumps({"title" : project_info["projectTitle"]})) # send response
-
-    elif command=="moa-jobinfo":
-        if not mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
+    if command=="moa-jobinfo":
+        if not mwr.isMoaDir(path): # if the path does not correspond to a Moa directory
             output_error("The directory or file you attempted to retrieve job information on is not a Moa directory.") # say so            
 
-        job_info=mwr.get_moa_info(path)
+        job_info=mwr.getInfo(path)
 
         output_json_headers(0);
         rw.end_header_mode();
         rw.send(json.dumps(add_timestamp(job_info, 0)));
 
     elif command=="moa-jobparam":
-        if not mwr.is_directory_moa(path): # if the path does not correspond to a Moa directory
+        if not mwr.isMoaDir(path): # if the path does not correspond to a Moa directory
             output_error("The directory or file you attempted to retrieve and/or set job information on is not a Moa directory.") # say so
 
         if "key" in env["params"]:
@@ -144,12 +130,12 @@ def run(args=None, env=None):
             else:
                 var_value=""
            
-            mwr.set_moa_parameter(path, var_key, var_value)
+            mwr.setParameter(path, var_key, var_value)
 
         elif env["method"]=="GET": # if a get was requested
-            var_value=mwr.get_moa_parameter(path, var_key)
+            var_value=mwr.getParameter(path, var_key)
         elif env["method"]=="DELETE" : # if a delete was requested
-            mwr.set_moa_parameter(path, var_key, "")
+            mwr.setParameter(path, var_key, "")
 
     
         output_json_headers(0);
