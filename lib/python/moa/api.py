@@ -77,11 +77,13 @@ def status(wd):
     """
     Returns the status of a directory. It will return a one of the following status messages:
 
-    - notadir - this is not an accessible directory
-    - notmoa - this is not a moa directory
-    - waiting - a moa job, not doing anything
-    - running - this is a moa job & currently executing (runlock exists)       
-    - locked - this job is locked (i.e. a lock file exists)
+    - notadir: this is not an accessible directory
+    - notmoa: this is not a moa directory
+    - waiting: a moa job, not doing anything
+    - success: a moa job, not doing anything, but the last (background) run was successfull
+    - failed: A moa job, not doing anything, but the last (background) run failed
+    - running: this is a moa job & currently executing (runlock exists)       
+    - locked: this job is locked (i.e. a lock file exists)
 
     >>> result = status(TESTPATH)
     >>> result in ['waiting', 'locked', 'running']

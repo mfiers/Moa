@@ -75,13 +75,12 @@ moa.logger.handler	moa.logger-module.html#handler
 moa.logger.formatter	moa.logger-module.html#formatter
 moa.logger.logmark	moa.logger-module.html#logmark
 moa.runMake	moa.runMake-module.html
-moa.runMake.execute	moa.runMake-module.html#execute
-moa.runMake.runMakeAndExit	moa.runMake-module.html#runMakeAndExit
 moa.runMake.getError	moa.runMake-module.html#getError
-moa.runMake.__package__	moa.runMake-module.html#__package__
 moa.runMake.runMakeGetOutput	moa.runMake-module.html#runMakeGetOutput
+moa.runMake.__package__	moa.runMake-module.html#__package__
+moa.runMake._runMake	moa.runMake-module.html#_runMake
 moa.runMake.getOutput	moa.runMake-module.html#getOutput
-moa.runMake.runMake	moa.runMake-module.html#runMake
+moa.runMake.go	moa.runMake-module.html#go
 moa.runMake._startMake	moa.runMake-module.html#_startMake
 moa.unittests	moa.unittests-module.html
 moa.unittests.tests	moa.unittests-module.html#tests

@@ -47,7 +47,6 @@ test_clean:
 test: 
 	$e echo '$(txt)' > moa_test
 
-
 unittests: unittest_moabase_var
 .PHONY: unittest_moabase_var
 unittest_moabase_var:

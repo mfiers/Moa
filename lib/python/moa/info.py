@@ -85,6 +85,10 @@ def status(d):
 
        - notmoa - this is not a moa directory
        - waiting - a moa job, not doing anything
+       - success - a moa job, not doing anything, but the last (background) run
+          was successfull
+       - failed - A moa job, not doing anything, but the last (background) run
+          failed
        - running - this is a moa job & currently executing (runlock exists)       
        - locked - this job is locked (i.e. a lock file exists)
 
@@ -99,11 +103,18 @@ def status(d):
     if not isMoaDir(d):
         return "notmoa"
     lockfile = os.path.join(d, 'lock')
+    successfile = os.path.join(d, 'moa.success')
+    failedfile = os.path.join(d, 'moa.failed')
+    lockfile = os.path.join(d, 'lock')
     runlockfile = os.path.join(d, 'moa.runlock')
     if os.path.exists(runlockfile):
         return "running"
     if os.path.exists(lockfile):
         return "locked"
+    if os.path.exists(successfile):
+        return "success"
+    if os.path.exists(failedfile):
+        return "failed"
     return "waiting"
     
 def info(wd):
