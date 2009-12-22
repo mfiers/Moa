@@ -7,7 +7,7 @@ from wwwmoa import rl
 import wwwmoa.env
 from wwwmoa.formats.html import error
 import wwwmoa.info.moa as moainfo
-import moa.info as moachecker
+import moa.api as moaapi
 import moa.dispatcher as dispatcher
 
 import os
@@ -23,7 +23,6 @@ from wwwmoa.api import in_root
 from wwwmoa.api import is_root
 from wwwmoa.api import add_timestamp
 from wwwmoa.api import output_json_headers
-from quickls import listdir
 
 ## Main Interface Logic ##
 
@@ -41,6 +40,11 @@ def run(args=None, env=None, path=None):
 
         if command_filter==None:
             raise
+
+        if "filter-ignorecase" in env["params"]:
+            command_filter_sensitive=(env["params"]["filter-ignorecase"]!="1")
+        else:
+            command_filter_sensitive=True
 
         command_filter=command_filter.strip()
         command_filter_type=command_filter_type.strip().lower()
@@ -86,7 +90,7 @@ def run(args=None, env=None, path=None):
                                     "read-allowed" : in_root(path_exploded_current) and os.access(path_exploded_current, os.R_OK), # whether or not we will be able to read it using other API calls
                                     "write-allowed" : in_root(path_exploded_current) and os.access(path_exploded_current, os.W_OK), # whether or not we will be able to write it using other API calls
                                     "path" : "", # path for later access, since simple concat may not work well
-                                    "x-is-moa" : moachecker.isMoa(path_exploded_current)
+                                    "x-is-moa" : moaapi.isMoaDir(path_exploded_current)
                                         })
 
         for p in path_exploded_final: # for each entry in the final dir path listing
@@ -104,7 +108,8 @@ def run(args=None, env=None, path=None):
 
     
     # create directory listing
-    ls=listdir(path) # get raw listing
+    ls=os.listdir(path) # get raw listing
+    ls.sort() # sort the listing (alpha and ascending)
     ls_file=[] # create list that will contain just the files
     ls_dir=[] # create list that will contain just the dirs
     ls_final=[] # create the final list that will be sent back to the user
@@ -113,14 +118,24 @@ def run(args=None, env=None, path=None):
 
     if command_filtered:
         if command_filter_type=="contains":
-            for l in ls:
-                if l.find(command_filter)!=-1:
-                    ls_filter.append(l)
+            if command_filter_sensitive:
+                for l in ls:
+                    if l.find(command_filter)!=-1:
+                        ls_filter.append(l)
+            else:
+                for l in ls:
+                    if l.lower().find(command_filter.lower())!=-1:
+                        ls_filter.append(l)
 
         if command_filter_type=="exactly":
-            for l in ls:
-                if l==command_filter:
-                    ls_filter.append(l)
+            if command_filter_sensitive:
+                for l in ls:
+                    if l==command_filter:
+                        ls_filter.append(l)
+            else:
+                for l in ls:
+                    if l.lower()==command_filter.lower():
+                        ls_filter.append(l)
 
         ls=ls_filter
 
@@ -159,7 +174,7 @@ def run(args=None, env=None, path=None):
                            "read-allowed" : in_root(l_complete) and os.access(l_complete, os.R_OK), # whether or not we will be able to read it using other API calls
                            "write-allowed" : in_root(l_complete) and os.access(l_complete, os.W_OK), # whether or not we will be able to write it using oher API calls
                            "path" : os.path.join(path_exploded_str_current, l), # path for later access, since simple concat may not work well
-                           "x-is-moa" : moachecker.isMoa(l_complete)
+                           "x-is-moa" : moaapi.isMoaDir(l_complete)
                            })
         
     # add both lists to paliminary final list
@@ -173,7 +188,7 @@ def run(args=None, env=None, path=None):
 
     rw.send(json.dumps(add_timestamp({ # send response
                 "dir" : path_exploded_final, # the dir path components
-                "x-dir-is-moa" : moachecker.isMoa(path),
+                "x-dir-is-moa" : moaapi.isMoaDir(path),
                 "ls" : ls_final, # the final listing
                 "ls-available" : ls_total_count, # the total number of entries that are potentially available
                 "ls-returned" : len(ls_final), # the total number of entries that we returned
