@@ -1,5 +1,3 @@
-### WWWMoa ###############################
-### Mod_API / Main API
 
 ## Imports ##
 
@@ -80,14 +78,38 @@ def run(args=None, env=None, path=None):
     path_exploded_final.reverse() # reverse the final "rich" listing so that it will be in correct order
         
 
-
+    
     # create directory listing
     ls=os.listdir(path) # get raw listing
     ls.sort() # sort the listing (alpha and ascending)
-       
     ls_file=[] # create list that will contain just the files
     ls_dir=[] # create list that will contain just the dirs
     ls_final=[] # create the final list that will be sent back to the user
+
+
+        
+    for l in ls: # for each entry in the raw directory listing
+        l_complete=os.path.join(path,l) # create the full pathname for the entry
+
+        if os.path.isfile(l_complete): # if the entry is a file
+            ls_file.append(l) # add it to the file list
+        elif os.path.isdir(l_complete): # if the entry is a dir
+            ls_dir.append(l) # add it to the dir list
+
+    # place the entries in the correct order
+    ls=[]
+    ls.extend(ls_dir) # directories go first
+    ls.extend(ls_file) # files come after directories
+    ls_dir=[] # reset dir list
+    ls_file=[] # reset file list
+    
+
+    # before we cut out some entries, we should capture the size of the listing
+    ls_total_count=len(ls)
+
+    if not command_min==None and not command_max==None: # if the min and max are valid
+        ls=ls[command_min-1:command_max] # cut the list in accordance with this min and max
+
         
     for l in ls: # for each entry in the raw directory listing
         l_complete=os.path.join(path,l) # create the full pathname for the entry
@@ -123,11 +145,7 @@ def run(args=None, env=None, path=None):
     ls_final.extend(ls_dir) # dirs go first
     ls_final.extend(ls_file) # files go last
 
-    # before we cut out some entries, we should capture the size of the listing
-    ls_total_count=len(ls_final)
 
-    if not command_min==None and not command_max==None: # if the min and max are valid
-        ls_final=ls_final[command_min-1:command_max] # cut the list in accordance with this min and max
 
     output_json_headers(0) # out appropriate headers
     rw.end_header_mode() # get ready to send response

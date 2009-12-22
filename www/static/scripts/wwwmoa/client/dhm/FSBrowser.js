@@ -50,6 +50,7 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 
 	    _setLocationAttr : function(val) {
 		this._location=val;
+		this.attr("startIndex", 0);
 		this.doNavAction();
 	    },
 
