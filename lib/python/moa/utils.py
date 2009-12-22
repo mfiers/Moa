@@ -117,14 +117,18 @@ def removeDirectory(path):
 
 def simple_decorator(decorator):
 
-    """This decorator can be used to turn simple functions into
+    """
+
+    This decorator can be used to turn simple functions into
     well-behaved decorators, so long as the decorators are fairly
     simple. If a decorator expects a function and returns a function
     (no descriptors), and if it doesn't modify function attributes or
     docstring, then it is eligible to use this. Simply apply
-    @simple_decorator to your decorator and it will automatically
+    E{@}simple_decorator to your decorator and it will automatically
     preserve the docstring and function attributes of functions to
-    which it is applied."""
+    which it is applied.
+
+    """
     def new_decorator(f):
         g = decorator(f)
         g.__name__ = f.__name__

@@ -251,8 +251,6 @@ def templateList():
 
     >>> result = templateList()
 
-    :param wd: the Moa directory to use
-    :type wd: String
     :returns: A list of moa templates
     :rtype: List of Strings
     """

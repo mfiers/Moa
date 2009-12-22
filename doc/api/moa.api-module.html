@@ -14,9 +14,6 @@
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
-  <!-- Home link -->
-      <th>&nbsp;&nbsp;&nbsp;<a
-        href="moa-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -206,11 +203,11 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">List of Strings</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="templateList"></a><span class="summary-sig-name">templateList</span>()</span><br />
+          <td><span class="summary-sig"><a href="moa.api-module.html#templateList" class="summary-sig-name">templateList</a>()</span><br />
       Return a list of valid moa templates</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.api-pysrc.html#templateList">source&nbsp;code</a></span>
@@ -250,6 +247,75 @@
 files in place).</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.api-pysrc.html#removeMoaFiles">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="moa.api-module.html#getMoaOut" class="summary-sig-name">getMoaOut</a>(<span class="summary-sig-arg">wd</span>)</span><br />
+      Return output of a MOA run</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="moa.api-pysrc.html#getMoaOut">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="moa.api-module.html#getMoaErr" class="summary-sig-name">getMoaErr</a>(<span class="summary-sig-arg">wd</span>)</span><br />
+      Return moa error</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="moa.api-pysrc.html#getMoaErr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="qr"></a><span class="summary-sig-name">qr</span>(<span class="summary-sig-arg">cl</span>)</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="moa.api-pysrc.html#qr">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="moa.api-module.html#runMoa" class="summary-sig-name">runMoa</a>(<span class="summary-sig-arg">wd</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">target</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">threads</span>=<span class="summary-sig-default">1</span>)</span><br />
+      execute Moa</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="moa.api-pysrc.html#runMoa">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -661,6 +727,29 @@ a parameter exists, use the <a href="moa.api-module.html#getInfo" class="link">g
   </dl>
 </td></tr></table>
 </div>
+<a name="templateList"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">templateList</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.api-pysrc.html#templateList">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return a list of valid moa templates</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span>result = templateList()</pre>
+  <dl class="fields">
+    <dt>Returns: List of Strings</dt>
+        <dd>A list of moa templates</dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="removeMoaFiles"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -687,8 +776,8 @@ files in place). The function deletes the following files:</p>
 <pre class="py-doctest">
 <span class="py-prompt">&gt;&gt;&gt; </span>makefile = os.path.join(EMPTYDIR, <span class="py-string">'Makefile'</span>)
 <span class="py-prompt">&gt;&gt;&gt; </span>moamk = os.path.join(EMPTYDIR, <span class="py-string">'moa.mk'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>newJob(<span class="py-string">'traverse'</span>,
-<span class="py-more">... </span>       directory=EMPTYDIR,
+<span class="py-prompt">&gt;&gt;&gt; </span>newJob(template = <span class="py-string">'traverse'</span>,
+<span class="py-more">... </span>       wd=EMPTYDIR,
 <span class="py-more">... </span>       title=<span class="py-string">'test removeMoaFiles'</span>)
 <span class="py-prompt">&gt;&gt;&gt; </span>removeMoaFiles(EMPTYDIR)
 <span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(os.path.join(EMPTYDIR, <span class="py-string">'Makefile'</span>))
@@ -705,14 +794,130 @@ files are to be removed</li>
   </dl>
 </td></tr></table>
 </div>
+<a name="getMoaOut"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getMoaOut</span>(<span class="sig-arg">wd</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.api-pysrc.html#getMoaOut">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return output of a MOA run</p>
+<p>This function reads the moa.out file in a MOA directory and
+returns its content.</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span>F = open(os.path.join(EMPTYDIR, <span class="py-string">'moa.out'</span>),<span class="py-string">'w'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>F.write(<span class="py-string">'tst'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>F.close()
+<span class="py-prompt">&gt;&gt;&gt; </span>getMoaOut(EMPTYDIR) == <span class="py-string">'tst'</span>
+<span class="py-output">True</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>getMoaOut(NOTMOADIR) == <span class="py-string">''</span>
+<span class="py-output">True</span></pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>wd</code></strong> (String) - The pathname of the directory from which the Moa
+files are to be removed</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="getMoaErr"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getMoaErr</span>(<span class="sig-arg">wd</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.api-pysrc.html#getMoaErr">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Return moa error</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span>F = open(os.path.join(EMPTYDIR, <span class="py-string">'moa.err'</span>),<span class="py-string">'w'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>F.write(<span class="py-string">'tsterr'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>F.close()
+<span class="py-prompt">&gt;&gt;&gt; </span>getMoaErr(EMPTYDIR) == <span class="py-string">'tsterr'</span>
+<span class="py-output">True</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>getMoaErr(NOTMOADIR) == <span class="py-string">''</span>
+<span class="py-output">True</span></pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>wd</code></strong> (String) - the Moa directory</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="runMoa"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">runMoa</span>(<span class="sig-arg">wd</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">target</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">threads</span>=<span class="sig-default">1</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.api-pysrc.html#runMoa">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>execute Moa</p>
+<p>This function executes moa in path <tt class="rst-docutils literal"><span class="pre">wd</span></tt>.</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span>removeMoaFiles(EMPTYDIR)
+<span class="py-prompt">&gt;&gt;&gt; </span>newJob(<span class="py-string">'test'</span>,
+<span class="py-more">... </span>       wd = EMPTYDIR,
+<span class="py-more">... </span>       title = <span class="py-string">'Test moa run'</span>,
+<span class="py-more">... </span>       parameters = [<span class="py-string">'txt=testRunMoa'</span>])
+<span class="py-prompt">&gt;&gt;&gt; </span>runMoa(EMPTYDIR)
+<span class="py-prompt">&gt;&gt;&gt; </span>output = getMoaOut(EMPTYDIR)
+<span class="py-prompt">&gt;&gt;&gt; </span>len(output) &gt; 0
+<span class="py-output">True</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span><span class="py-string">'Starting MOA'</span> <span class="py-keyword">in</span> output
+<span class="py-output">True</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>target = os.path.join(EMPTYDIR, <span class="py-string">'moa_test'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(target)
+<span class="py-output">True</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>open(target).read().strip() == <span class="py-string">'testRunMoa'</span>
+<span class="py-output">True</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>runMoa(EMPTYDIR, target= <span class="py-string">'clean'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>output = getMoaOut(EMPTYDIR)
+<span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(target)
+<span class="py-output">False</span></pre>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>wd</code></strong> (String) - The pathname of the directory from which the Moa
+files are to be removed</li>
+        <li><strong class="pname"><code>target</code></strong> (String) - The Make target to execute (for example clean)</li>
+        <li><strong class="pname"><code>threads</code></strong> (Integer) - No of threads to run Moa with.</li>
+    </ul></dd>
+    <dt>Raises:</dt>
+    <dd><ul class="nomargin-top">
+        <li><code><strong class='fraise'><a href="moa.exceptions.NotAMoaDirectory-class.html">NotAMoaDirectory</a></strong></code> - if <tt class="rst-docutils literal"><span class="pre">wd</span></tt> is not a moa directory</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
-  <!-- Home link -->
-      <th>&nbsp;&nbsp;&nbsp;<a
-        href="moa-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -732,7 +937,7 @@ files are to be removed</li>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Dec 21 09:56:48 2009
+    Generated by Epydoc 3.0.1 on Tue Dec 22 16:51:13 2009
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

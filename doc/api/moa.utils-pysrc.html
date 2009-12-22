@@ -14,9 +14,6 @@
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
-  <!-- Home link -->
-      <th>&nbsp;&nbsp;&nbsp;<a
-        href="moa-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -87,10 +84,11 @@
 <a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">shutil</tt> </tt>
 <a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">contextlib</tt> </tt>
 <a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"> </tt>
-<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package moa=moa-module.html"><a title="moa" class="py-name" href="#" onclick="return doclink('link-0', 'moa', 'link-0');">moa</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module moa.logger=moa.logger-module.html"><a title="moa.logger" class="py-name" href="#" onclick="return doclink('link-1', 'logger', 'link-1');">logger</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Variable moa.archive.l=moa.archive-module.html#l,Variable moa.conf.l=moa.conf-module.html#l,Variable moa.job.l=moa.job-module.html#l,Variable moa.logger.l=moa.logger-module.html#l"><a title="moa.archive.l
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package moa=moa-module.html"><a title="moa" class="py-name" href="#" onclick="return doclink('link-0', 'moa', 'link-0');">moa</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module moa.logger=moa.logger-module.html"><a title="moa.logger" class="py-name" href="#" onclick="return doclink('link-1', 'logger', 'link-1');">logger</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Variable moa.archive.l=moa.archive-module.html#l,Variable moa.conf.l=moa.conf-module.html#l,Variable moa.job.l=moa.job-module.html#l,Variable moa.logger.l=moa.logger-module.html#l,Variable script-moa.l=script-moa-module.html#l"><a title="moa.archive.l
 moa.conf.l
 moa.job.l
-moa.logger.l" class="py-name" href="#" onclick="return doclink('link-2', 'l', 'link-2');">l</a></tt> </tt>
+moa.logger.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-2', 'l', 'link-2');">l</a></tt> </tt>
 <a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-3" class="py-name"><a title="moa" class="py-name" href="#" onclick="return doclink('link-3', 'moa', 'link-0');">moa</a></tt><tt class="py-op">.</tt><tt id="link-4" class="py-name" targets="Module moa.exceptions=moa.exceptions-module.html"><a title="moa.exceptions" class="py-name" href="#" onclick="return doclink('link-4', 'exceptions', 'link-4');">exceptions</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
 <a name="flock"></a><div id="flock-def"><a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"> </tt>
 <a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># Get a file lock, adapted from:</tt> </tt>
@@ -126,7 +124,8 @@ moa.logger.l" class="py-name" href="#" onclick="return doclink('link-2', 'l', 'l
 </div><div id="exit-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="exit-expanded"><a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line">    <tt class="py-keyword">for</tt> <tt class="py-name">h</tt> <tt class="py-keyword">in</tt> <tt id="link-6" class="py-name"><a title="moa.archive.l
 moa.conf.l
 moa.job.l
-moa.logger.l" class="py-name" href="#" onclick="return doclink('link-6', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">handlers</tt><tt class="py-op">:</tt> </tt>
+moa.logger.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-6', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">handlers</tt><tt class="py-op">:</tt> </tt>
 <a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-name">h</tt><tt class="py-op">.</tt><tt class="py-name">flush</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
 <a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">    <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Function moa.utils.exit()=moa.utils-module.html#exit"><a title="moa.utils.exit" class="py-name" href="#" onclick="return doclink('link-7', 'exit', 'link-7');">exit</a></tt><tt class="py-op">(</tt><tt class="py-name">rc</tt><tt class="py-op">)</tt> </tt>
 </div><a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
@@ -177,17 +176,68 @@ moa.logger.l" class="py-name" href="#" onclick="return doclink('link-6', 'l', 'l
 <a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">    <tt id="link-8" class="py-name"><a title="moa.archive.l
 moa.conf.l
 moa.job.l
-moa.logger.l" class="py-name" href="#" onclick="return doclink('link-8', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Module moa.info=moa.info-module.html,Function moa.info.info()=moa.info-module.html#info"><a title="moa.info
+moa.logger.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-8', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Module moa.info=moa.info-module.html,Function moa.info.info()=moa.info-module.html#info"><a title="moa.info
 moa.info.info" class="py-name" href="#" onclick="return doclink('link-9', 'info', 'link-9');">info</a></tt><tt class="py-op">(</tt><tt class="py-string">"Removing %s"</tt> <tt class="py-op">%</tt> <tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
-<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">         </tt>
-<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">    <tt class="py-name">shutil</tt><tt class="py-op">.</tt><tt class="py-name">rmtree</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
-<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"> </tt>
-<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">    <tt id="link-10" class="py-name"><a title="moa.archive.l
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line">    <tt class="py-name">shutil</tt><tt class="py-op">.</tt><tt class="py-name">rmtree</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">    <tt id="link-10" class="py-name"><a title="moa.archive.l
 moa.conf.l
 moa.job.l
-moa.logger.l" class="py-name" href="#" onclick="return doclink('link-10', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="moa.info
+moa.logger.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-10', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name"><a title="moa.info
 moa.info.info" class="py-name" href="#" onclick="return doclink('link-11', 'info', 'link-9');">info</a></tt><tt class="py-op">(</tt><tt class="py-string">"Finished removing %s"</tt> <tt class="py-op">%</tt> <tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
-</div><a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+</div><a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"> </tt>
+<a name="simple_decorator"></a><div id="simple_decorator-def"><a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt> <a class="py-toggle" href="#" id="simple_decorator-toggle" onclick="return toggle('simple_decorator');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.utils-module.html#simple_decorator">simple_decorator</a><tt class="py-op">(</tt><tt class="py-param">decorator</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="simple_decorator-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="simple_decorator-expanded"><a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"><tt class="py-docstring">    This decorator can be used to turn simple functions into</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line"><tt class="py-docstring">    well-behaved decorators, so long as the decorators are fairly</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"><tt class="py-docstring">    simple. If a decorator expects a function and returns a function</tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line"><tt class="py-docstring">    (no descriptors), and if it doesn't modify function attributes or</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"><tt class="py-docstring">    docstring, then it is eligible to use this. Simply apply</tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line"><tt class="py-docstring">    E{@}simple_decorator to your decorator and it will automatically</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"><tt class="py-docstring">    preserve the docstring and function attributes of functions to</tt> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line"><tt class="py-docstring">    which it is applied.</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L131"></a><tt class="py-lineno">131</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">    <tt class="py-keyword">def</tt> <tt class="py-def-name">new_decorator</tt><tt class="py-op">(</tt><tt class="py-param">f</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line">        <tt class="py-name">g</tt> <tt class="py-op">=</tt> <tt class="py-name">decorator</tt><tt class="py-op">(</tt><tt class="py-name">f</tt><tt class="py-op">)</tt> </tt>
+<a name="L134"></a><tt class="py-lineno">134</tt>  <tt class="py-line">        <tt class="py-name">g</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt> <tt class="py-op">=</tt> <tt class="py-name">f</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt> </tt>
+<a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">        <tt class="py-name">g</tt><tt class="py-op">.</tt><tt class="py-name">__doc__</tt> <tt class="py-op">=</tt> <tt class="py-name">f</tt><tt class="py-op">.</tt><tt class="py-name">__doc__</tt> </tt>
+<a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line">        <tt class="py-name">g</tt><tt class="py-op">.</tt><tt class="py-name">__dict__</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt class="py-name">f</tt><tt class="py-op">.</tt><tt class="py-name">__dict__</tt><tt class="py-op">)</tt> </tt>
+<a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">g</tt> </tt>
+</div><a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line">    <tt class="py-comment"># Now a few lines needed to make simple_decorator itself</tt> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line">    <tt class="py-comment"># be a well-behaved decorator.</tt> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line">    <tt class="py-name">new_decorator</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt> <tt class="py-op">=</tt> <tt class="py-name">decorator</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line">    <tt class="py-name">new_decorator</tt><tt class="py-op">.</tt><tt class="py-name">__doc__</tt> <tt class="py-op">=</tt> <tt class="py-name">decorator</tt><tt class="py-op">.</tt><tt class="py-name">__doc__</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line">    <tt class="py-name">new_decorator</tt><tt class="py-op">.</tt><tt class="py-name">__dict__</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt class="py-name">decorator</tt><tt class="py-op">.</tt><tt class="py-name">__dict__</tt><tt class="py-op">)</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">new_decorator</tt> </tt>
+</div><a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line"> </tt>
+<a name="flog"></a><div id="flog-def"><a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt class="py-decorator">@</tt><tt class="py-decorator">simple_decorator</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt> <a class="py-toggle" href="#" id="flog-toggle" onclick="return toggle('flog');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.utils-module.html#flog">flog</a><tt class="py-op">(</tt><tt class="py-param">func</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="flog-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="flog-expanded"><a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line">    <tt class="py-keyword">def</tt> <tt class="py-def-name">flogger</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt class="py-param">args</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kwargs</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line">        <tt id="link-12" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-12', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">critical</tt><tt class="py-op">(</tt><tt class="py-string">"Executing %s"</tt> <tt class="py-op">%</tt> <tt class="py-name">func</tt><tt class="py-op">.</tt><tt class="py-name">__name__</tt><tt class="py-op">)</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">a</tt> <tt class="py-keyword">in</tt> <tt id="link-13" class="py-name" targets="Variable script-moa.args=script-moa-module.html#args"><a title="script-moa.args" class="py-name" href="#" onclick="return doclink('link-13', 'args', 'link-13');">args</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line">            <tt id="link-14" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-14', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt><tt class="py-op">(</tt><tt class="py-string">"  - calling with arg %s"</tt> <tt class="py-op">%</tt> <tt class="py-name">a</tt><tt class="py-op">)</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt class="py-name">k</tt> <tt class="py-keyword">in</tt> <tt class="py-name">kwargs</tt><tt class="py-op">.</tt><tt class="py-name">keys</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line">            <tt id="link-15" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-15', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt><tt class="py-op">(</tt><tt class="py-string">"  - calling with kwargs %s=%s"</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt><tt class="py-name">k</tt><tt class="py-op">,</tt> <tt class="py-name">kwargs</tt><tt class="py-op">[</tt><tt class="py-name">k</tt><tt class="py-op">]</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-name">func</tt><tt class="py-op">(</tt><tt class="py-op">*</tt><tt id="link-16" class="py-name"><a title="script-moa.args" class="py-name" href="#" onclick="return doclink('link-16', 'args', 'link-13');">args</a></tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-name">kwargs</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line">    <tt class="py-keyword">return</tt> <tt class="py-name">flogger</tt> </tt>
+</div><a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line"> </tt><script type="text/javascript">
 <!--
 expandto(location.href);
 // -->
@@ -198,9 +248,6 @@ expandto(location.href);
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
   <tr valign="middle">
-  <!-- Home link -->
-      <th>&nbsp;&nbsp;&nbsp;<a
-        href="moa-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
 
   <!-- Tree link -->
       <th>&nbsp;&nbsp;&nbsp;<a
@@ -220,7 +267,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Dec 21 09:56:48 2009
+    Generated by Epydoc 3.0.1 on Tue Dec 22 16:51:13 2009
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
