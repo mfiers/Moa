@@ -22,6 +22,9 @@
 ## define all variables here that are not depending on moa.mk
 ###############################################################################
 
+$(warning $(MOABASE))
+include $(shell echo $$MOABASE)/template/moaBasePre.mk
+
 SHELL := /bin/bash
 HAVE_INCLUDED_MOABASE = yes
 
@@ -32,36 +35,6 @@ include $(shell echo $$MOABASE)/template/gmsl
 ## Load moa wide configuration
 include $(shell echo $$MOABASE)/etc/moa.conf.mk
 
-## Files that moa uses
-moa_system_files = Makefile moa.mk moa.archive 
-
-## Define a variable that can be used to hide
-## output if the moa/make is not called with the -v flag
-ifdef MOA_VERBOSE
-e=
-minv=-v
-else
-e=@
-minv=
-endif
-
-## some help variables
-warn_on := \033[0;41;37m
-warn_off := \033[0m
-boldOn := \033[0;1;47;0;32;4m
-boldOff := \033[0m
-
-#a colorful mark, showing that this comes from moabase
-moamark := \033[0;42;30mm\033[0m
-moaerrr := \033[0;1;37;41m!!!\033[0m
-moawarn := \033[0;43m>>\033[0m
-moatest := \033[0;42mTEST:\033[0m
-echo = echo -e "$(moamark) $(1)"
-warn = echo -e "$(moawarn) $(1)"
-tstm = echo -e "$(moatest) $(1)"
-errr = echo -e "$(moaerrr) $(1)"
-exer = ( echo -e "$(moaerrr) $(1)"; exit -1 )
-
 ##			$(warning Setting $v to default value $($v_default)) \
 #fill in the default values of each variable
 $(foreach v,$(moa_must_define) $(moa_may_define),				\
@@ -71,13 +44,15 @@ $(foreach v,$(moa_must_define) $(moa_may_define),				\
 	)															\
 )
 
-#moa_prepare_var: $(addprefix moa_prepare_var_, $(moa_must_define) $(moa_may_define))
-moa_prepare_var:
-
-#moa_prepare_var_%:
-#	$e $(if $($*),,$(if $($*_default),$(eval $*=$($*_default))))
-
-
+define moa_fileset_define
+  $(eval moa_must_define += $(1)_dir),		\
+  $(eval moa_may_define += $(1)_extension)
+  $(eval $(1)_dir_help = $(3)
+  $(eval $(1)_dir_type = directory
+  $(eval $(1)_extension_help = file extension for the files in $(1)_dir)
+  $(eval $(1)_extension_type = string
+  $(eval $(1)_default = $(2)  
+endef
 
 ## default variables used in generating help
 
@@ -183,7 +158,6 @@ title:
 moa_execute_targets =										\
 	moa_check_lock											\
 	moa_welcome 											\
-	moa_prepare_var											\
 	moa_check 												\
 	moa_run_precommand										\
 	moa_preprocess 											\
@@ -226,7 +200,7 @@ moa_main_targets: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
 moa_main_targets:
 	@for moa_main_target in $(moa_ids); do 										\
 		$(call echo,calling $$moa_main_target) ;								\
-		$(MAKE) $(minj) moa_prepare_var $$moa_main_target 						\
+		$(MAKE) $(mins) $(minj) $$moa_main_target 						\
 				$${moa_main_target}_main_phase=T ;								\
 	done
 
@@ -234,7 +208,6 @@ moa_main_targets:
 ## executed
 execorder:
 	@echo "moa_welcome"
-	@echo "moa_prepare_var"
 	@echo "moa_preprocess"
 	@echo "$(addsuffix _prepare, $(moa_ids))"
 	@echo "moa_check"
@@ -302,12 +275,13 @@ moa_followups ?= 																\
 all:  ignore_lock?=$(strip $(if $(action), 										\
 			$(if $(filter $(action),$(moa_ignore_lock_targets)),				\
 				yes,)))
-all: moa_prepare_var $(if $(call seq,$(action),), 								\
+all: $(if $(call seq,$(action),), 								\
 			moa_default_target,													\
 			$(if $(call set_is_member, $(action), $(moa_all_targets)),			\
 				$(action),														\
 				$(warning Ignoring $(action) - not a valid target) ) )
 	$e for FUP in $(moa_followups); do 											\
+		set -e																	\
 		$(call echo,Processing $$FUP 											\
 			$(if $(call seq,$(ignore_lock),yes),								\
 				$(p_open)IGNORING LOCK!$(p_close))); 							\
@@ -315,12 +289,12 @@ all: moa_prepare_var $(if $(call seq,$(action),), 								\
 		if [[ -e $$FUP/Makefile ]]; then 										\
 			if [[ "$(ignore_lock)" == "yes" ]]; then 							\
 				cd $$FUP;														\
-				$(MAKE) all action=$(action);									\
+				$(MAKE) $(mins) all action=$(action);									\
 				cd ..;															\
 			else 																\
 				if [[ ! -e $$FUP/lock ]]; then 									\
 					cd $$FUP;													\
-					$(MAKE) all action=$(action);								\
+					$(MAKE) $(mins) all action=$(action);								\
 					cd ..;														\
 				else 															\
 					$(call warn,Not going here : $$FUP is locked) ;				\
@@ -330,6 +304,7 @@ all: moa_prepare_var $(if $(call seq,$(action),), 								\
 			$(call echo,$$FUP is not a moa directory);							\
 		fi;																		\
 	done
+	$(call echo,Successfully finished moa all run $(if $(action),action=$(action)))
 
 
 
@@ -380,7 +355,7 @@ checkPrereqExec = \
 			if [[ -n "$(2)" ]]; then 											\
 				$(call errr,$(2)); 												\
 			fi;																	\
-			false ;																\
+			exit -1 ;																\
 	fi
 
 checkPrereqPath = \
@@ -390,7 +365,7 @@ checkPrereqPath = \
 		if [[ -n "$(2)" ]]; then 												\
 			$(call errr,$(2)); 													\
 		fi;																		\
-		false ;																	\
+		exit -1 ;																	\
 	fi
 
 .PHONY: prereqs $(prereqlist)
@@ -419,7 +394,7 @@ moa_var_mustexists := $(addprefix mustexist_, $(moa_must_define))
 moa_var_checkall := $(addprefix varcheck_, $(moa_must_define) $(moa_may_define))
 
 .PHONY: moa_check
-moa_check: moa_prepare_var prereqs $(moa_var_mustexists) $(moa_var_checkall)
+moa_check: prereqs $(moa_var_mustexists) $(moa_var_checkall)
 	@$(call echo,everything is fine)
 
 moa_var_check_dir:=[[ -d "$(2)" ]] || $(call exer,$(1)=$(2) is not a directory)
@@ -445,7 +420,7 @@ mustexist_%:
 ################################################################################
 
 .PHONY: show showvar_%
-show: moa_prepare_var $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
+show: $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 
 #@echo -ne '$(if $(call seq,$($*_show_expanded),F),$(value $*),$($*))'
 #	@echo '$($*_show_expanded) $(call seq,$($*_show_expanded),F) $(value $*)'
@@ -487,7 +462,7 @@ info_keyvallist = "$(1)" : [$(call merge,$(comma),$(foreach v,$(2),"$(subst '"',
 		info_parameters_optional 	\
 		info_parameters_required 
 
-info: moa_prepare_var info_header info_parameters
+info: info_header info_parameters
 
 info_header:
 	@echo -e 'moa_title\t$(moa_title)'
