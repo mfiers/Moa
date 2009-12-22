@@ -245,7 +245,8 @@ moa_dummy:
 ## targets are called in reverse order.
 .PHONY: clean
 clean: clean_start $(call reverse, $(addsuffix _clean, $(moa_ids)))
-	-@rm lock 2>/dev/null || true
+	-@rm moa.out moa.err moa.success 2>/dev/null || true
+	-@rm moa.failed moa.runlock lock 2>/dev/null || true
 
 .PHONY: clean_start
 clean_start: moa_welcome

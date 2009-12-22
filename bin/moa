@@ -103,6 +103,9 @@ parser.add_option('-f', '--force', dest='force', action='store_true',
 parser.add_option("-v", "--verbose", dest="verbose",
                   action="store_true", help="verbose output")
 
+parser.add_option("--bg", dest="background",
+                  action="store_true", help="Run moa in the background")
+
 parser.set_defaults(threads=1)
 parser.add_option("-j", dest="threads",
                   help="threads to use when running Make (corresponds " +
@@ -183,7 +186,10 @@ if __name__ == "__main__":
     l.debug("MOABASE : %s" % MOABASE)
 
     if len(args) == 0:
-        runMake.runMakeAndExit(verbose=options.verbose)
+        rc = runMake.go(verbose = options.verbose,
+                        threads = options.threads,
+                        background = options.background)
+        sys.exit(rc)
 
     command = args[0]
     newargs = args[1:]
@@ -191,7 +197,11 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
 
     if command == 'run':
-        runMake.runMakeAndExit(args=newargs, verbose=options.verbose)
+        rc = runMake.go(makeArgs=newargs,
+                        verbose=options.verbose,
+                        threads = options.threads,
+                        background = options.background)
+        sys.exit(rc)
     elif command == 'rawinfo':
         pprint.pprint(moa.info.info(os.getcwd()))
         
@@ -217,5 +227,9 @@ if __name__ == "__main__":
         moa.unittests.run()
     else:
         #fire arguments of to make
-        runMake.runMakeAndExit(args=args, verbose=options.verbose)    
+        rc = runMake.go(makeArgs=args,
+                        threads = options.threads,
+                        background = options.background,
+                        verbose=options.verbose)
+        sys.exit(rc)
     utils.exit()

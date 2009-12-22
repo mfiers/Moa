@@ -81,19 +81,18 @@ def _startMake(wd, makeArgs, verbose = True,
         stderr = FERR)
     return p
 
-def runMake(wd = None, target = "", makeArgs = [],
-            verbose=True, captureOut = False, threads=1):
+
+def _runMake(wd = None, target = "", makeArgs = [],
+             verbose=True, captureOut = False, threads=1):
+
     """
-    Run Make and wait for it to finish    
+    Actually run make
     """
     
     os.putenv('MOA_THREADS', "%s" % threads)    
     if verbose:
         os.putenv('MOA_VERBOSE', "-v")
         
-    if not wd:
-        wd = os.getcwd()
-
     if target:
         makeArgs.insert(0, target)
 
@@ -102,15 +101,72 @@ def runMake(wd = None, target = "", makeArgs = [],
     out,err = p.communicate()
     
     rc = p.returncode
-    l.debug("Finished make in %s with return code %s" % (wd, rc))
+    if rc == 0:
+        l.debug("Succesfully finished make in %s" % (wd))
+    else:
+        l.debug("Error running make in %s. Return code %s" % (wd, rc))
     return rc
 
-def runMakeGetOutput(*makeArgs, **kwmakeArgs):
+def go(wd = None, target = "", makeArgs = [],
+       verbose=True, threads=1, background = False,
+       captureOut = None, exitWhenDone=False):
+    """
+    Run Make
+    """
+    if not wd:
+        wd = os.getcwd()
+
+    if background:
+        
+        # Unless defined otherwise, write the output to
+        # moa.out and moa.err when backgrounding
+        if captureOut == None: captureOut = True
+
+        if os.path.exists(os.path.join(wd, 'moa.success')):
+            os.unlink(os.path.join(wd, 'moa.success'))
+        if os.path.exists(os.path.join(wd, 'moa.failed')):
+            os.unlink(os.path.join(wd, 'moa.failed'))
+        # try to fork
+        child = os.fork()
+        if child != 0:
+            l.debug("Parent: return & be done with it")
+            return True
+        l.debug("Child (pid=%d). Start make" % child)
+
+    # Unless specified otherwise, just write all output
+    # to the terminal
+    if captureOut == None:
+        captureOut = False
+        
+    rc = _runMake(wd = wd,
+             target=target,
+             makeArgs = makeArgs,
+             verbose=verbose,
+             threads = threads,
+             captureOut = captureOut)
+
+    if background:
+        if rc == 0:
+            F = open(os.path.join(wd, 'moa.success'), 'w')
+            F.write("%s" % rc)
+            F.close()
+        else:
+            F = open(os.path.join(wd, 'moa.failed'), 'w')
+            F.write("%s" % rc)
+            F.close()
+     
+        
+    if exitWhenDone:
+        sys.exit(rc)
+    
+def runMakeGetOutput(*args, **kwargs):
     """
     Run runmake, wait for it to finish & return the output
     """
-    wd = kwmakeArgs['wd']
-    runMake(*makeArgs, **kwmakeArgs)
+    wd = kwargs['wd']
+    kwargs['captureOut'] = True
+    kwargs['background'] = False
+    runMake(*args, **kwargs)
     return getOutput(wd)
 
 def getOutput(wd):
@@ -153,25 +209,3 @@ def getError(wd):
         return ""    
     return open(errfile).read()
 
-def runMakeAndExit(wd = None, makeArgs = [], verbose=True):
-    """
-    Convenience function - run, report & exit
-    """
-    l.debug("ji %s %s" % (wd, makeArgs))
-    try:
-        rc = runMake(wd=wd, verbose=verbose, makeArgs=makeArgs)
-    except NotAMoaDirectory:
-        l.critical("Attempt to execute Moa in a non-moa directory")
-        sys.exit(1)        
-    sys.exit(rc)
-
-
-##
-## API Command Dispatcher
-## 
-
-def execute(d, makeArgs = []):
-    """
-    Execute 'make' in directory d
-    """
-    __startupMake(d, makeArgs)

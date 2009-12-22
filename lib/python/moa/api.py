@@ -346,7 +346,7 @@ def getMoaErr(wd):
 def qr(cl):
     return subprocess.Popen(cl, stdout=subprocess.PIPE, shell=True).communicate()[0]
 
-def runMoa(wd=None, target="", threads=1):
+def runMoa(wd=None, target="", threads=1, background=True):
     """
     execute Moa
 
@@ -380,15 +380,21 @@ def runMoa(wd=None, target="", threads=1):
     :type target: String
     :param threads: No of threads to run Moa with.
     :type threads: Integer
+    :param background: Return immediately, do not wait for Moa to
+       finish (default True). 
+    :type background: Boolean
     :raises NotAMoaDirectory: if ``wd`` is not a moa directory
+    :returns: If background==True, then the return value means
+      nothing. Otherwise it is Moa return code. Anything other than 0
+      (zero) means that there was an error.
+    :rtype: Integer
     """
-    moa.runMake.runMake(wd = wd,
-                        target = target,
-                        threads = threads,
-                        makeArgs = [],
-                        verbose = False,
-                        captureOut = True)
-
+    moa.runMake.go(wd = wd,
+                   target = target,
+                   threads = threads,
+                   makeArgs = [],
+                   verbose = False,
+                   captureOut = True)
 
 #Depreacted, these will be removed once William has changed his code
 def is_directory_moa(wd):
