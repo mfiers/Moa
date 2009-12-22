@@ -28,11 +28,13 @@ __authors__ = "Mark Fiers, William Demchick"
 
 import os
 import sys
+import subprocess
 
 import moa.info
 import moa.runMake
 import moa.conf
 import moa.job
+import moa.utils
 from moa.exceptions import *
 from moa.logger import l
 
@@ -307,40 +309,88 @@ def removeMoaFiles(wd):
 
 def getMoaOut(wd):
     """
-    Return moa output    
+    Return output of a MOA run
+
+    This function reads the moa.out file in a MOA directory and
+    returns its content.
+
+    >>> F = open(os.path.join(EMPTYDIR, 'moa.out'),'w')
+    >>> F.write('tst')
+    >>> F.close()
+    >>> getMoaOut(EMPTYDIR) == 'tst'
+    True
+    >>> getMoaOut(NOTMOADIR) == ''
+    True
+    
+    :param wd: The pathname of the directory from which the Moa
+        files are to be removed
+    :type wd: String
     """
-    
     return moa.runMake.getOutput(wd)
-    
-def runMoa(wd):
+
+def getMoaErr(wd):
+    """
+    Return moa error
+
+    >>> F = open(os.path.join(EMPTYDIR, 'moa.err'),'w')
+    >>> F.write('tsterr')
+    >>> F.close()
+    >>> getMoaErr(EMPTYDIR) == 'tsterr'
+    True
+    >>> getMoaErr(NOTMOADIR) == ''
+    True
+
+    :param wd: the Moa directory
+    :type wd: String
+    """
+    return moa.runMake.getError(wd)
+
+def qr(cl):
+    return subprocess.Popen(cl, stdout=subprocess.PIPE, shell=True).communicate()[0]
+
+def runMoa(wd=None, target="", threads=1):
     """
     execute Moa
 
     This function executes moa in path ``wd``.
 
     >>> removeMoaFiles(EMPTYDIR)
-    >>> newJob('traverse',
-    ...        wd = EMPTYDIR,
-    ...        title = 'Test moa run')
+    >>> newJob('test',
+    ...        wd = EMPTYDIR, 
+    ...        title = 'Test moa run',
+    ...        parameters = ['txt=testRunMoa'])
     >>> runMoa(EMPTYDIR)
     >>> output = getMoaOut(EMPTYDIR)
-    >>> l.critical(output)
     >>> len(output) > 0
     True
-
+    >>> 'Starting MOA' in output
+    True
+    >>> target = os.path.join(EMPTYDIR, 'moa_test')
+    >>> os.path.exists(target)
+    True
+    >>> open(target).read().strip() == 'testRunMoa'
+    True
+    >>> runMoa(EMPTYDIR, target= 'clean')
+    >>> output = getMoaOut(EMPTYDIR)
+    >>> os.path.exists(target)
+    False
+    
     :param wd: The pathname of the directory from which the Moa
         files are to be removed
     :type wd: String
+    :param target: The Make target to execute (for example clean)
+    :type target: String
+    :param threads: No of threads to run Moa with.
+    :type threads: Integer
     :raises NotAMoaDirectory: if ``wd`` is not a moa directory
     """
     moa.runMake.runMake(wd = wd,
+                        target = target,
+                        threads = threads,
+                        makeArgs = [],
                         verbose = False,
                         captureOut = True)
 
-
-    
-
-    
 
 #Depreacted, these will be removed once William has changed his code
 def is_directory_moa(wd):

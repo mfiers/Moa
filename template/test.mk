@@ -25,9 +25,9 @@ unittest_help = Do nothing - no need to call this.
 ## define a few test variables
 
 #an obligatory variable
-moa_must_define = test_obl
-test_obl_help = test variable
-test_obl_type = string
+moa_must_define = txt
+txt_help = test variable
+txt_type = string
 
 #and an optional one
 moa_may_define = test_opt
@@ -42,23 +42,24 @@ endif
 test_prepare:
 test_post:
 test_clean:
-
-#default function is to do nothing
+	-rm moa_test
+#default function is to create the file 'moa_test' with content 'test.  
 test: 
+	$e echo '$(txt)' > moa_test
 
 
 unittests: unittest_moabase_var
 .PHONY: unittest_moabase_var
 unittest_moabase_var:
 	$e $(call moa_unittest_var,title,Test title)
-	$e $(call moa_unittest_var,test_obl,test variable 1)
-	$e $(call moa_unittest_var,test_obl,test variable 2)
-	$e $(call tstm,Test removing the value of test_obl)
-	$e moa $(minv) set test_obl=
-	$e grep -q "test_obl" moa.mk && $(call exer,variable test_obl was not removed!) || true
+	$e $(call moa_unittest_var,txt,test variable 1)
+	$e $(call moa_unittest_var,txt,test variable 2)
+	$e $(call tstm,Test removing the value of txt)
+	$e moa $(minv) set txt=
+	$e grep -q "txt" moa.mk && $(call exer,variable txt was not removed!) || true
 	$e $(call tstm,Check if moa will run with an obligatory variable unset)
 	$e ( moa $(minv) >/dev/null \
-			&& $(call exer,Should not finished succesfully - test_obl is not defined) \
+			&& $(call exer,Should not finished succesfully - txt is not defined) \
 		) || true	
 	$e $(call tstm,Check automatic assignment of variables works)
 	$e ( moa show | grep "test_opt" | grep "konijntje"  ) \

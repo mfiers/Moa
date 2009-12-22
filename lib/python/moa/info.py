@@ -136,8 +136,11 @@ def info(wd):
         'parameters' : {}
         }
     
-    out = \
-        runMake.runMakeGetOutput(wd = wd, args='info')
+    out = runMake.runMakeGetOutput(
+        wd = wd,
+        target='info',
+        verbose=False,
+        captureOut=True)
 
     outlines = out.split("\n")
     while True:

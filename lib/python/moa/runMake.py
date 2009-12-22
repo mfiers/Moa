@@ -31,7 +31,7 @@ from  moa.logger import l
 import moa.info
 from moa.exceptions import *
 
-def _startMake(wd, args, verbose = True,
+def _startMake(wd, makeArgs, verbose = True,
                captureOut = False):
     """
     Start Make
@@ -41,8 +41,8 @@ def _startMake(wd, args, verbose = True,
     
     :param wd: Directory in which to execute make
     :type wd: String
-    :param args: Arguments to pass to make
-    :type args: String or List of Strings
+    :param makeArgs: Arguments to pass to make
+    :type makeArgs: String or List of Strings
     :param verbose: Have make be silent or generate lots of output
     :type verbose: Boolean
     :param captureOut: If True the output will be written to moa.out
@@ -52,16 +52,16 @@ def _startMake(wd, args, verbose = True,
     """
 
     l.debug("attempting to start make in %s" % wd)
-
     if not moa.info.isMoaDir(wd):
         raise NotAMoaDirectory(wd)
 
-    if type(args) == type("str"):
-        args = args.split()
+    if type(makeArgs) == type("str"):
+        makeArgs = makeArgs.split()
 
-    args.insert(0, '-r')
+    makeArgs.insert(0, '-r')
+    
     if not verbose:
-        args.insert(0, '-s')
+        makeArgs.insert(0, '-s')
 
     if captureOut:
         FOUT = open(os.path.join(wd, 'moa.out'), 'w')
@@ -70,72 +70,96 @@ def _startMake(wd, args, verbose = True,
     else:
         FOUT = None
         FERR = None
-
         os.putenv('MOAANSI', 'yes')
         
-    args.insert(0, 'make')
+    makeArgs.insert(0, 'make')
     p = subprocess.Popen(
-        args,
+        makeArgs,
         shell=False,
         cwd = wd,
         stdout = FOUT,
         stderr = FERR)
     return p
 
-def runMake(wd = None, args = [], verbose=True, captureOut = False):
+def runMake(wd = None, target = "", makeArgs = [],
+            verbose=True, captureOut = False, threads=1):
     """
-    Run Make and wait for it to finish
-    """    
-    if not wd: wd = os.getcwd()
-    try:
-        p = _startMake(wd = wd, args = args, verbose=verbose,
-                       captureOut = captureOut)
-    except NotAMoaDirectory:
-        l.critical("Attempt to execute Moa in a non-moa directory")
-        sys.exit(1)        
+    Run Make and wait for it to finish    
+    """
+    
+    os.putenv('MOA_THREADS', "%s" % threads)    
+    if verbose:
+        os.putenv('MOA_VERBOSE', "-v")
         
-    p.communicate()
+    if not wd:
+        wd = os.getcwd()
+
+    if target:
+        makeArgs.insert(0, target)
+
+    p = _startMake(wd = wd, makeArgs = makeArgs, verbose=verbose,
+                   captureOut = captureOut)
+    out,err = p.communicate()
+    
     rc = p.returncode
     l.debug("Finished make in %s with return code %s" % (wd, rc))
     return rc
 
-def runMakeGetOutput(wd = None, args = [], verbose=True):
+def runMakeGetOutput(*makeArgs, **kwmakeArgs):
     """
-    Run Make and wait for it to finish
-    """    
-    if not wd: wd = os.getcwd()
-    try:
-        p = _startMake(wd = wd, args = args, verbose=verbose, captureOut = True)
-    except NotAMoaDirectory:
-        l.critical("Attempt to execute Moa in a non-moa directory")
-        sys.exit(1)        
-        
-    p.communicate()
-    rc = p.returncode
-    if rc == 0:
-        l.debug("Finished make in %s with return code %s" % (wd, rc))
-    else:
-        l.critical("Finished make in %s with non zero rc %s" % (wd, rc))
-        sys.exit(rc)
-
+    Run runmake, wait for it to finish & return the output
+    """
+    wd = kwmakeArgs['wd']
+    runMake(*makeArgs, **kwmakeArgs)
     return getOutput(wd)
 
 def getOutput(wd):
     """
     Get the output from a moa run
+
+    >>> F = open(os.path.join(EMPTYDIR, 'moa.out'),'w')
+    >>> F.write('tst')
+    >>> F.close()
+    >>> getOutput(EMPTYDIR) == 'tst'
+    True
+    >>> getOutput(NOTMOADIR) == ''
+    True
+
+    :param wd: the Moa directory
+    :type wd: String
+
     """
     outfile = os.path.join(wd, 'moa.out')
     if not os.path.exists(outfile):
         return ""    
     return open(outfile).read()
 
-def runMakeAndExit(wd = None, args = [], verbose=True):
+def getError(wd):
+    """
+    Get the stderr of a moa run
+
+    >>> F = open(os.path.join(EMPTYDIR, 'moa.err'),'w')
+    >>> F.write('tsterr')
+    >>> F.close()
+    >>> getError(EMPTYDIR) == 'tsterr'
+    True
+
+    :param wd: the Moa directory
+    :type wd: String
+
+    """
+    errfile = os.path.join(wd, 'moa.err')
+    if not os.path.exists(errfile):
+        return ""    
+    return open(errfile).read()
+
+def runMakeAndExit(wd = None, makeArgs = [], verbose=True):
     """
     Convenience function - run, report & exit
     """
-    l.debug("ji %s %s" % (wd, args))
+    l.debug("ji %s %s" % (wd, makeArgs))
     try:
-        rc = runMake(wd=wd, verbose=verbose, args=args)
+        rc = runMake(wd=wd, verbose=verbose, makeArgs=makeArgs)
     except NotAMoaDirectory:
         l.critical("Attempt to execute Moa in a non-moa directory")
         sys.exit(1)        
@@ -146,8 +170,8 @@ def runMakeAndExit(wd = None, args = [], verbose=True):
 ## API Command Dispatcher
 ## 
 
-def execute(d, args = []):
+def execute(d, makeArgs = []):
     """
     Execute 'make' in directory d
     """
-    __startupMake(d, args)
+    __startupMake(d, makeArgs)

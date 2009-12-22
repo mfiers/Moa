@@ -131,7 +131,7 @@ is_moa:
 p_open=(
 p_close=)
 moa_welcome:
-	@$(call echo, Welcome to MOA $(p_open)$(shell pwd)$(p_close))
+	@$(call echo, Starting MOA $(MAKECMDGOALS) in $(CURDIR))
 
 ## If moa.mk is defined, and not yet imported: do so.
 ## moa.mk is used to store job specific variables
@@ -244,8 +244,11 @@ moa_dummy:
 ## after it..  this one calls all cleans. Note that the x_clean
 ## targets are called in reverse order.
 .PHONY: clean
-clean: $(call reverse, $(addsuffix _clean, $(moa_ids)))
+clean: clean_start $(call reverse, $(addsuffix _clean, $(moa_ids)))
 	-@rm lock 2>/dev/null || true
+
+.PHONY: clean_start
+clean_start: moa_welcome
 
 
 ################################################################################

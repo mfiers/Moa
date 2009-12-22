@@ -126,7 +126,7 @@ def list():
         r.append(f.replace('.mk', ''))
     r.sort()
     return r
-        
+
 def newJob(template,
            title = None,
            wd = '.',
