@@ -395,6 +395,7 @@ def runMoa(wd=None, target="", threads=1, background=True):
                    target = target,
                    threads = threads,
                    makeArgs = [],
+                   background= background,
                    verbose = False,
                    captureOut = True)
 
