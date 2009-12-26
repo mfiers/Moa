@@ -90,7 +90,8 @@ def removeMoaFiles(path):
         >>> os.unlink(os.path.join(EMPTYDIR, 'test.file'))
         
     """
-    for name in ['Makefile', 'moa.mk', 'lock', 'moa.runlock']:
+    for name in ['Makefile', 'moa.mk', 'lock', 'moa.runlock',
+                 'moa.out', 'moa.err']:
         ff = os.path.join(path, name)
         if os.path.isfile(ff):
             os.unlink(ff)

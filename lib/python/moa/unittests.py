@@ -41,10 +41,10 @@ tests = 0
 
 TESTGLOB = {
     'MOABASE' : MOABASE,
-    'TESTPATH' : os.path.join(MOABASE, 'demo', 'test'),
-    'NOTMOADIR' : os.path.join(MOABASE, 'demo', 'test', 'notmoa'),
-    'LOCKEDMOADIR' : os.path.join(MOABASE, 'demo', 'test', '20.locked.job'),
-    'EMPTYDIR' : os.path.join(MOABASE, 'demo', 'test', 'empty.dir'),
+    'P_TEST' : os.path.join(MOABASE, 'test', '00.base', '99.test'),
+    'P_EMPTY' : os.path.join(MOABASE, 'test', '00.base', '00.empty'),
+    'P_JOB' : os.path.join(MOABASE, 'test', '00.base', '10.moa.job'),
+    'P_LOCKEDJOB' : os.path.join(MOABASE, 'test', '20.moa.locked'),
     }
 
 def testModule(m):

@@ -29,6 +29,7 @@ import subprocess
 
 from  moa.logger import l
 import moa.info
+import moa.utils
 from moa.exceptions import *
 
 def _startMake(wd, makeArgs, verbose = True,
@@ -173,12 +174,14 @@ def getOutput(wd):
     """
     Get the output from a moa run
 
+    >>> moa.utils.removeMoaFiles(EMPTYDIR)
     >>> F = open(os.path.join(EMPTYDIR, 'moa.out'),'w')
     >>> F.write('tst')
     >>> F.close()
     >>> getOutput(EMPTYDIR) == 'tst'
     True
-    >>> getOutput(NOTMOADIR) == ''
+    >>> moa.utils.removeMoaFiles(EMPTYDIR)
+    >>> getOutput(EMPTYDIR) == ''
     True
 
     :param wd: the Moa directory

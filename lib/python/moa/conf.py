@@ -99,11 +99,11 @@ def setVar(wd, key, value):
 
         >>> import random
         >>> testTitle = 'title %d' % random.randint(0,10000)
-        >>> setVar(TESTPATH, 'title', testTitle)
-        >>> title = getVar(TESTPATH, 'title')
+        >>> setVar(TEST, 'title', testTitle)
+        >>> title = getVar(TEST, 'title')
         >>> title == testTitle
         True
-        >>> try: setVar(NOTMOADIR, 'title', 'test setvar in a non-moa dir')
+        >>> try: setVar(EMPTY, 'title', 'test setvar in a non-moa dir')
         ... except NotAMoaDirectory:
         ...   'Fine'
         'Fine'
@@ -118,14 +118,14 @@ def appendVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
     
-        >>> setVar(TESTPATH, 'title', 'one')
-        >>> getVar(TESTPATH, 'title')
+        >>> setVar(TEST, 'title', 'one')
+        >>> getVar(TEST, 'title')
         'one'
-        >>> appendVar(TESTPATH, 'title', 'two')
-        >>> appendVar(TESTPATH, 'title', 'three')
-        >>> getVar(TESTPATH, 'title')
+        >>> appendVar(TEST, 'title', 'two')
+        >>> appendVar(TEST, 'title', 'three')
+        >>> getVar(TEST, 'title')
         'one two three'
-        >>> try: appendVar(NOTMOADIR, 'title', 'test setvar in a non-moa dir')
+        >>> try: appendVar(EMPTY, 'title', 'test setvar in a non-moa dir')
         ... except NotAMoaDirectory:
         ...   'Fine'
         'Fine'
@@ -140,8 +140,8 @@ def getVar(wd, key):
     """
     Get a single parameter from a moa directory
 
-    >>> setVar(TESTPATH, 'title', 'test getVar')
-    >>> getVar(TESTPATH, 'title')
+    >>> setVar(TEST, 'title', 'test getVar')
+    >>> getVar(TEST, 'title')
     'test getVar'
 
     :param wd: Directory to retrieve the variable from
