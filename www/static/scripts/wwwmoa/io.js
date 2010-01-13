@@ -120,68 +120,84 @@ else {
 
     // AJAX utilities
     wwwmoa.io.ajax={
-          // Wrapper for Dojo AJAX system call.  The callback function is passed
-          // null on error, or a string object on success.
-          get : function (relrl, callback, timeout) {
-              function cb(txt) {
+	  _createBaseObject : function(relrl, callback, timeout) {
+	      var bobj={};
+
+	      bobj.cb=function(txt) {
                   callback(txt);
-              }
+              };
 
-              function cbe(err) {
+              bobj.cbe=function(err) {
                   callback(null);
-              }
+              };
 
-	      var args={
+	      bobj.args={
 		  url : relrl,
 		  handleAs : "text",
 		  timeout : timeout,
-		  load : cb,
-		  error : cbe
-	      }
+		  load : bobj.cb,
+		  error : bobj.cbe
+	      };
 
-              dojo.xhrGet(args);
+	      bobj.cancel=dojo.hitch(bobj, function() {
+		  if(this.args.abort!==undefined)
+		      this.args.abort();
+	      });
 
-              return {
-		  cancel : function()
-                  {
-                      if(args.abort!==undefined)
-		          args.abort();
-                  }
-              };
-	},
+	      bobj.returnobj={cancel : bobj.cancel};
+
+	      return bobj;
+	  },
+
+
+          // Wrapper for Dojo AJAX system call.  The callback function is passed
+          // null on error, or a string object on success.
+          get : function (relrl, callback, timeout) {
+	      var bobj=this._createBaseObject(relrl, callback, timeout);
+
+              dojo.xhrGet(bobj.args);
+
+              return bobj.returnobj;
+	  },
+
+
+          // Wrapper for Dojo AJAX system call.  The callback function is passed
+          // null on error, or a string object on success.
+          del : function (relrl, callback, timeout) {
+	      var bobj=this._createBaseObject(relrl, callback, timeout);
+
+              dojo.xhrDelete(bobj.args);
+
+              return bobj.returnobj;
+	  },
 
 
 
           // Wrapper for Dojo AJAX system call.  The callback function is passed
           // null on error, or a string object on success.
-	post : function (relrl, callback, timeout) {
-	    function cb(txt) {
-		callback(txt);
-	    }
+	  post : function (relrl, callback, timeout, data) {
+              var bobj=this._createBaseObject(relrl, callback, timeout);
 
-	    function cbe(err) {
-		callback(null);
-	    }
+	      if(dojo.isString(data))
+		  bobj.args.postData=data;
 
-	    var args={
-		url : relrl,
-		handleAs : "text",
-		timeout : timeout,
-		load : cb,
-		error : cbe
-	    }
+	      dojo.xhrPost(bobj.args);
 
-	    dojo.xhrPost(args);
-	    
-	    return {
-		cancel : function() {
-		    if(args.abort!==undefined)
-			args.abort();
-		}
-	    };
-	}
+	      return bobj.returnobj;
+	  },
 
+          // Wrapper for Dojo AJAX system call.  The callback function is passed
+          // null on error, or a string object on success.
+          put : function (relrl, callback, timeout, data) {
+              var bobj=this._createBaseObject(relrl, callback, timeout);
 
+	      if(dojo.isString(data))
+		  bobj.args.postData=data;
+
+	      dojo.xhrPut(bobj.args);
+
+	      return bobj.returnobj;
+	  }
 
 
     }

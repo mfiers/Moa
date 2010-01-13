@@ -2,6 +2,7 @@
 
 from wwwmoa import rw
 from wwwmoa import rl
+from wwwmoa import cgiex
 
 import wwwmoa.env
 from wwwmoa.formats.html import error
@@ -12,6 +13,7 @@ import os.path
 import json
 import time
 import sys
+import urlparse
 
 
 
@@ -238,31 +240,31 @@ the \"{2}\" parameter.\n\n\"{2}\" parameter information:\n\
 
 
 
-    ## moa-jobparam Command ##
+    ## moa-jobparams Command ##
 
-    elif command=="moa-jobparam":
-        var_key=env["params"]["key"]
+    elif command=="moa-jobparams":
 
-        if (env["method"]=="POST") or (env["method"]=="PUT"): # if a set was requested
 
-            if "value" in env["params"]:
-                var_value=env["params"]["value"]
-            else:
-                var_value=""
-           
+        if env["method"]=="POST": # if a single set was requested
+            var_key=env["params"]["key"]
+            var_value=cgiex.get_request_body()
             moaapi.setParameter(path, var_key, var_value)
 
+            output_action_message(True, "The Moa job parameter has been set.")
+        elif env["method"]=="PUT": # if a set was requested
+            try:
+                var_dict=json.loads(cgiex.get_request_body())
+            except ValueError:
+                output_action_message(False, "The Moa job parameter set you sent was not valid.")
+            else:
+                for v in var_dict.keys():
+                    moaapi.setParameter(path, v, var_dict[v])
+                    
+                output_action_message(True, "The supplied Moa job parameters have been set.")
         elif env["method"]=="GET": # if a get was requested
-            var_value=moaapi.getParameter(path, var_key)
-        elif env["method"]=="DELETE" : # if a delete was requested
-            moaapi.setParameter(path, var_key, "")
-
-    
-        output_json_headers(0)
-        rw.end_header_mode()
-        rw.send(json.dumps(add_timestamp({"key" : var_key, "value" : var_value}, 0)))
-
-
+            output_json_headers(0)
+            rw.end_header_mode()
+            rw.send(json.dumps(add_timestamp({"parameters" : moaapi.getInfo(path)["parameters"]}, 0)))
 
 
     ## moa-templates Command ##

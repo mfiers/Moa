@@ -8,6 +8,7 @@ dojo.require("dijit.layout.TabContainer");
 
 dojo.require("wwwmoa.client.dhm.FSBrowser");
 dojo.require("wwwmoa.client.dhm.PBrowser");
+dojo.require("wwwmoa.client.dhm.JobParamEditor");
 
 dojo.addOnLoad(function() {
 	dojo.declare("wwwmoa.client.Client", dijit._Widget, {
@@ -60,6 +61,17 @@ dojo.addOnLoad(function() {
 		    this.uiCompDHM.push(this.uiComp.pbrowser);
 
 		    dojo.place(this.uiComp.pbrowser.domNode, this.uiComp.pbrowserpane.domNode);
+
+
+		    this.uiComp.jobparameditorpane=new dijit.layout.ContentPane({title : "Job Parameters", region : "leading", style : "width:300px", splitter : true});
+
+		    this.uiComp.tab.addChild(this.uiComp.jobparameditorpane);
+
+		    this.uiComp.jobparameditor=new wwwmoa.client.dhm.JobParamEditor({});
+
+		    this.uiCompDHM.push(this.uiComp.jobparameditor);
+
+		    dojo.place(this.uiComp.jobparameditor.domNode, this.uiComp.jobparameditorpane.domNode);
 
 		   
 		    this.uiComp.bottom=new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."});

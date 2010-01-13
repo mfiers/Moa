@@ -85,9 +85,9 @@ commands["moa-jobsession"]={
 
 
 
-## moa-jobparam Command Entry ##
+## moa-jobparams Command Entry ##
 
-commands["moa-jobparam"]={
+commands["moa-jobparams"]={
     "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
                                             "dir" : REQUIREMENT_NONE,
                                             "file" : REQUIREMENT_NONE,
@@ -95,12 +95,8 @@ commands["moa-jobparam"]={
                                             "write" : REQUIREMENT_PRESENCE
                                             },
 
-                          "help" : "Retrieves the value of a parameter.",
-                          "params" : {"key" : {"mandatory" : True,
-                                               "help" : "\
-The key associated with the parameter."
-                                               }
-                                      }
+                          "help" : "Retrieves the values of all parameters.",
+                          "params" : {}
                           },
 
                  "POST" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
@@ -110,16 +106,11 @@ The key associated with the parameter."
                                              "write" : REQUIREMENT_PRESENCE
                                              },
 
-                           "help" : "Sets the value of a parameter.",
+                           "help" : "Sets the value of a single parameter. The value should be sent as the request body.",
                            "params" : {"key" : {"mandatory" : True,
                                                 "help" : "\
 The key associated with the parameter."
-                                                },
-
-                                       "value" : {"mandatory" : True,
-                                                  "help" : "\
-The new value of the parameter."
-                                                  }
+                                                }
                                        }
                            },
 
@@ -130,38 +121,15 @@ The new value of the parameter."
                                             "write" : REQUIREMENT_PRESENCE
                                             },
 
-                          "help" : "Alias for POST.",
-                          "params" : {"key" : {"mandatory" : True,
-                                               "help" : "\
-The key associated with the parameter."
-                                               },
-
-                                      "value" : {"mandatory" : True,
-                                                 "help" : "\
-The new value of the parameter."
-                                                 }
-                                      }
-                          },
-
-                 "DELETE" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                               "dir" : REQUIREMENT_NONE,
-                                               "file" : REQUIREMENT_NONE,
-                                               "read" : REQUIREMENT_PRESENCE,
-                                               "write" : REQUIREMENT_PRESENCE
-                                               },
-
-                             "help" : "\
-Removes the value currently associated with the parameter.",
-                             "params" : {"key" : {"mandatory" : True,
-                                                  "help" : "\
-The key associated with the parameter."
-                                                  }
-                                         }
-                             }
+                          "help" : "Updates the entire collection of parameters.  The parameters should be included \
+in the body of the request, and should be a JSON encoded dictionary of key-value pairs.  Not all \
+parameters must be specified; if not specified, the current values will be maintained.",
+                          "params" : {}
+                          }
                  },
 
-    "title" : "Moa Job Parameter",
-    "help" : "Represents a Moa job parameter."
+    "title" : "Moa Job Parameters",
+    "help" : "Represents a Moa job parameter set."
     }
 
 

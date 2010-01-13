@@ -37,9 +37,14 @@ else {
         // JSON utilities
         json : {
               // Wrapper for Dojo JSON parser.
-              parse : function (str) {
+              parse : function(str) {
                   return dojo.fromJson(str);
-              }
+	      },
+
+	      // Wrapper for Dojo JSON encoder.
+	      encode : function(obj) {
+		  return dojo.toJson(obj);
+	      }
         }
     }
 }
