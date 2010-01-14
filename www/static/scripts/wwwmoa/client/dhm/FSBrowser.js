@@ -34,10 +34,6 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 	    /* * * * * * * * * * *  * * * * * * * * * * * */
 
 
-	    constructor : function() {
-		this._navToLocation();
-	    },
-
 	    buildRendering : function() {
 		this.domNode=dojo.create("div", null);
 		this._refreshVisual();
@@ -398,7 +394,7 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 		    return; // there is no reason to proceed
 
 		if(this.attr("visualCode")==null) // if either the main code or the current directory item code is not present
-		    node=dojo.create("div", {innerHTML : "Loading directory contents...<br>One moment..."}); // create loading message
+		    node=dojo.create("div", null); // create blank section
 		else // if both the main code and the current directory item code is present
 		    node=this.attr("visualDOM");
 

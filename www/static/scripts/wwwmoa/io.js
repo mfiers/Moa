@@ -201,4 +201,18 @@ else {
 
 
     }
+
+    // Cookie utilities
+    wwwmoa.io.cookie={
+	set : function(key, value, keep) {
+	    if(keep==null)
+		keep=false;
+
+	    dojo.cookie(key, value, (keep ? {expires : 730} : {}));
+	},
+
+	get : function(key) {
+	    return dojo.cookie(key);
+	}
+    }
 }

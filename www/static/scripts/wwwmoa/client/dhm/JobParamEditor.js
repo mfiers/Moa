@@ -46,6 +46,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    if(!success) {
 			this._dhmSetVisualByCode("No parameters were found.");
 			this.dhmUnlock();
+			return;
 		    }
 		    
 		    this._pushStore();
