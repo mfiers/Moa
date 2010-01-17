@@ -8,6 +8,7 @@ dojo.require("dijit.layout.TabContainer");
 
 dojo.require("wwwmoa.client.dhm.FSBrowser");
 dojo.require("wwwmoa.client.dhm.PBrowser");
+dojo.require("wwwmoa.client.dhm.JobParamEditor");
 
 dojo.addOnLoad(function() {
 	dojo.declare("wwwmoa.client.Client", dijit._Widget, {
@@ -25,6 +26,7 @@ dojo.addOnLoad(function() {
 		},
 
 		buildRendering : function() {
+		    var startup_wd;
 
 		    this.uiComp.parent=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
 
@@ -61,6 +63,17 @@ dojo.addOnLoad(function() {
 
 		    dojo.place(this.uiComp.pbrowser.domNode, this.uiComp.pbrowserpane.domNode);
 
+
+		    this.uiComp.jobparameditorpane=new dijit.layout.ContentPane({title : "Job Parameters", region : "leading", style : "width:300px", splitter : true});
+
+		    this.uiComp.tab.addChild(this.uiComp.jobparameditorpane);
+
+		    this.uiComp.jobparameditor=new wwwmoa.client.dhm.JobParamEditor({});
+
+		    this.uiCompDHM.push(this.uiComp.jobparameditor);
+
+		    dojo.place(this.uiComp.jobparameditor.domNode, this.uiComp.jobparameditorpane.domNode);
+
 		   
 		    this.uiComp.bottom=new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."});
 
@@ -68,6 +81,16 @@ dojo.addOnLoad(function() {
 
 		    for(var x=0; x<this.uiCompDHM.length; x++) 
 			this.uiCompDHM[x].dhmPoint(this);
+
+
+		    startup_wd=wwwmoa.io.cookie.get("WWWMOA_WD");
+
+		    startup_wd=(startup_wd==null ? "" : startup_wd);
+
+		    this.dhmRequest({
+			    type : wwwmoa.dhm.DHM_REQ_WDNAV,
+			    args : {path : startup_wd}
+			});
 		},
 
                 dhmRequest : function(request, dhm) {
@@ -143,9 +166,12 @@ dojo.addOnLoad(function() {
 				poll_good=poll_good&&poll_ret;
 			}
 
-			if(poll_good)
+			if(poll_good) {
 			    for(var x=0; x<this.uiCompDHM.length; x++)
 				this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_WDNAV, args : { path : request.args.path }});
+
+			    wwwmoa.io.cookie.set("WWWMOA_WD", request.args.path, true);
+			}
 
 			return poll_good;
 		    }

@@ -8,7 +8,6 @@ import wwwmoa.env
 from wwwmoa.formats.html import error
 import wwwmoa.info.moa as moainfo
 import moa.api as moaapi
-import moa.dispatcher as dispatcher
 
 import os
 import os.path

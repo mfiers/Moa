@@ -1,15 +1,11 @@
 ### WWWMoa ###############################
 ### RW / Low-level Output Handlers
-### Version: 0.1
-### Date: November 18, 2009
 
 ## Imports ##
 import sys # will use for string outputs
-import cgi # will use for input parameter processing
-
+import cgiex # will use for loading query parameters
 
 ## State / Buffer Variables ##
-_request_params=cgi.FieldStorage() # _request_params will hold the input parameter object at import time
 _in_header_mode=True # keeps track of whether we are in "header mode" or not
 
 ## Output Handlers ##
@@ -51,11 +47,15 @@ def send_header(name, value):
 def send_status(id, brief=""):
     send_header("Status", str(int(id))+" "+brief)
 
+
+# Note: This function is now deprecated.  The functionality defined
+# in the cgiex module should be used instead.  This command may be 
+# removed in the future.
+
 ## Returns a string with the contents of a given request parameter.  Note that an empty string will be returned if not such parameter was sent.
 def get_request_param(name):
-    global _request_params # we have already processed the request parameters
+    return cgiex.get_request_query_value(name)
 
-    return _request_params.getfirst(name,"") # locate the first request parameter with the given name
 
 ## Terminates the current script.
 def terminate():
