@@ -17,19 +17,18 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_ids += dottup
-moa_title_mummer = clustalw
-moa_description_mummer = Run clustalw on two sets of sequences
+moa_title_dottup = EMBOSS Dottup
+moa_description_dottup = Use dottup (from EMBOSS) to compare two sets			\
+of sequences
 
 #targets
-dottup_help = run clustalw
+dottup_help = Run dottup
 
 #variables
 moa_must_define += dottup_input_dir_a dottup_input_dir_b
-dottup_input_dir_a_help= This set is compared to the sequences in input_dir_b. \
-  only a forward comparison is made (a against b, not the other way \
-  round )
-dottup_input_dir_b_help= The set to compare against
+dottup_input_dir_a_help= This set is compared to the sequences in input_dir_b.
 
+dottup_input_dir_b_help= The set to compare against
 
 moa_may_define += dottup_input_extension dottup_wordsize
 

@@ -15,4 +15,4 @@ moa_preprocess:
 .PHONY: moa_postprocess
 moa_postprocess:
 
-include $(MOABASE)/template/test.mk
+include $(MOABASE)/template/moatest.mk

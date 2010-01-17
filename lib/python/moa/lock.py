@@ -30,9 +30,12 @@ def lockJob(d):
     """
     Lock a moa directory
 
-        >>> lockJob(TESTPATH)
-        >>> os.path.exists(os.path.join(TESTPATH, 'lock'))
+        >>> lockJob(P_JOB)
+        >>> os.path.exists(os.path.join(P_JOB, 'lock'))
         True
+        >>> unlockJob(P_JOB)
+        >>> os.path.exists(os.path.join(P_JOB, 'lock'))
+        False
     """
     if not moa.info.isMoaDir(d):
         raise NotAMoaDirectory(d)
@@ -45,11 +48,12 @@ def unlockJob(d):
     """
     Unlock a moa directory
 
-        >>> unlockJob(TESTPATH)
-        >>> os.path.exists(os.path.join(TESTPATH, 'lock'))
+        >>> lockJob(P_JOB)
+        >>> unlockJob(P_JOB)
+        >>> os.path.exists(os.path.join(P_JOB, 'lock'))
         False
         >>> try:
-        ...     unlockJob(NOTMOADIR)
+        ...     unlockJob(P_EMPTY)
         ...     False
         ... except NotAMoaDirectory: True
         ... except: False

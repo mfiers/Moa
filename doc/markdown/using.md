@@ -24,10 +24,9 @@ data from multiple organisms, that might be a good top level division.
 
 * On lower levels start organizing your annotation pipeline. Since most 
 
-
-
-##Setting up analysis steps
-
+## Setting up new jobs - `moa new`
+ 
+Creating a new job is done with the `moa new` command.
 
 #Running a pipeline
 

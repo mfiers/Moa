@@ -18,19 +18,18 @@
 # 
 moa_ids += dotself
 moa_title_mummer = Dottup self
-moa_description_mummer = Run dottup for  sequence against itself
+moa_description_mummer = Run dottup with a sequence against itself
 
 #targets
 dotself_help = run clustalw
 
 #variables
 moa_must_define += dotself_input_dir
-dotself_input_dir_help= Set of sequenced to dotplot
+dotself_input_dir_help= Set of sequences to use
 
 moa_may_define += dotself_input_extension dotself_wordsize
 
-include $(shell echo $$MOABASE)/template/moaBase.mk
-
+include $(MOABASE)/template/moaBase.mk
 
 dotself_wordsize ?= 10
 dotself_input_extension ?= fasta

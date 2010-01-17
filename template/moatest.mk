@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 
-moa_ids += test
+moa_ids += moatest
 moa_title = Unittest template
-moa_description = Not to be used - is used by unittests
+moa_description = Not to be used - is used by unitmoatests
 
-unittest_help = Do nothing - no need to call this. 
+moatest_help = Do nothing - no need to call this. 
 
 ## define a few test variables
 
@@ -31,20 +31,20 @@ txt_type = string
 
 #and an optional one
 moa_may_define = test_opt
-test_opt_help = test variable
-test_opt_type = string
-test_opt_default = konijntje
+moatest_opt_help = test variable
+moatest_opt_type = string
+moatest_opt_default = konijntje
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
-test_prepare:
-test_post:
-test_clean:
+moatest_prepare:
+moatest_post:
+moatest_clean:
 	-rm moa_test
 #default function is to create the file 'moa_test' with content 'test.  
-test: 
+moatest: 
 	$e echo '$(txt)' > moa_test
 
 unittests: unittest_moabase_var

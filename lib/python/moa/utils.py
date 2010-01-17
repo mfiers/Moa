@@ -71,27 +71,27 @@ def removeMoaFiles(path):
     Removes all moa related files from a directory
 
 
-        >>> open(os.path.join(EMPTYDIR, 'Makefile'),'a').close()
-        >>> open(os.path.join(EMPTYDIR, 'moa.mk'), 'a').close()
-        >>> open(os.path.join(EMPTYDIR, 'lock'), 'a').close()
-        >>> open(os.path.join(EMPTYDIR, 'moa.runlock'), 'a').close()
-        >>> open(os.path.join(EMPTYDIR, 'test.file'), 'a').close()
-        >>> removeMoaFiles(EMPTYDIR)
-        >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+        >>> open(os.path.join(P_EMPTY, 'Makefile'),'a').close()
+        >>> open(os.path.join(P_EMPTY, 'moa.mk'), 'a').close()
+        >>> open(os.path.join(P_EMPTY, 'lock'), 'a').close()
+        >>> open(os.path.join(P_EMPTY, 'moa.runlock'), 'a').close()
+        >>> open(os.path.join(P_EMPTY, 'test.file'), 'a').close()
+        >>> removeMoaFiles(P_EMPTY)
+        >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
         False
-        >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+        >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
         False
-        >>> os.path.exists(os.path.join(EMPTYDIR, 'lock'))
+        >>> os.path.exists(os.path.join(P_EMPTY, 'lock'))
         False
-        >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.runlock'))
+        >>> os.path.exists(os.path.join(P_EMPTY, 'moa.runlock'))
         False
-        >>> os.path.exists(os.path.join(EMPTYDIR, 'test.file'))
+        >>> os.path.exists(os.path.join(P_EMPTY, 'test.file'))
         True
-        >>> os.unlink(os.path.join(EMPTYDIR, 'test.file'))
+        >>> os.unlink(os.path.join(P_EMPTY, 'test.file'))
         
     """
     for name in ['Makefile', 'moa.mk', 'lock', 'moa.runlock',
-                 'moa.out', 'moa.err']:
+                 'moa.out', 'moa.err', 'moa.failed', 'moa.success']:
         ff = os.path.join(path, name)
         if os.path.isfile(ff):
             os.unlink(ff)
