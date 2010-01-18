@@ -63,3 +63,19 @@ template_test:
 		$(call var_defined,$(v)_help)\
 		$(call var_defined,$(v)_type)\
 	)
+	$(foreach v, $(moa_may_define),\
+		$(call var_defined,$(v)_default)\
+	)
+	
+template_extra_test:
+	RANDOMDIR=`mktemp -d`;                      		\
+	$(call warn,Executing unittest $* in $$RANDOMDIR);      	\
+	cd $$RANDOMDIR;                        			\
+	moa new -t 'unittest' $*;                  		\
+	moa -v unittest_$* ;                    			\
+	if [[ "$$?" != "0" ]]; then 				\
+	$(call exer,unittest failed); 				\
+	fi;  							\
+	$(call warn,Finished executing unittest $*);        	\
+	rm -rf $$RANDOMDIR
+	

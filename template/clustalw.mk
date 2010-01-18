@@ -29,17 +29,17 @@ clustalw_help = run clustalw
 
 #variables
 moa_must_define += input_dir_a
-input_dir_a_help = This set is compared to the sequences in input_dir_b. input_dir_a_type = directory
+input_dir_a_help = This set is compared to the sequences in input_dir_b.  
 input_dir_a_type = directory
 
 
 moa_must_define += input_dir_b
-input_dir_b_help = The set to compare against
+input_dir_b_help = The set to compare against. Only a forward comparison is \
+  made (a against b, not the other way round)
+
 input_dir_b_type = directory
 
 
-  only a forward comparison is made (a against b, not the other way \
-  round )
 
 
 moa_may_define += input_extension

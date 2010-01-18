@@ -16,42 +16,33 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+include $(MOABASE)/template/moaBasePre.mk
+
 moa_title = Blast
-moa_description = Wraps BLAST [[Alt90]], the most popular				\
+moa_description = Wraps BLAST [[Alt90]], the most popular			\
   similarity search tool in bioinformatics
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
   [[Alt90]] suite of tools
+
 moa_ids += blast
+
 blast_help = Running BLAST takes an input directory						\
   (*blast_input_dir*), determines what sequence files are present		\
   (with the parameter *blast_input_extension*) and executes BLAST on	\
   each of these. Moa BLAST is configured to create XML output (as		\
-  opposed ot the standard text based output) in the *./out*				\
-  directory. The output XML is subsequently converted to GFF3			\
+  opposed ot the standard text based output) in the *./out*			\
+  directory. The output XML is subsequently converted to GFF3		\
   [[gff]] by the custom *blast2gff* script (build around biopython		\
   [[biopython]]). Additionally, a simple text report is created.		\
 
 moa_additional_targets += blast_report
 moa_blast_report_help = Generate a text BLAST report.
 
-
 #########################################################################
 # Prerequisite testing
 
-prereqlist += prereq_blast_installed prereq_blast_report_installed \
-  prereq_biopython_installed
-
-prereq_blast_installed:
-	@if ! which blastall >/dev/null; then \
-		echo "Blast is either not installed or not in \$$PATH" ;\
-		false ;\
-	fi
-
-prereq_blast_report_installed:
-	@if ! which blastReport >/dev/null; then \
-		echo "blastReport is either not installed or not in \$$PATH" ;\
-		false ;\
-	fi
+prereqlist += prereq_biopython_installed
+moa_prereq_simple += blastalla blastReport
 
 prereq_biopython_installed:
 	@if ! python -c "import Bio.Blast"; then \
@@ -59,58 +50,45 @@ prereq_biopython_installed:
 		exit -1 ;\
 	fi
 
-
-moa_must_define += blast_input_dir
-blast_input_dir_help = directory containing the input sequences
-blast_input_dir_type = dir
+$(call moa_fileset_define,blast_input,fasta,Directory with the BLAST input \
+	files)
 
 moa_must_define += blast_db
-blast_db_help = Location of the blast database. You can either define			\
-the blast db parameter as used by blast, or any of the blast database			\
-files, in which case the extension will be removed before use
-blast_db_type = file
+blast_db_help = Location of the blast database. You can either define the blast db parameter as used by blast, or any of the blast database files, in which case the extension will be removed before use
+#blast_db_type = file
 
-moa_may_define +=  blast_gff_source
+moa_may_define += blast_gff_source
+blast_gff_source_default = BLAST
 blast_gff_source_help = source field to use in the gff
 blast_gff_source_type = string
-blast_gff_source_default = BLAST
-
-
-moa_may_define += blast_input_extension
-blast_input_extension_help = Input file extension
-blast_input_extension_type = string
-blast_input_extension_default = fasta
 
 moa_may_define += blast_program
+blast_program_default = blastn
 blast_program_help = blast program to use (default: blastn)
 blast_program_type = set
-blast_program_allowed = blastx blastn blastp tblastx tblastn
-blast_program_default = blastn
+blast_program_allowed = blastx blastn blastp tblastn tblastx
 
 moa_may_define += blast_eval
+blast_eval_default = 1e-10
 blast_eval_help = e value cutoff
 blast_eval_type = float
-blast_eval_default = 1e-10
 
 moa_may_define += blast_nohits
+blast_nohits_default = 50
 blast_nohits_help = number of hits to report
 blast_nohits_type = integer
-blast_nohits_default = 50
 
 moa_may_define += blast_nothreads
-blast_nothreads_help = threads to run blast with (note the overlap				\
-	with the Make -j parameter)
-blast_nothreads_type = integer
 blast_nothreads_default = 2
-blast_nothreads_category = advanced
+blast_nothreads_help = threads to run blast with (note the overlap with the Make -j parameter)
+blast_nothreads_type = integer
 
 moa_may_define += blast_gff_blasthit
-blast_gff_blasthit_help = (T,**F**) - export an extra blasthit feature			\
-  to the created gff, grouping all hsp (match) features.
-blast_gff_blasthit_type = set
-blast_gff_blasthit_allowed = T F
 blast_gff_blasthit_default = F
-blast_gff_blasthit_category = advanced
+blast_gff_blasthit_help = (T,**F**) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.
+blast_gff_blasthit_type = set
+
+blast_gff_blasthit_allowed = T                               F
 
 #preparing for gbrowse upload:
 gup_gff_dir = ./gff
@@ -136,7 +114,6 @@ endif
 
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
-
 
 ifdef real_blast_db
 single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]s[dq] 2>/dev/null || true)

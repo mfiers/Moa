@@ -27,25 +27,30 @@ moa_title_fasta2gff = Fasta to gff
 moa_description_fasta2gff = Create gff from a fasta file to accompany upload to \
   a gbrowse db
 
-# Output definition
-moa_outputs += fasta2gff
-moa_output_fasta2gff = ./gff/*
-moa_output_fasta2gff_help = gff output files
-
 #varables that NEED to be defined
 moa_must_define += f2g_gffsource
 f2g_gffsource_help = Source to be used in the gff
+f2g_gffsource_type = string
 
 #varables that MAY  be defined
-moa_may_define += f2g_input_dir f2g_output_dir
-f2g_input_dir_help = Directory with the input fasta (default: ./fasta)	
-f2g_output_dir_help = Directory with the output gff (default: ./gff)
+moa_must_define += f2g_input_dir 
+f2g_input_dir_help = Directory with the input fasta files
+f2g_input_dir_type = directory
+
+moa_may_define += f2g_output_dir
+f2g_output_dir_default = ./gff
+f2g_output_dir_help = Directory with the output gff 
+f2g_output_dir_type = directory
 
 moa_may_define += f2g_input_extension
-f2g_input_extension_help = glob pattern of the fasta files (default: *.fasta) 
+f2g_input_extension_default = fasta
+f2g_input_extension_help = glob pattern of the fasta files (default: *.fasta)
+f2g_input_extension_type = string
 
 moa_may_define += f2g_options
-f2g_options_help = options to be passed to the fasta2gff script 
+f2g_options_default = 
+f2g_options_help = options to be passed to the fasta2gff script
+f2g_options_type = string
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -54,10 +59,6 @@ endif
 
 ################################################################################
 
-f2g_options ?=
-f2g_input_dir ?= ./fasta
-f2g_output_dir ?= ./gff
-f2g_input_extension ?= fasta
 f2g_input_files = $(wildcard $(f2g_input_dir)/*.$(f2g_input_extension))
 f2g_output_files = \
     $(addprefix $(f2g_output_dir)/, \

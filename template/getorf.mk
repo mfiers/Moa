@@ -85,8 +85,8 @@ getorf_table_help = Genetic code to use: 0 Standard; 1 Standard	\
    Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium			\
    Mitochondrial.
 getorf_table_type = set
-getorf_table_allowed 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 21 22 23
-getorf_table_default 11
+getorf_table_allowed = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 21 22 23
+getorf_table_default = 11
 
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk

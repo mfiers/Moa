@@ -70,9 +70,10 @@ moa_postprocess:
 ## aditional  pre/post process command - to be definable in moa.mk
 ## this is only one single command.
 moa_may_define += moa_precommand
-moa_precommand_help = A single command to be executed before the main			\
-operation starts. For more complicated processing, please override the			\
-moa_preprocess target in the local Makefile.
+moa_precommand_help = A single command to be executed before the main		\
+  operation starts. For more complicated processing, please override the		\
+  moa_preprocess target in the local Makefile.
+moa_precommand_default =
 moa_precommand_type = string
 moa_precommand_category = advanced
 
@@ -82,6 +83,7 @@ Moa is finished. For more complex processing please override the				\
 moa_postprocess target in the local Makefile.
 moa_postcommand_category = advanced
 moa_postcommand_type = string
+moa_postcommand_default =
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
@@ -380,10 +382,10 @@ checkPrereqExec = \
 	fi
 
 checkPrereqPath = \
-	if ! which $(1) >/dev/null 2>/dev/null; then 								\
-		$(call errr,Prerequisite check);										\
-		$(call errr,Cannot find $(1) in your PATH, is it installed?); 			\
-		if [[ -n "$(2)" ]]; then 												\
+	if ! which $(1) >/dev/null 2>/dev/null; then 			\
+		$(call errr,Prerequisite check: \
+			Cannot find $(1) in your PATH $(comma).); 	\
+		if [[ "$(strip $(2))" ]]; then 												\
 			$(call errr,$(2)); 													\
 		fi;																		\
 		$(call exerUnlock);														\
@@ -391,7 +393,7 @@ checkPrereqPath = \
 
 .PHONY: prereqs $(prereqlist)
 prereqs: $(prereqlist) \
-	$(addprefix moa_prereq_simple_check_,$(moa_prereq_simplec))
+	$(addprefix moa_prereq_simple_check_,$(moa_prereq_simple))
 
 moa_prereq_simple_check_%:
 	$e $(call checkPrereqPath,$*)
