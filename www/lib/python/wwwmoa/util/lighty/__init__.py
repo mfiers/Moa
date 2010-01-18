@@ -30,10 +30,20 @@ import time
 
 cl_parser=OptionParser()
 
-cl_parser.set_defaults(port=8080, instance=None, home_dir=None,
-                       act_run=False, act_kill=False, act_status=False,
-                       act_kill_all=False, flag_noconf=False,
-                       flag_preserve=False)
+cl_parser.set_defaults(port=8080,
+                       instance=None,
+                       home_dir=None,
+                       password=None,
+                       act_run=False,
+                       act_kill=False,
+                       act_status=False,
+                       act_kill_all=False,
+                       flag_noconf=False,
+                       flag_preserve=False,
+                       flag_readonly=False,
+                       flag_restrictlocal=False,
+                       flag_autopassword=False
+                       )
 
 cl_parser.add_option(
     "-r", "--run",
@@ -118,7 +128,49 @@ cl_parser.add_option(
     "with the given port; causes -m to be ignored"
     )
 
+cl_parser.add_option(
+    "-o", "--read-only",
+    action="store_true",
+    dest="flag_readonly",
+    help="when running a new instance of lighttpd, causes \
+it to start in read-only mode"
+    )
+
+cl_parser.add_option(
+    "-w", "--password",
+    action="store",
+    dest="password",
+    help="when running a new instance of lighttpd, causes \
+it to be password protected with the specified password;  \
+if the specified password has a length of zero, one will  \
+be automatically generated (although you can also specify \
+this behavior with --auto-password)"
+    )
+
+cl_parser.add_option(
+    "--restrict-to-local",
+    action="store_true",
+    dest="flag_restrictlocal",
+    help="when running a new instance of lighttpd, causes \
+it to only be accessible from the local host"
+    )
+
+cl_parser.add_option(
+    "--auto-password",
+    action="store_true",
+    dest="flag_autopassword",
+    help="automatically generates a password as described in \
+the help section for the -w option; this option overrides any\
+ password specified using the -w option"
+    )
+
+
+
+
 (opt, leftover_args)=cl_parser.parse_args()
+
+if opt.flag_autopassword:
+    opt.password=""
 
 if opt.verbose:
     setVerbose()
@@ -154,6 +206,10 @@ if opt.act_run:
 
 
     opt.home=os.path.expanduser(opt.home)
+
+    if not os.access(opt.home, os.F_OK):
+        l.warning("""The content directory you specified does not exist. Until the directory
+                     you specified is created, WWWMoa may not function properly.""")
 
     if opt.port<1 or opt.port>65535:        
         print_fatal_error_message("""Sorry, but the TCP port you
@@ -201,7 +257,7 @@ if opt.act_run:
                 instance?"""):
             sys.exit()
 
-    run(opt.port, opt.home, opt.flag_preserve)
+    run(opt.port, opt.home, opt.flag_preserve, opt.flag_readonly, opt.password, opt.flag_restrictlocal)
 
 elif opt.act_status:
     from actions import status

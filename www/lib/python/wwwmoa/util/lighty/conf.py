@@ -2,9 +2,11 @@ import os
 import os.path
 import sys
 import wwwmoa.info.moa as moainfo
+import wwwmoa.info
 
 import wwwmoa.formats.xml as xml
 
+import hashlib
 
 def get_cgi_handler_path():
     return sys.executable # gets the pathname of the Python interpreter, which we will use for CGI
@@ -29,9 +31,14 @@ def get_path_variable():
     return get_install_moabase_bin_path()
 
 def escape_string(str):
-    return str # [!] Placeholder
+    return str.replace("\"", "\\\"")
 
-def get_env_file(home):
+def get_env_file(home, readonly=False):
+    if readonly:
+        writeaccess="false"
+    else:
+        writeaccess="true"
+
     return """<?xml version=\"1.0\"?>
 
 <env>
@@ -40,11 +47,37 @@ def get_env_file(home):
 
     <content path=\"""" + xml.fix_text(home) +"""\" />
 
+    <access write=\""""+xml.fix_text(writeaccess)+"""\" />
+
 </env>
 
 """
 
-def get_config_file(port, home):
+def get_config_file(port, home, passwordfile=None, restrictlocal=False):
+    custom=""
+
+    if passwordfile!=None:
+        custom+="""
+auth.backend=\"htdigest\"
+
+auth.backend.htdigest.userfile=\""""+escape_string(passwordfile)+"""\"
+
+auth.require=(
+    \"/\" => (
+        \"method\"  => \"digest\",
+        \"realm\"   => \""""+escape_string(wwwmoa.info.get_name())+"""\",
+        \"require\" => \"user=user\"
+    )
+)
+
+"""
+
+    if restrictlocal:
+        custom+="server.bind=\"localhost\"\n\n"
+
+    if custom=="":
+        custom="# No custom parameters are present."
+
     return """
 
 ################################################################
@@ -76,7 +109,8 @@ server.modules=(
     \"mod_cgi\",
     \"mod_rewrite\",
     \"mod_alias\",
-    \"mod_setenv\"
+    \"mod_setenv\",
+    \"mod_auth\"
 )
 
 
@@ -106,7 +140,9 @@ index-file.names=(
 )
 
 $HTTP[\"url\"]=~\"^/direct($|(/.*))\" {
-    dir-listing.active=\"enable\"
+    dir-listing.activate=\"enable\"
+    dir-listing.set-footer=\""""+escape_string(wwwmoa.info.get_string())+""" powered by lighttpd\"
+    server.follow-symlink=\"disable\"
 }
 
 
@@ -140,7 +176,19 @@ setenv.add-environment+=(
     \"PATH\" => \""""+escape_string(get_path_variable())+"""\"
 )
 
+
+## Custom Parameters ##
+
+"""+custom+"""
+
 ################################################################
 
 """
 
+def get_password_file(password):
+    left="user:"+wwwmoa.info.get_name()+":"
+
+    hashgen=hashlib.md5()
+    hashgen.update(left+password)
+
+    return left+hashgen.hexdigest().lower()
