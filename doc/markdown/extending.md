@@ -60,33 +60,17 @@ indented (with at least one space).
 
 ## Moa organizational units - moa_ids
 
-In the previous chapter, both title and description are fairly self
-evident. The `moa_ids` variable is, however, more complicated. Each
-template must have, at least one, unique, preferaby short, identifier
-linked to it. This `moa_id` helps in defining variable space for each
-template. The moa_id returns when defining template specific variables
-and targets. All template specific variables have the moa\_id as a
-part of their name, so do the major targets of a template.
+In the previous chapter, both title and description are fairly self evident. The `moa_ids` variable is, however, more complicated. Each template must have a unique, preferaby short, identifier linked to it. This `moa_id` helps in defining variable space for a template. The moa_id returns when defining template specific variables and targets. All template specific variables have the `moa\_id` as a part of their name, as do the major targets of a template.
 
-Use of uniqued ids allow Moa to stack several templates into a larger,
-more complicated, templates. This might be usefull describing a set of
-resembling tasks that have a lot of overlapping code. Another powerful
-use is to create complex jobs that execute a mini-pipeline in one
-run. For example, gathering a filter a specific set of sequences
-(using the gather template) and creating a BLAST database from that.
+Use of uniqued ids allow Moa to stack several templates into a larger, more complicated, templates. This might be usefull describing a set of resembling tasks that have a lot of overlapping code. Another powerful use is to create complex jobs that execute a mini-pipeline in one run. For example, gathering a filter a specific set of sequences (using the gather template) and creating a BLAST database from that.
 
-Using ids allows functional sepeartion of tasks withing a template, or
-within a stacked template. It is advisable to start creating templates
-with only one task. For each task, a set of specific variables need to
-be defined.
+The design of moa allows, potentially, for stacked templates. These are combined templates containing multiple sub templates, separated by multiple ``moa_ids``. This is however an experimental feature. It is recommended to use only on moa_id per template 
 
-Given that a template can define multiple tasks, a moa\_id are added
-to the moa\_ids array using the following syntax:
+Given that a template can define multiple tasks, a moa\_id are added to the moa\_ids array using the following syntax:
 
     moa_ids += revcomp
 
-## taks specfic variables
-
+## job descriptive variables
 
 Identifier           Description
 -----------------    ---------------------------------------------------
@@ -94,6 +78,11 @@ moa_title            The title for this template
 moa_description      A short description of this template
 moa_ids              A unique, short, identifier for this template
 
+## Job specific variables
+
+Most templates will have variables specific to the job. These can be defined by  
+
+## optional job specific variables
 
 # Include moaBase
 
