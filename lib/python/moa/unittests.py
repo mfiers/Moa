@@ -53,7 +53,24 @@ def testModule(m):
     f, t = doctest.testmod(m, extraglobs = TESTGLOB)
     failures += f
     tests += t
-
+    
+def testTemplates():
+    global failures
+    global tests
+    testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')
+    for templateFile in os.listdir(os.path.join(MOABASE, 'template')):
+        if not templateFile[-3:] == '.mk': continue
+        if templateFile[:2] == '__': continue
+        template = templateFile[:-3]
+        l.debug("testing template %s" % template)
+        moa.api.removeMoaFiles(testDir)
+        moa.api.newJob(template = template, wd=testDir,
+                       title='Testing template %s' % template)
+        moa.api.runMoa(wd=testDir, target='template_test', background=False)
+        result = moa.api.getMoaOut(wd=testDir).strip()
+        if result:
+            print result
+        
 def run():
     l.info("Start running python doctests")
 
@@ -65,7 +82,13 @@ def run():
     testModule(moa.conf)
     testModule(moa.job)
     testModule(moa.runMake)
+
     setInfo()
-    
-    l.info("Finished running of unittests")
+    l.info("Finished running of python unittests")
     l.info("Ran %d test, %d failed" % (tests, failures))
+    
+    testTemplates()
+
+    
+
+

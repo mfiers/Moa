@@ -220,5 +220,5 @@ def newJob(template,
         l.debug("and setting parameters %s" % parameters)        
         moa.conf.commandLineHandler(wd, parameters)
             
-    l.info("Written %s, try: moa help" % makefile)
+    l.debug("Written %s, try: moa help" % makefile)
 
