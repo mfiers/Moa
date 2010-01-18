@@ -30,6 +30,7 @@ import sys
 from moa.logger import l
 from moa import runMake
 from moa.exceptions import *
+import moa.utils
 import moa.lock
 
 MOABASE = os.environ["MOABASE"]
@@ -92,11 +93,12 @@ def status(d):
        - running - this is a moa job & currently executing (runlock exists)       
        - locked - this job is locked (i.e. a lock file exists)
 
-           >>> status(TESTPATH)
+           >>> status(P_JOB)
            'waiting'
-           >>> status(NOTMOADIR)
+           >>> moa.utils.removeMoaFiles(P_EMPTY)
+           >>> status(P_EMPTY)
            'notmoa'
-           >>> status(LOCKEDMOADIR)
+           >>> status(P_LOCKEDJOB)
            'locked'
        
     """
@@ -121,7 +123,7 @@ def info(wd):
     """
     Retrieve a lot of information on a job
 
-    >>> result = info(TESTPATH)
+    >>> result = info(P_JOB)
     >>> type(result) == type({})
     True
     >>> result.has_key('moa_targets')

@@ -136,20 +136,20 @@ def newJob(template,
     Create a new template based makefile in the current dir.
 
 
-    >>> moa.utils.removeMoaFiles(EMPTYDIR)
-    >>> newJob(template = 'traverse',
+    >>> moa.utils.removeMoaFiles(P_EMPTY)
+    >>> newJob(template = 'moatest',
     ...        title = 'test job creation',
-    ...        wd=EMPTYDIR,
+    ...        wd=P_EMPTY,
     ...        parameters=['moa_precommand="ls"'])
-    >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
     True
-    >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+    >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
     True
-    >>> moa.conf.getVar(EMPTYDIR, 'title')
+    >>> moa.conf.getVar(P_EMPTY, 'title')
     'test job creation'
-    >>> moa.conf.getVar(EMPTYDIR, 'moa_precommand')
+    >>> moa.conf.getVar(P_EMPTY, 'moa_precommand')
     '"ls"'
-    >>> moa.utils.removeMoaFiles(EMPTYDIR)
+    >>> moa.utils.removeMoaFiles(P_EMPTY)
         
     """
     l.debug("Creating template '%s'" % template)
@@ -220,5 +220,5 @@ def newJob(template,
         l.debug("and setting parameters %s" % parameters)        
         moa.conf.commandLineHandler(wd, parameters)
             
-    l.info("Written %s, try: moa help" % makefile)
+    l.debug("Written %s, try: moa help" % makefile)
 

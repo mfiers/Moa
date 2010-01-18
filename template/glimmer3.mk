@@ -24,26 +24,41 @@ moa_description = Predicts (prokaryotic) using glimmer3.
 moa_ids += glimmer3
 
 glimmer3_help = Glimmer3 is a open reading frame discovery program		\
-  from the EMBOSS [[emboss]] package. It takes a set of input			\
+  from the EMBOSS [[emboss]] package. It takes a set of input		\
   sequences and predicts all open reading frames. Additionally, this	\
   template converts the default output (predicted protein sequences)	\
   to GFF3.
 
 moa_must_define += glimmer3_input_dir
+glimmer3_input_dir_help = Input directory with the sequences to run glimmer3 on
+glimmer3_input_dir_type = directory
+
 blast_input_dir_help = directory containing the input sequences
 
-moa_may_define +=  glimmer3_gff_source
+moa_may_define += glimmer3_gff_source
+glimmer3_gff_source_default = glimmer3
 glimmer3_gff_source_help = source field to use in the gff. Defaults to "glimmer3"
+glimmer3_gff_source_type = string
 
-moa_may_define += glimmer3_input_extension glimmer3_max_overlap \
-	glimmer3_gene_len glimmer3_treshold
-
+moa_may_define += glimmer3_input_extension
+glimmer3_input_extension_default = fasta
 glimmer3_input_extension_help = input file extension. Defaults to 'fasta'
-glimmer3_max_overlap_help = Maximum overlap, see the glimmer	\
-  documentation for the -o or --max_olap parameter
-glimmer3_gene_len_help = Minimum gene length (glimmer3 -g/--gene_len)
-glimmer3_treshold_help = treshold for calling a gene a gene (glimmer3 -t)
+glimmer3_input_extension_type = string
 
+moa_may_define += glimmer3_max_overlap
+glimmer3_max_overlap_default = 50
+glimmer3_max_overlap_help = Maximum overlap, see the glimmer documentation for the -o or --max_olap parameter
+glimmer3_max_overlap_type = integer
+
+moa_may_define += glimmer3_gene_len
+glimmer3_gene_len_default = 110
+glimmer3_gene_len_help = Minimum gene length (glimmer3 -g/--gene_len)
+glimmer3_gene_len_type = integer
+
+moa_may_define += glimmer3_treshold
+glimmer3_treshold_default = 30
+glimmer3_treshold_help = treshold for calling a gene a gene (glimmer3 -t)
+glimmer3_treshold_type = integer
 
 #preparing for possible gbrowse upload:
 gup_gff_dir = ./gff
@@ -77,19 +92,8 @@ prereq_awkscripts_installed:
 	@$(call checkPrereqExec,get-motif-counts.awk --version,						\
 			Check the AWK shebang!)
 
-
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
-
-
-
-
-
-glimmer3_max_overlap ?= 50
-glimmer3_gene_len ?= 110
-glimmer3_treshold ?= 30
-glimmer3_gff_source ?= glimmer3
-glimmer3_input_extension ?= fasta
 
 glimmer3_input_files ?= $(wildcard $(glimmer3_input_dir)/*.$(glimmer3_input_extension))
 
@@ -125,8 +129,6 @@ glimmer3_clean:
 	-rm -rf ./train/
 	-rm -rf ./out/
 	-rm -rf ./fasta/
-
-
 
 .PHONY: glimmer3
 glimmer3: $(glimmer3_gff_files) $(glimmer3_cds_files)
@@ -167,7 +169,6 @@ $(glimmer3_output_files): out/%.g3.predict: 									\
 			-P $$startuse														\
 			$(realpath $<) 														\
 			../train/train1.icm $*.g3
-
 
 #run elph to create analyze motifs
 train/upstream.motif: train/upstream.train.set

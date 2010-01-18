@@ -55,35 +55,11 @@ moa_unittest_filenotexists=\
 
 moa_default_unittests += moabase_var
 
-.PHONY: unittest
-unittest: unittest_template
+var_defined=$(if $(call seq,$(origin $(1)),undefined),echo '$(moa_ids): $(1) is undefined';)
 
-.PHONY: unittest_all
-unittest_all: base_unittest unittest_template
-
-.PHONY: unittest_template
-unittest_template: $(addprefix unittest_template_wrapper_,$(moa_ids))
-
-base_unittest:
-	$(e)RANDOMDIR=`mktemp -d`;												\
-		$(call warn,Executing base unittest in $$RANDOMDIR);			\
-		cd $$RANDOMDIR;													\
-		moa new -t 'unittest' test;										\
-		moa $(minv) unittests;												\
-		if [[ "$$?" != "0" ]]; then 									\
-			$(call exer,unittest failed); 								\
-		fi;																\
-		$(call warn,Finished executing base unittests);					\
-		rm -rf $$RANDOMDIR
-
-unittest_template_wrapper_%:
-	$(e)RANDOMDIR=`mktemp -d`;											\
-		$(call warn,Executing unittest $* in $$RANDOMDIR);			\
-		cd $$RANDOMDIR;												\
-		moa new -t 'unittest' $*;									\
-		moa $(minv) unittest_$* ;							\
-		if [[ "$$?" != "0" ]]; then 								\
-			$(call exer,unittest failed); 							\
-		fi;															\
-		$(call warn,Finished executing unittest $*);				\
-		rm -rf $$RANDOMDIR
+.PHONY: template_test
+template_test: 
+	$(foreach v,$(moa_must_define) $(moa_may_define),\
+		$(call var_defined,$(v)_help)\
+		$(call var_defined,$(v)_type)\
+	)

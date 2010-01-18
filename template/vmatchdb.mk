@@ -23,14 +23,18 @@ moa_description = Builds a vmatchdb index from a sequence
 #variables
 moa_must_define += vmatchdb_input_dir
 vmatchdb_input_dir_help = The sequence to build a vmatch database from.
+vmatchdb_input_dir_type = directory
 
 moa_may_define += vmatchdb_input_extension vmatch_pl
 vmatchdb_input_extension_help = Extension of the input files, defaults	\
   to 'fasta'
+vmatchdb_input_extension_type = string
 vmatch_pl_help = prefix length
+vmatch_pl_type = string
 
 moa_must_define += vmatchdb_name
 vmatchdb_name_help = Name of the vmatch index to create
+vmatchdb_name_type = string
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk

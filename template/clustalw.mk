@@ -28,18 +28,29 @@ moa_description_mummer = Run clustalw on two sets of sequences
 clustalw_help = run clustalw
 
 #variables
-moa_must_define += input_dir_a input_dir_b
-input_dir_a_help= This set is compared to the sequences in input_dir_b. \
+moa_must_define += input_dir_a
+input_dir_a_help = This set is compared to the sequences in input_dir_b. input_dir_a_type = directory
+input_dir_a_type = directory
+
+
+moa_must_define += input_dir_b
+input_dir_b_help = The set to compare against
+input_dir_b_type = directory
+
+
   only a forward comparison is made (a against b, not the other way \
   round )
-input_dir_b_help= The set to compare against
 
 
 moa_may_define += input_extension
+input_extension_default = fasta
+input_extension_help = File extension for input files
+input_extension_type = string
+
+
 
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
-input_extension ?= fasta
 ix = $(input_extension)
 input_files_a = $(addprefix a__,$(wildcard $(input_dir_a)/*.$(input_extension)))
 input_files_b = $(wildcard $(input_dir_b)/*.$(input_extension))

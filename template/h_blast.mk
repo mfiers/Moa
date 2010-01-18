@@ -50,56 +50,54 @@ prereq_biopython_installed:
 
 moa_must_define += hadoop_base
 hadoop_base_help = location of the hadoop installation
+hadoop_base_type = directory
 
 moa_may_define += hdfs_base
-hadoop_base_help = htfs://SERVER:PORT for the hdfs filesystem,					\
-defaults to "hdfs://localhost:9000"
+hdfs_base_help = htfs://SERVER:PORT for the hdfs filesystem, defaults to \
+   "hdfs://localhost:9000"
+hdfs_base_type = string
+hdfs_base_default = hdfs://localhost:9000
 
 moa_must_define += h_blast_input_dir
 h_blast_input_dir_help = location of the hadoop installation
-
-moa_may_define += blast_input_jid
-blast_input_dir_help = directory name of containing the input fasta				\
-files on the hadoop fs
+h_blast_input_dir_type = directory
 
 moa_must_define += h_blast_db
 h_blast_db_help = Location of the blast database
-h_blast_db_cdbattr = blastdb
+h_blast_db_type = file
 
 moa_mays_define +=  h_blast_gff_source
 h_blast_gff_source_help = source field to use in the gff
+h_blast_gff_source_type = string
 
 moa_may_define += h_blast_input_extension
 h_blast_input_extension_help = input file extension
+h_blast_input_extension_type = string
+h_blast_input_extension_default = fasta
 
 moa_may_define += h_blast_program
 h_blast_program_help = blast program to use (default: blastn)
+h_blast_program_type = set
+h_blast_program_allowed = blastn blastp blastx tblastn tblastx
 
 moa_may_define += h_blast_eval
 h_blast_eval_help = e value cutoff
+h_blast_eval_type = float
+h_blast_eval_default = 1e-10
 
 moa_may_define += h_blast_nohits
 h_blast_nohits_help = number of hits to report
+h_blast_nohits_type = integer
+h_blast_nohits_default = 50
 
 moa_may_define += h_blast_nothreads
 h_blast_nothreads_help = threads to run blast with (note the \
 	overlap with the Make -j parameter)
-
-#preparing for gbrowse upload:
-gup_gff_dir = ./gff
-gup_upload_gff = T
-gup_gffsource ?= $(blast_gff_source)
+h_blast_nothreads_type = integer
+h_blast_nothreads_default = 1
 
 #include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moaBase.mk
-
-h_blast_eval ?= 1e-10
-h_blast_program ?= blastn
-h_blast_input_extension ?= fasta
-h_blast_nohits ?= 100
-h_blast_nothreads ?= 1
-h_blast_gff_source = blast
-hdfs_base = hdfs://localhost:9000
+include $(MOABASE)/template/moaBase.mk
 
 comma=,
 h_blast_db_files = \

@@ -1,6 +1,8 @@
 include $(shell echo $$MOABASE)/etc/moa.conf.mk
 
-notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk
+notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk __moaBasePre.mk __moaBaseTest.mk\
+	__moaBaseHelp.mk moaBasePre.mk __moaBaseVar.mk moaBasePre.mk
+
 #templates=$(filter-out $notemplate,$(notdir $(wildcard $$MOABASE/template/*.mk)))
 templates=$(sort $(filter-out $(notemplate),$(notdir $(wildcard $(shell echo $$MOABASE)/template/*.mk))))
 temptex=$(addprefix ./templates/,$(patsubst %.mk,%.tex,$(templates)))
@@ -13,8 +15,6 @@ chapters = 						\
 	extending.tex				\
 	reference.tex				\
 	manual.tex 					
-
-
 
 .PHONY: manual
 manual: prepare $(chapters)
@@ -37,7 +37,7 @@ reference.tex:  $(temptex)
 	done
 
 ./templates/%.tex: $(shell echo $$MOABASE)/template/%.mk
-	echo "\section{$*}" > $@
+	echo "\section{${subst _,\_,$*}}" > $@
 	make -sf $$MOABASE/template/$*.mk help_latex >> $@
 
 manual.tex: manual.template.tex

@@ -61,9 +61,9 @@ def isMoaDir(wd):
     """
     Is directory 'wd' a Moa directory?
     
-    >>> isMoaDir(TESTPATH)
+    >>> isMoaDir(P_JOB)
     True
-    >>> isMoaDir(NOTMOADIR)
+    >>> isMoaDir(P_EMPTY)
     False
 
     :param wd: directory to check
@@ -85,10 +85,11 @@ def status(wd):
     - running: this is a moa job & currently executing (runlock exists)       
     - locked: this job is locked (i.e. a lock file exists)
 
-    >>> result = status(TESTPATH)
+    >>> result = status(P_JOB)
     >>> result in ['waiting', 'locked', 'running']
     True
-    >>> result = status(NOTMOADIR)
+    >>> moa.utils.removeMoaFiles(P_EMPTY)
+    >>> result = status(P_EMPTY)
     >>> result == 'notmoa'
     True
 
@@ -149,7 +150,7 @@ def getInfo(wd):
           (array) A list of allowed values, if of type set
 
 
-    >>> result = getInfo(TESTPATH)
+    >>> result = getInfo(P_JOB)
     >>> type(result) == type({})
     True
     >>> result.has_key('moa_targets')
@@ -194,7 +195,7 @@ def getParameter(wd, key):
     empty string. This is the fastest solution. If you want to know if
     a parameter exists, use the `getInfo` function.
 
-    >>> title = getParameter(TESTPATH, 'title')
+    >>> title = getParameter(P_JOB, 'title')
     >>> type(title) == type('string')
     True
     >>> len(title) > 0
@@ -202,7 +203,7 @@ def getParameter(wd, key):
     >>> try: getParameter('/', 'title')
     ... except NotAMoaDirectory: 'ok!'
     'ok!'
-    >>> result = getParameter(TESTPATH, 'NotExisitingParameter')
+    >>> result = getParameter(P_JOB, 'NotExisitingParameter')
     >>> type(result) == type("")
     True
     >>> len(result) == 0
@@ -224,7 +225,7 @@ def setParameter(wd, key, value):
 
     Set the parameter ``key`` in path ``wd`` to value ``value``.
     
-    >>> setParameter(TESTPATH, 'title', 'test setParameter')
+    >>> setParameter(P_JOB, 'title', 'test setParameter')
 
     :param wd: the Moa directory to use
     :type wd: String
@@ -242,7 +243,7 @@ def appendParameter(wd, key, value):
     """
     Append the value to parameter 'key' (in path x)
 
-        >>> result = appendParameter(TESTPATH, 'title', 'b')
+        >>> result = appendParameter(P_JOB, 'title', 'b')
     """    
     moa.conf.setVar(wd, key, value)
 
@@ -262,15 +263,15 @@ def newJob(*args, **kwargs):
     """
     Creates a new job
 
-    >>> removeMoaFiles(EMPTYDIR)
-    >>> newJob('traverse',
+    >>> removeMoaFiles(P_EMPTY)
+    >>> newJob(template = 'moatest',
     ...        title = 'test creating of jobs',
-    ...        wd=EMPTYDIR)
-    >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+    ...        wd=P_EMPTY)
+    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
     True
-    >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+    >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
     True
-    >>> removeMoaFiles(EMPTYDIR)
+    >>> removeMoaFiles(P_EMPTY)
         
     """
     moa.job.newJob(*args, **kwargs)
@@ -287,17 +288,17 @@ def removeMoaFiles(wd):
 
     The function does not check if `wd` is a moa directory or not.
 
-    >>> makefile = os.path.join(EMPTYDIR, 'Makefile')
-    >>> moamk = os.path.join(EMPTYDIR, 'moa.mk')
-    >>> newJob(template = 'traverse',
-    ...        wd=EMPTYDIR,
+    >>> makefile = os.path.join(P_EMPTY, 'Makefile')
+    >>> moamk = os.path.join(P_EMPTY, 'moa.mk')
+    >>> newJob(template = 'moatest',
+    ...        wd=P_EMPTY,
     ...        title='test removeMoaFiles')
-    >>> removeMoaFiles(EMPTYDIR)
-    >>> os.path.exists(os.path.join(EMPTYDIR, 'Makefile'))
+    >>> removeMoaFiles(P_EMPTY)
+    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
     False
-    >>> os.path.exists(os.path.join(EMPTYDIR, 'moa.mk'))
+    >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
     False
-    >>> removeMoaFiles(NOTMOADIR)
+    >>> removeMoaFiles(P_EMPTY)
     
     
     :param wd: The pathname of the directory from which the Moa
@@ -314,12 +315,10 @@ def getMoaOut(wd):
     This function reads the moa.out file in a MOA directory and
     returns its content.
 
-    >>> F = open(os.path.join(EMPTYDIR, 'moa.out'),'w')
+    >>> F = open(os.path.join(P_JOB, 'moa.out'),'w')
     >>> F.write('tst')
     >>> F.close()
-    >>> getMoaOut(EMPTYDIR) == 'tst'
-    True
-    >>> getMoaOut(NOTMOADIR) == ''
+    >>> getMoaOut(P_JOB) == 'tst'
     True
     
     :param wd: The pathname of the directory from which the Moa
@@ -332,12 +331,10 @@ def getMoaErr(wd):
     """
     Return moa error
 
-    >>> F = open(os.path.join(EMPTYDIR, 'moa.err'),'w')
+    >>> F = open(os.path.join(P_JOB, 'moa.err'),'w')
     >>> F.write('tsterr')
     >>> F.close()
-    >>> getMoaErr(EMPTYDIR) == 'tsterr'
-    True
-    >>> getMoaErr(NOTMOADIR) == ''
+    >>> getMoaErr(P_JOB) == 'tsterr'
     True
 
     :param wd: the Moa directory
@@ -354,24 +351,24 @@ def runMoa(wd=None, target="", threads=1, background=True):
 
     This function executes moa in path ``wd``.
 
-    >>> removeMoaFiles(EMPTYDIR)
-    >>> newJob('test',
-    ...        wd = EMPTYDIR, 
+    >>> removeMoaFiles(P_TEST)
+    >>> newJob(template = 'moatest',
+    ...        wd = P_TEST, 
     ...        title = 'Test moa run',
     ...        parameters = ['txt=testRunMoa'])
-    >>> runMoa(EMPTYDIR)
-    >>> output = getMoaOut(EMPTYDIR)
+    >>> runMoa(wd=P_TEST, background=False)
+    >>> output = getMoaOut(P_TEST)
     >>> len(output) > 0
     True
     >>> 'Starting MOA' in output
     True
-    >>> target = os.path.join(EMPTYDIR, 'moa_test')
+    >>> target = os.path.join(P_TEST, 'moa_test')
     >>> os.path.exists(target)
     True
     >>> open(target).read().strip() == 'testRunMoa'
     True
-    >>> runMoa(EMPTYDIR, target= 'clean')
-    >>> output = getMoaOut(EMPTYDIR)
+    >>> runMoa(wd=P_TEST, target= 'clean', background=False)
+    >>> output = getMoaOut(P_TEST)
     >>> os.path.exists(target)
     False
     
@@ -391,6 +388,7 @@ def runMoa(wd=None, target="", threads=1, background=True):
       (zero) means that there was an error.
     :rtype: Integer
     """
+    l.debug("executing make in %s" % wd)
     moa.runMake.go(wd = wd,
                    target = target,
                    threads = threads,

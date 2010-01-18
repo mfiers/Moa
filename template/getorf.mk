@@ -53,18 +53,26 @@ input_extension_help = input file extension. Defaults to 'fasta'
 moa_may_define += getorf_minsize getorf_maxsize getorf_circular 		\
 	getorf_table getorf_find
 
-getorf_minsize_help = minimal nucleotide size of the predicted ORF,	\
-  (**30**)
+getorf_minsize_help = minimal nucleotide size of the predicted ORF.
+getorf_minsize_type = integer
+getorf_minsize_default = 30
 
-getorf_maxsize_help = maximal nucleotide size of the predicted ORF,	\
-  (**1000000**)
+getorf_maxsize_help = maximal nucleotide size of the predicted ORF.
+getorf_maxsize_type = integer
+getorf_maxsize_default = 1000000
 
-getorf_circular_help = Is the sequence linear (Y/**N**)
+getorf_circular_help = Is the sequence linear?
+getorf_circular_type = set
+getorf_circular_allowed = Y N
+getorf_circular_default = N
 
 getorf_find_help = What to output? 0: Translation between stop codons,	\
   1: Translation between start & stop codon, 2: Nucleotide sequence		\
   between stop codons; 3: Nucleotide sequence between start	\
   and stop codons. Default: 3
+getorf_find_type = set
+getorf_find_allowed = 0 1 2 3 
+getorf_find_default = 3
 
 getorf_table_help = Genetic code to use: 0 Standard; 1 Standard	\
    with alternative initiation codons; 2 Vertebrate Mitochondrial; 3	\
@@ -75,21 +83,14 @@ getorf_table_help = Genetic code to use: 0 Standard; 1 Standard	\
    Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma	\
    Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode			\
    Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium			\
-   Mitochondrial. Default: 11
-
-#preparing for possible gbrowse upload:
-gup_gff_dir = ./gff
-gup_upload_gff = T
-gup_gffsource ?= $(blast_gff_source)
+   Mitochondrial.
+getorf_table_type = set
+getorf_table_allowed 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 21 22 23
+getorf_table_default 11
 
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
-getorf_table ?= 11
-getorf_find ?= 3
-getorf_minsize ?= 30
-getorf_maxsize ?= 1000000
-getorf_circular ?= Y
 getorf_gff_source ?= moa
 getorf_input_extension ?= fasta
 getorf_find ?= 0
