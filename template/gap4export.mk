@@ -28,9 +28,11 @@ moa_description_gap4export = Export data from an assembly using gap4
 #varables that NEED to be defined
 moa_must_define += ge_input_dir
 ge_input_dir_help = Directory with the input data
+ge_input_dir_type = directory
 
 moa_must_define += ge_input_pattern
 ge_input_pattern_help = file name pattern
+ge_input_pattern_type = string
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -38,7 +40,6 @@ ifndef dont_include_moabase
 endif
 
 ################################################################################
-
 
 g4e_infiles = $(notdir $(shell find $(ge_input_dir) -maxdepth 1 -name "$(ge_input_pattern)" -type d))
 gap4export_phase = $(addsuffix .phase, $(g4e_infiles))
@@ -79,7 +80,6 @@ $(gap4export_cons): %.contig.fasta : $(ge_input_dir)/%
 			echo "Using vA for $@" ;\
 		fi ;\
 		gap4ExportContig $</$$bacId $$bestversion $$bacId
-
 
 $(gap4export_gbfas): %.fasta : %.contig.fasta %.contig.order
 	@echo "hi $@ $<"

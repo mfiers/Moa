@@ -25,26 +25,33 @@ moa_description_gmap = Run GMAP on an set of input files (query) \
 #variables
 moa_must_define += gmap_db
 gmap_db_help = Gmap db
-gmap_db_default_attrib = gmapdb
+gmap_db_type = file
 
 moa_must_define += gmap_input_file
 gmap_input_file_help = input file with the sequences to map
-gmap_input_file_default_attrib = fastafile
+gmap_input_file_type = file
 
-moa_may_define += gmap_extra_parameters gmap_invert_gff gmap_gff_source
+moa_may_define += gmap_extra_parameters
+gmap_extra_parameters_default = 
 gmap_extra_parameters_help = extra parameters to feed to gmap
+gmap_extra_parameters_type = string
+
+moa_may_define += gmap_invert_gff
+gmap_invert_gff_default = F
 gmap_invert_gff_help = Invert the GFF (T/*F*)
+gmap_invert_gff_type = set
+
+gmap_invert_gff_allowed = T F
+moa_may_define += gmap_gff_source
+gmap_gff_source_default = gmap
 gmap_gff_source_help = Source field to use in the output GFF
+gmap_gff_source_type = string
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
 ##### Derived variables for this run
-
-gmap_dbname:=$(shell basename $(gmap_db))
-gmap_invert_gff?=F
-gmap_gff_source?=gmap.$(gmap_dbname)
 
 #prepare for gbrowse updload
 gup_gff_dir=.
@@ -85,5 +92,4 @@ output.raw: $(gmap_input_file)
 gmap_clean:
 	-rm -f output.gff
 	-rm -f output.raw
-
 

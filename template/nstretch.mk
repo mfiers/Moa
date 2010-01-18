@@ -21,24 +21,25 @@ moa_title_nstretch = Nstretch
 moa_description_nstretch = Run NSTRETCH on an set of input files 
 
 #variables
-moa_may_define += nstretch_input_dir
+moa_must_define += nstretch_input_dir
 nstretch_input_dir_help = input dir with the fasta files
-nstretch_input_dir_default_attrib = fastadir
+nstretch_input_dir_type = directory
 
 moa_may_define += nstretch_input_extension
+nstretch_input_extension_default = fasta
 nstretch_input_extension_help = extension of the input files
+nstretch_input_extension_type = string
 
 moa_may_define += nstretch_len
+nstretch_len_default = 10
 nstretch_len_help = minimal number of Ns before its reported (default 10)
+nstretch_len_type = integer
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
 ##### Derived variables for this run
-nstretch_input_extension ?= fasta
-nstretch_input_dir ?= ./fasta
-nstretch_len ?= 10
 
 nstretch_input_files = \
 	$(wildcard $(nstretch_input_dir)/*.$(nstretch_input_extension))
@@ -61,8 +62,6 @@ nstretch: $(nstretch_gff_files)
 	@echo Creating gff $@ from $<	
 	fastaNfinder $< $(nstretch_len) > $@
 
-
 nstretch_clean:
 	-rm -rf ./gff
-
 

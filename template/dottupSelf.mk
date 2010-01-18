@@ -25,14 +25,21 @@ dotself_help = run clustalw
 
 #variables
 moa_must_define += dotself_input_dir
-dotself_input_dir_help= Set of sequences to use
+dotself_input_dir_help = Set of sequences to use
+dotself_input_dir_type = directory
 
-moa_may_define += dotself_input_extension dotself_wordsize
+moa_may_define += dotself_input_extension
+dotself_input_extension_default = fasta
+dotself_input_extension_help = Extension of input files
+dotself_input_extension_type = string
+
+moa_may_define += dotself_wordsize
+dotself_wordsize_default = 6
+dotself_wordsize_help = Wordsize used for recognizing similarity
+dotself_wordsize_type = integer
 
 include $(MOABASE)/template/moaBase.mk
 
-dotself_wordsize ?= 10
-dotself_input_extension ?= fasta
 ix = $(dotself_input_extension)
 
 dotself_input_files = $(addprefix a__,\
@@ -40,7 +47,6 @@ dotself_input_files = $(addprefix a__,\
 
 dotself_output_files = $(addprefix png/,\
 	$(patsubst %.$(ix),%.png,$(notdir $(dotself_input_files))))
-
 
 .PHONY: test
 test:
