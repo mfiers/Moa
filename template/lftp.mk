@@ -73,10 +73,12 @@ lftp_noclean_category = advanced
 moa_may_define += lftp_user lftp_pass
 lftp_user_help = username for the remote site
 lftp_user_type = string
+lftp_user_default = 
 
 lftp_pass_help = password for the remote site, note that this can be \
   defined on the commandline using: 'make lftp_pass=PASSWORD'
 lftp_pass_type = password
+lftp_pass_default = 
 
 moa_may_define += lftp_output_dir lftp_dos2unix
 
