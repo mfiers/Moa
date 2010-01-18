@@ -26,6 +26,7 @@ moa_description_vmatch = Run VMATCH on an set of input files (query) \
 moa_must_define += vmatch_db
 vmatch_db_help = vmatch db to compare against
 vmatch_db_default_attrib = vmatchdb
+vmatch_db_type = file
 
 moa_must_define += vmatch_input_file
 vmatch_input_file_help = input file with the sequences to map

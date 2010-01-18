@@ -23,10 +23,14 @@ moa_description = This template takes GFF and FASTA files and uploads	\
 moa_may_define += gup_fasta_dir gup_gff_dir
 
 gup_fasta_dir_help = input directory with fasta files to upload to gbrowse
+gup_fasta_dir_type = directory
 gup_gff_dir_help = input directory with gff files to upload to gbrowse
+gup_gff_dir_type = directory
 
 moa_must_define += gup_upload_fasta gup_upload_gff
 gup_upload_gff_help = Perform gff upload (T/F)
+gup_upload_gff_type = set
+
 gup_upload_fasta_help = Perform fasta upload (T/F)
 
 #The rest of the functionality is implemented here:

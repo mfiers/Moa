@@ -29,7 +29,7 @@ bowtie_db_type = file
 
 moa_must_define += bowtie_input_dir
 bowtie_input_dir_help = input dir with the query files
-bowtie_input_type = directory
+bowtie_input_dir_type = directory
 
 moa_may_define += bowtie_input_extension
 bowtie_input_extension_help = Extension of the input files

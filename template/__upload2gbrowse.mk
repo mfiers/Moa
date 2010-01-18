@@ -34,34 +34,45 @@ moa_gupgo_help = Actually do the upload. upload2gbrowse NEVER does	\
 
 moa_must_define += gup_user gup_db
 gup_user_help = gbrowse db user. If not defined, this defaults to 'moa'.
+gup_user_type = string
+
 gup_db_help = gbrowse database. If not defined, this defaults to 'moa'.
+gup_db_type = string
 
 moa_may_define += gup_gff_extension gup_fasta_extension
+
 gup_fasta_extension_help = extension of the FASTA files to upload (.fasta)
+gup_fasta_extension_type = string
+gup_fasta_extension_default = fasta
+
 gup_gff_extension_help = extension of the GFF files to upload (.gff)
+gup_gff_extension_type = string
+gup_gff_extension_default = gff
 
 moa_may_define += gup_upload_fasta gup_upload_gff gup_force_upload
 gup_upload_fasta_help = upload fasta to gbrowse (T/F)
+gup_upload_fasta_type = set
+gup_upload_fasta_allowed = T F
+
 gup_upload_gff_help = upload gff to gbrowse (T/F)
+gup_upload_gff_type = set
+gup_upload_gff_allowed = T F
+gup_upload_gff_default = F
+
 gup_force_upload_help = upload to gbrowse, ignore gup_lock and upload	\
   all, not only files newer that upload_gff or upload_fasta
+gup_force_upload_type = set
+gup_force_upload_allowed = T F
+gup_force_upload_default = F
 
 moa_may_define += marks_extensions
+marks_extensions_type = set
 marks_extensions_help = Add some extensions to the Gbrowse database to \
   be initalized, for use by Mark.
+marks_extensions_allowed = T F
+marks_extensions_default = F
 
 include $(shell echo $$MOABASE)/template/moaBase.mk
-
-gup_gff_extension ?= gff
-gup_fasta_extension ?= fasta
-gup_gff_dir ?= ./gff
-gup_fasta_dir ?= ./fasta
-
-#Per default we're not uploading. you really need to set this.
-gup_upload_fasta ?= F
-gup_upload_gff ?= F
-
-marks_extensions ?= F
 
 #see if this job is locked from uploading
 gup_locked = $(shell if [ -f ./gup_lock ]; then echo "T"; else echo "F"; fi)

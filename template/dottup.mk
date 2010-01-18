@@ -27,9 +27,10 @@ dottup_help = Run dottup
 #variables
 moa_must_define += dottup_input_dir_a dottup_input_dir_b
 dottup_input_dir_a_help= This set is compared to the sequences in input_dir_b.
+dottup_input_dir_a_type = directory
 
-dottup_input_dir_b_help= The set to compare against
-
+dottup_input_dir_b_help = The set to compare against
+dottup_input_dir_b_type = directory
 moa_may_define += dottup_input_extension dottup_wordsize
 
 include $(shell echo $$MOABASE)/template/moaBase.mk
