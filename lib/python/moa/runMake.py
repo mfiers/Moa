@@ -155,7 +155,8 @@ def go(wd = None, target = "", makeArgs = [],
             F = open(os.path.join(wd, 'moa.failed'), 'w')
             F.write("%s" % rc)
             F.close()
-     
+    else:            
+        return rc
         
     if exitWhenDone:
         sys.exit(rc)
