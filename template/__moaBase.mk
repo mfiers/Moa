@@ -49,6 +49,8 @@ $(foreach v,$(_moa_filesets), \
 
 moa_fileset_init = $(warning use of moa_fileset_init is depreacted)
 
+## remap a fileset,
+## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)
 moa_fileset_remap = \
 	$(eval $(2)_files=$(addprefix $(3)/,$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files)))))
 
