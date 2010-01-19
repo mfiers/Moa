@@ -177,12 +177,20 @@ moa_execute_targets =										\
 
 .PHONY: moa_set_runlock
 moa_set_runlock:
-	if [[ -f 'moa.runlock' ]]; then							\
-		$(call exer,This job is already running);			\
-	else 													\
-		$(call echo,Locking job for this run);				\
-		touch moa.runlock;									\
-	fi
+	$e if [[ -f 'moa.runlock' ]]; then						\
+		oldpid=`cat moa.runlock`;							\
+		oldexec=`ps -p $$oldpid -o comm=`;					\
+		if [[ "$$oldexec" == "make" ]]; then				\
+			$(call errr,This job is already running);		\
+		else 												\
+			$(call warn,Found what appears to be a stale lockfile - removing);	\
+			rm moa.runlock;									\
+		fi;													\
+	fi;														\
+	$(call echo,Locking job for this run);					\
+	$(call echo,$(shell ps -p $$PPID -o comm=));			\
+	echo $$PPID > moa.runlock
+
 
 .PHONY: moa_clean_runlock
 moa_clean_runlock:
