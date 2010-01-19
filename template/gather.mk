@@ -38,7 +38,8 @@ g_input_pattern_type = string
 
 moa_may_define += g_name_sed
 g_name_sed_default = s/a/a/
-g_name_sed_help = SED expression to be executed on each file name - allows you to change file names
+g_name_sed_help = SED expression to be executed on each file name - allows you to \
+  change file names
 g_name_sed_type = string
 
 name_sed_help = Sed substitution command that alters the filename,				\
@@ -51,13 +52,14 @@ g_output_dir_type = directory
 
 moa_may_define += g_parallel
 g_parallel_default = F
-g_parallel_help = allow parallel execution (T) or not (**F**). If for example concatenating to one single file, you should not have multiple threads.
+g_parallel_help = allow parallel execution (T) or not (**F**). If for example\
+  concatenating to one single file, you should not have multiple threads.
 g_parallel_type = set
 
 g_parallel_allowed = T F
 
 moa_may_define += g_process
-g_process_default = ln -f $< $(g_target)
+g_process_default = ln -f $$< $$(g_target)
 g_process_help = Command to process the files. If undefined, hardlink the files.
 g_process_type = string
 
@@ -96,9 +98,9 @@ gather_prepare:
 .PHONY: gather_post
 gather_post:
 
-test:
-	@echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
-		$(shell find $(dir) -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
+gather_test:
+	$e echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
+		$(shell find $(dir)/ -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
 		| sort -nr | head -$(g_limit) | cut -f 2 ))))'
 
 ifeq ($(g_parallel),F)
@@ -106,7 +108,7 @@ ifeq ($(g_parallel),F)
 endif
 .PHONY: gather
 gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
-	$(shell find $(dir) -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
+	$(shell find $(dir)/ -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
 		| sort -nr | head -$(g_limit) | cut -f 2 ))))
 
 touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
