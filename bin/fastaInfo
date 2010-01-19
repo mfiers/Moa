@@ -37,7 +37,20 @@ import moa
 import stats.stats as s
 from moa.logger import l, setVerbose
 
-parser = optparse.OptionParser()
+usage = \
+"""%s [OPTIONS] [STATS]
+
+STATS can by any of:
+ - length
+ - fracn
+ - id
+ - scaf10
+ - scaf100
+
+ - gcfrac
+
+"""
+parser = optparse.OptionParser(usage=usage)
 
 parser.add_option('-i', dest='infile',
     help = 'input fasta file')
