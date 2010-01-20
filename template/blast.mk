@@ -42,7 +42,7 @@ moa_blast_report_help = Generate a text BLAST report.
 # Prerequisite testing
 
 prereqlist += prereq_biopython_installed
-moa_prereq_simple += blastalla blastReport
+moa_prereq_simple += blastall blastReport
 
 prereq_biopython_installed:
 	@if ! python -c "import Bio.Blast"; then \
@@ -50,12 +50,13 @@ prereq_biopython_installed:
 		exit -1 ;\
 	fi
 
-$(call moa_fileset_define,blast_input,fasta,Directory with the BLAST input \
-	files)
+$(call moa_fileset_define,blast_input,fasta,Directory with the BLAST input files)
 
 moa_must_define += blast_db
-blast_db_help = Location of the blast database. You can either define the blast db parameter as used by blast, or any of the blast database files, in which case the extension will be removed before use
-#blast_db_type = file
+blast_db_help = Location of the blast database. You can either define the \
+  blast db parameter as used by blast, or any of the blast database files, \
+  in which case the extension will be removed before use
+blast_db_type = file
 
 moa_may_define += blast_gff_source
 blast_gff_source_default = BLAST
@@ -100,8 +101,7 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 real_blast_db = $(if $(blast_db), $(shell echo "$(blast_db)" | sed "s/\.[pn]..$$//"))
 
-ifdef blast_main_phase
-  $(warning HI)
+ifdef blast_main_phase  
   blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
   $(warning XXX indir $(blast_input_dir) inext $(blast_input_extension)  inf $(blast_input_files))
 

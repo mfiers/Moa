@@ -36,10 +36,10 @@ input_dir_b_type = directory
 
 moa_may_define += input_extension
 input_extension_type = string
+input_extension_default = fasta
 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moaBase.mk
 
-input_extension ?= fasta
 ix = $(input_extension)
 input_files_a = $(addprefix a__,$(wildcard $(input_dir_a)/*.$(input_extension)))
 input_files_b = $(wildcard $(input_dir_b)/*.$(input_extension))

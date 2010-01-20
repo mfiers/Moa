@@ -97,19 +97,11 @@ getorf_gff_source ?= moa
 getorf_input_extension ?= fasta
 getorf_find ?= 0
 
-getorf_output_files = $(addprefix out/, $(notdir $(patsubst		\
-    %.$(getorf_input_extension), %.getorf.fasta, $(getorf_input_files))))
+#prepare lists of out & gff files
+$(call moa_fileset_remap,getorf_input,getorf_output,out)
+$(call moa_fileset_remap,getorf_input,getorf_gff,gff)
 
-getorf_gff_files = $(addprefix gff/, \
-	$(patsubst %.fasta, %.gff, $(notdir $(getorf_output_files))))
-
-getorf_test:
-	@echo "Input extension: '$(getorf_input_extension)'"
-	@echo "a blastdb file: '$(single_getorf_db_file)'"
-	@echo "No inp files $(words $(getorf_input_files))  $(word 1,$(getorf_input_files))"
-	@echo "No orf files $(words $(getorf_output_files))  $(word 1,$(getorf_output_files))"
-	@echo "No gff files $(words $(getorf_gff_files))  $(word 1,$(getorf_gff_files))"
-
+	
 #echo Main target for getorf
 .PHONY: getorf
 getorf: $(getorf_gff_files)
@@ -120,13 +112,12 @@ getorf: $(getorf_gff_files)
 getorf_prepare:	
 	-mkdir out 
 	-mkdir gff  	
-	-mkdir fasta
 
 .PHONY: getorf_post
 getorf_post:
 
 # Convert to GFF (forward)
-gff/%.getorf.gff: out/%.getorf.fasta
+gff/%.gff: out/%.out
 	@echo "Create gff $@ from $< - forward genes"
 	cat $< 																		\
 		| grep "^>" 															\
@@ -140,8 +131,8 @@ gff/%.getorf.gff: out/%.getorf.fasta
 		| sed 's/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\].*/\1\t$(getorf_gff_source)\tCDS\t\4\t\3\t.\t-\t.\tID=\1.getorf.\2;Name=\1.getorf.\2/'	\
 		>> $@
 
-# create out/*xml - run GETORF 
-out/%.getorf.fasta: $(getorf_input_dir)/%.$(getorf_input_extension)
+# create getorf/*xml - run GETORF 
+out/%.out: $(getorf_input_dir)/%.$(getorf_input_extension)
 	@echo "Processing getorf $*"
 	@echo "Creating out.orf $@ from $<"
 	@echo "Params $(getorf_program) $(getorf_db)"
@@ -156,3 +147,11 @@ getorf_clean:
 	-rm -rf ./gff/
 	-rm -rf ./out/
 	-rm -rf ./fasta/
+	
+getorf_test:
+	$e echo "testing getorf (datadir $(MOADATA))"
+	moa new -f -t 'testing getorf' getorf
+	moa set getorf_input_dir=$(MOADATA)/10.dna
+	[[ -f gff/test.gff ]] || $(call exer,No output file is generated)
+	[[ "`cat gff/test.gff | wc -l`"  == "354" ]] || $(call errr,Unexpected number of discovered ORFs)
+	

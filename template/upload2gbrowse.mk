@@ -33,13 +33,11 @@ gup_gff_dir_type = directory
 moa_must_define += gup_upload_fasta
 gup_upload_fasta_help = Perform fasta upload (T/F)
 gup_upload_fasta_type = set
-
-gup_upload_fasta_allowed = T   F
+gup_upload_fasta_allowed = T F
 
 moa_must_define += gup_upload_gff
 gup_upload_gff_help = Perform gff upload (T/F)
 gup_upload_gff_type = set
-
 gup_upload_gff_allowed = T   F
 
 #The rest of the functionality is implemented here:

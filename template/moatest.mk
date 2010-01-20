@@ -31,9 +31,9 @@ txt_type = string
 
 #and an optional one
 moa_may_define = test_opt
-moatest_opt_help = test variable
-moatest_opt_type = string
-moatest_opt_default = konijntje
+test_opt_help = test variable
+test_opt_type = string
+test_opt_default = konijntje
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
