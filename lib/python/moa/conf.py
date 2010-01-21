@@ -215,14 +215,16 @@ def writeToConf(wd, data):
         
         #parse through the old file
         for line in F.readlines():
-            k,o,v = re.split(r'\s*(\+?=)\s*', line.strip())
+            line = line.strip()
+            if not line: continue
+            k,o,v = re.split(r'\s*(\+?=)\s*', line, maxsplit=1)
             l.debug("read %s %s %s" % (k,o,v))
             if refd.get(k, {}).get('operator') == '=':
                 #do not rewrite this line - it is being replaced
                 l.debug("ignoring %s" % k)
             else:
                 #if the mode is not 'set', write 
-                G.write(line)
+                G.write(line+"\n")
                 
         for v in data:
             if v['value']:
