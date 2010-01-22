@@ -42,7 +42,7 @@ moa_blast_report_help = Generate a text BLAST report.
 # Prerequisite testing
 
 prereqlist += prereq_biopython_installed
-moa_prereq_simple += blastalla blastReport
+moa_prereq_simple += blastall blastReport
 
 prereq_biopython_installed:
 	@if ! python -c "import Bio.Blast"; then \

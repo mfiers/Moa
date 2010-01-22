@@ -71,7 +71,7 @@ moa_postprocess:
 ## this is only one single command.
 moa_may_define += moa_precommand
 moa_precommand_help = A single command to be executed before the main		\
-  operation starts. For more complicated processing, please override the		\
+  operation starts. For more complicated processing, please override the	\
   moa_preprocess target in the local Makefile.
 moa_precommand_default =
 moa_precommand_type = string
@@ -87,11 +87,12 @@ moa_postcommand_default =
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
-	@if [ "$(moa_precommand)" ]; then 										\
-		$(call echo, Running precommand); 									\
-		$(call echo, $(moa_precommand));									\
+	$e if [[ '$(value moa_precommand))' ]]; then 			\
+		$(call echo,Running precommand); 					\
 	fi
-	$(if ifneq(($(strip $(moa_precommand)),)),$(moa_precommand))
+	$e $(moa_precommand)
+
+#	$(if ifneq(($(strip $(moa_precommand)),)),$(moa_precommand))
 
 .PHONY: moa_run_postcommand
 moa_run_postcommand:
@@ -100,6 +101,13 @@ moa_run_postcommand:
 		$(call echo, $(moa_postcommand));									\
 	fi
 	$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
+
+#catch undefine prepare steps - 
+%_prepare:
+	@echo -n
+
+%_post:
+	@echo -n
 
 #Find project root (if there is one)
 # ifndef in_project_loop
