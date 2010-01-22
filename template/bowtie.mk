@@ -108,16 +108,22 @@ bfn = $(bowtie_forward_suffix)
 brn = $(bowtie_reverse_suffix)
 
 ifeq ($(bowtie_input_format),fastq)
+bowtie_input_format_param=-q
 endif
+
 ifeq ($(bowtie_input_format),fasta)
+bowtie_input_format_param=-f
 endif
 
 ifeq ($(bowtie_output_format),bam)
 bowtie_output_convert=| samtools view -bS - 
+bowtie_output_format_param = -S
 endif
 ifeq ($(bowtie_output_format),sam)
-bowtie_output_convert=
+bowtie_output_convert
+bowtie_output_format_param = -S
 endif
+
 ifeq ($(bowtie_output_format),bowtie)
 $(warning, set output format to default bowtie)
 bowtie_output_convert = 
@@ -162,7 +168,7 @@ single_%.$(bowtie_output_format): \
 imn=$(bowtie_insertsize_min)
 imx=$(bowtie_insertsize_max)
 bis=$(bowtie_insertsize_sed)
-ls -l pair_%.$(bowtie_output_format): \
+pair_%.$(bowtie_output_format): \
 		$(bowtie_input_dir)/%$(bfn).$(bowtie_input_extension) \
 		$(bowtie_input_dir)/%$(brn).$(bowtie_input_extension)
 	$e IS="$(bowtie_insertsize)";\
@@ -170,9 +176,15 @@ ls -l pair_%.$(bowtie_output_format): \
 		[[ ! "$$IS" && "$(bis)" ]] && IS=`echo "$*" | sed "$(bis)"`;\
 		[[ "$$IS" ]] && sizeDef=`python -c "print \"-I %d -X %d\" % ($$IS * $(imn), $$IS*$(imx))"`;\
 		$(call echo, Executing bowtie for $<);\
-		bowtie $(bowtie_input_format_param) $(bowtie_output_format_param) 			\
-			$(bowtie_extra_params) $$sizeDef $(bowtie_db) 							\
-			 -1 $(word 1,$^) -2 $(word 2,$^) $(bowtie_output_convert) > $@
+		bowtie $(bowtie_input_format_param) \
+				$(bowtie_output_format_param) \
+				$(bowtie_extra_params) \
+				$$sizeDef \
+				$(bowtie_db) \
+				-1 $(word 1,$^) \
+				-2 $(word 2,$^) \
+				$(bowtie_output_convert) \
+				> $@
 
 bowtie_clean:
 	-rm -f $(bowtie_output_file)

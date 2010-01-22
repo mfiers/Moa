@@ -57,14 +57,22 @@ moa_default_unittests += moabase_var
 
 var_defined=$(if $(call seq,$(origin $(1)),undefined),echo '$(moa_ids): $(1) is undefined';)
 
+var_starts_with=$(if $(filter-out $(1)%,$(2)),echo '$(2) does not start with $(moa_ids)';)
+
+
 .PHONY: template_test
-template_test:	
-	$(foreach v,$(moa_must_define) $(moa_may_define),\
-		$(call var_defined,$(v)_help)\
-		$(call var_defined,$(v)_type)\
+template_test: prefix_ex=$(call set_create,title moa_precommand moa_postcommand)
+template_test:
+	$(foreach v,$(moa_must_define) $(moa_may_define),	\
+		$(call var_defined,$(v)_help)					\
+		$(call var_defined,$(v)_type)					\
 	)
-	$(foreach v, $(moa_may_define),\
-		$(call var_defined,$(v)_default)\
+	$(foreach v, $(moa_may_define),					\
+		$(call var_defined,$(v)_default)				\
+	)
+	$(foreach v,$(moa_must_define) $(moa_may_define),	\
+		$(if $(call set_is_member,$(v),$(prefix_ex)),,	\
+		$(call var_starts_with,$(moa_ids),$(v)))		\
 	)
 	
 template_extra_test:
