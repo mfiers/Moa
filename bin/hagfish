@@ -1,0 +1,832 @@
+#!/usr/bin/env python
+
+import os
+import re
+import sys
+import copy
+import math
+import numpy as np
+import random
+import logging
+import optparse
+import tempfile
+import subprocess as sp
+import rpy2.robjects as robjects
+import rpy2.robjects.numpy2ri
+
+## INITIALIZE, VARIABLES, HELPER FUNCTIONS
+VERSION = 0.1
+random.seed()
+r = robjects.r
+
+colors = {
+    'r' : '#E81717',
+    'y' : '#EBCE17',
+    'g' : '#42EB17',
+    'b' : '#1972D1',
+    'p' : '#A6219D'
+    }
+
+#format text for optparse help
+def _hf(s): return " ".join(s.split())
+
+#introduce a slight variation into a color
+def _colorVar(col):
+    choices = list('000123456789ABCDEFFFF')
+    cl = list(col.upper())
+    for x in range(1, 7, 2):
+        cl[x] = choices[choices.index(cl[x],2) + random.choice([-4, -2, 0, 2, 4])]
+    res = "".join(cl)
+    l.debug("changed color %s to %s" % (col, res))
+    return res
+
+################################################################################
+## Define command line arguments
+
+## Arguments: General options 
+parser = optparse.OptionParser(version=VERSION)
+parser.add_option('-s', dest='sequence', help='Input sequence to analyse')
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+parser.add_option('--dataout', dest='dataOutFile', 
+                  help='output the raw data to this file')
+
+## Arguments : Control image 
+parser_i = optparse.OptionGroup(parser, "Image control")
+parser.set_defaults(xsize="800", ysize="600", lineAlpha='55', xstart=0,
+                    colorvar = False, plotMode='BS', grid=False, gridLines = 20,
+                    gridColor = 'CCCCAA',)
+
+xsizeHelp = """ (pixels) X resolution of the graph. As an alternative
+it is possible to define [VALUE]P (i.e. 1000P) in which case the width is
+calculated based on the sequence length, with one pixel for each 1000 nt."""
+
+parser_i.add_option('-x', dest='xsize', metavar='SIZE', help=_hf(xsizeHelp))
+
+parser_i.add_option('-y', dest='ysize', type='int', metavar='SIZE',
+                    help='(pixels) y resolution of the graph')
+
+parser_i.add_option('--linealpha', dest='lineAlpha', metavar='ALPHA',
+                    help='alpha value of all lines (invisiable 00 to opaque FF)')
+
+parser_i.add_option('--xstart', dest='xstart', type='int', metavar='POS',
+                    help='(nt) start the graph at a certain position')
+
+parser_i.add_option('--xstop', dest='xstop', type='int', metavar='POS',
+                    help='(nt) end the graph at a certain position')
+
+parser_i.add_option('--ymax', dest='ymax', type='int', metavar='POS',
+                    help='(nt) max y value')
+
+parser_i.add_option('--ymin', dest='ymin', type='int', metavar='POS',
+                    help='(nt) min y value')
+
+parser_i.add_option('--grid', dest='grid', action='store_true')
+parser_i.add_option('--gridlines', dest='gridLines', type='int')
+parser_i.add_option('--gridcolor', dest='gridColor')
+
+parser_i.add_option('--lines', dest='drawLines', action='store_true',
+                    help='Draw lines representing insert length')
+
+parser_i.add_option('--colorvar', dest='colorVar', action='store_true',
+                    help='Slightly vary each color (default F)')
+
+plotMode_help = """
+How to plot Bowtie data & simulated data. 'split: split the graph in
+two. BS: One graph, plotting the simulated data over the Bowtie
+data. SB: one graph, the other way round (default: BS)
+"""
+parser_i.add_option('--plotmode', dest='plotMode', metavar='MODE',
+                    help=_hf(plotMode_help))
+
+parser_i.add_option('--outfile', dest='outFile',
+                    help='Output PNG file to write to. Default: derive ' +
+                    'from the input sequence name')
+
+parser_g = optparse.OptionGroup(parser, "Simulate readpairs")
+parser.set_defaults(maxInsertSize = 50000, minInsertSize = 5, insertLength=[])
+
+parser_g.add_option('-l', dest='insertLength', type='int', action='append',
+                    metavar='LENGTH',
+                    help='(nt) Insert size to generate - you can specify multiple values')
+
+parser_g.add_option('--maxinsert', dest='maxInsertSize', type='int', metavar='NT',
+                    help='(nt) Maximum insert size to map')
+parser_g.add_option('--mininsert', dest='minInsertSize', type='int', metavar='NT',
+                    help='(nt) Minimum insert size to map')
+parser_g.add_option('--readlength', dest='readLength', type='int', action='append',
+                    metavar='NT', help='(nt) Size of the reads (default: 36). It ' +
+                    'is possible to define multiple values which will correspond to '+
+                    '-l')
+parser_g.add_option('--sd', dest='insertSigma', action='append',
+                    metavar='NT',
+                    help='Insertlength is drawn from a normal distribution with this ' +
+                    'value as sd. Defaults is 0.05 * insertlength. It is possible to ' +
+                    'define multiple values, it is possible to define a value like ' +
+                    'P0.01, defining 1 % of the insert length')
+parser_g.add_option('-n', dest='noPairs', type='int', action='append',
+                    help='No of readpairs to generate per -l. It is possible to define ' +
+                    'multiple values')
+parser_g.add_option('--recreateindex', dest='recreateindex', action='store_true',
+                    help='Force recreating the bowtie index')
+
+parser.set_defaults(simAlpha='AA', simColors=['g'], simPSize=[0.5,], simPType=[21,])
+parser_g.add_option('--simalpha', dest='simAlpha', metavar='ALPHA',
+                    help='alpha value of simulated data points')
+parser_g.add_option('--simcolors', dest='simColors', metavar='STRING',
+                    help='list of colors to use (rygbp)')
+parser_g.add_option('--simpointsize', dest='simPSize', metavar='INT', action='append',
+                    help='point size for simulated data')
+parser_g.add_option('--simpointtype', dest='simPType', metavar='INT', action='append',
+                    help='point type for simulated data')
+
+parser.set_defaults(deletes = [], inserts = [])
+parser_g.add_option('-I', dest='inserts', action='append',
+                  help='START:LEN - Simulate a (random) insert in the sequence ' +
+                    '(for a random insert use -)')
+parser_g.add_option('-D', dest='deletes', action='append',
+                    help='START:STOP - Simulate a deletion in the sequence, '+
+                    '(for a random delete use -)')
+
+## Arguments: Dotplots 
+parser_d = optparse.OptionGroup(parser, "Dotplots")
+parser_d.add_option('--dotplot', dest='dotplot', action='store_true')
+
+## Arguments: Find NNNs
+parser_n = optparse.OptionGroup(parser, "Find & identify stretches of NNs")
+parser_n.add_option('-N', dest='findNNN', action='store_true',
+                  help='discover stretches of NNNs and annotate these')
+parser.set_defaults(minNN=5, NColor="#000000")
+parser_n.add_option('--minNN', dest='minNN', type='int', metavar='NT',
+                  help='Minimum size of a stretch of NNs to be displayed (5)')
+parser_n.add_option('--Ncolor', dest='NColor', metavar='COLOR',
+                    help='Color of the blocks representing stretches of NNs (rygbp "'+
+                    'or #ABCDEF, default: #CACCCF)')
+
+## Arguments: Parse bowtie data
+parser_r = optparse.OptionGroup(parser, "(Real) bowtie input data")
+parser.set_defaults(bowtieInputs=[], bowtieLimit=1e12)
+
+bowtieInputsHelp = """ A directory with bowtie output data """
+
+parser_r.add_option('-b', dest='bowtieInputs', action='append',
+                    metavar='DIR', help=_hf(bowtieInputsHelp))
+parser_r.add_option('--limitbowtie', dest='bowtieLimit', type='int',
+                    metavar='NO',
+                    help='limit the number of reads to per bowtie input file')
+
+parser.set_defaults(bowtieAlpha='AA', bowtieColors=['r'], bowtiePSize=[0.5], bowtiePType=[21])
+parser_r.add_option('--bowalpha', dest='bowtieAlpha', metavar='ALPHA',
+                    help='alpha value of bowtie data points')
+parser_r.add_option('--bowcolors', dest='bowtieColors', metavar='STRING',
+                    help='list of colors to uses (rygbp, default ryry)')
+parser_r.add_option('--bowpointsize', dest='bowtiePSize', metavar='INT', action='append',
+                    help='point size for bowtie data')
+parser_r.add_option('--bowpointtype', dest='bowtiePType', metavar='INT', action='append',
+                    help='point type for bowtie data')
+
+
+parser.add_option_group(parser_i)
+parser.add_option_group(parser_g)
+parser.add_option_group(parser_n)
+parser.add_option_group(parser_r)
+(options, args) = parser.parse_args()
+
+##############################################################################
+## Set up logging
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+l.info("starting hagfish")
+l.debug("Debugging on")
+    
+bowtieColors = dict([(a,b+options.bowtieAlpha) for a,b in colors.items()])
+lineColors = dict([(a,b+options.lineAlpha) for a,b in colors.items()])
+simColors = dict([(a,b+options.simAlpha) for a,b in colors.items()])
+
+def seqReader(sequence):
+    F = open(sequence)
+    title = F.readline().strip()[1:]    
+    seq = ''.join([x.strip()
+                   for x
+                   in F.readlines() if x[0] != '>'
+                   ] )
+    F.close()
+    return title, seq
+
+########################################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# Model definitions
+
+def model_pair_midpoint(s1,s2,e1,e2):
+    return s1 + (0.5 * (e2-s1)), (e1-s2)
+
+def model_pair_start(s1,s2,e1,e2):
+    return s1, (e1-s2)
+    
+CURRENTPAIRMODEL = model_pair_midpoint
+def model_set_correct(x, y):
+    z = copy.copy(y)
+    z.sort()
+    insertSizeObserved = z[int(0.5 * len(z))]
+    q = y - insertSizeObserved
+    l.debug("observed insert size %f" % insertSizeObserved)
+    return x, q, insertSizeObserved
+    
+def model_set_dummy(x, y):
+    z = copy.copy(y)
+    z.sort()
+    return x,y,z[int(0.5 * len(z))]
+
+CURRENTSETMODEL = model_set_correct
+#CURRENTSETMODEL = model_set_dummy
+
+########################################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+# Bowtie handling routines
+
+def bowtieSearch(index, seq1, seq2, minInsertSize, maxInsertSize):
+    bowtieArgs = ["bowtie",
+                  "-S", 
+                  "-r", "--ff",
+                  "-I", str(minInsertSize),
+                  "-X", str(maxInsertSize),
+                  "--all", "--best", index,
+                  "-1", seq1,
+                  "-2", seq2 ]
+    l.debug("about to execute %s" % " ".join(bowtieArgs))
+    results = sp.Popen(bowtieArgs, stdout=sp.PIPE, stderr=sp.PIPE)\
+              .communicate()[0]\
+              .strip()\
+              .split("\n")
+
+    results = [x for x in results if x[0] != '@']
+    while len(results) >= 2:
+        line1 = results.pop(0).strip()
+        line2 = results.pop(0).strip()
+        if not line1 and line2:
+            l.error('Invalid bowtie results')
+            l.error(line1)
+            l.error(line2)
+
+        l1 = int(line1.split("\t")[3])
+        l2 = int(line2.split("\t")[3])
+        
+        yield l1, l2
+
+def buildBowtieIndex(seqFile):
+    #see if there is already an tmp index for this sequence
+    newIndex = []
+    if os.path.exists('hagfish_indici'):
+        with open('hagfish_indici', 'r') as indexindex:
+            for line in indexindex.readlines():                
+                indexseqfile, bowtieindex = line.split()                
+                if seqFile == indexseqfile:
+                    if not options.recreateindex:
+                        #found the index, not recreating it, so return it
+                        #for reuse
+                        l.info("Using (old) bowtieindex at %s" % bowtieindex)
+                        return bowtieindex
+                else:
+                    newIndex.append((indexseqfile, bowtieindex))
+                
+    tmpdir = tempfile.mkdtemp(prefix='bowtie_tmpindex_')
+    l.info("Building bowtie index in %s" % tmpdir)
+    tmpbase = os.path.join(tmpdir, 'bowtie_index')
+    p = sp.Popen(["bowtie-build", seqFile, tmpbase], stdout=sp.PIPE, stderr=sp.PIPE).communicate()[0]
+    l.debug("output %s ... %s" % (p[:20], p[-20:]))
+    l.info("bowtie index created in %s" % tmpbase)
+    newIndex.append((seqFile, tmpbase))
+    l.info("Writing new bowtie index-index")    
+    with open('hagfish_indici', 'w') as indexindex:
+        for a,b in newIndex:
+            indexindex.write("%s\t%s\n" % (a,b))
+
+    
+    return tmpbase
+
+def parseBowtieFile(seqName, f, limit):
+    l.debug('getting readpairs for "%s"' % seqName)
+    l.debug('  from "%s"' % f)
+    rvx = []
+    rvy = []
+    #use samtools to open the file
+    F = sp.Popen("samtools view -f 2 %s" % f, shell=True, stdout=sp.PIPE).stdout
+    #F = open(f)
+    i = 0
+    while True:
+        line1 = F.readline()
+        
+        if not line1: break
+        if line1[0] == '@': continue
+        
+        line2 = F.readline()
+        l1 = line1.strip().split()
+        l2 = line2.strip().split()
+
+        try:
+            if l1[2] == '*': continue
+            if l2[2] == '*': continue
+        except IndexError:
+            print line1
+            print line2
+            raise
+
+        if l1[2] != seqName: continue
+                
+        i += 1
+        if i > limit: break
+        
+        s1 = int(l1[3])
+        s2 = int(l2[3])
+        rl = len(l1[9])
+        x,y = CURRENTPAIRMODEL(s1, s1 + rl, s2, s2 + rl)
+        rvx.append(x)
+        rvy.append(y)
+        
+    F.close()
+    l.debug('yielding %d readpairs' % len(rvx))
+    return np.array(rvx), np.array(rvy)
+
+def testBowtieFile(f):
+    """
+    Test if this appears to be a valid bowtie-pair file
+    """
+    return True
+
+def getRealBowtieData(seqName, indirs, readsPerFile, colorList, sizeList, typeList):
+    i = 0
+    _colorList = list(colorList)
+
+    for indir in indirs:
+        if not os.path.isdir(indir):
+            l.error('Not a directory: %s' % indir)
+            sys.exit()
+        i += 1
+        if options.colorVar:
+            thisColor = _colorVar(simColors[_colorList[i % len(_colorList)]])
+        else:
+            thisColor = simColors[_colorList[i % len(_colorList)]]
+
+        thisPointType = typeList[i % len(typeList)]
+        thisPointSize = sizeList[i % len(sizeList)]
+
+        axs = []
+        ays = []
+        achitot = 0
+        achicnt = 0
+        for infile in os.listdir(indir):
+            if not infile[-4:] == '.bam': continue
+            if infile[0] == '.': continue
+            if infile[-1] == '~': continue
+            if infile.split('.')[-1] in ['png', 'mk', 'Makefile']:
+                continue
+            inpath = os.path.join(indir, infile)
+            if os.path.isdir(inpath):
+                continue
+            if testBowtieFile(inpath):                
+                l.info("considering the following file: %s" % inpath)
+                xs, ys, achi = CURRENTSETMODEL(*parseBowtieFile(seqName, inpath, readsPerFile))
+                if len(xs) > 0:
+                    achitot += achi
+                    achicnt += 1
+                    axs.extend(xs)
+                    ays.extend(ys)
+                    
+        yield {'x' : axs,
+               'y' : ays,
+               'i' : i,
+               'pch' : thisPointType,
+               'cex' : thisPointSize,
+               'dir' : indir,
+               'col' : thisColor,
+               'observedInsertSize' : int(float(achitot) / achicnt)}
+
+    
+
+#########################################################################################
+# generate random pairs
+
+def randomPairGenerator(bowtieIndex, realSeq, noPairs, readLength,
+                        insertLen, insertSigma, minInsertSize, maxInsertSize):
+
+    realSeqlen = len(realSeq)
+    xxx = []
+    yyy = []
+
+    noTooLargeInserts = 0
+    noTooSmallInserts = 0
+
+    fragfile1 = tempfile.NamedTemporaryFile(delete=False)
+    fragfile2 = tempfile.NamedTemporaryFile(delete=False)
+    
+    fragfile1Name = fragfile1.name
+    fragfile2Name = fragfile2.name
+    
+    for i in range(noPairs):
+        iLen = max(0, int(random.gauss(insertLen, insertSigma)))
+        start = random.randint(0, realSeqLen - (iLen + (2*readLength)))
+
+        s1 = start
+        s2 = s1 + readLength
+        e1 = s2 + iLen
+        e2 = e1 + readLength
+
+        seq1 = realSeq[s1:s2]
+        seq2 = realSeq[e1:e2]
+
+        fragfile1.write("%s\n" % (seq1))
+        fragfile2.write("%s\n" % (seq2))
+
+    fragfile1.close()
+    fragfile2.close()
+    l.debug("written artifical reads to %s and %s" % (fragfile1Name, fragfile2Name))
+    for p1, p2 in bowtieSearch(bowtieIndex, fragfile1Name, fragfile2Name,  minInsertSize, maxInsertSize):
+        x,y = CURRENTPAIRMODEL(p1, p1 + readLength,
+                               p2, p2 + readLength)
+        xxx.append(x)
+        yyy.append(y)
+
+    l.info("Observed %d readpairs mapped to the sequence" % len(xxx))
+    return np.array(xxx), np.array(yyy)
+
+inputSeqFile = options.sequence
+seqName, seq = seqReader(inputSeqFile)
+
+seqLen = len(seq)
+l.debug("Imported sequence %s" % (inputSeqFile))
+l.debug("Sequence Id %s" % (seqName))
+l.debug("Sequence length %d" % (seqLen))
+
+bowtieIndex = buildBowtieIndex(inputSeqFile)
+
+##############################################################################
+#gather dotplot material
+if options.dotplot:
+    tf = tempfile.NamedTemporaryFile(delete=False)
+    tfn = tf.name
+    tf.close()
+    
+    l.info("gathering dotplot data")
+    cl = ['dottup',
+          '-asequence', inputSeqFile,
+          '-bsequence', inputSeqFile,
+          '-graph', 'png',
+          '-wordsize', '20',
+          '-goutfile', tfn
+          ]
+    #result = sp.Popen(cl, stdout=sp.PIPE, stderr=sp.PIPE).communicate()[0].strip().split("\n")[0]
+    #result = result.split(" ")[1]
+    #l.debug("dotplotinfo is in %s" % result)
+    
+##############################################################################
+## Simulate an "original" sequence - to introduce inserts / deletes into the
+## simulated readpairs
+
+#inserts
+realSeq = list(seq)
+for insert in options.inserts:
+    if insert == '-':
+        _f = random.randint(0, seqLen)
+        _t = random.randint(_f, seqLen)
+    else:
+        _f, _t = map(int, insert.split(':'))
+
+    l.info("processing insert %s (%d %d)" % (
+        insert, _f, _t))
+
+    for x in range(_f, _t):
+        realSeq[x] = 'D'
+        
+deletions = []
+l.debug("deletions %s" % options.deletes)
+for deletion in options.deletes:
+    l.debug("preparing deletion %s" % deletion)
+    if deletion == '-':
+        _f = random.randint(0, seqLen)
+        _t = random.randint(_f, seqLen)
+        deletions.append((_f, _t))
+    else:
+        a,b = deletion.split(':')
+        deletions.append((int(a), int(b)))
+
+deletions.sort()
+for dF, dT in deletions:
+    dSeq = "".join([random.choice(['a', 'c', 'g', 't']) for x in range(dT - dF)])
+    l.debug("creating an deletion from %d to %d" % (dT, dF))
+    realSeq[dF] = realSeq[dF] + dSeq 
+
+#collapse the 'real' sequence
+realSeq = "".join([x for x in realSeq if not x == 'D'])
+realSeqLen = len(realSeq)
+l.debug("simul. 'real' seq length %d : %s..%s" % (realSeqLen, realSeq[:10], realSeq[-10:]))
+
+##############################################################################
+## Simulate readpairs
+
+simulDataSets = []
+for i in range(len(options.insertLength)):
+    insertLength = options.insertLength[i]    
+    if options.readLength:
+        readLength = options.readLength[i % len(options.readLength)]
+    else:
+        readLength = 36
+        
+    if options.noPairs:
+        noPairs = options.noPairs[i % len(options.noPairs)]
+    else:
+        noPairs = 1000
+    
+    if options.insertSigma:
+        insertSigma = options.insertSigma[i % len(options.insertSigma)]
+        if insertSigma[0].lower() == 'p':
+            insertSigma = float(insertSigma[1:]) * insertLength
+        else:
+            insertSigma = float(insertSigma)
+    else:
+        insertSigma = 0.05 * insertLength
+    
+    _colorList = list(options.simColors)
+    if options.colorVar:
+        thisColor = _colorVar(simColors[_colorList[i % len(_colorList)]])
+    else:
+        thisColor = simColors[_colorList[i % len(_colorList)]]
+
+    thisPointType = options.simPType[i % len(options.simPType)]
+    thisPointSize = options.simPSize[i % len(options.simPSize)]
+    
+    l.debug("start simulating %d readpairs with insertlength %d" % (
+        noPairs, insertLength))
+    
+    xs, ys, achI = CURRENTSETMODEL(
+        *randomPairGenerator(bowtieIndex, realSeq, noPairs, readLength, insertLength,
+                             insertSigma, options.minInsertSize, options.maxInsertSize ))
+
+    l.info("Simulated %d readpairs with insertlength %d (achieved insertlength %d)" %
+           (len(xs), insertLength, achI))
+    
+    simulDataSets.append(
+        {'x' : xs,
+         'y' : ys,
+         'i' : i,
+         'col' : thisColor,
+         'pch' : thisPointType,
+         'cex' : thisPointSize,
+         'insertSize' : insertLength,
+         'observedInsertSize' : int(achI)})
+
+
+##############################################################################
+## Identify stretches of NNs
+##
+NNs = []
+if options.findNNN:
+    NFinder = re.compile("N{%d,}" % options.minNN, re.I)
+    for match in NFinder.finditer(seq):
+        NNs.append([match.start(), match.end()])
+    l.info("Identified %s stretches of NNs" % len(NNs))
+    l.debug(" first 5 N stretches: %s" % NNs[:5])
+    
+##############################################################################
+## Start drawing the graph
+
+#preread bowtie data (not this is quite a lot, not very elegant to preread :()
+l.info("Start reading ALL bowtie data")
+
+allBowData = []
+for d in getRealBowtieData(seqName, options.bowtieInputs,
+                           options.bowtieLimit, options.bowtieColors,
+                           options.bowtiePSize, options.bowtiePType):
+    allBowData.append(d)
+    l.info("read %s (%d datapoints)" % (d['dir'], len(d['x'])))
+
+l.info("Finished - readStart reading ALL bowtie data")
+
+graphMaxY = 100
+graphMinY = -100
+
+for d in simulDataSets:
+    graphMaxY = max(graphMaxY, max(d['y']))
+    graphMinY = min(graphMinY, min(d['y']))
+
+for d in allBowData:
+    graphMaxY = max(graphMaxY, max(d['y']))
+    graphMinY = min(graphMinY, min(d['y']))
+
+graphMaxY = 1.2 * graphMaxY
+if graphMinY < 0:
+    graphMinY = 1.2 * graphMinY
+else:
+    graphMinY = 0.5 * graphMinY
+
+l.info("Determined graph y boundaries: %d %d" % (graphMinY, graphMaxY))
+
+xstart = options.xstart
+if options.xstop: xstop = options.xstop
+else: xstop = seqLen
+
+#determine the x size
+if options.xsize[-1] == 'P':
+    xsize = seqLen / int(options.xsize[:-1])
+else:
+    xsize = int(options.xsize)
+
+l.info("preparing graph with size (x/y) %d/%d" % (
+    xsize, options.ysize))
+
+
+PNGARGS = {
+    'bg' : '#ffffff',
+    'col' : '#000000',
+    }
+
+PLOTARGS = {
+    'ylim' : robjects.IntVector([graphMinY, graphMaxY]),
+    'xlim' : robjects.IntVector([xstart, xstop]),
+    'xlab' : 'position (nt)',
+    'ylab' : 'corrected distance (nt)',
+    'bg'   : '#ff00ff',
+    'col.lab' : '#003366',
+    'col.main' : '#003366',
+    'col.sub' : '#003366',
+    'col.axis' : '#006633',
+    }
+
+PLOT1ARGS = copy.copy(PLOTARGS)
+PLOT2ARGS = copy.copy(PLOTARGS)
+PLOT1ARGS['xaxt'] = "n"
+PLOT1ARGS['xlab'] = ""
+
+plargs = { 'xlab': 'insert size',
+           'xlab': 'position',
+           'type' : 'p'}
+
+plargsLine = { 'pch' : 19,
+               'cex': 1,
+               'type' : 'l'}
+
+outfilename = options.outFile
+if not outfilename:
+    outfilename = os.path.basename(inputSeqFile)
+    if '.' in outfilename:
+        outfilename = outfilename.rsplit('.')[0] + '.png'
+legends = []
+legendcol = []
+legendtyp = []
+legendsiz = []
+#################################################################################
+# Draw the blocks showing NNNs
+
+def plotNNN():
+    NColor = options.NColor   
+    if NColor in list('rygbp'):
+        NColor = colors[NColor]
+
+    NNNPlotArgs = {
+        'border' : 'NA',
+        'col' : NColor,
+        'lwd' : 1,    
+        }
+    legends.append("Ns")
+    legendcol.append(NNNPlotArgs['col'])
+    dx = abs( (graphMaxY - graphMinY) / 20.0)
+    for N in NNs:        
+        r.polygon([N[0], N[1], N[1], N[0]],
+                  [graphMinY + dx, graphMinY + dx, graphMinY, graphMinY],
+                  **NNNPlotArgs)
+
+def plotGrid():
+    for y in range(xstart, xstop, int((xstop - xstart) / options.gridLines)):
+        r.abline(-y,0.5, col='#' + options.gridColor)
+        r.abline(y,-0.5, col='#' + options.gridColor)
+        
+def drawAnySet(d):    
+    xs = d['x']
+    ys = d['y']
+    cex = d['cex']
+    pch = d['pch']
+    insize = d['observedInsertSize']
+    l.info("DrawAnySet points: %d insize: %d" % (
+        len(xs), insize))
+    l.info("DrawAnySet points size %(cex)s type %(pch)s col %(col)s" % d)
+    l.info("DrawAnySet xxs %s" % xs[:5])
+    l.info("DrawAnySet yys %s" % ys[:5])
+    
+    halfsize = 0.5 * insize
+    
+    if options.drawLines:
+        l.info("Start drawing lines")
+        for i in range(len(xs)):
+            x = xs[i]
+            y = ys[i]
+            r.lines([x-halfsize, x+halfsize], [y,y], col=d['col'], type='l')
+            
+    l.info("Start drawing points")
+    r.points(xs, ys, col=d['col'], cex=d['cex'], pch=d['pch'], **plargs)
+
+
+################################################################################
+# Draw the 'REAL' bowtie data
+def drawBowData():
+    for d in allBowData:
+        drawAnySet(d)
+        legends.append("Bowtie %s (%s)" % (d['dir'], d['observedInsertSize']))
+        legendcol.append(d['col'])
+        legendtyp.append(d['pch'])
+        legendsiz.append(d['cex'])
+
+################################################################################
+# Draw the simulated datasets
+def drawSimData():
+    for d in simulDataSets:
+        drawAnySet(d)
+        legends.append("Sim %d" % d['insertSize'])
+        legendcol.append(d['col'])
+        legendtyp.append(d['pch'])
+        legendsiz.append(d['cex'])
+
+def drawLegend():
+    if len(legends) == 0:
+        return
+    l.info("Drawing legend")
+    l.debug("legend keys: %s" % legends)
+    l.debug("legend colors: %s" % legendcol)
+    r.legend(x="topright", legend = legends,
+             pch=robjects.FloatVector(legendtyp),
+             cex=1,
+             lwd=5,
+             col=robjects.StrVector(legendcol),
+             **{
+                 'pt.bg' : robjects.StrVector(legendcol)
+                } )
+
+
+
+    
+r.png(outfilename, width=xsize, height=options.ysize, pointsize=12, **PNGARGS)
+r.plot([], [], **PLOTARGS    )
+
+    
+if options.plotMode.lower() == 'bs':
+    l.info("drawing a BS graph")
+    if options.grid: plotGrid()
+    if options.findNNN: plotNNN()
+    drawBowData()
+    drawSimData()
+    drawLegend()
+elif options.plotMode.lower() == 'sb': 
+    l.info("drawing a SB graph")
+    if options.grid: plotGrid()
+    if options.findNNN: plotNNN()
+    drawSimData()
+    drawBowData()
+    drawLegend()
+elif options.plotMode.lower() == 'split':
+    r.par(oma=robjects.array.array('f', [3,3,0.5,0.5]))
+    r.par(mar=robjects.array.array('f', [0,0,0,0]))
+    r.par(mgp=robjects.array.array('f', [0.5,0.5,0.001]))
+#          c(3,3,3,3)+.1, mar=c(0,0,0,0)+0.1, mfrow=c(3,3))
+    l.info("drawing a split mode graph")
+    r.par(mfrow=robjects.array.array('i', [2,1]))
+    r.plot([], [], **PLOT1ARGS    )
+    if options.grid: plotGrid()
+    drawSimData()
+    drawLegend()
+    legends = []; legendcol = [];
+    r.plot([], [], **PLOT2ARGS    )
+    if options.grid: plotGrid()
+    drawBowData()
+    drawLegend()
+else:
+    l.error('invalid plotmode %s' % options.plotMode)
+    sys.exit(-1)
+
+def writeRawOut(handle, dataset, what):
+    for i in range(len(d['y'])):
+        DO.write("%s\t%s\t%s\t%s\t%s\n" % (
+            what, d['i'], d['observedInsertSize'],
+            d['x'][i], d['y'][i]))
+
+if options.dataOutFile:
+    with open(options.dataOutFile, 'w') as DO:
+        for d in allBowData:
+            writeRawOut(DO, d, 'bowtie')
+        for d in simulDataSets:
+            writeRawOut(DO, d, 'simul')
+    
+    
+#close grpah
+r['dev.off']()
