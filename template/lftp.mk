@@ -105,6 +105,7 @@ lftp_mode_allowed = mirror get
 
 lftp_get_name_help = target name of the file to download
 lftp_get_name_type = string
+lftp_get_name_default = 
 
 prereqlist += prereq_lftp_installed
 prereq_lftp_installed:

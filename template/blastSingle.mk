@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+
 blast_input_dir = $(shell x=$(blast_input_file); echo $${x%/*})
 #without escaping the following line would have read:
 ## blast_input_ext = $(shell export x=$(blast_input_file); echo ${x##*.} )
@@ -24,5 +25,6 @@ blast_input_ext = $(shell x=$(blast_input_file); echo $${x\#\#*.} )
 moa_must_define += blast_input_file
 blast_input_file_help = Input fasta file to BLAST
 blast_input_files = $(blast_input_file)
+blast_input_file_type = file
 
 include $(shell echo $$MOABASE)/template/blast.mk

@@ -53,6 +53,7 @@ moa_may_define += gup_upload_fasta gup_upload_gff gup_force_upload
 gup_upload_fasta_help = upload fasta to gbrowse (T/F)
 gup_upload_fasta_type = set
 gup_upload_fasta_allowed = T F
+gup_upload_fasta_default = F
 
 gup_upload_gff_help = upload gff to gbrowse (T/F)
 gup_upload_gff_type = set

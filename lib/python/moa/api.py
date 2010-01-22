@@ -349,7 +349,7 @@ def getMoaErr(wd):
 def qr(cl):
     return subprocess.Popen(cl, stdout=subprocess.PIPE, shell=True).communicate()[0]
 
-def runMoa(wd=None, target="", threads=1, background=True):
+def runMoa(wd=None, target="", threads=1, background=True, verbose=False):
     """
     execute Moa
 
@@ -400,7 +400,7 @@ def runMoa(wd=None, target="", threads=1, background=True):
                    threads = threads,
                    makeArgs = [],
                    background= background,
-                   verbose = False,
+                   verbose = verbose,
                    captureOut = True)
 
 #Depreacted, these will be removed once William has changed his code

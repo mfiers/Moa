@@ -59,7 +59,7 @@ class XTRFormatter(logging.Formatter):
             record.vis1 = "C"
 
 
-        record.msg = " ".join(record.msg.split())
+        record.msg = " ".join(record.msg.split(" "))
         #check if we're on a tty, if not, reset colon/coloff
         if not sys.stdout.isatty():
             record.colon = ""
