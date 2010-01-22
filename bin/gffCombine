@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 help = """
-This is a fairly complex, but rather powerfull scriptx. It's best explained using an example:
+This is a fairly complex, but rather powerfull script. It's can be used to combine 
+two gff files into one. Based on selection criteria data from the second gff file
+is added to the first.
 
 imagine the following command:
    ./gffcombiner.py 
@@ -13,6 +15,7 @@ imagine the following command:
      -X '^.*Hsp_expect=([0-9\.e-]*);.*;Note="(.*)"'
      -Y ';note="Blastx Trembl Bacteria (Eval \1) \2"'
      -o $$base;
+     
 """
 import re
 import os
@@ -30,6 +33,12 @@ parser.add_option('-a', '--add', dest='addgff',
 parser.set_defaults(outfile= '-')
 parser.add_option('-o', '--output', dest='outfile',
                   help = 'output file, defaults to stdout')
+
+parser.set_defaults(referenceKey='ID')
+parser.add_option('-Q', '--referenceKey', dest='referenceKey',
+                  help='attribute key to look for in the reference set - based ' + 
+                  'this key the reference records to append to are selected (' +
+                  'default: ID)')
 
 parser.add_option('-f', '--featureRef', dest='featureRef',
                   help="apply to features of the reference set of this type")
@@ -151,6 +160,18 @@ class GFFRECORD:
                 ";".join(a)])
         else:
             return self.line
+    def pretty(self):
+        if self._type != 'record':
+            return self.line
+        rv = []
+        rv.append(" - ".join([self.ref, self.source, self.feature,
+                    str(self.start), str(self.stop),
+                    self.score, self.strand, self.frame]))
+        return "\n".join(rv)
+                  
+            
+        
+                
 
 class GFFINDEX:
     def __init__(self, key):
@@ -158,7 +179,7 @@ class GFFINDEX:
         self.d = {}
         
     def add(self, rec):
-        k = rec.__dict__[self.keyName]
+        k = rec.__dict__.get(self.keyName, None)
         if not self.d.has_key(k): self.d[k] = []
         self.d[k].append(rec)
 
@@ -228,7 +249,7 @@ class GFFSET:
 
 
 l.debug("start loading reference set")
-refset = GFFSET(options.refgff, indici=['ID', 'feature'],
+refset = GFFSET(options.refgff, indici=['ID', 'feature', options.referenceKey],
                 clearAttribs=options.clearAttribs)
 refset.report()
 
@@ -266,14 +287,15 @@ for rec in addset.getRecords():
     if i % 180 == 0:
         l.info("processed %d records" % i)
 
-    query['ID'] = rec.ref
+    
+    query[options.referenceKey] = rec.ref
     
     l.debug("query %s" % (query))
         
     for r in refset.search(**query):
         r.addAttribute(appK, appV)
         l.debug("appending to")
-        l.debug("     %s" % (r))
+        l.debug("     %s" % (r.pretty()))
 
 if options.outfile == '-':
     F = sys.stdout
