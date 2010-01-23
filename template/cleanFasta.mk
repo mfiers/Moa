@@ -16,7 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_main_target: check clean_fasta
+
+#Include base moa code - does variable checks & generates help
+include $(MOABASE)/template/moaBasePre.mk
 
 ################################################################################
 # Definitions
@@ -55,7 +57,7 @@ sed_command_type = string
 input_extension_help = extension to the fasta files (default .fasta)
 
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moaBase.mk
 
 ################################################################################
 

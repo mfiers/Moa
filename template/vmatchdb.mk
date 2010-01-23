@@ -16,21 +16,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+
+################################################################################
+#include moabasepre
+include $(MOABASE)/template/moaBasePre.mk
+
 moa_ids += vmatchdb
 moa_title = vmatch database builder
 moa_description = Builds a vmatchdb index from a sequence
 
 #variables
-moa_must_define += vmatchdb_input_dir
-vmatchdb_input_dir_help = The sequence to build a vmatch database from.
-vmatchdb_input_dir_type = directory
 
-moa_may_define += vmatchdb_input_extension vmatch_pl
-vmatchdb_input_extension_help = Extension of the input files, defaults	\
-  to 'fasta'
-vmatchdb_input_extension_type = string
-vmatch_pl_help = prefix length
-vmatch_pl_type = string
+$(call moa_fileset_define,vmatch_input,fasta,Input files for vmatch)
+
+moa_may_define += vmatch_pl
+vmatch_pl_help = Prefix length
+vmatch_pl_type = integer
+vmatch_pl_default = 
 
 moa_must_define += vmatchdb_name
 vmatchdb_name_help = Name of the vmatch index to create

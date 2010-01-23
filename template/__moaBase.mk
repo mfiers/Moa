@@ -49,6 +49,8 @@ $(foreach v,$(_moa_filesets), \
 
 moa_fileset_init = $(warning use of moa_fileset_init is depreacted)
 
+## remap a fileset,
+## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)
 moa_fileset_remap = \
 	$(eval $(2)_files=$(addprefix $(3)/,$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files)))))
 
@@ -70,9 +72,10 @@ moa_postprocess:
 ## aditional  pre/post process command - to be definable in moa.mk
 ## this is only one single command.
 moa_may_define += moa_precommand
-moa_precommand_help = A single command to be executed before the main			\
-operation starts. For more complicated processing, please override the			\
-moa_preprocess target in the local Makefile.
+moa_precommand_help = A single command to be executed before the main		\
+  operation starts. For more complicated processing, please override the	\
+  moa_preprocess target in the local Makefile.
+moa_precommand_default =
 moa_precommand_type = string
 moa_precommand_category = advanced
 
@@ -82,14 +85,16 @@ Moa is finished. For more complex processing please override the				\
 moa_postprocess target in the local Makefile.
 moa_postcommand_category = advanced
 moa_postcommand_type = string
+moa_postcommand_default =
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
-	@if [ "$(moa_precommand)" ]; then 										\
-		$(call echo, Running precommand); 									\
-		$(call echo, $(moa_precommand));									\
+	$e if [[ '$(value moa_precommand))' ]]; then 			\
+		$(call echo,Running precommand); 					\
 	fi
-	$(if ifneq(($(strip $(moa_precommand)),)),$(moa_precommand))
+	$e $(moa_precommand)
+
+#	$(if ifneq(($(strip $(moa_precommand)),)),$(moa_precommand))
 
 .PHONY: moa_run_postcommand
 moa_run_postcommand:
@@ -98,6 +103,13 @@ moa_run_postcommand:
 		$(call echo, $(moa_postcommand));									\
 	fi
 	$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
+
+#catch undefine prepare steps - 
+%_prepare:
+	@echo -n
+
+%_post:
+	@echo -n
 
 #Find project root (if there is one)
 # ifndef in_project_loop
@@ -173,12 +185,20 @@ moa_execute_targets =										\
 
 .PHONY: moa_set_runlock
 moa_set_runlock:
-	if [[ -f 'moa.runlock' ]]; then							\
-		$(call exer,This job is already running);			\
-	else 													\
-		$(call echo,Locking job for this run);				\
-		touch moa.runlock;									\
-	fi
+	$e if [[ -f 'moa.runlock' ]]; then						\
+		oldpid=`cat moa.runlock`;							\
+		oldexec=`ps -p $$oldpid -o comm=`;					\
+		if [[ "$$oldexec" == "make" ]]; then				\
+			$(call errr,This job is already running);		\
+		else 												\
+			$(call warn,Found what appears to be a stale lockfile - removing);	\
+			rm moa.runlock;									\
+		fi;													\
+	fi;														\
+	$(call echo,Locking job for this run);					\
+	$(call echo,$(shell ps -p $$PPID -o comm=));			\
+	echo $$PPID > moa.runlock
+
 
 .PHONY: moa_clean_runlock
 moa_clean_runlock:
@@ -380,10 +400,10 @@ checkPrereqExec = \
 	fi
 
 checkPrereqPath = \
-	if ! which $(1) >/dev/null 2>/dev/null; then 								\
-		$(call errr,Prerequisite check);										\
-		$(call errr,Cannot find $(1) in your PATH, is it installed?); 			\
-		if [[ -n "$(2)" ]]; then 												\
+	if ! which $(1) >/dev/null 2>/dev/null; then 			\
+		$(call errr,Prerequisite check: \
+			Cannot find $(1) in your PATH $(comma).); 	\
+		if [[ "$(strip $(2))" ]]; then 												\
 			$(call errr,$(2)); 													\
 		fi;																		\
 		$(call exerUnlock);														\
@@ -391,7 +411,7 @@ checkPrereqPath = \
 
 .PHONY: prereqs $(prereqlist)
 prereqs: $(prereqlist) \
-	$(addprefix moa_prereq_simple_check_,$(moa_prereq_simplec))
+	$(addprefix moa_prereq_simple_check_,$(moa_prereq_simple))
 
 moa_prereq_simple_check_%:
 	$e $(call checkPrereqPath,$*)

@@ -243,7 +243,11 @@ def appendParameter(wd, key, value):
     """
     Append the value to parameter 'key' (in path x)
 
-        >>> result = appendParameter(P_JOB, 'title', 'b')
+	>>> setParameter(P_JOB, 'title', 'a')
+    >>> 
+	appendParameter(P_JOB, 'title', 'b')
+	>>> test = getParameter(P_JOB, 'title')
+	>>>
     """    
     moa.conf.setVar(wd, key, value)
 
@@ -345,7 +349,7 @@ def getMoaErr(wd):
 def qr(cl):
     return subprocess.Popen(cl, stdout=subprocess.PIPE, shell=True).communicate()[0]
 
-def runMoa(wd=None, target="", threads=1, background=True):
+def runMoa(wd=None, target="", threads=1, background=True, verbose=False):
     """
     execute Moa
 
@@ -357,6 +361,7 @@ def runMoa(wd=None, target="", threads=1, background=True):
     ...        title = 'Test moa run',
     ...        parameters = ['txt=testRunMoa'])
     >>> runMoa(wd=P_TEST, background=False)
+    0
     >>> output = getMoaOut(P_TEST)
     >>> len(output) > 0
     True
@@ -368,6 +373,7 @@ def runMoa(wd=None, target="", threads=1, background=True):
     >>> open(target).read().strip() == 'testRunMoa'
     True
     >>> runMoa(wd=P_TEST, target= 'clean', background=False)
+    0
     >>> output = getMoaOut(P_TEST)
     >>> os.path.exists(target)
     False
@@ -389,12 +395,12 @@ def runMoa(wd=None, target="", threads=1, background=True):
     :rtype: Integer
     """
     l.debug("executing make in %s" % wd)
-    moa.runMake.go(wd = wd,
+    return moa.runMake.go(wd = wd,
                    target = target,
                    threads = threads,
                    makeArgs = [],
                    background= background,
-                   verbose = False,
+                   verbose = verbose,
                    captureOut = True)
 
 #Depreacted, these will be removed once William has changed his code

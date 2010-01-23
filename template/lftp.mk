@@ -73,10 +73,12 @@ lftp_noclean_category = advanced
 moa_may_define += lftp_user lftp_pass
 lftp_user_help = username for the remote site
 lftp_user_type = string
+lftp_user_default = 
 
 lftp_pass_help = password for the remote site, note that this can be \
   defined on the commandline using: 'make lftp_pass=PASSWORD'
 lftp_pass_type = password
+lftp_pass_default = 
 
 moa_may_define += lftp_output_dir lftp_dos2unix
 
@@ -103,6 +105,7 @@ lftp_mode_allowed = mirror get
 
 lftp_get_name_help = target name of the file to download
 lftp_get_name_type = string
+lftp_get_name_default = 
 
 prereqlist += prereq_lftp_installed
 prereq_lftp_installed:

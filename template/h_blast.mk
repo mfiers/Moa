@@ -79,6 +79,7 @@ moa_may_define += h_blast_program
 h_blast_program_help = blast program to use (default: blastn)
 h_blast_program_type = set
 h_blast_program_allowed = blastn blastp blastx tblastn tblastx
+h_blast_program_default = blastn
 
 moa_may_define += h_blast_eval
 h_blast_eval_help = e value cutoff

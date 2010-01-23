@@ -2,4 +2,5 @@
 *~
 *#
 *.pyc
-.backup
+*.backup
+*.pyc

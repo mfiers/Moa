@@ -70,13 +70,16 @@ moa_must_define += vector_primerfile
 vector_primerfile_help = File with the vector primers
 vector_primerfile_type = file
 
-moa_may_define += quality_value_clip pregap_template
-quality_value_clip_help = quality cutoff (default=10)
+moa_may_define += quality_value_clip
+quality_value_clip_help = quality cutoff
 quality_value_clip_type = integer
+quality_value_clip_default = 10
 
+moa_may_define += pregap_template
 pregap_template_help = the template pregap config file to use. if \
   not defined, Moa tries ./files/pregap.config.
 pregap_template_type = file
+pregap_template_default = ./files/pregap.config.
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase

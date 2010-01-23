@@ -17,6 +17,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
+################################################################################
+#include moabasepre
+include $(MOABASE)/template/moaBasePre.mk
+
 moa_title = Getorf
 
 moa_description = Predicts open reading frames using the EMBOSS	\
@@ -35,20 +39,17 @@ moa_getorf_help = Getorf is a open reading frame discovery program		\
 
 #########################################################################
 # Prerequisite testing
+moa_prereq_simple += getorf
 
-prereqlist += prereq_getorf_installed
+#########################################################################
+# Variable definition
 
-prereq_getorf_installed:
-	@$(call checkPrereqPath,getorf,gerorf is part of EMBOSS)
-
-moa_must_define += getorf_input_dir
-blast_input_dir_help = directory containing the input sequences
+$(call moa_fileset_define,getorf_input,fasta,Input files for getorf)
 
 moa_may_define +=  getorf_gff_source
-blast_gff_source_help = source field to use in the gff. Defaults to "moa"
-
-moa_may_define += getorf_input_extension
-input_extension_help = input file extension. Defaults to 'fasta'
+getorf_gff_source_help = source field to use in the gff.
+getorf_gff_source_type = string
+getorf_gff_source_default = getorf
 
 moa_may_define += getorf_minsize getorf_maxsize getorf_circular 		\
 	getorf_table getorf_find
@@ -85,30 +86,22 @@ getorf_table_help = Genetic code to use: 0 Standard; 1 Standard	\
    Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium			\
    Mitochondrial.
 getorf_table_type = set
-getorf_table_allowed 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 21 22 23
-getorf_table_default 11
+getorf_table_allowed = 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 21 22 23
+getorf_table_default = 11
 
-#include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moaBase.mk
+################################################################################
+#include moabase
+include $(MOABASE)/template/moaBase.mk
 
 getorf_gff_source ?= moa
 getorf_input_extension ?= fasta
 getorf_find ?= 0
-getorf_input_files ?= $(wildcard $(getorf_input_dir)/*.$(getorf_input_extension))
 
-getorf_output_files = $(addprefix out/, $(notdir $(patsubst		\
-    %.$(getorf_input_extension), %.getorf.fasta, $(getorf_input_files))))
+#prepare lists of out & gff files
+$(call moa_fileset_remap,getorf_input,getorf_output,out)
+$(call moa_fileset_remap,getorf_input,getorf_gff,gff)
 
-getorf_gff_files = $(addprefix gff/, \
-	$(patsubst %.fasta, %.gff, $(notdir $(getorf_output_files))))
-
-getorf_test:
-	@echo "Input extension: '$(getorf_input_extension)'"
-	@echo "a blastdb file: '$(single_getorf_db_file)'"
-	@echo "No inp files $(words $(getorf_input_files))  $(word 1,$(getorf_input_files))"
-	@echo "No orf files $(words $(getorf_output_files))  $(word 1,$(getorf_output_files))"
-	@echo "No gff files $(words $(getorf_gff_files))  $(word 1,$(getorf_gff_files))"
-
+	
 #echo Main target for getorf
 .PHONY: getorf
 getorf: $(getorf_gff_files)
@@ -119,13 +112,12 @@ getorf: $(getorf_gff_files)
 getorf_prepare:	
 	-mkdir out 
 	-mkdir gff  	
-	-mkdir fasta
 
 .PHONY: getorf_post
 getorf_post:
 
 # Convert to GFF (forward)
-gff/%.getorf.gff: out/%.getorf.fasta
+gff/%.gff: out/%.out
 	@echo "Create gff $@ from $< - forward genes"
 	cat $< 																		\
 		| grep "^>" 															\
@@ -139,8 +131,8 @@ gff/%.getorf.gff: out/%.getorf.fasta
 		| sed 's/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\].*/\1\t$(getorf_gff_source)\tCDS\t\4\t\3\t.\t-\t.\tID=\1.getorf.\2;Name=\1.getorf.\2/'	\
 		>> $@
 
-# create out/*xml - run GETORF 
-out/%.getorf.fasta: $(getorf_input_dir)/%.$(getorf_input_extension)
+# create getorf/*xml - run GETORF 
+out/%.out: $(getorf_input_dir)/%.$(getorf_input_extension)
 	@echo "Processing getorf $*"
 	@echo "Creating out.orf $@ from $<"
 	@echo "Params $(getorf_program) $(getorf_db)"
@@ -155,3 +147,11 @@ getorf_clean:
 	-rm -rf ./gff/
 	-rm -rf ./out/
 	-rm -rf ./fasta/
+	
+getorf_test:
+	$e echo "testing getorf (datadir $(MOADATA))"
+	moa new -f -t 'testing getorf' getorf
+	moa set getorf_input_dir=$(MOADATA)/10.dna
+	[[ -f gff/test.gff ]] || $(call exer,No output file is generated)
+	[[ "`cat gff/test.gff | wc -l`"  == "354" ]] || $(call errr,Unexpected number of discovered ORFs)
+	

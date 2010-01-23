@@ -25,36 +25,38 @@ moa_must_define += bdb_name
 bdb_name_help = Database name to create.
 bdb_name_type = string
 
-moa_may_define += bdb_input_dir bdb_input_extension bdb_fasta_file
+moa_may_define += bdb_input_dir
+bdb_input_dir_default = 
 bdb_input_dir_help = Dir with the input fasta files, defaults to ./fasta
-bdb_input_dir_type = dir
+bdb_input_dir_type = directory
 
+moa_may_define += bdb_input_extension
+bdb_input_extension_default = fasta
 bdb_input_extension_help = extension of the input sequence files, defaults to fasta
 bdb_input_extension_type = string
 
-bdb_fasta_file_help = The file with all FASTA sequences for the blastdb		\
-  concatenated. This can be used as an alternative to defining			\
-  "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your	\
-  sequences are already in a single file, then using this parameter		\
-  prevents duplication of that file.
+moa_may_define += bdb_fasta_file
+bdb_fasta_file_default = 
+bdb_fasta_file_help = The file with all FASTA sequences for the blastdb concatenated. This can be used as an alternative to defining "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your sequences are already in a single file, then using this parameter prevents duplication of that file.
 bdb_fasta_file_type = file
 
 #Variable: protein
-moa_may_define += bdb_protein 
+moa_may_define += bdb_protein
+bdb_protein_default = F
 bdb_protein_help = Protein database? (T)rue) or not (F)alse (default: F)
+bdb_protein_type = set
+
+bdb_protein_allowed = T F
 
 prereqlist += prereq_blastdb
 
 prereq_glimmer3_installed:
 	@$(call checkPrereqPath,formatdb)
 
-
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
 # End of the generic part - from here on you're on your own :)
-
-bdb_input_extension ?= fasta
 
 bdb_doconcat = F
 ifndef $(bdb_fasta_file)
@@ -71,7 +73,6 @@ moa_register_fastafile = $(bdb_fasta_file)
 moa_register_idlist = $(shell echo `pwd`/$(bdb_name).list)
 
 #the rest of the variable definitions 
-bdb_protein ?= F
 
 ifeq ("$(bdb_protein)", "F")
 	one_blast_db_file = $(bdb_name).nhr

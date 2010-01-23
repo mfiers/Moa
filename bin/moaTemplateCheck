@@ -1,0 +1,235 @@
+#!/usr/bin/env python
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
+"""
+moa template checker
+
+"""
+
+import os
+import re
+import sys
+import site
+import shutil
+import readline
+import optparse
+
+#moa specific libs - first prepare for loading libs
+if not os.environ.has_key('MOABASE'):
+    raise Exception("MOABASE is undefined")
+
+#process the .pth file in the $MOABASE/bin folder !
+site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
+
+MOABASE = os.environ["MOABASE"]
+TEMPLATEDIR = os.path.join(MOABASE, 'template')
+
+template = sys.argv[1]
+
+## Init the logger
+import moa.logger
+l = moa.logger.l
+
+## define & parse command line options  
+parser = optparse.OptionParser()
+
+parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true", help="verbose output")
+(options, args) = parser.parse_args()
+
+template = args[0]
+
+if options.verbose:
+    moa.logger.setVerbose()
+
+l.info("Checking template %s" % template)
+templateFile = os.path.join(TEMPLATEDIR, template + '.mk')
+templateBackupFile = os.path.join(TEMPLATEDIR, template + '.mk.backup')
+
+with open(templateFile) as F:
+	lines = F.readlines()
+	
+vars = {}
+
+class VAR:
+	pass
+
+def findVars(line):
+	if line.find('moa_may_define') == 0: 
+		for v in line.split('+=')[1].strip().split():
+			yield v, False
+			
+	if line.find('moa_must_define') == 0: 
+		for v in line.split('+=')[1].strip().split():
+			yield v, True
+			
+	
+#preparse - discover variable names
+for line in lines:
+	for v, mandatory in findVars(line):
+		l.debug('discovered %s (mandatory %s)' % (v, mandatory))
+		vars[v] = VAR()
+		vars[v].mandatory = mandatory
+		
+l.info("%d vars discovered" % len(vars))
+#preparse, found info on the vars
+
+i = 0
+while True:
+	if i >= len(lines): break
+	line = lines[i]
+	i += 1
+	
+	for v in vars.keys():
+		if line.find(v) != 0:
+			continue
+		fieldname = line.split('=')[0].strip()
+		value = line.split('=')[1].strip()
+		while (len(value) > 0) and (value[-1] == '\\'):
+			value = value[:-1].strip()
+			line = lines[i]
+			i += 1
+			value += " " + line.strip()
+		
+		prop = fieldname.split('_')[-1]
+		
+		setattr(vars[v], prop, value)
+		l.debug("found property %s for %s" % (prop, v))
+		l.debug("... value: %s" % value)
+
+def getAnswer(question):
+	l.warning(question)
+	answer = raw_input('>')
+	return answer
+		
+def getChoice(question, choices):
+	l.warning(question)
+	i = 0
+	for c in choices:
+		i += 1
+		l.warning('.. %d: %s' % (i, c))
+	answer = raw_input('>')
+	
+	if answer in choices:
+		return answer
+	
+	answer = int(answer) -1
+	return choices[answer]
+	
+	
+def checkVar(v):		
+	var = vars[v]
+	l.info("checking %s" % v)
+	
+	
+	try:
+		help = var.help
+	except AttributeError:
+		var.help = getAnswer(
+				"Please enter a help text for %s" % v)
+		l.debug("Help text for is set to %s" % var.help)
+	#if the type is not defined, do this now:
+	try:
+		vt = var.type
+	except AttributeError:
+		var.type = getChoice(
+			"Of what type is variable %s?" % v,
+			["string", "file", "directory", "integer",
+			 "float", "set"])
+		l.info("Defined type of %s as %s" % (v, var.type))
+		
+	if var.type == 'set':
+		try:
+			allowed = var.allowed
+		except AttributeError:
+			var.allowed = getAnswer(
+				"What values are allowed for this set? (space separated!)"
+				).strip().split()
+			
+			
+	if not var.mandatory:
+		try:
+			default = var.default
+		except AttributeError:
+			if var.type == 'set':
+				var.default = getChoice(
+					"What is the default value for %s?" % v,
+					var.allowed)
+			else:
+				var.default = getAnswer(
+					"What is the default value for %s" % v)
+			l.debug("Default value is set to %s" % var.default)
+	#if type is not define
+	
+for v in vars:
+	checkVar(v)	
+
+new = []
+
+i = 0
+while True:
+	if i >= len(lines): break
+	line = lines[i]
+	i += 1
+	
+	skipthis = False
+	for v in vars.keys():
+		if line.find(v) == 0:
+			while (len(line.rstrip()) > 0) and \
+					(line.rstrip()[-1] == '\\'):
+				line = lines[i]
+				i += 1
+			skipthis = True
+			break
+	if skipthis:
+		continue # next line, this one will be generated
+		
+	for v, mandatory in findVars(line):
+		var = vars[v]
+		l.debug("Outputting %s" % v)		
+		if var.mandatory:
+			new.append("moa_must_define += %s\n" % v)
+		else:
+			new.append("moa_may_define += %s\n" % v)
+			new.append("%s_default = %s\n" % (v, var.default))
+		new.append("%s_help = %s\n" % (v, var.help))
+		new.append("%s_type = %s\n" % (v, var.type))
+		new.append("\n")
+		if var.type == 'set':
+			new.append("%s_allowed = %s\n" % (v, " ".join(var.allowed)))
+		skipthis = True
+		
+	if skipthis: continue
+	new.append(line)
+	
+
+shutil.move(templateFile, templateBackupFile)
+with open(templateFile, 'w') as F:
+	lastLineEmpty = False
+	for l in new:
+		if l.strip():
+			F.write(l)
+			lastLineEmpty = False
+		else:
+			if not lastLineEmpty:
+				F.write(l)
+			lastLineEmpty = True
+
+	
+	

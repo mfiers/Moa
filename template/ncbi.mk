@@ -34,14 +34,16 @@ ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
 ncbi_query_type = string
 
 moa_may_define = ncbi_db
-ncbi_db_help = NCBI database (defaults to nuccore)
+ncbi_db_help = NCBI database
 ncbi_db_type = string
+ncbi_db_default = nuccore
 
 moa_may_define += ncbi_sequence_name
 ncbi_sequence_name_help = Sequence name to download. When this			\
   parameter is set, the template assumes that only one sequence is to	\
   be downloaded, the rest will be discarded.
 ncbi_sequence_name_type = string
+ncbi_sequence_name_default = 
 
 prereqlist += prereq_xml_twig_tools prereq_wget
 
@@ -57,8 +59,6 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 #define extra variables to register in couchdb
 #moa_register_extra += fastadir
 #moa_register_fastadir = $(shell echo `pwd`)/fasta 
-
-ncbi_db ?= nuccore
 
 ################################################################################
 .PHONY: getFromNcbi_prepare
