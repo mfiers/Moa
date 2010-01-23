@@ -241,6 +241,123 @@ the default is case-sensitive."
 
 
 
+## s Command Entry ##
+
+commands["s"]={
+    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_NONE,
+                                            "dir" : REQUIREMENT_NONE,
+                                            "file" : REQUIREMENT_NONE,
+                                            "read" : REQUIREMENT_PRESENCE,
+                                            "write" : REQUIREMENT_NONE
+                                            },
+                          "help" : "\
+Retrieves information about how to access a representation \
+of the item.",
+                          "params" : {}
+                          },
+                 "PUT" : {"requirements" : {"job" : REQUIREMENT_NONE,
+                                            "dir" : REQUIREMENT_ABSENCE,
+                                            "file" : REQUIREMENT_PRESENCE,
+                                            "read" : REQUIREMENT_PRESENCE,
+                                            "write" : REQUIREMENT_PRESENCE
+                                            },
+                          "help" : "\
+Updates the contents of a file.  The contents of \
+the file should be included in the request body.",
+                          "params" : {"multipart" : {"mandatory" : False, 
+                                                     "help" : "\
+A value that represents whether or not the contents \
+of the request body should be interpreted as \
+'multipart/form-data'. A value of '1' indicates that \
+it should; any other value indicates that the contents \
+of the file are included in the request body as is. \
+The name of the field that holds the contents should be \
+'file'."
+                                                     }
+                                      }
+                          },
+                 "POST" : {"requirements" : {"job" : REQUIREMENT_NONE,
+                                             "dir" : REQUIREMENT_PRESENCE,
+                                             "file" : REQUIREMENT_ABSENCE,
+                                             "read" : REQUIREMENT_PRESENCE,
+                                             "write" : REQUIREMENT_PRESENCE
+                                             },
+                           "help" : "\
+Creates a new file or directory within the item.",
+                           "params" : {"multipart" : {"mandatory" : False,
+                                                      "help" : "\
+Please see the help for the 'multipart' parameter \
+for the 'PUT' method."
+                                                      },
+                                       "name" : {"mandatory" : True,
+                                                 "help" : "\
+The name of the file or directory to create.  If a \
+file or directory with the same name already exists, \
+an error occurs. The name cannot be a pathname that points \
+to a location outside the current item, or to a location \
+within one of the item's children."
+                                                 },
+                                       "directory" : {"mandatory" : False,
+                                                      "help" : "\
+A value that represents whether or not the new item should \
+be a directory. A value of '1' indicates that it should be; \
+any other value indicates that the item should be a file."
+                                                      }
+                                       }
+                           },
+                 "DELETE" : {"requirements" : {"job" : REQUIREMENT_NONE,
+                                               "dir" : REQUIREMENT_NONE,
+                                               "file" : REQUIREMENT_NONE,
+                                               "read" : REQUIREMENT_PRESENCE,
+                                               "write" : REQUIREMENT_PRESENCE
+                                               },
+                             "help" : "\
+Deletes the item.  If the item is a directory, all of \
+the directories contents are also deleted.",
+                             "params" : {}
+                             }
+                 },
+    "title" : "File System Item",
+    "help" : "Represents a file system item."
+    }
+
+
+
+## preview Command Entry ##
+
+commands["preview"]={
+    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_NONE,
+                                            "dir" : REQUIREMENT_ABSENCE,
+                                            "file" : REQUIREMENT_PRESENCE,
+                                            "read" : REQUIREMENT_PRESENCE,
+                                            "write" : REQUIREMENT_NONE
+                                            },
+                          "help" : "Retrieves a preview of a file.",
+                          "params" : {"offset" : {"mandatory" : False,
+                                                  "help" : "\
+The index of the first byte of the piece of the file \
+to create the preview from. Default value is 0."
+                                                  },
+                                      "size" : {"mandatory" : False,
+                                                "help" : "\
+The size (in bytes) of the piece of the file to create \
+the preview from.  If this value is larger than the \
+number of available bytes, the piece's length will be \
+smaller. Cannot exceed 64 KiB. Default value is 1 KiB. \
+Note that the piece's size is not nessesarily the same \
+as the size of the preview that is created."
+                                                }
+                                      }
+                          }
+                 },
+
+    "title" : "Preview of a File",
+    "help" : "Represents a textual preview of a file.  The preview will \
+not nessesarily be an exact copy of the file."
+    }
+
+
+
 ## help Command Entry ##
 
 commands["help"]={

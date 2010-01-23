@@ -5,7 +5,6 @@
 ## Imports ##
 import urllib # will use this for URL encoding
 
-
 ## RL Lookup Functions ##
 
 ## Returns the absolute pathname of the psuedo-root directory that WWWMoa will use.  Always ends with a slash.
@@ -44,11 +43,11 @@ def get_api(command, path=None):
     if len(fragment)!=0: # if the fragment is not empty
         fragment+="/" # add a seperator as appropriate
 
-    return get_pre()+"api/"+fragment+url_encode_x(command)
+    return get_pre()+"api/"+fragment+command
 
-## Returns the relative pathname of a helper module for WWWMoa, given the helper modules name and argument list (optional).
-def get_hm(rrl):
-    return get_pre()+"scripts/hm/"+rrl
+## Returns a relative pathname that can be used for direct access to a file in the content directory.
+def get_direct(path):
+    return get_pre()+"direct/"+url_encode(path.strip("/"))
 
 ## Performs a standard URL encoding.
 def url_encode(txt):
@@ -57,11 +56,3 @@ def url_encode(txt):
 ## Performs the inverse operation of url_encode().
 def url_decode(txt):
     return urllib.unquote(txt)
-
-## Performs a modified version of URL encoding so that "/" will not be present in the output string.  In addition, special characters are escaped with "%" as in a usual url encoding process.
-def url_encode_x(txt):
-    return urllib.quote(txt.replace("@","@@").replace("/","@x"))
-
-## Performs the inverse operation of url_encode_x().
-def url_decode_x(txt):
-    return urllib.unquote(txt).replace("@x", "/").replace("@@", "@")

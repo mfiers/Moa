@@ -127,11 +127,14 @@ mimetype.assign=(
     \".jpg\" => \"image/jpeg\",
     \".jpeg\" => \"image/jpeg\",
     \".pdf\" => \"application/pdf\",
-    \".svg\" => \"image/svg+xml\"
+    \".svg\" => \"image/svg+xml\",
+    \"\" => \"text/plain\"
 )
 
 
 ## WWWMoa Specific Parameters ##
+
+server.max-request-size=20480
 
 server.error-handler-404=\"/error-nf.html\"
 
@@ -167,15 +170,16 @@ alias.url=(
     \"/direct\" => \""""+escape_string(home)+"""\"
 )
 
-expire.url=(
-    \"/\" => \"access 0 seconds\"
-)
+$HTTP[\"url\"]!~\"^/dynamic($|(/.*))\" {
+    expire.url=(
+        \"/\" => \"access 0 seconds\"
+    )
+}
 
 setenv.add-environment+=(
     \"MOABASE\" => \""""+escape_string(get_install_moabase_path())+"""\",
     \"PATH\" => \""""+escape_string(get_path_variable())+"""\"
 )
-
 
 ## Custom Parameters ##
 

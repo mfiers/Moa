@@ -7,6 +7,7 @@ from wwwmoa import cgiex
 import wwwmoa.env
 from wwwmoa.formats.html import error
 import wwwmoa.info.moa as moainfo
+import wwwmoa.formats.mime.type as mimetype
 
 import os
 import os.path
@@ -14,8 +15,9 @@ import json
 import time
 import sys
 import urlparse
-
-
+import shutil
+import cgi
+import StringIO
 
 
 
@@ -117,7 +119,7 @@ The API request you made cannot be completed, because you did not supply \
 enough information.")
 
     # extract the command and file system path
-    command=rl.url_decode_x(args[len(args)-1])
+    command=args[len(args)-1]
     command=command.strip()
     if len(args)>=2: # if there was a path sent
         content_path_array=args[:len(args)-1] # the subset of elements that
@@ -166,7 +168,7 @@ enough information.")
                                 "You do not have permission to access the path you specified."
                                 ) # say so
     
-    if not os.path.isdir(path): # if the request path does not exist
+    if not os.path.isdir(path) and not os.path.isfile(path): # if the request path does not exist
         error.throw_fatal_error("Target Not Found",
                                 "The item you attempted to access does not exist."
                                 ) # say so
@@ -188,7 +190,6 @@ The directory or file you specified cannot be used with \
 When \"{0}\" is accessed with \"{1}\", you must supply \
 the \"{2}\" parameter.\n\n\"{2}\" parameter information:\n\
 ".format(command, env["method"], r) + apireg.getParameterHelp(command, env["method"], r)) # say so
-
 
 
 
@@ -320,6 +321,122 @@ The templates that are currently installed are:
         api_ls.run(args, env, path)
 
 
+
+
+    ## s Command ##
+
+    elif command=="s":
+        
+        if env["method"]=="GET":
+            s_info={}
+
+            s_path=os.path.relpath(path, wwwmoa.env.get_content_dir())
+
+            if os.path.isdir(path):
+                s_info["location"]=rl.get_api("ls", s_path)
+                s_info["size"]=-1
+                s_info["mimetype"]=""
+            else:
+                s_info["location"]=rl.get_direct(s_path)
+                s_info["size"]=os.path.getsize(path)
+                s_info["mimetype"]=mimetype.guess_from_file(path)
+
+            output_json_headers(0)
+            rw.end_header_mode()
+            rw.send(json.dumps(add_timestamp(s_info, 0)))
+
+        elif env["method"]=="PUT" or env["method"]=="POST":
+            try:
+                s_multipart=(env["params"]["multipart"]=="1")
+            except KeyError:
+                s_multipart=False
+
+            s_contents=cgiex.get_request_body()
+            
+            if s_multipart:
+                s_store=cgi.FieldStorage(StringIO.StringIO(s_contents))
+
+                s_contents=s_store.getfirst("file")
+                
+
+            if env["method"]=="PUT":
+                s_file=open(path, "wb")
+                s_file.write(s_contents)
+                s_file.close()
+
+                output_action_message(True, "The file has been updated.")
+            else:
+                s_path=os.path.join(path, env["params"]["name"])
+                
+                if not os.path.samefile(os.path.dirname(s_path), path):
+                    output_action_message(False, "The specified name does not meet restrictions.")
+
+                try:
+                    s_dir=(env["params"]["directory"]==1)
+                except KeyError:
+                    s_dir=False
+
+                if os.access(s_path, os.F_OK):
+                    output_action_message(False, "The file or directory you attempted to create already exists.")
+                else:
+                    if s_dir:
+                        os.mkdir(s_path)
+                        
+                        output_action_message(True, "The directory has been created.")
+                    else:
+                        s_file=open(s_path, "wb")
+                        s_file.write(s_contents)
+                        s_file.close()
+                        
+                        output_action_message(True, "The file has been created.")
+                
+
+        elif env["method"]=="DELETE":
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+                output_action_message(True, "Deleted directory (and its contents).")
+            else:
+                os.unlink(path)
+                output_action_message(True, "Deleted file.")
+
+
+
+
+    ## preview Command ##
+
+    elif command=="preview":
+        try:
+            piece_offset=int(env["params"]["offset"])
+        except (KeyError, ValueError):
+            piece_offset=0
+
+        try:
+            piece_size=int(env["params"]["size"])
+        except (KeyError, ValueError):
+            piece_size=1024
+
+        if piece_size<0 or piece_offset<0:
+            output_error("One or more of the parameter values you passed are out of range.")
+
+        if piece_size>65536:
+            output_error("The size you specified exceeds the limit of 64 KiB.")
+
+        output_json_headers(0)
+        rw.end_header_mode()
+
+        piece={}
+
+        # Note: We will create the preview as if the file was encoded using the
+        # ISO-8859-1 / Latin-1 character encoding.
+
+        piece_file=open(path, "rb")
+        piece_file.seek(piece_offset)
+        piece["contents"]=piece_file.read(piece_size).replace("\0", "?")
+        piece_file.close()
+
+        piece["mimetype"]=mimetype.guess_from_file(path)
+        
+        rw.send(json.dumps(add_timestamp(piece, 0), encoding="latin-1"))
 
 
     ## help Command ##
