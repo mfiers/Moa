@@ -30,7 +30,7 @@ request_path=[]
 
 # decode the elements
 for r in request_path_undecoded: # for each undecoded element
-    request_path.append(rl.url_decode_x(r)) # decode it and add it
+    request_path.append(rl.url_decode(r)) # decode it and add it
 
 # retrieve the request method used
 request_method=cgiex.get_request_method()
