@@ -23,13 +23,23 @@ def bamreader(filename):
             ps2 = int(ls1[7]) + len(ls1[9])
             size = int(ls1[8])
             yield [sq,  ps1, size, ps2]
-                
-for seq, pos1, size, pos2 in bamreader(sys.argv[1]):
-    if not data.has_key(seq): data[seq] = []
-    data[seq].append((pos1, size, pos2))
 
-for seq in data.keys():
-    with open('%s.cam' % seq, 'w') as F:
-        for pos1, size, pos2 in data[seq]:
-            F.write("%s\t%s\t%s\n" % (pos1, size, pos2))
+def write_data(d):
+    print 'writing data!'
+    for seq in data.keys():
+        with open('%s.cam' % seq, 'a') as F:
+            for pos1, size, pos2 in data[seq]:
+                F.write("%s\t%s\t%s\n" % (pos1, size, pos2))
 
+i = 0
+for inputFile in sys.argv[1:]:
+    print "Processing", inputFile
+    for seq, pos1, size, pos2 in bamreader(inputFile):
+        i += 1
+        if not data.has_key(seq): data[seq] = []
+        data[seq].append((pos1, size, pos2))
+        if i > 10000000:
+            write_data(data)
+            data = {}
+            i = 0
+write_data(data)
