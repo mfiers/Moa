@@ -633,8 +633,10 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 		else if(data.substr(0,4)=="itm-") { // if the message sent requested an item in the current directory
 		    path=this.attr("response")["ls"][item_index]["path"]; // retrieve the pathname associated with the item
 
-		    if(this.attr("response")["ls"][item_index]["type"]=="file")
+		    if(this.attr("response")["ls"][item_index]["type"]=="file") {
+			this._previewFile(path);
 			return;
+		    }
 		}
 		else // if the message has not yet been recognized
 		    return; // we should just exit
@@ -653,6 +655,11 @@ dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._W
 		this.attr("filterOn", false);
 
 		this._dhmManager.dhmRequest({type : wwwmoa.dhm.DHM_REQ_WDNAV, args : { path : path}}, this);
+	    },
+
+	    // Attempts to open the file for a preview.
+	    _previewFile : function(path) {
+		this._dhmManager.dhmRequest({type : wwwmoa.dhm.DHM_REQ_FILEACTION, args : {path : path}}, this);
 	    },
 
 	    // Attempts to open the widget in "expanded mode".

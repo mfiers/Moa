@@ -9,6 +9,7 @@ dojo.require("dijit.layout.TabContainer");
 dojo.require("wwwmoa.client.dhm.FSBrowser");
 dojo.require("wwwmoa.client.dhm.PBrowser");
 dojo.require("wwwmoa.client.dhm.JobParamEditor");
+dojo.require("wwwmoa.client.dhm.FileViewer");
 
 dojo.addOnLoad(function() {
 	dojo.declare("wwwmoa.client.Client", dijit._Widget, {
@@ -174,6 +175,40 @@ dojo.addOnLoad(function() {
 			}
 
 			return poll_good;
+		    }
+		    else if(request.type=wwwmoa.dhm.DHM_REQ_FILEACTION) {
+			var container;
+			var fileviewer;
+			var title;
+
+			if(request.args.path==null)
+			    return null;
+
+			fileviewer=new wwwmoa.client.dhm.FileViewer({});
+
+			title=request.args.path;
+
+			if(title.length>24)
+			    title="..."+title.substr(title.length-21, 21);
+
+			title=wwwmoa.formats.html.fix_text(title);
+
+			container=new dijit.layout.ContentPane({title : title,
+								closable : true,
+								onClose : function() {
+								    fileviewer.destroy();
+								    return true;
+								}
+			    });
+
+			this.uiComp.tab.addChild(container);
+			this.uiComp.tab.selectChild(container);
+
+			dojo.place(fileviewer.domNode, container.domNode);
+
+			fileviewer.attr("location", request.args.path);
+
+			return true;
 		    }
 		    else {
 			return null;
