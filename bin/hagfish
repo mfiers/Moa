@@ -180,16 +180,23 @@ parser_r.add_option('--bowalpha', dest='bowtieAlpha', metavar='ALPHA',
                     help='alpha value of bowtie data points')
 parser_r.add_option('--bowcolors', dest='bowtieColors', metavar='STRING',
                     help='list of colors to uses (rygbp, default ryry)')
-parser_r.add_option('--bowpointsize', dest='bowtiePSize', metavar='INT', action='append',
+parser_r.add_option('--bowpointsize', dest='bowtiePSize', metavar='INT', 
+                    action='append',
                     help='point size for bowtie data')
-parser_r.add_option('--bowpointtype', dest='bowtiePType', metavar='INT', action='append',
+parser_r.add_option('--bowpointtype', dest='bowtiePType', metavar='INT', 
+                    action='append',
                     help='point type for bowtie data')
 
+parser_c = optparse.OptionGroup(parser, "Circos")
+parser_c.add_option('--circos', dest='circos', action='store_true', 
+                    help='Generate a circos configuration file')
 
 parser.add_option_group(parser_i)
 parser.add_option_group(parser_g)
 parser.add_option_group(parser_n)
 parser.add_option_group(parser_r)
+parser.add_option_group(parser_c)
+
 (options, args) = parser.parse_args()
 
 ##############################################################################
@@ -827,6 +834,8 @@ if options.dataOutFile:
         for d in simulDataSets:
             writeRawOut(DO, d, 'simul')
     
-    
+if options.circos:
+    circos_base = sp.Popen(["which", "circos"], stdout=PIPE).communicate()[0]
+    l.debug("Discovered circos: %s" % circos_base)    
 #close grpah
 r['dev.off']()

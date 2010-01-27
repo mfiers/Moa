@@ -1,37 +1,36 @@
 This chapter describes how to create new templates for use with
-Moa. Creating a template is not very difficult, once you have a basic
-understanding of how Makefiles work. Pprobably the hardest part is
+Moa. Creating a basic template is not difficult, once you have a basic
+understanding of how Makefiles work. Probably the hardest part is
 ensuring that templates are able to interact with other templates.
 
-A template is, as stated, not much more than Makefile that adheres to
-certain standards. To understand how Makefiles work, please read the
-[Gnu Make
-Manual](http://www.gnu.org/software/make/manual/make.html). Note that
+A template is, as stated, basically a Makefile that adheres to a set of standards. To understand how Makefiles work, please read the
+[Gnu Make Manual](http://www.gnu.org/software/make/manual/make.html). Note that
 creating Makefiles can be somewhat complex at first, given that the
 logic differs from scripting languages. The easiest way to do this is
 to work from an existing Makefile.
 
-Each template exists of the following parts:
+Each template exists of two parts:
 
-* Definition 
-* Include moaBase
+* Definitions
 * Implementation
 
-The order in which everything is defined in a template is very
-important! It is advisable to not define variables depending on other
-variables in the definition phase. 
+This order is very important! Parts of the Moa core are included inbetween the definitions and the implementation. Getting the order wrong might cripple your template.  
 
-In the remainder of this chapter we will describe a simple template
-that creates the reverse complement of a
-[FASTA](http://en.wikipedia.org/wiki/FASTA_format) file using the
+In the remainder of this chapter we will describe how to implement a new tool base on a simple example that creates the reverse complement of a
+[FASTA](http://en.wikipedia.org/wiki/FASTA_format) sequence using the
 [EMBOSS](http://emboss.sourceforge.net/)\citep{Ric00}
 [revseq](http://emboss.sourceforge.net/apps/release/6.1/emboss/apps/revseq.html)
-utility
+utility. 
 
-# Definition
+All templates are stored in the `$MOABASE/template` directory. This template will be stored under the name `revseq.mk`.
 
-The definition is a list of variables defining what your template does
-and giving Moa information on how to use this template.
+# Definitions
+
+Each template start with including the first part of the Moa core:
+
+    include $(MOABASE)/template/moaBasePre.mk
+
+`moaBasePre` defines a set of default Moa variables and has some macro's that make variable definition easier. The template defintion continues by defining a set of variables used in the latter part of the template.
 
 ## Describing the new template
 
@@ -41,43 +40,47 @@ website.
 
 Identifier           Description
 -----------------    ---------------------------------------------------
-moa_title            The title for this template
+moa_title            A short title for this template
 moa_description      A short description of this template
-moa_ids              A unique, short, identifier for this template
 
-Example:
+For our Revseq example:
 
-     moa_title = Reverse Complement
+     moa_title = Revseq
      moa_description = This Moa template takes a set of      \
-         input FASTA sequences and determines the reverse    \
-         complement using the EMBOSS revseq utility.
+       input FASTA sequences and determines the reverse      \
+       complement using the EMBOSS revseq utility.
      moa_ids += revcom
 
 Note that lines are allowed to break over multiple lines, given that
-each line that continues to the enxt line ends with a backslash. No
-spaces are allowd after the backslash and the new line must be
-indented (with at least one space).
+each line that continues to the next line ends with a backslash. No
+spaces are allowd after the backslash. Indenting the next line is not necessary, but it does enhance readability.
 
-## Moa organizational units - moa_ids
+## namespace definition: `moa_ids`
 
-In the previous chapter, both title and description are fairly self evident. The `moa_ids` variable is, however, more complicated. Each template must have a unique, preferaby short, identifier linked to it. This `moa_id` helps in defining variable space for a template. The moa_id returns when defining template specific variables and targets. All template specific variables have the `moa\_id` as a part of their name, as do the major targets of a template.
+Each MOA template defines a set of variables and targets (things to do). These variables and targets (usually) share a single id in their name. In the case of template variables this is a convention, making templates easier to read. Targets, however, are often executed automatically, based on the expected name. A `moa_id` is defined in the following way (for our example):
 
-Use of uniqued ids allow Moa to stack several templates into a larger, more complicated, templates. This might be usefull describing a set of resembling tasks that have a lot of overlapping code. Another powerful use is to create complex jobs that execute a mini-pipeline in one run. For example, gathering a filter a specific set of sequences (using the gather template) and creating a BLAST database from that.
+    moa_ids += revseq
 
-The design of moa allows, potentially, for stacked templates. These are combined templates containing multiple sub templates, separated by multiple ``moa_ids``. This is however an experimental feature. It is recommended to use only on moa_id per template 
+A `moa_id` should be unique and is ideally short and consise. It is also advisable to save the template under the same name. 
+    
+The design of moa allows, theoretically, for stacked templates. These are combined templates containing multiple sub templates, separated by multiple `moa_id`s. This is, at the moment, an experimental feature. It is recommended to use only on `moa_id` per template 
 
-Given that a template can define multiple tasks, a moa\_id are added to the moa\_ids array using the following syntax:
+## job specific variables
 
-    moa_ids += revcomp
+The next part of the definitions can be used freely to define variables to be used in the implementation. Each of these variables, ideally, start with the `moa_id` (but this is not enforced). The advantage of defining variables here is that they will be accessible via the command line and the API. For example, you can set a define variable using the following command line:
 
-## job descriptive variables
+    moa set title='Descriptive title'    
+
+
+There are two types of variables that can be defined: mandatory and optional.
 
 Identifier           Description
 -----------------    ---------------------------------------------------
-moa_title            The title for this template
-moa_description      A short description of this template
-moa_ids              A unique, short, identifier for this template
+moa\_title            The title for this template
+moa\_description      A short description of this template
+moa\_ids              A unique, short, identifier for this template
 
+In the case
 ## Job specific variables
 
 Most templates will have variables specific to the job. These can be defined by  
