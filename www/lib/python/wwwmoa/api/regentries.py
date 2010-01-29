@@ -1,10 +1,10 @@
 
 ## Constants ##
 
-REQUIREMENT_PRESENCE=1
-REQUIREMENT_ABSENCE=-1
-REQUIREMENT_NONE=0
-
+R_FILE=1
+R_DIR=2
+R_JOB=4
+R_WRITE=8
 
 
 
@@ -17,13 +17,7 @@ commands={}
 ## moa-jobinfo Command Entry ##
 
 commands["moa-jobinfo"]={
-    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                            "dir" : REQUIREMENT_NONE,
-                                            "file" : REQUIREMENT_NONE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_PRESENCE
-                                            },
-
+    "methods" : {"GET" : {"requirements" : R_JOB,
                           "help" : "Retrieves information about a Moa job.",
                           "params" : {}
                           }
@@ -41,24 +35,12 @@ and \"help strings\"."
 ## moa-jobsession Command Entry ##
 
 commands["moa-jobsession"]={
-    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                            "dir" : REQUIREMENT_NONE,
-                                            "file" : REQUIREMENT_NONE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_PRESENCE
-                                            },
-
+    "methods" : {"GET" : {"requirements" : R_JOB,
                           "help" : "Retrieves the status of a Moa job.",
                           "params" : {}
                           },
 
-                 "PUT" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                            "dir" : REQUIREMENT_NONE,
-                                            "file" : REQUIREMENT_NONE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_PRESENCE
-                                            },
-
+                 "PUT" : {"requirements" : R_JOB|R_WRITE,
                           "help" : "Runs a Moa job.",
                           "params" : {"target" : {"mandatory" : False,
                                                   "help" : "The Moa target to execute."
@@ -66,13 +48,7 @@ commands["moa-jobsession"]={
                                       }
                           },
 
-                 "DELETE" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                               "dir" : REQUIREMENT_NONE,
-                                               "file" : REQUIREMENT_NONE,
-                                               "read" : REQUIREMENT_PRESENCE,
-                                               "write" : REQUIREMENT_PRESENCE
-                                               },
-
+                 "DELETE" : {"requirements" : R_JOB|R_WRITE,
                              "help" : "Cleans up a Moa job.",
                              "params" : {}
                              }
@@ -88,24 +64,12 @@ commands["moa-jobsession"]={
 ## moa-jobparams Command Entry ##
 
 commands["moa-jobparams"]={
-    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                            "dir" : REQUIREMENT_NONE,
-                                            "file" : REQUIREMENT_NONE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_PRESENCE
-                                            },
-
+    "methods" : {"GET" : {"requirements" : R_JOB,
                           "help" : "Retrieves the values of all parameters.",
                           "params" : {}
                           },
 
-                 "POST" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                             "dir" : REQUIREMENT_NONE,
-                                             "file" : REQUIREMENT_NONE,
-                                             "read" : REQUIREMENT_PRESENCE,
-                                             "write" : REQUIREMENT_PRESENCE
-                                             },
-
+                 "POST" : {"requirements" : R_JOB|R_WRITE,
                            "help" : "Sets the value of a single parameter. The value should be sent as the request body.",
                            "params" : {"key" : {"mandatory" : True,
                                                 "help" : "\
@@ -114,13 +78,7 @@ The key associated with the parameter."
                                        }
                            },
 
-                 "PUT" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                            "dir" : REQUIREMENT_NONE,
-                                            "file" : REQUIREMENT_NONE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_PRESENCE
-                                            },
-
+                 "PUT" : {"requirements" : R_JOB|R_WRITE,
                           "help" : "Updates the entire collection of parameters.  The parameters should be included \
 in the body of the request, and should be a JSON encoded dictionary of key-value pairs.  Not all \
 parameters must be specified; if not specified, the current values will be maintained.",
@@ -138,24 +96,12 @@ parameters must be specified; if not specified, the current values will be maint
 ## moa-job Command Entry ##
 
 commands["moa-job"]={
-    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                          "dir" : REQUIREMENT_NONE,
-                                          "file" : REQUIREMENT_NONE,
-                                          "read" : REQUIREMENT_PRESENCE,
-                                          "write" : REQUIREMENT_PRESENCE
-                                          },
-
+    "methods" : {"GET" : {"requirements" : R_JOB,
                           "help" : "An alias for \"moa-jobinfo\".",
                           "params" : {}
                           },
 
-                 "PUT" : {"requirements" : {"job" : REQUIREMENT_NONE,
-                                            "dir" : REQUIREMENT_PRESENCE,
-                                            "file" : REQUIREMENT_ABSENCE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_PRESENCE
-                                            },
-
+                 "PUT" : {"requirements" : R_DIR|R_WRITE,
                           "help" : "\
 Creates a new Moa job in the specified directory, \
 overwriting one if it already exists.",
@@ -170,12 +116,7 @@ The template to create the new job from."
                                       }
                           },
 
-                 "DELETE" : {"requirements" : {"job" : REQUIREMENT_PRESENCE,
-                                               "dir" : REQUIREMENT_NONE,
-                                               "file" : REQUIREMENT_NONE,
-                                               "read" : REQUIREMENT_PRESENCE,
-                                               "write" : REQUIREMENT_PRESENCE
-                                               },
+                 "DELETE" : {"requirements" : R_JOB|R_WRITE,
                              "help" : "\
 Removes a Moa job from the specified directory.",
                              "params" : {}
@@ -206,12 +147,7 @@ commands["moa-templates"]={
 ## ls Command Entry ##
 
 commands["ls"]={
-    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_NONE,
-                                            "dir" : REQUIREMENT_PRESENCE,
-                                            "file" : REQUIREMENT_ABSENCE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_NONE
-                                            },
+    "methods" : {"GET" : {"requirements" : R_DIR,
                           "help" : "Retrieves a directory listing.",
                           "params" : {"filter" : {"mandatory" : False,
                                                   "help" : "\
@@ -244,23 +180,12 @@ the default is case-sensitive."
 ## s Command Entry ##
 
 commands["s"]={
-    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_NONE,
-                                            "dir" : REQUIREMENT_NONE,
-                                            "file" : REQUIREMENT_NONE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_NONE
-                                            },
-                          "help" : "\
+    "methods" : {"GET" : {"help" : "\
 Retrieves information about how to access a representation \
 of the item.",
                           "params" : {}
                           },
-                 "PUT" : {"requirements" : {"job" : REQUIREMENT_NONE,
-                                            "dir" : REQUIREMENT_ABSENCE,
-                                            "file" : REQUIREMENT_PRESENCE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_PRESENCE
-                                            },
+                 "PUT" : {"requirements" : R_FILE|R_WRITE,
                           "help" : "\
 Updates the contents of a file.  The contents of \
 the file should be included in the request body.",
@@ -276,12 +201,7 @@ The name of the field that holds the contents should be \
                                                      }
                                       }
                           },
-                 "POST" : {"requirements" : {"job" : REQUIREMENT_NONE,
-                                             "dir" : REQUIREMENT_PRESENCE,
-                                             "file" : REQUIREMENT_ABSENCE,
-                                             "read" : REQUIREMENT_PRESENCE,
-                                             "write" : REQUIREMENT_PRESENCE
-                                             },
+                 "POST" : {"requirements" : R_DIR|R_WRITE,
                            "help" : "\
 Creates a new file or directory within the item.",
                            "params" : {"multipart" : {"mandatory" : False,
@@ -305,13 +225,7 @@ any other value indicates that the item should be a file."
                                                       }
                                        }
                            },
-                 "DELETE" : {"requirements" : {"job" : REQUIREMENT_NONE,
-                                               "dir" : REQUIREMENT_NONE,
-                                               "file" : REQUIREMENT_NONE,
-                                               "read" : REQUIREMENT_PRESENCE,
-                                               "write" : REQUIREMENT_PRESENCE
-                                               },
-                             "help" : "\
+                 "DELETE" : {"help" : "\
 Deletes the item.  If the item is a directory, all of \
 the directories contents are also deleted.",
                              "params" : {}
@@ -326,12 +240,7 @@ the directories contents are also deleted.",
 ## preview Command Entry ##
 
 commands["preview"]={
-    "methods" : {"GET" : {"requirements" : {"job" : REQUIREMENT_NONE,
-                                            "dir" : REQUIREMENT_ABSENCE,
-                                            "file" : REQUIREMENT_PRESENCE,
-                                            "read" : REQUIREMENT_PRESENCE,
-                                            "write" : REQUIREMENT_NONE
-                                            },
+    "methods" : {"GET" : {"requirements" : R_FILE,
                           "help" : "Retrieves a preview of a file.",
                           "params" : {"offset" : {"mandatory" : False,
                                                   "help" : "\
