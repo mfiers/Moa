@@ -35,9 +35,16 @@ and \"help strings\"."
 ## moa-jobsession Command Entry ##
 
 commands["moa-jobsession"]={
-    "methods" : {"GET" : {"requirements" : R_JOB,
+    "methods" : {"GET" : {"requirements" : R_DIR,
                           "help" : "Retrieves the status of a Moa job.",
-                          "params" : {}
+                          "params" : {"output" : {"mandatory" : False,
+                                                  "help" : "\
+A value that represents whether the outputs \
+of the Moa job should be sent in the response. \
+A value of '1' indicates that they should; all \
+other values indicate that they should not."
+                                                  }
+                                      }
                           },
 
                  "PUT" : {"requirements" : R_JOB|R_WRITE,

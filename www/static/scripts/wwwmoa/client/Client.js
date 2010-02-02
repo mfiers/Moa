@@ -10,6 +10,7 @@ dojo.require("wwwmoa.client.dhm.FSBrowser");
 dojo.require("wwwmoa.client.dhm.PBrowser");
 dojo.require("wwwmoa.client.dhm.JobParamEditor");
 dojo.require("wwwmoa.client.dhm.FileViewer");
+dojo.require("wwwmoa.client.dhm.JobStatusViewer");
 
 dojo.addOnLoad(function() {
 	dojo.declare("wwwmoa.client.Client", dijit._Widget, {
@@ -54,6 +55,24 @@ dojo.addOnLoad(function() {
 		    // just a placeholder item for the moment
 
 		    this.uiComp.main=new dijit.layout.ContentPane({title : "Home", style : "padding:6px"});
+
+
+
+
+		    this.uiComp.jobstatusviewerpane=new dijit.layout.ContentPane({title : "Job Status",
+										  region : "leading"
+			});
+
+		    this.uiComp.tab.addChild(this.uiComp.jobstatusviewerpane);
+
+		    this.uiComp.jobstatusviewer=new wwwmoa.client.dhm.JobStatusViewer({});
+		    this.uiCompDHM.push(this.uiComp.jobstatusviewer);
+
+		    dojo.place(this.uiComp.jobstatusviewer.domNode, this.uiComp.jobstatusviewerpane.domNode);
+
+
+
+
 
 		    this.uiComp.pbrowserpane=new dijit.layout.ContentPane({title : "Job View", region : "leading", style : "width:300px", splitter : true});
 
