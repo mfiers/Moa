@@ -15,20 +15,28 @@ import wwwmoa.info.moa as moainfo
 _loaded_cleanly=False
 _loading_failed=False
 _path=None
+_readonly=None
 
 class EnvHandler(xml.sax.handler.ContentHandler):
     def startElement(this, name, attr):
         global _path
+        global _readonly
 
-        if name=="content":
-            _path=attr["path"]
+        try:
+            if name=="content":
+                _path=attr["path"]
+            elif name=="access":
+                _readonly=(attr["write"]!="true")
+        except KeyError:
+            pass
 
     def endDocument(this):
         global _path
+        global _readonly
         global _loaded_cleanly
         global _loading_failed
 
-        _loaded_cleanly=(_path!=None)
+        _loaded_cleanly=(_path!=None) and (_readonly!=None)
         _loading_failed=not _loaded_cleanly
 
        
@@ -64,3 +72,13 @@ def get_content_dir():
         return _path # return the path
     else: # if we were not able to load the environment
         return None # return None as per specs
+
+
+def is_readonly():
+    global _readonly
+    global _loaded_cleanly
+
+    if _loaded_cleanly:
+        return _readonly
+    else:
+        return None

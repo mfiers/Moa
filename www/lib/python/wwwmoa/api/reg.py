@@ -4,14 +4,13 @@ import wwwmoa.info.moa as moainfo
 import sys
 import os
 import os.path
+import wwwmoa.env
 
 sys.path.append(moainfo.get_pylib_base())
 
 import moa.api
 
-from wwwmoa.api.regentries import REQUIREMENT_PRESENCE
-from wwwmoa.api.regentries import REQUIREMENT_ABSENCE
-from wwwmoa.api.regentries import REQUIREMENT_NONE
+from wwwmoa.api.regentries import R_JOB, R_DIR, R_FILE, R_WRITE
 from wwwmoa.api.regentries import commands as _commands
 
 
@@ -25,35 +24,42 @@ def pathSatisfiesRequirements(path, command, method):
     if "requirements" in method_dict:
         return _pathSatisfiesRequirements(path, method_dict["requirements"])
     else:
-        return True
+        return _pathSatisfiesRequirements(path, 0)
 
-def _pathSatisfiesRequirements(path, requirements):
-    result=True
+def _pathSatisfiesRequirements(path, reqs):
+    global R_JOB, R_DIR, R_FILE, R_WRITE
 
     if not os.path.isdir(path) and not os.path.isfile(path):
         return False
     
-    result=result and _evalRequirement(requirements["dir"],
-                                       os.path.isdir(path)
-                                       )
+    if os.path.islink(path):
+        return False
 
-    result=result and _evalRequirement(requirements["file"],
-                                       os.path.isfile(path)
-                                       )
+    if not os.access(path, os.R_OK | os.W_OK):
+        return False
 
-    result=result and _evalRequirement(requirements["read"],
-                                       os.access(path, os.R_OK)
-                                       )
+    if _evalReq(R_FILE, reqs) and not os.path.isfile(path):
+        return False
 
-    result=result and _evalRequirement(requirements["write"],
-                                       os.access(path, os.W_OK)
-                                       )
+    if _evalReq(R_DIR, reqs) and not os.path.isdir(path):
+        return False
 
-    result=result and _evalRequirement(requirements["job"],
-                                       moa.api.isMoaDir(path)
-                                       )
+    if _evalReq(R_WRITE, reqs):
+        if wwwmoa.env.is_readonly()==None:
+            return False
 
-    return result
+        if wwwmoa.env.is_readonly():
+            return False
+
+    if _evalReq(R_JOB, reqs):
+        if not os.path.isdir(path):
+            return False
+
+        if not moa.api.isMoaDir(path):
+            return False
+
+
+    return True
     
 def isCommandSupported(command):
     try:
@@ -110,16 +116,8 @@ def getMethodHelp(command, method):
 def getParameterHelp(command, method, parameter):
     return _getParameter(command, method, parameter)["help"]
 
-def _evalRequirement(type, flag):
-    global REQUIREMENT_PRESENCE
-    global REQUIREMENT_ABSENCE
-
-    if type==REQUIREMENT_PRESENCE:
-        return flag
-    elif type==REQUIREMENT_ABSENCE:
-        return not flag
-    
-    return True
+def _evalReq(req, reqs):
+    return (req & reqs)==req
 
 def _getCommand(command):
     global _commands
