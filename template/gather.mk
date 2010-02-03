@@ -82,11 +82,15 @@ include $(shell echo $$MOABASE)/template/moaBase.mk
 
 #this is a dummy command, replaces every a with an a - hence nothing happens
 
-#name_sed ?= s/\.genbank\.htg\.[0-9]/.fasta/
 gather_link_noclean ?= Makefile moa.mk
 
 .PHONY: gather_link_run
-vpath % $(g_input_dir)
+
+
+VPATH = $(g_input_dir) 
+#vpath %.touch touch/
+#vpath % $(g_input_dir)
+#vpath %.touch touch/
 
 .PHONY: gather_prepare
 gather_prepare:
@@ -95,26 +99,39 @@ gather_prepare:
 		 mkdir $(g_output_dir);													\
 	fi
 
+	
 .PHONY: gather_post
 gather_post:
 
 gather_test:
-	$e echo '$(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
+	$e echo '$(addprefix touch/, $(notdir $(foreach dir, $(g_input_dir), \
 		$(shell find $(dir)/ -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
 		| sort -nr | head -$(g_limit) | cut -f 2 ))))'
+
 
 ifeq ($(g_parallel),F)
 .NOTPARALLEL: gather
 endif
 .PHONY: gather
-gather: $(addprefix touch/,$(notdir $(foreach dir, $(g_input_dir), \
-	$(shell find $(dir)/ -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
-		| sort -nr | head -$(g_limit) | cut -f 2 ))))
 
-touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
-touch/%: %
+gather_input_files = \
+	$(foreach dir, $(g_input_dir), $(shell \
+		find $(dir)/ -maxdepth 1 -name "$(g_input_pattern)" \
+				-printf "%A@\t%p\n" \
+			| sort -nr \
+			| head -$(g_limit) \
+			| cut -f 2 \
+			| xargs -n 1 basename \
+	))
+
+.PHONY: gather
+gather: $(addprefix $(CURDIR)/touch/,$(gather_input_files))
+
+	
+$(CURDIR)/touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
+$(CURDIR)/touch/%: %
 	$(call echo,gatherer: considering $< - $(g_target))
-	$(g_process)
+	$e $(g_process)
 	touch $@
 
 gather_clean: find_exclude_args = \
