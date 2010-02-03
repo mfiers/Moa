@@ -75,7 +75,7 @@ moa_may_define += moa_precommand
 moa_precommand_help = A single command to be executed before the main		\
   operation starts. For more complicated processing, please override the	\
   moa_preprocess target in the local Makefile.
-moa_precommand_default =
+moa_precommand_default=
 moa_precommand_type = string
 moa_precommand_category = advanced
 
@@ -85,11 +85,11 @@ Moa is finished. For more complex processing please override the				\
 moa_postprocess target in the local Makefile.
 moa_postcommand_category = advanced
 moa_postcommand_type = string
-moa_postcommand_default =
+moa_postcommand_default=
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
-	$e if [[ '$(value moa_precommand))' ]]; then 			\
+	$e if [[ "$(value moa_precommand)" ]]; then 			\
 		$(call echo,Running precommand); 					\
 	fi
 	$e $(moa_precommand)
@@ -98,11 +98,12 @@ moa_run_precommand:
 
 .PHONY: moa_run_postcommand
 moa_run_postcommand:
-	@if [ "$(moa_postcommand)" ]; then 										\
-		$(call echo, Running postcommand); 									\
-		$(call echo, $(moa_postcommand));									\
+	$e if [ "$(value moa_postcommand)" ]; then \
+		$(call echo, Running postcommand); \
 	fi
-	$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
+	$e $(moa_postcommand)
+	
+#$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
 
 #catch undefine prepare steps - 
 %_prepare:

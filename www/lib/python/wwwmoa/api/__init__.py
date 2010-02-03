@@ -219,9 +219,20 @@ the \"{2}\" parameter.\n\n\"{2}\" parameter information:\n\
         job_status=moaapi.status(path)
 
         if env["method"]=="GET":
+            job_obj={"status" : job_status}
+
+            try:
+                job_output=env["params"]["output"]=='1'
+            except KeyError:
+                job_output=False
+
+            if job_output:
+                job_obj["output"]=moaapi.getMoaOut(path)
+                job_obj["output-error"]=moaapi.getMoaErr(path)
+
             output_json_headers(0)
             rw.end_header_mode()
-            rw.send(json.dumps(add_timestamp({"status" : job_status}, 0)))
+            rw.send(json.dumps(add_timestamp(job_obj, 0)))
 
         elif job_status!="running":
             if env["method"]=="PUT":

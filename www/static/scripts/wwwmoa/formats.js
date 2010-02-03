@@ -17,8 +17,14 @@ else {
         html : {
             // Escapes text to make it safe for insertion into an HTML document.
             fix_text : function(txt) {
-                return txt.replace("&","&amp;").replace("\"", "&quot;").replace("'", "&#039;").replace(">", "&gt;").replace("<", "&lt;");
-            }
+                return txt.replace(/&/g,"&amp;").replace(/\"/g, "&quot;").replace(/\'/g, "&#039;").replace(/>/g, "&gt;").replace(/</g, "&lt;");
+            },
+
+	    // Escapes text to make it safe for insertion into an HTML document.
+	    // Also ensures linefeeds are changed to BR nodes.
+	    translate_text : function(txt) {
+		return this.fix_text(txt).replace(/\n/g, "<br>");
+	    }
         },
 
         // JavaScript utilities

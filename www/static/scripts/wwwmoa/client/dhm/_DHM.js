@@ -60,22 +60,19 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm._DHM", dijit._Widget,
 		},
 
 	        _dhmSetVisualByCode : function(code) {
-		    var child_elements;
-
-		    if(this._dhmCleanOnSetVisual)
-			this._dhmSafelyDestroyVisual();
+		    var child=dojo.create("div", {innerHTML : code});
 		    
-		    child_elements=dojo.query("> *", this.domNode);
-
-		    for(var x=0; x<child_elements.length; x++)
-			this.domNode.removeChild(child_elements[x]);
-
-		    this.domNode.innerHTML=code;
+		    this._dhmSetVisualByNode(child);
 		},
 
 		_dhmSetVisualByNode : function(node) {
 		    if(this._dhmCleanOnSetVisual)
 			this._dhmSafelyDestroyVisual();
+
+		    var children=dojo.query("> *", this.domNode);
+
+		    for(var x=0; x<children.length; x++)
+			this.domNode.removeChild(children[x]);
 		    
 		    this.domNode.appendChild(node);
 		},
@@ -93,8 +90,6 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm._DHM", dijit._Widget,
 
 		    for(var x=0; x<children.length; x++)
 			children[x].destroyRecursive();
-
-		    dojo.empty(this.domNode);
 		}
 
 	    })});
