@@ -38,8 +38,14 @@ def handler(options, args):
     """
     parse the command line and save the arguments into moa.mk
     """
-    cwd = os.getcwd()    
-    commandLineHandler(cwd, args)
+    cwd = os.getcwd()
+
+    command = args[0]
+    if command == 'set':
+        commandLineHandler(cwd, args[1:])
+    elif command == 'get':
+        print getVar(cwd, args[1])
+            
 
 def parseClArgs(args):
     """
