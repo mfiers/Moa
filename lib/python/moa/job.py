@@ -70,11 +70,11 @@ def handler(options, args):
             params = []
         elif '=' in newargs[0]:
             template = 'traverse'
-            params = moa.conf.parseClArgs(newargs)
+            params = newargs
         else:
             template = newargs[0]
-            params = moa.conf.parseClArgs(newargs[1:])
-            
+            params = newargs[1:]
+
         newJob(
             template = template,
             title = title,
