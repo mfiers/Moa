@@ -102,7 +102,7 @@ moa_run_postcommand:
 		$(call echo, Running postcommand); \
 	fi
 	$e $(moa_postcommand)
-	
+
 #$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
 
 #catch undefine prepare steps - 
@@ -480,7 +480,7 @@ set:
 #
 ################################################################################
 
-.PHONY: show showvar_%
+.PHONY: show moa_showvar_%
 show: $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 
 #@echo -ne '$(if $(call seq,$($*_show_expanded),F),$(value $*),$($*))'
@@ -489,6 +489,11 @@ moa_showvar_%:
 	@echo -ne '$*\t'	
 	@echo '$(value $*)'
 
+.PHONY: get moa_getvar_%
+get: $(addprefix moa_getvar_, $(filter $(var),$(moa_must_define) $(moa_may_define)))
+
+moa_getvar_%:
+	@echo '$(value $*)'
 
 
 
