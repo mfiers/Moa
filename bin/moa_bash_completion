@@ -1,0 +1,87 @@
+#!bash
+
+# Moa bash completion!
+#
+#
+#
+
+__moa_is_moadir() {
+	if [[ -e "moa.mk" ]] 
+	then
+		echo "yes";
+	elif [[ ! -e "Makefile" ]] 
+	then
+		echo "no"
+	elif grep -qi moa Makefile
+	then
+		echo "yes"
+	else
+		echo "no"
+	fi
+}
+
+__moa_all_templates() {
+	#return a list of all known moa templates
+	echo `moa list`
+}	
+
+__moa_all_vars() {
+	#return a list of all known moa templates
+	if [[ $(__moa_is_moadir) == "yes" ]]
+	then
+		echo `moa showvars 2>/dev/null`
+	fi
+}		
+
+_moa() 
+{
+    local cur prev opts shopts moacomms moacommand
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    		
+    opts="--help --force --verbose --bg --title --directory"
+    shopts="-h -f -v -j -t -d"
+    moacomms="set run new list test help show"
+    moacommand=""
+       
+    if [[ ${cur} == --* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts} ${shopts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${prev} == moa ]]; then
+    		COMPREPLY=( $(compgen -W "${moacomms}" -- ${cur}) )
+        return 0
+    fi
+    
+    #Find the currently entered command (if there is one)
+    for x in $(seq 1 ${COMP_CWORD})
+    	do
+    		if [[ ${COMP_WORDS[x]} != -* ]] 
+    		then
+    			moacommand=${COMP_WORDS[x]}
+    			break
+    		fi
+    	done
+    	
+    case "${moacommand}" in 
+		new)
+       	   local templates=$(__moa_all_templates)
+       	   COMPREPLY=( $(compgen -W "${templates}" -- ${cur}) )   
+            ;;
+        set)
+        		local vars=$(__moa_all_vars)
+        		COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+        		;;
+        *)
+        	;;
+    esac
+               	
+}
+complete -o nospace -o default -o bashdefault -F _moa moa
