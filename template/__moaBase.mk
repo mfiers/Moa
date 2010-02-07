@@ -494,7 +494,19 @@ get: $(addprefix moa_getvar_, $(filter $(var),$(moa_must_define) $(moa_may_defin
 
 moa_getvar_%:
 	@echo '$(value $*)'
+	
+################################################################################
+## make showvars ###############################################################
+#
+#### print a list of all definable variables
+#
+################################################################################
 
+.PHONY: showvars
+showvars:
+	for x in $(moa_must_define) $(moa_may_define); do \
+		echo $$x; \
+	done
 
 
 #'$(value $*)'
