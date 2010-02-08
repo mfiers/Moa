@@ -139,12 +139,7 @@ else {
 		  error : bobj.cbe
 	      };
 
-	      bobj.cancel=dojo.hitch(bobj, function() {
-		  if(this.args.abort!==undefined)
-		      this.args.abort();
-	      });
-
-	      bobj.returnobj={cancel : bobj.cancel};
+	      bobj.returnobj={cancel : function() { bobj.req.cancel() }};
 
 	      return bobj;
 	  },
@@ -155,7 +150,7 @@ else {
           get : function (relrl, callback, timeout) {
 	      var bobj=this._createBaseObject(relrl, callback, timeout);
 
-              dojo.xhrGet(bobj.args);
+              bobj.req=dojo.xhrGet(bobj.args);
 
               return bobj.returnobj;
 	  },
@@ -166,7 +161,7 @@ else {
           del : function (relrl, callback, timeout) {
 	      var bobj=this._createBaseObject(relrl, callback, timeout);
 
-              dojo.xhrDelete(bobj.args);
+              bobj.req=dojo.xhrDelete(bobj.args);
 
               return bobj.returnobj;
 	  },
@@ -181,7 +176,7 @@ else {
 	      if(dojo.isString(data))
 		  bobj.args.postData=data;
 
-	      dojo.xhrPost(bobj.args);
+	      bobj.req=dojo.xhrPost(bobj.args);
 
 	      return bobj.returnobj;
 	  },
@@ -194,7 +189,7 @@ else {
 	      if(dojo.isString(data))
 		  bobj.args.postData=data;
 
-	      dojo.xhrPut(bobj.args);
+	      bobj.req=dojo.xhrPut(bobj.args);
 
 	      return bobj.returnobj;
 	  }
