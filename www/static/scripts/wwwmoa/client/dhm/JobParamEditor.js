@@ -24,21 +24,21 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 	        _editorDOM : null,
 	        _editorButtons : [],
 	        _visualLocked : false,
-		    
+
 		_setLocationAttr : function(val) {
 		    this._location=val;
 		    this._navToLocation();
 		},
-		    
+
 		_getLocationAttr : function() {
 		    return this._location;
 		},
 
 	        _navToLocation : function() {
 		    this._dhmSetVisualByCode("Loading parameters...");
-		    
+
 		    this.dhmLock();
-		    
+
 		    this._syncStore(dojo.hitch(this, this._navToLocationCallback));
 		},
 
@@ -48,20 +48,20 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			this.dhmUnlock();
 			return;
 		    }
-		    
+
 		    this._pushStore();
-		    
+
 		    this.dhmUnlock();
 		},
 
 	        _pullStore : function() {
 		    var params=[], param_values=[];
-		
+
 		    params=this._store.getParamNames();
 
 		    for(var x=0; x<params.length; x++) {
 			param_values=this._getEditorParamValues(params[x]);
-			
+
 			this._store.rewriteParam(params[x], param_values);
 		    }
 
@@ -77,7 +77,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			return [];
 
 		    trs=dojo.query("tr", this._editorDOM);
-		
+
 		    for(var x=0; x<trs.length; x++) {
 			curtds=dojo.query("td", trs[x]);
 
@@ -88,7 +88,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 			    for(var y=0; y<curspans.length; y++)
 				curtr_valuewidgets=curtr_valuewidgets.concat(dijit.findWidgets(curspans[y]));
-			
+
 			    for(var y=0; y<curtr_valuewidgets.length; y++)
 				curtr_values[y]=curtr_valuewidgets[y].attr("value");
 
@@ -138,14 +138,14 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 
 		    this.dhmLock();
-		
+
 
 		    if(this._editorDOM==null) {
 			editor_dom=dojo.create("div", null);
 
 			createButton(savebutton_params);
 			createButton(revbutton_params);
-		    
+
 			editor_dom_center=dojo.create("div", null);
 			editor_dom.appendChild(editor_dom_center);
 
@@ -155,22 +155,22 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			this._editorButtons=editor_buttons;
 
 			editor_dom.appendChild(dojo.create("div", {innerHTML : "<span style=\"color:#FF0000; font-weight:bold\">*</span> denotes required parameter"}));
-				
+
 			groups=this._store.getParamGroups();
-		    
+
 			for(var x=0; x<groups.length; x++) {
 			    group_advanced=(groups[x]=="advanced");
 
 			    group_dom_padding=dojo.create("div", {style : { margin : "20px 0px 20px 0px" }});
 			    group_dom_padding.appendChild(dojo.create("input", {type : "hidden", value : groups[x]}));
-			
+
 			    group_widget_container=new dijit.TitlePane({
 				    title : (groups[x]=="" ? "General" : wwwmoa.util.str.title_case(groups[x]))+" Parameters",
 				    open : !group_advanced
 				});
 
 			    group_dom_padding.appendChild(group_widget_container.domNode);
-			
+
 			    editor_dom_center.appendChild(group_dom_padding);
 
 			    group_dom_center=group_widget_container.containerNode;
@@ -182,7 +182,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 						}));
 
 
-			    
+
 			    group_dom_table=dojo.create("table", {width : "100%"});
 			    group_dom_center.appendChild(group_dom_table);
 			    group_dom_tbody=dojo.create("tbody", null); // Note: a tbody node is required for MSIE
@@ -190,11 +190,11 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 
 			    params=this._store.getParamsByGroup(groups[x]);
-			
+
 
 			    for(var y=0; y<params.length; y++) {
 				param_dom_row=dojo.create("tr", null);
-			    
+
 				// title cell
 				param_dom_title=dojo.create("td", {
 					style : {fontWeight : "bold", verticalAlign : "top", width : "20%"},
@@ -208,20 +208,21 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 						    }));
 
 				param_dom_title.appendChild(dojo.create("input", {type : "hidden", value : params[y].name}));
-			   
+
 
 				param_dom_row.appendChild(param_dom_title);
-			    
-			    
+
+
 				// button cell
 				param_dom_button=dojo.create("td", {
 					style : {paddingLeft : "20px", verticalAlign : "top", width : "20%"}
 				    });
-			    
+
 				param_dom_button.appendChild(this._createHelpNode(params[y]));
-				
-				param_dom_button.appendChild((new dijit.form.Button({
-						label : "Add Value", style : {fontSize : "10px", fontWeight : "bold"}, 
+
+				param_dom_button.appendChild((new dijit.form.Button({ 
+						 : false,
+						iconClass : 'moaAddButton',
 						disabled : (params[y].cardinality!=this._store.CARD_MANY),
 						onClick : dojo.hitch({main : this, name : params[y].name},
 								     function() {
@@ -230,23 +231,23 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 								     )})).domNode);
 
 				param_dom_row.appendChild(param_dom_button);
-			    
-			    
+
+
 				// values cell
 				param_dom_values=dojo.create("td", {
 					style : {paddingLeft : "20px", verticalAlign : "top", width : "60%"}
 				    });
 
 				param_dom_row.appendChild(param_dom_values);
-			    
+
 
 				group_dom_tbody.appendChild(param_dom_row);
 			    }
-			    
+
 			}
-		    
+
 			this._editorDOM=editor_dom;
-			
+
 			this._switchVisualToEditor();
 		    }
 		    else
@@ -260,9 +261,9 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			param_dom_cells=dojo.query("td", editor_dom_rows[x]);
 			param_name=dojo.query("input", param_dom_cells[0])[0].value;
 			param_store=this._store.getParam(param_name);
-		    
+
 			values=param_store.values;
-		    
+
 			// Note: this should always go first, since widgets may contain a br node
 			param_widgets=dijit.findWidgets(param_dom_cells[2]);
 
@@ -274,12 +275,12 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 			for(var y=0; y<param_dom_remove.length; y++)
 			    param_dom_cells[2].removeChild(param_dom_remove[y]);
-		    
-		    
+
+
 			for(var y=0; y<values.length; y++) {
 			    if(y!=0)
 				param_dom_cells[2].appendChild(dojo.create("br", null));
-			
+
 			    value_dom_marker=dojo.create("span", null);
 
 			    param_dom_cells[2].appendChild(value_dom_marker);
@@ -289,14 +290,23 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 				            this._store.transValueITO(values[y], param_store.type),
 					    param_store.type
 					    ).domNode);
-			
+
+			    param_dom_cells[2].appendChild((new dijit.form.Button(
+                  {
+                    showLabel : false,
+                    iconClass : 'moaResetButton',
+                    onClick : dojo.hitch({main : this, name : param_name, index : y},
+				      function() {
+					    this.main._useDefaultValue(this.name, this.index);
+					  }
+						)})).domNode);
 
 			    param_dom_cells[2].appendChild(dojo.create("br", null));
 
 			    if(values.length>1)
 				param_dom_cells[2].appendChild((new dijit.form.Button({
 						label : "Remove Value",
-					        style : {fontSize : "10px", fontWeight : "bold"}, 
+					        style : {fontSize : "10px", fontWeight : "bold"},
                                                 onClick : dojo.hitch({main : this, name : param_name, index : y},
 								     function() {
 									 this.main._removeValue(this.name, this.index);
@@ -304,18 +314,9 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 								     )})).domNode);
 
 
-			    param_dom_cells[2].appendChild((new dijit.form.Button({
-					    label : "Use Default Value",
-					    style : {fontSize : "10px", fontWeight : "bold"}, 
-                                            onClick : dojo.hitch({main : this, name : param_name, index : y},
-								 function() {
-								     this.main._useDefaultValue(this.name, this.index);
-								 }
-								 )})).domNode);
 			}
 		    }
 
-		
 		    this.dhmUnlock();
 
 		    return true;
@@ -330,14 +331,14 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			if(params[p]["type"]!=this._store.TYPE_UNKNOWN)
 			    request[this._store.transNameITO(params[p]["name"])]=this._store.transValuesITO(params[p]["values"]);
 		    }
-		
+
 
 		    var request_json=wwwmoa.formats.json.encode(request);
-		
+
 		    wwwmoa.io.ajax.put(wwwmoa.io.rl.get_api("moa-jobparams", this.attr("location")), dojo.hitch(this,function(data) {
 				var store;
 				var response=wwwmoa.formats.json.parse(data); // attempt a parse of the received data
-			    
+
 				if(data==null) { // if null was passed, we have an error
 				    try{ callback(false); } catch(e) {}
 				    return;
@@ -347,7 +348,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 				    try{ callback(false); } catch(e) {}
 				    return;
 				}
-				
+
 				try {callback(true);} catch(e) {}
 
 			    }) , 8192, request_json); // be somewhat patient about sending the store
@@ -365,7 +366,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 				// create params store
 				store=new wwwmoa.client.store.Params();
-			    
+
 				// decode params
 				store.setParams(store.transParamsOTI(response["parameters"]));
 
@@ -429,7 +430,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 	        _registerChange : function() {
 		    this._changed=true;
-		    
+
 		    this._setSaveButtonState("Save Parameters", false);
 		    this._setRevButtonState("Undo Changes", false);
 		},
@@ -484,19 +485,19 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			return;
 
 		    this._registerSaveStart();
-		    
+
 		    this.dhmLock();
-		
+
 		    this._dhmDisableSetVisualCleaning();
-		
+
 		    this._dhmSetVisualByCode("Saving parameters...");
-		
+
 		    if(!this._pullStore()) {
 			this._registerSaveFailure();
 			this.dhmUnlock();
 			return;
 		    }
-		
+
 		    this._sendStore(dojo.hitch(this, this._saveCallback));
 		},
 
@@ -505,7 +506,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 		    this._dhmEnableSetVisualCleaning();
 
-		    this._switchVisualToEditor();	        
+		    this._switchVisualToEditor();
 
 		    if(!success)
 			this._registerSaveFailure();
@@ -521,7 +522,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			return;
 
 		    this._registerRevertStart();
-		    
+
 		    this.dhmLock();
 
 		    this._dhmSetVisualByCode("Undoing changes to parameters...");
@@ -531,24 +532,24 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 				this.dhmUnlock();
 				this._registerRevertSuccess();
 			    }), 1000); // delay so that user can see something happened
-		
+
 		},
 
 	        _addValue : function(paramname) {
 		    var param_default;
-		    
+
 		    param_default=this._store.getParam(paramname)["default"];
-		    
+
 		    this.dhmLock();
-		    
+
 		    this._pullStore();
-		    
+
 		    this._store.rewriteParam(paramname, this._getEditorParamValues(paramname).concat(param_default));
-		    
+
 		    this._pushStore();
-		    
+
 		    this.dhmUnlock();
-		    
+
 		    this._registerChange();
 		},
 
@@ -558,10 +559,10 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this.dhmLock();
 
 		    this._pullStore();
-	        
+
 		    param_values=this._getEditorParamValues(paramname);
 		    param_values.splice(valueindex, 1);
-		
+
 		    this._store.rewriteParam(paramname, param_values);
 
 		    this._pushStore();
@@ -578,7 +579,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this.dhmLock();
 
 		    this._pullStore();
-	        
+
 		    try {
 			default_value=this._store.getParam(paramname)["default"];
 		    }
@@ -587,10 +588,10 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    }
 
 		    param_values=this._getEditorParamValues(paramname);
-		    
+
 		    if(valueindex>=0 && valueindex<param_values.length)
 			param_values[valueindex]=default_value;
-		    
+
 		    this._store.rewriteParam(paramname, param_values);
 
 		    this._pushStore();
@@ -622,37 +623,42 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 	        _createHelpNode : function(param) {
 		    var help_string="", help_typestring="", help_titlestring="";
 		    var help_button, help_dialog;
-		
+
 		    help_string+=dojo.string.trim(param.help);
 
 		    if(help_string=="")
-			help_string="Sorry, no detailed help is available for this parameter.";
+			help_string="No detailed help is available for this parameter.";
 
 		    if(param.type==this._store.TYPE_STRING)
-			help_typestring="This parameter is a string.  A string is a piece of text.";
+		    	help_typestring="(type: string)";
 		    if(param.type==this._store.TYPE_INTEGER)
-			help_typestring="This parameter is an integer. An integer is a number without a fractional (or imaginary) component.";
-		
+		    	help_typestring="(type: integer)";
+
 		    help_titlestring=wwwmoa.formats.html.fix_text(param.name)+" Parameter";
 
 		    help_string=wwwmoa.formats.html.fix_text(help_string);
 		    help_typestring=wwwmoa.formats.html.fix_text(help_typestring);
-		
-		    help_dialog=new dijit.TooltipDialog( {content : "<div style=\"font-size:10pt\"><span style=\"font-weight:bold;text-decoration:underline; color:#108010\">"+help_titlestring+"</span><br><br>"+help_string+"<br><br>"+help_typestring+"</div>"});
-		
+
+		    help_dialog=new dijit.TooltipDialog( 
+		    		{content : "<div style=\"font-size:10pt\"><span style=\"font-weight:bold;text-decoration:underline; color:#108010\">"+help_titlestring+"</span><br><br>"+help_string+"<br><br>"+help_typestring+"</div>"});
+
+//		    help_button=new dijit.form.Button({
+//                showLabel: false,
+//                iconClass : 'moaHelpButton'
+//			});
 		    help_button=new dijit.form.DropDownButton({
-			    style : {fontWeight : "bold", fontSize : "10px"},
 			    dropDown : help_dialog,
-			    label : "Help"
+                showLabel: false,
+                iconClass : 'moaHelpButton',
 			});
-		
+
 		    return help_button.domNode;
 		},
 
-		_createParameterWidget : function(val, type) {   
+		_createParameterWidget : function(val, type) {
 		    var cur_widget;
 		    var style_obj= {border : "1px solid #FFFFFF", width : "85%"};
-		
+
 		    if(type==this._store.TYPE_STRING) {
 			cur_widget=new dijit.form.TextBox({value : val, style : style_obj});
 		    }
@@ -660,7 +666,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			cur_widget=new dijit.form.NumberTextBox({
 				constraints: {places : 0},
 				invalidMessage : "This parameter must be an integer.",
-				value : val, 
+				value : val,
 				style : style_obj
 			    });
 		    }
@@ -671,7 +677,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 				disabled : "disabled"
 			    });
 		    }
-		
+
 		    dojo.connect(cur_widget, "onKeyPress", this, function() {
 			    this._registerChange();
 			});
