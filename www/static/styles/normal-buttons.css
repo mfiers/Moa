@@ -35,3 +35,32 @@ border:1px solid #404040
 {
 color:#000000
 }
+
+.moaHelpButton
+{
+    background-image: url(/images/tango/16x16/apps/help-browser.png);
+    background-repeat: no-repeat;
+    height: 18px;
+    text-align: center;
+    width: 18px;
+}
+
+.moaResetButton
+{
+    background-image: url(/images/tango/16x16/actions/edit-undo.png);
+    background-repeat: no-repeat;
+    height: 18px;
+    text-align: center;
+    width: 18px;
+
+}
+
+.moaAddButton
+{
+    background-image: url(/images/tango/16x16/actions/add.png);
+    background-repeat: no-repeat;
+    height: 18px;
+    text-align: center;
+    width: 18px;
+
+}

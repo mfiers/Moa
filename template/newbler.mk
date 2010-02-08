@@ -21,8 +21,13 @@ include $(shell echo $$MOABASE)/template/moaBasePre.mk
 
 moa_ids += newbler
 moa_title_newbler = Newbler
-moa_description_newbler = Run a simple, out of the box, newbler					\
-assembly
+moa_description_newbler = Run a simple, out of the box, newbler		\
+assembly.															\
+																	\
+As an extra feature, this template automatically creates uniquely	\
+named links to the two main output fasta files (454AllContigs.fna,	\
+454LargeContigs.fna). This is convenient for subsequence 'gather'	\
+steps. The links are named after the directory. 
 
 #variables
 $(call moa_fileset_define,newbler_input,sff,input SFF files)
@@ -36,7 +41,10 @@ include $(MOABASE)/template/moaBase.mk
 newbler_prepare:
 
 .PHONY: newbler_post
+newbler_post: uname=$(shell echo `basename $(CURDIR)` | sed "s/[ \///\/]//g" )
 newbler_post:
+	cat 454AllContigs.fna | sed 's/>contig/>$(uname)_contig/' > $(uname).all.fasta 
+	cat 454LargeContigs.fna | sed 's/>contig/>$(uname)_contig/' > $(uname).large.fasta 
 
 .PHONY: newbler
 newbler: 454AllContigs.fna 454LargeContigs.all.png 
