@@ -221,7 +221,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 				param_dom_button.appendChild(this._createHelpNode(params[y]));
 
 				param_dom_button.appendChild((new dijit.form.Button({ 
-						 : false,
+						showLabel : false,
 						iconClass : 'moaAddButton',
 						disabled : (params[y].cardinality!=this._store.CARD_MANY),
 						onClick : dojo.hitch({main : this, name : params[y].name},
