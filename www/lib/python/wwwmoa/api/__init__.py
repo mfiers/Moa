@@ -383,7 +383,7 @@ The templates that are currently installed are:
                     output_action_message(False, "The specified name does not meet restrictions.")
 
                 try:
-                    s_dir=(env["params"]["directory"]==1)
+                    s_dir=(env["params"]["directory"]=="1")
                 except KeyError:
                     s_dir=False
 
