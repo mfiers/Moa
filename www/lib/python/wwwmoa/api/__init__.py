@@ -378,9 +378,12 @@ The templates that are currently installed are:
                 output_action_message(True, "The file has been updated.")
             else:
                 s_path=os.path.join(path, env["params"]["name"])
+
+                s_path_dir=os.path.dirname(s_path)
                 
-                if not os.path.samefile(os.path.dirname(s_path), path):
+                if (not os.access(s_path_dir, os.F_OK)) or (not os.path.samefile(s_path_dir, path)):
                     output_action_message(False, "The specified name does not meet restrictions.")
+                    rw.terminate()
 
                 try:
                     s_dir=(env["params"]["directory"]=="1")

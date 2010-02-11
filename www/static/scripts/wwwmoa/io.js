@@ -31,6 +31,8 @@ else {
                     ret+="%3F";
                 else if(c==38) // amp
                     ret+="%26";
+                else if(c==37) // percent
+                    ret+="%25";
                 else
                     ret+=str.substr(x,1);
             }

@@ -649,7 +649,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    help_button=new dijit.form.DropDownButton({
 			    dropDown : help_dialog,
                 showLabel: false,
-                iconClass : 'moaHelpButton',
+                iconClass : 'moaHelpButton'
 			});
 
 		    return help_button.domNode;
