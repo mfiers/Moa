@@ -74,7 +74,9 @@ parser.add_option('-e', dest='echo', action="store_true",
 if not options.infile:
     raise Exception("Must define an inputfile!")
 
-
+if len(args) == 0:
+    args = ['id', 'length']
+                
 def fastareader(f):
     F = open(f)
     name, seq = "", []

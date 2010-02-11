@@ -110,9 +110,7 @@ $(id)									\n\
 \#\# Required parameters				\n\
 $(foreach v,$(moa_must_define), 		  \
 $(v)									\n\
-:   $(call ptype,$(v))$(if $($(v)_help),					\
-		$($(v)_help),					\
-		undefined)						\n\
+:   $(if $($(v)_help),$($(v)_help),undefined)	$(call ptype,$(v)) \n\
 )										\n\
 \#\# Optional parameters				\n\
 $(foreach v,$(moa_may_define), 			\
@@ -120,3 +118,5 @@ $(v)									\n\
 :   $(if $($(v)_help),$($(v)_help),undefined)	$(call ptype,$(v)) \n\
 )
 
+
+ $(call ptype,$(v))
