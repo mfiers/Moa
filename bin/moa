@@ -204,6 +204,8 @@ if __name__ == "__main__":
         sys.exit(rc)
     elif command == 'rawinfo':
         pprint.pprint(moa.info.info(os.getcwd()))
+    elif command == 'status':
+        print moa.info.status(os.getcwd())
         
     #Create new jobs
     elif command == 'job':
@@ -221,6 +223,8 @@ if __name__ == "__main__":
             print job
     #configuration stuff
     elif command == 'set':
+        moa.conf.handler(options, args)
+    elif command == 'get':
         moa.conf.handler(options, args)
     elif command == 'get':
         moa.conf.handler(options, args)
