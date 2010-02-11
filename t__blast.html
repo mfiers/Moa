@@ -4,6 +4,8 @@
 	<title>MOA - Makefiles in bioinformatics</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+
   </head>
   <body>
 	<center>
@@ -38,6 +40,10 @@
                  <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
+                 <hr>
+                 <a href="moa_manual.pdf">Manual in PDF</a>
+                 <hr>
+                 <a href="api/index.html">Python API</a><br>
 			  </div>
 			</div>
 		  </div>
@@ -47,112 +53,110 @@
 <h1 id="chapterTitle">blast.mk</h1>
 <p
 >Wraps BLAST , the most popular similarity search tool in bioinformatics</p
-><div id="targets"
-><h1
-  >Targets</h1
-  ><dl
+><h1 id="targets"
+>Targets</h1
+><dl
+><dt
+  >(empty)</dt
+  ><dd
+  >Leaving the target unspecified executes the default target(s): (blast)</dd
   ><dt
-    >(empty)</dt
-    ><dd
-    >Leaving the target unspecified executes the default target(s): (blast)</dd
-    ><dt
-    >clean</dt
-    ><dd
-    >removes all results from this job</dd
-    ><dt
-    >all</dt
-    ><dd
-    >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-    ><dt
-    >blast</dt
-    ><dd
-    ><p
-      >Running BLAST takes an input directory (<em
-	>blast_input_dir</em
-	>), determines what sequence files are present (with the parameter <em
-	>blast_input_extension</em
-	>) and executes BLAST on each of these. Moa BLAST is configured to create XML output (as opposed ot the standard text based output) in the <em
-	>./out</em
-	> directory. The output XML is subsequently converted to GFF3 ). Additionally, a simple text report is created.</p
-      ></dd
-    ><dt
-    >blast_report</dt
-    ><dd
-    ><p
-      >Generate a text BLAST report.</p
-      ></dd
-    ></dl
-  ></div
-><div id="parameters"
-><h1
-  >Parameters</h1
-  ><div id="required-parameters"
-  ><h2
-    >Required parameters</h2
-    ><dl
-    ><dt
-      >blast_db</dt
-      ><dd
-      >Location of the blast database</dd
-      ><dt
-      >blast_gff_source</dt
-      ><dd
-      >source field to use in the gff</dd
-      ><dt
-      >title</dt
-      ><dd
-      >A job name - Describe what you are doing</dd
-      ></dl
-    ></div
-  ><div id="optional-parameters"
-  ><h2
-    >Optional parameters</h2
-    ><dl
-    ><dt
-      >blast_input_dir</dt
-      ><dd
-      >directory containing the input sequences</dd
-      ><dt
-      >input_extension</dt
-      ><dd
-      >Extension of the input files</dd
-      ><dt
-      >blast_program</dt
-      ><dd
-      >blast program to use (default: blastn)</dd
-      ><dt
-      >blast_eval</dt
-      ><dd
-      >e value cutoff</dd
-      ><dt
-      >blast_nohits</dt
-      ><dd
-      >number of hits to report</dd
-      ><dt
-      >blast_nothreads</dt
-      ><dd
-      >threads to run blast with (note the overlap with the Make -j parameter)</dd
-      ><dt
-      >blast_gff_blasthit</dt
-      ><dd
-      >(T,<strong
-	>F</strong
-	>) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.</dd
-      ><dt
-      >moa_precommand</dt
-      ><dd
-      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile.</dd
-      ><dt
-      >moa_postcommand</dt
-      ><dd
-      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile.</dd
-      ><dt
-      >project</dt
-      ><dd
-      >A project name - group your analyses.</dd
-      ></dl
-    ></div
-  ></div
+  >clean</dt
+  ><dd
+  >removes all results from this job</dd
+  ><dt
+  >all</dt
+  ><dd
+  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
+  ><dt
+  >blast</dt
+  ><dd
+  ><p
+    >Running BLAST takes an input directory (<em
+      >blast_input_dir</em
+      >), determines what sequence files are present (with the parameter <em
+      >blast_input_extension</em
+      >) and executes BLAST on each of these. Moa BLAST is configured to create XML output (as opposed ot the standard text based output) in the <em
+      >./out</em
+      > directory. The output XML is subsequently converted to GFF3 ). Additionally, a simple text report is created.</p
+    ></dd
+  ><dt
+  >blast_report</dt
+  ><dd
+  ><p
+    >Generate a text BLAST report.</p
+    ></dd
+  ></dl
+><h1 id="parameters"
+>Parameters</h1
+><h2 id="required-parameters"
+>Required parameters</h2
+><dl
+><dt
+  >blast_input_dir</dt
+  ><dd
+  >Directory with the BLAST input files (directory)</dd
+  ><dt
+  >blast_db</dt
+  ><dd
+  >Location of the blast database. You can either define the blast db parameter as used by blast, or any of the blast database files, in which case the extension will be removed before use (file)</dd
+  ><dt
+  >title</dt
+  ><dd
+  >A job name - Describe what you are doing (string)</dd
+  ></dl
+><h2 id="optional-parameters"
+>Optional parameters</h2
+><dl
+><dt
+  >blast_input_extension</dt
+  ><dd
+  >file extension for the files in blast_input_dir (string, default:fasta)</dd
+  ><dt
+  >blast_input_glob</dt
+  ><dd
+  >glob to select a subset of files from blast_input_dir (string, default:*)</dd
+  ><dt
+  >blast_gff_source</dt
+  ><dd
+  >source field to use in the gff (string, default:BLAST)</dd
+  ><dt
+  >blast_program</dt
+  ><dd
+  >blast program to use (default: blastn) (blastx|<em
+    >blastn</em
+    >|blastp|t<em
+    >blastn</em
+    >|tblastx)</dd
+  ><dt
+  >blast_eval</dt
+  ><dd
+  >e value cutoff (float, default:1e-10)</dd
+  ><dt
+  >blast_nohits</dt
+  ><dd
+  >number of hits to report (integer, default:50)</dd
+  ><dt
+  >blast_nothreads</dt
+  ><dd
+  >threads to run blast with (note the overlap with the Make -j parameter) (integer, default:2)</dd
+  ><dt
+  >blast_gff_blasthit</dt
+  ><dd
+  >(T,<strong
+    >F</strong
+    >) - export an extra blasthit feature to the created gff, grouping all hsp (match) features. (T|<em
+    >F</em
+    >)</dd
+  ><dt
+  >moa_precommand</dt
+  ><dd
+  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
+  ><dt
+  >moa_postcommand</dt
+  ><dd
+  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
+  ></dl
 >
 </div>
 </div>

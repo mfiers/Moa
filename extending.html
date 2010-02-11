@@ -4,6 +4,8 @@
 	<title>MOA - Makefiles in bioinformatics</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+
   </head>
   <body>
 	<center>
@@ -38,6 +40,10 @@
                  <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
+                 <hr>
+                 <a href="moa_manual.pdf">Manual in PDF</a>
+                 <hr>
+                 <a href="api/index.html">Python API</a><br>
 			  </div>
 			</div>
 		  </div>
@@ -46,212 +52,218 @@
 			
 <h1 id="chapterTitle">Extending Moa</h1>
 <p
->This chapter describes how to create new templates for use with Moa. Creating a template is not very difficult, once you have a basic understanding of how Makefiles work. Pprobably the hardest part is ensuring that templates are able to interact with other templates.</p
+>This chapter describes how to create new templates for use with Moa. Creating a basic template is not difficult, once you have a basic understanding of how Makefiles work. Probably the hardest part is ensuring that templates are able to interact with other templates.</p
 ><p
->A template is, as stated, not much more than Makefile that adheres to certain standards. To understand how Makefiles work, please read the <a href="http://www.gnu.org/software/make/manual/make.html"
+>A template is, as stated, basically a Makefile that adheres to a set of standards. To understand how Makefiles work, please read the <a href="http://www.gnu.org/software/make/manual/make.html"
   >Gnu Make Manual</a
   >. Note that creating Makefiles can be somewhat complex at first, given that the logic differs from scripting languages. The easiest way to do this is to work from an existing Makefile.</p
 ><p
->Each template exists of the following parts:</p
+>Each template exists of two parts:</p
 ><ul
 ><li
-  >Definition</li
-  ><li
-  >Include moaBase</li
+  >Definitions</li
   ><li
   >Implementation</li
   ></ul
 ><p
->The order in which everything is defined in a template is very important! It is advisable to not define variables depending on other variables in the definition phase.</p
+>This order is very important! Parts of the Moa core are included inbetween the definitions and the implementation. Getting the order wrong might cripple your template.</p
 ><p
->In the remainder of this chapter we will describe a simple template that creates the reverse complement of a <a href="http://en.wikipedia.org/wiki/FASTA_format"
+>In the remainder of this chapter we will describe how to implement a new tool base on a simple example that creates the reverse complement of a <a href="http://en.wikipedia.org/wiki/FASTA_format"
   >FASTA</a
-  > file using the <a href="http://emboss.sourceforge.net/"
+  > sequence using the <a href="http://emboss.sourceforge.net/"
   >EMBOSS</a
   > <a href="http://emboss.sourceforge.net/apps/release/6.1/emboss/apps/revseq.html"
   >revseq</a
-  > utility</p
-><div id="definition"
-><h1
-  >Definition</h1
-  ><p
-  >The definition is a list of variables defining what your template does and giving Moa information on how to use this template.</p
-  ><div id="describing-the-new-template"
-  ><h2
-    >Describing the new template</h2
-    ><p
-    >The following variables define what your template does. These variables are used in generating the help files, the manual and the website.</p
-    ><table
-    ><tr class="header"
-      ><th align="left" style="width: 26%;"
-	>Identifier</th
-	><th align="left" style="width: 63%;"
-	>Description</th
-	></tr
-      ><tr class="odd"
-      ><td align="left"
-	>moa_title</td
-	><td align="left"
-	>The title for this template</td
-	></tr
-      ><tr class="even"
-      ><td align="left"
-	>moa_description</td
-	><td align="left"
-	>A short description of this template</td
-	></tr
-      ><tr class="odd"
-      ><td align="left"
-	>moa_ids</td
-	><td align="left"
-	>A unique, short, identifier for this template</td
-	></tr
-      ></table
-    ><p
-    >Example:</p
-    ><pre
-    ><code
-      > moa_title = Reverse Complement
+  > utility.</p
+><p
+>All templates are stored in the <code
+  >$MOABASE/template</code
+  > directory. This template will be stored under the name <code
+  >revseq.mk</code
+  >.</p
+><h1 id="definitions"
+>Definitions</h1
+><p
+>Each template start with including the first part of the Moa core:</p
+><pre
+><code
+  >include $(MOABASE)/template/moaBasePre.mk
+</code
+  ></pre
+><p
+><code
+  >moaBasePre</code
+  > defines a set of default Moa variables and has some macro's that make variable definition easier. The template defintion continues by defining a set of variables used in the latter part of the template.</p
+><h2 id="describing-the-new-template"
+>Describing the new template</h2
+><p
+>The following variables define what your template does. These variables are used in generating the help files, the manual and the website.</p
+><table
+><tr
+  ><th align="left" style="width: 26%;"
+    >Identifier</th
+    ><th align="left" style="width: 63%;"
+    >Description</th
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_title</td
+    ><td align="left"
+    >A short title for this template</td
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_description</td
+    ><td align="left"
+    >A short description of this template</td
+    ></tr
+  ></table
+><p
+>For our Revseq example:</p
+><pre
+><code
+  > moa_title = Revseq
  moa_description = This Moa template takes a set of      \
-     input FASTA sequences and determines the reverse    \
-     complement using the EMBOSS revseq utility.
+   input FASTA sequences and determines the reverse      \
+   complement using the EMBOSS revseq utility.
  moa_ids += revcom
 </code
-      ></pre
-    ><p
-    >Note that lines are allowed to break over multiple lines, given that each line that continues to the enxt line ends with a backslash. No spaces are allowd after the backslash and the new line must be indented (with at least one space).</p
-    ></div
-  ><div id="moa-organizational-units---moaids"
-  ><h2
-    >Moa organizational units - moa_ids</h2
-    ><p
-    >In the previous chapter, both title and description are fairly self evident. The <code
-      >moa_ids</code
-      > variable is, however, more complicated. Each template must have, at least one, unique, preferaby short, identifier linked to it. This <code
-      >moa_id</code
-      > helps in defining variable space for each template. The moa_id returns when defining template specific variables and targets. All template specific variables have the moa_id as a part of their name, so do the major targets of a template.</p
-    ><p
-    >Use of uniqued ids allow Moa to stack several templates into a larger, more complicated, templates. This might be usefull describing a set of resembling tasks that have a lot of overlapping code. Another powerful use is to create complex jobs that execute a mini-pipeline in one run. For example, gathering a filter a specific set of sequences (using the gather template) and creating a BLAST database from that.</p
-    ><p
-    >Using ids allows functional sepeartion of tasks withing a template, or within a stacked template. It is advisable to start creating templates with only one task. For each task, a set of specific variables need to be defined.</p
-    ><p
-    >Given that a template can define multiple tasks, a moa_id are added to the moa_ids array using the following syntax:</p
-    ><pre
-    ><code
-      >moa_ids += revcomp
+  ></pre
+><p
+>Note that lines are allowed to break over multiple lines, given that each line that continues to the next line ends with a backslash. No spaces are allowd after the backslash. Indenting the next line is not necessary, but it does enhance readability.</p
+><h2 id="namespace-definition-moa_ids"
+>namespace definition: <code
+  >moa_ids</code
+  ></h2
+><p
+>Each MOA template defines a set of variables and targets (things to do). These variables and targets (usually) share a single id in their name. In the case of template variables this is a convention, making templates easier to read. Targets, however, are often executed automatically, based on the expected name. A <code
+  >moa_id</code
+  > is defined in the following way (for our example):</p
+><pre
+><code
+  >moa_ids += revseq
 </code
-      ></pre
-    ></div
-  ><div id="taks-specfic-variables"
-  ><h2
-    >taks specfic variables</h2
-    ><table
-    ><tr class="header"
-      ><th align="left" style="width: 26%;"
-	>Identifier</th
-	><th align="left" style="width: 63%;"
-	>Description</th
-	></tr
-      ><tr class="odd"
-      ><td align="left"
-	>moa_title</td
-	><td align="left"
-	>The title for this template</td
-	></tr
-      ><tr class="even"
-      ><td align="left"
-	>moa_description</td
-	><td align="left"
-	>A short description of this template</td
-	></tr
-      ><tr class="odd"
-      ><td align="left"
-	>moa_ids</td
-	><td align="left"
-	>A unique, short, identifier for this template</td
-	></tr
-      ></table
-    ></div
-  ></div
-><div id="include-moabase"
-><h1
-  >Include moaBase</h1
+  ></pre
+><p
+>A <code
+  >moa_id</code
+  > should be unique and is ideally short and consise. It is also advisable to save the template under the same name.</p
+><p
+>The design of moa allows, theoretically, for stacked templates. These are combined templates containing multiple sub templates, separated by multiple <code
+  >moa_id</code
+  >s. This is, at the moment, an experimental feature. It is recommended to use only on <code
+  >moa_id</code
+  > per template</p
+><h2 id="job-specific-variables"
+>job specific variables</h2
+><p
+>The next part of the definitions can be used freely to define variables to be used in the implementation. Each of these variables, ideally, start with the <code
+  >moa_id</code
+  > (but this is not enforced). The advantage of defining variables here is that they will be accessible via the command line and the API. For example, you can set a define variable using the following command line:</p
+><pre
+><code
+  >moa set title='Descriptive title'    
+</code
+  ></pre
+><p
+>There are two types of variables that can be defined: mandatory and optional.</p
+><table
+><tr
+  ><th align="left" style="width: 26%;"
+    >Identifier</th
+    ><th align="left" style="width: 63%;"
+    >Description</th
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_title</td
+    ><td align="left"
+    >The title for this template</td
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_description</td
+    ><td align="left"
+    >A short description of this template</td
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_ids</td
+    ><td align="left"
+    >A unique, short, identifier for this template</td
+    ></tr
+  ></table
+><p
+>In the case ## Job specific variables</p
+><p
+>Most templates will have variables specific to the job. These can be defined by</p
+><h2 id="optional-job-specific-variables"
+>optional job specific variables</h2
+><h1 id="include-moabase"
+>Include moaBase</h1
+><p
+>To includie moaBase add the following line to your Makefile:</p
+><pre
+><code
+  >include $(shell echo $$MOABASE)/template/moaBase.mk
+</code
+  ></pre
+><h1 id="implementation"
+>Implementation</h1
+><h2 id="define-dependant-variables"
+>define dependant variables</h2
+><h2 id="define-targets"
+>define targets</h2
+><p
+>Each task, identified by a unique moa_id, needs to define a set of four targets. For example, if your template defines: <code
+  >moa_id += revomp</code
+  > then the following four targets are expected to be defined and are automatically executed:</p
+><ul
+><li
+  >MOA_ID - revcomp</li
+  ><li
+  >MOA_ID_prepare - revcomp_prepare</li
+  ><li
+  >MOA_ID_post - revcomp_post</li
+  ><li
+  >MOA_ID_clean - revcomp_clean</li
+  ></ul
+><p
+>Each of these targets must be defined in a new template, although they could can be empty. In the following paragraphs, each of these targets are discussed, in the order that they are executed.</p
+><h3 id="prepare-execution-revcomp_prep"
+>Prepare execution: revcomp_prep</h3
+><p
+>The MOA_ID_prep target contains commands that are executed prior to the main run. In the case of reverse complementing sequences this target can be used to create a directory to store the output sequences. Using a separate subdirectory to</p
+><h3 id="round-up-execution-revcomp_post"
+>Round up execution: revcomp_post</h3
+><h3 id="clean-up-revcomp_clean"
+>Clean up: revcomp_clean</h3
+><ul
+><li
   ><p
-  >To includie moaBase add the following line to your Makefile:</p
-  ><pre
-  ><code
-    >include $(shell echo $$MOABASE)/template/moaBase.mk
-</code
-    ></pre
-  ></div
-><div id="implementation"
-><h1
-  >Implementation</h1
-  ><div id="define-dependant-variables"
-  ><h2
-    >define dependant variables</h2
-    ></div
-  ><div id="define-targets"
-  ><h2
-    >define targets</h2
-    ><p
-    >Each task, identified by a unique moa_id, needs to define a set of four targets. For example, if your template defines: <code
-      >moa_id += revomp</code
-      > then the following four targets are expected to be defined and are automatically executed:</p
-    ><ul
-    ><li
-      >MOA_ID - revcomp</li
-      ><li
-      >MOA_ID_prepare - revcomp_prepare</li
-      ><li
-      >MOA_ID_post - revcomp_post</li
-      ><li
-      >MOA_ID_clean - revcomp_clean</li
-      ></ul
-    ><p
-    >Each of these targets must be defined in a new template, although they could can be empty. In the following paragraphs, each of these targets are discussed, in the order that they are executed.</p
-    ><div id="prepare-execution-revcompprep"
-    ><h3
-      >Prepare execution: revcomp_prep</h3
-      ><p
-      >The MOA_ID_prep target contains commands that are executed prior to the main run. In the case of reverse complementing sequences this target can be used to create a directory to store the output sequences. Using a separate subdirectory to</p
-      ></div
-    ><div id="round-up-execution-revcomppost"
-    ><h3
-      >Round up execution: revcomp_post</h3
-      ></div
-    ><div id="clean-up-revcompclean"
-    ><h3
-      >Clean up: revcomp_clean</h3
-      ><ul
-      ><li
-	><p
-	  ><strong
-	    >revcomp</strong
-	    >: the main target, executes the main task of this template. In this case it takes a set of input sequences and write the reverse complement back to disk.</p
-	  ></li
-	><li
-	><p
-	  ><strong
-	    >revcomp_prepare</strong
-	    >:</p
-	  ></li
-	><li
-	><p
-	  ><strong
-	    >revcomp_post</strong
-	    >: Optional commands to be exeucted after everything is finished. In the case of reverse complementing a set of sequences there is not much to do. The BLAST template, however, uses this target to create an overall BLAST report</p
-	  ></li
-	><li
-	><p
-	  ><strong
-	    >revcomp_clean</strong
-	    >: Cleans up all reverse complemented sequences</p
-	  ></li
-	></ul
-      ></div
-    ></div
-  ></div
+    ><strong
+      >revcomp</strong
+      >: the main target, executes the main task of this template. In this case it takes a set of input sequences and write the reverse complement back to disk.</p
+    ></li
+  ><li
+  ><p
+    ><strong
+      >revcomp_prepare</strong
+      >:</p
+    ></li
+  ><li
+  ><p
+    ><strong
+      >revcomp_post</strong
+      >: Optional commands to be exeucted after everything is finished. In the case of reverse complementing a set of sequences there is not much to do. The BLAST template, however, uses this target to create an overall BLAST report</p
+    ></li
+  ><li
+  ><p
+    ><strong
+      >revcomp_clean</strong
+      >: Cleans up all reverse complemented sequences</p
+    ></li
+  ></ul
 >
 </div>
 </div>

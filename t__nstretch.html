@@ -4,6 +4,8 @@
 	<title>MOA - Makefiles in bioinformatics</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+
   </head>
   <body>
 	<center>
@@ -38,6 +40,10 @@
                  <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
+                 <hr>
+                 <a href="moa_manual.pdf">Manual in PDF</a>
+                 <hr>
+                 <a href="api/index.html">Python API</a><br>
 			  </div>
 			</div>
 		  </div>
@@ -45,70 +51,58 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">nstretch.mk</h1>
-<div id="targets"
-><h1
-  >Targets</h1
-  ><dl
+<h1 id="targets"
+>Targets</h1
+><dl
+><dt
+  >(empty)</dt
+  ><dd
+  >Leaving the target unspecified executes the default target(s): (nstretch )</dd
   ><dt
-    >(empty)</dt
-    ><dd
-    >Leaving the target unspecified executes the default target(s): (nstretch )</dd
-    ><dt
-    >clean</dt
-    ><dd
-    >removes all results from this job</dd
-    ><dt
-    >all</dt
-    ><dd
-    >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-    ></dl
-  ><p
-  >nstretch :</p
-  ></div
-><div id="parameters"
-><h1
-  >Parameters</h1
-  ><div id="required-parameters"
-  ><h2
-    >Required parameters</h2
-    ><dl
-    ><dt
-      >title</dt
-      ><dd
-      >A job name - Describe what you are doing</dd
-      ></dl
-    ></div
-  ><div id="optional-parameters"
-  ><h2
-    >Optional parameters</h2
-    ><dl
-    ><dt
-      >nstretch_input_dir</dt
-      ><dd
-      >input dir with the fasta files</dd
-      ><dt
-      >nstretch_input_extension</dt
-      ><dd
-      >extension of the input files</dd
-      ><dt
-      >nstretch_len</dt
-      ><dd
-      >minimal number of Ns before its reported (default 10)</dd
-      ><dt
-      >moa_precommand</dt
-      ><dd
-      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile.</dd
-      ><dt
-      >moa_postcommand</dt
-      ><dd
-      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile.</dd
-      ><dt
-      >project</dt
-      ><dd
-      >A project name - group your analyses.</dd
-      ></dl
-    ></div
-  ></div
+  >clean</dt
+  ><dd
+  >removes all results from this job</dd
+  ><dt
+  >all</dt
+  ><dd
+  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
+  ></dl
+><p
+>nstretch :</p
+><h1 id="parameters"
+>Parameters</h1
+><h2 id="required-parameters"
+>Required parameters</h2
+><dl
+><dt
+  >nstretch_input_dir</dt
+  ><dd
+  >input dir with the fasta files (directory)</dd
+  ><dt
+  >title</dt
+  ><dd
+  >A job name - Describe what you are doing (string)</dd
+  ></dl
+><h2 id="optional-parameters"
+>Optional parameters</h2
+><dl
+><dt
+  >nstretch_input_extension</dt
+  ><dd
+  >extension of the input files (string, default:fasta)</dd
+  ><dt
+  >nstretch_len</dt
+  ><dd
+  >minimal number of Ns before its reported (default 10) (integer, default:10)</dd
+  ><dt
+  >moa_precommand</dt
+  ><dd
+  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
+  ><dt
+  >moa_postcommand</dt
+  ><dd
+  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
+  ></dl
 >
 </div>
 </div>
