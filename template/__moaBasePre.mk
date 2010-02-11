@@ -57,11 +57,12 @@ echo = echo -e "$(moamark) $(strip $(1))"
 warn = echo -e "$(moawarn) $(strip $(1))"
 tstm = echo -e "$(moatest) $(strip $(1))"
 errr = echo -e "$(moaerrr) $(strip $(1))"
-exer = ( echo -e "$(moaerrr) $(1)"; exit -1 )
-exerUnlock = ( if [[ "$(strip $(1))" ]]; \
-	then echo -e "$(moaerrr) $(strip $(1))"; \
-	fi; \
-	rm -f moa.runlock; exit -1 )
+exer = echo -e "$(moaerrr) $(1) - exiting"; exit -1
+exerUnlock = ( if [[ "$(strip $(1))" ]]; 		\
+	then echo -e "$(moaerrr) $(strip $(1))"; 	\
+	fi; 										\
+	rm -f moa.runlock || true ); 				\
+	exit -1 
 
 ## Define a variable that can be used to hide
 ## output if the moa/make is not called with the -v flag
