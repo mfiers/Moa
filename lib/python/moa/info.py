@@ -26,6 +26,7 @@ __docformat__ = "restructuredtext en"
 import os
 import re
 import sys
+import commands
 
 from moa.logger import l
 from moa import runMake
@@ -80,6 +81,54 @@ def isMoaDir(d):
     F.close()        
     return isMoa
 
+def _checkRunlock(d):
+    """
+    Check if the runlock file actually points to a proper process
+
+    @returns: If the runlock is valid
+    @rtype: boolean
+    """
+    runlockfile = os.path.join(d, 'moa.runlock')
+
+    #does the file exist?
+    if not os.path.exists(runlockfile):
+        return False
+    
+    try:
+        with open(runlockfile, 'r') as F:    
+            pid = F.read().strip()
+            pid = int(pid)
+    except IOError, e:
+        if e.errno == 2: #file does not exist (anymore?)
+            return False
+        #other error - raise
+        raise
+    except ValueError, e:
+        #the file does not seem be a proper runlock
+        if "invalid literal for int()" in e.message:
+            #runlock should contain a PID, i.e. an integer
+            l.warning("Erroneous lock file (or so it seems) - removing")
+            os.unlink(runlockfile)
+            return False
+        raise
+
+    
+    if not pid:
+        os.unlink(runlockfile)
+        return False
+
+    l.debug("Checking pid %d" % pid)
+
+    processName = commands.getoutput("ps -p %d -o comm=" % pid)
+    if processName != 'make':
+        l.warning("Stale lock file (or so it seems) - removing")
+        os.unlink(runlockfile)
+        return False
+
+    return True
+
+
+
 def status(d):
     """
     Returns the status of a directory. It will return a one of the following status messages:
@@ -109,7 +158,7 @@ def status(d):
     failedfile = os.path.join(d, 'moa.failed')
     lockfile = os.path.join(d, 'lock')
     runlockfile = os.path.join(d, 'moa.runlock')
-    if os.path.exists(runlockfile):
+    if _checkRunlock(d):
         return "running"
     if os.path.exists(lockfile):
         return "locked"
