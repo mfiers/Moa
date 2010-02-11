@@ -197,15 +197,20 @@ def info(wd):
     rv = {
         'parameters' : {}
         }
-    
+
+    outBaseName = '.moa.%d' % os.getpid()
+    l.debug("using %s" % outBaseName)
     rc = runMake.go(
         wd = wd,
         background=False,
         target='info',
         verbose=False,
-        captureOut=True)
-    out = runMake.getOutput(wd)
-
+        captureOut=True,
+        captureOutName = outBaseName)
+    out = runMake.getOutput(wd, outBaseName)
+    #remove the output files
+    moa.utils.removeMoaOutfiles(wd, outBaseName)
+    
     outlines = out.split("\n")
     while True:
         if len(outlines) == 0: break

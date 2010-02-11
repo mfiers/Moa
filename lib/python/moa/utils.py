@@ -66,6 +66,16 @@ def exit(rc=0):
         h.flush()
     sys.exit(rc)
 
+def removeMoaOutfiles(path, outName='moa'):
+    """
+    Remove only the .out and .err files, based on outName
+    """
+    for name in ['%s.out' % outName,
+                 '%s.err' % outName]:
+        ff = os.path.join(path, name)
+        if os.path.isfile(ff):
+            os.unlink(ff)
+            
 def removeMoaFiles(path):
     """
     Removes all moa related files from a directory

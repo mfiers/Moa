@@ -243,11 +243,11 @@ def appendParameter(wd, key, value):
     """
     Append the value to parameter 'key' (in path x)
 
-	>>> setParameter(P_JOB, 'title', 'a')
+    >>> setParameter(P_JOB, 'title', 'a')
     >>> 
-	appendParameter(P_JOB, 'title', 'b')
-	>>> test = getParameter(P_JOB, 'title')
-	>>>
+    appendParameter(P_JOB, 'title', 'b')
+    >>> test = getParameter(P_JOB, 'title')
+    >>>
     """    
     moa.conf.setVar(wd, key, value)
 

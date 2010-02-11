@@ -33,23 +33,27 @@ import moa.utils
 from moa.exceptions import *
 
 def _startMake(wd, makeArgs, verbose = True,
-               captureOut = False):
+               captureOut = False,
+               captureOutName = 'moa'):
     """
     Start Make
 
     A function that starts Make (but does not wait for it to finish)
     in directory `wd`
     
-    :param wd: Directory in which to execute make
-    :type wd: String
-    :param makeArgs: Arguments to pass to make
-    :type makeArgs: String or List of Strings
-    :param verbose: Have make be silent or generate lots of output
-    :type verbose: Boolean
-    :param captureOut: If True the output will be written to moa.out
-    and moa.err
-    :type captureOut: Boolean
-    :raises NotMoaDirectory: If ``wd`` is not a Moa directory    
+    @param wd: Directory in which to execute make
+    @type wd: String
+    @param makeArgs: Arguments to pass to make
+    @type makeArgs: String or List of Strings
+    @param verbose: Have make be silent or generate lots of output
+    @type verbose: Boolean
+    @param captureOut: If True the output will be written to moa.out
+      and moa.err
+    @type captureOut: Boolean
+    @param captureOutName: Basename of the file where the moa output
+      will be captured to
+    @type captureOutName: String
+    @raises NotMoaDirectory: If ``wd`` is not a Moa directory    
     """
 
     l.debug("attempting to start make in %s" % wd)
@@ -65,8 +69,8 @@ def _startMake(wd, makeArgs, verbose = True,
         makeArgs.insert(0, '-s')
 
     if captureOut:
-        FOUT = open(os.path.join(wd, 'moa.out'), 'w')
-        FERR = open(os.path.join(wd, 'moa.err'), 'w')
+        FOUT = open(os.path.join(wd, '%s.out' % captureOutName), 'w')
+        FERR = open(os.path.join(wd, '%s.err' % captureOutName), 'w')
         os.putenv('MOAANSI', 'no')
     else:
         FOUT = None
@@ -84,10 +88,29 @@ def _startMake(wd, makeArgs, verbose = True,
 
 
 def _runMake(wd = None, target = "", makeArgs = [],
-             verbose=True, captureOut = False, threads=1):
+             verbose=True, captureOut = False, threads=1,
+             captureOutName='moa'
+             ):
 
     """
     Actually run make
+    
+    @param wd: Working directory
+    @type wd: String
+    @param target: Makefile target to execute
+    @type target: String
+    @param makeArgs: Arguments to pass onto Make
+    @type makeArgs: List of Strings
+    @param verbose: Verbose output
+    @type verbose: Boolean
+    @param captureOut: Capture the output in log files
+    @type captureOut: Boolean
+    @param captureOutName: Basename for the log files that will
+      capture the output
+    @type captureOutName: String
+    @param threads: Number of threads to run Make with
+    @type threads: Integer
+    
     """
     
     os.putenv('MOA_THREADS', "%s" % threads)    
@@ -97,8 +120,11 @@ def _runMake(wd = None, target = "", makeArgs = [],
     if target:
         makeArgs.insert(0, target)
 
-    p = _startMake(wd = wd, makeArgs = makeArgs, verbose=verbose,
-                   captureOut = captureOut)
+    p = _startMake(wd = wd,
+                   makeArgs = makeArgs,
+                   verbose=verbose,
+                   captureOut = captureOut,
+                   captureOutName=captureOutName)
     out,err = p.communicate()
     
     rc = p.returncode
@@ -110,9 +136,17 @@ def _runMake(wd = None, target = "", makeArgs = [],
 
 def go(wd = None, target = "", makeArgs = [],
        verbose=True, threads=1, background = False,
-       captureOut = None, exitWhenDone=False):
+       captureOut = None, captureOutName='moa',
+       exitWhenDone=False):
     """
     Run Make
+    
+    @param captureOut: Capture the output in log files
+    @type captureOut: Boolean
+    @param captureOutName: Basename for the log files that will
+      capture the output
+    @type captureOutName: String
+    
     """
     if not wd:
         wd = os.getcwd()
@@ -144,7 +178,8 @@ def go(wd = None, target = "", makeArgs = [],
              makeArgs = makeArgs,
              verbose=verbose,
              threads = threads,
-             captureOut = captureOut)
+             captureOut = captureOut,
+             captureOutName = captureOutName )
 
     if background:
         if rc == 0:
@@ -163,15 +198,18 @@ def go(wd = None, target = "", makeArgs = [],
     
 def runMakeGetOutput(*args, **kwargs):
     """
-    Run runmake, wait for it to finish & return the output
+    Run runmake, wait for it to finish & return the output -
+    we capture the output in a random name (to preven collisions)
     """
+    outName = 'moa.%d' % os.getpid()
     wd = kwargs['wd']
     kwargs['captureOut'] = True
+    kwargs['captureOutName'] = outName
     kwargs['background'] = False
     runMake(*args, **kwargs)
-    return getOutput(wd)
+    return getOutput(wd, outName)
 
-def getOutput(wd):
+def getOutput(wd, outName='moa'):
     """
     Get the output from a moa run
 
@@ -185,16 +223,17 @@ def getOutput(wd):
     >>> getOutput(P_EMPTY) == ''
     True
 
-    :param wd: the Moa directory
-    :type wd: String
-
+    @param wd: the Moa directory
+    @type wd: String
+    @param outName: Basename of the output to retrieve
+    @type outName: String
     """
-    outfile = os.path.join(wd, 'moa.out')
+    outfile = os.path.join(wd, '%s.out' % outName)
     if not os.path.exists(outfile):
         return ""    
     return open(outfile).read()
 
-def getError(wd):
+def getError(wd, outName='moa'):
     """
     Get the stderr of a moa run
 
@@ -204,11 +243,12 @@ def getError(wd):
     >>> getError(P_EMPTY) == 'tsterr'
     True
 
-    :param wd: the Moa directory
-    :type wd: String
-
+    @param wd: the Moa directory
+    @type wd: String
+    @param outName: Basename of the output to retrieve
+    @type outName: String
     """
-    errfile = os.path.join(wd, 'moa.err')
+    errfile = os.path.join(wd, '%s.err' % outName)
     if not os.path.exists(errfile):
         return ""    
     return open(errfile).read()
