@@ -24,8 +24,8 @@ all: imagesao $(addprefix ../../html/,$(chapters))
 imagesao: moa.css images/moa_logo_small.png  images/moa_logo_smaller.png
 	cp moa.css ../../html/
 	cp images/* ../../html	
-	cp ../../manual.pdf ../../html/
-
+	cp ../../manual.pdf ../../html/moa_manual.pdf
+	cp ../../api ../../html/ -R
 
 ../../html/index.html: index.template.html header.html footer.html
 	cat header.html > $@
@@ -40,7 +40,7 @@ imagesao: moa.css images/moa_logo_small.png  images/moa_logo_smaller.png
 		>> $@
 	cat footer.html >> $@
 
-notemplate=__moaBase.mk moaBase.mk __moaBaseHelp.mk __upload2gbrowse.mk
+notemplate=__moaBase.mk moaBase.mk __moaBaseHelp.mk __moaBasePre.mk __moaBaseTest.mk __moaBaseVar.mk __upload2gbrowse.mk
 templates=$(patsubst %.mk,%,								\
 				$(sort $(filter-out $(notemplate),			\
 					$(notdir $(wildcard 					\
@@ -75,4 +75,4 @@ temptex=$(addprefix ../../html/t__,$(addsuffix .html,$(templates)))
 	cat footer.html >> $@
 
 clean:
-	rm ../../html/*
+	rm -rf ../../html/*
