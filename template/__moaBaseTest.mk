@@ -70,11 +70,11 @@ template_test:
 	$(foreach v, $(moa_may_define),					\
 		$(call var_defined,$(v)_default)				\
 	)
-	$(foreach v,$(moa_must_define) $(moa_may_define),	\
-		$(if $(call set_is_member,$(v),$(prefix_ex)),,	\
-		$(call var_starts_with,$(moa_ids),$(v)))		\
-	)
-	
+#	$(foreach v,$(moa_must_define) $(moa_may_define),	\
+#		$(if $(call set_is_member,$(v),$(prefix_ex)),,	\
+#		$(call var_starts_with,$(moa_ids),$(v)))		\
+#	)
+
 template_extra_test:
 	RANDOMDIR=`mktemp -d`;                      		\
 	$(call warn,Executing unittest $* in $$RANDOMDIR);	\
@@ -86,4 +86,3 @@ template_extra_test:
 	fi;  							\
 	$(call warn,Finished executing unittest $*);        	\
 	rm -rf $$RANDOMDIR
-	
