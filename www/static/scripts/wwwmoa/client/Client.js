@@ -246,8 +246,10 @@ dojo.addOnLoad(function() {
 		dhmNotify : function(message, dhm) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_DATA) {
 			if(dhm==this.uiComp.fsbrowser) {
-			    if(message.args.key=="locationBreadcrumbCode")
-				this.uiComp.navbreadcrumb.innerHTML=message.args.data;
+			    if(message.args.key=="locationBreadcrumbNode") {
+				dojo.empty(this.uiComp.navbreadcrumb);
+				this.uiComp.navbreadcrumb.appendChild(message.args.data);
+			    }
 			}
 		    }
 		}		
