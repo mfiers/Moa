@@ -74,6 +74,8 @@ parser.add_option('-e', dest='echo', action="store_true",
 if not options.infile:
     raise Exception("Must define an inputfile!")
 
+if not args:
+    args = ['id', 'length']
 
 def fastareader(f):
     F = open(f)
@@ -253,6 +255,8 @@ for a in args:
 F.write("\n")
 for i in range(len(exportData[args[0]])):
     for a in args:
+        if not exportData.has_key(a):
+            continue        
         F.write("%g\t" % exportData[a][i])
     F.write("\n")
 F.close()
