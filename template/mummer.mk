@@ -40,6 +40,14 @@ mum_breaklen_help = Set the distance an alignment extension will attempt \
 mum_breaklen_default = 200
 mum_breaklen_type = integer
 
+moa_may_define += mum_plot_raw
+mum_plot_raw_help = plot an alternative visualization where mummer	\
+does not attempt to put the sequences in the correct order
+mum_plot_raw_type = set
+mum_plot_raw_allowed = T F
+mum_plot_raw_default = F
+
+
 include $(shell echo $$MOABASE)/template/moaBase.mk
 
 mum_a_set = $(addprefix a__, $(mum_input_a_files))
@@ -62,18 +70,21 @@ aix = $(mum_input_a_extension)
 bix = $(mum_input_b_extension)
 
 $(mum_a_set): a__%: $(mum_b_set)
-	$e for against in $?; do \
+	$e for against in $?; do											\
 		prefix=`basename $* .$(aix)`__`basename $$against .$(bix)` ;	\
-		nucmer --maxmatch -b $(mum_breaklen) --prefix=$$prefix 		\
-				$* $$against || true ;								\
-		show-coords -rcl $$prefix.delta > $$prefix.coords || true;	\
-		mummerplot -R $* -Q $$against --layout 						\
-				-t png -p $$prefix $$prefix.delta || true;			\
-		mummerplot -R $* -Q $$against --layout 						\
-				-t postscript -p $$prefix $$prefix.delta || true; 	\
-		mummerplot -t png -p Raw_$$prefix $$prefix.delta || true;			\
-		mummerplot -t postscript -p Raw_$$prefix $$prefix.delta || true; 	\
-		ps2pdf Raw_$$prefix.ps;											\
+		nucmer --maxmatch -b $(mum_breaklen) --prefix=$$prefix			\
+				$* $$against || true ;									\
+		show-coords -rcl $$prefix.delta > $$prefix.coords || true;		\
+		mummerplot -R $* -Q $$against --layout							\
+				-t png -p $$prefix $$prefix.delta || true;				\
+		mummerplot -R $* -Q $$against --layout							\
+				-t postscript -p $$prefix $$prefix.delta || true;		\
+		if [[ "$(mum_plot_raw)" == "T" ]]; then							\
+			mummerplot -t png -p Raw_$$prefix $$prefix.delta || true;	\
+			mummerplot -t postscript -p Raw_$$prefix $$prefix.delta		\
+				|| true;												\
+			ps2pdf Raw_$$prefix.ps;										\
+		fi;																\
 	done
 
 clean: mummer_clean

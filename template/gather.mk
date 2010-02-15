@@ -30,6 +30,7 @@ moa_description_gather = gather a set of files and create hardlinks				\
 moa_must_define += g_input_dir
 g_input_dir_help = list of directories with the input files
 g_input_dir_type = directory
+g_input_dir_cardinality = many
 
 moa_may_define += g_input_pattern
 g_input_pattern_default = *

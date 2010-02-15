@@ -27,12 +27,12 @@ moa_description = Builds a vmatchdb index from a sequence
 
 #variables
 
-$(call moa_fileset_define,vmatch_input,fasta,Input files for vmatch)
+$(call moa_fileset_define,vmatchdb_input,fasta,Input files for vmatch)
 
-moa_may_define += vmatch_pl
-vmatch_pl_help = Prefix length
-vmatch_pl_type = integer
-vmatch_pl_default = 
+moa_may_define += vmatchdb_pl
+vmatchdb_pl_help = Prefix length
+vmatchdb_pl_type = integer
+vmatchdb_pl_default = 
 
 moa_must_define += vmatchdb_name
 vmatchdb_name_help = Name of the vmatch index to create
@@ -61,13 +61,13 @@ vmatchdb_post:
 vmatchdb: $(vmatchdb_input_files)
 	@echo processing $(words $^) input files
 	-rm -f $(vmatchdb_name).fasta
-	if [[ $(words $^) > 1 ]]; then 						\
-		cat $^ > $(vmatchdb_name).fasta;				\
-	else												\
-		ln -s $< $(vmatchdb_name).fasta;				\
+	if [[ $(words $^) > 1 ]]; then								\
+		cat $^ > $(vmatchdb_name).fasta;						\
+	else														\
+		ln -s $(vmatchdb_input_dir)/$< $(vmatchdb_name).fasta;	\
 	fi;
-	mkvtree -db $(vmatchdb_name).fasta -dna -allout		\
-		-v -pl $(vmatch_pl)								\
+	mkvtree -db $(vmatchdb_name).fasta -dna -allout	\
+		-v -pl $(vmatchdb_pl)						\
 		-indexname $(vmatchdb_name).fasta
 
 .PHONY: vmatchdb_clean

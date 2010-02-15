@@ -26,12 +26,23 @@ background-image:url(../images/STYASTbuttonhov1);
 background-color:#F8F8FF
 }
 
-.button:active
+.button:active { border:1px solid #404040; }
+.button:visited { color:#000000; }
+
+
+.moaHelpButton,.moaResetButton,.moaAddButton,.moaNextButton,
+.moaLastButton,.moaFirstButton,.moaPrevButton,.moaSearchButton
 {
-border:1px solid #404040
+background-repeat:no-repeat;
+background-position:center center;
+height:20px; width:24px;
 }
 
-.button:visited
-{
-color:#000000
-}
+.moaHelpButton   { background-image: url(/images/tango/16x16/apps/help-browser.png); }
+.moaResetButton  { background-image: url(/images/tango/16x16/actions/edit-undo.png); }
+.moaAddButton    { background-image: url(/images/tango/16x16/actions/add.png); }
+.moaFirstButton  { background-image: url(/images/LISTfirstA); }
+.moaLastButton   { background-image: url(/images/LISTlastA); }
+.moaNextButton   { background-image: url(/images/LISTnextA); }
+.moaPrevButton   { background-image: url(/images/LISTprevA); }
+.moaSearchButton { background-image: url(/images/FSsearchA); }

@@ -11,6 +11,7 @@ dojo.require("wwwmoa.client.dhm.PBrowser");
 dojo.require("wwwmoa.client.dhm.JobParamEditor");
 dojo.require("wwwmoa.client.dhm.FileViewer");
 dojo.require("wwwmoa.client.dhm.JobStatusViewer");
+dojo.require("wwwmoa.client.dhm.NavPanel");
 
 dojo.addOnLoad(function() {
 	dojo.declare("wwwmoa.client.Client", dijit._Widget, {
@@ -35,9 +36,21 @@ dojo.addOnLoad(function() {
 		    this.domNode=dojo.create("div", null);
 		    this.domNode.appendChild(this.uiComp.parent.domNode);
 
-		    this.uiComp.nav=new dijit.layout.ContentPane({region : "top", splitter : false, style : "height:32px"});
+		    this.uiComp.nav=new dijit.layout.ContentPane({region : "top", splitter : false, style : "height:40px"});
 
 		    this.uiComp.parent.addChild(this.uiComp.nav);
+
+		    this.uiComp.navpanel=new wwwmoa.client.dhm.NavPanel({style : {display : "inline"}});
+		    this.uiCompDHM.push(this.uiComp.navpanel);
+
+		    this.uiComp.nav.containerNode.appendChild(this.uiComp.navpanel.domNode);
+
+		    this.uiComp.nav.containerNode.appendChild(dojo.create("span", {innerHTML : " | "}));
+
+		    this.uiComp.navbreadcrumb=dojo.create("span", {style : {marginRight : "20px"}});
+
+		    this.uiComp.nav.containerNode.appendChild(this.uiComp.navbreadcrumb);
+
 
 		    this.uiComp.fsbrowserpane=new dijit.layout.ContentPane({region : "leading", style : "width:300px", splitter : true});
 
@@ -51,10 +64,6 @@ dojo.addOnLoad(function() {
 		    this.uiComp.tab=new dijit.layout.TabContainer({region : "center", splitter : true});
 
 		    this.uiComp.parent.addChild(this.uiComp.tab);
-
-		    // just a placeholder item for the moment
-
-		    this.uiComp.main=new dijit.layout.ContentPane({title : "Home", style : "padding:6px"});
 
 
 
@@ -237,8 +246,10 @@ dojo.addOnLoad(function() {
 		dhmNotify : function(message, dhm) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_DATA) {
 			if(dhm==this.uiComp.fsbrowser) {
-			    if(message.args.key=="locationBreadcrumbCode")
-				this.uiComp.nav.domNode.innerHTML=message.args.data;
+			    if(message.args.key=="locationBreadcrumbNode") {
+				dojo.empty(this.uiComp.navbreadcrumb);
+				this.uiComp.navbreadcrumb.appendChild(message.args.data);
+			    }
 			}
 		    }
 		}		

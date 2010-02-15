@@ -143,8 +143,10 @@ lftp_mirror:
 .PHONY: lftp_get
 lftp_get: _addcl=$(if $(lftp_get_name),-o $(lftp_get_name))
 lftp_get:
-	$e cd $(lftp_output_dir); 														\
-		lftp $(lftp_au) -e "get $(_addcl) '$(lftp_url)'; exit";
+	$e cd $(lftp_output_dir);								\
+		for xx in $(lftp_url); do							\
+			lftp $(lftp_au) -e "get $(_addcl) '$$xx'; exit";	\
+		done
 	$e if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
 .PHONY: lftp_dos2unix

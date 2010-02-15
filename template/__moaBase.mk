@@ -190,7 +190,7 @@ moa_set_runlock:
 		oldpid=`cat moa.runlock`;							\
 		oldexec=`ps -p $$oldpid -o comm=`;					\
 		if [[ "$$oldexec" == "make" ]]; then				\
-			$(call errr,This job is already running);		\
+			$(call exer,This job is already running);		\
 		else 												\
 			$(call warn,Found what appears to be a stale lockfile - removing);	\
 			rm moa.runlock;									\

@@ -1,717 +1,688 @@
 
 dojo.provide("wwwmoa.client.dhm.FSBrowser");
-dojo.require("dijit._Widget");
 
-dojo.addOnLoad(function() { dojo.declare("wwwmoa.client.dhm.FSBrowser", dijit._Widget, {
+dojo.require("wwwmoa.client.dhm._DHM");
 
+dojo.require("dijit.form.Button");
+dojo.require("dijit.TooltipDialog");
+dojo.require("dijit.form.DropDownButton");
+dojo.require("dijit.form.TextBox");
+dojo.require("dijit.form.NumberTextBox");
 
+dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.client.dhm._DHM, {
 
-            /* * * * * * * * * * * * * * * */
-	    /* * * * * * Storage * * * * * */
-	    /* * * * * * * * * * * * * * * */
+		_location : "",
 
+	        _filter : "",
+		_filterOn : false,
 
-       	    _visualDOM : null, // holds the visual node to publish (Node)
-	    _locked : false, // holds whether or not the input to the widget should be suppressed (boolean)
-	    _response : null, // holds the last response received from the API (parsed JSON)
-	    _location : "", // holds the current location (string)
-	    _locationComponents : [], // holds the location components from the last response received from the API (Array of String)
-	    _startIndex : 1, // holds the current start index, which is a 1-based index that represents the first item to be shown (number)
-	    _indexCount : 15, // holds the current index count, which represents how many items (max) to show at once (number)
-	    _expandedIndexCount : 100, // holds the current expanded index count, which represents how many items (max) to show at once when expanded (number)
-	    _colCount : 5, // holds how many columns to display the results in when expanded (number)
-	    _dhmManager : null, // holds the current DHM Manager, which should be contacted for certain operations (Object)
-	    _filter : "", // holds the filter search phrase (string)
-	    _filterType : "contains", // holds the filter search criteria (string)
-	    _filterOn : false, // holds whether or not the filter should be used (boolean)
-	    _expanded : false, // holds whether or not the widget is expanded (boolean)
-	    _expandedNode : null, // holds the node to publish to while in expanded mode (Node)
+		_creatingItem : false,
 
+		_items : [],
+		_parentItems : [],
+		_available : 0,
 
+		_cols : 1,
+		_startIndex : 0,
+		_indexCount : 15,
 
-	    /* * * * * * * * * * *  * * * * * * * * * * * */
-	    /* * * * * * Initializing Functions * * * * * */
-	    /* * * * * * * * * * *  * * * * * * * * * * * */
+		_widgets : [],
 
 
-	    buildRendering : function() {
-		this.domNode=dojo.create("div", null);
-		this._refreshVisual();
-	    },
+		_setLocationAttr : function(val) {
+		    this._location=val;
+		    this._goToFirstGroup();
+		},
 
+		_getLocationAttr : function() {
+		    return this._location;
+		},
 
+		_setColsAttr : function(val) {
+		    this._cols=Math.max(Math.floor(val), 1);
+		    this._nav();
+		},
 
-	    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
-	    /* * * * * * Attribute Setters and Getters * * * * * */
-	    /* * * * * * * * * * * * * * * * * * * * * * * * * * */
+		_getColsAttr : function() {
+		    return this._cols;
+		},
 
+		_setStartIndexAttr : function(val) {
+		    this._startIndex=Math.max(Math.floor(val), 0);
+		    this._nav();
+		},
 
-	    _setVisualDOMAttr : function(val) {
-	        this._visualDOM=val;
-		this._refreshVisual();
-	    },
+		_getStartIndexAttr : function() {
+		    return this._startIndex;
+		},
 
-	    _getVisualDOMAttr : function() {
-		return this._visualDOM;
-	    },
+		_setIndexCountAttr : function(val) {
+		    this._indexCount=Math.max(Math.floor(val), 1);
+		    this._nav();
+		},
 
-	    _setVisualCodeAttr : function(val) {
-		if(val==null) {
-		    this.attr("visualDOM", null);
-		    return;
-		}
-
-		this.attr("visualDOM", dojo.create("div", {innerHTML : val}));
-	    },
-
-	    _getVisualCodeAttr : function() {
-		if(this.attr("visualDOM")==null)
-		    return null;
-
-		return this.attr("visualDOM").innerHTML;
-	    },
-
-	    _setLockedAttr : function(val) {
-		this._locked=val;
-	    },
-
-	    _getLockedAttr : function() {
-		return this._locked;
-	    },
-
-            _setResponseAttr : function(val) {
-		this._response=val;
-	    },
-
-	    _getResponseAttr : function() {
-		return this._response;
-	    },
-
-	    _getColCountAttr : function() {
-		if(this._expanded)
-		    return this._colCount;
-		else
-		    return 1;
-	    },
-
-	    _setColCountAttr : function(val) {
-		try {
-		   fix_val=Math.floor(new Number(val));
-
-		   if(fix_val<1)
-		       this._colCount=1;
-		   else
-		       this._colCount=fix_val;
-		}
-		catch(err) {}
-	    },
-
-	    _setLocationAttr : function(val) {
-		this._location=val;
-		this.attr("startIndex", 0);
-		this._navToLocation();
-	    },
-
-	    _getLocationAttr : function() {
-		return this._location;
-	    },
-
-	    _setLocationComponents : function(val) {
-		this._locationComponents=val;
-	    },
-
-	    _getLocationComponents : function() {
-		return this._locationComponents;
-	    },
-
-	    _setLocationIsMoaAttr : function(val) {
-		this._locationIsMoa=val;
-	    },
-
-	    _getLocationIsMoaAttr : function() {
-		return this._locationIsMoa;
-	    },
-
-            _setStartIndexAttr : function(val) {
-		if(val<1)
-		    this._startIndex=1;
-		else
-		    this._startIndex=val;
-	    },
-
-	    _getStartIndexAttr : function() {
-		return this._startIndex;
-	    },
-
-	    _setFilterAttr : function(val) {
-		this._filter=val;
-	    },
-
-	    _getFilterAttr : function() {
-		return this._filter;
-	    },
-
-	    _setFilterTypeAttr : function(val) {
-	        this._filterType=val;
-	    },
-
-	    _getFilterTypeAttr : function() {
-		return this._filterType;
-	    },
-
-	    _setFilterOnAttr : function(val) {
-		this._filterOn=val;
-	    },
-
-	    _getFilterOnAttr : function() {
-		return this._filterOn;
-	    },
-
-	    _setIndexCountAttr : function(val) {
-		var val_fixed;
-
-		if(val<1)
-		    val_fixed=1;
-		else if(val>500)
-		    val_fixed=500;
-		else
-		    val_fixed=val;
-
-		if(this._expanded)
-		    this._expandedIndexCount=val_fixed;
-		else
-		    this._indexCount=val_fixed;
-	    },
-
-	    _getIndexCountAttr : function() {
-		if(this._expanded)
-		    return this._expandedIndexCount;
-		else
+		_getIndexCountAttr : function() {
 		    return this._indexCount;
-	    },
+		},
 
-	    // A psuedo-property that returns HTML code that can be used to create a "breadcrumb" representation of the current location.
-	    _getLocationBreadcrumbCodeAttr : function() {
-		var locationComponents=this.attr("locationComponents");
-		var code="<span style=\"font-weight:bold\"><img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSdiroprtA")) + "\" alt=\"Directory\"> <span style=\"color:#0000FF; text-decoration:underline; cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._contact('rtx');\">Root</span>";
-		
-		for(var x=0; x<locationComponents.length; x++) {
-		    code+=" / <span style=\"color:#0000FF; text-decoration:underline; cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._contact('par-"+x+"');\">"+wwwmoa.formats.js.fix_text_for_html(locationComponents[x]["name"])+"</span>";
-		}
+		_nav : function() {
+		    var args="?";
 
-		code+="</span>";
-		
-		return code;
-
-	    },
-
-
-
-
-            /* * * * * * * * * * * * * * * * * * * * * */
-	    /* * * * * * Navigation Routines * * * * * */
-            /* * * * * * * * * * * * * * * * * * * * * */
-	    
-	    // Starts a navigation to the location specified in the "location" attribute.
-	    _navToLocation : function() {
-		var location="";
-		var api_command="ls?start="+this.attr("startIndex")+"&end="+(this.attr("startIndex")+this.attr("indexCount")-1);
-		
-		if(this.attr("filterOn"))
-		    api_command+="&filter="+wwwmoa.io.rl.url_encode(this.attr("filter"))+"&filter-type="+wwwmoa.io.rl.url_encode(this.attr("filterType"));
-
-		if(this.attr("location")!==undefined)
-		    location=this.attr("location");
-		    
-		this.attr("locked", true);
-		
-		wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api(api_command, location),dojo.hitch(this, function(data) {
-			this._processAPIResponse(data); // use the callback function of this object
-		    }), 8192); // be somewhat patient about receiving the listing
-	    },
-
-	    // Checks whether or not navigating to the given start index can be done successfully.
-	    _isStartIndexOpValid : function(newsi) {
-		if((typeof newsi != "number")&& (typeof newsi != "Number"))
-		    return false;
-
-		if(newsi==Number.NaN)
-		    return false;
-
-		if(newsi>this.attr("response")["ls-available"])
-		    return false;
-
-		if(newsi<1) 
-		    return false;
-		
-		return true;
-	    },
-
-	    // Updates the "startIndex" attribute, if navigating to the given start index can be done successfully.
-	    _startIndexOp : function(newsi) {
-	        if(this._isStartIndexOpValid(newsi))
-		    this.attr("startIndex", newsi);
-	    },
-
-	    // Checks whether or not navigating to the given index count can be done successfully.
-	    _isIndexCountOpValid : function(newic) {
-		if((typeof newic != "number")&& (typeof newic != "Number"))
-		    return false;
-
-		if(newic==Number.NaN)
-		    return false;
-
-		if(newic<1) 
-		    return false;
-		
-		return true;
-	    },
-
-	    // Updates the "indexCount" attribute, if navigating to the given index count can be done successfully.
-	    _indexCountOp : function(newic) {
-	        if(this._isIndexCountOpValid(newic))
-		    this.attr("indexCount", newic);
-	    },
-
-	    // Checks whether or not navigating to the given column count can be done successfully.
-	    _isColCountOpValid : function(newic) {
-		if((typeof newic != "number")&& (typeof newic != "Number"))
-		    return false;
-
-		if(newic==Number.NaN)
-		    return false;
-
-		if(newic<1) 
-		    return false;
-		
-		return true;
-	    },
-
-	    // Updates the "colCount" attribute, if navigating to the given column count can be done successfully.
-	    _colCountOp : function(newcc) {
-	        if(this._isColCountOpValid(newcc))
-		    this.attr("colCount", newcc);
-	    },
-
-    	    // Starts a navigation to the start index specified, preserving the other parameters set earlier.  If the start index cannot be navigated to successfully, the start index is not changed, but the navigation is still carried out.
-	    _navToIndex : function(newsi) {
-		var newsi_fixed=Math.floor(new Number(newsi));
-
-		if(this.attr("locked"))
-		    return;
-
-		this._startIndexOp(newsi_fixed);
-		this._navToLocation();
-	    },
-
-    	    // Starts a navigation to the index count specified, preserving the other parameters set earlier.  If the index count cannot be navigated to successfully, the index count is not changed, but the navigation is still carried out.
-	    _navToIndexCount : function(newic) {
-		var newic_fixed=Math.floor(new Number(newic));
-
-		if(this.attr("locked"))
-		    return;
-
-		this._indexCountOp(newic_fixed);
-		this._navToLocation();
-	    },
-
-    	    // Starts a navigation to the column count specified, preserving the other parameters set earlier.  If the column count cannot be navigated to successfully, the column count is not changed, but the navigation is still carried out.
-	    _navToColCount : function(newcc) {
-		var newcc_fixed=Math.floor(new Number(newcc));
-
-		if(this.attr("locked"))
-		    return;
-
-		this._colCountOp(newcc_fixed);
-		this._navToLocation();
-	    },
-
-    	    // Starts a navigation to the previous index group, preserving the other parameters set earlier.  If the current index group is already the first, the navigation is still carried out without changing the start index.
-	    _navToIndexPrevGroup : function() {
-		if(this.attr("locked"))
-		    return;
-
-		this._startIndexOp(this.attr("startIndex")-this.attr("indexCount"));
-		this._navToLocation();
-	    },
-
-    	    // Starts a navigation to the next index group, preserving the other parameters set earlier.  If the current index group is already the last, the navigation is still carried out without changing the start index.
-	    _navToIndexNextGroup : function() {
-		if(this.attr("locked"))
-		    return;
-
-		this._startIndexOp(this.attr("startIndex")+this.attr("indexCount"));
-		this._navToLocation();
-	    },
-
-    	    // Starts a navigation to the first index group, preserving the other parameters set earlier.  The navigation is carried out even if the current index group is already the first.
-	    _navToIndexFirstGroup : function() {
-		if(this.attr("locked"))
-		    return;
-
-		this._startIndexOp(1);
-		this._navToLocation();
-	    },
-
-    	    // Starts a navigation to the last index group, preserving the other parameters set earlier.  The navigation is carried out even if the current index group is already the last.
-	    _navToIndexLastGroup : function() {
-		if(this.attr("locked"))
-		    return;
-
-		this._startIndexOp(Math.max(1, this.attr("response")["ls-available"]-this.attr("indexCount")+1));
-		this._navToLocation();
-	    },
-
-	    // Starts a navigation to the first index group using a given filter, preserving the other parameters set earlier.
-	    _navToFilter : function(filter) {
-		if(this.attr("locked"))
-		    return;
-
-		if(filter=="")
-		    return;
-
-		this.attr("filterOn", true);
-		this.attr("filter", filter);
-		this._startIndexOp(1);
-		this._navToLocation();
-	    },
-
-	    // Starts a navigation to the first index group after removing a filter if it is present, preserving the other parameters set earlier.
-	    _navToNoFilter : function() {
-		if(this.attr("locked"))
-		    return;
-
-		this.attr("filterOn", false);
-		this._startIndexOp(1);
-		this._navToLocation();
-	    },
-
-	    // Takes the previously generated HTML and packages it for viewing.  Then, it pushes the HTML code into the visual node so that it is visible.
-	    _refreshVisual : function() {
-                var node;
-
-		if(this.domNode==null) // if we do not have a visual node
-		    return; // there is no reason to proceed
-
-		if(this.attr("visualCode")==null) // if either the main code or the current directory item code is not present
-		    node=dojo.create("div", null); // create blank section
-		else // if both the main code and the current directory item code is present
-		    node=this.attr("visualDOM");
-
-		dojo.forEach(dijit.findWidgets(this.domNode), function(item) {item.destroyRecursive(false);});
-		dojo.empty(this.domNode);
-
-		if(this._expanded) {
-		    dojo.forEach(dijit.findWidgets(this._expandedNode), function(item) {item.destroyRecursive(false);});
-
-		    dojo.empty(this._expandedNode);
-		    
-		    this._expandedNode.appendChild(node);
-		}
-		else {
-		    this.domNode.appendChild(node);
-		}
-	    },
-
-
-	    /* * * * * * * * * *  * * * * * * * * * * */
-	    /* * * * * * Callback Functions * * * * * */
-	    /* * * * * * * * * *  * * * * * * * * * * */
-
-
-            // Receives data from the API request.  Then, it creates the HTML code that will be used to display the directory contents.  Finally, it requests an update of the visual node.
-            _processAPIResponse : function(data) {
-		
-                // Helper function that properly truncates a name.
-		var truncName=function(str) {
-                    var strtrunc=str.substr(0,24); // cap characters at 24
-
-		    if(str.length!=strtrunc.length) { // if caping characters made a difference
-			strtrunc=strtrunc.substr(0,21); // cap characters at 13, so there will be 24  characters in total
-			strtrunc+="..."; // add on ...
+		    if(this._filterOn) {
+			args+="filter="+wwwmoa.io.rl.url_encode(this._filter)+"&";
+			args+="filter-type=contains&";
 		    }
 
-		    return strtrunc;
-		};
-		
-		var ls_response=wwwmoa.formats.json.parse(data); // attempt a parse of the received data
-		var no_read=0;
-		var buf_code=""; // buffer for visual code
+		    args+="start="+(this._startIndex+1)+"&";
+		    args+="end="+(this._startIndex+this._indexCount)+"&";
 
-		var is_dir=false; // holds whether the currently processed item is a directory or not
-		var files_exist=false;  // holds whether or not the current directory has any items
-		var col_count=this.attr("colCount");
+		    this._cancelNav();
 
-		this.attr("response", ls_response); // save the parsed response we have received for later use
-		
+		    this.dhmLock();
 
-		if(data!=null) {
+		    this._navRequest=wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("ls"+args, this._location),
+							dojo.hitch(this, this._navCallback),
+							8000);
+		},
 
-		    this.attr("locationComponents", ls_response["dir"]);
+		_navCallback : function(data) {
+		    this.dhmUnlock();
 
-		    if(this._expanded)
-			buf_code+=this.attr("locationBreadcrumbCode");
+		    if(data==null)
+			return;
 
+		    var response=wwwmoa.formats.json.parse(data);
 
-		    buf_code+="<div style=\"font-size:10pt; text-align:center\">currently showing <span style=\"font-weight:bold;\">"+ this.attr("startIndex") +"</span> to <span style=\"font-weight:bold\">"+ Math.min((this.attr("startIndex")+this.attr("indexCount")-1), ls_response["ls-available"]) +"</span> out of <span style=\"font-weight:bold\">"+ls_response["ls-available"]+"</span>";
+		    this._parentItems=response["dir"];
+		    this._items=response["ls"];
+		    this._available=response["ls-available"];
 
-
-		    buf_code+="<br>in a group of <select style=\"font-weight:bold\" onchange=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToIndexCount(this.value);\">";
-
-		    for(var x=(this._expanded ? 50 : 5); x<=(this._expanded ? 500 : 50); x+=(this._expanded ? 50 : 5)) {
-			buf_code+="<option value=\""+x+"\""+ (x==this.attr("indexCount") ? " selected=\"selected\"" : "") +">"+x+"</option>";
-		    }
-
-		    buf_code+="</select>";
-
-
-		    if(this._expanded) {
-			buf_code+=" in <select style=\"font-weight:bold\" onchange=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToColCount(this.value);\">";
-
-			for(var x=1; x<=10; x++) {
-			    buf_code+="<option value=\""+x+"\""+ (x==this.attr("colCount") ? " selected=\"selected\"" : "") +">"+x+"</option>";
+		    if(this._available<this._startIndex+1)
+			if(this._available!=0) {
+			    this._goToLastGroup();
+			    return;
 			}
 
-			buf_code+="</select> columns";
-		    }
+		    this._parentItems=[{name : "[Root]", path : ""}].concat(this._parentItems);
 
-		    
-		    buf_code+="</div>";
-		}
+		    this._updateDisplay();
+		},
 
+		_cancelNav : function() {
+		    if(this._navRequest!=null) {
+			this._navRequest.cancel();
+			this.dhmUnlock();
 
-		// add navigation options
-		buf_code+="<div style=\"font-weight:bold; font-size:14pt; color:#0000FF; text-align:center\">";
-		
-		buf_code+="<span style=\"cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToIndexFirstGroup();\" title=\"Go to the beginning of the list.\">&lArr;</span>";
-
-		buf_code+=" <span style=\"cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToIndexPrevGroup();\" title=\"Go to the previous group of the list.\">&larr;</span> <span style=\"color:#000000\">|</span>";
-
-		if(!this._expanded) {
-		    buf_code+=" <span style=\"cursor:pointer\" title=\"Show expanded view.\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._expand();\">E</span> ";
-
-		    buf_code+="<span style=\"color:#000000\">|</span>";
-		}
-
-		buf_code+=" <span style=\"cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToIndexNextGroup();\" title=\"Go to the next group of the list.\">&rarr;</span>";
-
-		buf_code+=" <span style=\"cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToIndexLastGroup();\" title=\"Go to the end of the list.\">&rArr;</span>";
-
-		buf_code+="</div>";
-
-		buf_code+="<div style=\"text-align:center\"><input type=\"text\" style=\"width:15%\"><button onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToIndex(this.previousSibling.value);\">Goto</button> <input type=\"text\" style=\"width:30%\"><button onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToFilter(this.previousSibling.value);\">Search</button></div>";
-
-		if(this.attr("filterOn")) {
-		    buf_code+="<div style=\"font-size:10pt; border:1px solid #008000; background-color:#F0FFF0; padding:2px\">You are currently viewing the results of a search for &quot;"+ wwwmoa.formats.html.fix_text(this.attr("filter")) +"&quot;.  To view all of the contents of the directory, <span style=\"color:#0000FF; text-decoration:underline; cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToNoFilter();\">click here</span>.</div><br>";
-		}
-
-		if(data==null) { // if null was passed, we have an error
-		    buf_code+="<div style=\"font-size:10pt; border:1px solid #800000; background-color:#FFF0F0; padding:2px\">Sorry, but the directory contents could not be loaded.<span style=\"color:#0000FF; text-decoration:underline; cursor:pointer\" onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._navToLocation();\">Click here</span> to try again.</div>"; // create an error message
-		    this.attr("locked", false);
-		    
-		    this.attr("visualCode", buf_code); // make main code "public"
-		    return;
-		}
-
-
-		// start structural table
-		buf_code+="<table style=\"font-weight:bold; font-size:10pt\">";
-
-
-		var_colour="";
-
-		var y;
-
-		for(var x=0; x<ls_response["ls"].length; x++) { // for each item in the current directory
-		    if(!ls_response["ls"][x]["read-allowed"]) { // if we cannot read a file
-			no_read++; // make a note of it
-			continue; // do not bother even showing it
-		    }
-
-		    is_dir=(ls_response["ls"][x]["type"]=="dir"); // find whether the item is a dir or not
-		    
-		    files_exist|=!is_dir; // if this item is a file, remember that we have encountered files
-		    
-		    name_colour=(ls_response["ls"][x]["write-allowed"] ? "#0000FF" : "#C0C0C0");
-
-
-
-		    if(!this._expanded || (x%col_count==0))
-			buf_code+="<tr style=\"margin:0px\">";
-
-		    buf_code+="<td>";
-
-		    
-		    
-		    if(!is_dir) { // if the item is a file
-			// create code for start of entry for a file
-			buf_code+="<img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSfileA")) + "\" alt=\"File\" style=\"vertical-align:middle\"> ";
-		    }
-		    else { // if the item is a directory
-			// create code for start of entry for a directory
-			
-			if(ls_response["ls"][x]["x-is-moa"]) // if the item is a moa directory
-			    buf_code+="<img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSdirclmoaA")) + "\" alt=\"Moa\" title=\"This item is a Moa directory.\" style=\"vertical-align:middle\"> "; // give it special annotation
-			else // if the item is not a moa directory
-			    buf_code+="<img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSdirclA")) + "\" alt=\"Directory\" style=\"vertical-align:middle\"> "; // give it normal annotation
-			    }
-
-		    buf_code+="<span style=\"font-weight:bold; color:"+name_colour+"; text-decoration:underline; cursor:pointer\" ";
-		        
-		    // add code to allow for item selection
-		    buf_code+="onclick=\"dijit.byId('" + wwwmoa.formats.js.fix_text_for_html(this.id) + "')._contact('itm-" + x + "');\" onmouseover=\"this.style.textDecoration='none';\" onmouseout=\"this.style.textDecoration='underline';\"";
-		   
-		    
-		    // start creating basic entry code (which is the same for files and directories)
-		    buf_code+=" title=\""+wwwmoa.formats.html.fix_text(ls_response["ls"][x]["name"])+"\">";
-		    buf_code+=wwwmoa.formats.html.fix_text(truncName(ls_response["ls"][x]["name"])); // add the name of the file
-		    buf_code+="</span>";
-
-		    buf_code+="</td><td>";
-
-		    if(ls_response["ls"][x]["link"]) // if the item is a link
-			buf_code+="<img src=\"" + wwwmoa.formats.html.fix_text(wwwmoa.io.rl.get_image("FSlinkA")) + "\" alt=\"Link\" title=\"This item is actually a link.\">"; // give it the proper annotation
-
-
-		    buf_code+="</td>";
-
-
-		    if(!this._expanded || (x%col_count==col_count-1))
-			buf_code+="</tr>";
-
-
-		    y=x;
-                }
-
-		if(y%col_count!=col_count-1)
-		    buf_code+="</tr>";
-
-		// end structural table
-		buf_code+="</table>";
-
-		// print the number of unreadable files, if any were encountered
-		if(no_read>0)
-		    buf_code+="<span style=\"font-size:10pt\">("+no_read+" unreadable items, not displayed)</span><br>"
-
-
-		this.attr("visualCode", buf_code); // make main code "public"
-		
-		
-		this.attr("locationIsMoa", ls_response["x-dir-is-moa"]);
-	    
-
-		this.attr("locked", false); // requests can now be sent again without a problem
-
-		this._dhmManager.dhmNotify({type : wwwmoa.dhm.DHM_MSG_DATA, args : { key : "locationBreadcrumbCode", data : this.attr("locationBreadcrumbCode") }}, this);
-	    },
-
-
-           // Callback for receiving "contact messages".
-           _contact : function(data) {
-		var path;
-		var item_index;
-
-
-		if(this.attr("locked")) // if we are locked
-		    return; // we should not do anything, so exit
-
-		if(this.attr("response")==null) // if we do not have a response from api call
-		    return; // we cannot do anything, so exit
-
-		// everything seems to be good, so convert the item index if it exists
-		try {
-		    item_index=new Number(data.substr(4)); // item index always starts at 5th character, if it exists at all
-		}
-		catch(err) { // on conversion failure
-		    item_index=0; // assume an index of 0
-		}
-		
-		if(data.substr(0,3)=="rtx") // if the message sent requested a change to the root directory
-		    path=""; // use a blank string for the path
-		else if(data.substr(0,4)=="par-") // if the message sent requested a parent directory
-		    path=this.attr("response")["dir"][item_index]["path"]; // retrieve the pathname associated with the parent directory
-		else if(data.substr(0,4)=="itm-") { // if the message sent requested an item in the current directory
-		    path=this.attr("response")["ls"][item_index]["path"]; // retrieve the pathname associated with the item
-
-		    if(this.attr("response")["ls"][item_index]["type"]=="file") {
-			this._previewFile(path);
 			return;
 		    }
-		}
-		else // if the message has not yet been recognized
-		    return; // we should just exit
-		
-		this._changeWD(path); // pass the pathname to be handled properly
-	    },
 
+		    this._navRequest=null;
+		},
 
-	    /* * * * * * * * * * * * * * * * * * * * * * */
-	    /* * * * * * Misc Helper Functions * * * * * */
-	    /* * * * * * * * * * * * * * * * * * * * * * */
+		_initDisplay : function() {
+		    var widget, event, event_obj;
+		    var create_dropdown, goto_dropdown;
 
+		    if(this._display!=null)
+			return;
 
-	    // Attempts to change the current working directory.
-	    _changeWD : function(path) {
-		this.attr("filterOn", false);
+		    this._display=dojo.create("div", {style : {fontSize : "10pt"}});
 
-		this._dhmManager.dhmRequest({type : wwwmoa.dhm.DHM_REQ_WDNAV, args : { path : path}}, this);
-	    },
+		    this._displayMessage=dojo.create("div", {style : {padding : "3px",
+								      border : "1px solid #90D090",
+								      backgroundColor : "#F0FFF0"
+			    }});
+		    this._clearMessages();
 
-	    // Attempts to open the file for a preview.
-	    _previewFile : function(path) {
-		this._dhmManager.dhmRequest({type : wwwmoa.dhm.DHM_REQ_FILEACTION, args : {path : path}}, this);
-	    },
-
-	    // Attempts to open the widget in "expanded mode".
-	    _expand : function() {
-		this._expanded=true;
-		if(!this._dhmManager.dhmRequest({type : wwwmoa.dhm.DHM_REQ_MODAL, args : { title : "File Browser", body : "Test Body" }}, this)) {
-		    this._expanded=false;
-		    return;
-		}
-
-		if(!this._expanded)
-		    return;
-
-		this.attr("visualCode", null);
-	    },
+		    this._displayList=dojo.create("table", null);
 
 
 
-	    /* * * * * * * * * * * *  * * * * * * * * * * * * */
-	    /* * * * * * DHM Communication Handlers * * * * * */
-	    /* * * * * * * * * * * *  * * * * * * * * * * * * */
+		    var helper={
+			_widgets : this._widgets,
+			_display : this._display,
 
-	    dhmNotify : function(message) {
-		if(message.type == wwwmoa.dhm.DHM_MSG_WDNAV) {
-		    this.attr("locked", true);
-		    this.attr("location", message.args.path); // set the new location
-		}
+			addCont : function(cont) {
+			    this._display.appendChild(cont);
+			    this.setCont(cont);
+			},
 
-		if(message.type == wwwmoa.dhm.DHM_MSG_MODAL_GAIN_CTRL) {
-		    this._expandedNode=message.args.node;
-		    this._navToLocation();
-		}
+			setCont : function(cont) {
+			    this._cont=cont;
+			},
 
-		if(message.type == wwwmoa.dhm.DHM_MSG_MODAL_LOOSE_CTRL) {
-		    if(this._expandedNode==message.args.node) {
-			this._expandedNode==null;
-			this._expanded=false;
-			this._navToLocation();
+			addWidget : function(widget) {
+			    this._widgets.push(widget);
+			    this._cont.appendChild(widget.domNode);
+			},
+
+			addLine : function() {
+			    this._cont.appendChild(dojo.create("br", null));
+			}
+		    };
+
+
+
+		    helper.addCont(dojo.create("div", {style : {textAlign : "center"}}));
+
+		    var addListButton=dojo.hitch({obj : this, helper : helper}, function(type, event) {
+			var widget=new dijit.form.Button({showLabel : false,
+							  iconClass : "moa"+type+"Button",
+							  onClick : dojo.hitch(this.obj, event)
+			    });
+
+			this.helper.addWidget(widget);
+			});
+
+		    addListButton("First", this._goToFirstGroup);
+		    addListButton("Prev", this._goToPrevGroup);
+		    addListButton("Next", this._goToNextGroup);
+		    addListButton("Last", this._goToLastGroup);
+
+
+
+
+		    create_dropdown=new dijit.TooltipDialog({});
+		    goto_dropdown=new dijit.TooltipDialog({});
+
+		    widget=new dijit.form.DropDownButton({showLabel : false,
+							  iconClass : "moaAddButton",
+							  dropDown : create_dropdown
+			});
+		    helper.addWidget(widget);
+
+		    widget=new dijit.form.DropDownButton({showLabel : false,
+							  iconClass : "moaSearchButton",
+							  dropDown : goto_dropdown
+			});
+		    helper.addWidget(widget);
+
+
+
+
+		    helper.setCont(create_dropdown.containerNode);
+
+		    widget=new dijit.form.TextBox({style : {width : "250px"}});
+		    helper.addWidget(widget);
+		    helper.addLine();
+
+		    event=function() {
+			if(this.textbox.attr("value")=="")
+			    return;
+
+			this.obj._createItem(this.textbox.attr("value"), this.isdir);
+
+			this.textbox.attr("value", "");
+
+			dijit.popup.close(this.dropdown);
+		    };
+
+		    event_obj={obj : this,
+			       textbox : widget,
+			       dropdown : create_dropdown,
+			       isdir : true
+		    };
+
+		    widget=new dijit.form.Button({label : "Create Directory",
+						  onClick : dojo.hitch(event_obj, event)
+			});
+		    helper.addWidget(widget);
+
+		    event_obj={obj : this,
+			       textbox : event_obj.textbox,
+			       dropdown : create_dropdown,
+			       isdir : false
+		    };
+
+		    widget=new dijit.form.Button({label : "Create File",
+						  onClick : dojo.hitch(event_obj, event)
+			});
+		    helper.addWidget(widget);
+
+
+
+
+
+		    helper.setCont(goto_dropdown.containerNode);
+
+		    widget=new dijit.form.NumberTextBox({style : {width : "100px"}});
+		    helper.addWidget(widget);
+
+		    widget=new dijit.form.Button({label : "Goto",
+						  onClick : dojo.hitch({obj : this,
+									textbox : widget,
+									dropdown : goto_dropdown
+						      }, function() {
+							  if(!this.textbox.isValid())
+							      return;
+
+							  this.obj._goToGroup(this.textbox.attr("value")-1);
+
+							  this.textbox.attr("value", "");
+
+							  dijit.popup.close(this.dropdown);
+						      })});
+		    helper.addWidget(widget);
+		    helper.addLine();
+
+		    widget=new dijit.form.TextBox({style : {width : "250px"}});
+		    helper.addWidget(widget);
+
+		    widget=new dijit.form.Button({label : "Search",
+						  onClick : dojo.hitch({obj : this,
+									textbox : widget,
+									dropdown : goto_dropdown
+						      }, function() {
+							  if(this.textbox.attr("value")=="")
+							      return;
+
+							  this.obj._turnOnFilter(this.textbox.attr("value"));
+
+							  this.textbox.attr("value", "");
+
+							  dijit.popup.close(this.dropdown);
+						      })});
+		    helper.addWidget(widget);
+
+
+
+		    helper.addCont(this._displayMessage);
+		    helper.addCont(this._displayList);
+
+		    this._dhmSetVisualByNode(this._display);
+		},
+
+		_updateDisplay : function() {
+		    var tr, td, tbody, img, span;
+		    var event;
+		    var item;
+		    var icon_alt, icon_name;
+
+		    this._initDisplay();
+
+		    this._clearMessages();
+
+		    dojo.empty(this._displayList);
+
+		    tbody=dojo.create("tbody", null);
+
+		    this._displayList.appendChild(tbody);
+
+		    if(this._items.length<1)
+			this._addEmptyMessage();
+
+		    for(var x=0; x<this._items.length; x++) {
+			if(x%this._cols==0) {
+			    tr=dojo.create("tr", null);
+			    tbody.appendChild(tr);
+			}
+			
+			item=this._items[x];
+
+			if((!item["write-allowed"]) || (!item["read-allowed"]))
+			    continue;
+
+			event=dojo.hitch({obj : this, x : x}, function() {
+				this.obj._openItem(this.x);
+			    });
+
+			td=dojo.create("td", {onclick : event,
+					      style : {color : "#0000FF",
+						       fontWeight : "bold",
+						       cursor : "pointer"
+				}});
+			tr.appendChild(td);
+
+			if(item.type=="dir") {
+			    if(item["x-is-moa"]) {
+				icon_name="FSdirclmoaA";
+				icon_alt="Moa Job";
+			    }
+			    else {
+				icon_name="FSdirclA";
+				icon_alt="Directory";
+			    }
+			}
+			else {
+			    icon_name="FSfileA";
+			    icon_alt="File";
+			}
+
+			img=dojo.create("img", {src : wwwmoa.io.rl.get_image(icon_name),
+						alt : icon_alt,
+						title : icon_alt,
+						style : {verticalAlign : "middle",
+							 paddingRight : "3px"
+				}});
+
+			td.appendChild(img);
+
+			span=dojo.create("span", {innerHTML : this._fixItemTitle(item.name),
+						  style : {textDecoration : "underline"},
+						  title : item.name
+			    });
+			td.appendChild(span);
+
+
+
+
+			td=dojo.create("td", null);
+			tr.appendChild(td);
+
+			event=dojo.hitch({obj : this, x : x}, function() {
+				this.obj._deleteItem(this.x);
+			    });
+
+			img=dojo.create("img", {src : wwwmoa.io.rl.get_image("FSdeleteA"),
+						onclick : event,
+						alt : "Delete",
+						title : "Delete",
+						style : {verticalAlign : "middle",
+							 paddingLeft : "3px",
+							 paddingRight : "3px",
+							 cursor : "pointer"
+				}});
+
+			td.appendChild(img);
 		    }
+
+		    this._sendBreadcrumb();
+		    this._addIndexMessage();
+		    this._addFilterMessage();
+		},
+
+		_fixItemTitle : function(title) {
+		    var title_fixed, title_max=24;
+
+		    if(title.length>title_max)
+			title_fixed=title.substr(0, title_max-3)+"...";
+		    else
+			title_fixed=title;
+
+		    return wwwmoa.formats.html.fix_text(title_fixed);
+		},
+
+		_addEmptyMessage : function() {
+		    this._addSimpleMessage("No items were found.");
+		},
+
+		_addIndexMessage : function() {
+		    if(this._available<=this._items.length)
+			return;
+
+		    var message="You are currently viewing "+(this._startIndex+1)+" to ";
+		    message+=(this._startIndex+this._items.length) + " out of "+this._available+".";
+
+		    this._addSimpleMessage(message);
+		},
+
+		_addFilterMessage : function() {
+		    if(!this._filterOn)
+			return;
+
+		    var node=dojo.create("div", null);
+
+		    var message="You are currently viewing the results of a filename search for \"";
+		    message+=wwwmoa.formats.html.fix_text(this._filter);
+		    message+="\".";
+
+		    node.appendChild(dojo.create("div", {innerHTML : message}));
+
+		    message="Click here to view all the contents of the directory.";
+
+		    node.appendChild(dojo.create("span", {innerHTML : message,
+				                          onclick : dojo.hitch(this, this._turnOffFilter),
+				                          style : {color : "#0000FF",
+					                           fontWeight : "bold",
+					                           cursor : "pointer"
+					}}));
+
+		    this._addMessage(node);
+		},
+
+		_addCreateItemFailureMessage : function(text) {
+		    var message="The item could not be created";
+
+		    if(text!=null)
+			message+=" for the following reason:\n\n"+text;
+		    else
+			message+=".";
+
+		    this._addSimpleMessage(message, "Item Could Not Be Created");
+		},
+
+		_addSimpleMessage : function(text, title) {
+		    var node=dojo.create("div", {innerHTML : wwwmoa.formats.html.translate_text(text)});
+
+		    this._addMessage(node, title);
+		},
+
+		_addMessage : function(node, title) {
+		    var main=dojo.create("div", {style : {padding : "2px",
+							  marginBottom : "5px",
+							  borderBottom : "1px solid #D0F0E0"
+			    }});
+
+		    this._initDisplay();
+
+		    if(title!=null) {
+			var title_node=dojo.create("div", {innerHTML : wwwmoa.formats.html.fix_text(title)+" ",
+							   style : {fontWeight : "bold"}
+			    });
+
+			title_node.appendChild(dojo.create("span", {innerHTML : "[Close Message]",
+					                            style : {fontWeight : "bold",
+					                                     cursor : "pointer",
+					                                     fontSize : "12px",
+					                                     color : "#0000FF",
+					                                     textDecoration : "underline"
+					                                     },
+					                            onclick : dojo.hitch(main, function() { dojo.destroy(this); })
+					}));
+
+			main.appendChild(title_node);
+		    }
+
+		    main.appendChild(node);
+
+		    this._displayMessage.appendChild(main);
+
+		    this._displayMessage.style.visibility="visible";
+		},
+
+		_clearMessages : function() {
+		    this._initDisplay();
+
+		    dojo.empty(this._displayMessage);
+
+		    this._displayMessage.style.visibility="hidden";
+		},
+
+		_sendBreadcrumb : function() {
+		    var main=dojo.create("span", {style : {fontWeight : "bold"}});
+		    var span, span_event;
+		    var img, icon_path;
+		    var item;
+
+		    for(var x=0; x<this._parentItems.length; x++) {
+			item=this._parentItems[x];
+
+			if(x!=0) {
+			    span=dojo.create("span", {innerHTML : " / "});
+			    main.appendChild(span);
+			    icon_path=wwwmoa.io.rl.get_image("FSdiropA");
+			}
+			else
+			    icon_path=wwwmoa.io.rl.get_image("FSdiroprtA");
+
+			img=dojo.create("img", {src : icon_path,
+						alt : "",
+						style : {verticalAlign : "middle",
+							 paddingRight : "3px"
+				}});
+			main.appendChild(img);
+
+			span_event=dojo.hitch({obj : this, x : x}, function() {
+				this.obj._openParentItem(this.x);
+			    });
+
+			span=dojo.create("span", {innerHTML : wwwmoa.formats.html.fix_text(item.name),
+						  onclick : span_event,
+						  style : {color : "#0000FF",
+							   cursor : "pointer"
+				}});
+			main.appendChild(span);
+
+		    }
+
+		    this._dhmGetManager().dhmNotify({type : wwwmoa.dhm.DHM_MSG_DATA,
+				                     args : {key : "locationBreadcrumbNode",
+				                             data : main
+				    }}, this);
+		},
+
+		_openItem : function(index) {
+		    var item=this._items[index];
+
+		    if(item==null)
+			return;
+
+		    if(item.type=="dir")
+			this._changeWD(item.path);
+		    else
+			this._openFile(item.path);
+		},
+
+		_openParentItem : function(index) {
+		    var item=this._parentItems[index];
+
+		    if(item==null)
+			return;
+
+		    this._changeWD(item.path);
+		},
+
+		_changeWD : function(path) {
+		    this._dhmGetManager().dhmRequest({type : wwwmoa.dhm.DHM_REQ_WDNAV,
+				                      args : {path : path}
+			});
+		},
+
+		_openFile : function(path) {
+		    this._dhmGetManager().dhmRequest({type : wwwmoa.dhm.DHM_REQ_FILEACTION,
+				                      args : {path : path}
+			});
+		},
+
+		_deleteItem : function(index) {
+		    var item=this._items[index];
+
+		    if(item==null)
+			return;
+
+		    var message="Are you sure you want to delete \""+item.name+"\" (\""+item.path+"\")?";
+
+		    if(item.type=="dir")
+			message+="\n\nDeleting \""+item.name+"\" will delete all of its contents as well.";
+
+		    if(!confirm(message))
+			return;
+
+		    wwwmoa.io.ajax.del(wwwmoa.io.rl.get_api("s", item.path), null, 8000);
+
+		    this._items.splice(index, 1);
+
+		    this._available--;
+
+		    if(this._items.length<1)
+			this._goToFirstGroup();
+		    else
+			this._updateDisplay();
+		},
+
+		_createItem : function(name, isdir) {
+		    var args="?";
+		    if(isdir) args+="directory=1&";
+		    args+="name="+wwwmoa.io.rl.url_encode(name);
+
+		    if(this._creatingItem)
+			return;
+
+		    this._creatingItem=true;
+
+		    wwwmoa.io.ajax.post(wwwmoa.io.rl.get_api("s"+args, this._location),
+					dojo.hitch(this, this._createItemCallback),
+					8000);
+		},
+
+		_createItemCallback : function(data) {
+		    this._creatingItem=false;
+
+		    if(data==null) {
+			this._addCreateItemFailureMessage();
+			return;
+		    }
+
+		    var response=wwwmoa.formats.json.parse(data);
+
+		    if(!response["success"]) {
+			this._addCreateItemFailureMessage(response["x-message"]);
+			return;
+		    }
+
+		    this._nav();
+		},
+
+		_turnOnFilter : function(filter) {
+		    this._filter=filter;
+		    this._filterOn=true;
+		    this._goToFirstGroup();
+		},
+
+		_turnOffFilter : function() {
+		    this._filterOn=false;
+		    this._goToFirstGroup();
+		},
+
+		_goToFirstGroup : function() {
+		    this.attr("startIndex", 0);
+		},
+
+		_goToLastGroup : function() {
+		    this.attr("startIndex", this._getLastGroupStartIndex());
+		},
+
+		_goToNextGroup : function() {
+		    this.attr("startIndex", Math.min(this._getLastGroupStartIndex(),
+						     this._startIndex+this._indexCount));
+		},
+
+		_goToPrevGroup : function() {
+		    this.attr("startIndex", Math.max(0, this._startIndex-this._indexCount));
+		},
+
+		_goToGroup : function(index) {
+		    this.attr("startIndex", Math.min(this._getLastGroupStartIndex(),
+						     this._indexCount*Math.max(0, index)));
+		},
+
+		_getLastGroupStartIndex : function() {
+		    return (Math.ceil(this._available/this._indexCount)-1)*this._indexCount;
+		},
+
+		dhmNotify : function(message) {
+		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
+			this.attr("location", message.args.path);
+		},
+
+		_dhmLockVisual : function() {
+		    for(var x=0; x<this._widgets.length; x++)
+			this._widgets[x].attr("disabled", true);
+		},
+
+		_dhmUnlockVisual : function() {
+		    for(var x=0; x<this._widgets.length; x++)
+			this._widgets[x].attr("disabled", false);
 		}
-	    },
 
-	    dhmPoll : function(poll) {
-		if(poll.type == wwwmoa.dhm.DHM_PLL_SHUTDOWN)
-		    return true;
-		else if(poll.type == wwwmoa.dhm.DHM_PLL_WDNAV)
-		    return !this.attr("locked");
- 	    },
-
-	    dhmPoint : function(manager) {
-		this._dhmManager=manager;
-	    }
-
-	})});
-
+	    })});

@@ -32,6 +32,14 @@ steps. The links are named after the directory.
 #variables
 $(call moa_fileset_define,newbler_input,sff,input SFF files)
 
+moa_may_define += newbler_library_name
+newbler_library_name_type = string
+newbler_library_name_default = $(shell echo `basename $(CURDIR)` | sed "s/[ \///\/]//g" )
+newbler_library_name_help = A library identifier for this				\
+assembly. This is used to create an extra fasta file, named using this	\
+variable, that contain the generated contigs with their ids prepended	\
+with the library id.
+
 ################################################################################
 ## Include MOABASE
 include $(MOABASE)/template/moaBase.mk
@@ -41,10 +49,11 @@ include $(MOABASE)/template/moaBase.mk
 newbler_prepare:
 
 .PHONY: newbler_post
-newbler_post: uname=$(shell echo `basename $(CURDIR)` | sed "s/[ \///\/]//g" )
+
+nln = $(newbler_library_name)
 newbler_post:
-	cat 454AllContigs.fna | sed 's/>contig/>$(uname)_contig/' > $(uname).all.fasta 
-	cat 454LargeContigs.fna | sed 's/>contig/>$(uname)_contig/' > $(uname).large.fasta 
+	cat 454AllContigs.fna | sed 's/>contig/>$(nln)_contig/' > $(nln).all.fasta 
+	cat 454LargeContigs.fna | sed 's/>contig/>$(nln)_contig/' > $(nln).large.fasta 
 
 .PHONY: newbler
 newbler: 454AllContigs.fna 454LargeContigs.all.png 

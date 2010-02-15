@@ -6,14 +6,11 @@
 #
 
 __moa_is_moadir() {
-	if [[ -e "moa.mk" ]] 
-	then
+	if [[ -e "moa.mk" ]]; then
 		echo "yes";
-	elif [[ ! -e "Makefile" ]] 
-	then
+	elif [[ ! -e "Makefile" ]]; then
 		echo "no"
-	elif grep -qi moa Makefile
-	then
+	elif grep -qi moa Makefile; then
 		echo "yes"
 	else
 		echo "no"
@@ -62,23 +59,21 @@ _moa()
     
     #Find the currently entered command (if there is one)
     for x in $(seq 1 ${COMP_CWORD})
-    	do
-    		if [[ ${COMP_WORDS[x]} != -* ]] 
-    		then
-    			moacommand=${COMP_WORDS[x]}
-    			break
-    		fi
-    	done
-    	
+	  do
+	  [[ ${COMP_WORDS[x]} == -* ]] && continue
+	  moacommand=${COMP_WORDS[x]}
+	  break
+	done
+	
     case "${moacommand}" in 
 		new)
        	   local templates=$(__moa_all_templates)
        	   COMPREPLY=( $(compgen -W "${templates}" -- ${cur}) )   
             ;;
         set)
-        		local vars=$(__moa_all_vars)
-        		COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
-        		;;
+			local vars=$(__moa_all_vars)
+			COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+			;;
         *)
         	;;
     esac
