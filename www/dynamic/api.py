@@ -44,16 +44,26 @@ for r in request_parameters_listed:
 
 
 # filter out unsupported request methods
-if (request_method!="GET") and (request_method!="POST") and (request_method!="PUT") and (request_method!="DELETE"):
-    error.throw_fatal_error("Method Not Implemented","""The method you used in your request is not implemented.  Please try one of the following request methods:
-* GET
-* POST
-* PUT
-* DELETE""")
+if (request_method!="GET") and \
+       (request_method!="POST") and \
+       (request_method!="PUT") and \
+       (request_method!="DELETE"):
+    error.throw_fatal_error(
+        "Method Not Implemented",
+        "The method you used in your request is not implemented. "+
+        "Please use GET, POST, PUT or DELETE")
 
 import wwwmoa.api
 
-try: # try to run the loaded module
-    wwwmoa.api.run(request_path,{"method" : request_method, "params" : request_parameters})
-except Exception as e: # on failure, send something useful
-    error.throw_fatal_error("Internal API Error", "I did find the item that you requested.  However, it misbehaved in such a way that it could not continue.\n\nThe Python interpreter (which I run on) supplied me with the following reason for the failure (you might find the following  useful when debugging):\n\""+str(e)+"\"")
+try:
+    #try to run the loaded module
+    wwwmoa.api.run(
+        request_path,
+        {"method" : request_method,
+         "params" : request_parameters})
+    
+except Exception as e:
+    # on failure, send something useful
+    error.throw_fatal_error(
+        "Internal API Error",
+        "Python debugging information:\n"+str(e))
