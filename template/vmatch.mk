@@ -36,12 +36,11 @@ vmatch_extra_parameters_default =
 vmatch_extra_parameters_help = extra parameters to feed to vmatch
 vmatch_extra_parameters_type = string
 
-moa_may_define += vmatch_invert_gff
-vmatch_invert_gff_default = F
-vmatch_invert_gff_help = Invert the GFF
-vmatch_invert_gff_type = set
-
-vmatch_invert_gff_allowed = T F
+#moa_may_define += vmatch_invert_gff
+#vmatch_invert_gff_default = F
+#vmatch_invert_gff_help = Invert the GFF
+#vmatch_invert_gff_type = set
+#vmatch_invert_gff_allowed = T F
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
@@ -50,10 +49,10 @@ endif
 ##### Derived variables for this run
 
 #prepare for gbrowse updload
-gup_gff_dir=.
-gup_upload_gff?=T
-gup_upload_fasta?=F
-gup_gffsource?=vmatch.$(vmatch_dbname)
+#gup_gff_dir=.
+#gup_upload_gff?=T
+#gup_upload_fasta?=F
+#gup_gffsource?=vmatch.$(vmatch_dbname)
 
 .PHONY: vmatch_prepare
 vmatch_prepare:
@@ -71,19 +70,18 @@ output.gff: output.raw
 		| sed "s/^\([^\t]*\)\(.*\)ID=/\1\2ID=vmatch.$(vmatch_dbname)_\1_/" \
 		| sed "s/Target=/Target=Sequence:/" \
 		> output.gff
-	if [ "$(vmatch_invert_gff)" == "T" ]; then \
-		invertGff output.gff > output.invert.gff ;\
-	fi
+#	if [ "$(vmatch_invert_gff)" == "T" ]; then \
+#		invertGff output.gff > output.invert.gff ;\
+#	fi
 
 output.raw: $(vmatch_input_file)
-	vmatch -D $(shell dirname $(vmatch_db)) \
-		 -d $(shell basename $(vmatch_db)) \
-		 $(vmatch_extra_parameters) \
-		 -A $< -F -f 3 > $@
-	vmatch -D $(shell dirname $(vmatch_db)) \
-		 -d $(shell basename $(vmatch_db)) \
-		 $(vmatch_extra_parameters) \
-		 $< -A -F -i 10 > output.align
+	vmatch										\
+		-q $<									\
+		-showdesc 0								\
+		-v										\
+		$(vmatch_extra_parameters)				\
+		$(vmatch_db)							\
+		> $@
 
 vmatch_clean:
 	-rm -f output.gff
