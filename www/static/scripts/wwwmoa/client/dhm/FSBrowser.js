@@ -137,6 +137,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._displayList=dojo.create("table", null);
 
 
+		    this._widgets=[];
 
 		    var helper={
 			_widgets : this._widgets,
