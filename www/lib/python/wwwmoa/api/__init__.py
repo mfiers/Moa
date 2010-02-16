@@ -270,7 +270,10 @@ the \"{2}\" parameter.\n\n\"{2}\" parameter information:\n\
                 output_action_message(False, "The Moa job parameter set you sent was not valid.")
             else:
                 for v in var_dict.keys():
-                    moaapi.setParameter(path, v, var_dict[v])
+                    if isinstance(var_dict[v], list):
+                        moaapi.setParameter(path, v, " ".join(var_dict[v]))
+                    else:
+                        moaapi.setParameter(path, v, var_dict[v])
                     
                 output_action_message(True, "The supplied Moa job parameters have been set.")
         elif env["method"]=="GET": # if a get was requested
