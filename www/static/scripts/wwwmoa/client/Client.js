@@ -29,8 +29,6 @@ dojo.addOnLoad(function() {
 		},
 
 		buildRendering : function() {
-		    var startup_wd;
-
 		    this.uiComp.parent=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
 
 		    this.domNode=dojo.create("div", null);
@@ -111,14 +109,32 @@ dojo.addOnLoad(function() {
 		    for(var x=0; x<this.uiCompDHM.length; x++) 
 			this.uiCompDHM[x].dhmPoint(this);
 
+		    this._initNav();
+		},
 
-		    startup_wd=wwwmoa.io.cookie.get("WWWMOA_WD");
+		_initNav : function() {
+		    this._initNavWD=wwwmoa.io.cookie.get("WWWMOA_WD");
 
-		    startup_wd=(startup_wd==null ? "" : startup_wd);
+		    this._initNavWD=(this._initNavWD==null ? "" : this._initNavWD);
+
+		    wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("s", this._initNavWD),
+				       dojo.hitch(this, this._initNavCallback),
+				       3000);
+		},
+
+		_initNavCallback : function(data) {
+		    if(data==null)
+			this._initNavWD="";
+		    else {
+			var response=wwwmoa.formats.json.parse(data);
+
+			if(response.size!=-1)
+			    this._initNavWD="";
+		    }
 
 		    this.dhmRequest({
 			    type : wwwmoa.dhm.DHM_REQ_WDNAV,
-			    args : {path : startup_wd}
+			    args : {path : this._initNavWD}
 			});
 		},
 
