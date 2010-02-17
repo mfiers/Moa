@@ -10,6 +10,7 @@ dojo.require("dojo.string");
 dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.client.dhm._DHM, {
 
 		_location : "",
+		_request : null,
 
 		_setLocationAttr : function(val) {
 		    this._location=val;
@@ -21,16 +22,33 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.cli
 		},
 
 		_navToLocation : function() {
+		    this._cancelNavToLocation();
+
 		    this._dhmSetVisualByCode("Loading job information...");
 
 		    this.dhmLock();
 
-		    wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-job", this.attr("location")),dojo.hitch(this,this._dataCallback) , 8192); // be somewhat patient about receiving the listing
+		    this._request=wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-job", this.attr("location")),
+						     dojo.hitch(this,this._dataCallback),
+						     8192);
+		},
+
+		_cancelNavToLocation : function() {
+		    if(this._request==null)
+			return;
+
+		    this._request.cancel();
+
+		    this._request=null;
+
+		    this.dhmUnlock();
 		},
 
                 // Receives data from the API request.  Then, it creates the HTML code that
                 // will be used to display the job view contents.
                 _dataCallback : function(data) {
+		    this._request=null;
+
 		    if(data==null) { // if null was passed, we have an error
 			this._dhmSetVisualByCode("No job information is available."); // create an error message
 			this.dhmUnlock();
@@ -104,13 +122,6 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.cli
 		dhmNotify : function(message) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
 			this.attr("location", message.args.path);
-		},
-
-		dhmPoll : function(poll) {
-		    if(poll.type==wwwmoa.dhm.DHM_PLL_SHUTDOWN)
-			return true;
-		    else if(poll.type==wwwmoa.dhm.DHM_PLL_WDNAV)
-			return !this.dhmIsLocked();
 		}
 
 	    })});
