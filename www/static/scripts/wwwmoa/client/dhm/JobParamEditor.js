@@ -3,6 +3,9 @@ dojo.provide("wwwmoa.client.dhm.JobParamEditor");
 
 dojo.require("wwwmoa.client.store.Params");
 dojo.require("wwwmoa.client.dhm._DHM");
+dojo.require("wwwmoa.client.dhm.FSBrowser");
+
+dojo.require("dojo.data.ItemFileReadStore");
 
 dojo.require("dijit.Tooltip");
 dojo.require("dijit.form.TextBox");
@@ -11,6 +14,8 @@ dojo.require("dijit.form.Button");
 dojo.require("dijit.form.DropDownButton");
 dojo.require("dijit.TooltipDialog");
 dojo.require("dijit.TitlePane");
+dojo.require("dijit.form.FilteringSelect");
+dojo.require("dijit._Widget");
 dojo.require("dojo.string");
 
 
@@ -24,6 +29,11 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 	        _editorDOM : null,
 	        _editorButtons : [],
 	        _visualLocked : false,
+
+		_pathDropDown : null,
+		_pathFSBrowser : null,
+		_pathInputWidget : null,
+		_pathBreadcrumb : null,
 
 		_setLocationAttr : function(val) {
 		    this._location=val;
@@ -39,6 +49,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 		    this.dhmLock();
 
+		    this._cancelSyncStore();
 		    this._syncStore(dojo.hitch(this, this._navToLocationCallback));
 		},
 
@@ -288,7 +299,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			    value_dom_marker.appendChild(
 			            this._createParameterWidget(
 				            this._store.transValueITO(values[y], param_store.type),
-					    param_store.type
+					    param_store.type,
+					    param_store.options
 					    ).domNode);
 
 			    param_dom_cells[2].appendChild((new dijit.form.Button(
@@ -355,9 +367,14 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		},
 
 	        _syncStore : function(callback) {
-		    wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-jobparams", this.attr("location")), dojo.hitch(this,function(data) {
+		    this._syncCallback=callback;
+
+		    this._syncRequest=wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("moa-jobparams", this.attr("location")),
+							 dojo.hitch(this,function(data) {
 				var store;
 				var response=wwwmoa.formats.json.parse(data); // attempt a parse of the received data
+
+				this._syncRequest=null; // this request is being handled, so remove it
 
 				if(data==null) { // if null was passed, we have an error
 				    try{ callback(false); } catch(e) {}
@@ -378,7 +395,18 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 				try {callback(true);} catch(e) {}
 
-			    }) , 8192); // be somewhat patient about receiving the parameters
+			    }) , 16000); // be somewhat patient about receiving the parameters
+		},
+
+		_cancelSyncStore : function() {
+		    if(this._syncRequest==null)
+			return;
+
+		    this._syncRequest.cancel();
+
+		    this._syncRequest=null;
+
+		    this._syncCallback(false); // we consider a cancel as an error
 		},
 
 		_switchVisualToEditor : function() {
@@ -629,10 +657,10 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    if(help_string=="")
 			help_string="No detailed help is available for this parameter.";
 
-		    if(param.type==this._store.TYPE_STRING)
-		    	help_typestring="(type: string)";
-		    if(param.type==this._store.TYPE_INTEGER)
-		    	help_typestring="(type: integer)";
+		    if(param.type==this._store.TYPE_PATH)
+			help_typestring="(type: path)";
+		    else if(param.type!=this._store.TYPE_UNKNOWN)
+		        help_typestring="(type: "+this._store.transTypeITO(param.type)+")";
 
 		    help_titlestring=wwwmoa.formats.html.fix_text(param.name)+" Parameter";
 
@@ -642,10 +670,6 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    help_dialog=new dijit.TooltipDialog( 
 		    		{content : "<div style=\"font-size:10pt\"><span style=\"font-weight:bold;text-decoration:underline; color:#108010\">"+help_titlestring+"</span><br><br>"+help_string+"<br><br>"+help_typestring+"</div>"});
 
-//		    help_button=new dijit.form.Button({
-//                showLabel: false,
-//                iconClass : 'moaHelpButton'
-//			});
 		    help_button=new dijit.form.DropDownButton({
 			    dropDown : help_dialog,
                 showLabel: false,
@@ -655,12 +679,32 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return help_button.domNode;
 		},
 
-		_createParameterWidget : function(val, type) {
-		    var cur_widget;
+		_createParameterWidget : function(val, type, options) {
+		    var cur_widget, cur_textwidget, cur_buttonwidget;
+		    var items;
 		    var style_obj= {border : "1px solid #FFFFFF", width : "85%"};
 
 		    if(type==this._store.TYPE_STRING) {
 			cur_widget=new dijit.form.TextBox({value : val, style : style_obj});
+		    }
+		    else if(type==this._store.TYPE_SET) {
+			items=[];
+
+			if(options!=null)
+			    for(var x=0; x<options.length; x++)
+				items.push({value : options[x],
+					    label : wwwmoa.formats.html.fix_text(options[x])
+					    });
+
+			items={items : items, label : "label", identifier : "value"};
+			items=new dojo.data.ItemFileReadStore({data : items});
+
+			cur_widget=new dijit.form.FilteringSelect({value : val,
+								   style : style_obj,
+								   store : items,
+								   searchAttr : "value"
+			    });
+
 		    }
 		    else if(type==this._store.TYPE_INTEGER) {
 			cur_widget=new dijit.form.NumberTextBox({
@@ -669,6 +713,65 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 				value : val,
 				style : style_obj
 			    });
+		    }
+		    else if(type==this._store.TYPE_FLOAT) {
+			cur_widget=new dijit.form.NumberTextBox({
+				invalidMessage : "This parameter must be a float.",
+				value : val,
+				style : style_obj
+			    });
+		    }
+		    else if(type==this._store.TYPE_PATH) {
+			this._initPathDropDown();
+
+			cur_widget=new dijit._Widget({});
+
+			cur_widget.domNode=dojo.create("div", {widgetid : cur_widget.id,
+							       style : {display : "inline",
+									padding : "8px",
+									width : "65%"
+				}});
+
+			cur_textwidget=new dijit.form.TextBox({value : val});
+
+			var event_obj={obj : this, inputwidget : cur_textwidget};
+
+			cur_buttonwidget=new dijit.form.DropDownButton({label : "Select",
+								       dropDown : this._pathDropDown
+			    });
+
+			cur_widget=dojo.mixin(cur_widget, {
+				_getValueAttr : function() {
+				    return cur_textwidget.attr("value");
+				},
+
+				_setValueAttr : function(val) {
+				    cur_textwidget.attr("value", val);
+				},
+
+				destroyRecursive : function() {
+				    cur_textwidget.destroyRecursive();
+				    cur_buttonwidget.attr("dropDown", null); // remove dropdown to avoid
+				                                             // it being destroyed
+				    cur_buttonwidget.destroyRecursive();
+
+				    dojo.destroy(this.domNode);
+				}
+			    });
+
+			dojo.connect(cur_buttonwidget, "onFocus", event_obj, function() {
+				this.obj._notifyPathDropDown();
+				this.obj._pathInputWidget=this.inputwidget;
+			    });
+
+
+			dojo.connect(cur_buttonwidget, "onKeyPress", event_obj, function() {
+				this.obj._registerChange();
+			    });
+
+
+			cur_widget.domNode.appendChild(cur_textwidget.domNode);
+			cur_widget.domNode.appendChild(cur_buttonwidget.domNode);
 		    }
 		    else {
 			cur_widget=new dijit.form.TextBox({
@@ -679,6 +782,10 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    }
 
 		    dojo.connect(cur_widget, "onKeyPress", this, function() {
+			    this._registerChange();
+			});
+
+		    dojo.connect(cur_widget, "onChange", this, function() {
 			    this._registerChange();
 			});
 
@@ -695,16 +802,134 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return cur_widget;
 		},
 
+		_initPathDropDown : function() {
+		    if(this._pathDropDown!=null)
+			return;
+
+		    this._pathDropDown=new dijit.TooltipDialog({});
+
+		    var contNode=this._pathDropDown.containerNode;
+
+		    this._pathFSBrowser=new wwwmoa.client.dhm.FSBrowser({cols : 3});
+
+		    this._pathFSBrowser.dhmPoint(this);
+
+		    this._pathFSBrowser.domNode.style.width="450px";
+		    this._pathFSBrowser.domNode.style.height="350px";
+
+		    var nav=dojo.create("div", {style : {borderBottom : "1px solid #B0B0B0",
+							 padding : "2px",
+							 marginBottom : "4px"
+			    }});
+
+		    this._pathBreadcrumb=dojo.create("span", {style : {paddingRight : "12px"}});
+
+		    var pathselect=dojo.create("span", {innerHTML : "(Select)",
+							onclick : dojo.hitch(this, function() {
+							    var path=this._getRelPath(this.attr("location"),
+										      this._pathFSBrowser.attr("location"));
+
+							    this._pathInputWidget.attr("value", path);
+							    this._registerChange();
+
+							    dijit.popup.close(this._pathDropDown);
+							}),
+							style : {color : "#0000FF",
+								 fontWeight : "bold",
+								 cursor : "pointer"
+			    }});
+
+
+		    contNode.appendChild(nav);
+		    nav.appendChild(this._pathBreadcrumb);
+		    nav.appendChild(pathselect);
+		    contNode.appendChild(this._pathFSBrowser.domNode);
+		},
+
+		_notifyPathDropDown : function(path) {
+		    if(this._pathFSBrowser==null)
+			return;
+
+		    this._pathFSBrowser.dhmNotify({type : wwwmoa.dhm.DHM_MSG_WDNAV,
+				                   args : {path : (path==null ? this.attr("location") : path)}
+			});
+		},
+
+		_getRelPath : function(from, to) {
+		    var rel="";
+		    var from_arr, to_arr;
+		    var x, y, to_start;
+		    var pathsep="/";
+
+		    var trimArr=function(arr) {
+			while(arr[0]=="" && arr.length>0)
+			    arr.shift();
+
+			while(arr[arr.length-1]=="" && arr.length>0)
+			    arr.pop();
+		    };
+
+		    var addPathComp=function(comp) {
+			rel+=(rel!="" ? pathsep : "");
+			rel+=comp;
+		    };
+
+		    from_arr=from.split(pathsep);
+		    to_arr=to.split(pathsep);
+
+		    trimArr(from_arr);
+		    trimArr(to_arr);
+
+		    to_start=from_arr.length;
+
+		    for(x=0; x<from_arr.length; x++)
+			if(from_arr[x]!=to_arr[x]) {
+			    for(y=x; y<from_arr.length; y++)
+				addPathComp("..");
+
+			    to_start=x;
+
+			    break;
+			}
+
+		    for(x=to_start; x<to_arr.length; x++)
+			addPathComp(to_arr[x]);
+
+		    rel=(rel=="" ? "." : rel);
+
+		    return rel;
+		},
+
 		dhmNotify : function(message) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
 			this.attr("location", message.args.path);
+
+		    if(message.type==wwwmoa.dhm.DHM_MSG_DATA)
+			if(message.args.key=="locationBreadcrumbNode")
+			    if(this._pathBreadcrumb!=null) {
+				dojo.empty(this._pathBreadcrumb);
+				this._pathBreadcrumb.appendChild(message.args.data);
+			    }
 		},
 
 		dhmPoll : function(poll) {
 		    if(poll.type==wwwmoa.dhm.DHM_PLL_SHUTDOWN)
 			return true;
 		    else if(poll.type==wwwmoa.dhm.DHM_PLL_WDNAV)
-			return !this.dhmIsLocked();
+			return !(this._isSaving() || this._isReverting());
+		},
+
+		dhmRequest : function(request, dhm) {
+		    if(request.type==wwwmoa.dhm.DHM_REQ_FILEACTION) {
+			this._pathInputWidget.attr("value",
+						   this._getRelPath(this.attr("location"),
+								    request.args.path));
+			this._registerChange();
+
+			dijit.popup.close(this._pathDropDown);
+		    }
+		    else if(request.type==wwwmoa.dhm.DHM_REQ_WDNAV)
+			this._notifyPathDropDown(request.args.path);
 		}
 
 	    })});
