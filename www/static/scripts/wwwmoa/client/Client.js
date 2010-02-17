@@ -109,7 +109,55 @@ dojo.addOnLoad(function() {
 		    for(var x=0; x<this.uiCompDHM.length; x++) 
 			this.uiCompDHM[x].dhmPoint(this);
 
+		    this._toggleExpand();
+
 		    this._initNav();
+		},
+
+		_toggleExpand : function() {
+		    var width, cols, indexCount;
+
+		    var setLabel=dojo.hitch(this, function() {
+			    var label=(this._expanded ? "[Normal View]" : "[Expanded View]");
+
+			    this.uiComp.navexpand.innerHTML=label;
+			});
+
+		    if(this._expanded==null) {
+			this.uiComp.navexpand=dojo.create("span", {onclick : dojo.hitch(this, this._toggleExpand),
+								   style : {fontWeight : "bold",
+									    color : "#0000FF",
+									    cursor : "pointer"
+				}});
+
+			this.uiComp.nav.containerNode.appendChild(this.uiComp.navexpand);
+
+			this._expanded=false;
+
+			setLabel();
+
+			return;
+		    }
+
+		    this._expanded=!this._expanded;
+
+		    setLabel();
+
+		    if(this._expanded) {
+			width=800;
+			cols=4;
+			indexCount=100;
+		    }
+		    else {
+			width=350;
+			cols=1;
+			indexCount=15;
+		    }
+
+		    this.uiComp.fsbrowserpane.resize({w : width});
+		    this.uiComp.parent.resize();
+		    this.uiComp.fsbrowser.attr("cols", cols);
+		    this.uiComp.fsbrowser.attr("indexCount", indexCount);
 		},
 
 		_initNav : function() {
@@ -142,61 +190,7 @@ dojo.addOnLoad(function() {
 		    var poll_good;
 		    var poll_ret;
 
-		    if(request.type==wwwmoa.dhm.DHM_REQ_MODAL) {
-
-			var modal_layout;
-			var modal_container;
-			var modal_exit;
-
-			if(this._isCurrentlyModal)
-			    return false;
-
-
-			modal_layout=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
-
-			modal_container=new dijit.layout.ContentPane({region : "center", splitter : false, style : ""});
-
-			modal_exit=new dijit.layout.ContentPane({region : "leading", splitter : false, style : "width:100px; font-size:36pt; font-weight:bold; cursor:pointer; text-align:center", content : "<div style=\"font-size:14pt\">CLICK<br>TO<br>RETURN</div><div title=\"Click to return to main view.\">&laquo;<br>&laquo;<br>&laquo;</div>"});
-
-			modal_layout.addChild(modal_container);
-
-			modal_layout.addChild(modal_exit);
-
-
-			this._isCurrentlyModal=true;
-
-			for(var x=0; x<this.uiCompDHM.length; x++) 
-			    this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_DISPLAY_LOCK, args : {}});
-
-
-			this.domNode.removeChild(this.uiComp.parent.domNode);
-			this.domNode.appendChild(modal_layout.domNode);
-
-
-			modal_layout.startup();
-
-			if(dhm!=null)
-			    dhm.dhmNotify({type : wwwmoa.dhm.DHM_MSG_MODAL_GAIN_CTRL, args : {node : modal_container.containerNode}});
-
-			dojo.connect(modal_exit, "onMouseEnter", function() { this.domNode.style.color="#808080"; });
-			dojo.connect(modal_exit, "onMouseLeave", function() { this.domNode.style.color="#000000"; });
-
-			dojo.connect(modal_exit, "onClick", dojo.hitch(this, function() {
-				modal_layout.destroy(false);
-
-				this.domNode.appendChild(this.uiComp.parent.domNode);
-
-				this._isCurrentlyModal=false;
-
-				dhm.dhmNotify({type : wwwmoa.dhm.DHM_MSG_MODAL_LOOSE_CTRL, args : {node : modal_container.containerNode}});
-
-				for(var x=0; x<this.uiCompDHM.length; x++)
-				    this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_DISPLAY_UNLOCK, args : {}});
-			    }));
-
-			return true;
-		    }
-		    else if(request.type==wwwmoa.dhm.DHM_REQ_WDNAV) {
+		    if(request.type==wwwmoa.dhm.DHM_REQ_WDNAV) {
 			if(request.args.path==null)
 			    return null;
 			
