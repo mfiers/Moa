@@ -13,6 +13,7 @@ else {
 	wwwmoa.io=new Object();
     };
 
+    // RL utilities
     wwwmoa.io.rl={        
         url_encode : function (str) {
             var ret="";
