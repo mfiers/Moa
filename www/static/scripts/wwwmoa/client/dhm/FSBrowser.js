@@ -29,6 +29,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		_widgets : [],
 
 
+		/* Attribute Handlers */
 		_setLocationAttr : function(val) {
 		    this._location=val;
 		    this._goToFirstGroup();
@@ -65,6 +66,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    return this._indexCount;
 		},
 
+		// Loads the content specific to the current parameters.
 		_nav : function() {
 		    var args="?";
 
@@ -85,6 +87,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 							8000);
 		},
 
+		// Receives the data requested by _nav.
 		_navCallback : function(data) {
 		    this.dhmUnlock();
 
@@ -108,6 +111,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._updateDisplay();
 		},
 
+		// Cancels the request made by _nav.
 		_cancelNav : function() {
 		    if(this._navRequest!=null) {
 			this._navRequest.cancel();
@@ -119,6 +123,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._navRequest=null;
 		},
 
+		// Creates the display if it has not been already.
 		_initDisplay : function() {
 		    var widget, event, event_obj;
 		    var create_dropdown, goto_dropdown;
@@ -293,6 +298,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._dhmSetVisualByNode(this._display);
 		},
 
+		// Updates the display, creating it first if nessesary.
 		_updateDisplay : function() {
 		    var tr, td, tbody, img, span;
 		    var event;
@@ -392,6 +398,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._addFilterMessage();
 		},
 
+		// Helper function that prepares an item title.
 		_fixItemTitle : function(title) {
 		    var title_fixed, title_max=24;
 
@@ -403,6 +410,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    return wwwmoa.formats.html.fix_text(title_fixed);
 		},
 
+		/* Message Handlers */
 		_addEmptyMessage : function() {
 		    this._addSimpleMessage("No items were found.");
 		},
@@ -499,6 +507,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._displayMessage.style.visibility="hidden";
 		},
 
+		// Creates a node containing the navigation breadcrumbs,
+		// and sends it to DHM manager.
 		_sendBreadcrumb : function() {
 		    var main=dojo.create("span", {style : {fontWeight : "bold"}});
 		    var span, span_event;
@@ -542,6 +552,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 				    }}, this);
 		},
 
+		// Inspects an item, and "opens" it.
 		_openItem : function(index) {
 		    var item=this._items[index];
 
@@ -554,6 +565,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 			this._openFile(item.path);
 		},
 
+		// "Opens" a parent directory.
 		_openParentItem : function(index) {
 		    var item=this._parentItems[index];
 
@@ -563,18 +575,21 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._changeWD(item.path);
 		},
 
+		// Attempts to change the WD.
 		_changeWD : function(path) {
 		    this._dhmGetManager().dhmRequest({type : wwwmoa.dhm.DHM_REQ_WDNAV,
 				                      args : {path : path}
 			});
 		},
 
+		// Attempts to "open" a file.
 		_openFile : function(path) {
 		    this._dhmGetManager().dhmRequest({type : wwwmoa.dhm.DHM_REQ_FILEACTION,
 				                      args : {path : path}
 			});
 		},
 
+		// Deletes an item and removes it from the display.
 		_deleteItem : function(index) {
 		    var item=this._items[index];
 
@@ -601,6 +616,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 			this._updateDisplay();
 		},
 
+		// Creates an item and refreshes the display.
 		_createItem : function(name, isdir) {
 		    var args="?";
 		    if(isdir) args+="directory=1&";
@@ -616,6 +632,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 					8000);
 		},
 
+		// Callback function used for _createItem.
 		_createItemCallback : function(data) {
 		    this._creatingItem=false;
 
@@ -634,6 +651,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._nav();
 		},
 
+		/* Filter Action Handlers */
 		_turnOnFilter : function(filter) {
 		    this._filter=filter;
 		    this._filterOn=true;
@@ -645,6 +663,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    this._goToFirstGroup();
 		},
 
+		/* Group Navigation Handlers */
 		_goToFirstGroup : function() {
 		    this.attr("startIndex", 0);
 		},
@@ -671,6 +690,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FSBrowser", wwwmoa.cl
 		    return (Math.ceil(this._available/this._indexCount)-1)*this._indexCount;
 		},
 
+		/* DHM Handlers */
 		dhmNotify : function(message) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
 			this.attr("location", message.args.path);

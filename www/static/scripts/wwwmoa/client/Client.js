@@ -28,12 +28,18 @@ dojo.addOnLoad(function() {
 		    
 		},
 
+		// Builds the client out of other widgets.
 		buildRendering : function() {
+		    // create main structure
 		    this.uiComp.parent=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
 
 		    this.domNode=dojo.create("div", null);
 		    this.domNode.appendChild(this.uiComp.parent.domNode);
 
+
+
+
+		    // create nav bar
 		    this.uiComp.nav=new dijit.layout.ContentPane({region : "top", splitter : false, style : "height:40px"});
 
 		    this.uiComp.parent.addChild(this.uiComp.nav);
@@ -50,6 +56,9 @@ dojo.addOnLoad(function() {
 		    this.uiComp.nav.containerNode.appendChild(this.uiComp.navbreadcrumb);
 
 
+
+
+		    // create fs browser
 		    this.uiComp.fsbrowserpane=new dijit.layout.ContentPane({region : "leading", style : "width:300px", splitter : true});
 
 		    this.uiComp.parent.addChild(this.uiComp.fsbrowserpane);
@@ -59,6 +68,10 @@ dojo.addOnLoad(function() {
 
 		    dojo.place(this.uiComp.fsbrowser.domNode, this.uiComp.fsbrowserpane.domNode);
 
+
+
+
+		    // create tab structure
 		    this.uiComp.tab=new dijit.layout.TabContainer({region : "center", splitter : true});
 
 		    this.uiComp.parent.addChild(this.uiComp.tab);
@@ -66,6 +79,7 @@ dojo.addOnLoad(function() {
 
 
 
+		    // create job status viewer
 		    this.uiComp.jobstatusviewerpane=new dijit.layout.ContentPane({title : "Job Status",
 										  region : "leading"
 			});
@@ -80,7 +94,7 @@ dojo.addOnLoad(function() {
 
 
 
-
+		    // create job view
 		    this.uiComp.pbrowserpane=new dijit.layout.ContentPane({title : "Job View", region : "leading", style : "width:300px", splitter : true});
 
 		    this.uiComp.tab.addChild(this.uiComp.pbrowserpane);
@@ -91,6 +105,9 @@ dojo.addOnLoad(function() {
 		    dojo.place(this.uiComp.pbrowser.domNode, this.uiComp.pbrowserpane.domNode);
 
 
+
+
+		    // create job parameter editor
 		    this.uiComp.jobparameditorpane=new dijit.layout.ContentPane({title : "Job Parameters", region : "leading", style : "width:300px", splitter : true});
 
 		    this.uiComp.tab.addChild(this.uiComp.jobparameditorpane);
@@ -101,19 +118,31 @@ dojo.addOnLoad(function() {
 
 		    dojo.place(this.uiComp.jobparameditor.domNode, this.uiComp.jobparameditorpane.domNode);
 
-		   
+
+
+
+		    // create notices
 		    this.uiComp.bottom=new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."});
 
 		    this.uiComp.parent.addChild(this.uiComp.bottom);
 
+
+
+
+		    // perform some additional init
 		    for(var x=0; x<this.uiCompDHM.length; x++) 
 			this.uiCompDHM[x].dhmPoint(this);
 
 		    this._toggleExpand();
 
+
+
+
+		    // perform initial navigation
 		    this._initNav();
 		},
 
+		// Toggles whether the client is in expanded view.
 		_toggleExpand : function() {
 		    var width, cols, indexCount;
 
@@ -160,6 +189,7 @@ dojo.addOnLoad(function() {
 		    this.uiComp.fsbrowser.attr("indexCount", indexCount);
 		},
 
+		// Starts initial navigation.
 		_initNav : function() {
 		    this._initNavWD=wwwmoa.io.cookie.get("WWWMOA_WD");
 
@@ -170,6 +200,7 @@ dojo.addOnLoad(function() {
 				       3000);
 		},
 
+		// Completes initial navigation.
 		_initNavCallback : function(data) {
 		    if(data==null)
 			this._initNavWD="";

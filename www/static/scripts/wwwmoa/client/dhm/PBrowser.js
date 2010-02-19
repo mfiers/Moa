@@ -12,6 +12,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.cli
 		_location : "",
 		_request : null,
 
+		/* Attribute Handlers */
 		_setLocationAttr : function(val) {
 		    this._location=val;
 		    this._navToLocation();
@@ -21,6 +22,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.cli
 		    return this._location;
 		},
 
+		// Loads data for the current location.
 		_navToLocation : function() {
 		    this._cancelNavToLocation();
 
@@ -33,6 +35,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.cli
 						     8192);
 		},
 
+		// Cancels the request made by _navToLocation.
 		_cancelNavToLocation : function() {
 		    if(this._request==null)
 			return;
@@ -44,8 +47,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.cli
 		    this.dhmUnlock();
 		},
 
-                // Receives data from the API request.  Then, it creates the HTML code that
-                // will be used to display the job view contents.
+                // Receives data requested by _navToLocation.
                 _dataCallback : function(data) {
 		    this._request=null;
 
@@ -119,6 +121,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.PBrowser", wwwmoa.cli
 		    this.dhmUnlock();
 		},
 
+		/* DHM Handlers */
 		dhmNotify : function(message) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
 			this.attr("location", message.args.path);

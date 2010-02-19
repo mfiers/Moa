@@ -35,6 +35,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		_pathInputWidget : null,
 		_pathBreadcrumb : null,
 
+		/* Attribute Handlers */
 		_setLocationAttr : function(val) {
 		    this._location=val;
 		    this._navToLocation();
@@ -44,6 +45,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return this._location;
 		},
 
+		// Loads the parameters for the current location.
 	        _navToLocation : function() {
 		    this._dhmSetVisualByCode("Loading parameters...");
 
@@ -53,6 +55,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this._syncStore(dojo.hitch(this, this._navToLocationCallback));
 		},
 
+		// Receives the data requested by _navToLocation.
 	        _navToLocationCallback : function(success) {
 		    if(!success) {
 			this._dhmSetVisualByCode("No parameters were found.");
@@ -65,6 +68,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this.dhmUnlock();
 		},
 
+		// Updates the _store object with values from the display.
 	        _pullStore : function() {
 		    var params=[], param_values=[];
 
@@ -110,6 +114,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return curtr_values;
 		},
 
+		// Updates the display with values from the _store object.
 	        _pushStore : function() {
 		    var groups=[], params=[], values=[];
 
@@ -334,6 +339,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return true;
 		},
 
+		// Sends the contents of the _store object to the server
+		// for storage.
 		_sendStore : function(callback) {
 
 		    var request={};
@@ -366,6 +373,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			    }) , 8192, request_json); // be somewhat patient about sending the store
 		},
 
+		// Updates the _store object with values from the server.
 	        _syncStore : function(callback) {
 		    this._syncCallback=callback;
 
@@ -398,6 +406,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			    }) , 16000); // be somewhat patient about receiving the parameters
 		},
 
+		// Cancels the request sent by _syncStore.
 		_cancelSyncStore : function() {
 		    if(this._syncRequest==null)
 			return;
@@ -409,6 +418,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this._syncCallback(false); // we consider a cancel as an error
 		},
 
+		/* Display Utilities */
 		_switchVisualToEditor : function() {
 		    if(this._editorDOM!=null) {
 			this._visualLockingAction();
@@ -456,6 +466,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    };
 		},
 
+		/* State Utilities */
 	        _registerChange : function() {
 		    this._changed=true;
 
@@ -505,6 +516,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return this._reverting;
 		},
 
+		// Starts a high-level save operation.
 	        _save : function() {
 		    if(!this._isUnsaved())
 			return;
@@ -529,6 +541,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this._sendStore(dojo.hitch(this, this._saveCallback));
 		},
 
+		// Finishes a high-level save operation.
 	        _saveCallback : function(success) {
 		    this.dhmUnlock();
 
@@ -542,6 +555,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			this._registerSaveSuccess();
 		},
 
+		// Starts a high-level revert operation.
 	        _revert : function() {
 		    if(!this._isUnsaved())
 			return;
@@ -563,6 +577,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 
 		},
 
+		// Completes a high-level add operation.
+		// To be used on a multivalued parameter.
 	        _addValue : function(paramname) {
 		    var param_default;
 
@@ -581,6 +597,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this._registerChange();
 		},
 
+		// Completes a high-level remove operation.
+		// To be used on a multivalued parameter.
 		_removeValue : function(paramname, valueindex) {
 		    var param_values;
 
@@ -600,6 +618,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this._registerChange();
 		},
 
+		 // Completes a high-level use default operation.
 		_useDefaultValue : function(paramname, valueindex) {
 		    var param_values;
 		    var default_value;
@@ -633,6 +652,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return this._changed;
 		},
 
+		/* DHM Handlers */
 	        _visualLockingAction : function() {
 		    if(this._editorDOM!=null)
 			this._editorDOM["style"]["visibility"]=(this._visualLocked ? "hidden" : "visible");
@@ -648,6 +668,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    this._visualLockingAction();
 		},
 
+		// Creates a node to use as a help button.
 	        _createHelpNode : function(param) {
 		    var help_string="", help_typestring="", help_titlestring="";
 		    var help_button, help_dialog;
@@ -679,6 +700,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return help_button.domNode;
 		},
 
+		// Creates a type-specific widget to accept input.
 		_createParameterWidget : function(val, type, options) {
 		    var cur_widget, cur_textwidget, cur_buttonwidget;
 		    var items;
@@ -802,6 +824,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return cur_widget;
 		},
 
+		// Creates a drop down to use for selecting a file or directory,
+		// if it has not already been created.
 		_initPathDropDown : function() {
 		    if(this._pathDropDown!=null)
 			return;
@@ -846,6 +870,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    contNode.appendChild(this._pathFSBrowser.domNode);
 		},
 
+		// Instructs the drop down created using the previous function
+		// to load contents from a given path.
 		_notifyPathDropDown : function(path) {
 		    if(this._pathFSBrowser==null)
 			return;
@@ -855,6 +881,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 			});
 		},
 
+		// Finds a relative path.
 		_getRelPath : function(from, to) {
 		    var rel="";
 		    var from_arr, to_arr;
@@ -900,6 +927,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobParamEditor", wwwm
 		    return rel;
 		},
 
+		/* DHM Handlers */
 		dhmNotify : function(message) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
 			this.attr("location", message.args.path);
