@@ -1,8 +1,3 @@
-### WWWMoa ###############################
-### Env / Operating Environment
-
-
-
 import os
 import xml.sax
 import os.path
@@ -16,6 +11,9 @@ _loaded_cleanly=False
 _loading_failed=False
 _path=None
 _readonly=None
+
+
+## Custom XML Handler ##
 
 class EnvHandler(xml.sax.handler.ContentHandler):
     def startElement(this, name, attr):
@@ -39,20 +37,23 @@ class EnvHandler(xml.sax.handler.ContentHandler):
         _loaded_cleanly=(_path!=None) and (_readonly!=None)
         _loading_failed=not _loaded_cleanly
 
+
+## Main Logic ##
        
-_request_port=cgiex.get_request_port()
+_request_port=cgiex.get_request_port() # find the request port, since this
+                                       # is what we use to identify an env
 
 try:
-    if _request_port!=-1:
+    if _request_port!=-1: # if the request port could be found
         _env_file=os.path.join(moainfo.get_base(True), "etc/www/env/"+str(_request_port)+".xml")
     
-        if not os.access(_env_file, os.R_OK):
-            _loading_failed=True
-        else:
-            _handler=EnvHandler()
-            xml.sax.parse(_env_file, _handler)
-    else:
-        _loading_failed=True
+        if not os.access(_env_file, os.R_OK): # if there is not a readable env configuration
+            _loading_failed=True # we cannot possibly load the env
+        else: # if a env configuration is available
+            _handler=EnvHandler() # create a handler
+            xml.sax.parse(_env_file, _handler) # parse the configuration
+    else: # if the request port could not be found
+        _loading_failed=True # we cannot possibly load the env
 except MoaNotFoundError:
     _loading_failed=True
 
@@ -73,12 +74,14 @@ def get_content_dir():
     else: # if we were not able to load the environment
         return None # return None as per specs
 
-
+## Returns whether or not the env is read-only.
+## Returns None if the environment was not
+## loaded successfully.
 def is_readonly():
     global _readonly
     global _loaded_cleanly
 
-    if _loaded_cleanly:
-        return _readonly
-    else:
-        return None
+    if _loaded_cleanly: # if we were able to load the environment
+        return _readonly # return the read-only flag
+    else: # if we were not able to load the environment
+        return None # return None as per specs

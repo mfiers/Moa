@@ -9,6 +9,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FileViewer", wwwmoa.c
 		_location : "",
 		_downloadLocation : null,
 
+		/* Attribute Handlers */
 		_setLocationAttr : function(val) {
 		    if(this.dhmIsLocked())
 			return;
@@ -29,6 +30,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FileViewer", wwwmoa.c
 		    return this._downloadLocation;
 		},
 
+		// Loads information about the current location.
 		_navToLocation : function() {
 		    this._dhmSetVisualByCode("Loading file...");
 
@@ -123,7 +125,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.FileViewer", wwwmoa.c
 		_isImageType : function(mimetype) {
 		    return (mimetype=="image/png")||(mimetype=="image/jpeg")||(mimetype=="image/gif");
 		},
-		
+
+		// Sets the display to a preview of a file.
 		_setPreviewNode : function(path, contentnode) {
 		    var node;
 
