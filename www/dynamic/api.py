@@ -42,7 +42,6 @@ request_parameters={}
 for r in request_parameters_listed:
     request_parameters[r[0]]=r[1]
 
-
 # filter out unsupported request methods
 if (request_method!="GET") and \
        (request_method!="POST") and \
