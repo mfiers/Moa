@@ -127,8 +127,8 @@ endif
 #download files using LFTP
 .PHONY: lftp_prepare
 lftp_prepare:
-	if [[ "$(lftp_output_dir)" != "." ]]; then		\
-		mkdir $(lftp_output_dir);					\
+	if [[ "$(lftp_output_dir)" != "." ]]; then	\
+		mkdir $(lftp_output_dir) || true;		\
 	fi
 
 lftp: fexcl=$(addprefix -not -name , $(lftp_noclean))
@@ -137,15 +137,17 @@ lftp: lftp_$(lftp_mode) lftp_dos2unix
 .PHONY: lftp_mirror
 lftp_mirror:
 	cd $(lftp_output_dir); 														\
-		lftp $(lftp_au) $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;
+		lftp $(lftp_auth) $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;
 	if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
 .PHONY: lftp_get
 lftp_get: _addcl=$(if $(lftp_get_name),-o $(lftp_get_name))
 lftp_get:
-	$e cd $(lftp_output_dir);								\
-		for xx in $(lftp_url); do							\
-			lftp $(lftp_au) -e "get $(_addcl) '$$xx'; exit";	\
+	$e cd $(lftp_output_dir);									\
+		for xx in $(lftp_url); do								\
+			$(call echo,Downloading $$xx $(lftp_auth));			\
+			echo lftp $(lftp_auth) -e "get $(_addcl) '$$xx'; exit";	\
+			lftp $(lftp_auth) -e "get $(_addcl) '$$xx'; exit";	\
 		done
 	$e if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
