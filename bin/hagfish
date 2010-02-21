@@ -148,10 +148,6 @@ parser_g.add_option('-D', dest='deletes', action='append',
                     help='START:STOP - Simulate a deletion in the sequence, '+
                     '(for a random delete use -)')
 
-## Arguments: Dotplots 
-parser_d = optparse.OptionGroup(parser, "Dotplots")
-parser_d.add_option('--dotplot', dest='dotplot', action='store_true')
-
 ## Arguments: Find NNNs
 parser_n = optparse.OptionGroup(parser, "Find & identify stretches of NNs")
 parser_n.add_option('-N', dest='findNNN', action='store_true',
@@ -480,25 +476,6 @@ l.debug("Sequence length %d" % (seqLen))
 
 bowtieIndex = buildBowtieIndex(inputSeqFile)
 
-##############################################################################
-#gather dotplot material
-if options.dotplot:
-    tf = tempfile.NamedTemporaryFile(delete=False)
-    tfn = tf.name
-    tf.close()
-    
-    l.info("gathering dotplot data")
-    cl = ['dottup',
-          '-asequence', inputSeqFile,
-          '-bsequence', inputSeqFile,
-          '-graph', 'png',
-          '-wordsize', '20',
-          '-goutfile', tfn
-          ]
-    #result = sp.Popen(cl, stdout=sp.PIPE, stderr=sp.PIPE).communicate()[0].strip().split("\n")[0]
-    #result = result.split(" ")[1]
-    #l.debug("dotplotinfo is in %s" % result)
-    
 ##############################################################################
 ## Simulate an "original" sequence - to introduce inserts / deletes into the
 ## simulated readpairs
