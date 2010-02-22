@@ -67,8 +67,8 @@ parser.add_option('--datain', dest='dataInFile',
 ## Arguments : Control image 
 parser_i = optparse.OptionGroup(parser, "Image control")
 parser.set_defaults(xsize="800", ysize="600", lineAlpha='55', xstart=0,
-                    colorvar = False, plotMode='BS', grid=False, gridLines = 20,
-                    gridColor = 'CCCCAA', bowtieLineColors='2', simLineColors='2')
+                    plotMode='BS', grid=False, gridLines = 20,
+                    gridColor = 'CCCCAA')
 
 xsizeHelp = """ (pixels) X resolution of the graph. As an alternative
 it is possible to define [VALUE]P (i.e. 1000P) in which case the width is
@@ -81,9 +81,6 @@ parser_i.add_option('-x', dest='xsize', metavar='SIZE', help=_hf(xsizeHelp))
 
 parser_i.add_option('-y', dest='ysize', type='int', metavar='SIZE',
                     help='(pixels) y resolution of the graph')
-
-parser_i.add_option('--linealpha', dest='lineAlpha', metavar='ALPHA',
-                    help='alpha value of all lines (invisiable 00 to opaque FF)')
 
 parser_i.add_option('--xstart', dest='xstart', type='int', metavar='POS',
                     help='(nt) start the graph at a certain position')
@@ -103,9 +100,6 @@ parser_i.add_option('--gridcolor', dest='gridColor')
 
 parser_i.add_option('--lines', dest='drawLines', action='store_true',
                     help='Draw lines representing insert length')
-
-parser_i.add_option('--colorvar', dest='colorVar', action='store_true',
-                    help='Slightly vary each color (default F)')
 
 plotMode_help = """
 How to plot Bowtie data & simulated data. 'split: split the graph in
@@ -146,18 +140,28 @@ parser_g.add_option('-n', dest='noPairs', type='int', action='append',
 parser_g.add_option('--recreateindex', dest='recreateindex', action='store_true',
                     help='Force recreating the bowtie index')
 
-parser.set_defaults(simAlpha='AA', simColors=['g'], simPSize=[0.5,], simPType=[21,])
-parser_g.add_option('--simalpha', dest='simAlpha', metavar='ALPHA',
-                    help='alpha value of simulated data points')
-parser_g.add_option('--simcolors', dest='simColors', metavar='STRING',
-                    help='list of colors to use (rygbp01234)')
-parser_g.add_option('--simlinecolors', dest='simLineColors', metavar='STRING',
-                    help='list of colors to use (rygbp01234)')
+parser.set_defaults(simPSize=[], simPType=[])
 
-parser_g.add_option('--simpointsize', dest='simPSize', metavar='INT', action='append',
-                    help='point size for simulated data')
-parser_g.add_option('--simpointtype', dest='simPType', metavar='INT', action='append',
-                    help='point type for simulated data')
+def opColorList(option, opt_str, value, parser):
+    colors = getattr(parser.values, option.dest)
+    if not colors: colors = []
+    newcolor = '#' + value
+    colors.append(newcolor)
+    setattr(parser.values, option.dest, colors)
+    
+parser_g.add_option('--simcolors', dest='simColors', metavar='COLOR',
+                    nargs=1, action='callback', type="string",
+                    help='Color to use for simulated points (RRGGBBAA)',
+                    callback=opColorList)
+
+parser_g.add_option('--simlinecolors', dest='simLineColors', metavar='STRING',
+                    action='callback', type="string", nargs = 1, callback=opColorList,
+                    help='Color to use for lines between simulated points (RRGGBBAA)')
+
+parser_g.add_option('--simpointsize', dest='simPSize', metavar='INT',
+                    action='append', help='point size for simulated data')
+parser_g.add_option('--simpointtype', dest='simPType', metavar='INT',
+                    action='append', help='point type for simulated data', type='int')
 
 parser.set_defaults(deletes = [], inserts = [])
 parser_g.add_option('-I', dest='inserts', action='append',
@@ -190,13 +194,15 @@ parser_r.add_option('--limitbowtie', dest='bowtieLimit', type='int',
                     metavar='NO',
                     help='limit the number of reads to per bowtie input file')
 
-parser.set_defaults(bowtieAlpha='AA', bowtieColors=['r'], bowtiePSize=[0.5], bowtiePType=[21])
-parser_r.add_option('--bowalpha', dest='bowtieAlpha', metavar='ALPHA',
-                    help='alpha value of bowtie data points')
-parser_r.add_option('--bowcolors', dest='bowtieColors', metavar='STRING',
-                    help='list of colors to uses (rygbp01234, default ryry)')
-parser_g.add_option('--bowlinecolors', dest='bowLineColors', metavar='STRING',
-                    help='list of colors to use for bowtie lines (rygbp01234)')
+parser.set_defaults(bowtiePType=[] ,bowtiePSize=[])
+
+parser_g.add_option('--bowcolors', dest='bowtieColors', metavar='COLOR', action='callback',
+                    type="string", nargs=1, callback=opColorList, 
+                    help='Color to use for simulated points (RRGGBBAA)')
+parser_g.add_option('--bowlinecolors', dest='bowtieLineColors', metavar='STRING',
+                    type="string", nargs=1, callback=opColorList, action='callback',
+                    help='Color to use for lines between simulated points (RRGGBBAA)')
+
 parser_r.add_option('--bowpointsize', dest='bowtiePSize', metavar='INT', 
                     action='append',
                     help='point size for bowtie data')
@@ -231,17 +237,31 @@ elif options.verbose == 1:
 else:
     l.setLevel(logging.WARNING)
 
+if not options.simColors:
+    options.simColors = ['#42EB17FF']
+if not options.simLineColors:
+    options.simLineColors = ['#EBCE17ff']
+if not options.bowtieColors:
+    options.bowtieColors = ['#006385FF']    
+if not options.bowtieLineColors:
+    options.bowtieLineColors = ['#FF6B9044']
+if not options.simPSize:
+    options.simPSize = [0.5,]
+if not options.simPType:
+    options.simPType=[21,]
+
+if not options.bowtiePSize:
+    options.bowtiePSize = [0.5,]
+if not options.bowtiePType:
+    options.bowtiePType=[21,]
+  
 l.info("starting hagfish on %s" % time.ctime())
 startTime = time.time()
     
-bowtieColors = dict([(a,b+options.bowtieAlpha) for a,b in colors.items()])
-lineColors = dict([(a,b+options.lineAlpha) for a,b in colors.items()])
-simColors = dict([(a,b+options.simAlpha) for a,b in colors.items()])
-
 def seqReader(sequence):
     F = open(sequence)
     title = F.readline().strip()[1:]    
-    seq = ''.join([x.strip()
+    seq = ''.join([x.strip().lower()
                    for x
                    in F.readlines() if x[0] != '>'
                    ] )
@@ -250,6 +270,14 @@ def seqReader(sequence):
 
 ########################################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # Model definitions
+
+
+def modelDataset(d):    
+    iss = d['e2'] - d['s1']
+    insertSizeObserved = np.median(iss)
+    l.debug("insertSizeObserved %d" % insertSizeObserved)
+    d['y'] = iss - insertSizeObserved
+    d['insertSizeObserved'] = np.median(iss)
 
 def model_pair_midpoint(s1,s2,e1,e2):
     return s1 + (0.5 * (e2-s1)), (e1-s2)
@@ -355,8 +383,12 @@ def buildBowtieIndex(seqFile):
 def parseBowtieFile(seqName, f, limit):
     l.debug('getting readpairs for "%s"' % seqName)
     l.debug('  from "%s"' % f)
-    rvx = []
-    rvy = []
+
+    ss1 = []
+    ee1 = []
+    ss2 = []
+    ee2 = []
+    
     #use samtools to open the file
     F = sp.Popen("samtools view -f 2 %s" % f, shell=True, stdout=sp.PIPE).stdout
     #F = open(f)
@@ -387,13 +419,19 @@ def parseBowtieFile(seqName, f, limit):
         s1 = int(l1[3])
         s2 = int(l2[3])
         rl = len(l1[9])
-        x,y = CURRENTPAIRMODEL(s1, s1 + rl, s2, s2 + rl)
-        rvx.append(x)
-        rvy.append(y)
+        ss1.append(s1)
+        ss2.append(s2)
+        ee1.append(s1+rl)
+        ee2.append(s2+rl)
+        if i < 4:
+            l.debug("Bowtie hit found %d %d %d %d" % (
+                s1, s1+rl, s2, s2+rl))
+            l.debug("  - %s " % realSeq[s1:s1+rl])
+            l.debug("  - %s " % realSeq[s2:s2+rl])
         
     F.close()
-    l.debug('yielding %d readpairs' % len(rvx))
-    return np.array(rvx), np.array(rvy)
+    l.debug('yielding %d readpairs' % len(ss1))
+    return np.array(ss1), np.array(ee1), np.array(ss2), np.array(ee2)
 
 def testBowtieFile(f):
     """
@@ -401,58 +439,43 @@ def testBowtieFile(f):
     """
     return True
 
-def getRealBowtieData(seqName, indirs, readsPerFile, colorList, lineColorList, sizeList, typeList):
+def getRealBowtieData(seqName, indirs, readsPerFile):
     i = 0
-    _colorList = list(colorList)
-    _lineColorList = list(lineColorList)
     for indir in indirs:
         if not os.path.isdir(indir):
             l.error('Not a directory: %s' % indir)
             sys.exit()
         i += 1
-        if options.colorVar:
-            thisColor = _colorVar(simColors[_colorList[i % len(_colorList)]])
-            thisLineColor = _colorVar(lineColors[_lineColorList[i % len(_lineColorList)]])
-        else:
-            thisColor = simColors[_colorList[i % len(_colorList)]]
-            thisLineColor = lineColors[_lineColorList[i % len(_lineColorList)]]
 
-        thisPointType = typeList[i % len(typeList)]
-        thisPointSize = sizeList[i % len(sizeList)]
-
-        axs = []
-        ays = []
-        achitot = 0
-        achicnt = 0
+        as1 = []
+        ae1 = []
+        as2 = []
+        ae2 = []
+        
         for infile in os.listdir(indir):
             if not infile[-4:] == '.bam': continue
             if infile[0] == '.': continue
-            if infile[-1] == '~': continue
-            if infile.split('.')[-1] in ['png', 'mk', 'Makefile']:
-                continue
+            
             inpath = os.path.join(indir, infile)
             if os.path.isdir(inpath):
                 continue
             if testBowtieFile(inpath):                
                 l.info("considering the following file: %s" % inpath)
-                xs, ys, achi = CURRENTSETMODEL(*parseBowtieFile(seqName, inpath, readsPerFile))
-                if len(xs) > 0:
-                    achitot += achi
-                    achicnt += 1
-                    axs.extend(xs)
-                    ays.extend(ys)
-                    
-        yield {'x' : axs,
-               'y' : ays,
-               'i' : i,
-               'pch' : thisPointType,
-               'cex' : thisPointSize,
-               'dir' : indir,
-               'col' : thisColor,
-               'lcol' : thisLineColor,
-               'observedInsertSize' : int(float(achitot) / achicnt)}
+                ss1, ee1, ss2, ee2  = parseBowtieFile(seqName, inpath, readsPerFile)
+                if len(ss1) > 0:
+                    as1.extend(ss1)
+                    ae1.extend(ee1)
+                    as2.extend(ss2)
+                    ae2.extend(ee2)
 
-    
+        d = { 's1' : np.array(as1),
+              'e1' : np.array(ae1),
+              's2' : np.array(as2),
+              'e2' : np.array(ae2),
+              'dir' : indir }
+        modelDataset(d)
+        
+        yield(d)
 
 #########################################################################################
 # generate random pairs
@@ -472,9 +495,11 @@ def randomPairGenerator(bowtieIndex, realSeq, noPairs, readLength,
     xstart = max(0, xstart - (readLength * 2))
     #xstop = xstop - (iLen + (2*readLength))
     
-    xxx = []
-    yyy = []
-
+    ss1 = []
+    ss2 = []
+    ee1 = []
+    ee2 = []
+    
     noTooLargeInserts = 0
     noTooSmallInserts = 0
 
@@ -495,6 +520,9 @@ def randomPairGenerator(bowtieIndex, realSeq, noPairs, readLength,
 
         seq1 = realSeq[s1:s2]
         seq2 = realSeq[e1:e2]
+        if 'n' in seq1: continue
+        if 'n' in seq2: continue
+        
 
         fragfile1.write("%s\n" % (seq1))
         fragfile2.write("%s\n" % (seq2))
@@ -502,14 +530,21 @@ def randomPairGenerator(bowtieIndex, realSeq, noPairs, readLength,
     fragfile1.close()
     fragfile2.close()
     l.debug("written artifical reads to %s and %s" % (fragfile1Name, fragfile2Name))
+    ii = 0
     for p1, p2 in bowtieSearch(bowtieIndex, fragfile1Name, fragfile2Name,  minInsertSize, maxInsertSize):
-        x,y = CURRENTPAIRMODEL(p1, p1 + readLength,
-                               p2, p2 + readLength)
-        xxx.append(x)
-        yyy.append(y)
+        ss1.append(p1)
+        ee1.append(p1+readLength)
+        ss2.append(p2)
+        ee2.append(p2+readLength)
+        ii += 1
+        if ii < 3:
+            l.debug("Simulate hit found %d %d %d %d" % (
+                p1, p1+readLength, p2, p2+readLength))
+            l.debug("  - %s " % realSeq[p1:p1+readLength])
+            l.debug("  - %s " % realSeq[p2:p2+readLength])
 
-    l.info("Observed %d readpairs mapped to the sequence" % len(xxx))
-    return np.array(xxx), np.array(yyy)
+    l.info("Observed %d readpairs mapped to the sequence" % len(ss1))
+    return np.array(ss1), np.array(ee1), np.array(ss2), np.array(ee2)
 
 
 
@@ -538,54 +573,75 @@ def plotGrid():
     for y in range(xstart, xstop, int((xstop - xstart) / options.gridLines)):
         r.abline(-y,0.5, col='#' + options.gridColor)
         r.abline(y,-0.5, col='#' + options.gridColor)
-        
-def drawAnySet(d):
-    xs = d['x']
+         
+def drawAnySet(d, col, lcol, cex, pch):
+
+    s1 = d['s1']
+    e1 = d['e1']
+    s2 = d['s2']
+    e2 = d['e2']
     ys = d['y']
-    cex = d['cex']
-    pch = d['pch']
-    insize = d['observedInsertSize']
-    l.info("DrawAnySet points: %d insize: %d" % (
-        len(xs), insize))
-    l.info("DrawAnySet points size %(cex)s type %(pch)s col %(col)s" % d)
-    l.info("DrawAnySet xxs %s" % xs[:5])
-    l.info("DrawAnySet yys %s" % ys[:5])
+
+    #ize = d['observedInsertSize']
+    #.info("DrawAnySet points: %d insize: %d" % (
+    #   len(xs), insize))
+    #.info("DrawAnySet points size %s type %s col %s linecol %s" %
+    #      (cex, pch, col, lcol))
+    #.info("DrawAnySet xxs %s" % xs[:5])
+    #.info("DrawAnySet yys %s" % ys[:5])
     
-    halfsize = 0.5 * insize
+    #halfsize = 0.5 * insize
     
     if options.drawLines:
-        l.info("Start drawing lines")
-        for i in range(len(xs)):
-            x = xs[i]
-            y = ys[i]
-            r.lines([x-halfsize, x+halfsize], [y,y], col=d['lcol'], type='l')
-            r.points(x-halfsize, y, col=d['col'], cex=d['cex'], pch=d['pch'], **plargs)
-            r.points(x+halfsize, y, col=d['col'], cex=d['cex'], pch=d['pch'], **plargs)
+       l.info("Start drawing lines")
+       for i in range(len(s1)):
+           r.lines([s1[i], e2[i]], [ys[i],ys[i]], col=lcol, type='l')
+
+    r.points(s1, ys, col=col, cex=cex, pch=pch, **plargs)
+    r.points(e2, ys, col=col, cex=cex, pch=pch, **plargs)
+    #r.points(xs, ys, col=col, cex=cex, pch=pch, **plargs)
             
-    l.info("Start drawing points")
-    
     #r.points(xs, ys, col=d['col'], cex=d['cex'], pch=d['pch'], **plargs)
 
 
 ################################################################################
 # Draw the 'REAL' bowtie data
+
+def wg(i, l):
+    return l[i % len(l)]
+
 def drawBowData():
+    i = 0
     for d in allBowData:
-        drawAnySet(d)
-        legends.append("Bowtie %s (%s)" % (d['dir'], d['observedInsertSize']))
-        legendcol.append(d['col'])
-        legendtyp.append(d['pch'])
-        legendsiz.append(d['cex'])
+        col = wg(i, options.bowtieColors)
+        lcol = wg(i, options.bowtieLineColors)
+        cex = wg(i, options.bowtiePSize)
+        pch = wg(i, options.bowtiePType)
+        drawAnySet(d, col, lcol, cex, pch)
+        legends.append("Bowtie %s (%s)" % (d['dir'], d['insertSizeObserved']))
+        legendcol.append(col)
+        legendcol.append(lcol)
+        legendtyp.append(pch)
+        legendsiz.append(cex)
+        i += 1
+                 
 
 ################################################################################
 # Draw the simulated datasets
 def drawSimData():
+    i = 0
     for d in simulDataSets:
-        drawAnySet(d)
-        legends.append("Sim %d" % d['insertSize'])
-        legendcol.append(d['col'])
-        legendtyp.append(d['pch'])
-        legendsiz.append(d['cex'])
+        col = wg(i, options.simColors)
+        lcol = wg(i, options.simLineColors)
+        cex = wg(i, options.simPSize)
+        pch = wg(i, options.simPType)
+        drawAnySet(d, col, lcol, cex, pch)
+        legends.append("Sim")# % d['insertSize'])
+        legendcol.append(col)
+        legendcol.append(lcol)
+        legendtyp.append(pch)
+        legendsiz.append(cex)
+        i += 1
 
 def drawLegend():
     if len(legends) == 0:
@@ -713,41 +769,25 @@ for i in range(len(options.insertLength)):
 
     _colorList = list(options.simColors)
     _lineColorList = list(options.simLineColors)
-    if options.colorVar:
-        thisColor = _colorVar(simColors[_colorList[i % len(_colorList)]])
-        thisLineColor = _colorVar(LineColors[_lineColorList[i % len(_lineColorList)]])
-    else:
-        thisColor = simColors[_colorList[i % len(_colorList)]]
-        thisLineColor = lineColors[_lineColorList[i % len(_lineColorList)]]
-
-    l.debug("drawing line with %s %s" % (options.simLineColors, thisLineColor))
-    
-    thisPointType = options.simPType[i % len(options.simPType)]
-    thisPointSize = options.simPSize[i % len(options.simPSize)]
 
     l.debug("start simulating %d readpairs with insertlength %d" % (
         noPairs, insertLength))
 
-    xs, ys, achI = CURRENTSETMODEL(
-        *randomPairGenerator(bowtieIndex, realSeq, noPairs, readLength, insertLength,
+    s1, e1, s2, e2 = \
+        randomPairGenerator(bowtieIndex, realSeq, noPairs, readLength, insertLength,
                              insertSigma, options.minInsertSize, options.maxInsertSize,
-                             options.xstart, options.xstop))
+                             options.xstart, options.xstop)
     #xs, ys = get_subset(options.
-    l.info("Simulated %d readpairs with insertlength %d (achieved insertlength %d)" %
-           (len(xs), insertLength, achI))
-
-    simulDataSets.append(
-        {'x' : xs,
-         'y' : ys,
-         'i' : i,
-         'col' : thisColor,
-         'lcol' : thisLineColor,
-         'pch' : thisPointType,
-         'cex' : thisPointSize,
-         'insertSize' : insertLength,
-         'observedInsertSize' : int(achI)})
+    l.info("Simulated %d readpairs" % len(s1))
 
 
+    ds = {'s1' : s1,
+          'e1' : e1,
+          's2' : s2,
+          'e2' : e2}
+    modelDataset(ds)
+    simulDataSets.append(ds)
+    
 ##############################################################################
 ## Identify stretches of NNs
 ##
@@ -764,18 +804,16 @@ if options.findNNN:
 #preread bowtie data (not this is quite a lot, not very elegant to preread :()
 l.info("Start reading ALL bowtie data")
 
-for d in getRealBowtieData(seqName, options.bowtieInputs,
-                           options.bowtieLimit, options.bowtieColors,
-                           options.bowtieLineColors,
-                           options.bowtiePSize, options.bowtiePType):
+for d in getRealBowtieData(seqName, options.bowtieInputs, options.bowtieLimit):
     allBowData.append(d)
-    l.info("read %s (%d datapoints)" % (d['dir'], len(d['x'])))
+    l.info("read %s (%d datapoints)" % (d['dir'], len(d['s1'])))
 
 l.info("Finished - readStart reading ALL bowtie data")
 
 graphMaxY = 100
 graphMinY = -100
 
+    
 for d in simulDataSets:
     graphMaxY = max(graphMaxY, max(d['y']))
     graphMinY = min(graphMinY, min(d['y']))
@@ -889,10 +927,13 @@ else:
     sys.exit(-1)
 
 def writeRawOut(handle, dataset, what):
-    for i in range(len(d['y'])):
+    for i in range(len(dataset['y'])):
         DO.write("%s\t%s\t%s\t%s\t%s\n" % (
-            what, d['i'], d['observedInsertSize'],
-            d['x'][i], d['y'][i]))
+            what,
+            dataset['s1'][i],
+            dataset['e1'][i],
+            dataset['s2'][i],
+            dataset['e2'][i]))
 
     
 #close graph
