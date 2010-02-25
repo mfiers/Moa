@@ -34,6 +34,7 @@ from moa.exceptions import *
 
 def _startMake(wd, makeArgs, verbose = True,
                captureOut = False,
+               extraMakeParameters = [],
                captureOutName = 'moa'):
     """
     Start Make
@@ -50,24 +51,16 @@ def _startMake(wd, makeArgs, verbose = True,
     @param captureOut: If True the output will be written to moa.out
       and moa.err
     @type captureOut: Boolean
+    @param extraMakeParameters: Extra parameters to pass to make (such as -B)
+    @type extraMakeParameters: List of Strings
     @param captureOutName: Basename of the file where the moa output
-      will be captured to
+        will be captured.
     @type captureOutName: String
     @raises NotMoaDirectory: If ``wd`` is not a Moa directory    
     """
 
     l.debug("attempting to start make in %s" % wd)
-    if not moa.info.isMoaDir(wd):
-        raise NotAMoaDirectory(wd)
-
-    if type(makeArgs) == type("str"):
-        makeArgs = makeArgs.split()
-
-    makeArgs.insert(0, '-r')
     
-    if not verbose:
-        makeArgs.insert(0, '-s')
-
     if captureOut:
         FOUT = open(os.path.join(wd, '%s.out' % captureOutName), 'w')
         FERR = open(os.path.join(wd, '%s.err' % captureOutName), 'w')
@@ -89,6 +82,7 @@ def _startMake(wd, makeArgs, verbose = True,
 
 def _runMake(wd = None, target = "", makeArgs = [],
              verbose=True, captureOut = False, threads=1,
+             extraMakeParameters= [],
              captureOutName='moa'
              ):
 
@@ -103,6 +97,8 @@ def _runMake(wd = None, target = "", makeArgs = [],
     @type makeArgs: List of Strings
     @param verbose: Verbose output
     @type verbose: Boolean
+    @param extraMakeParameters: Extra parameters to pass to make (such as -B)
+    @type extraMakeParameters: List of Strings
     @param captureOut: Capture the output in log files
     @type captureOut: Boolean
     @param captureOutName: Basename for the log files that will
@@ -113,16 +109,36 @@ def _runMake(wd = None, target = "", makeArgs = [],
     
     """
     
-    os.putenv('MOA_THREADS', "%s" % threads)    
+    if not moa.info.isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+
+    #prepare arguments & environment
+
+    if type(makeArgs) == type("str"):
+        makeArgs = makeArgs.split()
+
+    for extraParam in extraMakeParameters:
+        makeArgs.insert(0,extraParam)
+
+    #we do not want all default rules (since we're not compiling software)
+    makeArgs.insert(0, '-r')
+
     if verbose:
         os.putenv('MOA_VERBOSE', "-v")
+    else:
+        makeArgs.insert(0, '-s')
+
+    os.putenv('MOA_MAKE_PARAMETERS', " ".join(makeArgs))
+    os.putenv('MOA_THREADS', "%s" % threads)
+    l.debug("moa make parameters: %s" % " ".join(makeArgs))
         
     if target:
         makeArgs.insert(0, target)
 
     p = _startMake(wd = wd,
-                   makeArgs = makeArgs,
+                   makeArgs = makeArgs,                   
                    verbose=verbose,
+                   extraMakeParameters = extraMakeParameters,
                    captureOut = captureOut,
                    captureOutName=captureOutName)
     out,err = p.communicate()
@@ -137,12 +153,15 @@ def _runMake(wd = None, target = "", makeArgs = [],
 def go(wd = None, target = "", makeArgs = [],
        verbose=True, threads=1, background = False,
        captureOut = None, captureOutName='moa',
+       extraMakeParameters=[],
        exitWhenDone=False):
     """
     Run Make
     
     @param captureOut: Capture the output in log files
     @type captureOut: Boolean
+    @param extraMakeParameters: Extra parameters to pass to Make
+    @type extraMakeParameters: List of Strings
     @param captureOutName: Basename for the log files that will
       capture the output
     @type captureOutName: String
@@ -150,7 +169,7 @@ def go(wd = None, target = "", makeArgs = [],
     """
     if not wd:
         wd = os.getcwd()
-
+        
     if background:
         
         # Unless defined otherwise, write the output to
@@ -161,6 +180,7 @@ def go(wd = None, target = "", makeArgs = [],
             os.unlink(os.path.join(wd, 'moa.success'))
         if os.path.exists(os.path.join(wd, 'moa.failed')):
             os.unlink(os.path.join(wd, 'moa.failed'))
+            
         # try to fork
         child = os.fork()
         if child != 0:
@@ -174,12 +194,13 @@ def go(wd = None, target = "", makeArgs = [],
         captureOut = False
         
     rc = _runMake(wd = wd,
-             target=target,
-             makeArgs = makeArgs,
-             verbose=verbose,
-             threads = threads,
-             captureOut = captureOut,
-             captureOutName = captureOutName )
+                  target=target,
+                  makeArgs = makeArgs,
+                  extraMakeParameters = extraMakeParameters,
+                  verbose=verbose,
+                  threads = threads,
+                  captureOut = captureOut,
+                  captureOutName = captureOutName )
 
     if background:
         if rc == 0:

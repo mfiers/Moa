@@ -112,6 +112,8 @@ parser.add_option("-j", dest="threads",
                   help="threads to use when running Make (corresponds " +
                   "to the make -j parameter)")
 
+parser.add_option("-B", dest="remake", action='store_true',
+                  help="Reexecute all targets (corresponds to make -B) ")
 
 parserN = optparse.OptionGroup(parser, "For use with moa new")
 parser.set_defaults(title="", directory=".")
@@ -128,12 +130,18 @@ if options.verbose:
     
 #make sure the MOA_THREADS env var is set - this is used by MOA later
 #on
-os.putenv('MOA_THREADS', "%s" % options.threads)
-if options.verbose:
-    os.putenv('MOA_VERBOSE', "-v")
+extraMakeParameters = []
 
-##
-## Check for deprecated style makefile
+# threads need to be treated different from the other parameters.
+# multithreaded operation is only allowed in the second phase
+# execution.
+os.putenv('MOA_THREADS', "%s" % options.threads)
+
+if options.remake:
+    extraMakeParameters.append('-B')
+
+
+#### Check for deprecated style makefile
 
 _check = subprocess.Popen("cat Makefile 2>/dev/null |grep dont_include_moabase ",
                           shell=True,
@@ -189,6 +197,7 @@ if __name__ == "__main__":
     if len(args) == 0:
         rc = runMake.go(verbose = options.verbose,
                         threads = options.threads,
+                        extraMakeParameters = extraMakeParameters,                        
                         background = options.background)
         sys.exit(rc)
 
@@ -201,6 +210,7 @@ if __name__ == "__main__":
         rc = runMake.go(makeArgs=newargs,
                         verbose=options.verbose,
                         threads = options.threads,
+                        extraMakeParameters = extraMakeParameters,
                         background = options.background)
         sys.exit(rc)
     elif command == 'rawinfo':
@@ -237,6 +247,7 @@ if __name__ == "__main__":
         rc = runMake.go(makeArgs=args,
                         threads = options.threads,
                         background = options.background,
+                        extraMakeParameters = extraMakeParameters,
                         verbose=options.verbose)
         sys.exit(rc)
     utils.exit()
