@@ -58,16 +58,20 @@ parser.add_option('-s', dest='sequence', help='Input sequence to analyse')
 parser.add_option('-v', dest='verbose', action="count", 
                   help='Show debug information')
 
-parser.add_option('--dataout', dest='dataOutFile', 
+parser.add_option('--bn', dest='basename',
+                  help='base name of the output files. If not specified, it is derived ' +
+                  'from the sequence name')
+
+parser.add_option('--dataout', dest='dataOut', action='store_true',
                   help='output the processed (gzipped!) data to this file')
 
-parser.add_option('--datain', dest='dataInFile', 
+parser.add_option('--datain', dest='dataIn', action='store_true',
                   help='read program input from a data file')
 
 ## Arguments : Control image 
 parser_i = optparse.OptionGroup(parser, "Image control")
 parser.set_defaults(xsize="800", ysize="600", lineAlpha='55', xstart=0,
-                    plotMode='BS', grid=False, gridLines = 20,
+                    plotMode=[], grid=False, gridLines = 20,
                     gridColor = 'CCCCAA')
 
 xsizeHelp = """ (pixels) X resolution of the graph. As an alternative
@@ -101,17 +105,13 @@ parser_i.add_option('--gridcolor', dest='gridColor')
 parser_i.add_option('--lines', dest='drawLines', action='store_true',
                     help='Draw lines representing insert length')
 
-plotMode_help = """
-How to plot Bowtie data & simulated data. 'split: split the graph in
-two. BS: One graph, plotting the simulated data over the Bowtie
-data. SB: one graph, the other way round (default: BS)
-"""
-parser_i.add_option('--plotmode', dest='plotMode', metavar='MODE',
-                    help=_hf(plotMode_help))
+plotMode_help = """ How to plot Bowtie data & simulated data. 'split:
+split the graph in two. 'bs': One graph, plotting the simulated data
+over the Bowtie data. 'sb': one graph, the other way round (default:
+'bs'). 'yd' is a historgram of the insert size distribution"""
 
-parser_i.add_option('--outfile', dest='outFile',
-                    help='Output PNG file to write to. Default: derive ' +
-                    'from the input sequence name')
+parser_i.add_option('--plotmode', dest='plotMode', metavar='MODE',
+                    help=_hf(plotMode_help), action='append')
 
 parser_g = optparse.OptionGroup(parser, "Simulate readpairs")
 parser.set_defaults(maxInsertSize = 50000, minInsertSize = 5, insertLength=[])
@@ -134,6 +134,7 @@ parser_g.add_option('--sd', dest='insertSigma', action='append',
                     'value as sd. Defaults is 0.05 * insertlength. It is possible to ' +
                     'define multiple values, it is possible to define a value like ' +
                     'P0.01, defining 1 % of the insert length')
+
 parser_g.add_option('-n', dest='noPairs', type='int', action='append',
                     help='No of readpairs to generate per -l. It is possible to define ' +
                     'multiple values')
@@ -184,7 +185,7 @@ parser_n.add_option('--Ncolor', dest='NColor', metavar='COLOR',
 
 ## Arguments: Parse bowtie data
 parser_r = optparse.OptionGroup(parser, "(Real) bowtie input data")
-parser.set_defaults(bowtieInputs=[], bowtieLimit=1e12)
+parser.set_defaults(bowtieInputs=[], bowtieLimit=-1)
 
 bowtieInputsHelp = """ A directory with bowtie output data """
 
@@ -193,6 +194,9 @@ parser_r.add_option('-b', dest='bowtieInputs', action='append',
 parser_r.add_option('--limitbowtie', dest='bowtieLimit', type='int',
                     metavar='NO',
                     help='limit the number of reads to per bowtie input file')
+parser_r.add_option('--bowtiemaxinsert', dest='bowtiemaxinsert', type='int',
+                    metavar='LEN', default=1e12,
+                    help='Max insert length from a bowtie file to consider')
 
 parser.set_defaults(bowtiePType=[] ,bowtiePSize=[])
 
@@ -237,6 +241,7 @@ elif options.verbose == 1:
 else:
     l.setLevel(logging.WARNING)
 
+#set default colors
 if not options.simColors:
     options.simColors = ['#42EB17FF']
 if not options.simLineColors:
@@ -254,8 +259,21 @@ if not options.bowtiePSize:
     options.bowtiePSize = [0.5,]
 if not options.bowtiePType:
     options.bowtiePType=[21,]
+
+options.plotMode = [x.lower() for x in options.plotMode]
+if not options.plotMode:
+    options.plotMode=['bs']
+    
   
 l.info("starting hagfish on %s" % time.ctime())
+l.info("Executed with these arguments:")
+l.info("  %s" % " ".join(sys.argv))
+l.info('-' * 80)
+if options.xstart:
+    l.info(" Analysis starts at nucleotide %d" % options.xstart)
+if options.xstop:
+    l.info(" Analysis stops at nucleotide %d" % options.xstop)
+
 startTime = time.time()
     
 def seqReader(sequence):
@@ -271,13 +289,76 @@ def seqReader(sequence):
 ########################################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 # Model definitions
 
+#
+def discoverBorders(fit):
+    l.debug("debugging discover borders")
+    
+    x = list(fit[0])
+    y = list(fit[1])
 
+    maxy = max(y)
+    maxLoc = y.index(maxy)
+    maxx = x[maxLoc]
+    realPeak = maxx
+
+    #find peak edge going down
+    i = maxLoc - 1
+    leftEdge = realPeak
+    rightEdge = realPeak
+    while i >= 1:
+        this, prev = y[i], y[i-1]
+        slope = (prev-this) / x[i-1] - x[i]
+        if (prev > this) or  (this < 0.1 * maxy):
+            leftEdge = x[i]
+            break
+        i -= 1
+    else: leftEdge = x[i]
+    
+    i = maxLoc + 1
+    while i <= len(x) -1:
+        this, next = y[i], y[i+1]
+        slope = (this - next) / (x[i] - x[i+1])
+        if (next > this) or (this < 0.1 * maxy):
+            rightEdge = x[i]
+            break
+        i += 1
+    else: rightEdge = x[i]
+
+    l.info('Discovered peak borders at: %s %s %s' % (leftEdge, realPeak, rightEdge))
+    return leftEdge, realPeak, rightEdge
+        
+    
+    
 def modelDataset(d):    
+
     iss = d['e2'] - d['s1']
-    insertSizeObserved = np.median(iss)
-    l.debug("insertSizeObserved %d" % insertSizeObserved)
-    d['y'] = iss - insertSizeObserved
-    d['insertSizeObserved'] = np.median(iss)
+
+    d['ymedian'] = np.median(iss)
+
+    d['yhist'], edges = np.histogram(iss, bins=400, range=(0,30000), new=True)
+    d['ymids'] = np.array([(0.5 * (edges[i]+edges[i+1])) for i in range(len(edges)-1)])
+
+    #use R for smoothing
+    fit = r['loess.smooth'](
+        d['ymids'], d['yhist'], ann=False, family="gaussian",
+        evaluation=100, span=0.03)
+    
+    d['yfitx'] = list(fit[0])
+    d['yfity'] = list(fit[1])
+    
+    #find max in the fit -
+    left, top, right = discoverBorders(fit)
+    d['peakLow'] = left
+    d['peakHigh'] = right
+    d['ypeak'] = top
+    d['insertSizeObserved'] = top
+
+    y = iss - top
+    d['y'] = y
+    
+    l.info("Modelling set %(name)s" % d)
+    l.info(" - y: %s .. %s" % ("/".join(map(str, y[:5])),"/".join(map(str, y[-5:]))))
+    l.info(" - observed insert size %(insertSizeObserved)d" % d)
 
 def model_pair_midpoint(s1,s2,e1,e2):
     return s1 + (0.5 * (e2-s1)), (e1-s2)
@@ -300,7 +381,6 @@ def model_set_dummy(x, y):
     return x,y,z[int(0.5 * len(z))]
 
 CURRENTSETMODEL = model_set_correct
-#CURRENTSETMODEL = model_set_dummy
 
 def get_subset(start, end, array, more_arrays):
     """
@@ -380,8 +460,9 @@ def buildBowtieIndex(seqFile):
     
     return tmpbase
 
-def parseBowtieFile(seqName, f, limit):
-    l.debug('getting readpairs for "%s"' % seqName)
+def parseBowtieFile(seqName, f, limit, maxinsert):
+    l.info('Parsing bowtie output "%s", max %d records and a max insert size of %d' % (
+        seqName, limit, maxinsert))
     l.debug('  from "%s"' % f)
 
     ss1 = []
@@ -414,16 +495,21 @@ def parseBowtieFile(seqName, f, limit):
         if l1[2] != seqName: continue
                 
         i += 1
-        if i > limit: break
-        
+        if limit > -1 and i > limit: break
+
         s1 = int(l1[3])
         s2 = int(l2[3])
         rl = len(l1[9])
+
+        #only consider inserts smaller than a predefined value 
+        if ((s2+rl) - s1) > maxinsert: continue
+        
+
         ss1.append(s1)
         ss2.append(s2)
         ee1.append(s1+rl)
         ee2.append(s2+rl)
-        if i < 4:
+        if i < 2:
             l.debug("Bowtie hit found %d %d %d %d" % (
                 s1, s1+rl, s2, s2+rl))
             l.debug("  - %s " % realSeq[s1:s1+rl])
@@ -439,7 +525,7 @@ def testBowtieFile(f):
     """
     return True
 
-def getRealBowtieData(seqName, indirs, readsPerFile):
+def getRealBowtieData(seqName, indirs, readsPerFile, maxInsert):
     i = 0
     for indir in indirs:
         if not os.path.isdir(indir):
@@ -447,11 +533,6 @@ def getRealBowtieData(seqName, indirs, readsPerFile):
             sys.exit()
         i += 1
 
-        as1 = []
-        ae1 = []
-        as2 = []
-        ae2 = []
-        
         for infile in os.listdir(indir):
             if not infile[-4:] == '.bam': continue
             if infile[0] == '.': continue
@@ -459,23 +540,19 @@ def getRealBowtieData(seqName, indirs, readsPerFile):
             inpath = os.path.join(indir, infile)
             if os.path.isdir(inpath):
                 continue
-            if testBowtieFile(inpath):                
+            if testBowtieFile(inpath):
                 l.info("considering the following file: %s" % inpath)
-                ss1, ee1, ss2, ee2  = parseBowtieFile(seqName, inpath, readsPerFile)
-                if len(ss1) > 0:
-                    as1.extend(ss1)
-                    ae1.extend(ee1)
-                    as2.extend(ss2)
-                    ae2.extend(ee2)
+                ss1, ee1, ss2, ee2  = parseBowtieFile(seqName, inpath, readsPerFile, maxInsert)
 
-        d = { 's1' : np.array(as1),
-              'e1' : np.array(ae1),
-              's2' : np.array(as2),
-              'e2' : np.array(ae2),
-              'dir' : indir }
-        modelDataset(d)
-        
-        yield(d)
+                d = { 's1' : np.array(ss1),
+                      'e1' : np.array(ee1),
+                      's2' : np.array(ss2),
+                      'e2' : np.array(ee2),
+                      'dir' : indir,
+                      'name' : 'Bowtie %s' % inpath}
+                modelDataset(d)
+                yield(d)
+
 
 #########################################################################################
 # generate random pairs
@@ -563,10 +640,10 @@ def plotNNN():
         }
     legends.append("Ns")
     legendcol.append(NNNPlotArgs['col'])
-    dx = abs( (graphMaxY - graphMinY) / 20.0)
+    dx = abs( (graphMaxY - graphMinY) / 30.0)
     for N in NNs:        
         r.polygon([N[0], N[1], N[1], N[0]],
-                  [graphMinY + dx, graphMinY + dx, graphMinY, graphMinY],
+                  [graphMinY - dx, graphMinY - dx, graphMinY, graphMinY],
                   **NNNPlotArgs)
 
 def plotGrid():
@@ -610,6 +687,63 @@ def drawAnySet(d, col, lcol, cex, pch):
 def wg(i, l):
     return l[i % len(l)]
 
+def plotRibbons():
+    i = 0
+
+    #flatten sets
+    r_ok = np.zeros(realSeqLen, dtype=np.int)
+    r_high = np.zeros(realSeqLen, dtype=np.int)
+    r_low = np.zeros(realSeqLen, dtype=np.int)
+
+    for d in allBowData:
+        l.info("Ribbonifying bowtie dataset %s" % d['name'])
+        
+        l.debug("top, botton %s %s" % (d['peakLow'], d['peakHigh']))
+        #filter out those pairs that are below / on / above the peak
+
+        peakLow = d['peakLow']
+        peakHigh = d['peakHigh']
+        
+        def ff(a,b):
+            dist = b-a
+            if dist < peakLow:
+                r_low[a:b] += 1
+            elif dist > peakHigh:
+                r_high[a:b] += 1
+            else:
+                r_ok[a:b] += 1
+
+        FF = np.vectorize(ff)
+        FF(d['s1'], d['e2'])
+        l.info("Done interpretind %s" % d['name'])
+
+        
+    #prepare for plotting
+    def binnify(noBins, start, stop, r):
+        binSize = int((stop-start) / noBins)
+        bins = range(xstart, xstop, binSize)
+        noBins = len(bins)-1
+        out_r = np.zeros(noBins)
+        for x in range(noBins):
+            out_r[x] = np.average(r[bins[x]:bins[x+1]])
+        return bins[:-1], out_r
+
+    r_ok_bins, r_ok_binned = binnify(800, xstart, xstop, r_ok)
+    r_high_bins, r_high_binned = binnify(800, xstart, xstop, r_high)
+    r_low_bins, r_low_binned = binnify(800, xstart, xstop, r_low)
+        
+    r.plot(r_high_bins, r_high_binned,
+           col='darkred', ann=False, type='h',  xaxt="n", yaxt="n",  xlab="", ylab="", lwd=2)
+#           ylim = robjects.IntVector([0, 50]))
+    #r.plot(r_ok_bins, r_ok_binned,
+    #       col='green', ann=False, type='h',  xaxt="n", yaxt="n",  xlab="", ylab="", lwd=2,
+    #       ylim = robjects.IntVector([0, 50]))
+    r.plot(r_ok_bins, r_ok_binned,
+           col='darkgreen', ann=False, type='h',  xaxt="n", yaxt="n",  xlab="", ylab="", lwd=2)
+    r.plot(r_low_bins, r_low_binned,
+           col='darkblue', ann=False, type='h',  yaxt="n", lwd=2, ylab="")
+    #, ylim = robjects.IntVector([0, 50]))
+        
 def drawBowData():
     i = 0
     for d in allBowData:
@@ -618,7 +752,7 @@ def drawBowData():
         cex = wg(i, options.bowtiePSize)
         pch = wg(i, options.bowtiePType)
         drawAnySet(d, col, lcol, cex, pch)
-        legends.append("Bowtie %s (%s)" % (d['dir'], d['insertSizeObserved']))
+        legends.append("Bowtie %s (%s)" % (d['name'], d['insertSizeObserved']))
         legendcol.append(col)
         legendcol.append(lcol)
         legendtyp.append(pch)
@@ -667,19 +801,20 @@ simulDataSets = []
 NNs = []
 allBowData = []
 
+basefilename = options.basename
+
 #see if there is a data input
 allDataFields = '''inputSeqFile seqName seq seqLen
                    realSeq realSeqLen simulDataSets
                    NNs allBowData'''.split()
 
-if options.dataInFile:
-    l.info("Reading data file from %s.all.gz" % options.dataInFile)
-    DI = gzip.open(options.dataInFile + '.all.gz', 'rb')
+if options.dataIn:
+    l.info("Reading data file from %s.state.gz" % basefilename)
+    DI = gzip.open(basefilename + '.state.gz', 'rb')
     allData = cPickle.load(DI)
     DI.close()
     for a in allDataFields:
         globals()[a] = allData[a]
-        
 
 ## read the sequence
 if options.sequence:
@@ -688,7 +823,14 @@ if options.sequence:
     seqLen = len(seq)
     realSeq = seq
     realSeqLen = len(seq)
-    
+ 
+#it is possible that basefilename is not defined yet - get it
+#from the sequence input
+if not basefilename:
+    basefilename = os.path.basename(inputSeqFile)
+    if '.' in basefilename:
+        basefilename = basefilename.rsplit('.')[0]
+
 l.debug("Imported sequence %s" % (inputSeqFile))
 l.debug("Sequence Id %s" % (seqName))
 l.debug("Sequence length %d" % (seqLen))
@@ -784,7 +926,10 @@ for i in range(len(options.insertLength)):
     ds = {'s1' : s1,
           'e1' : e1,
           's2' : s2,
-          'e2' : e2}
+          'e2' : e2,
+          'name' : 'Sim %d' % insertLength,
+          'insertLength' : insertLength,
+          'readLength' : readLength}
     modelDataset(ds)
     simulDataSets.append(ds)
     
@@ -804,7 +949,9 @@ if options.findNNN:
 #preread bowtie data (not this is quite a lot, not very elegant to preread :()
 l.info("Start reading ALL bowtie data")
 
-for d in getRealBowtieData(seqName, options.bowtieInputs, options.bowtieLimit):
+for d in getRealBowtieData(seqName, options.bowtieInputs,
+                           options.bowtieLimit,
+                           options.bowtiemaxinsert):
     allBowData.append(d)
     l.info("read %s (%d datapoints)" % (d['dir'], len(d['s1'])))
 
@@ -819,7 +966,9 @@ for d in simulDataSets:
     graphMinY = min(graphMinY, min(d['y']))
 
 for d in allBowData:
+    l.debug("Bowtie graphMax %d %d" % (graphMaxY, np.amax(d['y'])))
     graphMaxY = max(graphMaxY, max(d['y']))
+    l.debug("Bowtie  graphMin %d %d" % (graphMinY, np.amin(d['y'])))
     graphMinY = min(graphMinY, min(d['y']))
 
 graphMaxY = 1.2 * graphMaxY
@@ -849,8 +998,11 @@ PNGARGS = {
     'col' : '#000000',
     }
 
+graphYRange = graphMaxY - graphMinY
+l.info("Graph limits xmin %s xmax %s ymin %s ymax %s" % (
+    xstart, xstop, graphMinY, graphMaxY))
 PLOTARGS = {
-    'ylim' : robjects.IntVector([graphMinY, graphMaxY]),
+    'ylim' : robjects.IntVector([(graphMinY - (graphYRange / 20)), graphMaxY]),
     'xlim' : robjects.IntVector([xstart, xstop]),
     'xlab' : 'position (nt)',
     'ylab' : 'corrected distance (nt)',
@@ -874,11 +1026,7 @@ plargsLine = { 'pch' : 19,
                'cex': 1,
                'type' : 'l'}
 
-outfilename = options.outFile
-if not outfilename:
-    outfilename = os.path.basename(inputSeqFile)
-    if '.' in outfilename:
-        outfilename = outfilename.rsplit('.')[0] + '.png'
+        
 legends = []
 legendcol = []
 legendtyp = []
@@ -887,30 +1035,48 @@ legendsiz = []
 #################################################################################
 # Draw the blocks showing NNNs
 
-    
-r.png(outfilename, width=xsize, height=options.ysize, pointsize=12, **PNGARGS)
-r.plot([], [], **PLOTARGS    )
-
-    
-if options.plotMode.lower() == 'bs':
+if 'bs' in options.plotMode:
+    r.png(basefilename +'.bs.png', width=xsize, height=options.ysize, pointsize=12, **PNGARGS)
+    r.par(oma=robjects.array.array('f', [3,3,0.5,0.5]))
+    r.par(mar=robjects.array.array('f', [0,0,0,0]))
+    r.par(mgp=robjects.array.array('f', [0.5,0.5,0.001]))
+    r.layout(r.matrix([1,2,3,4,5], ncol=1),
+             heights=robjects.IntVector([10,1,1,1,1]))
+    THISPLOTARGS = copy.copy(PLOTARGS)
+    THISPLOTARGS['xaxt'] = 'n'
+    THISPLOTARGS['xlab'] = ''
+    r.plot([], [],    **THISPLOTARGS    )
     l.info("drawing a BS graph")
     if options.grid: plotGrid()
     if options.findNNN: plotNNN()
     drawBowData()
     drawSimData()
     drawLegend()
-elif options.plotMode.lower() == 'sb': 
+    plotRibbons()
+    r['dev.off']() #close graph
+    
+if 'sb' in options.plotMode:
+    r.png(basefilename +'.sb.png', width=xsize, height=options.ysize, pointsize=12, **PNGARGS)
+    #generate an empty graph
+    r.plot([], [], **PLOTARGS    )
+
     l.info("drawing a SB graph")
     if options.grid: plotGrid()
     if options.findNNN: plotNNN()
     drawSimData()
     drawBowData()
     drawLegend()
-elif options.plotMode.lower() == 'split':
+    r['dev.off']() #close graph
+    
+if 'split' in  options.plotMode:
+    r.png(basefilename +'.split.png', width=xsize, height=options.ysize, pointsize=12, **PNGARGS)
+    #generate an empty graph
+    r.plot([], [], **PLOTARGS    )
+
     r.par(oma=robjects.array.array('f', [3,3,0.5,0.5]))
     r.par(mar=robjects.array.array('f', [0,0,0,0]))
     r.par(mgp=robjects.array.array('f', [0.5,0.5,0.001]))
-#          c(3,3,3,3)+.1, mar=c(0,0,0,0)+0.1, mfrow=c(3,3))
+    #          c(3,3,3,3)+.1, mar=c(0,0,0,0)+0.1, mfrow=c(3,3))
     l.info("drawing a split mode graph")
     r.par(mfrow=robjects.array.array('i', [2,1]))
     r.plot([], [], **PLOT1ARGS    )
@@ -922,9 +1088,125 @@ elif options.plotMode.lower() == 'split':
     if options.grid: plotGrid()
     drawBowData()
     drawLegend()
-else:
-    l.error('invalid plotmode %s' % options.plotMode)
-    sys.exit(-1)
+    r['dev.off']() #close graph
+
+
+if 'ribbon' in options.plotMode:
+    r.png(basefilename +'.ribbon.png', width=xsize, height=options.ysize, pointsize=12, **PNGARGS)
+    #generate an empty graph
+    r.plot([], [], **PLOTARGS    )
+
+    for d in allBowData:
+        l.info("top, botton %s %s" % (d['peakLow'], d['peakHigh']))
+        #filter out those pairs that are below / on / above the peak
+
+        l.info("flatting sets")
+
+        #flatten sets
+        r_ok = np.zeros(realSeqLen, dtype=np.int)
+        r_high = np.zeros(realSeqLen, dtype=np.int)
+        r_low = np.zeros(realSeqLen, dtype=np.int)
+
+        peakLow = d['peakLow']
+        peakHigh = d['peakHigh']
+        
+        def ff(a,b):
+            dist = b-a
+            if dist < peakLow:
+                r_low[a:b] += 1
+            elif dist > peakHigh:
+                r_high[a:b] += 1
+            else:
+                r_ok[a:b] += 1
+
+        FF = np.vectorize(ff)
+        FF(d['s1'], d['e2'])
+        l.info("Done flattening ")
+
+        def etm(e):
+            return np.array([(0.5 * (e[i]+e[i+1])) for i in range(len(e)-1)])
+        
+        #prepare for plotting
+        def binnify(noBins, start, stop, r):
+            binSize = int((stop-start) / noBins)
+            bins = range(xstart, xstop, binSize)
+            noBins = len(bins)-1
+            out_r = np.zeros(noBins)
+            for x in range(noBins):
+                out_r[x] = np.average(r[bins[x]:bins[x+1]])
+            return bins[:-1], out_r
+
+        r_ok_bins, r_ok_binned = binnify(500, xstart, xstop, r_ok)
+        r_high_bins, r_high_binned = binnify(500, xstart, xstop, r_high)
+        r_low_bins, r_low_binned = binnify(500, xstart, xstop, r_low)
+        
+        r.plot(r_ok_bins, r_ok_binned,
+               col='green', ann=False, type='s')
+        r.points(r_high_bins, r_high_binned,
+               col='red', ann=False, type='s')
+        r.points(r_low_bins, r_low_binned,
+               col='blue', ann=False, type='s')
+#        r.points(r_ok[1900000:2000000], col='green', ann=False)
+#        r.points(r_low[1900000:2000000], col='blue', ann=False)
+        
+#        cutoff = 10
+#        r_ok_flat = np.greater(r_ok, cutoff)
+#        r_high_flat = np.greater(r_high, cutoff)
+#        r_low_flat = np.greater(r_low, cutoff)
+#        r.plot(r_ok_flat + 1)
+#        r.points(r_high_flat+2)
+#        r.points(r_low_flat)
+
+        #r.heatmap(r_ok[0])
+        
+                
+        
+    r['dev.off']() #close graph
+    
+if 'yd' in options.plotMode:
+    r.require('graphics')
+    #print y histogram
+    i = -1; j = 1
+    lowf = 0.0001
+    graphOpen = False
+    for d in allBowData:
+        l.info("creating insert size distribution graph for")
+        l.info("   %s" % d['name'])
+        i += 1
+        if i % 4 == 0:
+            if graphOpen:
+                r['dev.off']() #close graph
+            r.png(basefilename +('.ydist.%d.png' % j), width=1000, height=700,
+                  pointsize=12, **PNGARGS)
+            j += 1
+            r.par(oma=robjects.array.array('f', [3,3,0.5,0.5]))
+            r.par(mar=robjects.array.array('f', [0,0,0,0]))
+            r.par(mgp=robjects.array.array('f', [0.5,0.5,0.001]))
+            r.layout(r.matrix([1,2,3,4], ncol=1))
+            graphOpen = True
+        
+        #generate an empty graph
+        TPA = copy.copy(PLOTARGS)
+        if i == 1:
+            TPA['ylab'] = 'frequency'
+        if i == 3:
+            TPA['xlab'] = 'Insert size (nt)'
+        yvals = d['e2'] - d['s1']        
+        r.plot(d['ymids'], d['yhist'], type='h', ann=False, lwd=2, col='grey')
+        r.text(max(d['ymids']) * 0.8, max(d['yhist']) * 0.8,
+               "%s (%s)" %  (d['name'], int(d['ypeak'])),
+               pos=2, adj=robjects.FloatVector([0.5, 1]), cex=1.5)
+        r.lines(d['yfitx'], d['yfity'], lwd=2, col="red")
+        r.abline(v=d['peakLow'], lwd=2, col="darkred" )
+        r.abline(v=d['ypeak'], lwd=2, col="blue" )
+        r.abline(v=d['peakHigh'], lwd=2, col="darkgreen" )
+        
+    if graphOpen:
+        r['dev.off']() #close graph
+    
+if 'none' in options.plotMode:
+    pass
+
 
 def writeRawOut(handle, dataset, what):
     for i in range(len(dataset['y'])):
@@ -935,18 +1217,17 @@ def writeRawOut(handle, dataset, what):
             dataset['s2'][i],
             dataset['e2'][i]))
 
-    
-#close graph
-r['dev.off']()
-
-if options.dataOutFile:
-    DO = gzip.open(options.dataOutFile + '.gz', 'wb')
+if options.dataOut:
+    #write a tab delimted datafile
+    DO = gzip.open(basefilename + '.tsv.gz', 'wb')
     for d in allBowData:
         writeRawOut(DO, d, 'bowtie')
     for d in simulDataSets:
         writeRawOut(DO, d, 'simul')
     DO.close()
-    DT = gzip.open("%s.all.gz" % options.dataOutFile, 'wb')
+    
+    #dump program state
+    DT = gzip.open("%s.state.gz" % basefilename, 'wb')
     allData = {}
     for a in allDataFields:
         allData[a] = globals()[a]
