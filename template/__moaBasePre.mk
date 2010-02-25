@@ -91,3 +91,10 @@ moa_fileset_define = \
 	$(eval _moa_filesets += $(1))
 
 
+
+################################################################################
+## Some python tricks
+##
+
+exec_python = $(eval export $(1)) \
+echo "$$$(strip $(1))" | python
