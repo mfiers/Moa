@@ -659,23 +659,18 @@ def drawAnySet(d, col, lcol, cex, pch):
     e2 = d['e2']
     ys = d['y']
 
-    #ize = d['observedInsertSize']
-    #.info("DrawAnySet points: %d insize: %d" % (
-    #   len(xs), insize))
-    #.info("DrawAnySet points size %s type %s col %s linecol %s" %
-    #      (cex, pch, col, lcol))
-    #.info("DrawAnySet xxs %s" % xs[:5])
-    #.info("DrawAnySet yys %s" % ys[:5])
-    
-    #halfsize = 0.5 * insize
-    
     if options.drawLines:
        l.info("Start drawing lines")
        for i in range(len(s1)):
-           r.lines([s1[i], e2[i]], [ys[i],ys[i]], col=lcol, type='l')
+           dist = (e2[i] - s1[i])
+           if (dist < d['peakLow']) or (dist > d['peakHigh']):
+               col = "#0033aa44"
+           else:
+               col = "#11880044"
+           r.lines([s1[i], e2[i]], [ys[i],ys[i]], col=col, type='l')
 
-    r.points(s1, ys, col=col, cex=cex, pch=pch, **plargs)
-    r.points(e2, ys, col=col, cex=cex, pch=pch, **plargs)
+    r.points(s1, ys, col='black', cex=cex, pch=pch, **plargs)
+    r.points(e2, ys, col='black', cex=cex, pch=pch, **plargs)
     #r.points(xs, ys, col=col, cex=cex, pch=pch, **plargs)
             
     #r.points(xs, ys, col=d['col'], cex=d['cex'], pch=d['pch'], **plargs)
@@ -699,6 +694,7 @@ def prepareRibbons():
     
     r_ok = np.zeros(realSeqLen, dtype=np.int)
     r_bad = np.zeros(realSeqLen, dtype=np.int)
+    
 
     for d in allBowData:
         l.info("Ribbofying dataset %s" % d['name'])
@@ -731,7 +727,8 @@ def plotRibbons(start = None, stop = None):
         stop = xstop
 
     i = 0
-
+    cutoff = 25
+    
     #prepare for plotting
     def binnify(noBins, start, stop, r):
         binSize = int((stop-start) / noBins)
@@ -743,24 +740,30 @@ def plotRibbons(start = None, stop = None):
         return bins[:-1], out_r
 
     r_ok_bins, r_ok_binned = binnify(800, start, stop, r_ok)
-    r_bad, r_bad = binnify(800, start, stop, r_bad)
+    r_bad_bins, r_bad_binned = binnify(800, start, stop, r_bad)
 
     ribbonymax = max(r_ok_binned)
     r_tmp = np.sort(r_ok_binned)
-    ribbonymax = r_tmp[int(len(r_tmp) * 0.8)]
+    ribbonymax = min(250, r_tmp[int(len(r_tmp) * 0.8)])
     l.info("max y coord for ribbon plot: %s" % ribbonymax)
 
-    r_bad = r_bad * -1
-    r.plot(r_ok_bins, r_ok_binned,
-           col='#118800', ann=False, type='h',  xlab="", ylab="Freq.", lwd=2.5,
-           ylim = robjects.IntVector([0, ribbonymax]))
-    r.points(r_low_bins, r_low_binned,
-           col='#000077', ann=False, type='h', lwd=2.5,
-           ylim = robjects.IntVector([0, ribbonymax]))
-    r.points(r_ok_bins, r_ok_binned,
-           col='#118800EE', ann=False, type='h', lwd=2.5,
-           ylim = robjects.IntVector([0, ribbonymax]))
+    def findErr(x):
+        if x < cutoff: return ribbonymax
+        else: return 0
 
+    vFindErr = np.vectorize(findErr)
+    r_err = vFindErr(r_ok_binned)
+
+    r.plot(r_ok_bins, r_err,
+           col='#cc0000', ann=False, type='h',  xlab="", ylab="Freq.", lwd=2.5,          
+           ylim = robjects.IntVector([-ribbonymax, ribbonymax]))
+    r.points(r_ok_bins, -r_err,
+           col='#cc0000', ann=False, type='h',  xlab="", ylab="Freq.", lwd=2.5)
+    r.points(r_ok_bins, r_ok_binned,
+           col='#118800', ann=False, type='h',  xlab="", ylab="Freq.", lwd=2.5)
+    r.points(r_bad_bins, -1 * r_bad_binned,
+           col='#0033aa', ann=False, type='h', lwd=2.5)
+    
         
 
 
@@ -1060,8 +1063,8 @@ if 'bs' in options.plotMode:
     r.par(oma=robjects.array.array('f', [3,3,0.5,0.5]))
     r.par(mar=robjects.array.array('f', [0,0,0,0]))
     r.par(mgp=robjects.array.array('f', [0.5,0.5,0.001]))
-    r.layout(r.matrix([1,2,3], ncol=1),
-             heights=robjects.IntVector([10,1,1]))
+    r.layout(r.matrix([1,2], ncol=1),
+             heights=robjects.IntVector([5,1]))
     THISPLOTARGS = copy.copy(PLOTARGS)
     THISPLOTARGS['xaxt'] = 'n'
     THISPLOTARGS['xlab'] = ''
@@ -1070,8 +1073,6 @@ if 'bs' in options.plotMode:
     if options.grid: plotGrid()
     if options.findNNN: plotNNN()
     drawBowData()
-    drawSimData()
-    drawLegend()
     prepareRibbons()
     plotRibbons()
     r['dev.off']() #close graph
