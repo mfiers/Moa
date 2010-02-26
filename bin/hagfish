@@ -687,37 +687,51 @@ def drawAnySet(d, col, lcol, cex, pch):
 def wg(i, l):
     return l[i % len(l)]
 
-def plotRibbons():
-    i = 0
+r_ok = None
+r_bad = None
 
+def prepareRibbons():
+    l.info("Preparing for the ribbon plots")
+    
     #flatten sets
+    global r_ok
+    global r_bad
+    
     r_ok = np.zeros(realSeqLen, dtype=np.int)
-    r_high = np.zeros(realSeqLen, dtype=np.int)
-    r_low = np.zeros(realSeqLen, dtype=np.int)
+    r_bad = np.zeros(realSeqLen, dtype=np.int)
 
     for d in allBowData:
-        l.info("Ribbonifying bowtie dataset %s" % d['name'])
-        
-        l.debug("top, botton %s %s" % (d['peakLow'], d['peakHigh']))
-        #filter out those pairs that are below / on / above the peak
+        l.info("Ribbofying dataset %s" % d['name'])
+        l.debug(" - bowtie dataset: top, botton %s %s" % (d['peakLow'], d['peakHigh']))
 
+        #filter out those pairs that are below / on / above the peak
         peakLow = d['peakLow']
         peakHigh = d['peakHigh']
         
         def ff(a,b):
             dist = b-a
-            if dist < peakLow:
-                r_low[a:b] += 1
-            elif dist > peakHigh:
-                r_high[a:b] += 1
+            if (dist < peakLow) or (dist > peakHigh):
+                r_bad[a:b] += 1
             else:
                 r_ok[a:b] += 1
 
+        #use numpy's vectorization functions
         FF = np.vectorize(ff)
         FF(d['s1'], d['e2'])
-        l.info("Done interpretind %s" % d['name'])
 
+        #done
         
+    
+def plotRibbons(start = None, stop = None):
+    
+    if not start:
+        start = xstart
+        
+    if not stop:
+        stop = xstop
+
+    i = 0
+
     #prepare for plotting
     def binnify(noBins, start, stop, r):
         binSize = int((stop-start) / noBins)
@@ -728,22 +742,28 @@ def plotRibbons():
             out_r[x] = np.average(r[bins[x]:bins[x+1]])
         return bins[:-1], out_r
 
-    r_ok_bins, r_ok_binned = binnify(800, xstart, xstop, r_ok)
-    r_high_bins, r_high_binned = binnify(800, xstart, xstop, r_high)
-    r_low_bins, r_low_binned = binnify(800, xstart, xstop, r_low)
-        
-    r.plot(r_high_bins, r_high_binned,
-           col='darkred', ann=False, type='h',  xaxt="n", yaxt="n",  xlab="", ylab="", lwd=2)
-#           ylim = robjects.IntVector([0, 50]))
-    #r.plot(r_ok_bins, r_ok_binned,
-    #       col='green', ann=False, type='h',  xaxt="n", yaxt="n",  xlab="", ylab="", lwd=2,
-    #       ylim = robjects.IntVector([0, 50]))
+    r_ok_bins, r_ok_binned = binnify(800, start, stop, r_ok)
+    r_bad, r_bad = binnify(800, start, stop, r_bad)
+
+    ribbonymax = max(r_ok_binned)
+    r_tmp = np.sort(r_ok_binned)
+    ribbonymax = r_tmp[int(len(r_tmp) * 0.8)]
+    l.info("max y coord for ribbon plot: %s" % ribbonymax)
+
+    r_bad = r_bad * -1
     r.plot(r_ok_bins, r_ok_binned,
-           col='darkgreen', ann=False, type='h',  xaxt="n", yaxt="n",  xlab="", ylab="", lwd=2)
-    r.plot(r_low_bins, r_low_binned,
-           col='darkblue', ann=False, type='h',  yaxt="n", lwd=2, ylab="")
-    #, ylim = robjects.IntVector([0, 50]))
+           col='#118800', ann=False, type='h',  xlab="", ylab="Freq.", lwd=2.5,
+           ylim = robjects.IntVector([0, ribbonymax]))
+    r.points(r_low_bins, r_low_binned,
+           col='#000077', ann=False, type='h', lwd=2.5,
+           ylim = robjects.IntVector([0, ribbonymax]))
+    r.points(r_ok_bins, r_ok_binned,
+           col='#118800EE', ann=False, type='h', lwd=2.5,
+           ylim = robjects.IntVector([0, ribbonymax]))
+
         
+
+
 def drawBowData():
     i = 0
     for d in allBowData:
@@ -1040,8 +1060,8 @@ if 'bs' in options.plotMode:
     r.par(oma=robjects.array.array('f', [3,3,0.5,0.5]))
     r.par(mar=robjects.array.array('f', [0,0,0,0]))
     r.par(mgp=robjects.array.array('f', [0.5,0.5,0.001]))
-    r.layout(r.matrix([1,2,3,4,5], ncol=1),
-             heights=robjects.IntVector([10,1,1,1,1]))
+    r.layout(r.matrix([1,2,3], ncol=1),
+             heights=robjects.IntVector([10,1,1]))
     THISPLOTARGS = copy.copy(PLOTARGS)
     THISPLOTARGS['xaxt'] = 'n'
     THISPLOTARGS['xlab'] = ''
@@ -1052,6 +1072,7 @@ if 'bs' in options.plotMode:
     drawBowData()
     drawSimData()
     drawLegend()
+    prepareRibbons()
     plotRibbons()
     r['dev.off']() #close graph
     
