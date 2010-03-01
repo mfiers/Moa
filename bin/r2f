@@ -20,16 +20,47 @@
 """
 converts a fasta file to and from r2
 
-The script checks if the input if fasta or r2. 
+The script checks if the input if fasta or r2 and subsequenctly converts
+the file(s) to the other format.
+
+Multiple fasta files get converted into a single r2 file. An r2 file
+can be converted to multifasta or multiple fasta files
 
 """
 import os
+import re
 import sys
+import optparse
 
-def fastareader(F):
-    #assume F is a file handle
+
+def fastaWriter(F, seqId, seq):
+    """
+    param F: File handle in 'w' mode
+    param seqId: seqId to save
+    param seq: sequence to save    
+    """
+    F.write(">%s\n%s\n" % (seqId, seq))
     
-    name, head, seq = "",  "", []
+    
+def r2Writer(F, seqId, seq):
+    """
+    param F: File handle in 'w' mode
+    param seqId: seqId to save
+    param seq: sequence to save    
+    """
+    F.write("%s %s\n" % (seqId, seq))
+
+def r2Reader(F):
+    while True:
+        line = F.readline().strip()
+        yield line.split()
+        
+def fastaReader(F):
+    """
+    param F: File handle
+    """
+    
+    seqId, head, seq = "",  "", []
     while True:
         l = F.readline()
         if not l: break
@@ -38,36 +69,83 @@ def fastareader(F):
         if not l: continue
 
         if l[0] == '>':
-            if name and seq:
-                yield name, head, "".join(seq)
+            if seqId and seq:
+                yield seqId, "".join(seq)
             seq = []
             ls = l[1:].split(None, 1)
-            name = ls[0]
-            if len(ls) > 1: head = ls[1]
-            if name[:2] == 'gi':
-                head = name + " " + head
-                name = "GI" + name.split("|",2)[1]
+            seqId = ls[0]
+            if seqId[:2] == 'gi':
+                seqId = "GI" + seqId.split("|",2)[1]
         else:
             seq.append("".join(l.split()).lower())
 
-    if name and seq:
-        yield name, head, "".join(seq)
-
+    if seqId and seq:
+        yield seqId, "".join(seq)
     F.close()
 
 
-if sys.argv[1] == '-':
-   infileorhandle  = sys.stdin
-else:    
-   infileorhandle  = open(sys.argv[1])
 
-i = 0
-for name, head,seq in fastareader(infileorhandle):
-    i += 1
-    try:
-        print name, seq
-    except IOError:
-        sys.exit()
+parser = optparse.OptionParser()
+parser.set_defaults(mode='fr')
+parser.add_option('--ff', dest='mode', action='store_const', const='ff',
+                  help = 'input fasta, output fasta')
+parser.add_option('--fr', dest='mode', action='store_const', const='fr',
+                  help = 'input fasta, output = r2')
+parser.add_option('--rf', dest='mode', action='store_const', const='rf',
+                  help = 'input r2, output = fasta')
+parser.add_option('--rr', dest='mode', action='store_const', const='rr',
+                  help = 'input r2, output = r2')
+parser.add_option('-T', dest='idFromFile', action='store_true',
+                  help='Take fasta Ids from the filename, when reading ' +
+                  'a set of fasta sequences directly' )
+
+(options, args) = parser.parse_args()
+if options.mode == 'ff':
+    inputHandler = fastaReader
+    outputHandler = fastaWriter
+elif options.mode == 'fr':
+    inputHandler = fastaReader
+    outputHandler = r2Writer
+elif options.mode == 'fr':
+    inputHandler = r2Reader
+    outputHandler = fastaWriter
+elif options.mode == 'fr':
+    inputHandler = r2Reader
+    outputHandler = r2Writer
+
+
+def handleOne(I, forceId):
+    i = 0
+    thisForceId = forceId
+    for seqId, seq in inputHandler(I):
+        if forceId:
+            outputHandler(sys.stdout, thisForceId, seq)
+        else:
+            outputHandler(sys.stdout, seqId, seq)
+        i += 1
+        thisForceId = "%s%03d" % (forceId, i)
+
+
+def cleanId(s):
+    s = re.sub('\.fasta$', '', s)
+    s = re.sub('\.fa$', '', s)
+    s = re.sub('\.fna$', '', s)
+    s = re.sub('\.seq$', '', s)
+    s = re.sub(' ', '_', s)
+    return s
+
+#see if there are filenames to be read
+if args:
+    for inFile in args:
+        if options.idFromFile:
+            thisId = cleanId(inFile)
+        else:
+            thisId = False
+            
+        with open(inFile, 'r') as F:
+            handleOne(F, thisId)
+else:
+    handleOne(sys.stdin)
     
 
 
