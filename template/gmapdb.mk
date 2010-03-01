@@ -56,6 +56,7 @@ gmapdb_post:
 gmapdb: Makefile.$(gmapdb_name)
 	$(MAKE) -f $< coords
 	$(MAKE) -f $< gmapdb
+	touch $(gmapdb_name)
 
 Makefile.$(gmapdb_name):
 	gmap_setup -S -d $(gmapdb_name) $(gmapdb_input_files)

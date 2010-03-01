@@ -32,7 +32,8 @@ gsmap_sfffile_help = SFF files with reads to map against the reference	\
 
 moa_must_define += gsmap_reference_fasta
 gsmap_reference_fasta_type = file
-gsmap_library_name_help = A multifasta file with the reference sequence(s)with the library id.
+gsmap_reference_fasta_help = A multifasta file with the reference	\
+sequence(s)with the library id.
 
 moa_may_define += gsmap_min_overlap_len
 gsmap_min_overlap_len_help = Minimum overlap length in the assembly step
@@ -44,6 +45,10 @@ gsmap_min_overlap_ident_help = Minimum identity length in the assembly step
 gsmap_min_overlap_ident_default = 90
 gsmap_min_overlap_ident_type = integer
 
+moa_may_define += gsmap_annotation
+gsmap_annotation_help = Gene annotation file in the UCSC GenePred format
+gsmap_annotation_default = 
+gsmap_annotation_type = file
 
 ################################################################################
 ## Include MOABASE
@@ -109,9 +114,16 @@ reads.index: $(gsmap_sfffile)
 		sffinfo -a $$x | sed "s/$$/ $$bn/";		\
 	done > reads.index	
 
+ifdef gsmap_annotation
+	$(warning HHIHIH)
+  annotCL= -annot $(gsmap_annotation)
+else
+  annotCl=
+endif
+
 out/454HCDiffs.txt: $(gsmap_reference_fasta) $(gsmap_sfffile)
 	$e runMapping \
-		-o out -ace -fd \
+		-o out -ace -fd $(annotCL) \
 		-mi $(gsmap_min_overlap_ident) \
 		-ml $(gsmap_min_overlap_len) \
 		$(gsmap_reference_fasta) \
@@ -120,7 +132,9 @@ out/454HCDiffs.txt: $(gsmap_reference_fasta) $(gsmap_sfffile)
 
 gsmap_clean:
 	$e -rm -rf out
-
+	$e -rm -f reads.index
+	$e -rm -f improved.HCDiffs
+	$e -rm -f out.gff
 
 
 #      #   mid = "MID1", "ACGAGTGCGT", 2;

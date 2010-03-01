@@ -51,14 +51,6 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moaBase.mk
 endif
 
-##### Derived variables for this run
-
-#prepare for gbrowse updload
-gup_gff_dir=.
-gup_upload_gff?=T
-gup_upload_fasta?=F
-gup_gffsource?=gmap.$(gmap_dbname)
-
 .PHONY: gmap_prepare
 gmap_prepare:
 
@@ -66,8 +58,9 @@ gmap_prepare:
 gmap_post: 
 
 .PHONY: gmap
-gmap: output.gff
+gmap: output.gff output.genepred
 
+output.gff: gmap_dbname=$(shell basename $(gmap_db))
 output.gff: output.raw
 	cat output.raw \
 		| sed "s/$(gmap_dbname)/$(gmap_gff_source)/" \
@@ -78,6 +71,11 @@ output.gff: output.raw
 	if [ "$(gmap_invert_gff)" == "T" ]; then \
 		invertGff output.gff > output.invert.gff ;\
 	fi
+
+output.genepred: output.raw
+	gmapgff2genepred output.raw > output.genepred
+
+
 
 output.raw: $(gmap_input_file)
 	gmap -D $(shell dirname $(gmap_db)) \
