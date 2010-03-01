@@ -109,6 +109,9 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.store.Params", null, {
 
 		    var ivalue=[];
 
+		    if(ovalue.length==0)
+			ivalue[0]=this.transValueOTI("", itype);
+
 		    for(var x=0; x<ovalue.length; x++)
 			ivalue[x]=this.transValueOTI(ovalue[x], itype);
 
@@ -126,16 +129,19 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.store.Params", null, {
 		    
 	        transValueOTI : function(ovalue, itype) {
 		    try {
-			if(itype==this.TYPE_STRING)
+			if(itype==this.TYPE_STRING || itype==this.TYPE_PATH || itype==this.TYPE_SET)
 			    return ovalue.toString();
 
-			if(itype==this.TYPE_INTEGER) {
+			if(itype==this.TYPE_INTEGER || itype==this.TYPE_FLOAT) {
 			    var ovalue_num=new Number(ovalue);
 
-			    if(ovalue_num==Number.NaN)
+			    if(isNaN(ovalue_num))
 				return "0";
 
-			    return (Math.floor(ovalue_num)).toString();
+			    if(itype==this.TYPE_INTEGER)
+				return (Math.floor(ovalue_num)).toString();
+			    else
+				return ovalue_num.toString();
 			}
 		    }
 		    catch(err) {}
@@ -181,11 +187,17 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.store.Params", null, {
 		    if(otype_fixed=="string")
 			return this.TYPE_STRING;
 
-		    if(otype_fixed=="directory")
-			return this.TYPE_STRING;
+		    if(otype_fixed=="set")
+			return this.TYPE_SET;
+
+		    if(otype_fixed=="directory" || otype_fixed=="file")
+			return this.TYPE_PATH;
 
 		    if(otype_fixed=="integer")
 			return this.TYPE_INTEGER;
+
+		    if(otype_fixed=="float")
+			return this.TYPE_FLOAT;
 
 		    return this.TYPE_UNKNOWN;
 		},
@@ -254,6 +266,15 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.store.Params", null, {
 
 		    if(itype==this.TYPE_INTEGER)
 			return "integer";
+
+		    if(itype==this.TYPE_FLOAT)
+			return "float";
+
+		    if(itype==this.TYPE_SET)
+			return "set";
+
+		    if(itype==this.TYPE_PATH)
+			return "directory";
 
 		    return "";
 		},
@@ -337,7 +358,10 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.store.Params", null, {
 		    
 		TYPE_UNKNOWN : -1,
 		TYPE_INTEGER : 16,
+		TYPE_FLOAT : 17,
 		TYPE_STRING : 32,
+		TYPE_PATH : 33,
+		TYPE_SET : 34,
 		CARD_ONE : 1,
                 CARD_MANY : -2
 		    

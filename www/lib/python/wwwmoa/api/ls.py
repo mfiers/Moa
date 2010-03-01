@@ -27,8 +27,13 @@ from wwwmoa.api import output_json_headers
 
 def run(args=None, env=None, path=None):
 
-    (command_min, command_max)=(None, None) # we will start off by assuming that a valid min and max was NOT passed
-    (command_filter, command_filter_type, command_filtered)=(None, None, False)
+    # we will start off by assuming that a valid min and max was NOT passed
+    command_min = None
+    command_max = None
+    command_filter = None
+    command_filter_type = None
+    command_filtered = False
+    command_filter_dot = True
 
     try:
         command_filter=env["params"]["filter"]
@@ -41,10 +46,16 @@ def run(args=None, env=None, path=None):
             raise
 
         if "filter-ignorecase" in env["params"]:
-            command_filter_sensitive=(env["params"]["filter-ignorecase"]!="1")
+            command_filter_sensitive=(env["params"]["filter-ignorecase"] != "1")
         else:
             command_filter_sensitive=True
 
+        if "filter-dot" in env["params"]:
+            if env["params"]["filter-dot"] == "1":
+                command_filter_dot = True
+            else:
+                command_filter_dot = False
+        
         command_filter=command_filter.strip()
         command_filter_type=command_filter_type.strip().lower()
         
@@ -54,19 +65,28 @@ def run(args=None, env=None, path=None):
         command_filtered=True
 
     except:
-        (command_filter, command_filter_type)=(None, None)
+        command_filter = None
+        command_filter_type = None
 
-    try: # the inputs may be invalid (or non-existant), so we need to be careful
-        command_min=int(env["params"]["start"]) # attempt to retrieve min
-        command_max=int(env["params"]["end"]) # attempt to retrieve max
-    except: # on conversion failure
-        (command_min, command_max)=(None, None) # reset min and max
-    else: # on conversion success, do sanity check
-        if command_min>command_max: # if min is ever greater than max
-            (command_min, command_max)=(None, None) # reset min and max
+    try:
+        # the inputs may be invalid (or non-existent), so we need to be careful        
+        # attempt to retrieve min & max
+        command_min=int(env["params"]["start"])
+        command_max=int(env["params"]["end"]) 
+    except:
+        # on conversion failure
+        # reset min and max
+        (command_min, command_max)=(None, None) 
+    else:
+        # on conversion success, do sanity check
         
-        if command_min<1 or command_max<1: # if min or max is less than one (min and max are based at 1)
-            (command_min, command_max)=(None, None) # reset min and max
+        # if min is ever greater than max: reset
+        if command_min>command_max:            
+            (command_min, command_max)=(None, None) 
+
+        # if min or max is less than one (both are base-1): reset
+        if command_min<1 or command_max<1: 
+            (command_min, command_max)=(None, None) 
 
     # create a list of the path components for the requested directory
     path_exploded=[] # start with no components in list
@@ -74,23 +94,50 @@ def run(args=None, env=None, path=None):
     path_exploded_str=[] # start with no components in the list
     path_exploded_str_current="" # start with zero length string
     path_exploded_final=[] # start with no components in the list
-    while not is_root(path_exploded_current): # while we have not reached the root
-        (path_exploded_current_h, path_exploded_current_t)=os.path.split(path_exploded_current) # skim off the next path component
-        path_exploded.append(path_exploded_current_t) # add the component to the list
 
-        path_exploded_str.append(os.path.join(path_exploded_current_t, path_exploded_str_current)) # append the path name
-        path_exploded_str_current=path_exploded_str[len(path_exploded_str)-1] # remember this last path name
+    # while we have not reached the root
+    while not is_root(path_exploded_current): 
+
+        # skim off the next path component
+        path_exploded_current_h, path_exploded_current_t = \
+            os.path.split(path_exploded_current) 
+
+        # add the component to the list
+        path_exploded.append(path_exploded_current_t) 
+
+        # append the path name
+        path_exploded_str.append(
+            os.path.join(
+            path_exploded_current_t,
+            path_exploded_str_current))
+
+        # remember this last path name
+        path_exploded_str_current = \
+            path_exploded_str[len(path_exploded_str)-1] 
 
 
-        path_exploded_final.append({"name" : path_exploded_current_t, # the name of the dir
-                                    "size" : -1, # -1 since this is a dir [!] Note: This may be changed to the size of the directory contents in the future.
-                                    "link" : os.path.islink(path_exploded_current), # whether or not the dir is a link
-                                    "type" : "dir", # that it is a dir
-                                    "read-allowed" : in_root(path_exploded_current) and os.access(path_exploded_current, os.R_OK), # whether or not we will be able to read it using other API calls
-                                    "write-allowed" : in_root(path_exploded_current) and os.access(path_exploded_current, os.W_OK), # whether or not we will be able to write it using other API calls
-                                    "path" : "", # path for later access, since simple concat may not work well
-                                    "x-is-moa" : moaapi.isMoaDir(path_exploded_current)
-                                        })
+        # name          : dirname
+        # size          : -1 if it is a dir
+        # link          : is this a link (True/False)
+        # type          : dir
+        # read-allowed  : whether or not we will be able to
+        #                 read it using other API calls
+        # write-allpwed : whether or not we will be able to write
+        #                 it using other API calls
+        # path          : path for later access, since simple concat
+        #                 may not work well
+        path_exploded_final.append(
+            {"name" : path_exploded_current_t, 
+             "size" : -1, 
+             "link" : os.path.islink(path_exploded_current), 
+             "type" : "dir", 
+             "read-allowed" : in_root(path_exploded_current)
+                 and os.access(path_exploded_current, os.R_OK),
+             "write-allowed" : in_root(path_exploded_current) and
+                  os.access(path_exploded_current, os.W_OK),
+             "path" : "", 
+             "x-is-moa" : moaapi.isMoaDir(path_exploded_current)
+             })
 
         for p in path_exploded_final: # for each entry in the final dir path listing
             if p["path"]!="": # if the path has been started before this cycle
@@ -108,6 +155,11 @@ def run(args=None, env=None, path=None):
     
     # create directory listing
     ls=os.listdir(path) # get raw listing
+
+    #if we're filtering dot files - kick'm out here
+    if command_filter_dot:
+        ls = [x for x in ls if x[0] != '.']
+        
     ls.sort() # sort the listing (alpha and ascending)
     ls_file=[] # create list that will contain just the files
     ls_dir=[] # create list that will contain just the dirs
@@ -145,35 +197,66 @@ def run(args=None, env=None, path=None):
     if not command_min==None and not command_max==None: # if the min and max are valid
         ls=ls[command_min-1:command_max] # cut the list in accordance with this min and max
 
-        
-    for l in ls: # for each entry in the raw directory listing
-        l_complete=os.path.join(path,l) # create the full pathname for the entry
 
-        if os.path.isfile(l_complete): # if the entry is a file
-            try: # attempt to get its size
+    # for each entry in the raw directory listing
+    for l in ls:
+
+        #if we're filterint dotfiles: continue
+        if command_filter_dot:
+            if l[0] == '.': continue
+            
+        # create the full pathname for the entry
+        l_complete=os.path.join(path,l) 
+
+        # if the entry is a file
+        if os.path.isfile(l_complete): 
+            try:
+                # attempt to get its size
                 l_size=os.path.getsize(l_complete)
-            except: # on failure to get size
+            except:
+                # on failure to get size
                 l_size=-1 # return -1 to signify an "undefined" size
+
             
             # to the file list append
-            ls_file.append({"name" : l, # the name of the file
-                            "size" : l_size, # the size of the file (or -1)
-                            "link" : os.path.islink(l_complete), # whether or not the file is a link
-                            "type" : "file", # that it is a file
-                            "read-allowed" : in_root(l_complete) and os.access(l_complete, os.R_OK), # whether or not we will be able to read it using other API calls
-                            "write-allowed" : in_root(l_complete) and os.access(l_complete, os.W_OK), # whether or not we will be able to write it using other API calls
-                            "path" : os.path.join(path_exploded_str_current, l), # path for later access, since simple concat may not work well
-                            "x-is-moa" : False
-                            })
-        elif os.path.isdir(l_complete): # if the entry is a dir
-            ls_dir.append({"name" : l, # the name of the file
-                           "size" : -1, # -1 since this is a dir [!] Note: This may be changed to the size of the directory contents in the future.
-                           "link" : os.path.islink(l_complete), # whether or not the dir is a link
-                           "type" : "dir", # that it is a dir
-                           "read-allowed" : in_root(l_complete) and os.access(l_complete, os.R_OK), # whether or not we will be able to read it using other API calls
-                           "write-allowed" : in_root(l_complete) and os.access(l_complete, os.W_OK), # whether or not we will be able to write it using oher API calls
-                           "path" : os.path.join(path_exploded_str_current, l), # path for later access, since simple concat may not work well
-                           "x-is-moa" : moaapi.isMoaDir(l_complete)
+            ls_file.append({
+                # the name of the file
+                "name" : l,
+                # the size of the file (or -1)
+                "size" : l_size,
+                # whether or not the file is a link
+                "link" : os.path.islink(l_complete),
+                # that it is a file
+                "type" : "file",
+                # whether or not we will be able to read it using other API calls
+                "read-allowed" : in_root(l_complete) \
+                    and os.access(l_complete, os.R_OK),
+                # whether or not we will be able to write it using other API calls
+                "write-allowed" : in_root(l_complete) \
+                    and os.access(l_complete, os.W_OK),
+                # path for later access, since simple concat may not work well
+                "path" : os.path.join(path_exploded_str_current, l), 
+                "x-is-moa" : False
+                })
+
+        # if the entry is a dir
+        elif os.path.isdir(l_complete): 
+            ls_dir.append({
+                # the name of the file
+                "name" : l,
+                # -1 since this is a dir [!]
+                "size" : -1,
+                # whether or not the dir is a link
+                "link" : os.path.islink(l_complete), 
+                # that it is a dir
+                "type" : "dir", 
+                # whether or not we will be able to read it using other API calls
+                "read-allowed" : in_root(l_complete) and os.access(l_complete, os.R_OK), 
+                # whether or not we will be able to write it using oher API calls
+                "write-allowed" : in_root(l_complete) and os.access(l_complete, os.W_OK), 
+                # path for later access, since simple concat may not work well
+                "path" : os.path.join(path_exploded_str_current, l), 
+                "x-is-moa" : moaapi.isMoaDir(l_complete)
                            })
         
     # add both lists to paliminary final list

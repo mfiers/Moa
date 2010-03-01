@@ -13,6 +13,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		_request : null,
 		_outputRequest : null,
 
+		/* Attribute Handlers */
 		_setLocationAttr : function(val) {
 		    if(this.dhmIsLocked())
 			return;
@@ -28,6 +29,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		    return this._location;
 		},
 
+		// Loads the status for the job at the current location.
 		_navToLocation : function() {
 		    if(this._request!=null)
 			this._request.cancel();
@@ -39,6 +41,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 				                     3000);
 		},
 
+		// Receives data requested by _navToLocation.
 		_dataCallback : function(data) {
 		    var response;
 		    
@@ -51,9 +54,11 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 			this._showStatus(response["status"]);
 		    }
 
+		    // auto refresh status in 4 seconds
 		    this._timeout=setTimeout(dojo.hitch(this,this._navToLocation), 4000);
 		},
 
+		// Receives data requested by _refreshOutputDisplay.
 		_dataOutputCallback : function(data) {
 		    var response, nodes;
 		    	    
@@ -83,6 +88,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		    }
 		},
 
+		// Helper function that sets the contents of an output box.
 		_setOutputBoxNode : function(node, output, message) {
 		    var content=(output=="" ? message : output);
 
@@ -91,6 +97,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		    node.innerHTML=wwwmoa.formats.html.translate_text(content);
 		},
 
+		// Creates the display, if it has not already been created.
 		_createDisplay : function() {
 		    var status_node, longstatus_node;
 		    var outputrefresh_node;
@@ -154,6 +161,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		    this._resetOutputDisplay();
 		},
 
+		// Resets the part of the display that shows the outputs.
 		_resetOutputDisplay : function() {
 		    var nodes;
 
@@ -173,6 +181,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		    nodes[3].innerHTML="";
 		},
 
+		// Loads the outputs of the job in the current location.
 		_refreshOutputDisplay : function() {
 		    if(this._outputRequest!=null)
 			return;
@@ -187,6 +196,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		    nodes[0].innerHTML="Attempting to load outputs...";
 		},
 
+		// Updates the display to show a given status.
 		_showStatus : function(rawstatus) {
 		    var status, status_colour, status_summary, status_ismoa=true;
 		    var nodes;
@@ -257,6 +267,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.JobStatusViewer", www
 		    this._dhmSetVisualByNode(this._displayNode);
 		},
 
+		/* DHM Handlers */
 		dhmNotify : function(message) {
 		    if(message.type==wwwmoa.dhm.DHM_MSG_WDNAV)
 			this.attr("location", message.args.path);

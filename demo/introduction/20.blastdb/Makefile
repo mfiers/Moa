@@ -15,6 +15,4 @@ moa_preprocess:
 .PHONY: moa_postprocess
 moa_postprocess:
 
-dont_include_moabase=true
-include $(shell echo $$MOABASE)/template/traverse.mk
-include $(shell echo $$MOABASE)/template/__moaBase.mk
+include $(MOABASE)/template/traverse.mk

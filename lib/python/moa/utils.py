@@ -66,6 +66,88 @@ def exit(rc=0):
         h.flush()
     sys.exit(rc)
 
+
+################################################################################
+## Handle moa directories
+
+def renumber(path, fr, to):
+    """
+    Renumber a moa job
+
+    >>> removeFiles(P_EMPTY, recursive=True)
+    >>> fromDir = os.path.join(P_EMPTY, '10.test')
+    >>> problemDir = os.path.join(P_EMPTY, '20.problem')
+    >>> toDir = os.path.join(P_EMPTY, '20.test')
+    >>> os.mkdir(os.path.join(P_EMPTY, '10.test'))
+    >>> os.path.exists(os.path.join(P_EMPTY, '10.test'))
+    True
+    >>> os.path.exists(toDir)
+    False
+    >>> renumber(P_EMPTY, '10', '20')
+    >>> os.path.exists(fromDir)
+    False
+    >>> os.path.exists(toDir)
+    True
+    >>> os.mkdir(problemDir)
+    >>> renumber(P_EMPTY, '20', '30')
+    Traceback (most recent call last):
+      File '/opt/moa/lib/python/moa/utils.py', line 114, in renumber
+        raise MoaFileError(fullDir)
+    MoaFileError: Moa error handling file
+
+    
+    @param path: the path to operate in
+    @type path: String
+    @param fr: number to rename from
+    @type fr: String representing a number
+    @param to: number to rename to
+    @type to: String representing a number
+    """
+
+    frDir = None
+    toDir = None
+    l.debug("moa ren %s %s" % (fr, to))
+    for x in os.listdir(path):        
+        if x[0] == '.' : continue
+        
+        fullDir = os.path.join(path, x)
+
+        xsplit = x.split('.')
+        if xsplit[0] == fr:
+            if frDir:
+                l.error("more than one directory starting with %s" % fr)
+                raise MoaFileError(fullDir)
+            frDir = fullDir
+            toDir = os.path.join(path, to + "." + ".".join(xsplit[1:]))
+        if xsplit[0] == to:
+            l.error("target directory starting with %s already exists" % to)
+            raise MoaFileError(fullDir)
+
+    if not frDir:
+        l.error("Cannot find a directory starting with %s" % fr)
+        raise MoaFileError(path)
+    if not toDir:
+        l.error("Cannot find a directory starting with %s" % to)
+        raise MoaFileError(path)
+    
+    if not os.path.isdir(frDir):
+        l.error("%s is not a directory" % frDir)
+        raise MoaFileError(frDir)
+    #if not os.path.isdir(toDir):
+    #    l.error("%s is not a directory" % toDir)
+    #    raise MoaFileError(toDir)
+
+    l.info("renaming: %s" % (frDir))
+    l.info("  to: %s" % (toDir))
+    os.rename(frDir, toDir)
+        
+    
+
+################################################################################
+## remove & delete data
+##
+
+
 def removeMoaOutfiles(path, outName='moa'):
     """
     Remove only the .out and .err files, based on outName
@@ -81,11 +163,11 @@ def removeMoaFiles(path):
     Removes all moa related files from a directory
 
 
-        >>> open(os.path.join(P_EMPTY, 'Makefile'),'a').close()
-        >>> open(os.path.join(P_EMPTY, 'moa.mk'), 'a').close()
-        >>> open(os.path.join(P_EMPTY, 'lock'), 'a').close()
-        >>> open(os.path.join(P_EMPTY, 'moa.runlock'), 'a').close()
-        >>> open(os.path.join(P_EMPTY, 'test.file'), 'a').close()
+        >>> touch(os.path.join(P_EMPTY, 'Makefile'))
+        >>> touch(os.path.join(P_EMPTY, 'moa.mk'))
+        >>> touch(os.path.join(P_EMPTY, 'lock'))
+        >>> touch(os.path.join(P_EMPTY, 'moa.runlock'))
+        >>> touch(os.path.join(P_EMPTY, 'test.file'))
         >>> removeMoaFiles(P_EMPTY)
         >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
         False
@@ -105,7 +187,66 @@ def removeMoaFiles(path):
         ff = os.path.join(path, name)
         if os.path.isfile(ff):
             os.unlink(ff)
+
+def touch(path, times=None):
+    """
+    as the unix 'touch' util
     
+    Borrowed from:
+    http://stackoverflow.com/questions/1158076/implement-touch-using-python
+
+    >>> removeFiles(P_EMPTY, recursive=True)
+    >>> testFile = os.path.join(P_EMPTY, 'test.file')
+    >>> os.path.exists(testFile)
+    False
+    >>> touch(testFile)
+    >>> os.path.exists(testFile)
+    True
+    >>> removeFiles(P_EMPTY, recursive=True)
+
+    @param path: The filename to touch
+    @type path: String    
+    """
+    with file(path, 'a'):
+        os.utime(path, times)
+
+        
+        
+def removeFiles(path, recursive=False):
+    """
+    Remove all files from a path, and all subdirectories if
+    recursive==True
+
+    >>> removeFiles(P_EMPTY, recursive=True)
+    >>> touch(os.path.join(P_EMPTY, 'Makefile'))
+    >>> subdir = os.path.join(P_EMPTY, 'test')
+    >>> os.mkdir(subdir)
+    >>> touch(os.path.join(subdir, 'test'))
+    >>> os.path.exists(os.path.join(subdir, 'test'))
+    True
+    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+    True
+    >>> removeFiles(P_EMPTY)
+    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+    False
+    >>> os.path.exists(os.path.join(P_EMPTY, 'test'))
+    True
+    >>> removeFiles(P_EMPTY, recursive=True)
+    >>> os.path.exists(os.path.join(P_EMPTY, 'test'))
+    False
+
+    @param recursive: Include all subdirectories
+    @type recursive: Boolean
+    
+    """
+    for entry in os.listdir(path):
+        this = os.path.join(path, entry)
+        if os.path.isfile(this):
+            os.unlink(this)
+        elif os.path.isdir(this) and recursive:
+            shutil.rmtree(this)
+        
+        
 def removeDirectory(path):
     """
     dangerous utility - it complete deletes a directory

@@ -249,7 +249,7 @@ def appendParameter(wd, key, value):
     >>> test = getParameter(P_JOB, 'title')
     >>>
     """    
-    moa.conf.setVar(wd, key, value)
+    moa.conf.appendVar(wd, key, value)
 
 
 def templateList():

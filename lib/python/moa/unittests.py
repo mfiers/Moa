@@ -33,6 +33,7 @@ import moa.info
 import moa.conf
 import moa.utils
 import moa.job
+import moa.project
 
 MOABASE = os.environ['MOABASE']
 
@@ -137,7 +138,17 @@ def run(options, args):
         l.info("Finished running basic template tests")
         sys.exit()
         
-    for template in args:
-        testTemplateExtensive(template, verbose =options.verbose)
+    for what in args:
+        if what[:4] == 'moa.':            
+            l.info("testing moa python module %s" % what)
+            setSilent()
+            eval("testModule(%s)" % what)
+            if options.verbose: setVerbose()
+            else: setInfo()
+            l.info("Finished running unittests for %s" % what)
+            l.info("Ran %d test, %d failed" % (tests, failures))
+        else:
+            #assume it is a template
+            testTemplateExtensive(template, verbose =options.verbose)
         
     

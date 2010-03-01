@@ -28,14 +28,18 @@ dojo.addOnLoad(function() {
 		    
 		},
 
+		// Builds the client out of other widgets.
 		buildRendering : function() {
-		    var startup_wd;
-
+		    // create main structure
 		    this.uiComp.parent=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
 
 		    this.domNode=dojo.create("div", null);
 		    this.domNode.appendChild(this.uiComp.parent.domNode);
 
+
+
+
+		    // create nav bar
 		    this.uiComp.nav=new dijit.layout.ContentPane({region : "top", splitter : false, style : "height:40px"});
 
 		    this.uiComp.parent.addChild(this.uiComp.nav);
@@ -52,6 +56,9 @@ dojo.addOnLoad(function() {
 		    this.uiComp.nav.containerNode.appendChild(this.uiComp.navbreadcrumb);
 
 
+
+
+		    // create fs browser
 		    this.uiComp.fsbrowserpane=new dijit.layout.ContentPane({region : "leading", style : "width:300px", splitter : true});
 
 		    this.uiComp.parent.addChild(this.uiComp.fsbrowserpane);
@@ -61,6 +68,10 @@ dojo.addOnLoad(function() {
 
 		    dojo.place(this.uiComp.fsbrowser.domNode, this.uiComp.fsbrowserpane.domNode);
 
+
+
+
+		    // create tab structure
 		    this.uiComp.tab=new dijit.layout.TabContainer({region : "center", splitter : true});
 
 		    this.uiComp.parent.addChild(this.uiComp.tab);
@@ -68,6 +79,7 @@ dojo.addOnLoad(function() {
 
 
 
+		    // create job status viewer
 		    this.uiComp.jobstatusviewerpane=new dijit.layout.ContentPane({title : "Job Status",
 										  region : "leading"
 			});
@@ -82,7 +94,7 @@ dojo.addOnLoad(function() {
 
 
 
-
+		    // create job view
 		    this.uiComp.pbrowserpane=new dijit.layout.ContentPane({title : "Job View", region : "leading", style : "width:300px", splitter : true});
 
 		    this.uiComp.tab.addChild(this.uiComp.pbrowserpane);
@@ -93,6 +105,9 @@ dojo.addOnLoad(function() {
 		    dojo.place(this.uiComp.pbrowser.domNode, this.uiComp.pbrowserpane.domNode);
 
 
+
+
+		    // create job parameter editor
 		    this.uiComp.jobparameditorpane=new dijit.layout.ContentPane({title : "Job Parameters", region : "leading", style : "width:300px", splitter : true});
 
 		    this.uiComp.tab.addChild(this.uiComp.jobparameditorpane);
@@ -103,22 +118,102 @@ dojo.addOnLoad(function() {
 
 		    dojo.place(this.uiComp.jobparameditor.domNode, this.uiComp.jobparameditorpane.domNode);
 
-		   
+
+
+
+		    // create notices
 		    this.uiComp.bottom=new dijit.layout.ContentPane({region : "bottom", splitter : false, id : "smallnotices", content : "This is the pre-release version of WWWMoa.<br>WWWMoa is powered by <a href=\"/go/python\">Python</a> and <a href=\"/go/dojo\">Dojo Toolkit</a>. Best viewed in <a href=\"/go/firefox\">Firefox Web Browser</a>."});
 
 		    this.uiComp.parent.addChild(this.uiComp.bottom);
 
+
+
+
+		    // perform some additional init
 		    for(var x=0; x<this.uiCompDHM.length; x++) 
 			this.uiCompDHM[x].dhmPoint(this);
 
+		    this._toggleExpand();
 
-		    startup_wd=wwwmoa.io.cookie.get("WWWMOA_WD");
 
-		    startup_wd=(startup_wd==null ? "" : startup_wd);
+
+
+		    // perform initial navigation
+		    this._initNav();
+		},
+
+		// Toggles whether the client is in expanded view.
+		_toggleExpand : function() {
+		    var width, cols, indexCount;
+
+		    var setLabel=dojo.hitch(this, function() {
+			    var label=(this._expanded ? "[Normal View]" : "[Expanded View]");
+
+			    this.uiComp.navexpand.innerHTML=label;
+			});
+
+		    if(this._expanded==null) {
+			this.uiComp.navexpand=dojo.create("span", {onclick : dojo.hitch(this, this._toggleExpand),
+								   style : {fontWeight : "bold",
+									    color : "#0000FF",
+									    cursor : "pointer"
+				}});
+
+			this.uiComp.nav.containerNode.appendChild(this.uiComp.navexpand);
+
+			this._expanded=false;
+
+			setLabel();
+
+			return;
+		    }
+
+		    this._expanded=!this._expanded;
+
+		    setLabel();
+
+		    if(this._expanded) {
+			width=800;
+			cols=4;
+			indexCount=100;
+		    }
+		    else {
+			width=350;
+			cols=1;
+			indexCount=15;
+		    }
+
+		    this.uiComp.fsbrowserpane.resize({w : width});
+		    this.uiComp.parent.resize();
+		    this.uiComp.fsbrowser.attr("cols", cols);
+		    this.uiComp.fsbrowser.attr("indexCount", indexCount);
+		},
+
+		// Starts initial navigation.
+		_initNav : function() {
+		    this._initNavWD=wwwmoa.io.cookie.get("WWWMOA_WD");
+
+		    this._initNavWD=(this._initNavWD==null ? "" : this._initNavWD);
+
+		    wwwmoa.io.ajax.get(wwwmoa.io.rl.get_api("s", this._initNavWD),
+				       dojo.hitch(this, this._initNavCallback),
+				       3000);
+		},
+
+		// Completes initial navigation.
+		_initNavCallback : function(data) {
+		    if(data==null)
+			this._initNavWD="";
+		    else {
+			var response=wwwmoa.formats.json.parse(data);
+
+			if(response.size!=-1)
+			    this._initNavWD="";
+		    }
 
 		    this.dhmRequest({
 			    type : wwwmoa.dhm.DHM_REQ_WDNAV,
-			    args : {path : startup_wd}
+			    args : {path : this._initNavWD}
 			});
 		},
 
@@ -126,61 +221,7 @@ dojo.addOnLoad(function() {
 		    var poll_good;
 		    var poll_ret;
 
-		    if(request.type==wwwmoa.dhm.DHM_REQ_MODAL) {
-
-			var modal_layout;
-			var modal_container;
-			var modal_exit;
-
-			if(this._isCurrentlyModal)
-			    return false;
-
-
-			modal_layout=new dijit.layout.BorderContainer({style : "width:100%; height:700px", gutters : "true", liveSplitters: true});
-
-			modal_container=new dijit.layout.ContentPane({region : "center", splitter : false, style : ""});
-
-			modal_exit=new dijit.layout.ContentPane({region : "leading", splitter : false, style : "width:100px; font-size:36pt; font-weight:bold; cursor:pointer; text-align:center", content : "<div style=\"font-size:14pt\">CLICK<br>TO<br>RETURN</div><div title=\"Click to return to main view.\">&laquo;<br>&laquo;<br>&laquo;</div>"});
-
-			modal_layout.addChild(modal_container);
-
-			modal_layout.addChild(modal_exit);
-
-
-			this._isCurrentlyModal=true;
-
-			for(var x=0; x<this.uiCompDHM.length; x++) 
-			    this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_DISPLAY_LOCK, args : {}});
-
-
-			this.domNode.removeChild(this.uiComp.parent.domNode);
-			this.domNode.appendChild(modal_layout.domNode);
-
-
-			modal_layout.startup();
-
-			if(dhm!=null)
-			    dhm.dhmNotify({type : wwwmoa.dhm.DHM_MSG_MODAL_GAIN_CTRL, args : {node : modal_container.containerNode}});
-
-			dojo.connect(modal_exit, "onMouseEnter", function() { this.domNode.style.color="#808080"; });
-			dojo.connect(modal_exit, "onMouseLeave", function() { this.domNode.style.color="#000000"; });
-
-			dojo.connect(modal_exit, "onClick", dojo.hitch(this, function() {
-				modal_layout.destroy(false);
-
-				this.domNode.appendChild(this.uiComp.parent.domNode);
-
-				this._isCurrentlyModal=false;
-
-				dhm.dhmNotify({type : wwwmoa.dhm.DHM_MSG_MODAL_LOOSE_CTRL, args : {node : modal_container.containerNode}});
-
-				for(var x=0; x<this.uiCompDHM.length; x++)
-				    this.uiCompDHM[x].dhmNotify({type : wwwmoa.dhm.DHM_MSG_DISPLAY_UNLOCK, args : {}});
-			    }));
-
-			return true;
-		    }
-		    else if(request.type==wwwmoa.dhm.DHM_REQ_WDNAV) {
+		    if(request.type==wwwmoa.dhm.DHM_REQ_WDNAV) {
 			if(request.args.path==null)
 			    return null;
 			

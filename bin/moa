@@ -61,6 +61,7 @@ import moa.archive
 from moa import runMake
 import moa.conf
 import moa.info
+import moa.api
 import moa.unittests
 from moa import utils
 from moa.exceptions import *
@@ -112,6 +113,8 @@ parser.add_option("-j", dest="threads",
                   help="threads to use when running Make (corresponds " +
                   "to the make -j parameter)")
 
+parser.add_option("-B", dest="remake", action='store_true',
+                  help="Reexecute all targets (corresponds to make -B) ")
 
 parserN = optparse.OptionGroup(parser, "For use with moa new")
 parser.set_defaults(title="", directory=".")
@@ -126,14 +129,19 @@ parser.add_option_group(parserN)
 if options.verbose:
     moa.logger.setVerbose()
 
-##
+##Check for deprecate template style
 checkTemplate(os.getcwd())
 
 #make sure the MOA_THREADS env var is set - this is used by MOA later
-#on
+extraMakeParameters = []
+
+# threads need to be treated different from the other parameters.
+# multithreaded operation is only allowed in the second phase
+# execution.
 os.putenv('MOA_THREADS', "%s" % options.threads)
-if options.verbose:
-    os.putenv('MOA_VERBOSE', "-v")
+
+if options.remake:
+    extraMakeParameters.append('-B')
 
 ##
 ## Command dispatch
@@ -144,6 +152,7 @@ if __name__ == "__main__":
     if len(args) == 0:
         rc = runMake.go(verbose = options.verbose,
                         threads = options.threads,
+                        extraMakeParameters = extraMakeParameters,                        
                         background = options.background)
         sys.exit(rc)
 
@@ -156,12 +165,13 @@ if __name__ == "__main__":
         rc = runMake.go(makeArgs=newargs,
                         verbose=options.verbose,
                         threads = options.threads,
+                        extraMakeParameters = extraMakeParameters,
                         background = options.background)
         sys.exit(rc)
     elif command == 'rawinfo':
         pprint.pprint(moa.info.info(os.getcwd()))
     elif command == 'status':
-        print moa.info.status(os.getcwd())
+        print moa.api.status(os.getcwd())
         
     #Create new jobs
     elif command == 'job':
@@ -170,6 +180,10 @@ if __name__ == "__main__":
         #shortcut for moa job new
         moa.job.handler(options, args)
 
+    #utilities
+    elif command == 'ren':
+        #renumber a moa job
+        moa.utils.renumber(os.getcwd(), args[1], args[2])
     #pack & unpack trees
     elif command == 'archive':
         moa.archive.handler(options, newargs)
@@ -182,8 +196,6 @@ if __name__ == "__main__":
         moa.conf.handler(options, args)
     elif command == 'get':
         moa.conf.handler(options, args)
-    elif command == 'get':
-        moa.conf.handler(options, args)
     #unittests
     elif command == 'test':
         moa.unittests.run(options, newargs)
@@ -192,6 +204,7 @@ if __name__ == "__main__":
         rc = runMake.go(makeArgs=args,
                         threads = options.threads,
                         background = options.background,
+                        extraMakeParameters = extraMakeParameters,
                         verbose=options.verbose)
         sys.exit(rc)
     utils.exit()

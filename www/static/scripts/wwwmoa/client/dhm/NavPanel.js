@@ -27,6 +27,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		_createTemplate : null,
 		_targetRequest : null,
 
+		/* Attribute Handlers */
 		_setLocationAttr : function(val) {		    
 		    this._cancelLoadTargets();
 
@@ -46,6 +47,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		    return this._location;
 		},
 
+		// Loads the targets associated with the job at the current location.
 		_loadTargets : function() {
 		    if(this._targetRequest!=null)
 			return;
@@ -59,6 +61,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 							   8000);
 		},
 
+		// Cancels the request made by _loadTargets.
 		_cancelLoadTargets : function() {
 		    if(this._targetRequest==null)
 			return;
@@ -70,6 +73,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		    this.dhmUnlock();
 		},
 
+		// Receives data requested by _loadTargets.
 		_loadTargetsCallback : function(data) {
 		    this._targetRequest=null;
 
@@ -98,6 +102,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		    this.dhmUnlock();
 		},
 
+		// Creates the display, if it has not already been created.
 		_initDisplay : function() {
 		    if(this._displayNode!=null)
 			return;
@@ -131,6 +136,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		    this._dhmSetVisualByNode(this._displayNode);
 		},
 
+		// Loads the installed templates.
 		_loadTemplates : function() {
 		    this.dhmLock();
 
@@ -139,6 +145,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 				       8000);
 		},
 
+		// Receives the data requested by _loadTemplates.
+		// Also, creates the dialog used to create a job.
 		_loadTemplatesCallback : function(data) {
 		    if(data==null)
 			return;
@@ -244,6 +252,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		    this.dhmUnlock();
 		},
 
+		// Sets the form elements on the dialog used to create
+		// a job to default values.
 		_resetCreateDialog : function() {
 		    if(this._createDialogTitle==null)
 			return;
@@ -253,6 +263,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		    this._createDialogTemplate.attr("value", "");
 		},
 
+		// Starts the creation of a job.
 		_createJob : function(template, location, title) {
 		    if(this.dhmIsLocked())
 			return;
@@ -268,6 +279,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 				       4000);
 		},
 
+		// Receives data requested by _createJob, and makes a decision
+		// about whether to continue with creating a job.
 		_createJobLocationCallback : function(data) {
 
 		    if(data==null) {
@@ -290,6 +303,8 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 
 		},
 
+		// Receives data requested by _createJobLocationCallback, and makes a
+		// decision about whether to continue with creating a job.
 		_createJobInfoCallback : function(data) {
 		    var args;
 		    var confirm_text;
@@ -311,6 +326,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 				       8000);
 		},
 
+		// Receives data on whether a job was created successfully.
 		_createJobCallback : function(data) {
 		    this._resetCreateDialog();
 
@@ -319,6 +335,7 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 		    this._reloadWD();
 		},
 
+		// Sends a request to start a job.
 		_runJob : function(target) {
 		    var args;
 
@@ -329,12 +346,14 @@ dojo.addOnLoad(function() {dojo.declare("wwwmoa.client.dhm.NavPanel", wwwmoa.cli
 				       8000);
 		},
 
+		// Sends a request to reload the current WD.
 		_reloadWD : function() {
 		    this._dhmGetManager().dhmRequest({type : wwwmoa.dhm.DHM_REQ_WDNAV,
 				                      args : {path : this.attr("location")}
 			});
 		},
 
+		/* DHM Handlers */
 		_dhmLockVisual : function() {
 		    this._createButton.attr("disabled", true);
 		    this._runButton.attr("disabled", true);

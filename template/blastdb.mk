@@ -92,6 +92,7 @@ blastdb: $(one_blast_db_file)
 $(one_blast_db_file): $(bdb_fasta_file)
 	@echo "Creating $@ from $(bdb_input_dir)"
 	formatdb -i $< -p $(bdb_protein) -o T -n $(bdb_name)
+	touch $(bdb_name)
 
 $(bdb_fasta_file): $(input_files)
 	if [[ "$(bdb_doconcat)" == "T" ]]; then 			\

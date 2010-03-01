@@ -12,7 +12,5 @@ moa_postprocess:
 	@echo Postprocess commands go here..
 
 
-dont_include_moabase=please
 
-include $(shell echo $$MOABASE)/template/getFromNcbi.mk
-include $(shell echo $$MOABASE)/template/__moaBase.mk
+include $(MOABASE)/template/getFromNcbi.mk
