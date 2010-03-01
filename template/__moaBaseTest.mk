@@ -57,6 +57,9 @@ moa_default_unittests += moabase_var
 
 var_defined=$(if $(call seq,$(origin $(1)),undefined),echo '$(moa_ids): $(1) is undefined';)
 
+var_correct_type=$(if $(findstring $($(1)_type),file directory password string set float integer)\
+	,,echo "Invalid type '$($(1)_type)' for $(1)_type";)
+
 var_starts_with=$(if $(filter-out $(1)%,$(2)),echo '$(2) does not start with $(moa_ids)';)
 
 
@@ -66,14 +69,11 @@ template_test:
 	$(foreach v,$(moa_must_define) $(moa_may_define),	\
 		$(call var_defined,$(v)_help)					\
 		$(call var_defined,$(v)_type)					\
+		$(call var_correct_type,$(v))					\
 	)
-	$(foreach v, $(moa_may_define),					\
-		$(call var_defined,$(v)_default)				\
+	$(foreach v, $(moa_may_define),				\
+		$(call var_defined,$(v)_default)		\
 	)
-#	$(foreach v,$(moa_must_define) $(moa_may_define),	\
-#		$(if $(call set_is_member,$(v),$(prefix_ex)),,	\
-#		$(call var_starts_with,$(moa_ids),$(v)))		\
-#	)
 
 template_extra_test:
 	RANDOMDIR=`mktemp -d`;                      		\
