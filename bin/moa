@@ -64,6 +64,7 @@ import moa.info
 import moa.unittests
 from moa import utils
 from moa.exceptions import *
+from moa.checkTemplate import checkTemplate
 
 ## Init the logger
 import moa.logger
@@ -124,60 +125,15 @@ parser.add_option_group(parserN)
 
 if options.verbose:
     moa.logger.setVerbose()
-    
+
+##
+checkTemplate(os.getcwd())
+
 #make sure the MOA_THREADS env var is set - this is used by MOA later
 #on
 os.putenv('MOA_THREADS', "%s" % options.threads)
 if options.verbose:
     os.putenv('MOA_VERBOSE', "-v")
-
-##
-## Check for deprecated style makefile
-
-_check = subprocess.Popen("cat Makefile 2>/dev/null |grep dont_include_moabase ",
-                          shell=True,
-                          stdout=subprocess.PIPE).communicate()[0].strip()
-if 'dont_include_moabase' in _check:
-    includeline=re.compile(r'include \$\(shell echo \$\$MOABASE\)/template/.*\.mk$')
-    l.warning("Old style Makefile, automatically updating!")
-    l.warning("The old Makefile will be copied to Makefile.old")
-    shutil.move('Makefile', 'Makefile.old')
-    F = open('Makefile.old')
-    G = open('Makefile', 'w')
-    count_includes = 0
-    dim_removed = False
-    imb_removed = False
-    for line in F.readlines():
-        if re.match('^dont_include_moabase=.*$', line.strip()):
-            dim_removed = True
-            l.debug("Removing %s" % line)
-            continue
-        if line.strip() == 'include $(shell echo $$MOABASE)/template/__moaBase.mk':
-            imb_removed = True
-            l.debug("Removing %s" % line)
-            continue
-        if includeline.match(line.strip()):
-            l.debug("found an include line")
-            l.debug(line)
-            count_includes += 1
-            
-        line = line.replace('$(shell echo $$MOABASE)', '$(MOABASE)')
-        G.write(line)
-    F.close()
-    G.close()
-    if count_includes > 1:
-        l.critical("This makefile might NOT work - including more than one template")
-        l.critical("is not allowed (anymore :( )")
-        sys.exit(1)
-    if count_includes == 0:
-        l.warning("Odd - you dont' seem to be including any template, have a look")
-        sys.exit(1)
-    if not dim_removed and imb_removed:
-        l.error("Updated Makefile - unsure of success - please check")
-        sys.exit(1)
-    l.error("Updated Makefile - everything looks fine (check anyway)")
-    sys.exit()
-
 
 ##
 ## Command dispatch
