@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# 
 # Copyright 2009 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
@@ -20,8 +18,6 @@
 """
 Functions to retrieve information from Moa directories
 """
-__docformat__ = "restructuredtext en"
-
 
 import os
 import re
