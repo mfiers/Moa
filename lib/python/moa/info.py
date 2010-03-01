@@ -167,6 +167,39 @@ def status(d):
     if os.path.exists(failedfile):
         return "failed"
     return "waiting"
+
+def template(wd):
+    """
+    Return the template name of this wd
+    """
+    if not isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+    with open(os.path.join(wd, 'Makefile')) as F:
+        for line in F.readlines():
+            if 'include' in line \
+               and 'MOABASE' in line \
+               and 'template' in line:
+                return line.strip().split('/')[-1].replace('.mk', '')
+
+reFindTitle=re.compile(r'title\+?= *(.*?) *$')
+def getTitle(wd):
+    """
+    Return the title of a moa job
+
+    @param wd: directory to get the title of
+    @type wd: String
+    @returns: The title of the project
+    @rtype: String
+    @raises NotAMoaDirectory
+    """
+    if not isMoaDir(wd):
+        raise NotAMoaDirectory(wd)
+    with open(os.path.join(wd, 'moa.mk')) as F:
+        for line in F.readlines():
+            m = reFindTitle.match(line)
+            if not m: continue
+            return  m.groups()[0]
+
     
 def info(wd):
     """

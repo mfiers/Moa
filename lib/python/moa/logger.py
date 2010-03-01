@@ -89,7 +89,7 @@ def setVerbose():
     l.setLevel(logging.DEBUG)
 
 def setSilent():
-    l.setLevel(logging.WARNING)
+    l.setLevel(logging.CRITICAL)
 
 def setInfo():
     l.setLevel(logging.INFO)

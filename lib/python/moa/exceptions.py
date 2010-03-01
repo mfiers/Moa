@@ -20,3 +20,7 @@ class NotAMoaTemplate(Exception):
     def __str__(self):
         return "%s is not a MOA template" % self.template
 
+class MoaFileError(Exception):
+    """Error handling a file """
+    def __str__(self):
+        return "Moa error handling file"
