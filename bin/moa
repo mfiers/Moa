@@ -225,6 +225,10 @@ if __name__ == "__main__":
         #shortcut for moa job new
         moa.job.handler(options, args)
 
+    #utilities
+    elif command == 'ren':
+        #renumber a moa job
+        moa.utils.renumber(os.getcwd(), args[1], args[2])
     #pack & unpack trees
     elif command == 'archive':
         moa.archive.handler(options, newargs)
@@ -234,8 +238,6 @@ if __name__ == "__main__":
             print job
     #configuration stuff
     elif command == 'set':
-        moa.conf.handler(options, args)
-    elif command == 'get':
         moa.conf.handler(options, args)
     elif command == 'get':
         moa.conf.handler(options, args)
