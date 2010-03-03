@@ -17,7 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-include $(shell echo $$MOABASE)/template/moaBasePre.mk
+include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_ids += sam2bam
 moa_title_maq_fasta2bfa = Convert SAM to BAM using samtools

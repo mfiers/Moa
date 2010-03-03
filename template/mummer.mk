@@ -20,7 +20,7 @@
 ################################################################################
 # Variable checks & definition & help
 
-include $(shell echo $$MOABASE)/template/moaBasePre.mk
+include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_ids += mummer
 moa_title_mummer = mummer

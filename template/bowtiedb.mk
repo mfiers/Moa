@@ -17,7 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 moa_ids += bowtiedb
 moa_title_bowtiedb = Bowtie index builder

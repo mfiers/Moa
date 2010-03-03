@@ -18,7 +18,7 @@
 # 
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBasePre.mk
+	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
 moa_ids += fq2bq

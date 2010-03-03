@@ -19,7 +19,7 @@
 
 ################################################################################
 #include moabasepre
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 moa_ids += bowtie 
 moa_title_bowtie = Bowtie

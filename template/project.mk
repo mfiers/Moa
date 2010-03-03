@@ -24,11 +24,17 @@ project_help = This template does not do anything - it is a project placeholder.
 
 moa_may_define += project_description
 project_description_default = 
-project_description_help = A short description of what this project is supposed to achieve, how to use it, and what parameters are most important to set
+project_description_help = A description of what this project is				\
+  supposed to achieve, how to use it, and what parameters are most				\
+  important to set
 project_description_type = string
 
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moaBase.mk
+
+.PHONY: project_initialize
+project_initialize:
+	-mkdir moa
 
 .PHONY: project_clean
 project_clean:

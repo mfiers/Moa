@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 moa_title = Create ACT crunch files for use with Artemis ACT
 moa_description = Create a crunch file for use with the Artemis ACT \

@@ -64,15 +64,16 @@ var_starts_with=$(if $(filter-out $(1)%,$(2)),echo '$(2) does not start with $(m
 
 
 .PHONY: template_test
-template_test: prefix_ex=$(call set_create,title moa_precommand moa_postcommand)
+#template_test: prefix_ex=$(call set_create,title moa_precommand moa_postcommand)
 template_test:
+	@echo -n
 	$(foreach v,$(moa_must_define) $(moa_may_define),	\
 		$(call var_defined,$(v)_help)					\
 		$(call var_defined,$(v)_type)					\
 		$(call var_correct_type,$(v))					\
 	)
-	$(foreach v, $(moa_may_define),				\
-		$(call var_defined,$(v)_default)		\
+	$(foreach v, $(moa_may_define),						\
+		$(call var_defined,$(v)_default)				\
 	)
 
 template_extra_test:

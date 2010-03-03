@@ -17,7 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-include $(shell echo $$MOABASE)/template/moaBasePre.mk
+include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_ids += newbler
 moa_title_newbler = Newbler

@@ -22,20 +22,19 @@
 ## define all variables here that are not depending on moa.mk
 ###############################################################################
 
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 SHELL := /bin/bash
 INCLUDE_MOABASE = yes
 
-## We use the Gnu Make Standard Library
+## Using the (rather nice) Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
 include $(MOABASE)/template/gmsl
 
 ## Load moa wide configuration
 include $(MOABASE)/etc/moa.conf.mk
 
-##			$(warning Setting $v to default value $($v_default)) \
-#fill in the default values of each variable
+## Fill in the default values of each variable
 $(foreach v,$(moa_must_define) $(moa_may_define),				\
 	$(if $($v),,												\
 		$(if $($v_default),										\
@@ -46,8 +45,7 @@ $(foreach v,$(moa_must_define) $(moa_may_define),				\
 $(foreach v,$(_moa_filesets), \
 	$(eval $(v)_files = $(wildcard $($(v)_dir)/$($(v)_glob).$($(v)_extension))))
 
-
-moa_fileset_init = $(warning use of moa_fileset_init is depreacted)
+moa_fileset_init = $(warning use of moa_fileset_init is deprecated)
 
 ## remap a fileset,
 ## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)
@@ -59,12 +57,11 @@ moa_fileset_remap_nodir = \
 
 ## default variables used in generating help
 
-## Pandoc is used widely to convert to & from documentation
-## formats. A pandoc version >= v1.2 is recomended.
+## Pandoc is used to convert to & from documentation 
+## formats. A pandoc version >= v1.2 is strongly recomended.
 pandocbin?=$(shell which pandoc)
 
-
-#pre & postprocess targets. these need to be overridden
+#Pre & postprocess targets. these need to be overridden
 .PHONY: moa_preprocess moa_postprocess
 moa_preprocess:
 moa_postprocess:
@@ -112,6 +109,9 @@ moa_run_postcommand:
 %_post:
 	@echo -n
 
+%_initialize:
+	@echo -n
+
 #Find project root (if there is one)
 # ifndef in_project_loop
 # project_root = $(shell \
@@ -144,6 +144,7 @@ is_moa:
 p_open=(
 p_close=)
 moa_welcome:
+	@cat $(MOABASE)/share/moa/moa.logo.txt
 	@$(call echo, Starting MOA $(MAKECMDGOALS) in $(CURDIR))
 
 ## If moa.mk is defined, and not yet imported: do so.
@@ -274,6 +275,15 @@ clean_start: moa_welcome
 
 
 ################################################################################
+# Initialize - to be executed when setting up the moa job  (i.e. calling moa new xxx)
+#
+
+.PHONY: initialize
+initialize: $(moa_ids)_initialize
+	$(call errr,Ran initialization $(moa_ids)_initialize)
+
+
+################################################################################
 # Cruising - i.e. run this template and then walk through all subdirs
 #
 # by calling 'make all', all subdirs are made as well as the cd.As an extension,
@@ -349,8 +359,6 @@ all: $(if $(call seq,$(action),), 								\
 	$(call echo,Successfully finished moa all run $(if $(action),action=$(action)))
 
 
-
-
 # Add a few default targets to the set 
 # of possible targets
 moa_targets += check clean help show all prereqs set append
@@ -387,7 +395,6 @@ moa_author ?= Mark Fiers
 ## Moa check - is everything defined?
 
 ## check prerequisites
-
 prereqlist += prereq_moa_environment
 
 checkPrereqExec = \
@@ -494,7 +501,8 @@ get: $(addprefix moa_getvar_, $(filter $(var),$(moa_must_define) $(moa_may_defin
 
 moa_getvar_%:
 	@echo '$(value $*)'
-	
+
+
 ################################################################################
 ## make showvars ###############################################################
 #
@@ -508,8 +516,6 @@ showvars:
 		echo $$x; \
 	done
 
-
-#'$(value $*)'
 
 ifndef MOA_INCLUDE_HELP
 include $(shell echo $$MOABASE)/template/__moaBaseHelp.mk

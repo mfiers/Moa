@@ -18,7 +18,7 @@
 # 
 
 #Include base moa code - does variable checks & generates help
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 ################################################################################
 # Definitions

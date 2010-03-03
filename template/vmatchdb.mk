@@ -19,7 +19,7 @@
 
 ################################################################################
 #include moabasepre
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 moa_ids += vmatchdb
 moa_title = vmatch database builder
