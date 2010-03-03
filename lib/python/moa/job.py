@@ -28,6 +28,8 @@ import sys
 import moa.utils
 import moa.logger
 import moa.conf
+import moa.runMake
+
 from moa.exceptions import *
 
 l = moa.logger.l
@@ -219,6 +221,14 @@ def newJob(template,
     if parameters:
         l.debug("and setting parameters %s" % parameters)        
         moa.conf.commandLineHandler(wd, parameters)
-            
+
+    l.debug("Running moa initialization")
+
+    #moa.runMake.go(wd = wd,
+    #               target='initialize',
+    #               captureOut = True,
+    #               captureOutName='moa.init',
+    #               verbose=False)
+                   
     l.debug("Written %s, try: moa help" % makefile)
 
