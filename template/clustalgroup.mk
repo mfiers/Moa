@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += clustalgroup
+moa_id += clustalgroup
 moa_title_mummer = clustalw
 moa_description_mummer = Run clustalw on two sets of sequences
 
@@ -33,7 +33,7 @@ cwg_input_extension_default = fasta
 cwg_input_extension_help = Input file extension
 cwg_input_extension_type = string
 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 cwg_input_files = $(wildcard $(cwg_input_dir)/*.$(cwg_input_extension))
 

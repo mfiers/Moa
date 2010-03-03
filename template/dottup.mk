@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += dottup
+moa_id += dottup
 moa_title_dottup = EMBOSS Dottup
 moa_description_dottup = Use dottup (from EMBOSS) to compare two sets			\
 of sequences
@@ -45,7 +45,7 @@ dottup_wordsize_help = Wordsize used to discover similarities between sequences
 dottup_wordsize_type = integer
 
 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 
 ix = $(dottup_input_extension)

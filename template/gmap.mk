@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += gmap
+moa_id += gmap
 
 moa_title_gmap = Gmap
 moa_description_gmap = Run GMAP on an set of input files (query) \
@@ -48,7 +48,7 @@ gmap_gff_source_help = Source field to use in the output GFF
 gmap_gff_source_type = string
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 .PHONY: gmap_prepare

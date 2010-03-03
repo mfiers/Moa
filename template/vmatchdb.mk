@@ -21,7 +21,7 @@
 #include moabasepre
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_ids += vmatchdb
+moa_id += vmatchdb
 moa_title = vmatch database builder
 moa_description = Builds a vmatchdb index from a sequence
 
@@ -39,7 +39,7 @@ vmatchdb_name_help = Name of the vmatch index to create
 vmatchdb_name_type = string
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run

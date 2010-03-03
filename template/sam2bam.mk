@@ -19,7 +19,7 @@
 
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-moa_ids += sam2bam
+moa_id += sam2bam
 moa_title_maq_fasta2bfa = Convert SAM to BAM using samtools
 moa_description_maq_fasta2bfa = Converts a FASTQ file to MAQ BFQ	\
 format.
@@ -37,7 +37,7 @@ prereq_samtools:
 
 ################################################################################
 ## include moabase
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 ##### Derived variables for this run
 $(call moa_fileset_remap_nodir,sam2bam_input,sam2bam_output,bam)

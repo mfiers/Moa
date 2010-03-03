@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += dotself
+moa_id += dotself
 moa_title_mummer = Dottup self
 moa_description_mummer = Run dottup with a sequence against itself
 
@@ -38,7 +38,7 @@ dotself_wordsize_default = 6
 dotself_wordsize_help = Wordsize used for recognizing similarity
 dotself_wordsize_type = integer
 
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 
 ix = $(dotself_input_extension)
 

@@ -22,7 +22,7 @@
 
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-moa_ids += mummer
+moa_id += mummer
 moa_title_mummer = mummer
 moa_description_mummer = Run mummer between two sequences
 
@@ -48,7 +48,7 @@ mum_plot_raw_allowed = T F
 mum_plot_raw_default = F
 
 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 mum_a_set = $(addprefix a__, $(mum_input_a_files))
 mum_b_set = $(mum_input_b_files)

@@ -55,12 +55,12 @@ moa_unittest_filenotexists=\
 
 moa_default_unittests += moabase_var
 
-var_defined=$(if $(call seq,$(origin $(1)),undefined),echo '$(moa_ids): $(1) is undefined';)
+var_defined=$(if $(call seq,$(origin $(1)),undefined),echo '$(moa_id): $(1) is undefined';)
 
 var_correct_type=$(if $(findstring $($(1)_type),file directory password string set float integer)\
 	,,echo "Invalid type '$($(1)_type)' for $(1)_type";)
 
-var_starts_with=$(if $(filter-out $(1)%,$(2)),echo '$(2) does not start with $(moa_ids)';)
+var_starts_with=$(if $(filter-out $(1)%,$(2)),echo '$(2) does not start with $(moa_id)';)
 
 
 .PHONY: template_test

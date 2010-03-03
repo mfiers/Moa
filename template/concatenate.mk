@@ -28,7 +28,7 @@ clean_help = Clean up.
 clean_weka_help = clean location in the global weka db (will not run automatically)
 
 # Helpm
-moa_ids += concatenate
+moa_id += concatenate
 moa_title_concatenate = Concatenate
 moa_description_concatenate = Concatenate a set of fasta files into one.
 
@@ -53,7 +53,7 @@ input_extension_type = string
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ################################################################################

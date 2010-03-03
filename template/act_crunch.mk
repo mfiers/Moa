@@ -24,7 +24,7 @@ moa_description = Discover the bidirectional best blast hit between two \
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
   [[Alt90]] suite of tools
 
-moa_ids += crunch
+moa_id += crunch
 
 crunch_help = generate a list of bidirectional best blast hits.
 
@@ -60,7 +60,7 @@ crunch_nothreads_help = threads to run crunch with (note the overlap \
 crunch_nothreads_type = integer
 
 #include moabasemoa	
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 
 crunch_test:
 	$(e)echo "Input extension: '$(crunch_input_extension)'"

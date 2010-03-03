@@ -21,7 +21,7 @@ moa_title = Glimmer3
 
 moa_description = Predicts (prokaryotic) using glimmer3.
 
-moa_ids += glimmer3
+moa_id += glimmer3
 
 glimmer3_help = Glimmer3 is a open reading frame discovery program		\
   from the EMBOSS [[emboss]] package. It takes a set of input		\
@@ -93,7 +93,7 @@ prereq_awkscripts_installed:
 			Check the AWK shebang!)
 
 #include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 glimmer3_input_files ?= $(wildcard $(glimmer3_input_dir)/*.$(glimmer3_input_extension))
 

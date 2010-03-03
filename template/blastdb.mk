@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += blastdb
+moa_id += blastdb
 moa_title_blastdb = Create a BLAST database 
 blastdb_help = Takes either a set of fasta files or a single	\
   multi-fasta input file and creates a BLAST database.
@@ -54,7 +54,7 @@ prereq_glimmer3_installed:
 	@$(call checkPrereqPath,formatdb)
 
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 # End of the generic part - from here on you're on your own :)
 

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += traverse
+moa_id += traverse
 moa_title = Traverse
 moa_description = Do nothing, except be a part in executing full	\
 directory structures
@@ -25,7 +25,7 @@ traverse_help = Do nothing - no need to call this.
 #Include base moa code - does '*:blastn.self' variable checks & generates help
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 title ?= traverse node

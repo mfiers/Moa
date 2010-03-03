@@ -20,7 +20,7 @@
 moa_targets += getFromNcbi
 getFromNcbi_help = Download some data from NCBI
 
-moa_ids += getFromNcbi
+moa_id += getFromNcbi
 moa_title = "Download from NCBI"
 moa_description = Download a set of sequences from NCBI based on a		\
   query string (ncbi_query) and database (ncbi_db). This tempate will	\
@@ -54,7 +54,7 @@ prereq_wget:
 	@$(call checkPrereqPath,wget,Please install wget)
 
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 #define extra variables to register in couchdb
 #moa_register_extra += fastadir
