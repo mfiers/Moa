@@ -99,7 +99,7 @@ def testTemplateExtensive(template, verbose=False):
     l.info("Starting extensive template test for %s" % template)
     moa.api.newJob(template = template, wd=testDir,
                    title='Testing template %s' % template)
-    rc = moa.api.runMoa(wd=testDir, target='%s_test' % template, 
+    rc = moa.api.runMoa(wd=testDir, target='%s_unittest' % template, 
                         background=False, verbose=True)    
     if verbose:
         out = moa.api.getMoaOut(wd=testDir)

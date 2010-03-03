@@ -166,7 +166,7 @@ blast_clean:
 	-rm -rf error.log
 	-rm blast_report
 
-blast_test:	
+blast_unittest:	
 	moa new -d 10.blastdb -t 'test blast db' blastdb							\
 			bdb_fasta_file=$$MOADATA/dna/test01.fasta bdb_name=test
 	cd 10.blastdb; moa 
