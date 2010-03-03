@@ -126,9 +126,9 @@ logmark = chr(27) + '[0;44mU' + \
 
 
 normalFormatter = XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(message)s')
-debugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s: %(message)s @ %(pathname)s:%(lineno)d')
+debugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s: %(message)s @ %(filename)s:%(lineno)d')
 debugFormatterX = XTRFormatterD(
-    '#' * 80 + '\n##%(colon)s%(vis1)s%(coloff)s %(asctime)s\n%(traceback)s\n #@ %(pathname)s:%(lineno)d\n%(message)s')
+    '#' * 80 + '\n##%(colon)s%(vis1)s%(coloff)s %(asctime)s\n%(traceback)s\n #@ %(filepathname)s:%(lineno)d\n%(message)s')
 
 
 handler.setFormatter(normalFormatter)
@@ -141,7 +141,7 @@ def exitError(message):
     sys.exit(-1)
 
 def setVerbose():
-    handler.setFormatter(debugFormatterX)
+    handler.setFormatter(debugFormatter)
     l.setLevel(logging.DEBUG)
 
 def setSilent():
