@@ -94,13 +94,13 @@ def testTemplateExtensive(template, verbose=False):
     dataDir = os.path.join(MOABASE, 'test', '10.data')
     os.putenv('MOADATA', dataDir)
     testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')
+    l.info("Cleaning %s" % testDir)
+    moa.utils.removeFiles(testDir, recursive=True)
     l.info("Starting extensive template test for %s" % template)
-    moa.api.removeMoaFiles(testDir)
     moa.api.newJob(template = template, wd=testDir,
                    title='Testing template %s' % template)
     rc = moa.api.runMoa(wd=testDir, target='%s_test' % template, 
-                        background=False, verbose=True)
-    
+                        background=False, verbose=True)    
     if verbose:
         out = moa.api.getMoaOut(wd=testDir)
         print out
