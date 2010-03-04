@@ -22,18 +22,15 @@
 ## define all variables here that are not depending on moa.mk
 ###############################################################################
 
+__MOA_INCLUDE_CORE = yes
 include $(MOABASE)/template/moa/prepare.mk
 
-SHELL := /bin/bash
-INCLUDE_MOABASE = yes
+## Load plugins
+$(foreach p,$(moa_plugins), 									\
+	$(eval include $(MOABASE)/template/moa/plugins/$(p).mk) 	\
+)
 
-## Using the (rather nice) Gnu Make Standard Library
-## See: http://gmsl.sourceforge.net/
-include $(MOABASE)/template/gmsl
-
-## Load moa wide configuration
-include $(MOABASE)/etc/moa.conf.mk
-
+## Prep 
 ## Fill in the default values of each variable
 $(foreach v,$(moa_must_define) $(moa_may_define),				\
 	$(if $($v),,												\
@@ -47,42 +44,36 @@ $(foreach v,$(_moa_filesets), \
 
 moa_fileset_init = $(warning use of moa_fileset_init is deprecated)
 
-## remap a fileset,
-## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)
-moa_fileset_remap = \
-	$(eval $(2)_files=$(addprefix $(3)/,$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files)))))
 
-moa_fileset_remap_nodir = \
-	$(eval $(2)_files=$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files))))
+################################################################################
+## EXECUTION
+## Here we handle the execution of all targets necessary
 
-## default variables used in generating help
+## These targets need to be executed for a normal MOA run
+moa_execute_targets =										\
+	moa_check_lock											\
+	moa_set_runlock											\
+	$(moa_hooks_pre_welcome)								\
+	moa_welcome 											\
+	$(moa_hooks_pre_welcome)								\
+	moa_check 												\
+	moa_run_precommand										\
+	moa_preprocess 											\
+	$(moa_id)_prepare										\
+	moa_main_targets 										\
+	$(moa_id)_post											\
+	moa_postprocess 										\
+	moa_run_postcommand										\
+	moa_clean_runlock										\
+	moa_finished
 
-## Pandoc is used to convert to & from documentation 
-## formats. A pandoc version >= v1.2 is strongly recomended.
-pandocbin?=$(shell which pandoc)
 
-#Pre & postprocess targets. these need to be overridden
-.PHONY: moa_preprocess moa_postprocess
-moa_preprocess:
-moa_postprocess:
+## The default Moa target - A single moa invocation calls a set of targets
+.PHONY: moa_default_target
+.DEFAULT_GOAL := moa_default_target
+moa_default_target: $(moa_execute_targets)
 
-## aditional  pre/post process command - to be definable in moa.mk
-## this is only one single command.
-moa_may_define += moa_precommand
-moa_precommand_help = A single command to be executed before the main		\
-  operation starts. For more complicated processing, please override the	\
-  moa_preprocess target in the local Makefile.
-moa_precommand_default=
-moa_precommand_type = string
-moa_precommand_category = advanced
 
-moa_may_define += moa_postcommand
-moa_postcommand_help = A single shell command to be executed after the			\
-Moa is finished. For more complex processing please override the				\
-moa_postprocess target in the local Makefile.
-moa_postcommand_category = advanced
-moa_postcommand_type = string
-moa_postcommand_default=
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
@@ -90,8 +81,6 @@ moa_run_precommand:
 		$(call echo,Running precommand); 					\
 	fi
 	$e $(moa_precommand)
-
-#	$(if ifneq(($(strip $(moa_precommand)),)),$(moa_precommand))
 
 .PHONY: moa_run_postcommand
 moa_run_postcommand:
@@ -136,15 +125,8 @@ moa_run_postcommand:
 # 	fi
 
 ## 
-.PHONY: is_moa
-is_moa:
-	@echo "Yes"
 
-## display a MOA welcome message before a run
-p_open=(
-p_close=)
 moa_welcome:
-	@cat $(MOABASE)/share/moa/moa.logo.txt
 	@$(call echo, Starting MOA $(MAKECMDGOALS) in $(CURDIR))
 
 ## If moa.mk is defined, and not yet imported: do so.
@@ -163,26 +145,6 @@ endif
 .PHONY: title
 title:
 	@echo $(title)
-
-###############################################################################
-# Define and executed a MOA run 
-###############################################################################
-
-## These targets need to be executed for a normal MOA run
-moa_execute_targets =										\
-	moa_check_lock											\
-	moa_set_runlock											\
-	moa_welcome 											\
-	moa_check 												\
-	moa_run_precommand										\
-	moa_preprocess 											\
-	$(addsuffix _prepare, $(moa_ids)) 						\
-	moa_main_targets 										\
-	$(addsuffix _post, $(moa_ids)) 							\
-	moa_postprocess 										\
-	moa_run_postcommand										\
-	moa_clean_runlock										\
-	moa_finished
 
 
 .PHONY: moa_set_runlock
@@ -211,11 +173,6 @@ moa_clean_runlock:
 moa_finished:
 	@$(call echo,Moa finished - Succes!)
 
-## The default Moa target - A single moa invocation calls a set of targets
-.PHONY: moa_default_target
-.DEFAULT_GOAL := moa_default_target
-moa_default_target: $(moa_execute_targets)
-
 moa_all_targets = 											\
 	$(moa_execute_targets)									\
 	$(moa_additional_targets)								\
@@ -227,48 +184,27 @@ targets:
 	@for x in $(moa_all_targets); do	 					\
 		echo $$x;											\
 	done
-## print a list of all moa_ids
+## print a list of all moa_id
 .PHONY: ids
 ids:
-	@echo $(moa_ids)
+	@echo $(moa_id)
 
 ## the main targets - we run these as separate make instances since I
 ## really cannot make Make to reevaluate what possible in-/output
 ## files are created inbetween steps
 moa_main_targets: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
 moa_main_targets:
-	@for moa_main_target in $(moa_ids); do 										\
-		$(call echo,calling $$moa_main_target) ;								\
-		$(MAKE) $(mins) $(minj) $$moa_main_target 						\
-				$${moa_main_target}_main_phase=T ;								\
-	done
-
-## Print a list of all targets executed, in the order that they are
-## executed
-execorder:
-	@echo "moa_welcome"
-	@echo "moa_preprocess"
-	@echo "$(addsuffix _prepare, $(moa_ids))"
-	@echo "moa_check"
-	@echo "$(moa_ids)"
-	@echo "$(addsuffix _post, $(moa_ids))"
-	@echo "moa_postprocess"
-
-moa_dummy:
-	@echo "Targets to execute were"
-	@echo "-----------------------"
-	@echo moa_welcome moa_preprocess $(addsuffix _prepare, $(moa_ids)) 			\
-	  moa_check $(moa_ids) \
-	  $(addsuffix _post, $(moa_ids)) \
-	  moa_postprocess
+	$(call echo,calling $(moa_id)) ;							\
+	$(MAKE) $(mins) $(minj) $(moa_id) 							\
+				$(moa_id)_main_phase=T ;
 
 ## each moa makefile should include a ID_clean target cleaning up
 ## after it..  this one calls all cleans. Note that the x_clean
 ## targets are called in reverse order.
 .PHONY: clean
-clean: clean_start $(call reverse, $(addsuffix _clean, $(moa_ids)))
-	-@rm moa.out moa.err moa.success 2>/dev/null || true
-	-@rm moa.failed moa.runlock lock 2>/dev/null || true
+clean: clean_start $(call reverse, $(addsuffix _clean, $(moa_id)))
+	-$e rm moa.out moa.err moa.success 2>/dev/null || true
+	-$e rm moa.failed moa.runlock lock 2>/dev/null || true
 
 .PHONY: clean_start
 clean_start: moa_welcome
@@ -279,8 +215,16 @@ clean_start: moa_welcome
 #
 
 .PHONY: initialize
-initialize: $(moa_ids)_initialize
-	$(call errr,Ran initialization $(moa_ids)_initialize)
+initialize: \
+	$(moa_hooks_preinit)				\
+	$(moa_hooks_preinit_$(moa_id)) 		\
+	$(moa_id)_initialize				\
+	$(moa_hooks_postinit_$(moa_id)) 	\
+	$(moa_hooks_postinit)
+
+.PHONY: $(moa_id)_initialize
+$(moa_id)_initialize:
+
 
 
 ################################################################################
@@ -305,8 +249,9 @@ moa_all_targets = 																\
 	$(call set_create, 															\
 		set append clean reset targets check						 			\
 		$(moa_additional_targets)												\
-		$(addsuffix _prepare, $(moa_ids)) 										\
-		$(moa_ids) $(addsuffix _post, $(moa_ids))								\
+		$(moa_id)_prepare 														\
+		$(moa_id)																\
+		$(moa_id)_post															\
 	)
 
 moa_ignore_lock_targets = \
@@ -361,13 +306,12 @@ all: $(if $(call seq,$(action),), 								\
 
 # Add a few default targets to the set 
 # of possible targets
-moa_targets += check clean help show all prereqs set append
+moa_targets += check clean show all prereqs set append
 
 # and define help for these
 check_help = Check variable definition
 moa_clean_help = Clean. 
 show_help = Show the defined variables
-help_help = This help!
 all_help = Recursively run through all subdirectories (use make all \
   action=XXX to run "make XXX" recursively)
 prereqs_help = Check if all prerequisites are present
@@ -517,16 +461,12 @@ showvars:
 	done
 
 
-ifndef MOA_INCLUDE_HELP
-include $(shell echo $$MOABASE)/template/__moaBaseHelp.mk
-endif
-
 ifndef MOA_INCLUDE_VAR
-include $(shell echo $$MOABASE)/template/__moaBaseVar.mk
+include $(MOABASE)/template/__moaBaseVar.mk
 endif
 
 ifndef MOA_INCLUDE_TEST
-include $(shell echo $$MOABASE)/template/__moaBaseTest.mk
+include $(MOABASE)/template/__moaBaseTest.mk
 endif
 
 ################################################################################
@@ -551,7 +491,7 @@ info: info_header info_parameters
 info_header:
 	@echo -e 'moa_title\t$(moa_title)'
 	@echo -e 'moa_description\t$(moa_description)'
-	@echo -e 'moa_targets\t$(moa_ids) all clean $(moa_additional_targets)'
+	@echo -e 'moa_targets\t$(moa_id) all clean $(moa_additional_targets)'
 
 info_parameters: info_parameters_required info_parameters_optional
 
