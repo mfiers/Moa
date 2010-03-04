@@ -41,8 +41,7 @@ NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
 ## Moa Makefile
 ## http://mfiers.github.com/Moa
 
--include moa.mk
-MOAMK_INCLUDE=done
+include $(MOABASE)/template/moa/prepare.mk
 
 ## moa_preprocess & moa_postprocess are targets that can
 ## be overridden here. They are executed before & after
@@ -224,11 +223,10 @@ def newJob(template,
 
     l.debug("Running moa initialization")
 
-    #moa.runMake.go(wd = wd,
-    #               target='initialize',
-    #               captureOut = True,
-    #               captureOutName='moa.init',
-    #               verbose=False)
+    moa.runMake.go(wd = wd,
+                   target='initialize',
+                   captureOut = False)
+
                    
     l.debug("Written %s, try: moa help" % makefile)
 
