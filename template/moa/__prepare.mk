@@ -25,21 +25,36 @@
 ###############################################################################
 
 SHELL := /bin/bash
-MOA_INCLUDED_PREPARE = yes
+MOA_INCLUDE_PREPARE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
-include $(MOABASE)/template/gmsl
+include $(MOABASE)/template/util/gmsl
+
+## Load moa wide configuration
+MOA_INCLUDE_ETCMOACONF = yes
+include $(MOABASE)/etc/moa.conf.mk
+
+## Load the local configuration
+MOA_INCLUDE_MOAMK = yes
+-include moa.mk
 
 ## Files that moa uses
-moa_system_files = Makefile moa.mk moa.archive 
-
+moa_system_files = Makefile moa.mk 
 
 ## some help variables
 warn_on := \033[0;41;37m
 warn_off := \033[0m
 boldOn := \033[0;1;47;0;32;4m
 boldOff := \033[0m
+
+empty:=
+space:= $(empty) $(empty)
+comma:=,
+sep:=|
+parO:=(
+parC:=)
+
 
 #a colorful mark, showing that this comes from moabase
 ifeq ($(MOAANSI),no)
@@ -91,6 +106,15 @@ moa_fileset_define = \
 	$(eval _moa_filesets += $(1))
 
 
+## functions to remap filesets
+## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)
+moa_fileset_remap = \
+	$(eval $(2)_files=\
+		$(addprefix $(3)/,$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files)))))
+
+moa_fileset_remap_nodir = \
+	$(eval $(2)_files=$(patsubst %.$($(1)_extension),%.$(3),$(notdir $($(1)_files))))
+
 
 ################################################################################
 ## Some python tricks
@@ -98,3 +122,32 @@ moa_fileset_define = \
 
 exec_python = $(eval export $(1)) \
 echo "$$$(strip $(1))" | python
+
+
+################################################################################
+## Definition of pre & post targets that can be overridden in the
+## local Makefile
+
+.PHONY: moa_preprocess
+moa_preprocess:
+
+.PHONY: moa_postprocess
+moa_postprocess:
+
+## aditional  pre/post process command - to be definable in moa.mk
+## this is only one single command.
+moa_may_define += moa_precommand
+moa_precommand_help = A single command to be executed before the main		\
+  operation starts. For more complicated processing, please override the	\
+  moa_preprocess target in the local Makefile.
+moa_precommand_default=
+moa_precommand_type = string
+moa_precommand_category = advanced
+
+moa_may_define += moa_postcommand
+moa_postcommand_help = A single shell command to be executed after the			\
+Moa is finished. For more complex processing please override the				\
+moa_postprocess target in the local Makefile.
+moa_postcommand_category = advanced
+moa_postcommand_type = string
+moa_postcommand_default=
