@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id += traverse
+moa_id = traverse
 moa_title = Traverse
 moa_description = Do nothing, except be a part in executing full	\
 directory structures

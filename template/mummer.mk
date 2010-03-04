@@ -22,7 +22,7 @@
 
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-moa_id += mummer
+moa_id = mummer
 moa_title_mummer = mummer
 moa_description_mummer = Run mummer between two sequences
 

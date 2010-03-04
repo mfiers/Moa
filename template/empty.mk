@@ -20,7 +20,7 @@ maintarget: not doing anything
 
 ################################################################################
 # Help
-moa_id += empty
+moa_id = empty
 moa_title_empty = 
 moa_description_empty = 
 

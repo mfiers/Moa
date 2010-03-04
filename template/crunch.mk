@@ -22,7 +22,7 @@ moa_title = Create ACT crunch files for use with Artemis ACT
 moa_description = Create a crunch file for use with the Artemis ACT \
   comparison tool. 
 
-moa_id += crunch
+moa_id = crunch
 
 crunch_help = create crunch files
 

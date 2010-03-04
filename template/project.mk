@@ -19,7 +19,7 @@
 moa_title = Project
 moa_description = Create a new project. All subdirectories of this directory are automatically a part of this project
 
-moa_id += project
+moa_id = project
 project_help = This template does not do anything - it is a project placeholder.
 
 moa_may_define += project_description
@@ -31,10 +31,6 @@ project_description_type = string
 
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moa/core.mk
-
-.PHONY: project_initialize
-project_initialize:
-	-mkdir moa
 
 .PHONY: project_clean
 project_clean:

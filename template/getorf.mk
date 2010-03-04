@@ -28,7 +28,7 @@ moa_description = Predicts open reading frames using the EMBOSS	\
 
 moa_prerequisites += The [EMBOSS]() [[emboss]] suite of tools
 
-moa_id += getorf
+moa_id = getorf
 
 moa_getorf_help = Getorf is a open reading frame discovery program		\
   from the EMBOSS [[emboss]] package. It takes a set of input			\

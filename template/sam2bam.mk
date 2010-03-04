@@ -19,7 +19,7 @@
 
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-moa_id += sam2bam
+moa_id = sam2bam
 moa_title_maq_fasta2bfa = Convert SAM to BAM using samtools
 moa_description_maq_fasta2bfa = Converts a FASTQ file to MAQ BFQ	\
 format.

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id += gmap
+moa_id = gmap
 
 moa_title_gmap = Gmap
 moa_description_gmap = Run GMAP on an set of input files (query) \

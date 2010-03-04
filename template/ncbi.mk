@@ -20,7 +20,7 @@
 moa_targets += getFromNcbi
 getFromNcbi_help = Download some data from NCBI
 
-moa_id += getFromNcbi
+moa_id = getFromNcbi
 moa_title = "Download from NCBI"
 moa_description = Download a set of sequences from NCBI based on a		\
   query string (ncbi_query) and database (ncbi_db). This tempate will	\

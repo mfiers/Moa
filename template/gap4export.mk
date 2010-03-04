@@ -21,7 +21,7 @@ gap4export_help = Export data from an assembly using gap4
 clean_help = Clean up. 
 
 # Help
-moa_id += gap4export
+moa_id = gap4export
 moa_title_gap4export = Assembly export using gap4
 moa_description_gap4export = Export data from an assembly using gap4
 

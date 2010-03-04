@@ -28,7 +28,7 @@ moa_description = Use LFTP to download files. This template has two				\
 lftp_help = Download using ftp
 
 # Help
-moa_id += lftp
+moa_id = lftp
 lftp_help = execute the download
 
 #varables that NEED to be defined

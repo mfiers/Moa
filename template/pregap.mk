@@ -29,7 +29,7 @@ pregap_help = Run pregap
 clean_help = Clean up.
 
 # Help
-moa_id += pregap
+moa_id = pregap
 moa_title_pregap = Pregap
 moa_description_pregap = Run Pregap. Note that running phrap could be a part of this. 
 

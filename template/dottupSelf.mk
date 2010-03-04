@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id += dotself
+moa_id = dotself
 moa_title_mummer = Dottup self
 moa_description_mummer = Run dottup with a sequence against itself
 

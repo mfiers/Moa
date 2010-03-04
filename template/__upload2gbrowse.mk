@@ -23,7 +23,7 @@ moa_description = A library that aids in uploading FASTA and GFF	\
   following variables are preset; gup_fasta_dir, gup_gff_dir		\
   gup_upload_fasta, gup_upload_gff
 
-moa_id += upload2gbrowse
+moa_id = upload2gbrowse
 moa_upload2gbrowse_help = Upload to gbrowse
 
 moa_additional_targets += initGbrowse gupgo

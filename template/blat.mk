@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id += blat 
+moa_id = blat 
 moa_title_blat = Blat
 moa_description_blat = Run BLAT on an set of input files (query) vs a database.
 

@@ -21,7 +21,7 @@ moa_title = Glimmer3
 
 moa_description = Predicts (prokaryotic) using glimmer3.
 
-moa_id += glimmer3
+moa_id = glimmer3
 
 glimmer3_help = Glimmer3 is a open reading frame discovery program		\
   from the EMBOSS [[emboss]] package. It takes a set of input		\

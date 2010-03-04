@@ -19,7 +19,7 @@
 
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-moa_id += gsmap
+moa_id = gsmap
 moa_title_gsmap = GSMapper
 moa_description_gsmap = Run the Roche GS Reference mapper
 

@@ -21,7 +21,7 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_id += fq2bq
+moa_id = fq2bq
 moa_title_maq_fasta2bfa = Convert FASTQ to BFQ
 moa_description_maq_fasta2bfa = Converts a FASTQ file to MAQ BFQ	\
 format.

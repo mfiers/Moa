@@ -21,7 +21,7 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_id += maqpair
+moa_id = maqpair
 moa_title_maq_fasta2bfa = MAQ paired ends mapper
 moa_description_maq_fasta2bfa = Map paired ends to a reference	\
 sequence using MAQ

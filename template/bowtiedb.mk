@@ -19,7 +19,7 @@
 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_id += bowtiedb
+moa_id = bowtiedb
 moa_title_bowtiedb = Bowtie index builder
 moa_description_bowtiedb = Builds a bowtie index from a reference sequence
 

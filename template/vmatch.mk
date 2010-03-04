@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id += vmatch
+moa_id = vmatch
 
 moa_title_vmatch = Vmatch
 moa_description_vmatch = Run VMATCH on an set of input files (query) \

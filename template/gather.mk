@@ -20,7 +20,7 @@ gather_help = gather files
 clean_help = Remove anything that is not called Makefile or moa.mk 
 
 # Help
-moa_id += gather
+moa_id = gather
 moa_title_gather = gather files
 moa_description_gather = gather a set of files and create hardlinks				\
  to. Hardlinks have as advantage that updates are noticed via the				\

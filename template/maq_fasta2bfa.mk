@@ -21,7 +21,7 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_id += f2b
+moa_id = f2b
 moa_title_maq_fasta2bfa = Convert fasta to bfa
 moa_description_maq_fasta2bfa = Converts a FASTA file to MAQ format	\
 for use with a BFA a maq_fasta2bfa index from a reference sequence

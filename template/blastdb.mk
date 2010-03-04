@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id += blastdb
+moa_id = blastdb
 moa_title_blastdb = Create a BLAST database 
 blastdb_help = Takes either a set of fasta files or a single	\
   multi-fasta input file and creates a BLAST database.

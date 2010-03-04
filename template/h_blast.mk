@@ -20,7 +20,7 @@ moa_title = Hadoop Blast
 moa_description = Runs BLAST on a hadoop cluster
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)				\
 [[Alt90]] suite of tools and Hadoop.
-moa_id += h_blast
+moa_id = h_blast
 h_blast_help = Similar to a normal blast, but now running on an			\
 hadoop cluster
 

@@ -19,7 +19,7 @@
 
 moa_title = geneMarkS
 moa_description = predict genes using geneMarkS 
-moa_id += genemarks
+moa_id = genemarks
 moa_genemarks_help = Predict genes using geneMarkS
 
 moa_must_define += genemarks_input_dir

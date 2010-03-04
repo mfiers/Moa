@@ -24,7 +24,7 @@ moa_description = Discover the bidirectional best blast hit between two \
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
   [[Alt90]] suite of tools
 
-moa_id += bdbb
+moa_id = bdbb
 
 bdbb_help = generate a list of bidirectional best blast hits.
 

@@ -28,7 +28,7 @@ clean_help = Clean up.
 clean_weka_help = clean location in the global weka db (will not run automatically)
 
 # Helpm
-moa_id += concatenate
+moa_id = concatenate
 moa_title_concatenate = Concatenate
 moa_description_concatenate = Concatenate a set of fasta files into one.
 
