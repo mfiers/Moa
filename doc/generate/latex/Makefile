@@ -1,5 +1,6 @@
 include $(shell echo $$MOABASE)/etc/moa.conf.mk
 
+
 notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk __moaBasePre.mk __moaBaseTest.mk\
 	__moaBaseHelp.mk moaBasePre.mk __moaBaseVar.mk moaBasePre.mk
 
@@ -30,7 +31,7 @@ prepare:
 
 reference.tex:  $(temptex)
 	cat ../../markdown/templates_header.md \
-		| pandoc -f markdown -t latex \
+		| $(pandocbin) -f markdown -t latex \
 		> reference.tex
 	for f in $(temptex); do \
 		cat $$f >> reference.tex ;\
@@ -53,7 +54,7 @@ manual.tex: manual.template.tex
 
 %.tex:
 	cat ../../markdown/$*.md \
-		| pandoc -f markdown -t latex \
+		| $(pandocbin) -f markdown -t latex \
 		> $*.tex
 
 clean:
