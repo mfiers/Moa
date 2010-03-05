@@ -62,11 +62,13 @@ var_correct_type=$(if $(findstring $($(1)_type),file directory password string s
 
 var_starts_with=$(if $(filter-out $(1)%,$(2)),echo '$(2) does not start with $(moa_id)';)
 
+test_moa_id_space=$(if $(call seq,"$(moa_id)","$(strip $(moa_id))"),,echo 'moa_id "$(moa_id)" has spaces';)
 
 .PHONY: template_test
 #template_test: prefix_ex=$(call set_create,title moa_precommand moa_postcommand)
 template_test:
 	@echo -n
+	@$(call test_moa_id_space)
 	$(foreach v,$(moa_must_define) $(moa_may_define),	\
 		$(call var_defined,$(v)_help)					\
 		$(call var_defined,$(v)_type)					\

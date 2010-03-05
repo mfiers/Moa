@@ -118,7 +118,8 @@ def testTemplateExtensive(template, verbose=False):
     l.error(err)
     
 def run(options, args):
-    
+
+    os.putenv('MOA_UNITTESTS', "yes")
     if not args:
         l.info("Start running python doctests")
         setSilent()        
