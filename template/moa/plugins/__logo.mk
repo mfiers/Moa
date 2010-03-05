@@ -27,4 +27,4 @@ moa_hooks_pre_welcome += moa_logo
 
 .PHONY: moa_logo
 moa_logo:
-	$e cat $(MOABASE)/share/moa/moa.logo.txt
+	-$e cat $(MOABASE)/share/logo/moa.logo.txt

@@ -40,7 +40,7 @@ MOA_INCLUDE_MOAMK = yes
 -include moa.mk
 
 ## Files that moa uses
-moa_system_files = Makefile moa.mk 
+moa_system_files = Makefile moa.mk
 
 ## some help variables
 warn_on := \033[0;41;37m
@@ -72,7 +72,7 @@ echo = echo -e "$(moamark) $(strip $(1))"
 warn = echo -e "$(moawarn) $(strip $(1))"
 tstm = echo -e "$(moatest) $(strip $(1))"
 errr = echo -e "$(moaerrr) $(strip $(1))"
-exer = echo -e "$(moaerrr) $(1) - exiting"; exit -1
+exer = echo -e "$(moaerrr) $(strip $(1)) - exiting"; exit -1
 exerUnlock = ( if [[ "$(strip $(1))" ]]; 		\
 	then echo -e "$(moaerrr) $(strip $(1))"; 	\
 	fi; 										\

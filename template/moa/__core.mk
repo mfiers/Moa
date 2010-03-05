@@ -55,12 +55,14 @@ moa_execute_targets =										\
 	moa_set_runlock											\
 	$(moa_hooks_pre_welcome)								\
 	moa_welcome 											\
-	$(moa_hooks_pre_welcome)								\
+	$(moa_hooks_pre_check)									\
 	moa_check 												\
 	moa_run_precommand										\
 	moa_preprocess 											\
 	$(moa_id)_prepare										\
-	moa_main_targets 										\
+	$(moa_hooks_pre_run)									\
+	$(moa_hooks_pre_run_$(moa_id))							\
+	$(moa_id) 												\
 	$(moa_id)_post											\
 	moa_postprocess 										\
 	moa_run_postcommand										\
@@ -100,6 +102,10 @@ moa_run_postcommand:
 
 %_initialize:
 	@echo -n
+
+%_unittest:
+	@$(call exer,$@ is undefined)
+
 
 #Find project root (if there is one)
 # ifndef in_project_loop
@@ -214,16 +220,16 @@ clean_start: moa_welcome
 # Initialize - to be executed when setting up the moa job  (i.e. calling moa new xxx)
 #
 
-.PHONY: initialize
+.PHONY: initialize $(moa_id)_initialize
 initialize: \
 	$(moa_hooks_preinit)				\
 	$(moa_hooks_preinit_$(moa_id)) 		\
 	$(moa_id)_initialize				\
 	$(moa_hooks_postinit_$(moa_id)) 	\
 	$(moa_hooks_postinit)
-
-.PHONY: $(moa_id)_initialize
-$(moa_id)_initialize:
+	@echo -n
+#.PHONY: $(moa_id)_initialize
+#$(moa_id)_initialize:
 
 
 
@@ -420,9 +426,12 @@ mustexist_%:
 	fi
 
 #defer this to MOA
-set:
-	$(call echo,setting: $(filter-out s -- action=set,$(MAKEFLAGS)))
-	moa $(minv) set $(filter-out s -- action=set,$(MAKEFLAGS))
+.PHONY: set
+set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
+
+.PHONY: moa_set_2
+moa_set_2:
+	moa $(minv) __set $(MAKEFLAGS)
 
 ################################################################################
 ## make show ###################################################################
