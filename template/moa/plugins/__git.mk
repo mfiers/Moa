@@ -23,10 +23,69 @@ MOA_INCLUDE_PLUGIN_GIT= yes
 ## Git - use git to keep track of project history
 
 ## Add a hook for project_init
-moa_hooks_postinit_project += moa_git_initproject
+moa_hooks_postinit_project += moa_git_init_project
+moa_hooks_postinit += moa_git_init
 
-.PHONY: moa_git_initproject
-moa_git_initproject:
-	$e git status 2>&1 | grep -q 'Not a git repo' || \
-		$(call exer,We are already in a GIT repository - cannot init git)
-	echo "hi"
+## Add a hook after a var got set
+moa_hooks_postset += moa_git_postset
+
+#files that need to be stored in the repository 
+moa_git_files += Makefile moa.mk .gitignore
+
+#Initialize a git project
+.PHONY: moa_git_init_project
+
+#function to actually create the repos
+moa_git_init_repository = git init 2>&1 > /dev/null
+moa_git_init_gitignore = \
+	if [[ ! -f .gitignore ]]; then \
+		echo "*" > .gitignore; \
+		for mgf in $(moa_git_files); do \
+			echo "!$$mgf" >> .gitignore; \
+		done; \
+	fi \
+
+##Determine git commit message
+ifdef MOA_GITMESSAGE
+	commit_message = $(MOA_GITMESSAGE)
+else
+	commit_message = moa-git - automatic commit
+endif
+
+#Initialze a git repository
+moa_git_init_project: 
+	$e if [[ "$(MOA_UNITTESTS)" ]]; \
+	then \
+		true Do not do this during unittesting; \
+		echo -n; \
+	elif ! git status 2>&1 | grep -q 'Not a git repo' ; \
+	then \
+		if [[ "$$MOA_GITFORCEINIT" ]] && ls .git | grep -q config ; \
+		then \
+			$(call warn,Initalizing GIT repository$(comma) removing old repository); \
+			rm -rf .git; \
+			$(call moa_git_init_repository); \
+			$(call moa_git_init_gitignore); \
+		else \
+			$(call exer,Unable to  remove the old repository - GIT is not properly set up); \
+		fi; \
+	else \
+		$(call echo,Initalizing a GIT repository); \
+		$(call moa_git_init_repository); \
+		$(call moa_git_init_gitignore); \
+	fi
+
+.PHONY: moa_git_init
+moa_git_init:
+	git add $(minv) --all; \
+	git commit -qa -m "$(commit_message)" >/dev/null
+
+.PHONY: moa_git_postset
+moa_git_postset:
+	git commit -q -m "$(commit_message)" moa.mk 
+
+
+.PHONY: gitlog
+gitlog:
+	git log --pretty=oneline --abbrev-commit
+
