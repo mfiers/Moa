@@ -61,7 +61,7 @@ def _startMake(wd,
     @raises NotMoaDirectory: If ``wd`` is not a Moa directory    
     """
 
-    l.debug("attempting to start make in %s" % wd)
+    l.debug("attempting to start make in %s" % wd)     
     
     if captureOut:
         FOUT = open(os.path.join(wd, '%s.out' % captureOutName), 'w')
@@ -203,7 +203,7 @@ def go(wd = None,
     if captureOut == None:
         captureOut = False
 
-    l.debug("deferring to _runMake with args %s " % makeArgs)
+    l.debug("starting _runMake with target '%s', args %s " % (target, makeArgs))
     rc = _runMake(wd = wd,
                   target=target,
                   makeArgs = makeArgs,

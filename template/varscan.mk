@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id = varscan 
+moa_id = varscan
 moa_title_varscan = Varscan
 moa_description_varscan = Run VARSCAN to detect snps
 
@@ -56,7 +56,7 @@ varscan_prepare:
 varscan_post: 
 
 .PHONY: varscan
-varscan:
+varscan: $(varscan_output_name)
 	perl $(varscan_perl_file) easyrun \
 		$(varscan_input_file) \
 		--sample $(varscan_output_name)

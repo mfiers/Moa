@@ -31,6 +31,7 @@ import site
 import shutil
 import pprint
 import optparse
+import textwrap
 import subprocess
 
 #moa specific libs - first prepare for loading libs
@@ -52,9 +53,10 @@ for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
         continue
     if line[0] == '#': 
         continue
-    l = [x.strip() for x in line.split('=', 1)]
+    l = [x.strip() for x in re.split("\+?=", line, maxsplit=1)]
     if len(l) == 2:
         ETC[l[0]] = l[1]
+moaPlugins = ETC['moa_plugins'].split()
 
 import moa.job
 import moa.archive
@@ -70,34 +72,50 @@ from moa.checkTemplate import checkTemplate
 ## Init the logger
 import moa.logger
 l = moa.logger.l
+#quick hack to set verbosity
+if '-v' in sys.argv:
+    moa.logger.setVerbose()
 
-USAGE = """Usage: %prog [options] COMMAND args
+import moa.plugin.git
+## read plugin code
+moaPluginsLoaded = []
+moaPluginModules = {}
+for plugin in moaPlugins:
+    pyModule = 'moa.plugin.%s' % plugin
+    try:
+        _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
+        moaPluginModules[plugin] = _m
+        moaPluginsLoaded.append(plugin)
+        l.debug("Successfully Loaded module %s" % pyModule)
+    except ImportError, e:
+        if not str(e) == "No module named %s" % plugin:
+            raise
 
-Commands:
+## Command definitions
+moaCommands = {
+    'list' : 'List all known templates',
+    'set'  : 'Set or append to a configuration value. Variables should be defined as ' +
+             'KEY=VALUE pairs on the command-line',
+    'help' : 'Display help on the current job (not this help!)',
+    'show' : 'Display the currently set variables',
+    'run'  : 'Execute Moa, this runs the default action',    
+    }
 
-New Moa makefiles:
-
-  new: moa new -t 'SensibleTitle' -p ProjectName TEMPLATE1 ...
-
-    Generate a new makefile based on the template names provided. You
-    should provide a sensible title for your analysis (No spaces -
-    A-Za-z0-9_, a sensible name is probably smart)
-
-  list: (moa list)
-
-    List all known templates
-
-Configuration (in moa.mk):
-
-  conf set: moa conf set [KEY]=[VALUE]
-    Set a variable in moa.mk. This is implemented here to make
-    sure that multiple threads can safely write to one moa.mk.     
-"""
-
-DESCRIPTION = "Utility script for use with Moa makefiles"
+for p in moaPluginsLoaded:
+    moaPluginModules[p].defineCommands(moaCommands)
+    
+USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
+_commands = moaCommands.keys()
+_commands.sort()
+for _c in _commands:
+    USAGE += "\n".join(
+        textwrap.wrap(
+            '%s: %s' % (_c, moaCommands[_c]),
+            initial_indent=' ',
+            subsequent_indent = '   ')) + "\n"
 
 ## define & parse command line options  
-parser = optparse.OptionParser(usage=USAGE, description=DESCRIPTION)
+parser = optparse.OptionParser(usage=USAGE)
 
 parser.add_option('-f', '--force', dest='force', action='store_true',
                   help = 'Force an action, if applicable.')
@@ -116,7 +134,7 @@ parser.add_option("-j", dest="threads",
 parser.add_option("-B", dest="remake", action='store_true',
                   help="Reexecute all targets (corresponds to make -B) ")
 
-parserN = optparse.OptionGroup(parser, "For use with moa new")
+parserN = optparse.OptionGroup(parser, "Moa new")
 parser.set_defaults(title="", directory=".")
 
 parserN.add_option("-t", "--title", dest="title", help="Job title")
@@ -124,7 +142,15 @@ parserN.add_option("-d", "--directory", dest="directory",
                   help="Directory to create the new template in (default: .)")
 parser.add_option_group(parserN)
 
+for p in moaPluginsLoaded:
+    moaPluginModules[p].defineOptions(parser)
+
 (options, args) = parser.parse_args()
+
+for p in moaPluginsLoaded:
+    moaPluginModules[p].prepare(globals())
+
+
 
 if options.verbose:
     moa.logger.setVerbose()
@@ -136,7 +162,7 @@ checkTemplate(os.getcwd())
 extraMakeParameters = []
 
 # threads need to be treated different from the other parameters.
-# multithreaded operation is only allowed in the second phase
+# multi-threaded operation is only allowed in the second phase
 # execution.
 os.putenv('MOA_THREADS', "%s" % options.threads)
 
@@ -162,7 +188,8 @@ if __name__ == "__main__":
     l.debug("with args %s" % args[1:])
 
     if command == 'run':
-        rc = runMake.go(makeArgs=newargs,
+        rc = runMake.go(target = command,
+                        makeArgs=newargs,
                         verbose=options.verbose,
                         threads = options.threads,
                         extraMakeParameters = extraMakeParameters,
@@ -192,16 +219,17 @@ if __name__ == "__main__":
         for job in moa.job.list():
             print job
     #configuration stuff
-    elif command == 'set':
+    elif command == '__set':
         moa.conf.handler(options, args)
-    elif command == 'get':
+    elif command == '__get':
         moa.conf.handler(options, args)
     #unittests
     elif command == 'test':
         moa.unittests.run(options, newargs)
     else:
         #fire arguments of to make
-        rc = runMake.go(makeArgs=args,
+        rc = runMake.go(target = command,
+                        makeArgs=args,
                         threads = options.threads,
                         background = options.background,
                         extraMakeParameters = extraMakeParameters,

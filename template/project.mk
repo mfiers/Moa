@@ -16,11 +16,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+
+#include moabase, if it isn't already done yet..
+include $(shell echo $$MOABASE)/template/moa/prepare.mk
+
 moa_title = Project
-moa_description = Create a new project. All subdirectories of this directory are automatically a part of this project
+
+moa_description = Create a new project. All subdirectories of this				\
+  directory are automatically a part of this project
 
 moa_id = project
-project_help = This template does not do anything - it is a project placeholder.
+project_help = This template does not do anything - it is a project				\
+  placeholder.
 
 moa_may_define += project_description
 project_description_default = 

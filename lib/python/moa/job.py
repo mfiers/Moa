@@ -225,8 +225,9 @@ def newJob(template,
 
     moa.runMake.go(wd = wd,
                    target='initialize',
-                   captureOut = False)
-
+                   captureOut = False,
+                   makeArgs=[],
+                   verbose=False)
                    
     l.debug("Written %s, try: moa help" % makefile)
 
