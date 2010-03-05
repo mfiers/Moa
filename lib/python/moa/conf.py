@@ -24,6 +24,7 @@ Moa script - get and set variables to the moa.mk file
 import re
 import os
 import sys
+import shlex
 
 import moa.logger
 from moa.logger import exitError
@@ -45,8 +46,9 @@ def handler(options, args):
     ## These commands could be passed from a Makefile via the $(MAKEFLAGS)
     ## variable in which case we'll filter the actual arguments from
     ## sys.argv
-    if '--' in sys.argv:
-        newArgs = sys.argv[sys.argv.index('--')+1:]
+    if len(sys.argv) == 3 and  '--' in sys.argv[2]:
+        na = shlex.split(sys.argv[2].strip())
+        newArgs = na[na.index('--')+1:]
     if command == '__set':
         commandLineHandler(cwd, newArgs)
     elif command == '__get':
