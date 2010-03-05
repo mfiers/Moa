@@ -431,7 +431,7 @@ set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
 
 .PHONY: moa_set_2
 moa_set_2:
-	moa $(minv) __set $(MAKEFLAGS)
+	moa $(minv) __set '$(MAKEFLAGS)'
 
 ################################################################################
 ## make show ###################################################################
