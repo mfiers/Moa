@@ -19,7 +19,7 @@
 
 moa_title = geneMarkS
 moa_description = predict genes using geneMarkS 
-moa_ids += genemarks
+moa_id = genemarks
 moa_genemarks_help = Predict genes using geneMarkS
 
 moa_must_define += genemarks_input_dir
@@ -41,7 +41,7 @@ genemarks_input_extension_help = input file extension. Defaults to 'fasta'
 genemarks_input_extension_type = string
 
 #include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 #define resultfilesets
 genemarks_input_files = $(wildcard $(genemarks_input_dir)/*.$(genemarks_input_extension))

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += blat 
+moa_id = blat
 moa_title_blat = Blat
 moa_description_blat = Run BLAT on an set of input files (query) vs a database.
 
@@ -69,7 +69,7 @@ blat_query_type_type = set
 blat_query_type_allowed = ['dna', 'rna', 'prot', 'dnax', 'rnax']
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run

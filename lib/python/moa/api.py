@@ -355,7 +355,7 @@ def runMoa(wd=None, target="", threads=1, background=True, verbose=False):
 
     This function executes moa in path ``wd``.
 
-    >>> removeMoaFiles(P_TEST)
+    >>> moa.utils.removeFiles(P_TEST, recursive=True)
     >>> newJob(template = 'moatest',
     ...        wd = P_TEST, 
     ...        title = 'Test moa run',

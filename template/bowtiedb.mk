@@ -17,9 +17,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
-moa_ids += bowtiedb
+moa_id = bowtiedb
 moa_title_bowtiedb = Bowtie index builder
 moa_description_bowtiedb = Builds a bowtie index from a reference sequence
 
@@ -35,7 +35,7 @@ moa_must_define += bowtiedb_name
 bowtiedb_name_help = Name of the bowtie index to create
 bowtiedb_name_type = string
 
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 
 bowtiedb: $(bowtiedb_name).1.ebwt
 

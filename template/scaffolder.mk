@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += scaf
+moa_id = scaf
 
 moa_title_scaf = Scaffolder
 moa_description_scaffolder = Scaffold a set of input files based on a	\
@@ -37,7 +37,7 @@ scaf_prefix_default = scaffolds
 scaf_prefix_help = prefix for scaffolding output files
 scaf_prefix_type = string
 
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 
 ##### Derived variables for this run
 

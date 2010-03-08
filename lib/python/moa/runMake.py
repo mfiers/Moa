@@ -32,7 +32,9 @@ import moa.info
 import moa.utils
 from moa.exceptions import *
 
-def _startMake(wd, makeArgs, verbose = True,
+def _startMake(wd,
+               makeArgs = [],
+               verbose = True,
                captureOut = False,
                extraMakeParameters = [],
                captureOutName = 'moa'):
@@ -59,7 +61,7 @@ def _startMake(wd, makeArgs, verbose = True,
     @raises NotMoaDirectory: If ``wd`` is not a Moa directory    
     """
 
-    l.debug("attempting to start make in %s" % wd)
+    l.debug("attempting to start make in %s" % wd)     
     
     if captureOut:
         FOUT = open(os.path.join(wd, '%s.out' % captureOutName), 'w')
@@ -68,9 +70,9 @@ def _startMake(wd, makeArgs, verbose = True,
     else:
         FOUT = None
         FERR = None
-        os.putenv('MOAANSI', 'yes')
         
     makeArgs.insert(0, 'make')
+    l.debug("RUNNING MAKE\n%s" % " ".join(makeArgs))
     p = subprocess.Popen(
         makeArgs,
         shell=False,
@@ -113,10 +115,11 @@ def _runMake(wd = None, target = "", makeArgs = [],
         raise NotAMoaDirectory(wd)
 
     #prepare arguments & environment
-
+    l.debug("Incoming make parameters %s" % makeArgs)
     if type(makeArgs) == type("str"):
         makeArgs = makeArgs.split()
 
+    l.debug("Extra parameters for make %s" % extraMakeParameters)
     for extraParam in extraMakeParameters:
         makeArgs.insert(0,extraParam)
 
@@ -136,7 +139,7 @@ def _runMake(wd = None, target = "", makeArgs = [],
         makeArgs.insert(0, target)
 
     p = _startMake(wd = wd,
-                   makeArgs = makeArgs,                   
+                   makeArgs = makeArgs,
                    verbose=verbose,
                    extraMakeParameters = extraMakeParameters,
                    captureOut = captureOut,
@@ -150,11 +153,16 @@ def _runMake(wd = None, target = "", makeArgs = [],
         l.debug("Error running make in %s. Return code %s" % (wd, rc))
     return rc
 
-def go(wd = None, target = "", makeArgs = [],
-       verbose=True, threads=1, background = False,
-       captureOut = None, captureOutName='moa',
+def go(wd = None,
+       target = "",
        extraMakeParameters=[],
-       exitWhenDone=False):
+       verbose=True,
+       threads=1,
+       background = False,
+       captureOut = None,
+       makeArgs = [],
+       captureOutName='moa',
+       exitWhenDone=False ):    
     """
     Run Make
     
@@ -184,7 +192,7 @@ def go(wd = None, target = "", makeArgs = [],
         # try to fork
         child = os.fork()
         if child != 0:
-            l.debug("Parent: return & be done with it")
+            l.debug("Parent thread - finish")
             return True
         l.debug("Child (pid=%d). Start make" % child)
 
@@ -192,7 +200,8 @@ def go(wd = None, target = "", makeArgs = [],
     # to the terminal
     if captureOut == None:
         captureOut = False
-        
+
+    l.debug("starting _runMake with target '%s', args %s " % (target, makeArgs))
     rc = _runMake(wd = wd,
                   target=target,
                   makeArgs = makeArgs,

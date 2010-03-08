@@ -29,6 +29,6 @@
 ## be included from the Makefiles that were created until now. We use a new 
 ## variable to make sure that we don't inlcue moabase twice, accidentallly
 
-ifndef INCLUDE_MOABASE
- include $(MOABASE)/template/__moaBase.mk
+ifndef MOA_INCLUDE_PREPARE
+ include $(MOABASE)/template/moa/__prepare.mk
 endif

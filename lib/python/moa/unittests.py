@@ -73,10 +73,13 @@ def testTemplates():
         templateTests  += 1
         
         moa.api.removeMoaFiles(testDir)
-        moa.api.newJob(template = template, wd=testDir,
+        moa.api.newJob(template = template, wd = testDir,
                        title='Testing template %s' % template)
-        rc = moa.api.runMoa(wd=testDir, target='template_test', 
-                            background=False)
+        
+        rc = moa.runMake.go(wd=testDir,
+                            target='template_test', 
+                            background=False,
+                            makeArgs = [])
         if rc != 0:
             templateFailures += 1
             err = moa.api.getMoaErr(wd=testDir)
@@ -91,13 +94,13 @@ def testTemplateExtensive(template, verbose=False):
     dataDir = os.path.join(MOABASE, 'test', '10.data')
     os.putenv('MOADATA', dataDir)
     testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')
+    l.info("Cleaning %s" % testDir)
+    moa.utils.removeFiles(testDir, recursive=True)
     l.info("Starting extensive template test for %s" % template)
-    moa.api.removeMoaFiles(testDir)
     moa.api.newJob(template = template, wd=testDir,
                    title='Testing template %s' % template)
-    rc = moa.api.runMoa(wd=testDir, target='%s_test' % template, 
-                        background=False, verbose=True)
-    
+    rc = moa.api.runMoa(wd=testDir, target='%s_unittest' % template, 
+                        background=False, verbose=True)    
     if verbose:
         out = moa.api.getMoaOut(wd=testDir)
         print out
@@ -115,10 +118,11 @@ def testTemplateExtensive(template, verbose=False):
     l.error(err)
     
 def run(options, args):
-    
+
+    os.putenv('MOA_UNITTESTS', "yes")
     if not args:
         l.info("Start running python doctests")
-        setSilent()
+        setSilent()        
         testModule(moa.utils)
         testModule(moa.lock)
         testModule(moa.api)
@@ -126,10 +130,10 @@ def run(options, args):
         testModule(moa.conf)
         testModule(moa.job)
         testModule(moa.runMake)
-        if options.verbose:
-            setVerbose()
-        else:
-            setInfo()
+        
+        if options.verbose: setVerbose()
+        else: setInfo()
+        
         l.info("Finished running of python unittests")
         l.info("Ran %d test, %d failed" % (tests, failures))
         l.info("Start running basic template tests")
@@ -139,7 +143,12 @@ def run(options, args):
         sys.exit()
         
     for what in args:
-        if what[:4] == 'moa.':            
+        if what == 'templates':
+            l.info("Start running basic template tests")
+            testTemplates()
+            l.info("Ran %d template test, %d failed" % (templateTests, templateFailures))
+            l.info("Finished running basic template tests")
+        elif what[:4] == 'moa.':            
             l.info("testing moa python module %s" % what)
             setSilent()
             eval("testModule(%s)" % what)
@@ -149,6 +158,6 @@ def run(options, args):
             l.info("Ran %d test, %d failed" % (tests, failures))
         else:
             #assume it is a template
-            testTemplateExtensive(template, verbose =options.verbose)
+            testTemplateExtensive(what, verbose =options.verbose)
         
     

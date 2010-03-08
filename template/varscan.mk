@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += varscan 
+moa_id = varscan
 moa_title_varscan = Varscan
 moa_description_varscan = Run VARSCAN to detect snps
 
@@ -41,7 +41,7 @@ varscan_perl_file_help = the varscan (perl) executable
 varscan_perl_file_type = file
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run
@@ -56,7 +56,7 @@ varscan_prepare:
 varscan_post: 
 
 .PHONY: varscan
-varscan:
+varscan: $(varscan_output_name)
 	perl $(varscan_perl_file) easyrun \
 		$(varscan_input_file) \
 		--sample $(varscan_output_name)

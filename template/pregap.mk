@@ -29,7 +29,7 @@ pregap_help = Run pregap
 clean_help = Clean up.
 
 # Help
-moa_ids += pregap
+moa_id = pregap
 moa_title_pregap = Pregap
 moa_description_pregap = Run Pregap. Note that running phrap could be a part of this. 
 
@@ -83,7 +83,7 @@ pregap_template_default = ./files/pregap.config.
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 quality_value_clip ?= 10

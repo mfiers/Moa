@@ -17,9 +17,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-include $(shell echo $$MOABASE)/template/moaBasePre.mk
+include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-moa_ids += gsmap
+moa_id = gsmap
 moa_title_gsmap = GSMapper
 moa_description_gsmap = Run the Roche GS Reference mapper
 
@@ -56,7 +56,7 @@ gsmap_annotation_type = file
 
 ################################################################################
 ## Include MOABASE
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 ################################################################################
 
 .PHONY: gsmap_prepare

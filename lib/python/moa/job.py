@@ -28,6 +28,8 @@ import sys
 import moa.utils
 import moa.logger
 import moa.conf
+import moa.runMake
+
 from moa.exceptions import *
 
 l = moa.logger.l
@@ -39,8 +41,7 @@ NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
 ## Moa Makefile
 ## http://mfiers.github.com/Moa
 
--include moa.mk
-MOAMK_INCLUDE=done
+include $(MOABASE)/template/moa/prepare.mk
 
 ## moa_preprocess & moa_postprocess are targets that can
 ## be overridden here. They are executed before & after
@@ -219,6 +220,14 @@ def newJob(template,
     if parameters:
         l.debug("and setting parameters %s" % parameters)        
         moa.conf.commandLineHandler(wd, parameters)
-            
+
+    l.debug("Running moa initialization")
+
+    moa.runMake.go(wd = wd,
+                   target='initialize',
+                   captureOut = False,
+                   makeArgs=[],
+                   verbose=False)
+                   
     l.debug("Written %s, try: moa help" % makefile)
 

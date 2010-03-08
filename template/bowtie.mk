@@ -19,9 +19,9 @@
 
 ################################################################################
 #include moabasepre
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
-moa_ids += bowtie 
+moa_id = bowtie
 moa_title_bowtie = Bowtie
 moa_description_bowtie = Run BOWTIE on an set of input files (query) \
   vs a database index.
@@ -99,7 +99,7 @@ bowtie_insertsize_max_type = float
 # Prerequisite testing
 moa_prereq_simple += samtools bowtie
 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 ##### Derived variables for this run
 

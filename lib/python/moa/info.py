@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# 
 # Copyright 2009 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
@@ -20,8 +18,6 @@
 """
 Functions to retrieve information from Moa directories
 """
-__docformat__ = "restructuredtext en"
-
 
 import os
 import re
@@ -176,10 +172,10 @@ def template(wd):
         raise NotAMoaDirectory(wd)
     with open(os.path.join(wd, 'Makefile')) as F:
         for line in F.readlines():
-            if 'include' in line \
-               and 'MOABASE' in line \
-               and 'template' in line:
-                return line.strip().split('/')[-1].replace('.mk', '')
+            if 'include $(MOABASE)/template' in line \
+               and (not '/template/moa/' in line):
+                template = line.strip().split('/')[-1].replace('.mk', '')
+                return template
 
 reFindTitle=re.compile(r'title\+?= *(.*?) *$')
 def getTitle(wd):

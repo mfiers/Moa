@@ -3,34 +3,44 @@ Moa. Creating a basic template is not difficult, once you have a basic
 understanding of how Makefiles work. Probably the hardest part is
 ensuring that templates are able to interact with other templates.
 
-A template is, as stated, basically a Makefile that adheres to a set of standards. To understand how Makefiles work, please read the
-[Gnu Make Manual](http://www.gnu.org/software/make/manual/make.html). Note that
-creating Makefiles can be somewhat complex at first, given that the
-logic differs from scripting languages. The easiest way to do this is
-to work from an existing Makefile.
+
+# Creating a simple template - example
+A template is, as stated, basically a Makefile that adheres to a set
+of standards. To understand how Makefiles work, please read the [Gnu
+Make Manual](http://www.gnu.org/software/make/manual/make.html). Note
+that creating Makefiles can be somewhat complex at first, given that
+the logic differs from scripting languages. The easiest way to do this
+is to work from an existing Makefile.
 
 Each template exists of two parts:
 
 * Definitions
 * Implementation
 
-This order is very important! Parts of the Moa core are included inbetween the definitions and the implementation. Getting the order wrong might cripple your template.  
+This order is very important! Parts of the Moa core are included
+inbetween the definitions and the implementation. Getting the order
+wrong might cripple your template.
 
-In the remainder of this chapter we will describe how to implement a new tool base on a simple example that creates the reverse complement of a
-[FASTA](http://en.wikipedia.org/wiki/FASTA_format) sequence using the
-[EMBOSS](http://emboss.sourceforge.net/)\citep{Ric00}
+In the remainder of this chapter we will describe how to implement a
+new tool base on a simple example that creates the reverse complement
+of a [FASTA](http://en.wikipedia.org/wiki/FASTA_format) sequence using
+the [EMBOSS](http://emboss.sourceforge.net/)\citep{Ric00}
 [revseq](http://emboss.sourceforge.net/apps/release/6.1/emboss/apps/revseq.html)
-utility. 
+utility.
 
-All templates are stored in the `$MOABASE/template` directory. This template will be stored under the name `revseq.mk`.
+All templates are stored in the `$MOABASE/template` directory. This
+template will be stored under the name `revseq.mk`.
 
-# Definitions
+## Definitions
 
 Each template start with including the first part of the Moa core:
 
-    include $(MOABASE)/template/moaBasePre.mk
+    include $(MOABASE)/template/moa/prepare.mk
 
-`moaBasePre` defines a set of default Moa variables and has some macro's that make variable definition easier. The template defintion continues by defining a set of variables used in the latter part of the template.
+`moaBasePre` defines a set of default Moa variables and has some
+macro's that make variable definition easier. The template defintion
+continues by defining a set of variables used in the latter part of
+the template.
 
 ## Describing the new template
 
@@ -53,26 +63,38 @@ For our Revseq example:
 
 Note that lines are allowed to break over multiple lines, given that
 each line that continues to the next line ends with a backslash. No
-spaces are allowd after the backslash. Indenting the next line is not necessary, but it does enhance readability.
+spaces are allowd after the backslash. Indenting the next line is not
+necessary, but it does enhance readability.
 
-## namespace definition: `moa_ids`
+### namespace definition: `moa_ids`
 
-Each MOA template defines a set of variables and targets (things to do). These variables and targets (usually) share a single id in their name. In the case of template variables this is a convention, making templates easier to read. Targets, however, are often executed automatically, based on the expected name. A `moa_id` is defined in the following way (for our example):
+Each MOA template defines a set of variables and targets (things to
+do). These variables and targets (usually) share a single id in their
+name. In the case of template variables this is a convention, making
+templates easier to read. Targets, however, are often executed
+automatically, based on the expected name. A `moa_id` is defined in
+the following way (for our example):
 
     moa_ids += revseq
 
-A `moa_id` should be unique and is ideally short and consise. It is also advisable to save the template under the same name. 
+A `moa_id` should be unique and is ideally short and consise. It is
+also advisable to save the template under the same name.
     
-The design of moa allows, theoretically, for stacked templates. These are combined templates containing multiple sub templates, separated by multiple `moa_id`s. This is, at the moment, an experimental feature. It is recommended to use only on `moa_id` per template 
 
-## job specific variables
+### job specific variables
 
-The next part of the definitions can be used freely to define variables to be used in the implementation. Each of these variables, ideally, start with the `moa_id` (but this is not enforced). The advantage of defining variables here is that they will be accessible via the command line and the API. For example, you can set a define variable using the following command line:
+The next part of the definitions can be used freely to define
+variables to be used in the implementation. Each of these variables,
+ideally, start with the `moa_id` (but this is not enforced). The
+advantage of defining variables here is that they will be accessible
+via the command line and the API. For example, you can set a define
+variable using the following command line:
 
     moa set title='Descriptive title'    
 
 
-There are two types of variables that can be defined: mandatory and optional.
+There are two types of variables that can be defined: mandatory and
+optional.
 
 Identifier           Description
 -----------------    ---------------------------------------------------
@@ -80,22 +102,18 @@ moa\_title            The title for this template
 moa\_description      A short description of this template
 moa\_ids              A unique, short, identifier for this template
 
-In the case
-## Job specific variables
 
 Most templates will have variables specific to the job. These can be defined by  
 
-## optional job specific variables
+### optional job specific variables
 
-# Include moaBase
+## Include the moa core library
 
-To includie moaBase add the following line to your Makefile:
+To include the core moa library, the following line needs to be added to the Makefile
 
-    include $(shell echo $$MOABASE)/template/moaBase.mk
+    include $(shell echo $$MOABASE)/template/moa.core.mk
 
-# Implementation
-
-## define dependant variables
+## Implementation
 
 ## define targets
 
@@ -104,10 +122,10 @@ four targets. For example, if your template defines: `moa_id +=
 revomp` then the following four targets are expected to be defined and
 are automatically executed:
 
-* MOA\_ID - revcomp
-* MOA\_ID\_prepare - revcomp_prepare
-* MOA\_ID\_post - revcomp_post
-* MOA\_ID\_clean - revcomp_clean
+* $(moa_id): revcomp
+* $(moa_id)_prepare: revcomp_prepare
+* $(moa_id)_post - revcomp_post
+* $(moa_id)_clean - revcomp_clean
 
 Each of these targets must be defined in a new template, although they
 could can be empty. In the following paragraphs, each of these targets
@@ -125,7 +143,6 @@ sequences. Using a separate subdirectory to
 ### Clean up: revcomp_clean
 
 
-
 * **revcomp**: the main target, executes the main task of this
     template. In this case it takes a set of input sequences and write
     the reverse complement back to disk.
@@ -139,4 +156,107 @@ sequences. Using a separate subdirectory to
 
 * **revcomp_clean**: Cleans up all reverse complemented sequences
 
- 
+# Reference
+
+## Environment variables
+
+These environment variables are used by Moa:
+
+
+`MOAANSI`
+
+  ~ The default is to use (ANSI) colored characters in the output. To
+    prevent this from happening, set this (environment) variable to
+    `no`.
+
+`MOAPROJECTROOT`
+  
+  ~ The root of a moa project - project root is a parent directory of
+    the current directoy that has a moa job with template
+    `project`. If there is no project root, this variable is
+    undefined.
+
+
+## Global functions
+
+These function are meant to be used at the top level of a Makefile
+(meaning, not inside a target command block). Function can be called
+using:
+
+    $(call FUNCTIONNAME,ARGUMENT1,ARGUMENT2,...)
+
+`$(call moa_fileset_define,ID,EXTENSION,HELP)`
+
+  ~ Define a set of files to be recoginized by Moa.
+
+`$(call moa_fileset_remap,INPUT_ID,OUTPUT_ID,OUTPUT_EXTENSION)`
+
+  ~ Remap a set of input files to ....
+
+`$(call moa_fileset_remap_nodir,INPUT_ID,OUTPUT_ID,OUTPUT_EXTENSION)`
+
+  ~ as `moa_fileset_remap`, but without prefixing the set with a
+    subdirectory
+
+
+
+## Command functions
+
+The following commands render a command that can be executed inside
+a target command block
+
+`$(call echo,TEXT)
+
+  ~ Returns an echo statement for the text with a green block
+    prepended. The color allows for easy recognition of the echo'd
+    statements. Note that these only work within the code block of a
+    target.
+
+`$(call errr,TEXT)`
+  
+  ~ as `$(call echo,TEXT)`, but with a red marker (error)
+
+`$(call exer,TEXT)`
+
+  ~ as `$(call errr,TEXT)`, but exits the Makefile with an error
+
+`$(call exerUnlock,TEXT)`
+
+  ~ as `$(call exer,TEXT)`, but remove the Moa lockfile
+
+`$(call warn,TEXT)`
+
+  ~ as `$(call echo,TEXT)`, but with a yellow marker
+
+## Variables
+
+$(comma)
+
+  ~ a comma
+
+$e
+
+  ~ Can be used in place of Makefile "@". A @ prepended to a command
+    inside a target in a Makefile supresses echoing of that line
+    during execution. If $e is used, then supression is depending on
+    executing moa with the -v (verbose) parameter.
+
+$(empty)
+
+  ~ empty
+
+$(parC)
+
+  ~ parentheses close
+
+$(parO)
+
+  ~ parentheses open
+
+$(sep)
+
+  ~ contains the pipe symbol "|"
+
+$(space)
+
+  ~ a single space

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 moa_title = Blast
 moa_description = Wraps BLAST [[Alt90]], the most popular			\
@@ -24,7 +24,7 @@ moa_description = Wraps BLAST [[Alt90]], the most popular			\
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
   [[Alt90]] suite of tools
 
-moa_ids += blast
+moa_id = blast
 
 blast_help = Running BLAST takes an input directory						\
   (*blast_input_dir*), determines what sequence files are present		\
@@ -96,8 +96,8 @@ gup_gff_dir = ./gff
 gup_upload_gff = T
 gup_gffsource ?= $(blast_gff_source)
 
-#include moabasemoa	
-include $(shell echo $$MOABASE)/template/moaBase.mk
+#include the moa core libraries
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 real_blast_db = $(if $(blast_db), $(shell echo "$(blast_db)" | sed "s/\.[pn]..$$//"))
 
@@ -124,15 +124,6 @@ test:
 	$(e)echo $(blast_input_extension)
 	$(e)echo $(blast_input_dir)/*.$(blast_input_extension)
 	$(e)echo $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
-
-blast_test:
-	$(e)echo "Input extension: '$(blast_input_extension)'"
-	$(e)echo "Real blast db  '$(real_blast_db)'"
-	$(e)echo "a blastdb file: '$(single_blast_db_file)'"
-	$(e)echo "real blast db: '$(real_blast_db)'"
-	$(e)echo "No inp files $(words $(blast_input_files))"
-	$(e)echo "No xml files $(words $(blast_output_files))"
-	$(e)echo "No gff files $(words $(blast_gff_files))"
 
 #echo Main target for blast
 .PHONY: blast
@@ -174,3 +165,13 @@ blast_clean:
 	-rm -rf ./out/
 	-rm -rf error.log
 	-rm blast_report
+
+blast_unittest:	
+	moa new -d 10.blastdb -t 'test blast db' blastdb							\
+			bdb_fasta_file=$$MOADATA/dna/test01.fasta bdb_name=test
+	cd 10.blastdb; moa 
+	moa new -d 20.blast -t 'test blast' blast									\
+			blast_db=../10.blastdb/test blast_input_dir=$$MOADATA/dna
+	cd 20.blast; moa 
+	cd 20.blast; ls
+	[[ -f 20.blast/blast_report ]] || false

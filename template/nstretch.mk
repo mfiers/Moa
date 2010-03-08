@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += nstretch 
+moa_id = nstretch
 moa_title_nstretch = Nstretch
 moa_description_nstretch = Run NSTRETCH on an set of input files 
 
@@ -36,7 +36,7 @@ nstretch_len_help = minimal number of Ns before its reported (default 10)
 nstretch_len_type = integer
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run

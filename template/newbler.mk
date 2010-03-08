@@ -17,9 +17,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-include $(shell echo $$MOABASE)/template/moaBasePre.mk
+include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-moa_ids += newbler
+moa_id = newbler
 moa_title_newbler = Newbler
 moa_description_newbler = Run a simple, out of the box, newbler		\
 assembly.															\
@@ -42,7 +42,7 @@ with the library id.
 
 ################################################################################
 ## Include MOABASE
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 ################################################################################
 
 .PHONY: newbler_prepare

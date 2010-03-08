@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 
-moa_ids += moatest
+moa_id = moatest
 moa_title = Unittest template
 moa_description = Not to be used - is used by unitmoatests
 
@@ -36,7 +36,7 @@ test_opt_type = string
 test_opt_default = konijntje
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 moatest_prepare:

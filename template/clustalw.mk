@@ -20,7 +20,7 @@ maintarget: check mummer
 
 ################################################################################
 # Variable checks & definition & help
-moa_ids += clustalw
+moa_id = clustalw
 moa_title_mummer = clustalw
 moa_description_mummer = Run clustalw on two sets of sequences
 
@@ -49,7 +49,7 @@ input_extension_type = string
 
 
 
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 ix = $(input_extension)
 input_files_a = $(addprefix a__,$(wildcard $(input_dir_a)/*.$(input_extension)))

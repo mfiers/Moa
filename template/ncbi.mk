@@ -17,17 +17,17 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-moa_targets += getFromNcbi
-getFromNcbi_help = Download some data from NCBI
+moa_targets += ncbi
+ncbi_help = Download some data from NCBI
 
-moa_ids += getFromNcbi
+moa_id = ncbi
 moa_title = "Download from NCBI"
 moa_description = Download a set of sequences from NCBI based on a		\
   query string (ncbi_query) and database (ncbi_db). This tempate will	\
   run only once (!), after a succesful run it creates a 'lock' file		\
   that you need to remove to rerun
 
-getFromNcbi_help = Downloads from NCBI
+ncbi_help = Downloads from NCBI
 
 moa_must_define += ncbi_query
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
@@ -54,25 +54,25 @@ prereq_wget:
 	@$(call checkPrereqPath,wget,Please install wget)
 
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 #define extra variables to register in couchdb
 #moa_register_extra += fastadir
 #moa_register_fastadir = $(shell echo `pwd`)/fasta 
 
 ################################################################################
-.PHONY: getFromNcbi_prepare
-getFromNcbi_prepare:
+.PHONY: ncbi_prepare
+ncbi_prepare:
 	-mkdir fasta
 	-rm tmp.xml 
 	-rm tmp.fasta 
 	-rm fasta/*.fasta
 
-.PHONY: getFromNcbi_post
-getFromNcbi_post:
+.PHONY: ncbi_post
+ncbi_post:
 
-.PHONY: getFromNcbi
-getFromNcbi: tmp.fasta
+.PHONY: ncbi
+ncbi: tmp.fasta
 	if [[ -n "$(ncbi_sequence_name)" ]]; then 								\
 		cat tmp.fasta 														\
 			| sed "s/^>.*$$/>$(ncbi_sequence_name)/"							\
@@ -94,8 +94,5 @@ tmp.xml:
 	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
 		-O tmp.xml
 
-getFromNcbi_clean:
-	-rm -r fasta
-	-rm tmp.xml
-	-rm tmp.fasta
-	-rm getFromNcbi
+ncbi_clean:
+	-$e rm -r fasta tmp.xml tmp.fasta lock 2>/dev/null

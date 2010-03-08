@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += clustalpair
+moa_id = clustalpair
 moa_title_mummer = clustalw
 moa_description_mummer = Run clustalw on two sets of sequences
 
@@ -38,7 +38,7 @@ moa_may_define += input_extension
 input_extension_type = string
 input_extension_default = fasta
 
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 
 ix = $(input_extension)
 input_files_a = $(addprefix a__,$(wildcard $(input_dir_a)/*.$(input_extension)))

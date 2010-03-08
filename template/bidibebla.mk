@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-include $(MOABASE)/template/moaBasePre.mk
+include $(MOABASE)/template/moa/prepare.mk
 
 moa_title = Bidirectional best BLAST hit
 moa_description = Discover the bidirectional best blast hit between two \
@@ -24,7 +24,7 @@ moa_description = Discover the bidirectional best blast hit between two \
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
   [[Alt90]] suite of tools
 
-moa_ids += bdbb
+moa_id = bdbb
 
 bdbb_help = generate a list of bidirectional best blast hits.
 
@@ -60,7 +60,7 @@ bdbb_nothreads_help = threads to run bdbb with (note the overlap \
 bdbb_nothreads_type = integer
 
 #include moabasemoa	
-include $(MOABASE)/template/moaBase.mk
+include $(MOABASE)/template/moa/core.mk
 
 bdbb_test:
 	$(e)echo "Input extension: '$(bdbb_input_extension)'"

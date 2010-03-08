@@ -17,7 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-MOA_INCLUDE_HELP = yup
+MOA_INCLUDE_PLUGIN_HELP= yes
 
 ################################################################################
 ## Help structure
@@ -40,47 +40,10 @@ MOA_INCLUDE_HELP = yup
 ## Markdown, see: http://daringfireball.net/projects/markdown/
 ##
 
-.PHONY: help
-help:
-	@echo -e "$(call help_md)" 					\
-		| sed "s/^ //g"  						\
-		| sed "s/\[\[.*\]\]//g" 				\
-		| sed "s/[ \t]*$$//"					\
-		| $(pandocbin) -s -f markdown -t man	\
-		| $(mancommand)
-
-help_latex:
-	@echo -e "$(call help_md)"				\
-		| sed "s/^ //g"						\
-		| sed "s/[ \t]*$$//"				\
-		| sed "s/^#/##/"					\
-		| $(pandocbin) -f markdown -t latex		\
-		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g" 	
-
-help_man:
-	@echo $(pandocbin)
-	@echo -e "$(call help_md)" 				\
-		| sed "s/^ //g"  					\
-		| sed "s/\[\[.*\]\]//g" 			\
-		| sed "s/[ \t]*$$//"				\
-		| $(pandocbin) -s -f markdown -t man
-
-help_markdown:
-	@echo -e "$(call help_md)" 				\
-		| sed "s/^ //g"  					\
-		| sed "s/\[\[.*\]\]//g" 			\
-		| sed "s/[ \t]*$$//"
-
-empty:=
-space:= $(empty) $(empty)
-comma:=,
-sep:=|
-parO:=(
-parC:=)
 #return the type of a parameter
-ptype=$(if $($(1)_type),$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if $($(1)_default),$(comma) default:$($(1)_default)))$(parC))
+moa_help_parameter_type=$(if $($(1)_type),$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if $($(1)_default),$(comma) default:$($(1)_default)))$(parC))
 
-help_md = % $(subst $(space),_,$(moa_title)) \n\
+moa_help_md = % $(subst $(space),_,$(moa_title)) \n\
 % $(moa_author)							\n\
 % $(shell date)							\n\
 										\n\
@@ -90,14 +53,14 @@ $(moa_description)						\n\
 (empty)									\n\
 :   Leaving the target unspecified 		\n\
 :   executes the default target(s):     \n\
-:	($(moa_ids)) 						\n\
+:	($(moa_id)) 						\n\
 clean									\n\
 :	removes all results from this job   \n\
 all										\n\
 :	executes the default target and 	\n\
 :   into subdirectories to execute any  \n\
 :	other moa makefile it encounters	\n\
-$(foreach id,$(moa_ids),				  \
+$(foreach id,$(moa_id),				  \
 $(id)									\n\
 :	$($(id)_help)						\n\
 )										\n\
@@ -110,13 +73,49 @@ $(id)									\n\
 \#\# Required parameters				\n\
 $(foreach v,$(moa_must_define), 		  \
 $(v)									\n\
-:   $(if $($(v)_help),$($(v)_help),undefined)	$(call ptype,$(v)) \n\
+:   $(if $($(v)_help),$($(v)_help),undefined)	$(call moa_help_parameter_type,$(v)) \n\
 )										\n\
 \#\# Optional parameters				\n\
 $(foreach v,$(moa_may_define), 			\
 $(v)									\n\
-:   $(if $($(v)_help),$($(v)_help),undefined)	$(call ptype,$(v)) \n\
+:   $(if $($(v)_help),$($(v)_help),undefined)	$(call moa_help_parameter_type,$(v)) \n\
 )
 
 
- $(call ptype,$(v))
+moa_targets += help
+help_help = Show help 
+
+.PHONY: help
+help:
+	@echo -e "$(call moa_help_md)" 					\
+		| sed "s/^ //g"  						\
+		| sed "s/\[\[.*\]\]//g" 				\
+		| sed "s/[ \t]*$$//"					\
+		| $(pandocbin) -s -f markdown -t man	\
+		| $(mancommand)
+
+.PHONY: help_latex
+help_latex:
+	@echo -e "$(call moa_help_md)"				\
+		| sed "s/^ //g"						\
+		| sed "s/[ \t]*$$//"				\
+		| sed "s/^#/##/"					\
+		| $(pandocbin) -f markdown -t latex		\
+		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g" 	
+
+.PHONY: help_man
+help_man:
+	@echo $(pandocbin)
+	@echo -e "$(call moa_help_md)" 				\
+		| sed "s/^ //g"  					\
+		| sed "s/\[\[.*\]\]//g" 			\
+		| sed "s/[ \t]*$$//"				\
+		| $(pandocbin) -s -f markdown -t man
+
+.PHONY: help_markdown
+help_markdown:
+	@echo -e "$(call moa_help_md)" 				\
+		| sed "s/^ //g"  					\
+		| sed "s/\[\[.*\]\]//g" 			\
+		| sed "s/[ \t]*$$//"
+

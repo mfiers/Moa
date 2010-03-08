@@ -28,7 +28,7 @@ moa_description = Use LFTP to download files. This template has two				\
 lftp_help = Download using ftp
 
 # Help
-moa_ids += lftp
+moa_id = lftp
 lftp_help = execute the download
 
 #varables that NEED to be defined
@@ -113,7 +113,7 @@ prereq_lftp_installed:
 
 ################################################################################
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moaBase.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 ################################################################################
 
 ifdef lftp_user

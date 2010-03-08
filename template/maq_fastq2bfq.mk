@@ -18,10 +18,10 @@
 # 
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBasePre.mk
+	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_ids += fq2bq
+moa_id = fq2bq
 moa_title_maq_fasta2bfa = Convert FASTQ to BFQ
 moa_description_maq_fasta2bfa = Converts a FASTQ file to MAQ BFQ	\
 format.
@@ -30,12 +30,12 @@ format.
 $(call moa_fileset_define,fq2bq_input,fastq,input FASTA files)
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run
 
-$(call moa_fileset_init,fq2bq_input)
+#$(call moa_fileset_init,fq2bq_input)
 $(call moa_fileset_remap,fq2bq_input,fq2bq_bfq,bfq)
 
 test:

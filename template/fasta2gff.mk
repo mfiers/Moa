@@ -22,7 +22,7 @@ moa_description = Derive GFF from a FASTA file, usually to accompany the 		\
 moa_fasta2gff_help = Generate GFF from a fasta file
 
 # Help
-moa_ids += fasta2gff
+moa_id = fasta2gff
 moa_title_fasta2gff = Fasta to gff
 moa_description_fasta2gff = Create gff from a fasta file to accompany upload to \
   a gbrowse db
@@ -54,7 +54,7 @@ f2g_options_type = string
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ################################################################################

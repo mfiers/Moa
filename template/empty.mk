@@ -20,7 +20,7 @@ maintarget: not doing anything
 
 ################################################################################
 # Help
-moa_ids += empty
+moa_id = empty
 moa_title_empty = 
 moa_description_empty = 
 
@@ -41,7 +41,7 @@ moa_must_define +=
 moa_may_define += 		
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ################################################################################

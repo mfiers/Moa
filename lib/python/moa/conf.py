@@ -20,11 +20,11 @@
 """
 Moa script - get and set variables to the moa.mk file
 """
-__docformat__ = "restructuredtext en"
 
 import re
 import os
 import sys
+import shlex
 
 import moa.logger
 from moa.logger import exitError
@@ -41,10 +41,17 @@ def handler(options, args):
     cwd = os.getcwd()
 
     command = args[0]
-    if command == 'set':
-        commandLineHandler(cwd, args[1:])
-    elif command == 'get':
-        print getVar(cwd, args[1])
+    newArgs = args[1:]
+
+    ## These commands could be passed from a Makefile via the $(MAKEFLAGS)
+    ## variable in which case we'll filter the actual arguments from
+    ## sys.argv
+    if len(sys.argv) == 3 and  '--' in sys.argv[2]:
+        na = shlex.split(sys.argv[2].strip())
+        newArgs = na[na.index('--')+1:]
+    if command == '__set':
+        commandLineHandler(cwd, newArgs)
+    
             
 
 def parseClArgs(args):
@@ -97,7 +104,6 @@ def commandLineHandler(wd, args):
     #parse all arguments
     data = parseClArgs(args)
     writeToConf(wd, data)
-
 
 def setVar(wd, key, value):
     """

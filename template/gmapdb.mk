@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += gmapdb
+moa_id = gmapdb
 moa_title_gmapdb = gmapdb index builder
 moa_description_gmapdb = Builds gmapdb index from a reference	\
   sequence
@@ -36,7 +36,7 @@ gmapdb_name_help = Name of the gmap index to create
 gmapdb_name_type = string
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run

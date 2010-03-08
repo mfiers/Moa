@@ -18,10 +18,10 @@
 # 
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBasePre.mk
+	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_ids += f2b
+moa_id = f2b
 moa_title_maq_fasta2bfa = Convert fasta to bfa
 moa_description_maq_fasta2bfa = Converts a FASTA file to MAQ format	\
 for use with a BFA a maq_fasta2bfa index from a reference sequence
@@ -30,7 +30,7 @@ for use with a BFA a maq_fasta2bfa index from a reference sequence
 $(call moa_fileset_define,f2b_input,fasta,input FASTA files)
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run

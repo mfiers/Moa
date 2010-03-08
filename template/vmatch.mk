@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_ids += vmatch
+moa_id = vmatch
 
 moa_title_vmatch = Vmatch
 moa_description_vmatch = Run VMATCH on an set of input files (query) \
@@ -43,7 +43,7 @@ vmatch_extra_parameters_type = string
 #vmatch_invert_gff_allowed = T F
 
 ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moaBase.mk
+	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run
