@@ -726,6 +726,8 @@ def plotRibbons(start = None, stop = None):
     if not stop:
         stop = xstop
 
+    l.debug("Drawing ribbonplot from %s to %s" % (start, stop))
+    
     i = 0
     cutoff = 25
     
@@ -739,12 +741,14 @@ def plotRibbons(start = None, stop = None):
             out_r[x] = np.average(r[bins[x]:bins[x+1]])
         return bins[:-1], out_r
 
-    r_ok_bins, r_ok_binned = binnify(800, start, stop, r_ok)
-    r_bad_bins, r_bad_binned = binnify(800, start, stop, r_bad)
+    r_ok_bins, r_ok_binned = binnify(1500, start, stop, r_ok)
+    r_bad_bins, r_bad_binned = binnify(1500, start, stop, r_bad)
 
     ribbonymax = max(r_ok_binned)
     r_tmp = np.sort(r_ok_binned)
-    ribbonymax = min(250, r_tmp[int(len(r_tmp) * 0.8)])
+    ribbonymax = min(250, r_tmp[int(len(r_tmp) * 0.9)])
+
+    cutoff = 0.05 * ribbonymax
     l.info("max y coord for ribbon plot: %s" % ribbonymax)
 
     def findErr(x):
@@ -1114,74 +1118,26 @@ if 'split' in  options.plotMode:
 
 
 if 'ribbon' in options.plotMode:
+    l.debug("Start plotting real ribbon plot")
     r.png(basefilename +'.ribbon.png', width=xsize, height=options.ysize, pointsize=12, **PNGARGS)
-    #generate an empty graph
-    r.plot([], [], **PLOTARGS    )
+    r.par(oma=robjects.array.array('f', [3,3,0.5,0.5]))
+    r.par(mar=robjects.array.array('f', [0,0,0,0]))
+    r.par(mgp=robjects.array.array('f', [0.5,0.5,0.001]))
 
-    for d in allBowData:
-        l.info("top, botton %s %s" % (d['peakLow'], d['peakHigh']))
-        #filter out those pairs that are below / on / above the peak
+    rowLen = 500000
+    noRows = int(math.ceil((xstop - xstart) / rowLen))
 
-        l.info("flatting sets")
+    prepareRibbons()
+    r.layout(r.matrix(range(1,noRows+1), ncol=1),
+             heights=robjects.IntVector([1 for x in range(noRows)]))
 
-        #flatten sets
-        r_ok = np.zeros(realSeqLen, dtype=np.int)
-        r_high = np.zeros(realSeqLen, dtype=np.int)
-        r_low = np.zeros(realSeqLen, dtype=np.int)
-
-        peakLow = d['peakLow']
-        peakHigh = d['peakHigh']
-        
-        def ff(a,b):
-            dist = b-a
-            if dist < peakLow:
-                r_low[a:b] += 1
-            elif dist > peakHigh:
-                r_high[a:b] += 1
-            else:
-                r_ok[a:b] += 1
-
-        FF = np.vectorize(ff)
-        FF(d['s1'], d['e2'])
-        l.info("Done flattening ")
-
-        def etm(e):
-            return np.array([(0.5 * (e[i]+e[i+1])) for i in range(len(e)-1)])
-        
-        #prepare for plotting
-        def binnify(noBins, start, stop, r):
-            binSize = int((stop-start) / noBins)
-            bins = range(xstart, xstop, binSize)
-            noBins = len(bins)-1
-            out_r = np.zeros(noBins)
-            for x in range(noBins):
-                out_r[x] = np.average(r[bins[x]:bins[x+1]])
-            return bins[:-1], out_r
-
-        r_ok_bins, r_ok_binned = binnify(500, xstart, xstop, r_ok)
-        r_high_bins, r_high_binned = binnify(500, xstart, xstop, r_high)
-        r_low_bins, r_low_binned = binnify(500, xstart, xstop, r_low)
-        
-        r.plot(r_ok_bins, r_ok_binned,
-               col='green', ann=False, type='s')
-        r.points(r_high_bins, r_high_binned,
-               col='red', ann=False, type='s')
-        r.points(r_low_bins, r_low_binned,
-               col='blue', ann=False, type='s')
-#        r.points(r_ok[1900000:2000000], col='green', ann=False)
-#        r.points(r_low[1900000:2000000], col='blue', ann=False)
-        
-#        cutoff = 10
-#        r_ok_flat = np.greater(r_ok, cutoff)
-#        r_high_flat = np.greater(r_high, cutoff)
-#        r_low_flat = np.greater(r_low, cutoff)
-#        r.plot(r_ok_flat + 1)
-#        r.points(r_high_flat+2)
-#        r.points(r_low_flat)
-
-        #r.heatmap(r_ok[0])
-        
-                
+    curStart = xstart
+    curStop = xstart + rowLen-1
+    while curStart < xstop:
+        l.debug("Start ribbonplot %d %d " % (curStart, curStop))
+        plotRibbons(start = curStart, stop=curStop)
+        curStart += rowLen
+        curStop = curStart + rowLen -1
         
     r['dev.off']() #close graph
     
