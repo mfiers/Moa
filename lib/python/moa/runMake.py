@@ -70,8 +70,6 @@ def _startMake(wd,
     else:
         FOUT = None
         FERR = None
-        os.putenv('MOAANSI', 'yes')
-
         
     makeArgs.insert(0, 'make')
     l.debug("RUNNING MAKE\n%s" % " ".join(makeArgs))
