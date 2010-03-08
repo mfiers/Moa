@@ -77,16 +77,20 @@ moa_git_init_project:
 
 .PHONY: moa_git_init
 moa_git_init:
-	git add $(minv) --all; \
-	git commit -qa -m "$(commit_message)" >/dev/null
+	if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
+		git add $(minv) --all; \
+		git commit -qa -m "$(commit_message)" >/dev/null; \
+	fi
 
 .PHONY: moa_git_postset
 moa_git_postset:
-	git add moa.mk
-	git commit -q -m "$(commit_message)" moa.mk 
+	$e echo $(MOAPROJECTROOT);
+	if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
+		git add moa.mk; \
+		git commit -q -m "$(commit_message)" moa.mk ; \
+	fi
 
 
 .PHONY: gitlog
 gitlog:
 	git log --pretty=oneline --abbrev-commit
-
