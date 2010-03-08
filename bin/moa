@@ -64,6 +64,7 @@ from moa import runMake
 import moa.conf
 import moa.info
 import moa.api
+import moa.project
 import moa.unittests
 from moa import utils
 from moa.exceptions import *
@@ -147,15 +148,20 @@ for p in moaPluginsLoaded:
 
 (options, args) = parser.parse_args()
 
-for p in moaPluginsLoaded:
-    moaPluginModules[p].prepare(globals())
-
-
-
 if options.verbose:
     moa.logger.setVerbose()
 
-##Check for deprecate template style
+### Initialize the plugins 
+for p in moaPluginsLoaded:
+    moaPluginModules[p].prepare(globals())
+
+### Determine project root (if there is one)
+projectRoot = moa.project.findProjectRoot()
+if projectRoot:
+    l.debug('Project root is %s' % projectRoot)
+    os.putenv('MOAPROJECTROOT', projectRoot)
+
+### Check for deprecate template style
 checkTemplate(os.getcwd())
 
 #make sure the MOA_THREADS env var is set - this is used by MOA later

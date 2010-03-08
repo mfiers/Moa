@@ -55,7 +55,6 @@ def _projectRoot(path):
     if not moa.info.isMoaDir(path):
         return "out"
     template = moa.info.template(path)
-    l.debug("%s has template '%s'" % (path, template))
     if template != 'project':
         return "notproject"
     return "project"
@@ -114,8 +113,9 @@ def findProjectRoot(path=None):
     while True:
         res = _projectRoot(cwd)
         if res == 'project':
-            l.debug("projectroot found at %s" % cwd)
             return cwd
-        l.debug("projectroot check %s %s" % (res, cwd))
+        if res == 'out':
+            #not in a moa structure anymore -
+            return None        
 
         cwd = os.path.split(cwd)[0]
