@@ -30,6 +30,10 @@ gsmap_sfffile_cardinality = many
 gsmap_sfffile_help = SFF files with reads to map against the reference	\
   sequences
 
+moa_must_define += gsmap_name
+gsmap_name_type = filestring
+gsmap_name_help = Name identifying this mapping in the output gff
+
 moa_must_define += gsmap_reference_fasta
 gsmap_reference_fasta_type = file
 gsmap_reference_fasta_help = A multifasta file with the reference	\
@@ -64,8 +68,9 @@ gsmap_post:
 .PHONY: gsmap
 gsmap: out.gff
 
-out.gff: out/454HCDiffs.txt improved.HCDiffs
-	$e awk '/>/ {print $$1"\tgsMapper\tPolymorphism\t"$$2"\t"$$3"\t.\t.\t.\tName SNP ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out.gff
+out.gff: out/454HCDiffs.txt 
+	$e awk '/>/ {print $$1"\tgsMapper\tPolymorphism\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsmap_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out.gff
+	$e awk '/>/ {print $$1"\tgsMapper\tSNP_$(gsmap_name)\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsmap_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out2.gff
 
 
 
