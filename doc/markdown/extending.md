@@ -165,8 +165,16 @@ These environment variables are used by Moa:
 
 `MOAANSI`
 
-  ~ Use (ANSI) colored characters in the output
+  ~ The default is to use (ANSI) colored characters in the output. To
+    prevent this from happening, set this (environment) variable to
+    `no`.
 
+`MOAPROJECTROOT`
+  
+  ~ The root of a moa project - project root is a parent directory of
+    the current directoy that has a moa job with template
+    `project`. If there is no project root, this variable is
+    undefined.
 
 
 ## Global functions

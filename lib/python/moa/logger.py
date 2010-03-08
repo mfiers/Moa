@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 #
+import os
 import sys
 import logging
 import traceback
@@ -62,6 +63,13 @@ class XTRFormatter(logging.Formatter):
         record.msg = " ".join(record.msg.split(" "))
         #check if we're on a tty, if not, reset colon/coloff
         if not sys.stdout.isatty():
+            record.colon = ""
+            record.coloff = ""
+
+        #check if there is an env variable that prevents ANSI
+        #coloring
+        if os.environ.has_key('MOAANSI') and \
+           os.environ['MOAANSI'] == 'no':
             record.colon = ""
             record.coloff = ""
             

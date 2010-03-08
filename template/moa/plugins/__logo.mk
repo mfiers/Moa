@@ -27,4 +27,6 @@ moa_hooks_pre_welcome += moa_logo
 
 .PHONY: moa_logo
 moa_logo:
-	-$e cat $(MOABASE)/share/logo/moa.logo.txt
+	-$e if [[ ! ("$(MOAANSI)" == "no") ]]; then 			\
+		cat $(MOABASE)/share/logo/moa.logo.txt;		\
+	fi
