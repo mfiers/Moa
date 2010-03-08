@@ -172,10 +172,10 @@ def template(wd):
         raise NotAMoaDirectory(wd)
     with open(os.path.join(wd, 'Makefile')) as F:
         for line in F.readlines():
-            if 'include' in line \
-               and 'MOABASE' in line \
-               and 'template' in line:
-                return line.strip().split('/')[-1].replace('.mk', '')
+            if 'include $(MOABASE)/template' in line \
+               and (not '/template/moa/' in line):
+                template = line.strip().split('/')[-1].replace('.mk', '')
+                return template
 
 reFindTitle=re.compile(r'title\+?= *(.*?) *$')
 def getTitle(wd):

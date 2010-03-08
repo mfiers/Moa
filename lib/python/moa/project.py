@@ -53,13 +53,15 @@ def _projectRoot(path):
     False
     """
     if not moa.info.isMoaDir(path):
-        return False
-    if moa.info.template(path) != 'project':
-        return False
-    return True
+        return "out"
+    template = moa.info.template(path)
+    l.debug("%s has template '%s'" % (path, template))
+    if template != 'project':
+        return "notproject"
+    return "project"
 
     
-def findProjectRoot(path):
+def findProjectRoot(path=None):
     """
     Find the project root of a certain moa job
 
@@ -80,13 +82,19 @@ def findProjectRoot(path):
     >>> result[2] == 'test project'
     True
 
-    @param path: The path for which we're looking for the project root
+    @param path: The path for which we're looking for the project root, if
+      omitted, use the cwd
     @type path: string
     @returns: a tuple, first value indicates if there is a parent project
       the second is the path to the project, the third value is the project
       title
     @rtype: tuple of a boolean and two stringsg  
     """
+    if not path:
+        path=os.getcwd()
+        
+    l.debug("Finding project root for %s" % path)
+    
     #are we looking at a directory?
     if not os.path.isdir(path):
         l.critical("findProjectRoot must be executed with a directory as ")
@@ -94,21 +102,20 @@ def findProjectRoot(path):
         l.critical("  %s" % path)
         sys.exit(-1)
 
-    #start walking up through the tree until we discover
+    # start walking up through the tree until we discover
 
-    #remove trailing slash
+    # remove trailing slash - to make sure that os.path.split
+    # works properly
     if path[-1] == '/':
         path = path[:-1]
-
-    def splitDir(d):
-        parent, this = os.path.split(d)
-        return parent
 
     #start walking through the parent tree
     cwd = path
     while True:
-        if _projectRoot(cwd):
-            title = moa.info.getTitle(cwd)
-            l.critical(title)
-            return (True, cwd, title)
-        cwd = splitDir(cwd)
+        res = _projectRoot(cwd)
+        if res == 'project':
+            l.debug("projectroot found at %s" % cwd)
+            return cwd
+        l.debug("projectroot check %s %s" % (res, cwd))
+
+        cwd = os.path.split(cwd)[0]
