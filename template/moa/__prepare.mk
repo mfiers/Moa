@@ -31,9 +31,15 @@ MOA_INCLUDE_PREPARE = yes
 ## See: http://gmsl.sourceforge.net/
 include $(MOABASE)/template/util/gmsl
 
-## Load moa wide configuration
+## Load moa system wide configuration
 MOA_INCLUDE_ETCMOACONF = yes
 include $(MOABASE)/etc/moa.conf.mk
+
+## Load moa project wide configuration
+ifdef MOAPROJECTROOT
+	MOA_INCLUDE_PROJECTCONF = yes
+	-include $(MOAPROJECTROOT)/moa.mk
+endif
 
 ## Load the local configuration
 MOA_INCLUDE_MOAMK = yes
