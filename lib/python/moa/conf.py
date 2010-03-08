@@ -51,8 +51,7 @@ def handler(options, args):
         newArgs = na[na.index('--')+1:]
     if command == '__set':
         commandLineHandler(cwd, newArgs)
-    elif command == '__get':
-        print getVar(cwd, newArgs)
+    
             
 
 def parseClArgs(args):

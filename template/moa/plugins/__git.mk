@@ -49,7 +49,7 @@ moa_git_init_gitignore = \
 ifdef MOA_GITMESSAGE
 	commit_message = $(MOA_GITMESSAGE)
 else
-	commit_message = moa-git - automatic commit
+	commit_message = moa $(MAKECMDGOALS) automated commit
 endif
 
 #Initialze a git repository
@@ -82,6 +82,7 @@ moa_git_init:
 
 .PHONY: moa_git_postset
 moa_git_postset:
+	git add moa.mk
 	git commit -q -m "$(commit_message)" moa.mk 
 
 

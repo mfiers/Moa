@@ -45,5 +45,8 @@ def prepare(g):
         os.putenv("MOA_GITFORCEINIT", "yes")
     if g['options'].gitMessage:
         os.putenv("MOA_GITMESSAGE", g['options'].gitMessage)
-    elif g['options'].title:
+    elif g['args'] == 'new' and g['options'].title:
         os.putenv("MOA_GITMESSAGE", "Creating: " + g['options'].title)
+    elif g['args'] and g['args'][0] == 'set':
+        os.putenv("MOA_GITMESSAGE", "moa set '%s'" %
+                  " ".join(g['args'][1:]).replace('"',''))

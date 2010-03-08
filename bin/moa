@@ -221,8 +221,6 @@ if __name__ == "__main__":
     #configuration stuff
     elif command == '__set':
         moa.conf.handler(options, args)
-    elif command == '__get':
-        moa.conf.handler(options, args)
     #unittests
     elif command == 'test':
         moa.unittests.run(options, newargs)
