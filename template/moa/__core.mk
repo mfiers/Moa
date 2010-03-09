@@ -431,7 +431,7 @@ set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
 
 .PHONY: moa_set_2
 moa_set_2:
-	moa $(minv) __set '$(MAKEFLAGS)'
+	moa $(minv) __set $(MOAARGS)
 
 ################################################################################
 ## make show ###################################################################
@@ -443,11 +443,9 @@ moa_set_2:
 .PHONY: show moa_showvar_%
 show: $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 
-#@echo -ne '$(if $(call seq,$($*_show_expanded),F),$(value $*),$($*))'
-#	@echo '$($*_show_expanded) $(call seq,$($*_show_expanded),F) $(value $*)'
 moa_showvar_%:		 
-	@echo -ne '$*\t'	
-	@echo '$(value $*)'
+	$e echo -ne '$*\t'	
+	$e echo '$(value $*)'
 
 .PHONY: get moa_getvar_%
 get: $(addprefix moa_getvar_, $(filter $(var),$(moa_must_define) $(moa_may_define)))

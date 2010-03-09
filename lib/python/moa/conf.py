@@ -43,16 +43,16 @@ def handler(options, args):
     command = args[0]
     newArgs = args[1:]
 
-    ## These commands could be passed from a Makefile via the $(MAKEFLAGS)
-    ## variable in which case we'll filter the actual arguments from
-    ## sys.argv
-    if len(sys.argv) == 3 and  '--' in sys.argv[2]:
-        na = shlex.split(sys.argv[2].strip())
-        newArgs = na[na.index('--')+1:]
+    l.critical("%s", args)
+    ## This command is passed from make and argv[2] should be one long
+    ## string that needs parsing 
     if command == '__set':
-        commandLineHandler(cwd, newArgs)
-    
-            
+        a = []
+        for arg in newArgs:
+            if not '=' in arg: continue
+            a.append(arg)
+        commandLineHandler(cwd, a)
+                
 
 def parseClArgs(args):
     """
