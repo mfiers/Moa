@@ -1,0 +1,23 @@
+This package was debianized by Mark Fiers <mark.fiers.42@gmail.com> on
+Thu, 11 Mar 2010 10:25:24 +1300.
+
+It was downloaded from http://github.com/mfiers/Moa
+
+Upstream Author(s):
+
+    Mark Fiers <mark.fiers.42@gmail.com>
+
+Copyright:
+
+    <Copyright (C) 2009, 2010 Mark Fiers>
+
+License:
+
+    GNU General Public License
+
+The Debian packaging is:
+
+    Copyright (C) 2010 Mark Fiers <mark.fiers.42@gmail.com>
+
+and is licensed under the GPL version 3, 
+see `/usr/share/common-licenses/GPL-3'.

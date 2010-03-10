@@ -1,0 +1,16 @@
+Source: moa
+Section: science
+Priority: extra
+Maintainer: Mark Fiers <mark.fiers.42@gmail.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.1
+Homepage: http://mfiers.github.com/Moa/
+
+Package: moa
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Makefiles in bioinformatics
+ Moa is a set of tools build around GNU make that facilitates the use
+ of GNU make in bioinformatics data analysis. Moa helps in organizing
+ and formalizing a bioinformatics analysis pipeline without losing any
+ of the flexibility that comes with using ad-hoc scripting.
