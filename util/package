@@ -9,9 +9,11 @@ version=$1
 from=$2
 work=$3
 
+DISTS=karmic
+
 mkdir -p $work || true
 cd $from
-git archive --format=tar --prefix=moa-$version v$version \
+git archive --format=tar --prefix=moa-$version/ v$version \
     bin \
     COPYING \
     doc \
@@ -22,9 +24,22 @@ git archive --format=tar --prefix=moa-$version v$version \
     template \
     | gzip > $work/moa-$1.tar.gz
 
+git archive --format=tar --prefix=moa-$version/ v$version \
+    debian \
+    | gzip > $work/moa-debian-$1.tar.gz
+
 echo "generated source archive in $work/moa-$1.tar.gz"
 cd $work
-mkdir karmic || true
-cd karmic
-cp ../moa-$1.tar.gz moa_$1.orig.tar.gz
-tar xvzf moa_$1.orig.tar.gz
+for dist in $DISTS; do
+    rm -rf $dist || true
+    mkdir $dist || true
+    cd $dist
+    cp ../moa-$1.tar.gz moa_$1.orig.tar.gz
+    tar xvzf moa_$1.orig.tar.gz
+    tar xvzf ../moa-debian-$1.tar.gz
+    cat moa-$version/debian/changelog.t | sed "s/DIST/$dist/g" > moa-$version/debian/changelog
+    cd moa-$version; 
+    dpkg-buildpackage -S -rfakeroot
+    cd ..
+    lintian -i *dsc
+done
