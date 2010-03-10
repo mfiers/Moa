@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+#arguments
+# $1 - version (without the v - v0.9.0)
+# $2 - location of the git repos
+# $3 - location to create the packages
+
+version=$1
+from=$2
+work=$3
+
+mkdir -p $work || true
+cd $from
+git archive --format=tar --prefix=moa-$version v$version \
+    bin \
+    COPYING \
+    doc \
+    etc \
+    lib \
+    quick_init.sh \
+    README \
+    template \
+    | gzip > $work/moa-$1.tar.gz
+
+echo "generated source archive in $work/moa-$1.tar.gz"
+cd $work
+mkdir karmic || true
+cd karmic
+cp ../moa-$1.tar.gz moa_$1.orig.tar.gz
+tar xvzf moa_$1.orig.tar.gz
