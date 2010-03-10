@@ -1,4 +1,4 @@
-moa (0.9.0-1) karmic; urgency=low
+moa (0.9.0-1) DIST; urgency=low
 
   * Initial release
 
