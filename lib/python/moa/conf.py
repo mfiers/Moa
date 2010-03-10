@@ -43,7 +43,6 @@ def handler(options, args):
     command = args[0]
     newArgs = args[1:]
 
-    l.critical("%s", args)
     ## This command is passed from make and argv[2] should be one long
     ## string that needs parsing 
     if command == '__set':
