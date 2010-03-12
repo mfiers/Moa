@@ -8,6 +8,7 @@ all:
 	#do nothing
 
 install:
+	-rm bin/wmoa
 	install bin/* $(DESTDIR)/bin
 	install etc/* $(DESTDIR)/etc
 	install doc/api/* $(DESTDIR)/doc/api
