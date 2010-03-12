@@ -9,22 +9,23 @@ all:
 
 install:
 	-rm bin/wmoa
-	install bin/* $(DESTDIR)/bin
-	install etc/* $(DESTDIR)/etc
-	install doc/api/* $(DESTDIR)/doc/api
-	install doc/html/* $(DESTDIR)/doc/html	
-	install doc/images/* $(DESTDIR)/doc/images	
-	install doc/markdown/* $(DESTDIR)/doc/markdown
-	install etc/* $(DESTDIR)/etc
-	install lib/python/moa/* $(DESTDIR)/lib/python/moa
-	install lib/python/moa/plugins/* $(DESTDIR)/lib/python/moa/plugins
-	install template/* $(DESTDIR)/template
-	install template/moa* $(DESTDIR)/template/moa
-	install template/moa/plugin* $(DESTDIR)/template/moa/plugin
-	install README $(DESTDIR)
-	install COPYING $(DESTDIR)
-	install quick_init.sh $(DESTDIR)
-	install Makefile $(DESTDIR)
+	install -v bin/* $(DESTDIR)/bin
+	install -v etc/* $(DESTDIR)/etc
+	install -v etc/www/* $(DESTDIR)/etc/www
+	install -v doc/api/* $(DESTDIR)/doc/api
+	install -v doc/html/* $(DESTDIR)/doc/html	
+	install -v doc/images/* $(DESTDIR)/doc/images	
+	install -v doc/markdown/* $(DESTDIR)/doc/markdown
+	install -v etc/* $(DESTDIR)/etc
+	install -v lib/python/moa/* $(DESTDIR)/lib/python/moa
+	install -v lib/python/moa/plugins/* $(DESTDIR)/lib/python/moa/plugins
+	install -v template/* $(DESTDIR)/template
+	install -v template/moa* $(DESTDIR)/template/moa
+	install -v template/moa/plugin* $(DESTDIR)/template/moa/plugin
+	install -v README $(DESTDIR)
+	install -v COPYING $(DESTDIR)
+	install -v quick_init.sh $(DESTDIR)
+	install -v Makefile $(DESTDIR)
 
 package: source_package deb_jaunty
 
