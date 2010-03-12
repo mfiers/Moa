@@ -57,6 +57,15 @@ binary-indep: install
 	dh_testroot
 	dh_installchangelogs 
 	dh_installdocs
+#	dh_installexamples
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
 	dh_installexamples
 #	dh_install
 #	dh_installmenu
@@ -83,4 +92,4 @@ binary-indep: install
 	dh_builddeb
 
 binary: binary-indep
-.PHONY: build clean binary-indep binary install configure
+.PHONY: build clean binary-indep binary-arch binary install configure
