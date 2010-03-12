@@ -8,8 +8,8 @@ all:
 	#do nothing
 
 install:
-	install -d bin $(DESTDIR)/bin
-	install -d etc $(DESTDIR)/etc
+	install bin/* $(DESTDIR)/bin
+	install etc/* $(DESTDIR)/etc
 	install -d doc $(DESTDIR)/doc
 	install -d etc $(DESTDIR)/etc
 	install -d lib $(DESTDIR)/lib
@@ -19,13 +19,14 @@ install:
 	install quick_init.sh $(DESTDIR)
 	install Makefile $(DESTDIR)
 
-package: source_package deb_jaunty deb_karmic 
+package: source_package deb_jaunty
 
 source_package:
 	mkdir -p build/src
 	git archive --format=tar --prefix=moa-$(version)/ $(version)	\
-		Makefile etc bin COPYING doc etc lib quick_init.sh README	\
-		template | gzip > build/src/moa-$(version).tar.gz
+		Makefile etc bin COPYING doc etc lib quick_init.sh	\
+		README template | gzip >				\
+		build/src/moa-$(version).tar.gz
 
 deb_%: PACKDIR = build/deb/$*
 deb_%: BUILDDIR = build/deb/$*/moa-$(version)
@@ -39,4 +40,4 @@ deb_%: source_package
 	cd $(BUILDDIR)/debian; cat changelog.t | sed "s/DIST/$*/g" > changelog
 	cd $(BUILDDIR); dpkg-buildpackage -S -rfakeroot
 	cd $(PACKDIR); lintian -i moa_$(version)-*.dsc
-	cd $(PACKDIR); sudo DIST=$* pbuilder build *dsc
+	#cd $(PACKDIR); sudo DIST=$* pbuilder build *dsc
