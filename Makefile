@@ -10,10 +10,16 @@ all:
 install:
 	install bin/* $(DESTDIR)/bin
 	install etc/* $(DESTDIR)/etc
-	install -d doc $(DESTDIR)/doc
-	install -d etc $(DESTDIR)/etc
-	install -d lib $(DESTDIR)/lib
-	install -d template $(DESTDIR)/template
+	install doc/api/* $(DESTDIR)/doc/api
+	install doc/html/* $(DESTDIR)/doc/html	
+	install doc/images/* $(DESTDIR)/doc/images	
+	install doc/markdown/* $(DESTDIR)/doc/markdown
+	install etc/* $(DESTDIR)/etc
+	install lib/python/moa/* $(DESTDIR)/lib/python/moa
+	install lib/python/moa/plugins/* $(DESTDIR)/lib/python/moa/plugins
+	install template/* $(DESTDIR)/template
+	install template/moa* $(DESTDIR)/template/moa
+	install template/moa/plugin* $(DESTDIR)/template/moa/plugin
 	install README $(DESTDIR)
 	install COPYING $(DESTDIR)
 	install quick_init.sh $(DESTDIR)
