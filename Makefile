@@ -9,19 +9,22 @@ all:
 
 install:
 	-rm bin/wmoa
-	install -v bin/* $(DESTDIR)/bin
-	install -v etc/* $(DESTDIR)/etc
-	install -v etc/www/* $(DESTDIR)/etc/www
-	install -v doc/api/* $(DESTDIR)/doc/api
-	install -v doc/html/* $(DESTDIR)/doc/html	
-	install -v doc/images/* $(DESTDIR)/doc/images	
-	install -v doc/markdown/* $(DESTDIR)/doc/markdown
-	install -v etc/* $(DESTDIR)/etc
-	install -v lib/python/moa/* $(DESTDIR)/lib/python/moa
-	install -v lib/python/moa/plugins/* $(DESTDIR)/lib/python/moa/plugins
-	install -v template/* $(DESTDIR)/template
-	install -v template/moa* $(DESTDIR)/template/moa
-	install -v template/moa/plugin* $(DESTDIR)/template/moa/plugin
+	install -d $(DESTDIR)/bin
+	install -d $(DESTDIR)/etc
+	install -d $(DESTDIR)/doc/api
+	install -d $(DESTDIR)/doc/html
+	install -d $(DESTDIR)/doc/images
+	install -d $(DESTDIR)/doc/markdown
+	install -d $(DESTDIR)/template/moa/plugins
+	install id $(DESTDIR)/lib/python/moa/plugins
+	install bin/* $(DESTDIR)/bin
+	install etc/* $(DESTDIR)/etc
+	install template/* $(DESTDIR)/template
+	install template/moa/* $(DESTDIR)/template/moa
+	install template/moa/plugins/* $(DESTDIR)/template/moa/plugins
+	install lib/python/* $(DESTDIR)/lib/python/
+	install lib/python/moa/* $(DESTDIR)/lib/python/moa/
+	install lib/python/moa/plugin/* $(DESTDIR)/lib/python/moa/plugin
 	install -v README $(DESTDIR)
 	install -v COPYING $(DESTDIR)
 	install -v quick_init.sh $(DESTDIR)
