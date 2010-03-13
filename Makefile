@@ -7,28 +7,38 @@ version?=HEAD
 all:
 	#do nothing
 
+
+INSTALLDIRS = etc doc/api doc/html doc/images doc/markdown \
+	template/ template/moa template/moa/plugins \
+	lib/python lib/python/moa lib/python/moa/plugin
+
 install:
-	-rm bin/wmoa
 	install -d $(DESTDIR)/bin
-	install -d $(DESTDIR)/etc
-	install -d $(DESTDIR)/doc/api
-	install -d $(DESTDIR)/doc/html
-	install -d $(DESTDIR)/doc/images
-	install -d $(DESTDIR)/doc/markdown
-	install -d $(DESTDIR)/template/moa/plugins
-	install id $(DESTDIR)/lib/python/moa/plugins
-	install bin/* $(DESTDIR)/bin
-	install etc/* $(DESTDIR)/etc
-	install template/* $(DESTDIR)/template
-	install template/moa/* $(DESTDIR)/template/moa
-	install template/moa/plugins/* $(DESTDIR)/template/moa/plugins
-	install lib/python/* $(DESTDIR)/lib/python/
-	install lib/python/moa/* $(DESTDIR)/lib/python/moa/
-	install lib/python/moa/plugin/* $(DESTDIR)/lib/python/moa/plugin
+	install -v -m 555 `find  bin/ -maxdepth 1 -type f ` $(DESTDIR)/bin
+	for i in $(INSTALLDIRS); do \
+		install -d $(DESTDIR)/$$i; \
+		install -v -m 444 \
+			`find  $$i  -maxdepth 1 -type f` \
+			$(DESTDIR)/$$i; \
+	done			
 	install -v README $(DESTDIR)
 	install -v COPYING $(DESTDIR)
-	install -v quick_init.sh $(DESTDIR)
 	install -v Makefile $(DESTDIR)
+	echo "Installing bash configuration to /etc/profile.d/moa.sh"
+	echo "MOABASE=$(DESTDIR)s"
+	if [ "$$(id -u)" != "0" ]; then \
+		echo "We're not root - installing locally"; \
+		if grep -q "moainit.sh" ~/.bashrc; then \
+			perl -pi'*.bak' -e 's|^.*moainit.sh.*$$|. $(DESTDIR)/bin/moainit.sh|' ~/.bashrc; \
+		else \
+			echo >> ~/.bashrc ;\
+			echo ". $(DESTDIR)/bin/moainit.sh" >> ~/.bashrc; \
+			echo >> ~/.bashrc ;\
+		fi; \
+	else \
+		echo "we're root: install moa conf in /etc/profile.d" ;\
+		echo ". $(DESTDIR)/bin/moainit.sh" > /etc/profile.d/moa.sh ;\
+	fi
 
 package: source_package deb_jaunty
 
