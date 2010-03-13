@@ -36,6 +36,7 @@ install:
 			echo >> ~/.bashrc ;\
 		fi; \
 	else \
+		install -d /etc/profile.d
 		echo "we're root: install moa conf in /etc/profile.d" ;\
 		echo ". $(DESTDIR)/bin/moainit.sh" > /etc/profile.d/moa.sh ;\
 	fi
@@ -44,9 +45,9 @@ package: source_package deb_jaunty
 
 source_package:
 	mkdir -p build/src
-	git archive --format=tar --prefix=moa-$(version)/ $(version)	\
-		Makefile etc bin COPYING doc etc lib quick_init.sh	\
-		README template | gzip >				\
+	git archive --format=tar --prefix=moa-$(version)/ v$(version)	\
+		Makefile etc bin COPYING doc etc lib README template 	\
+		| gzip >						\
 		build/src/moa-$(version).tar.gz
 
 deb_%: PACKDIR = build/deb/$*
@@ -56,9 +57,9 @@ deb_%: source_package
 	mkdir -p build/deb/$*
 	cp build/src/moa-$(version).tar.gz $(PACKDIR)/moa_$(version).orig.tar.gz
 	cd $(PACKDIR)*; tar xzf moa_$(version).orig.tar.gz
-	git archive --format=tar --prefix=moa-$(version)/ $(version) \
+	git archive --format=tar --prefix=moa-$(version)/ v$(version) \
 		debian | tar x -C $(PACKDIR)
 	cd $(BUILDDIR)/debian; cat changelog.t | sed "s/DIST/$*/g" > changelog
 	cd $(BUILDDIR); dpkg-buildpackage -S -rfakeroot
 	cd $(PACKDIR); lintian -i moa_$(version)-*.dsc
-	#cd $(PACKDIR); sudo DIST=$* pbuilder build *dsc
+	cd $(PACKDIR); sudo DIST=$* pbuilder build *dsc
