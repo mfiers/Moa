@@ -63,4 +63,4 @@ deb_%: source_package
 	cd $(BUILDDIR)/debian; cat changelog.t | sed "s/DIST/$*/g" > changelog
 	cd $(BUILDDIR); dpkg-buildpackage -S -rfakeroot
 	cd $(PACKDIR); lintian -i moa_$(version)-*.dsc
-	cd $(PACKDIR); sudo DIST=$* pbuilder build *dsc
+	cd $(BUILDDIR); sudo DIST=$* pbuilder build ../*dsc
