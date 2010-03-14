@@ -14,6 +14,7 @@ DISTS=karmic
 mkdir -p $work || true
 cd $from
 git archive --format=tar --prefix=moa-$version/ v$version \
+    Makefile \
     bin \
     COPYING \
     doc \
@@ -30,7 +31,7 @@ git archive --format=tar --prefix=moa-$version/ v$version \
 
 echo "generated source archive in $work/moa-$1.tar.gz"
 cd $work
-for dist in $DISTS; do
+for dist in karmic; do
     rm -rf $dist || true
     mkdir $dist || true
     cd $dist
@@ -42,4 +43,5 @@ for dist in $DISTS; do
     dpkg-buildpackage -S -rfakeroot
     cd ..
     lintian -i *dsc
+    sudo DIST=$dist pbuilder build *dsc
 done
