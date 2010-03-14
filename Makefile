@@ -38,7 +38,7 @@ install:
 	else \
 		install -d etc/profile.d ;\
 		echo "we're root: install moa conf in /etc/profile.d" ;\
-		echo ". $(DESTDIR)/bin/moainit.sh" > /tmp/moa_etc_profile
+		echo ". $(DESTDIR)/bin/moainit.sh" > /tmp/moa_etc_profile;\
 		install -v /tmp/moa_etc_profile etc/profile.d/moa.sh ;\
 	fi
 
