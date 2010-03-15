@@ -53,12 +53,12 @@ install: build
 
 # Build architecture-independent files here.
 binary-indep: install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs 
-	dh_installdocs
-	dh_install
-#	dh_installexamples
+	dh_testdir -i
+	dh_testroot -i
+	dh_installchangelogs -i 
+	dh_installdocs -i
+	dh_install -i
+#	dh_installexamples -i
 #	dh_installman
 #	dh_installdeb
 #	dh_shlibdeps#
