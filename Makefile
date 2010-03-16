@@ -37,7 +37,7 @@ install:
 			echo >> ~/.bashrc ;\
 		fi; \
 	else \
-		install -d $(DESTDIR2)/etc/profile.d ;\
+		install -d $(DESTDIR)/etc/profile.d ;\
 		echo "we're root: install moa conf in /etc/profile.d" ;\
 		echo ". $(DESTDIR2)/bin/moainit.sh" > $(DESTDIR)/etc/profile.d/moa.sh;\
 	fi
