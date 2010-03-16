@@ -8,8 +8,8 @@ Homepage: http://mfiers.github.com/Moa/
 
 Package: moa
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: blast2
+Depends: ${shlibs:Depends}, ${misc:Depends}, make, python-biopython, python (<< 2.7), python (>= 2.5)
+Recommends: blast2, bowtie
 Description: Makefiles in bioinformatics
  Moa is a set of tools build around GNU make that facilitates the use
  of GNU make in bioinformatics data analysis. Moa helps in organizing
