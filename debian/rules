@@ -16,57 +16,59 @@
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-	# Add here commands to configure the package.
-
 	touch configure-stamp
-
 
 build: build-stamp
 
 build-stamp: configure-stamp  
 	dh_testdir
-
-	# Add here commands to compile the package.
-	#$(MAKE)
-	# docbook-to-man debian/moa.sgml > moa.1
-
 	touch $@
 
 clean: 
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
-
-	# Add here commands to clean up after the build process.
-	#$(MAKE) clean
-
 	dh_clean 
 
 install: build
-	dh_testdir
-	dh_testroot
-	dh_prep  
-	dh_installdirs
-
+	dh_testdir -i
+	dh_testroot -i
+	dh_prep -i
+	dh_installdirs -i 
 	$(MAKE) DESTDIR=$(CURDIR)/debian/moa install
 
 
 # Build architecture-independent files here.
-binary-indep: install
-	dh_testdir -i
-	dh_testroot -i
-	dh_installchangelogs -i 
-	dh_installdocs -i
-	dh_install -i
-#	dh_installexamples -i
-#	dh_installman
-#	dh_installdeb
-#	dh_shlibdeps#
-#	dh_gencontrol
-#	dh_md5sums
-#	dh_builddeb
-
-# We have nothing to do by default.
+binary-indep: build install
+        dh_testdir
+        dh_testroot
+        dh_installchangelogs
+        dh_installdocs
+        dh_installexamples
+#       dh_installmenu
+#       dh_installdebconf
+#       dh_installlogrotate
+#       dh_installemacsen
+#       dh_installcatalogs
+#       dh_installpam
+#       dh_installmime
+#       dh_installinit
+#       dh_installcron
+#       dh_installinfo
+#       dh_installwm
+#       dh_installudev
+#       dh_lintian
+#       dh_undocumented
+        dh_installman
+        dh_link
+        dh_compress
+        dh_fixperms
+#       dh_perl
+#       dh_python
+        dh_installdeb
+        dh_gencontrol
+        dh_md5sums
+        dh_builddeb
 
 # Build architecture-dependent files here.
 binary-arch:
