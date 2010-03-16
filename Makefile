@@ -39,7 +39,7 @@ install:
 		install -d etc/profile.d ;\
 		echo "we're root: install moa conf in /etc/profile.d" ;\
 		echo ". $(DESTDIR)/bin/moainit.sh" > /tmp/moa_etc_profile;\
-		install -m 744  -v /tmp/moa_etc_profile /etc/profile.d/moa.sh ;\
+		install -m 744  -v /tmp/moa_etc_profile $(DESTDIR)/etc/profile.d/moa.sh ;\
 	fi
 
 package: source_package deb_jaunty
