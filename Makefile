@@ -12,34 +12,34 @@ INSTALLDIRS = etc doc/api doc/html doc/images doc/markdown \
 	template/ template/moa template/moa/plugins \
 	lib/python lib/python/moa lib/python/moa/plugin
 
+install: DESTDIR2 = $(DESTDIR)/usr/share/moa
 install:
-	install -d $(DESTDIR)/bin
-	install -v -m 555 `find  bin/ -maxdepth 1 -type f ` $(DESTDIR)/bin
+	install -d $(DESTDIR2)/bin
+	install -v -m 555 `find  bin/ -maxdepth 1 -type f ` $(DESTDIR2)/bin
 	for i in $(INSTALLDIRS); do \
-		install -d $(DESTDIR)/$$i; \
+		install -d $(DESTDIR2)/$$i; \
 		install -v -m 444 \
 			`find  $$i  -maxdepth 1 -type f` \
-			$(DESTDIR)/$$i; \
+			$(DESTDIR2)/$$i; \
 	done			
-	install -v README $(DESTDIR)
-	install -v COPYING $(DESTDIR)
-	install -v Makefile $(DESTDIR)
+	install -v README $(DESTDIR2)
+	install -v COPYING $(DESTDIR2)
+	install -v Makefile $(DESTDIR2)
 	echo "Installing bash configuration to /etc/profile.d/moa.sh"
-	echo "MOABASE=$(DESTDIR)s"
+	echo "MOABASE=$(DESTDIR2)s"
 	if [ "$$(id -u)" != "0" ]; then \
 		echo "We're not root - installing locally"; \
 		if grep -q "moainit.sh" ~/.bashrc; then \
-			perl -pi'*.bak' -e 's|^.*moainit.sh.*$$|. $(DESTDIR)/bin/moainit.sh|' ~/.bashrc; \
+			perl -pi'*.bak' -e 's|^.*moainit.sh.*$$|. $(DESTDIR2)/bin/moainit.sh|' ~/.bashrc; \
 		else \
 			echo >> ~/.bashrc ;\
-			echo ". $(DESTDIR)/bin/moainit.sh" >> ~/.bashrc; \
+			echo ". $(DESTDIR2)/bin/moainit.sh" >> ~/.bashrc; \
 			echo >> ~/.bashrc ;\
 		fi; \
 	else \
-		install -d $(DESTDIR)/etc/profile.d ;\
+		install -d $(DESTDIR2)/etc/profile.d ;\
 		echo "we're root: install moa conf in /etc/profile.d" ;\
-		echo ". $(DESTDIR)/bin/moainit.sh" > /tmp/moa_etc_profile;\
-		install -m 744  -v /tmp/moa_etc_profile $(DESTDIR)/etc/profile.d/moa.sh ;\
+		echo ". $(DESTDIR2)/bin/moainit.sh" > $(DESTDIR)/etc/profile.d/moa.sh;\
 	fi
 
 package: source_package deb_jaunty
