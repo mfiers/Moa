@@ -1,9 +1,27 @@
-**NOTE: both the software and the manual are under heavy
-development. Expect things to change.**
+**NOTE: both the software and the manual are under development. Expect
+  things to change.**
 
-Moa is a set of tools build around [GNU
-make](http://www.gnu.org/software/make) \citep{Gnumake} that
-facilitates the use of GNU make in bioinformatics data analysis.
+Moa is a set of tools aimed at organizing and automating a
+bioinformatics analysis pipeline. The best way to understand what Moa
+does is by a small example:
+
+    moa new blast -t "run a demo"
+    moa set blast_db=/data/blast/db/nt
+    moa set blast_input_dir=../sequences
+    moa run
+
+In the first line, a new BLAST job (titled "run demo") is created in
+the current directory. What really happens is that Moa creates a
+Makefile (more about Makefiles later) based on a BLAST specific
+template. The next two lines set BLAST specific parameters. In the
+last line Moa is executed and comparies the sequences in the
+`../sequences` directory against the database in `/data/blast/db/nt`
+using BLAST. BLAST output files are generated in the current directory
+and, additionally, GFF \citep{GFF} files.
+
+Moa is build around [GNU make](http://www.gnu.org/software/make)
+\citep{Gnumake} that facilitates building and reusing the use of GNU
+make in bioinformatics data analysis.
 
 GNU Make is developed to aid in compilation of software. Software
 compilation usually involves the execution of many preprocessing,
