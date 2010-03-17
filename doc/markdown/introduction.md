@@ -1,9 +1,21 @@
 **NOTE: both the software and the manual are under development. Expect
   things to change.**
 
-Moa is a set of tools aimed at organizing and automating a
-bioinformatics analysis pipeline. The best way to understand what Moa
-does is by a small example:
+Moa is a set of tools aimed at organizing a bioinformatics project
+without losing the flexibility of ad-hoc scripting. To achieve this
+Moa provides a number of tools:
+
+- *Reusable building blocks* allow quick and easy creation of analysis
+  pipelines. Building blocks are easy to implement, adapt and share.
+
+- The full power of the *bash* scripting; at almost any position in
+  the analysis pipeline. Moa provides a number of hooks to insert bash
+  scripts or one-liners.
+
+- A *uniform interface*. All Moa operation happens through a single,
+  documented command line interface.
+
+The best way to understand how Moa works is by a short example:
 
     moa new blast -t "run a demo"
     moa set blast_db=/data/blast/db/nt

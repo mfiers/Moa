@@ -1,4 +1,4 @@
-moa (0.9.0-1) DIST; urgency=low
+moa (0.9.0-1~ppa1~DIST1) DIST; urgency=low
 
   * Initial packaging
 

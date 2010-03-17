@@ -68,6 +68,7 @@ temptex=$(addprefix ../../html/t__,$(addsuffix .html,$(templates)))
 	cat footer.html >> $@
 
 ../../html/%.html: ../../markdown/%.md footer.html header.html
+	echo "Remaking $*"
 	cat header.html > $@
 	echo '<h1 id="chapterTitle">$($*_title)</h1>' >> $@
 	cat $< 										\
