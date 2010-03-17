@@ -60,10 +60,13 @@ deb_%: source_package
 	cd $(PACKDIR)*; tar xzf moa_$(version).orig.tar.gz
 	git archive --format=tar --prefix=moa-$(version)/ v$(version) \
 		debian | tar x -C $(PACKDIR)
-	cd $(BUILDDIR)/debian; cat changelog.t | sed "s/DIST/$*/g" > changelog
+	cd $(BUILDDIR)/debian; cat changelog.t 			\
+		| sed "s/DIST/$*/g" 				\
+		| sed "s/VERSION/$(version)/g" > changelog
 	cd $(BUILDDIR)/debian; cp control.$* control
 	cd $(BUILDDIR); dpkg-buildpackage -S -rfakeroot
 	cd $(PACKDIR); lintian -i moa_$(version)-*.dsc
 
 	echo "to build the binary packages, execute:"
-	echo cd $(BUILDDIR); sudo DIST=$* pbuilder build ../*dsc
+	echo cd $(BUILDDIR)
+	echo sudo DIST=$* pbuilder build ../*dsc
