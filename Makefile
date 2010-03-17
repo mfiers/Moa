@@ -42,7 +42,7 @@ install:
 		echo ". $(DESTDIR2)/bin/moainit.sh" > $(DESTDIR)/etc/profile.d/moa.sh;\
 	fi
 
-package: source_package deb_hardy
+package: source_package deb_jaunty
 
 source_package:
 	mkdir -p build/src
