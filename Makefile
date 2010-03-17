@@ -2,7 +2,7 @@
 # A Makefile to install moa
 #
 
-version?=HEAD
+version?=$(shell git tag | sort -r | head -1 | cut -c2-)
 
 all:
 	#do nothing
