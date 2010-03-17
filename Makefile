@@ -8,9 +8,9 @@ all:
 	#do nothing
 
 
-INSTALLDIRS = etc doc/api doc/html doc/images doc/markdown \
-	template/ template/moa template/moa/plugins \
-	lib/python lib/python/moa lib/python/moa/plugin
+INSTALLDIRS = etc doc/api doc/html doc/images doc/markdown template/	\
+	template/moa template/moa/plugins lib/python lib/python/moa	\
+	lib/python/moa/plugin template/util
 
 install: DESTDIR2 = $(DESTDIR)/usr/share/moa
 install:
@@ -42,7 +42,7 @@ install:
 		echo ". $(DESTDIR2)/bin/moainit.sh" > $(DESTDIR)/etc/profile.d/moa.sh;\
 	fi
 
-package: source_package deb_jaunty
+package: source_package deb_hardy
 
 source_package:
 	mkdir -p build/src
