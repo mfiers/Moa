@@ -28,12 +28,13 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
-	#dh_clean 
+
+#dh_clean 
 
 install: build
 	dh_testdir -i
 	dh_testroot -i
-	dh_prep -i
+#	dh_prep -i
 	dh_installdirs -i 
 	$(MAKE) DESTDIR=$(CURDIR)/debian/moa install
 
