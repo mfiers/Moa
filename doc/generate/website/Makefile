@@ -2,17 +2,18 @@
 ## this is to get the location of pandoc - assuming it's defined there
 include $(shell echo $$MOABASE)/etc/moa.conf.mk
 
+
 introduction_title = Introduction
 installation_title = Installation
 using_title = Using Moa
 gbrowse_title = Using GBrowse with Moa
 extending_title = Extending Moa
 
-chapters =						\
-	index.html					\
+chapters =					\
+	index.html				\
 	introduction.html 			\
 	installation.html  			\
-	using.html 					\
+	using.html 				\
 	gbrowse.html 				\
 	extending.html				\
 	reference.html
@@ -23,7 +24,7 @@ all: imagesao $(addprefix ../../html/,$(chapters))
 .PHONY: imagesao
 imagesao: moa.css images/moa_logo_small.png  images/moa_logo_smaller.png
 	cp moa.css ../../html/
-	cp images/* ../../html	
+	cp -r images/* ../../html	
 	cp ../../manual.pdf ../../html/moa_manual.pdf
 	cp ../../api ../../html/ -R
 
@@ -67,6 +68,7 @@ temptex=$(addprefix ../../html/t__,$(addsuffix .html,$(templates)))
 	cat footer.html >> $@
 
 ../../html/%.html: ../../markdown/%.md footer.html header.html
+	echo "Remaking $*"
 	cat header.html > $@
 	echo '<h1 id="chapterTitle">$($*_title)</h1>' >> $@
 	cat $< 										\
