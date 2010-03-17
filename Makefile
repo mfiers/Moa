@@ -61,7 +61,9 @@ deb_%: source_package
 	git archive --format=tar --prefix=moa-$(version)/ v$(version) \
 		debian | tar x -C $(PACKDIR)
 	cd $(BUILDDIR)/debian; cat changelog.t | sed "s/DIST/$*/g" > changelog
+	cd $(BUILDDIR)/debian; cp control.$* control
 	cd $(BUILDDIR); dpkg-buildpackage -S -rfakeroot
 	cd $(PACKDIR); lintian -i moa_$(version)-*.dsc
+
 	echo "to build the binary packages, execute:"
 	echo cd $(BUILDDIR); sudo DIST=$* pbuilder build ../*dsc
