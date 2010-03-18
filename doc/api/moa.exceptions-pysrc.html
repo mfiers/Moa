@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>moa.exceptions</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://mfiers.github.com/Moa/">Moa</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="moa-module.html">Package&nbsp;moa</a> ::
+        Module&nbsp;exceptions
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="moa.exceptions-module.html">Module moa.exceptions</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"> </tt>
+<a name="CannotGetAFileLock"></a><div id="CannotGetAFileLock-def"><a name="L2"></a><tt class="py-lineno"> 2</tt> <a class="py-toggle" href="#" id="CannotGetAFileLock-toggle" onclick="return toggle('CannotGetAFileLock');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="moa.exceptions.CannotGetAFileLock-class.html">CannotGetAFileLock</a><tt class="py-op">(</tt><tt class="py-base-class">Exception</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CannotGetAFileLock-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="CannotGetAFileLock-expanded"><a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line">    <tt class="py-docstring">"""Cannot get a file lock"""</tt> </tt>
+<a name="CannotGetAFileLock.__init__"></a><div id="CannotGetAFileLock.__init__-def"><a name="L4"></a><tt class="py-lineno"> 4</tt> <a class="py-toggle" href="#" id="CannotGetAFileLock.__init__-toggle" onclick="return toggle('CannotGetAFileLock.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.exceptions.CannotGetAFileLock-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">f</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CannotGetAFileLock.__init__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="CannotGetAFileLock.__init__-expanded"><a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">d</tt> <tt class="py-op">=</tt> <tt class="py-name">dir</tt> </tt>
+</div><a name="CannotGetAFileLock.__str__"></a><div id="CannotGetAFileLock.__str__-def"><a name="L6"></a><tt class="py-lineno"> 6</tt> <a class="py-toggle" href="#" id="CannotGetAFileLock.__str__-toggle" onclick="return toggle('CannotGetAFileLock.__str__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.exceptions.CannotGetAFileLock-class.html#__str__">__str__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="CannotGetAFileLock.__str__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="CannotGetAFileLock.__str__-expanded"><a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">"Cannot get a file lock on %s"</tt> <tt class="py-op">%</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">f</tt> </tt>
+</div></div><a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"> </tt>
+<a name="NotAMoaDirectory"></a><div id="NotAMoaDirectory-def"><a name="L9"></a><tt class="py-lineno"> 9</tt> <a class="py-toggle" href="#" id="NotAMoaDirectory-toggle" onclick="return toggle('NotAMoaDirectory');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="moa.exceptions.NotAMoaDirectory-class.html">NotAMoaDirectory</a><tt class="py-op">(</tt><tt class="py-base-class">Exception</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NotAMoaDirectory-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="NotAMoaDirectory-expanded"><a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line">    <tt class="py-docstring">"""This is not a moa directory"""</tt> </tt>
+<a name="NotAMoaDirectory.__init__"></a><div id="NotAMoaDirectory.__init__-def"><a name="L11"></a><tt class="py-lineno">11</tt> <a class="py-toggle" href="#" id="NotAMoaDirectory.__init__-toggle" onclick="return toggle('NotAMoaDirectory.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.exceptions.NotAMoaDirectory-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">dir</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NotAMoaDirectory.__init__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="NotAMoaDirectory.__init__-expanded"><a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dir</tt> <tt class="py-op">=</tt> <tt class="py-name">dir</tt> </tt>
+</div><a name="NotAMoaDirectory.__str__"></a><div id="NotAMoaDirectory.__str__-def"><a name="L13"></a><tt class="py-lineno">13</tt> <a class="py-toggle" href="#" id="NotAMoaDirectory.__str__-toggle" onclick="return toggle('NotAMoaDirectory.__str__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.exceptions.NotAMoaDirectory-class.html#__str__">__str__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NotAMoaDirectory.__str__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="NotAMoaDirectory.__str__-expanded"><a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">"%s is not a MOA directory"</tt> <tt class="py-op">%</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">dir</tt> </tt>
+</div></div><a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"> </tt>
+<a name="NotAMoaTemplate"></a><div id="NotAMoaTemplate-def"><a name="L16"></a><tt class="py-lineno">16</tt> <a class="py-toggle" href="#" id="NotAMoaTemplate-toggle" onclick="return toggle('NotAMoaTemplate');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="moa.exceptions.NotAMoaTemplate-class.html">NotAMoaTemplate</a><tt class="py-op">(</tt><tt class="py-base-class">Exception</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NotAMoaTemplate-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="NotAMoaTemplate-expanded"><a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line">    <tt class="py-docstring">"""This is not a valid moa template"""</tt> </tt>
+<a name="NotAMoaTemplate.__init__"></a><div id="NotAMoaTemplate.__init__-def"><a name="L18"></a><tt class="py-lineno">18</tt> <a class="py-toggle" href="#" id="NotAMoaTemplate.__init__-toggle" onclick="return toggle('NotAMoaTemplate.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.exceptions.NotAMoaTemplate-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">template</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NotAMoaTemplate.__init__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="NotAMoaTemplate.__init__-expanded"><a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line">        <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Function moa.info.template()=moa.info-module.html#template"><a title="moa.info.template" class="py-name" href="#" onclick="return doclink('link-0', 'template', 'link-0');">template</a></tt> <tt class="py-op">=</tt> <tt id="link-1" class="py-name"><a title="moa.info.template" class="py-name" href="#" onclick="return doclink('link-1', 'template', 'link-0');">template</a></tt> </tt>
+</div><a name="NotAMoaTemplate.__str__"></a><div id="NotAMoaTemplate.__str__-def"><a name="L20"></a><tt class="py-lineno">20</tt> <a class="py-toggle" href="#" id="NotAMoaTemplate.__str__-toggle" onclick="return toggle('NotAMoaTemplate.__str__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.exceptions.NotAMoaTemplate-class.html#__str__">__str__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="NotAMoaTemplate.__str__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="NotAMoaTemplate.__str__-expanded"><a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">"%s is not a MOA template"</tt> <tt class="py-op">%</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name"><a title="moa.info.template" class="py-name" href="#" onclick="return doclink('link-2', 'template', 'link-0');">template</a></tt> </tt>
+</div></div><a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"> </tt>
+<a name="MoaFileError"></a><div id="MoaFileError-def"><a name="L23"></a><tt class="py-lineno">23</tt> <a class="py-toggle" href="#" id="MoaFileError-toggle" onclick="return toggle('MoaFileError');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="moa.exceptions.MoaFileError-class.html">MoaFileError</a><tt class="py-op">(</tt><tt class="py-base-class">Exception</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MoaFileError-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="MoaFileError-expanded"><a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line">    <tt class="py-docstring">"""Error handling a file """</tt> </tt>
+<a name="MoaFileError.__str__"></a><div id="MoaFileError.__str__-def"><a name="L25"></a><tt class="py-lineno">25</tt> <a class="py-toggle" href="#" id="MoaFileError.__str__-toggle" onclick="return toggle('MoaFileError.__str__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.exceptions.MoaFileError-class.html#__str__">__str__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MoaFileError.__str__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="MoaFileError.__str__-expanded"><a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line">        <tt class="py-keyword">return</tt> <tt class="py-string">"Moa error handling file"</tt> </tt>
+</div></div><a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://mfiers.github.com/Moa/">Moa</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Mar 19 10:58:17 2010
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
