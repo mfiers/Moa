@@ -26,7 +26,7 @@ deb_%: source_package
 		debian | tar x -C $(PACKDIR)
 	#create an /etc/profile.d file t
 	cd $(BUILDDIR); mkdir etc/profile.d; \
-		echo ". /usr/share/moa/bin/moainit.sh || true" > etc/profile/moa.sh
+		echo ". /usr/share/moa/bin/moainit.sh || true" > etc/profile.d/moa.sh
 	#fix the changelog for this version
 	cd $(BUILDDIR)/debian; cat changelog.t 			\
 		| sed "s/DIST/$*/g" 				\
