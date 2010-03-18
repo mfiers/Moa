@@ -1,4 +1,4 @@
-doc/html/*
+usr/share/moa/doc/html/*
 doc/markdown/*
 doc/images/*
 doc/api/*
