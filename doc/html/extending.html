@@ -1,0 +1,404 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+	<title>MOA - Makefiles in bioinformatics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+
+  </head>
+  <body>
+	<center>
+	  <div id="wrapper">
+		<div style="width: 815px;">
+		  <div style="clear: left;">
+			<div style="float: left; vertical-align:text-bottom">
+			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			</div>
+			<div style="float: right;">
+			  <a href="http://www.plantandfood.co.nz/">
+				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+			</a>
+			</div>
+		  </div>
+		  <div style="clear: left;">
+			<div style="float: left; width: 715px; height: 31px; background-color: rgb(81, 0, 45);">
+			  &nbsp;&nbsp;
+			</div>
+			<div style="float: left;">
+			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			</div>
+		  </div>
+		</div>
+		<div style="clear: left;">
+		  <div id="left">
+			<div style="width: 160px;">
+			  <div style="text-align: right;">
+                 <a href="introduction.html">Introduction</a><br>
+                 <a href="installation.html">Installation</a><br>
+                 <a href="using.html">Usage</a><br>
+                 <a href="gbrowse.html">Gbrowse</a><br>
+                 <a href="extending.html">Extend Moa</a><br>
+                 <a href="reference.html">Reference</a><br>
+                 <hr>
+                 <a href="moa_manual.pdf">Manual in PDF</a>
+                 <hr>
+                 <a href="api/index.html">Python API</a><br>
+			  </div>
+			</div>
+		  </div>
+		  <div id="center_content">
+			<div id="homepage_container">
+			
+<h1 id="chapterTitle">Extending Moa</h1>
+<p
+>This chapter describes how to create new templates for use with Moa. Creating a basic template is not difficult, once you have a basic understanding of how Makefiles work. Probably the hardest part is ensuring that templates are able to interact with other templates.</p
+><h1 id="creating-a-simple-template---example"
+>Creating a simple template - example</h1
+><p
+>A template is, as stated, basically a Makefile that adheres to a set of standards. To understand how Makefiles work, please read the <a href="http://www.gnu.org/software/make/manual/make.html"
+  >Gnu Make Manual</a
+  >. Note that creating Makefiles can be somewhat complex at first, given that the logic differs from scripting languages. The easiest way to do this is to work from an existing Makefile.</p
+><p
+>Each template exists of two parts:</p
+><ul
+><li
+  >Definitions</li
+  ><li
+  >Implementation</li
+  ></ul
+><p
+>This order is very important! Parts of the Moa core are included inbetween the definitions and the implementation. Getting the order wrong might cripple your template.</p
+><p
+>In the remainder of this chapter we will describe how to implement a new tool base on a simple example that creates the reverse complement of a <a href="http://en.wikipedia.org/wiki/FASTA_format"
+  >FASTA</a
+  > sequence using the <a href="http://emboss.sourceforge.net/"
+  >EMBOSS</a
+  > <a href="http://emboss.sourceforge.net/apps/release/6.1/emboss/apps/revseq.html"
+  >revseq</a
+  > utility.</p
+><p
+>All templates are stored in the <code
+  >$MOABASE/template</code
+  > directory. This template will be stored under the name <code
+  >revseq.mk</code
+  >.</p
+><h2 id="definitions"
+>Definitions</h2
+><p
+>Each template start with including the first part of the Moa core:</p
+><pre
+><code
+  >include $(MOABASE)/template/moa/prepare.mk
+</code
+  ></pre
+><p
+><code
+  >moaBasePre</code
+  > defines a set of default Moa variables and has some macro's that make variable definition easier. The template defintion continues by defining a set of variables used in the latter part of the template.</p
+><h2 id="describing-the-new-template"
+>Describing the new template</h2
+><p
+>The following variables define what your template does. These variables are used in generating the help files, the manual and the website.</p
+><table
+><tr
+  ><th align="left" style="width: 26%;"
+    >Identifier</th
+    ><th align="left" style="width: 63%;"
+    >Description</th
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_title</td
+    ><td align="left"
+    >A short title for this template</td
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_description</td
+    ><td align="left"
+    >A short description of this template</td
+    ></tr
+  ></table
+><p
+>For our Revseq example:</p
+><pre
+><code
+  > moa_title = Revseq
+ moa_description = This Moa template takes a set of      \
+   input FASTA sequences and determines the reverse      \
+   complement using the EMBOSS revseq utility.
+ moa_ids += revcom
+</code
+  ></pre
+><p
+>Note that lines are allowed to break over multiple lines, given that each line that continues to the next line ends with a backslash. No spaces are allowd after the backslash. Indenting the next line is not necessary, but it does enhance readability.</p
+><h3 id="namespace-definition-moa_ids"
+>namespace definition: <code
+  >moa_ids</code
+  ></h3
+><p
+>Each MOA template defines a set of variables and targets (things to do). These variables and targets (usually) share a single id in their name. In the case of template variables this is a convention, making templates easier to read. Targets, however, are often executed automatically, based on the expected name. A <code
+  >moa_id</code
+  > is defined in the following way (for our example):</p
+><pre
+><code
+  >moa_ids += revseq
+</code
+  ></pre
+><p
+>A <code
+  >moa_id</code
+  > should be unique and is ideally short and consise. It is also advisable to save the template under the same name.</p
+><h3 id="job-specific-variables"
+>job specific variables</h3
+><p
+>The next part of the definitions can be used freely to define variables to be used in the implementation. Each of these variables, ideally, start with the <code
+  >moa_id</code
+  > (but this is not enforced). The advantage of defining variables here is that they will be accessible via the command line and the API. For example, you can set a define variable using the following command line:</p
+><pre
+><code
+  >moa set title='Descriptive title'    
+</code
+  ></pre
+><p
+>There are two types of variables that can be defined: mandatory and optional.</p
+><table
+><tr
+  ><th align="left" style="width: 26%;"
+    >Identifier</th
+    ><th align="left" style="width: 63%;"
+    >Description</th
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_title</td
+    ><td align="left"
+    >The title for this template</td
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_description</td
+    ><td align="left"
+    >A short description of this template</td
+    ></tr
+  ><tr
+  ><td align="left"
+    >moa_ids</td
+    ><td align="left"
+    >A unique, short, identifier for this template</td
+    ></tr
+  ></table
+><p
+>Most templates will have variables specific to the job. These can be defined by</p
+><h3 id="optional-job-specific-variables"
+>optional job specific variables</h3
+><h2 id="include-the-moa-core-library"
+>Include the moa core library</h2
+><p
+>To include the core moa library, the following line needs to be added to the Makefile</p
+><pre
+><code
+  >include $(shell echo $$MOABASE)/template/moa.core.mk
+</code
+  ></pre
+><h2 id="implementation"
+>Implementation</h2
+><h2 id="define-targets"
+>define targets</h2
+><p
+>Each task, identified by a unique moa_id, needs to define a set of four targets. For example, if your template defines: <code
+  >moa_id += revomp</code
+  > then the following four targets are expected to be defined and are automatically executed:</p
+><ul
+><li
+  >$(moa_id): revcomp</li
+  ><li
+  >$(moa_id)_prepare: revcomp_prepare</li
+  ><li
+  >$(moa_id)_post - revcomp_post</li
+  ><li
+  >$(moa_id)_clean - revcomp_clean</li
+  ></ul
+><p
+>Each of these targets must be defined in a new template, although they could can be empty. In the following paragraphs, each of these targets are discussed, in the order that they are executed.</p
+><h3 id="prepare-execution-revcomp_prep"
+>Prepare execution: revcomp_prep</h3
+><p
+>The MOA_ID_prep target contains commands that are executed prior to the main run. In the case of reverse complementing sequences this target can be used to create a directory to store the output sequences. Using a separate subdirectory to</p
+><h3 id="round-up-execution-revcomp_post"
+>Round up execution: revcomp_post</h3
+><h3 id="clean-up-revcomp_clean"
+>Clean up: revcomp_clean</h3
+><ul
+><li
+  ><p
+    ><strong
+      >revcomp</strong
+      >: the main target, executes the main task of this template. In this case it takes a set of input sequences and write the reverse complement back to disk.</p
+    ></li
+  ><li
+  ><p
+    ><strong
+      >revcomp_prepare</strong
+      >:</p
+    ></li
+  ><li
+  ><p
+    ><strong
+      >revcomp_post</strong
+      >: Optional commands to be exeucted after everything is finished. In the case of reverse complementing a set of sequences there is not much to do. The BLAST template, however, uses this target to create an overall BLAST report</p
+    ></li
+  ><li
+  ><p
+    ><strong
+      >revcomp_clean</strong
+      >: Cleans up all reverse complemented sequences</p
+    ></li
+  ></ul
+><h1 id="reference"
+>Reference</h1
+><h2 id="environment-variables"
+>Environment variables</h2
+><p
+>These environment variables are used by Moa:</p
+><p
+><code
+  >MOAANSI</code
+  ></p
+><p
+>~ The default is to use (ANSI) colored characters in the output. To prevent this from happening, set this (environment) variable to <code
+  >no</code
+  >.</p
+><p
+><code
+  >MOAPROJECTROOT</code
+  ></p
+><p
+>~ The root of a moa project - project root is a parent directory of the current directoy that has a moa job with template <code
+  >project</code
+  >. If there is no project root, this variable is undefined.</p
+><h2 id="global-functions"
+>Global functions</h2
+><p
+>These function are meant to be used at the top level of a Makefile (meaning, not inside a target command block). Function can be called using:</p
+><pre
+><code
+  >$(call FUNCTIONNAME,ARGUMENT1,ARGUMENT2,...)
+</code
+  ></pre
+><p
+><code
+  >$(call moa_fileset_define,ID,EXTENSION,HELP)</code
+  ></p
+><p
+>~ Define a set of files to be recoginized by Moa.</p
+><p
+><code
+  >$(call moa_fileset_remap,INPUT_ID,OUTPUT_ID,OUTPUT_EXTENSION)</code
+  ></p
+><p
+>~ Remap a set of input files to ....</p
+><p
+><code
+  >$(call moa_fileset_remap_nodir,INPUT_ID,OUTPUT_ID,OUTPUT_EXTENSION)</code
+  ></p
+><p
+>~ as <code
+  >moa_fileset_remap</code
+  >, but without prefixing the set with a subdirectory</p
+><h2 id="command-functions"
+>Command functions</h2
+><p
+>The following commands render a command that can be executed inside a target command block</p
+><p
+><code
+  >$(call echo,TEXT)    ~ Returns an echo statement for the text with a green block     prepended. The color allows for easy recognition of the echo'd     statements. Note that these only work within the code block of a     target.</code
+  ><span class="math"
+  >(<em
+    >call</em
+    ><em
+    >errr</em
+    >,<em
+    >TEXT</em
+    >)`~<em
+    >as</em
+    >`</span
+  >(call echo,TEXT)<code
+  >, but with a red marker (error)</code
+  ><span class="math"
+  >(<em
+    >call</em
+    ><em
+    >exer</em
+    >,<em
+    >TEXT</em
+    >)`~<em
+    >as</em
+    >`</span
+  >(call errr,TEXT)<code
+  >, but exits the Makefile with an error</code
+  ><span class="math"
+  >(<em
+    >call</em
+    ><em
+    >exerUnlock</em
+    >,<em
+    >TEXT</em
+    >)`~<em
+    >as</em
+    >`</span
+  >(call exer,TEXT)<code
+  >, but remove the Moa lockfile</code
+  ><span class="math"
+  >(<em
+    >call</em
+    ><em
+    >warn</em
+    >,<em
+    >TEXT</em
+    >)`~<em
+    >as</em
+    >`</span
+  >(call echo,TEXT)`, but with a yellow marker</p
+><h2 id="variables"
+>Variables</h2
+><p
+>$(comma)</p
+><p
+>~ a comma</p
+><p
+>$e</p
+><p
+>~ Can be used in place of Makefile &quot;@&quot;. A @ prepended to a command inside a target in a Makefile supresses echoing of that line during execution. If $e is used, then supression is depending on executing moa with the -v (verbose) parameter.</p
+><p
+>$(empty)</p
+><p
+>~ empty</p
+><p
+>$(parC)</p
+><p
+>~ parentheses close</p
+><p
+>$(parO)</p
+><p
+>~ parentheses open</p
+><p
+>$(sep)</p
+><p
+>~ contains the pipe symbol &quot;|&quot;</p
+><p
+>$(space)</p
+><p
+>~ a single space</p
+>
+</div>
+</div>
+  
+<p>&nbsp;</p><div class="footer_text" id="footer">&copy 2009 PLANT &amp; FOOD RESEARCH | <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a></div>
+</div>
+</div></center>
+
+
+</body>
+</html>
