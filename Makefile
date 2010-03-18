@@ -63,8 +63,10 @@ deb_%: source_package
 	cd $(BUILDDIR)/debian; cat changelog.t 			\
 		| sed "s/DIST/$*/g" 				\
 		| sed "s/VERSION/$(version)/g" > changelog
-	cd $(BUILDDIR)/debian; cp compat.$(version) compat \
-	cd $(BUILDDIR)/debian; cp control.$* control
+	cd $(BUILDDIR)/debian; \
+		for x in *.$(version); do \
+			cp $x `basename $x .$(version)`; \
+		done
 	cd $(BUILDDIR); dpkg-buildpackage -S -rfakeroot
 	cd $(PACKDIR); lintian -i moa_$(version)-*.dsc
 
