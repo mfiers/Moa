@@ -1,2 +1,23 @@
-bin/*	usr/share/moa/bin
-template/*	usr/share/moa/template
+bin/blast2gff		usr/share/moa/bin
+bin/fasta2gff		usr/share/moa/bin
+bin/fastaSplitter	usr/share/moa/bin
+bin/gffPP		usr/share/moa/bin
+bin/r2cut		usr/share/moa/bin
+bin/seqSplitLink	usr/share/moa/bin
+bin/blastInfo		usr/share/moa/bin
+bin/fastaExtract	usr/share/moa/bin
+bin/gap4ExportContig	usr/share/moa/bin
+bin/mapPairPlotter	usr/share/moa/bin
+bin/r2f			usr/share/moa/bin
+bin/urlsplit		usr/share/moa/bin
+bin/blastReport		usr/share/moa/bin
+bin/fastaInfo		usr/share/moa/bin
+bin/gbrowserm		usr/share/moa/bin
+bin/invertGff		usr/share/moa/bin
+bin/removeFromGbrowse	usr/share/moa/bin
+bin/fastaNfinder	usr/share/moa/bin
+bin/gffCombine		usr/share/moa/bin
+bin/lJoin		usr/share/moa/bin
+bin/scaffolder		usr/share/moa/bin
+template/*		usr/share/moa/template
+
