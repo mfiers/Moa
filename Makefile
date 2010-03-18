@@ -22,6 +22,7 @@ deb_%: source_package
 	mkdir -p build/deb/$*
 	cp build/src/moa-$(version).tar.gz $(PACKDIR)/moa_$(version).orig.tar.gz
 	cd $(PACKDIR)*; tar xzf moa_$(version).orig.tar.gz
+	cd $(BUILDDIR); find -name '.gitignore' | xargs rm
 	git archive --format=tar --prefix=moa-$(version)/ v$(version) \
 		debian | tar x -C $(PACKDIR)
 	#create an /etc/profile.d file t
