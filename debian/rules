@@ -27,7 +27,7 @@ clean:
 binary-indep: 
 	dh_testdir
 	dh_testroot
-	dh_clean -i -k
+	dh_clean -i
 #	dh_installchangelogs -i
 	dh_installdocs -i
 	dh_install -i
