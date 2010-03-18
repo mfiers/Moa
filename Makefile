@@ -70,3 +70,11 @@ deb_%: source_package
 	echo "to build the binary packages, execute:"
 	echo cd $(BUILDDIR)
 	echo sudo DIST=$* pbuilder build ../*dsc
+
+
+tag_version: version=$(shell cat VERSION)
+tag_version:
+	@echo "setting  git tag to version v$(version)"
+	-@git tag -d v$(version)  || true
+	@git tag v$(version)
+	@git tag -l
