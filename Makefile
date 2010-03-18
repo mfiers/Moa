@@ -1,46 +1,11 @@
 #
-# A Makefile to install moa
+# A Makefile to create moa debian packages
 #
 
 version?=$(shell git tag | sort -r | head -1 | cut -c2-)
 
 all:
-	#do nothing
 
-
-INSTALLDIRS = etc doc/api doc/html doc/images doc/markdown template/	\
-	template/moa template/moa/plugins lib/python lib/python/moa	\
-	lib/python/moa/plugin template/util
-
-install: DESTDIR2 = $(DESTDIR)/usr/share/moa
-install:
-	install -d $(DESTDIR2)/bin
-	install -v -m 555 `find  bin/ -maxdepth 1 -type f ` $(DESTDIR2)/bin
-	for i in $(INSTALLDIRS); do \
-		install -d $(DESTDIR2)/$$i; \
-		install -v -m 444 \
-			`find  $$i  -maxdepth 1 -type f` \
-			$(DESTDIR2)/$$i; \
-	done			
-	install -v README $(DESTDIR2)
-	install -v COPYING $(DESTDIR2)
-	install -v Makefile $(DESTDIR2)
-	echo "Installing bash configuration to /etc/profile.d/moa.sh"
-	echo "MOABASE=$(DESTDIR2)s"
-	if [ "$$(id -u)" != "0" ]; then \
-		echo "We're not root - installing locally"; \
-		if grep -q "moainit.sh" ~/.bashrc; then \
-			perl -pi'*.bak' -e 's|^.*moainit.sh.*$$|. $(DESTDIR2)/bin/moainit.sh|' ~/.bashrc; \
-		else \
-			echo >> ~/.bashrc ;\
-			echo ". $(DESTDIR2)/bin/moainit.sh" >> ~/.bashrc; \
-			echo >> ~/.bashrc ;\
-		fi; \
-	else \
-		install -d $(DESTDIR)/etc/profile.d ;\
-		echo "we're root: install moa conf in /etc/profile.d" ;\
-		echo ". $(DESTDIR2)/bin/moainit.sh" > $(DESTDIR)/etc/profile.d/moa.sh;\
-	fi
 
 package: source_package deb_jaunty
 
@@ -48,8 +13,7 @@ source_package:
 	mkdir -p build/src
 	git archive --format=tar --prefix=moa-$(version)/ v$(version)	\
 		Makefile etc bin COPYING doc etc lib README template 	\
-		| gzip >						\
-		build/src/moa-$(version).tar.gz
+		| gzip > build/src/moa-$(version).tar.gz
 
 deb_%: PACKDIR = build/deb/$*
 deb_%: BUILDDIR = build/deb/$*/moa-$(version)
@@ -60,14 +24,21 @@ deb_%: source_package
 	cd $(PACKDIR)*; tar xzf moa_$(version).orig.tar.gz
 	git archive --format=tar --prefix=moa-$(version)/ v$(version) \
 		debian | tar x -C $(PACKDIR)
+	#create an /etc/profile.d file t
+	cd $(BUILDDIR); mkdir etc/profile.d; \
+		echo ". /usr/share/moa/bin/moainit.sh || true" > etc/profile/moa.sh
+	#fix the changelog for this version
 	cd $(BUILDDIR)/debian; cat changelog.t 			\
 		| sed "s/DIST/$*/g" 				\
 		| sed "s/VERSION/$(version)/g" > changelog
+	#create distro specific files 
 	cd $(BUILDDIR)/debian; \
 		for x in *.$*; do \
 			cp $$x `basename $$x .$*`; \
 		done
+	#build the source package
 	cd $(BUILDDIR); dpkg-buildpackage -S -rfakeroot
+	#and run a lintian check
 	cd $(PACKDIR); lintian -i moa_$(version)-*.dsc
 
 	echo "to build the binary packages, execute:"

@@ -9,38 +9,22 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-
-
-
-
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	touch configure-stamp
 
 build: build-stamp
-
 build-stamp: configure-stamp  
 	dh_testdir
 	touch $@
 
-clean: 
+clean: 	
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp configure-stamp
 
-#dh_clean 
-
-install: build
-	dh_testdir -i
-	dh_testroot -i
-#	dh_prep -i
-#	dh_installdirs -i 
-	$(MAKE) DESTDIR=$(CURDIR)/debian/moa install
-
-
-# Build architecture-independent files here.
-binary-indep: build install
+binary-indep: 
 	dh_testdir
 	dh_testroot
 	dh_clean -i -k
@@ -55,39 +39,5 @@ binary-indep: build install
 	dh_md5sums -i
 	dh_builddeb -i
 
-#	dh_testdir
-#	dh_testroot
-#	dh_installchangelogs
-#	dh_installdocs
-#	dh_installexamples
-#	dh_installmenu
-#	dh_installdebconf
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installcatalogs
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-#	dh_installwm
-#	dh_installudev
-#	dh_lintian
-#	dh_undocumented
-#	dh_install -i
-#	dh_installman -i 
-#	dh_link -i
-#	dh_compress
-#	dh_fixperms
-#	dh_perl
-#	dh_python
-#	dh_installdeb -i
-#	dh_gencontrol
-#	dh_md5sums
-#	dh_builddeb
-
-# Build architecture-dependent files here.
-binary-arch:
-
 binary: binary-indep
-.PHONY: build clean binary-indep binary-arch binary install configure
+.PHONY: binary binary-indep 
