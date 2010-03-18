@@ -60,10 +60,10 @@ binary-indep: build install
 #	dh_installudev
 #	dh_lintian
 #	dh_undocumented
-	dh_installman
-	dh_link
-	dh_compress
-	dh_fixperms
+#	dh_installman
+#	dh_link
+#	dh_compress
+#	dh_fixperms
 #	dh_perl
 #	dh_python
 	dh_installdeb
