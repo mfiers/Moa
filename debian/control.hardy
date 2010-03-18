@@ -15,17 +15,17 @@ Description: Makefiles in bioinformatics
  and formalizing a bioinformatics analysis pipeline without losing any
  of the flexibility that comes with using ad-hoc scripting.
 
-Package: moa-extra
-Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, moa, python-biopython, python (<< 2.7), python (>= 2.5), blast2, bowtie
-Recommends: 
-Description: Makefiles in bioinformatics
- Lots of extras for the moa package moa package, 
+#Package: moa-extra
+#Architecture: all
+#Depends: ${shlibs:Depends}, ${misc:Depends}, moa, python-biopython, python (<< 2.7), python (>= 2.5), blast2, bowtie
+#Recommends: 
+#Description: Makefiles in bioinformatics
+# Lots of extras for the moa package moa package, 
 
-Package: moa-doc
-Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, moa
-Recommends: 
-Description: Documentation for Moa
- HTML, Markdown and API docs for Moa.
+#Package: moa-doc
+#Architecture: all
+#Depends: ${shlibs:Depends}, ${misc:Depends}, moa
+#Recommends: 
+#Description: Documentation for Moa
+# HTML, Markdown and API docs for Moa.
 
