@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+	<title>MOA - Makefiles in bioinformatics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+
+  </head>
+  <body>
+	<center>
+	  <div id="wrapper">
+		<div style="width: 815px;">
+		  <div style="clear: left;">
+			<div style="float: left; vertical-align:text-bottom">
+			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			</div>
+			<div style="float: right;">
+			  <a href="http://www.plantandfood.co.nz/">
+				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+			</a>
+			</div>
+		  </div>
+		  <div style="clear: left;">
+			<div style="float: left; width: 715px; height: 31px; background-color: rgb(81, 0, 45);">
+			  &nbsp;&nbsp;
+			</div>
+			<div style="float: left;">
+			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			</div>
+		  </div>
+		</div>
+		<div style="clear: left;">
+		  <div id="left">
+			<div style="width: 160px;">
+			  <div style="text-align: right;">
+                 <a href="introduction.html">Introduction</a><br>
+                 <a href="installation.html">Installation</a><br>
+                 <a href="using.html">Usage</a><br>
+                 <a href="gbrowse.html">Gbrowse</a><br>
+                 <a href="extending.html">Extend Moa</a><br>
+                 <a href="reference.html">Reference</a><br>
+                 <hr>
+                 <a href="moa_manual.pdf">Manual in PDF</a>
+                 <hr>
+                 <a href="api/index.html">Python API</a><br>
+			  </div>
+			</div>
+		  </div>
+		  <div id="center_content">
+			<div id="homepage_container">
+			
+<h1 id="chapterTitle">gmap.mk</h1>
+<h1 id="targets"
+>Targets</h1
+><dl
+><dt
+  >(empty)</dt
+  ><dd
+  >Leaving the target unspecified executes the default target(s): (gmap)</dd
+  ><dt
+  >clean</dt
+  ><dd
+  >removes all results from this job</dd
+  ><dt
+  >all</dt
+  ><dd
+  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
+  ></dl
+><p
+>gmap :</p
+><h1 id="parameters"
+>Parameters</h1
+><h2 id="required-parameters"
+>Required parameters</h2
+><dl
+><dt
+  >gmap_db</dt
+  ><dd
+  >Gmap db (file)</dd
+  ><dt
+  >gmap_input_file</dt
+  ><dd
+  >input file with the sequences to map (file)</dd
+  ><dt
+  >title</dt
+  ><dd
+  >A job name - Describe what you are doing (string)</dd
+  ></dl
+><h2 id="optional-parameters"
+>Optional parameters</h2
+><dl
+><dt
+  >gmap_extra_parameters</dt
+  ><dd
+  >extra parameters to feed to gmap (string)</dd
+  ><dt
+  >gmap_invert_gff</dt
+  ><dd
+  >Invert the GFF (T/<em
+    >F</em
+    >) (T|<em
+    >F</em
+    >)</dd
+  ><dt
+  >gmap_gff_source</dt
+  ><dd
+  >Source field to use in the output GFF (string, default:gmap)</dd
+  ><dt
+  >moa_precommand</dt
+  ><dd
+  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
+  ><dt
+  >moa_postcommand</dt
+  ><dd
+  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
+  ></dl
+>
+</div>
+</div>
+  
+<p>&nbsp;</p><div class="footer_text" id="footer">&copy 2009 PLANT &amp; FOOD RESEARCH | <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a></div>
+</div>
+</div></center>
+
+
+</body>
+</html>

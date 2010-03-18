@@ -15,11 +15,12 @@ Moa provides a number of tools:
 - A *uniform interface*. All Moa operation happens through a single,
   documented command line interface.
 
-The best way to understand how Moa works is by a short example:
+The best way to understand how Moa works is by a small example:
 
     moa new blast -t "run a demo"
     moa set blast_db=/data/blast/db/nt
     moa set blast_input_dir=../sequences
+    moa set moa_post_process='grep polymerase gff/*gff > pol.gff'
     moa run
 
 In the first line, a new BLAST job (titled "run demo") is created in

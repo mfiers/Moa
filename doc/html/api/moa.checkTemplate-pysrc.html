@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>moa.checkTemplate</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://mfiers.github.com/Moa/">Moa</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        <a href="moa-module.html">Package&nbsp;moa</a> ::
+        Module&nbsp;checkTemplate
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="moa.checkTemplate-module.html">Module moa.checkTemplate</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment"># Copyright 2009 Mark Fiers, Plant &amp; Food Research</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-comment"># This file is part of Moa - http://github.com/mfiers/Moa</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"># Moa is free software: you can redistribute it and/or modify it under</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-comment"># the terms of the GNU General Public License as published by the Free</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-comment"># Software Foundation, either version 3 of the License, or (at your</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-comment"># option) any later version.</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-comment"># Moa is distributed in the hope that it will be useful, but WITHOUT</tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-comment"># ANY WARRANTY; without even the implied warranty of MERCHANTABILITY</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-comment"># or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-comment"># License for more details.</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"><tt class="py-comment"># You should have received a copy of the GNU General Public License</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-comment"># along with Moa.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"><tt class="py-comment"># </tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"><tt class="py-docstring"> Check template - checks templates for old style templates and tries</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"><tt class="py-docstring">to update them </tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">re</tt> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">subprocess</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line"> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-0" class="py-name" targets="Package moa=moa-module.html"><a title="moa" class="py-name" href="#" onclick="return doclink('link-0', 'moa', 'link-0');">moa</a></tt><tt class="py-op">.</tt><tt id="link-1" class="py-name" targets="Module moa.logger=moa.logger-module.html"><a title="moa.logger" class="py-name" href="#" onclick="return doclink('link-1', 'logger', 'link-1');">logger</a></tt> <tt class="py-keyword">import</tt> <tt id="link-2" class="py-name" targets="Variable moa.archive.l=moa.archive-module.html#l,Variable moa.conf.l=moa.conf-module.html#l,Variable moa.job.l=moa.job-module.html#l,Variable moa.logger.l=moa.logger-module.html#l,Variable moa.project.l=moa.project-module.html#l,Variable script-moa.l=script-moa-module.html#l"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-2', 'l', 'link-2');">l</a></tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-3" class="py-name"><a title="moa" class="py-name" href="#" onclick="return doclink('link-3', 'moa', 'link-0');">moa</a></tt> <tt class="py-keyword">import</tt> <tt id="link-4" class="py-name" targets="Module moa.runMake=moa.runMake-module.html"><a title="moa.runMake" class="py-name" href="#" onclick="return doclink('link-4', 'runMake', 'link-4');">runMake</a></tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt id="link-5" class="py-name"><a title="moa" class="py-name" href="#" onclick="return doclink('link-5', 'moa', 'link-0');">moa</a></tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Module moa.exceptions=moa.exceptions-module.html"><a title="moa.exceptions" class="py-name" href="#" onclick="return doclink('link-6', 'exceptions', 'link-6');">exceptions</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-7" class="py-name"><a title="moa" class="py-name" href="#" onclick="return doclink('link-7', 'moa', 'link-0');">moa</a></tt><tt class="py-op">.</tt><tt id="link-8" class="py-name" targets="Module moa.utils=moa.utils-module.html"><a title="moa.utils" class="py-name" href="#" onclick="return doclink('link-8', 'utils', 'link-8');">utils</a></tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt id="link-9" class="py-name"><a title="moa" class="py-name" href="#" onclick="return doclink('link-9', 'moa', 'link-0');">moa</a></tt><tt class="py-op">.</tt><tt id="link-10" class="py-name" targets="Module moa.lock=moa.lock-module.html"><a title="moa.lock" class="py-name" href="#" onclick="return doclink('link-10', 'lock', 'link-10');">lock</a></tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line"> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line"><tt id="link-11" class="py-name" targets="Variable moa.api.MOABASE=moa.api-module.html#MOABASE,Variable moa.archive.MOABASE=moa.archive-module.html#MOABASE,Variable moa.checkTemplate.MOABASE=moa.checkTemplate-module.html#MOABASE,Variable moa.info.MOABASE=moa.info-module.html#MOABASE,Variable moa.job.MOABASE=moa.job-module.html#MOABASE,Variable moa.unittests.MOABASE=moa.unittests-module.html#MOABASE,Variable script-moa.MOABASE=script-moa-module.html#MOABASE"><a title="moa.api.MOABASE
+moa.archive.MOABASE
+moa.checkTemplate.MOABASE
+moa.info.MOABASE
+moa.job.MOABASE
+moa.unittests.MOABASE
+script-moa.MOABASE" class="py-name" href="#" onclick="return doclink('link-11', 'MOABASE', 'link-11');">MOABASE</a></tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">environ</tt><tt class="py-op">[</tt><tt class="py-string">"MOABASE"</tt><tt class="py-op">]</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line"> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line"> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line"> </tt>
+<a name="checkTemplate"></a><div id="checkTemplate-def"><a name="L38"></a><tt class="py-lineno">38</tt> <a class="py-toggle" href="#" id="checkTemplate-toggle" onclick="return toggle('checkTemplate');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.checkTemplate-module.html#checkTemplate">checkTemplate</a><tt class="py-op">(</tt><tt class="py-param">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="checkTemplate-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="checkTemplate-expanded"><a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">    <tt class="py-docstring">"""</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line"><tt class="py-docstring">    Run all current template tests - see if any needs updating</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line"><tt class="py-docstring">    """</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line"> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">    <tt id="link-12" class="py-name" targets="Function moa.checkTemplate._check_deprecated_001()=moa.checkTemplate-module.html#_check_deprecated_001"><a title="moa.checkTemplate._check_deprecated_001" class="py-name" href="#" onclick="return doclink('link-12', '_check_deprecated_001', 'link-12');">_check_deprecated_001</a></tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line"> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line"> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line"> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line"><tt class="py-comment">## Check for deprecated style makefile</tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line"><tt class="py-comment">##</tt> </tt>
+<a name="_check_deprecated_001"></a><div id="_check_deprecated_001-def"><a name="L50"></a><tt class="py-lineno">50</tt> <a class="py-toggle" href="#" id="_check_deprecated_001-toggle" onclick="return toggle('_check_deprecated_001');">-</a><tt class="py-line"><tt class="py-keyword">def</tt> <a class="py-def-name" href="moa.checkTemplate-module.html#_check_deprecated_001">_check_deprecated_001</a><tt class="py-op">(</tt><tt class="py-param">path</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="_check_deprecated_001-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="_check_deprecated_001-expanded"><a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line"> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">    <tt class="py-name">makefile</tt> <tt class="py-op">=</tt> <tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">path</tt><tt class="py-op">.</tt><tt class="py-name">join</tt><tt class="py-op">(</tt><tt class="py-name">path</tt><tt class="py-op">,</tt> <tt class="py-string">'Makefile'</tt><tt class="py-op">)</tt> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line"> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line"> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">    <tt class="py-name">_check</tt> <tt class="py-op">=</tt> <tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">Popen</tt><tt class="py-op">(</tt><tt class="py-string">"cat %s 2&gt;/dev/null |grep dont_include_moabase "</tt> <tt class="py-op">%</tt> <tt class="py-name">makefile</tt><tt class="py-op">,</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">                              <tt class="py-name">shell</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">                              <tt class="py-name">stdout</tt><tt class="py-op">=</tt><tt class="py-name">subprocess</tt><tt class="py-op">.</tt><tt class="py-name">PIPE</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">communicate</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt>     </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">    <tt class="py-keyword">if</tt> <tt class="py-string">'dont_include_moabase'</tt> <tt class="py-keyword">in</tt> <tt class="py-name">_check</tt><tt class="py-op">:</tt> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">        <tt class="py-name">includeline</tt><tt class="py-op">=</tt><tt class="py-name">re</tt><tt class="py-op">.</tt><tt class="py-name">compile</tt><tt class="py-op">(</tt><tt class="py-string">r'include \$\(shell echo \$\$MOABASE\)/template/.*\.mk$'</tt><tt class="py-op">)</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">        <tt id="link-13" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-13', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">warning</tt><tt class="py-op">(</tt><tt class="py-string">"Old style Makefile in %s, automatically updating!"</tt> <tt class="py-op">%</tt> <tt class="py-name">makefile</tt><tt class="py-op">)</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">        <tt id="link-14" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-14', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">warning</tt><tt class="py-op">(</tt><tt class="py-string">"The old Makefile will be copied to Makefile.old"</tt><tt class="py-op">)</tt> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">        <tt class="py-name">shutil</tt><tt class="py-op">.</tt><tt class="py-name">move</tt><tt class="py-op">(</tt><tt class="py-name">makefile</tt><tt class="py-op">,</tt> <tt class="py-name">makefile</tt> <tt class="py-op">+</tt> <tt class="py-string">'.old'</tt><tt class="py-op">)</tt> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">        <tt class="py-name">F</tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">makefile</tt> <tt class="py-op">+</tt> <tt class="py-string">'.old'</tt><tt class="py-op">)</tt> </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">        <tt class="py-name">G</tt> <tt class="py-op">=</tt> <tt class="py-name">open</tt><tt class="py-op">(</tt><tt class="py-name">makefile</tt><tt class="py-op">,</tt>  <tt class="py-string">'w'</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">        <tt class="py-name">count_includes</tt> <tt class="py-op">=</tt> <tt class="py-number">0</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line">        <tt class="py-name">dim_removed</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">        <tt class="py-name">imb_removed</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">        <tt class="py-keyword">for</tt> <tt id="link-15" class="py-name" targets="Variable script-moa.line=script-moa-module.html#line"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-15', 'line', 'link-15');">line</a></tt> <tt class="py-keyword">in</tt> <tt class="py-name">F</tt><tt class="py-op">.</tt><tt class="py-name">readlines</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">re</tt><tt class="py-op">.</tt><tt class="py-name">match</tt><tt class="py-op">(</tt><tt class="py-string">'^dont_include_moabase=.*$'</tt><tt class="py-op">,</tt> <tt id="link-16" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-16', 'line', 'link-15');">line</a></tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">                <tt class="py-name">dim_removed</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">                <tt id="link-17" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-17', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Removing %s"</tt> <tt class="py-op">%</tt> <tt id="link-18" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-18', 'line', 'link-15');">line</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L73"></a><tt class="py-lineno">73</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-19" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-19', 'line', 'link-15');">line</a></tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">==</tt> <tt class="py-string">'include $(shell echo $$MOABASE)/template/__moaBase.mk'</tt><tt class="py-op">:</tt> </tt>
+<a name="L74"></a><tt class="py-lineno">74</tt>  <tt class="py-line">                <tt class="py-name">imb_removed</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L75"></a><tt class="py-lineno">75</tt>  <tt class="py-line">                <tt id="link-20" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-20', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"Removing %s"</tt> <tt class="py-op">%</tt> <tt id="link-21" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-21', 'line', 'link-15');">line</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L76"></a><tt class="py-lineno">76</tt>  <tt class="py-line">                <tt class="py-keyword">continue</tt> </tt>
+<a name="L77"></a><tt class="py-lineno">77</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">includeline</tt><tt class="py-op">.</tt><tt class="py-name">match</tt><tt class="py-op">(</tt><tt id="link-22" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-22', 'line', 'link-15');">line</a></tt><tt class="py-op">.</tt><tt class="py-name">strip</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L78"></a><tt class="py-lineno">78</tt>  <tt class="py-line">                <tt id="link-23" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-23', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt class="py-string">"found an include line"</tt><tt class="py-op">)</tt> </tt>
+<a name="L79"></a><tt class="py-lineno">79</tt>  <tt class="py-line">                <tt id="link-24" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-24', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">debug</tt><tt class="py-op">(</tt><tt id="link-25" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-25', 'line', 'link-15');">line</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L80"></a><tt class="py-lineno">80</tt>  <tt class="py-line">                <tt class="py-name">count_includes</tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L81"></a><tt class="py-lineno">81</tt>  <tt class="py-line"> </tt>
+<a name="L82"></a><tt class="py-lineno">82</tt>  <tt class="py-line">            <tt id="link-26" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-26', 'line', 'link-15');">line</a></tt> <tt class="py-op">=</tt> <tt id="link-27" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-27', 'line', 'link-15');">line</a></tt><tt class="py-op">.</tt><tt class="py-name">replace</tt><tt class="py-op">(</tt><tt class="py-string">'$(shell echo $$MOABASE)'</tt><tt class="py-op">,</tt> <tt class="py-string">'$(MOABASE)'</tt><tt class="py-op">)</tt> </tt>
+<a name="L83"></a><tt class="py-lineno">83</tt>  <tt class="py-line">            <tt class="py-name">G</tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt id="link-28" class="py-name"><a title="script-moa.line" class="py-name" href="#" onclick="return doclink('link-28', 'line', 'link-15');">line</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L84"></a><tt class="py-lineno">84</tt>  <tt class="py-line">        <tt class="py-name">F</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L85"></a><tt class="py-lineno">85</tt>  <tt class="py-line">        <tt class="py-name">G</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L86"></a><tt class="py-lineno">86</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">count_includes</tt> <tt class="py-op">&gt;</tt> <tt class="py-number">1</tt><tt class="py-op">:</tt> </tt>
+<a name="L87"></a><tt class="py-lineno">87</tt>  <tt class="py-line">            <tt id="link-29" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-29', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">critical</tt><tt class="py-op">(</tt><tt class="py-string">"This makefile might NOT work - including more than one template"</tt><tt class="py-op">)</tt> </tt>
+<a name="L88"></a><tt class="py-lineno">88</tt>  <tt class="py-line">            <tt id="link-30" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-30', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">critical</tt><tt class="py-op">(</tt><tt class="py-string">"is not allowed (anymore :( )"</tt><tt class="py-op">)</tt> </tt>
+<a name="L89"></a><tt class="py-lineno">89</tt>  <tt class="py-line">            <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-31" class="py-name" targets="Function moa.utils.exit()=moa.utils-module.html#exit"><a title="moa.utils.exit" class="py-name" href="#" onclick="return doclink('link-31', 'exit', 'link-31');">exit</a></tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L90"></a><tt class="py-lineno">90</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">count_includes</tt> <tt class="py-op">==</tt> <tt class="py-number">0</tt><tt class="py-op">:</tt> </tt>
+<a name="L91"></a><tt class="py-lineno">91</tt>  <tt class="py-line">            <tt id="link-32" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-32', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">warning</tt><tt class="py-op">(</tt><tt class="py-string">"Odd - you dont' seem to be including any template, have a look"</tt><tt class="py-op">)</tt> </tt>
+<a name="L92"></a><tt class="py-lineno">92</tt>  <tt class="py-line">            <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-33" class="py-name"><a title="moa.utils.exit" class="py-name" href="#" onclick="return doclink('link-33', 'exit', 'link-31');">exit</a></tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L93"></a><tt class="py-lineno">93</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">dim_removed</tt> <tt class="py-keyword">and</tt> <tt class="py-name">imb_removed</tt><tt class="py-op">:</tt> </tt>
+<a name="L94"></a><tt class="py-lineno">94</tt>  <tt class="py-line">            <tt id="link-34" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-34', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt><tt class="py-op">(</tt><tt class="py-string">"Updated Makefile - unsure of success - please check"</tt><tt class="py-op">)</tt> </tt>
+<a name="L95"></a><tt class="py-lineno">95</tt>  <tt class="py-line">            <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name"><a title="moa.utils.exit" class="py-name" href="#" onclick="return doclink('link-35', 'exit', 'link-31');">exit</a></tt><tt class="py-op">(</tt><tt class="py-number">1</tt><tt class="py-op">)</tt> </tt>
+<a name="L96"></a><tt class="py-lineno">96</tt>  <tt class="py-line">        <tt id="link-36" class="py-name"><a title="moa.archive.l
+moa.conf.l
+moa.job.l
+moa.logger.l
+moa.project.l
+script-moa.l" class="py-name" href="#" onclick="return doclink('link-36', 'l', 'link-2');">l</a></tt><tt class="py-op">.</tt><tt class="py-name">error</tt><tt class="py-op">(</tt><tt class="py-string">"Updated Makefile - everything looks fine (check anyway)"</tt><tt class="py-op">)</tt> </tt>
+<a name="L97"></a><tt class="py-lineno">97</tt>  <tt class="py-line">        <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name"><a title="moa.utils.exit" class="py-name" href="#" onclick="return doclink('link-37', 'exit', 'link-31');">exit</a></tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L98"></a><tt class="py-lineno">98</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Project homepage -->
+      <th class="navbar" align="right" width="100%">
+        <table border="0" cellpadding="0" cellspacing="0">
+          <tr><th class="navbar" align="center"
+            ><a class="navbar" target="_top" href="http://mfiers.github.com/Moa/">Moa</a></th>
+          </tr></table></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Mar 19 11:07:29 2010
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
