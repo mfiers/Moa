@@ -19,7 +19,7 @@ deb_%: PACKDIR = build/deb/$*
 deb_%: BUILDDIR = build/deb/$*/moa-$(version)
 deb_%: source_package
 	@echo "Building version $(version) for $* in $(BUILDDIR)"
-	-rm -rf build/deb/$*
+	-rm -rf build/deb/$*	
 	mkdir -p build/deb/$*
 	cp build/src/moa-$(version).tar.gz $(PACKDIR)/moa_$(version).orig.tar.gz
 	cd $(PACKDIR)*; tar xzf moa_$(version).orig.tar.gz
