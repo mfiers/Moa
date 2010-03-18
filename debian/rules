@@ -39,5 +39,8 @@ binary-indep:
 	dh_md5sums -i
 	dh_builddeb -i
 
+
+binary-arch:
+
 binary: binary-indep
-.PHONY: binary binary-indep 
+.PHONY: binary binary-indep  binary-arch clean 
