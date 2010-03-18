@@ -1,2 +1,2 @@
-bin/*
-template/*
+bin/*	usr/share/moa/bin
+template/*	usr/share/moa/template

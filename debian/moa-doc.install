@@ -1,4 +1,3 @@
-usr/share/moa/doc/html/*
-doc/markdown/*
-doc/images/*
-doc/api/*
+doc/html/*	usr/share/moa/doc/html
+doc/images/*	usr/share/moa/doc/images
+doc/api/*	usr/share/moa/doc/api
