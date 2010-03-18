@@ -43,9 +43,23 @@ install: build
 binary-indep: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs
-	dh_installdocs
-	dh_installexamples
+	dh_clean -i -k
+	dh_installchangelogs -i
+	dh_installdocs -i
+	dh_install -i
+	dh_link -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+#	dh_testdir
+#	dh_testroot
+#	dh_installchangelogs
+#	dh_installdocs
+#	dh_installexamples
 #	dh_installmenu
 #	dh_installdebconf
 #	dh_installlogrotate
@@ -60,17 +74,17 @@ binary-indep: build install
 #	dh_installudev
 #	dh_lintian
 #	dh_undocumented
-	dh_install
-	dh_installman
-	dh_link
-	dh_compress
+#	dh_install -i
+#	dh_installman -i 
+#	dh_link -i
+#	dh_compress
 #	dh_fixperms
 #	dh_perl
 #	dh_python
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+#	dh_installdeb -i
+#	dh_gencontrol
+#	dh_md5sums
+#	dh_builddeb
 
 # Build architecture-dependent files here.
 binary-arch:
