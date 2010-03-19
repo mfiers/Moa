@@ -75,6 +75,7 @@ moa_git_init_project_2:
 
 .PHONY: moa_git_init
 moa_git_init:
+	$(warning in git init)
 	if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
 		git add $(minv) --all; \
 		git commit -qa -m "$(commit_message)" >/dev/null; \
