@@ -160,7 +160,6 @@ def getInfo(wd):
     >>> result.has_key('parameters')
     True
     >>> parameters = result['parameters']
-    >>> print parameters
     >>> parameters.has_key('title')
     True
     >>> p_title = parameters['title']
