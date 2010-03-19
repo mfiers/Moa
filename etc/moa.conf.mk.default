@@ -27,4 +27,6 @@ moa_plugins += logo
 #unittest code
 moa_plugins += test
 
+#info - display machine readable information on a job
+moa_plugins += info
 
