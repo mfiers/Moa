@@ -54,10 +54,13 @@ endif
 
 #Initialze a git repository
 $(warning unittest? $(MOA_UNITTESTS) x)
-moa_git_init_project: $(if $(MOA_UNITTESTS),,moa_git_init_project_2)
+moa_git_init_project: $(if $(MOA_UNITTESTS),moa_git_init_project_3,moa_git_init_project_2)
+
+moa_git_init_project_3:
+	$(call err, not doing git init)
 
 moa_git_init_project_2:
-	$(call errr, HIHIHIH)
+
 	if ! git status 2>&1 | grep -q 'Not a git repo' ; \
 	then \
 		if [[ "$$MOA_GITFORCEINIT" ]] && ls .git | grep -q config ; \
