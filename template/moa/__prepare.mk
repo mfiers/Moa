@@ -45,6 +45,12 @@ endif
 MOA_INCLUDE_MOAMK = yes
 -include moa.mk
 
+## Load plugins
+$(foreach p,$(moa_plugins), \
+	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
+)
+
+
 ## Files that moa uses
 moa_system_files = Makefile moa.mk
 

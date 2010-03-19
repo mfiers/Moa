@@ -19,22 +19,21 @@
 include $(MOABASE)/template/moa/prepare.mk
 
 moa_title = Blast
-moa_description = Wraps BLAST [[Alt90]], the most popular			\
-  similarity search tool in bioinformatics
-moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
+moa_description = Wraps BLAST [[Alt90]], the most popular similarity	\
+  search tool in bioinformatics
+moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)	\
   [[Alt90]] suite of tools
 
 moa_id = blast
 
-blast_help = Running BLAST takes an input directory						\
-  (*blast_input_dir*), determines what sequence files are present		\
+blast_help = Running BLAST takes an input directory			\
+  (*blast_input_dir*), determines what sequence files are present	\
   (with the parameter *blast_input_extension*) and executes BLAST on	\
-  each of these. Moa BLAST is configured to create XML output (as		\
-  opposed ot the standard text based output) in the *./out*			\
-  directory. The output XML is subsequently converted to GFF3		\
-  [[gff]] by the custom *blast2gff* script (build around biopython		\
-  [[biopython]]). Additionally, a simple text report is created.		\
-
+  each of these. Moa BLAST is configured to create XML output (as	\
+  opposed ot the standard text based output) in the *./out*		\
+  directory. The output XML is subsequently converted to GFF3 [[gff]]	\
+  by the custom *blast2gff* script (build around biopython		\
+  [[biopython]]). Additionally, a simple text report is created.  \
 moa_additional_targets += blast_report
 moa_blast_report_help = Generate a text BLAST report.
 
@@ -51,6 +50,9 @@ prereq_biopython_installed:
 	fi
 
 $(call moa_fileset_define,blast_input,fasta,Directory with the BLAST input files)
+
+#moa_inputfile_vars += blast_input_files
+moa_state_outsets  +=  blast_gff_files
 
 moa_must_define += blast_db
 blast_db_help = Location of the blast database. You can either define the \

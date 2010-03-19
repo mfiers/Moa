@@ -25,48 +25,41 @@
 __MOA_INCLUDE_CORE = yes
 include $(MOABASE)/template/moa/prepare.mk
 
-## Load plugins
-$(foreach p,$(moa_plugins), 									\
-	$(eval include $(MOABASE)/template/moa/plugins/$(p).mk) 	\
-)
-
-## Prep 
+## Prepare - fill in the defaults of all variables
 ## Fill in the default values of each variable
 $(foreach v,$(moa_must_define) $(moa_may_define),				\
-	$(if $($v),,												\
-		$(if $($v_default),										\
-			$(eval $v=$($v_default)))							\
-	)															\
-)
+	$(if $($v),, \
+		$(if $($v_default), \
+			$(eval $v=$($v_default))) ) )
 
+## Evaluate & load the filesets
 $(foreach v,$(_moa_filesets), \
 	$(eval $(v)_files = $(wildcard $($(v)_dir)/$($(v)_glob).$($(v)_extension))))
 
 moa_fileset_init = $(warning use of moa_fileset_init is deprecated)
-
 
 ################################################################################
 ## EXECUTION
 ## Here we handle the execution of all targets necessary
 
 ## These targets need to be executed for a normal MOA run
-moa_execute_targets =										\
-	moa_check_lock											\
-	moa_set_runlock											\
-	$(moa_hooks_pre_welcome)								\
-	moa_welcome 											\
-	$(moa_hooks_pre_check)									\
-	moa_check 												\
-	moa_run_precommand										\
-	moa_preprocess 											\
-	$(moa_id)_prepare										\
-	$(moa_hooks_pre_run)									\
-	$(moa_hooks_pre_run_$(moa_id))							\
-	$(moa_id) 												\
-	$(moa_id)_post											\
-	moa_postprocess 										\
-	moa_run_postcommand										\
-	moa_clean_runlock										\
+moa_execute_targets = \
+	moa_check_lock \
+	moa_set_runlock \
+	$(moa_hooks_pre_welcome) \
+	moa_welcome \
+	$(moa_hooks_pre_check) \
+	moa_check \
+	moa_run_precommand \
+	moa_preprocess \
+	$(moa_id)_prepare \
+	$(moa_hooks_pre_run) \
+	$(moa_hooks_pre_run_$(moa_id)) \
+	$(moa_id) \
+	$(moa_id)_post \
+	moa_postprocess \
+	moa_run_postcommand \
+	moa_clean_runlock \
 	moa_finished
 
 
@@ -74,8 +67,6 @@ moa_execute_targets =										\
 .PHONY: moa_default_target
 .DEFAULT_GOAL := moa_default_target
 moa_default_target: $(moa_execute_targets)
-
-
 
 .PHONY: moa_run_precommand
 moa_run_precommand:
@@ -107,40 +98,8 @@ moa_run_postcommand:
 	@$(call exer,$@ is undefined)
 
 
-#Find project root (if there is one)
-# ifndef in_project_loop
-# project_root = $(shell \
-# 	C=`pwd`; \
-# 	$(warning processing $C);\
-# 	while [[ "$$C" && ("$$C" != "/") ]]; do \
-# 		if [[ -f "$$C/Makefile" ]]; then \
-# 			if moa  -f $$C/Makefile ids in_project_loop=T | grep -q "project"; then \
-# 				echo $$C; \
-# 				break; \
-# 			fi; \
-# 		fi; \
-# 		C=`dirname $$C`; \
-# 	done; 			\
-# 	echo "/";		\
-# )
-# endif
-# .PHONY: project_info
-# project_info:
-# 	@if [[ "$(project_root)" != '/' ]]; then \
-# 		$(shell make -s -C $(project_root) title);\
-# 	fi
-
-## 
-
 moa_welcome:
 	@$(call echo, Starting MOA $(MAKECMDGOALS) in $(CURDIR))
-
-## If moa.mk is defined, and not yet imported: do so.
-## moa.mk is used to store job specific variables
-ifndef MOAMK_INCLUDE
--include ./moa.mk
-MOAMK_INCLUDE=done
-endif
 
 ###############################################################################
 # Variable definition - post moa.mk include
@@ -155,20 +114,19 @@ title:
 
 .PHONY: moa_set_runlock
 moa_set_runlock:
-	$e if [[ -f 'moa.runlock' ]]; then						\
-		oldpid=`cat moa.runlock`;							\
-		oldexec=`ps -p $$oldpid -o comm=`;					\
-		if [[ "$$oldexec" == "make" ]]; then				\
-			$(call exer,This job is already running);		\
-		else 												\
-			$(call warn,Found what appears to be a stale lockfile - removing);	\
-			rm moa.runlock;									\
-		fi;													\
-	fi;														\
-	$(call echo,Locking job for this run);					\
-	$(call echo,$(shell ps -p $$PPID -o comm=));			\
+	$e if [[ -f 'moa.runlock' ]]; then \
+		oldpid=`cat moa.runlock`; \
+		oldexec=`ps -p $$oldpid -o comm=`; \
+		if [[ "$$oldexec" == "make" ]]; then \
+			$(call exer,This job is already running); \
+		else \
+			$(call warn,Found what appears to be a stale lockfile - removing); \
+			rm moa.runlock; \
+		fi; \
+	fi; \
+	$(call echo,Locking job for this run); \
+	$(call echo,$(shell ps -p $$PPID -o comm=)); \
 	echo $$PPID > moa.runlock
-
 
 .PHONY: moa_clean_runlock
 moa_clean_runlock:
@@ -179,17 +137,18 @@ moa_clean_runlock:
 moa_finished:
 	@$(call echo,Moa finished - Succes!)
 
-moa_all_targets = 											\
-	$(moa_execute_targets)									\
-	$(moa_additional_targets)								\
-	set append clean register reset targets check			
+moa_all_targets = \
+	$(moa_execute_targets) \
+	$(moa_additional_targets) \
+	set append clean register reset targets check
 
 ## print out a list of all targets
 .PHONY: targets
 targets:
-	@for x in $(moa_all_targets); do	 					\
-		echo $$x;											\
+	@for x in $(moa_all_targets); do \
+		echo $$x; \
 	done
+
 ## print a list of all moa_id
 .PHONY: ids
 ids:
@@ -228,10 +187,6 @@ initialize: \
 	$(moa_hooks_postinit_$(moa_id)) 	\
 	$(moa_hooks_postinit)
 	@echo -n
-#.PHONY: $(moa_id)_initialize
-#$(moa_id)_initialize:
-
-
 
 ################################################################################
 # Cruising - i.e. run this template and then walk through all subdirs
@@ -251,61 +206,59 @@ initialize: \
 ## A list of all valid targets that can be used to all a tree. In
 ## other words, these targets can be used with "make all
 ## action=TARGET"
-moa_all_targets = 																\
-	$(call set_create, 															\
-		set append clean reset targets check						 			\
-		$(moa_additional_targets)												\
-		$(moa_id)_prepare 														\
-		$(moa_id)																\
-		$(moa_id)_post															\
+moa_all_targets = \
+	$(call set_create, \
+		set append clean reset targets check \
+		$(moa_additional_targets) \
+		$(moa_id)_prepare \
+		$(moa_id) \
+		$(moa_id)_post \
 	)
 
 moa_ignore_lock_targets = \
 	set append clean targets check 
 
 ## A list of all subdirectories
-moa_followups ?= 																\
-	$(shell find . -maxdepth 1 -type d -regex "\..+" 							\
+moa_followups ?= \
+	$(shell find . -maxdepth 1 -type d -regex "\..+" \
 				   -exec basename '{}' \; | sort -n )
 
-
-
-## all depeends on properly executing this job, using either
+## all depends on properly executing this job, using either
 ## "action" as a target or the default target. Once this job is
 ## finished, start traversin through all subdirectories and execyte
 ## them as wll
 .PHONY: all
-all:  ignore_lock?=$(strip $(if $(action), 										\
-			$(if $(filter $(action),$(moa_ignore_lock_targets)),				\
+all:  ignore_lock?=$(strip $(if $(action), \
+			$(if $(filter $(action),$(moa_ignore_lock_targets)), \
 				yes,)))
-all: $(if $(call seq,$(action),), 								\
-			moa_default_target,													\
-			$(if $(call set_is_member, $(action), $(moa_all_targets)),			\
-				$(action),														\
+all: $(if $(call seq,$(action),), \
+			moa_default_target, \
+			$(if $(call set_is_member, $(action), $(moa_all_targets)), \
+				$(action), \
 				$(warning Ignoring $(action) - not a valid target) ) )
-	$e for FUP in $(moa_followups); do 											\
-		set -e																	\
-		$(call echo,Processing $$FUP 											\
-			$(if $(call seq,$(ignore_lock),yes),								\
-				$(p_open)IGNORING LOCK!$(p_close))); 							\
-		$(call echo, +- in $(shell echo `pwd`));								\
-		if [[ -e $$FUP/Makefile ]]; then 										\
-			if [[ "$(ignore_lock)" == "yes" ]]; then 							\
-				cd $$FUP;														\
-				$(MAKE) $(mins) all action=$(action);									\
-				cd ..;															\
-			else 																\
-				if [[ ! -e $$FUP/lock ]]; then 									\
-					cd $$FUP;													\
-					$(MAKE) $(mins) all action=$(action);								\
-					cd ..;														\
-				else 															\
-					$(call warn,Not going here : $$FUP is locked) ;				\
-				fi ;															\
-			fi;																	\
-		else																	\
-			$(call echo,$$FUP is not a moa directory);							\
-		fi;																		\
+	$e for FUP in $(moa_followups); do \
+		set -e \
+		$(call echo,Processing $$FUP \
+			$(if $(call seq,$(ignore_lock),yes), \
+				$(p_open)IGNORING LOCK!$(p_close))); \
+		$(call echo, +- in $(shell echo `pwd`)); \
+		if [[ -e $$FUP/Makefile ]]; then \
+			if [[ "$(ignore_lock)" == "yes" ]]; then \
+				cd $$FUP; \
+				$(MAKE) $(mins) all action=$(action); \
+				cd ..; \
+			else \
+				if [[ ! -e $$FUP/lock ]]; then \
+					cd $$FUP; \
+					$(MAKE) $(mins) all action=$(action); \
+					cd ..; \
+				else \
+					$(call warn,Not going here : $$FUP is locked) ; \
+				fi ; \
+			fi; \
+		else \
+			$(call echo,$$FUP is not a moa directory); \
+		fi; \
 	done
 	$(call echo,Successfully finished moa all run $(if $(action),action=$(action)))
 
@@ -348,23 +301,23 @@ moa_author ?= Mark Fiers
 prereqlist += prereq_moa_environment
 
 checkPrereqExec = \
-	if ! eval $(1) > /dev/null 2>/dev/null; then 								\
-		$(call errr,Prerequisite check);										\
-		$(call errr,Cannot execute $(1). Is properly executable?); 				\
-			if [[ -n "$(2)" ]]; then 											\
-				$(call errr,$(2)); 												\
-			fi;																	\
-			$(call exerUnlock);													\
+	if ! eval $(1) > /dev/null 2>/dev/null; then \
+		$(call errr,Prerequisite check); \
+		$(call errr,Cannot execute $(1). Is properly executable?); \
+			if [[ -n "$(2)" ]]; then \
+				$(call errr,$(2)); \
+			fi; \
+			$(call exerUnlock); \
 	fi
 
 checkPrereqPath = \
-	if ! which $(1) >/dev/null 2>/dev/null; then 			\
+	if ! which $(1) >/dev/null 2>/dev/null; then \
 		$(call errr,Prerequisite check: \
-			Cannot find $(1) in your PATH $(comma).); 	\
-		if [[ "$(strip $(2))" ]]; then 												\
-			$(call errr,$(2)); 													\
-		fi;																		\
-		$(call exerUnlock);														\
+			Cannot find $(1) in your PATH $(comma).); \
+		if [[ "$(strip $(2))" ]]; then \
+			$(call errr,$(2)); \
+		fi; \
+		$(call exerUnlock); \
 	fi
 
 .PHONY: prereqs $(prereqlist)
@@ -392,7 +345,6 @@ moa_lock:
 unlock: moa_unlock
 moa_unlock:
 	-rm lock
-
 
 #check if MOABASE is defined
 prereq_moa_environment:
@@ -467,22 +419,12 @@ showvars:
 		echo $$x; \
 	done
 
-
-ifndef MOA_INCLUDE_VAR
-include $(MOABASE)/template/__moaBaseVar.mk
-endif
-
-ifndef MOA_INCLUDE_TEST
-include $(MOABASE)/template/__moaBaseTest.mk
-endif
-
 ################################################################################
 ## make info ###################################################################
 #
 #### Show lots of information on the current job
 #
 ################################################################################
-
 
 comma=,
 info_keyval = "$(1)" : "$(subst '"',"'",$(2))"

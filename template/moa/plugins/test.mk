@@ -17,7 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-MOA_INCLUDE_TEST = yup
+MOA_INCLUDE_PLUGIN_TEST = yup
 
 ################################################################################
 ## Variables & functions
