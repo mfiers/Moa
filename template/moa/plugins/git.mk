@@ -57,6 +57,7 @@ $(warning unittest? $(MOA_UNITTESTS) x)
 moa_git_init_project: $(if $(MOA_UNITTESTS),,moa_git_init_project_2)
 
 moa_git_init_project_2:
+	$(call errr, HIHIHIH)
 	if ! git status 2>&1 | grep -q 'Not a git repo' ; \
 	then \
 		if [[ "$$MOA_GITFORCEINIT" ]] && ls .git | grep -q config ; \
