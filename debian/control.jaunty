@@ -2,8 +2,8 @@ Source: moa
 Section: science
 Priority: extra
 Maintainer: Mark Fiers <mark.fiers.42@gmail.com>
-Build-Depends: debhelper (>= 5)
-Standards-Version: 3.7.3
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.0
 Homepage: http://mfiers.github.com/Moa/
 
 Package: moa
