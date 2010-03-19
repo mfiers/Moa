@@ -57,7 +57,7 @@ $(warning unittest? $(MOA_UNITTESTS) x)
 moa_git_init_project: $(if $(MOA_UNITTESTS),moa_git_init_project_3,moa_git_init_project_2)
 
 moa_git_init_project_3:
-	$(call err, not doing git init)
+	$(warning hello)
 
 moa_git_init_project_2:
 
