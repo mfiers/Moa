@@ -163,6 +163,7 @@ def getInfo(wd):
     >>> parameters.has_key('title')
     True
     >>> p_title = parameters['title']
+    >>> print p_title
     >>> p_title.has_key('category') and p_title.has_key('mandatory')
     True
     >>> p_title.has_key('help') and p_title.has_key('default')
