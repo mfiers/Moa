@@ -17,16 +17,28 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-MOA_INCLUDE_PLUGIN_GIT= yes
+MOA_INCLUDE_PLUGIN_STATE= yes
 
-################################################################################
-## Git - use git to keep track of project history
+moa_targets += state
+state_help += shows the current state of this anaolysis
 
-## Add a hook for project_init
-moa_hooks_pre_welcome += moa_logo
+moa_state_insets += $(moa_id)_input_files
+moa_state_outsets += $(moa_id)_output_files
 
-.PHONY: moa_logo
-moa_logo:
-	-$e if [[ ! ("$(MOAANSI)" == "no") ]]; then 			\
-		cat $(MOABASE)/share/logo/moa.logo.txt;		\
-	fi
+.PHONY: state
+state: $(addprefix moa_state_,$(moa_state_outsets)) \
+	$(addprefix moa_state_,$(moa_state_insets))
+
+
+define state_target
+$(warning creating_state_$(1) : $(1))
+$(warning test $$($(1)))
+moa_state_$(1): $$($(1))
+	$e echo $($(1))
+	$e echo x $(1): $$? $$^ y
+endef 
+
+$(foreach st,$(moa_state_insets),$(eval $(call state_target,$(st))))
+$(foreach st,$(moa_state_outsets),$(eval $(call state_target,$(st))))
+
+

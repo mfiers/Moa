@@ -17,6 +17,16 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-ifndef MOA_INCLUDE_PLUGIN_LOGO
- include $(MOABASE)/template/moa/plugins/__logo.mk
-endif
+MOA_INCLUDE_PLUGIN_GIT= yes
+
+################################################################################
+## Git - use git to keep track of project history
+
+## Add a hook for project_init
+moa_hooks_pre_welcome += moa_logo
+
+.PHONY: moa_logo
+moa_logo:
+	-$e if [[ ! ("$(MOAANSI)" == "no") ]]; then 			\
+		cat $(MOABASE)/share/logo/moa.logo.txt;		\
+	fi
