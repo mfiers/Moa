@@ -45,11 +45,10 @@ endif
 MOA_INCLUDE_MOAMK = yes
 -include moa.mk
 
-## Load plugins
+## Load plugins early - load before template definitions are made
 $(foreach p,$(moa_plugins), \
-	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
+	$(eval -include $(MOABASE)/template/moa/plugins/$(p)_early.mk) \
 )
-
 
 ## Files that moa uses
 moa_system_files = Makefile moa.mk

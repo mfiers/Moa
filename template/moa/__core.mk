@@ -23,7 +23,13 @@
 ###############################################################################
 
 __MOA_INCLUDE_CORE = yes
+#see if __prepare is already loaded, if not load:
 include $(MOABASE)/template/moa/prepare.mk
+
+#load the plugins: contains core - post definition
+$(foreach p,$(moa_plugins), \
+	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
+)
 
 ## Prepare - fill in the defaults of all variables
 ## Fill in the default values of each variable
@@ -419,11 +425,3 @@ showvars:
 		echo $$x; \
 	done
 
-################################################################################
-## make info ###################################################################
-#
-#### Show lots of information on the current job
-#
-################################################################################
-
-comma=,
