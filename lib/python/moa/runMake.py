@@ -231,11 +231,16 @@ def runMakeGetOutput(*args, **kwargs):
     """
     Run runmake, wait for it to finish & return the output -
     we capture the output in a random name (to preven collisions)
+
     """
     outName = 'moa.%d' % os.getpid()
+    l.debug("runMakeGetOutput args %s kwargs %s" % (args, kwargs))
     if not kwargs.has_key('wd'):
         wd = os.getcwd()
         kwargs['wd'] = wd
+    else: 
+        wd = kwargs['wd']
+
     kwargs['captureOut'] = True
     kwargs['captureOutName'] = outName
     kwargs['background'] = False

@@ -30,3 +30,6 @@ moa_logo:
 	-$e if [[ ! ("$(MOAANSI)" == "no") ]]; then 			\
 		cat $(MOABASE)/share/logo/moa.logo.txt;		\
 	fi
+
+.PHONY: moa_plugin_logo_test
+moa_plugin_logo_test:

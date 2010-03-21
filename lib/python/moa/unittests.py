@@ -43,6 +43,9 @@ tests = 0
 templateFailures = 0
 templateTests = 0
 
+pluginFailures = 0
+pluginTests = 0
+
 TESTGLOB = {
     'MOABASE' : MOABASE,
     'P_TEST' : os.path.join(MOABASE, 'test', '00.base', '99.test'),
@@ -58,6 +61,36 @@ def testModule(m):
     failures += f
     tests += t
     
+def testPlugins():
+    global pluginFailures
+    global pluginTests
+    testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')    
+    moa.utils.removeMoaFiles(testDir)
+    moa.api.newJob(template = 'traverse', wd = testDir,
+                   title='Testing plugins')
+        
+    for plugin in moa.info.getPlugins(wd = testDir):
+        l.info("testing plugin %s" % plugin)
+        rc = moa.runMake.go(wd=testDir,
+                            target='moa_plugin_%s_test' % plugin,
+                            background=False,
+                            verbose=False,
+                            captureOut=True,
+                            makeArgs = [])
+        pluginTests += 1
+        if rc != 0:
+            err = moa.api.getMoaErr(wd=testDir)
+            if 'No rule to make target' in str(err):
+                l.warning("No tests defined for plugin %s" % plugin)
+            else:
+                pluginFailures += 1
+                l.error("Error running plugin test for %s" % plugin)
+                l.error(err)
+                                     
+        result = moa.api.getMoaOut(wd=testDir).strip()
+        if result:
+            print result
+
 def testTemplates():
     global templateFailures
     global templateTests
@@ -136,14 +169,28 @@ def run(options, args):
         
         l.info("Finished running of python unittests")
         l.info("Ran %d test, %d failed" % (tests, failures))
+
         l.info("Start running basic template tests")
         testTemplates()
-        l.info("Ran %d template test, %d failed" % (templateTests, templateFailures))
-        l.info("Finished running basic template tests")
+        l.info("Ran %d template test, %d failed" % (
+                templateTests, templateFailures))
+
+        l.info("Start running plugin tests")
+        testPlugins()
+        l.info("Ran %d plugin test, %d failed" % (
+                pluginTests, pluginFailures))
+        l.info("Finished running plugin tests")
         sys.exit()
         
     for what in args:
-        if what == 'templates':
+        if what == 'plugins':
+            l.info("Start running plugin tests")
+            testPlugins()
+            l.info("Ran %d plugin test, %d failed" % (
+                    pluginTests, pluginFailures))
+            l.info("Finished running plugin tests")
+            
+        elif what == 'templates':
             l.info("Start running basic template tests")
             testTemplates()
             l.info("Ran %d template test, %d failed" % (templateTests, templateFailures))

@@ -56,10 +56,6 @@ from moa import utils
 from moa.exceptions import *
 from moa.checkTemplate import checkTemplate
 
-## Determine which plugins are loaded
-moaPlugins = moa.runMake.runMakeGetOutput(
-    target='moa_list_plugins').strip().split()
-
 ## Init the logger
 import moa.logger
 l = moa.logger.l
@@ -67,12 +63,17 @@ l = moa.logger.l
 if '-v' in sys.argv:
     moa.logger.setVerbose()
 
+## Determine which plugins are loaded
+moaPlugins = moa.info.getPlugins()
+l.debug("Plugins %s" % moaPlugins)
+
 import moa.plugin.git
 ## read plugin code
 moaPluginsLoaded = []
 moaPluginModules = {}
 for plugin in moaPlugins:
     pyModule = 'moa.plugin.%s' % plugin
+    l.debug("attempt to load python module %s" % pyModule)
     try:
         _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
         moaPluginModules[plugin] = _m

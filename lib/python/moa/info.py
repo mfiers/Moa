@@ -28,9 +28,25 @@ from moa.logger import l
 from moa import runMake
 from moa.exceptions import *
 import moa.utils
+import moa.runMake
 import moa.lock
 
 MOABASE = os.environ["MOABASE"]
+
+def getPlugins(wd = None):
+    """
+    Get the plugins for a certain directory
+    """
+    if wd == None: wd = os.getcwd()
+    if not isMoaDir(wd):
+        return []
+    l.debug("getting plugins for %s" % wd)
+    result = moa.runMake.runMakeGetOutput(
+        verbose=False, wd = wd, target='moa_list_plugins').strip().split()
+    l.debug("Plugins for '%s' are '%s'" % (
+            wd, ', '.join(result)))
+    return result
+
 
 def getMoaBase():
     """
