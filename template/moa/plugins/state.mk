@@ -32,7 +32,7 @@ state: $(addprefix moa_state_,$(moa_state_outsets)) \
 
 define state_target
 $(warning creating_state_$(1) : $(1))
-$(warning test $$($(1)))
+$(warning test $(1))
 moa_state_$(1): $$($(1))
 	$e echo $($(1))
 	$e echo x $(1): $$? $$^ y

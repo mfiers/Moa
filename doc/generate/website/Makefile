@@ -26,7 +26,7 @@ imagesao: moa.css images/moa_logo_small.png  images/moa_logo_smaller.png
 	cp moa.css ../../html/
 	cp -r images/* ../../html	
 	cp ../../manual.pdf ../../html/moa_manual.pdf
-	cp ../../api ../../html/ -R
+	#cp ../../api ../../html/ -R
 
 ../../html/index.html: index.template.html header.html footer.html
 	cat header.html > $@

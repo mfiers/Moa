@@ -26,10 +26,15 @@ __MOA_INCLUDE_CORE = yes
 #see if __prepare is already loaded, if not load:
 include $(MOABASE)/template/moa/prepare.mk
 
-#load the plugins: contains core - post definition
+##load the plugins: contains core - post definition
 $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
 )
+
+##moa_list_plugins - list all loaded plugins
+.PHONY: moa_list_plugins
+moa_list_plugins:
+	@echo $(moa_plugins)
 
 ## Prepare - fill in the defaults of all variables
 ## Fill in the default values of each variable
@@ -265,7 +270,7 @@ all: $(if $(call seq,$(action),), \
 
 # Add a few default targets to the set 
 # of possible targets
-moa_targets += check clean show all prereqs set append
+moa_targets += check clean show all prereqs set
 
 # and define help for these
 check_help = Check variable definition
@@ -274,8 +279,6 @@ show_help = Show the defined variables
 all_help = Recursively run through all subdirectories (use make all \
   action=XXX to run "make XXX" recursively)
 prereqs_help = Check if all prerequisites are present
-set_help = set a variable to moa.mk
-append_help = as set, but append the variable to a list.
 
 #some default variable help defs
 input_dir_help = Directory with the input data
@@ -283,7 +286,6 @@ input_extension_help = Extension of the input files
 
 #prevent reinclusion of moabase
 dont_include_moabase=defined
-
 
 ###################################################
 ## Moa check - is everything defined?
@@ -367,14 +369,6 @@ mustexist_%:
 	@if [ "$(origin $*)" == "undefined" ]; then \
 		$(call exerUnlock,Error: $* is undefined) ;\
 	fi
-
-#defer this to MOA
-.PHONY: set
-set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
-
-.PHONY: moa_set_2
-moa_set_2:
-	moa $(minv) __set $(MOAARGS)
 
 ################################################################################
 ## make show ###################################################################

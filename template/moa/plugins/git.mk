@@ -73,13 +73,17 @@ moa_git_init_project_2:
 		$(call moa_git_init_gitignore); \
 	fi
 
+#do not run moa git init when in doing unittests
+moa_git_init: $(if $(MOA_UNITTESTS),,moa_git_init_2)
+
 .PHONY: moa_git_init
-moa_git_init:
-	$(warning in git init)
+moa_git_init_2:
 	if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
+		$(warning in git init)
 		git add $(minv) --all; \
 		git commit -qa -m "$(commit_message)" >/dev/null; \
 	fi
+
 
 .PHONY: moa_git_postset
 moa_git_postset:

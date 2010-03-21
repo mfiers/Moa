@@ -44,23 +44,6 @@ site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
-##
-## Read the moa configutation file 
-ETC = {}
-for line in open(os.path.join(MOABASE, 'etc', 'moa.conf.mk')).readlines():
-    line = line.strip()
-    if not line: 
-        continue
-    if line[0] == '#': 
-        continue
-    l = [x.strip() for x in re.split("\+?=", line, maxsplit=1)]
-    if len(l) == 2:
-        ETC[l[0]] = l[1]
-if ETC.has_key('moa_plugins'):
-    moaPlugins = ETC['moa_plugins'].split()
-else:
-    moaPlugins = []
-
 import moa.job
 import moa.archive
 from moa import runMake
@@ -72,6 +55,10 @@ import moa.unittests
 from moa import utils
 from moa.exceptions import *
 from moa.checkTemplate import checkTemplate
+
+## Determine which plugins are loaded
+moaPlugins = moa.runMake.runMakeGetOutput(
+    target='moa_list_plugins').strip().split()
 
 ## Init the logger
 import moa.logger
@@ -186,11 +173,12 @@ if options.remake:
 ## 
 if __name__ == "__main__":    
     l.debug("MOABASE : %s" % MOABASE)
-
+    l.debug("Extra make parameters %s" % extraMakeParameters)
     if len(args) == 0:
-        rc = runMake.go(verbose = options.verbose,
+        rc = runMake.go(target = 'moa_default_target',
+                        verbose = options.verbose,
                         threads = options.threads,
-                        extraMakeParameters = extraMakeParameters,                        
+                        extraMakeParameters = extraMakeParameters,            
                         background = options.background)
         sys.exit(rc)
 
