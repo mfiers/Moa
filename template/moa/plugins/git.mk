@@ -53,12 +53,10 @@ else
 endif
 
 #Initialze a git repository
-moa_git_init_project: 
-	$e if [[ "$(MOA_UNITTESTS)" ]]; \
-	then \
-		true Do not do this during unittesting; \
-		echo -n; \
-	elif ! git status 2>&1 | grep -q 'Not a git repo' ; \
+moa_git_init_project: $(if $(MOA_UNITTESTS),,moa_git_init_project_2)
+
+moa_git_init_project_2:
+	if ! git status 2>&1 | grep -q 'Not a git repo' ; \
 	then \
 		if [[ "$$MOA_GITFORCEINIT" ]] && ls .git | grep -q config ; \
 		then \
@@ -77,6 +75,7 @@ moa_git_init_project:
 
 .PHONY: moa_git_init
 moa_git_init:
+	$(warning in git init)
 	if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
 		git add $(minv) --all; \
 		git commit -qa -m "$(commit_message)" >/dev/null; \

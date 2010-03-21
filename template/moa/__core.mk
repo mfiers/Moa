@@ -23,11 +23,17 @@
 ###############################################################################
 
 __MOA_INCLUDE_CORE = yes
+#see if __prepare is already loaded, if not load:
 include $(MOABASE)/template/moa/prepare.mk
+
+#load the plugins: contains core - post definition
+$(foreach p,$(moa_plugins), \
+	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
+)
 
 ## Prepare - fill in the defaults of all variables
 ## Fill in the default values of each variable
-$(foreach v,$(moa_must_define) $(moa_may_define),				\
+$(foreach v,$(moa_must_define) $(moa_may_define), \
 	$(if $($v),, \
 		$(if $($v_default), \
 			$(eval $v=$($v_default))) ) )
@@ -68,10 +74,9 @@ moa_execute_targets = \
 .DEFAULT_GOAL := moa_default_target
 moa_default_target: $(moa_execute_targets)
 
-.PHONY: moa_run_precommand
 moa_run_precommand:
-	$e if [[ "$(value moa_precommand)" ]]; then 			\
-		$(call echo,Running precommand); 					\
+	$e if [[ "$(value moa_precommand)" ]]; then \
+		$(call echo,Running precommand); \
 	fi
 	$e $(moa_precommand)
 
@@ -106,11 +111,6 @@ moa_welcome:
 #
 # From here on moa.mk can be assumed to be included 
 ###############################################################################
-
-.PHONY: title
-title:
-	@echo $(title)
-
 
 .PHONY: moa_set_runlock
 moa_set_runlock:
@@ -284,15 +284,6 @@ input_extension_help = Extension of the input files
 #prevent reinclusion of moabase
 dont_include_moabase=defined
 
-#each analysis MUST have a name
-#Variable: set_name
-#moa_may_define += project
-moa_must_define += title
-title_type = string
-title_help ?= A job name - Describe what you are doing
-
-## author of this template
-moa_author ?= Mark Fiers
 
 ###################################################
 ## Moa check - is everything defined?
@@ -418,51 +409,4 @@ showvars:
 	for x in $(moa_must_define) $(moa_may_define); do \
 		echo $$x; \
 	done
-
-################################################################################
-## make info ###################################################################
-#
-#### Show lots of information on the current job
-#
-################################################################################
-
-comma=,
-info_keyval = "$(1)" : "$(subst '"',"'",$(2))"
-info_keyvallist = "$(1)" : [$(call merge,$(comma),$(foreach v,$(2),"$(subst '"',"'",$(v))"))]
-
-.PHONY: info info_header 
-		info_parameters 			\
-		info_parameters_optional 	\
-		info_parameters_required 
-
-info: info_header info_parameters
-
-info_header:
-	@echo -e 'moa_title\t$(moa_title)'
-	@echo -e 'moa_description\t$(moa_description)'
-	@echo -e 'moa_targets\t$(moa_id) all clean $(moa_additional_targets)'
-
-info_parameters: info_parameters_required info_parameters_optional
-
-info_parameters_required: mandatory=yes
-info_parameters_required: $(addprefix info_par_,$(moa_must_define))
-
-info_parameters_optional: mandatory=no
-info_parameters_optional: $(addprefix info_par_,$(moa_may_define))
-
-info_par_%:
-	@echo -en 'parameter'
-	@echo -en '\tname=$*'
-	@echo -en '\tmandatory=$(mandatory)'
-	@echo -en '\ttype=$*'
-	@echo -en '\tvalue=$($*)'
-	@echo -en '\tdefault=$($*_default)'
-	@echo -en '\tallowed=$($*_allowed)'
-	@echo -en '\ttype=$($*_type)'
-	@echo -en '\tcardinality=$(if $($*_cardinality),$($*_cardinality),one)'
-	@echo -en '\tcategory=$($*_category)'
-	@echo -en '\thelp=$($*_help)'
-	@echo
-
-
 

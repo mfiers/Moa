@@ -45,11 +45,10 @@ endif
 MOA_INCLUDE_MOAMK = yes
 -include moa.mk
 
-## Load plugins
+## Load plugins early - load before template definitions are made
 $(foreach p,$(moa_plugins), \
-	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
+	$(eval -include $(MOABASE)/template/moa/plugins/$(p)_early.mk) \
 )
-
 
 ## Files that moa uses
 moa_system_files = Makefile moa.mk
@@ -145,6 +144,17 @@ moa_preprocess:
 
 .PHONY: moa_postprocess
 moa_postprocess:
+
+#each analysis MUST have a name
+#Variable: set_name
+#moa_may_define += project
+moa_must_define += title
+title_type = string
+title_help ?= A job name - Describe what you are doing
+
+## author of this template
+moa_author ?= Mark Fiers
+
 
 ## aditional  pre/post process command - to be definable in moa.mk
 ## this is only one single command.

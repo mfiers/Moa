@@ -249,7 +249,7 @@ def info(wd):
         ls = line.split("\t")
         what = ls[0]
         if len(ls) > 1:
-            val = ls[1]
+            val = " ".join(ls[1:])
         else:
             val = ""
         
