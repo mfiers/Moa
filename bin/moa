@@ -56,6 +56,10 @@ from moa import utils
 from moa.exceptions import *
 from moa.checkTemplate import checkTemplate
 
+## Determine which plugins are loaded
+moaPlugins = moa.runMake.runMakeGetOutput(
+    target='moa_list_plugins').strip().split()
+
 ## Init the logger
 import moa.logger
 l = moa.logger.l
