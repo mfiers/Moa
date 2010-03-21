@@ -158,6 +158,77 @@ sequences. Using a separate subdirectory to
 
 # Reference
 
+## Moa Makefile load order
+
+Makefiles are sensitive to the order in which definitions are made,
+and thus the order in which the include files are loaded. Moa broadly
+recognizes two stages: "definition" and "implementation". The
+implementation phase starts once the moa core library is
+loaded. 
+
+Moa makefile load starts with loading the template makefile in the
+current work directory. This Makefile loads a number of other
+makefiles that load more Makefiles. The following list shows a
+detailed load order
+
+* **Makefile**: The Makefile in the working directory
+    * **prepare.mk**: initial definitions. At the start of the
+        prepare.mk file the following files are loaded:
+        
+        * **gmsl**: The
+            [GNU Make Standard library](http://gmsl.sourceforge.net/),
+            a number of utilities for use in Makefiles.
+        * **global configuration** (`$(MOABASE)/etc/moa.conf`): This
+          file loads the global default configuration file (
+          `$(MOABASE)/etc/moa.conf.mk.default`)
+        * **Project configuration**: (if present). Moa attempts to
+          find this in the first parent directory of the current
+          working directory that contains a moa project with template
+          "project".
+        * **Local configuration** (`moa.mk`)
+        * **Plugin definitions**: For each plugin name defined in the
+          variable `moa_plugins`, moa attempts to load a file called
+          `$(MOABASE)/template/moa/plugins/PLUGINNAME_def.mk`.
+        
+        Once these files are loaded, more Moa specific definitions
+        follow in `prepare.mk`
+        
+    * **template Makefile**: (`$(MOABASE)/template/TEMPLATENAME.mk`) A
+        makefile specific for the job at hand. This template Makefile
+        might attempt to load prepare.mk, unless it was already loaded
+        earlier. The first part of the template Makefile is used for
+        defining template specific variables. 
+        
+        The definition phase of a Moa Makefile is concluded by loading:
+        
+        * **Moa core** (`$(MOABASE)/template/moa/core.mk`). The first
+          thing the Moa core libraries do is loading a set of plugins:
+            * **Plugin cores**:
+              (`$(MOABASE)/template/moa/plugins/PLUGINNAME.mk`)
+	      
+          After the plugins are loaded moa defines a number of core
+          targets, most importantly, the default target that defines
+          the execution order (see the next paragraph). As much of the
+          functionality as possible is definined as a plubin.
+	
+	Once the core library has loaded, the template specific
+	targets are parsed.
+      
+## Execution order
+
+### Run
+
+* `moa_hooks_prewelcome`
+* `moa_welcome`
+* `moa_hooks_precheck`
+* `moa_check`
+* `moa_prepare`
+* `$(moa_id)_prepare`
+* `$(moa_id)`
+* `$(moa_id)_post`
+* moa_post
+
+
 ## Environment variables
 
 These environment variables are used by Moa:

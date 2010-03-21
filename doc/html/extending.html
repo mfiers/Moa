@@ -258,6 +258,134 @@
   ></ul
 ><h1 id="reference"
 >Reference</h1
+><h2 id="moa-makefile-load-order"
+>Moa Makefile load order</h2
+><p
+>Makefiles are sensitive to the order in which definitions are made, and thus the order in which the include files are loaded. Moa broadly recognizes two stages: &quot;definition&quot; and &quot;implementation&quot;. The implementation phase starts once the moa core library is loaded.</p
+><p
+>Moa makefile load starts with loading the template makefile in the current work directory. This Makefile loads a number of other makefiles that load more Makefiles. The following list shows a detailed load order</p
+><ul
+><li
+  ><strong
+    >Makefile</strong
+    >: The Makefile in the working directory<ul
+    ><li
+      ><p
+	><strong
+	  >prepare.mk</strong
+	  >: initial definitions. At the start of the prepare.mk file the following files are loaded:</p
+	><ul
+	><li
+	  ><strong
+	    >gmsl</strong
+	    >: The <a href="http://gmsl.sourceforge.net/"
+	    >GNU Make Standard library</a
+	    >, a number of utilities for use in Makefiles.</li
+	  ><li
+	  ><strong
+	    >global configuration</strong
+	    > (<code
+	    >$(MOABASE)/etc/moa.conf</code
+	    >): This file loads the global default configuration file ( <code
+	    >$(MOABASE)/etc/moa.conf.mk.default</code
+	    >)</li
+	  ><li
+	  ><strong
+	    >Project configuration</strong
+	    >: (if present). Moa attempts to find this in the first parent directory of the current working directory that contains a moa project with template &quot;project&quot;.</li
+	  ><li
+	  ><strong
+	    >Local configuration</strong
+	    > (<code
+	    >moa.mk</code
+	    >)</li
+	  ><li
+	  ><strong
+	    >Plugin definitions</strong
+	    >: For each plugin name defined in the variable <code
+	    >moa_plugins</code
+	    >, moa attempts to load a file called <code
+	    >$(MOABASE)/template/moa/plugins/PLUGINNAME_def.mk</code
+	    >.</li
+	  ></ul
+	><p
+	>Once these files are loaded, more Moa specific definitions follow in <code
+	  >prepare.mk</code
+	  ></p
+	></li
+      ><li
+      ><p
+	><strong
+	  >template Makefile</strong
+	  >: (<code
+	  >$(MOABASE)/template/TEMPLATENAME.mk</code
+	  >) A makefile specific for the job at hand. This template Makefile might attempt to load prepare.mk, unless it was already loaded earlier. The first part of the template Makefile is used for defining template specific variables.</p
+	><p
+	>The definition phase of a Moa Makefile is concluded by loading:</p
+	><ul
+	><li
+	  ><strong
+	    >Moa core</strong
+	    > (<code
+	    >$(MOABASE)/template/moa/core.mk</code
+	    >). The first thing the Moa core libraries do is loading a set of plugins:<ul
+	    ><li
+	      ><strong
+		>Plugin cores</strong
+		>: (<code
+		>$(MOABASE)/template/moa/plugins/PLUGINNAME.mk</code
+		>)</li
+	      ></ul
+	    ></li
+	  ></ul
+	><p
+	>After the plugins are loaded moa defines a number of core targets, most importantly, the default target that defines the execution order (see the next paragraph). As much of the functionality as possible is definined as a plubin.</p
+	></li
+      ></ul
+    ><p
+    >Once the core library has loaded, the template specific targets are parsed.</p
+    ></li
+  ></ul
+><h2 id="execution-order"
+>Execution order</h2
+><h3 id="run"
+>Run</h3
+><ul
+><li
+  ><code
+    >moa_hooks_prewelcome</code
+    ></li
+  ><li
+  ><code
+    >moa_welcome</code
+    ></li
+  ><li
+  ><code
+    >moa_hooks_precheck</code
+    ></li
+  ><li
+  ><code
+    >moa_check</code
+    ></li
+  ><li
+  ><code
+    >moa_prepare</code
+    ></li
+  ><li
+  ><code
+    >$(moa_id)_prepare</code
+    ></li
+  ><li
+  ><code
+    >$(moa_id)</code
+    ></li
+  ><li
+  ><code
+    >$(moa_id)_post</code
+    ></li
+  ><li
+  >moa_post</li
+  ></ul
 ><h2 id="environment-variables"
 >Environment variables</h2
 ><p

@@ -78,14 +78,13 @@
     ></li
   ></ul
 ><p
->Moa aims at making it easy to create and reuse building blocks (such as doing a BLAST analysis) without losing any of the flexibility that comes with ad-hoc scripts. Another major aim of Moa is to organize a bioinformatics project so that it possible later to understand what ex</p
-><p
->The best way to understand what Moa does is by a small example:</p
+>The best way to understand how Moa works is by a small example:</p
 ><pre
 ><code
   >moa new blast -t &quot;run a demo&quot;
 moa set blast_db=/data/blast/db/nt
 moa set blast_input_dir=../sequences
+moa set moa_post_process='grep polymerase gff/*gff &gt; pol.gff'
 moa run
 </code
   ></pre

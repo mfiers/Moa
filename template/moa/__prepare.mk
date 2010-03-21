@@ -47,7 +47,7 @@ MOA_INCLUDE_MOAMK = yes
 
 ## Load plugins early - load before template definitions are made
 $(foreach p,$(moa_plugins), \
-	$(eval -include $(MOABASE)/template/moa/plugins/$(p)_early.mk) \
+	$(eval -include $(MOABASE)/template/moa/plugins/$(p)_def.mk) \
 )
 
 ## Files that moa uses
@@ -154,7 +154,6 @@ title_help ?= A job name - Describe what you are doing
 
 ## author of this template
 moa_author ?= Mark Fiers
-
 
 ## aditional  pre/post process command - to be definable in moa.mk
 ## this is only one single command.

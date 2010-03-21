@@ -155,12 +155,12 @@ def _runMake(wd = None, target = "", makeArgs = [],
 
 def go(wd = None,
        target = "",
+       makeArgs = [],
        extraMakeParameters=[],
        verbose=True,
        threads=1,
        background = False,
        captureOut = None,
-       makeArgs = [],
        captureOutName='moa',
        exitWhenDone=False ):    
     """
@@ -201,7 +201,8 @@ def go(wd = None,
     if captureOut == None:
         captureOut = False
 
-    l.debug("starting _runMake with target '%s', args %s " % (target, makeArgs))
+    l.debug("starting _runMake with target '%s', args %s " % (
+            target, makeArgs))
     rc = _runMake(wd = wd,
                   target=target,
                   makeArgs = makeArgs,
@@ -232,12 +233,16 @@ def runMakeGetOutput(*args, **kwargs):
     we capture the output in a random name (to preven collisions)
     """
     outName = 'moa.%d' % os.getpid()
-    wd = kwargs['wd']
+    if not kwargs.has_key('wd'):
+        wd = os.getcwd()
+        kwargs['wd'] = wd
     kwargs['captureOut'] = True
     kwargs['captureOutName'] = outName
     kwargs['background'] = False
-    runMake(*args, **kwargs)
-    return getOutput(wd, outName)
+    go(*args, **kwargs)
+    output = getOutput(wd, outName)
+    moa.utils.removeMoaOutfiles(wd, outName)
+    return output
 
 def getOutput(wd, outName='moa'):
     """

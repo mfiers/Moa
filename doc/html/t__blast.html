@@ -71,21 +71,13 @@
   ><dt
   >blast</dt
   ><dd
-  ><p
-    >Running BLAST takes an input directory (<em
-      >blast_input_dir</em
-      >), determines what sequence files are present (with the parameter <em
-      >blast_input_extension</em
-      >) and executes BLAST on each of these. Moa BLAST is configured to create XML output (as opposed ot the standard text based output) in the <em
-      >./out</em
-      > directory. The output XML is subsequently converted to GFF3 ). Additionally, a simple text report is created.</p
-    ></dd
-  ><dt
-  >blast_report</dt
-  ><dd
-  ><p
-    >Generate a text BLAST report.</p
-    ></dd
+  >Running BLAST takes an input directory (<em
+    >blast_input_dir</em
+    >), determines what sequence files are present (with the parameter <em
+    >blast_input_extension</em
+    >) and executes BLAST on each of these. Moa BLAST is configured to create XML output (as opposed ot the standard text based output) in the <em
+    >./out</em
+    > directory. The output XML is subsequently converted to GFF3 ). Additionally, a simple text report is created. moa_additional_targets += blast_report</dd
   ></dl
 ><h1 id="parameters"
 >Parameters</h1
@@ -93,6 +85,10 @@
 >Required parameters</h2
 ><dl
 ><dt
+  >title</dt
+  ><dd
+  >A job name - Describe what you are doing (string)</dd
+  ><dt
   >blast_input_dir</dt
   ><dd
   >Directory with the BLAST input files (directory)</dd
@@ -100,10 +96,6 @@
   >blast_db</dt
   ><dd
   >Location of the blast database. You can either define the blast db parameter as used by blast, or any of the blast database files, in which case the extension will be removed before use (file)</dd
-  ><dt
-  >title</dt
-  ><dd
-  >A job name - Describe what you are doing (string)</dd
   ></dl
 ><h2 id="optional-parameters"
 >Optional parameters</h2
