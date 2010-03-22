@@ -46,7 +46,7 @@ adhoc_parallel_type = set
 adhoc_parallel_allowed = T F
 
 moa_may_define += adhoc_process
-adhoc_process_default = ln -f $$< $$(adhoc_target)
+adhoc_process_default = ln -f $$< $$(t)
 adhoc_process_help = Command to process the files. If undefined,	\
   hardlink the files.
 adhoc_process_type = string
@@ -69,15 +69,14 @@ adhoc_powerclean_allowed = T F
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moa/core.mk
 
-
-$(call moa_fileset_remap,adhoc_input,adhoc_output,touch)
+adhoc_touch_files=$(addprefix touch/,$(notdir $(adhoc_input_files)))
 
 adhoc_link_noclean ?= Makefile moa.mk
 
 .PHONY: adhoc_prepare
 adhoc_prepare:
 	-$e mkdir touch 2>/dev/null || true
-	-$e [[ "$(g_output_dir)" == "." ]] !! mkdir $(g_output_dir)
+	-$e [[ "$(adhoc_output_dir)" == "." ]] || mkdir $(adhoc_output_dir)
 
 .PHONY: adhoc_post
 adhoc_post:
@@ -88,11 +87,11 @@ endif
 .PHONY: adhoc
 
 .PHONY: adhoc
-adhoc:  $(adhoc_output_files)
+adhoc:  $(adhoc_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed $(adhoc_name_sed))
-touch/%: %
-	$(call echo,adhocer: considering $< - $t)
+touch/%: $(adhoc_input_dir)/%
+	$(call echo,considering $t)
 	$e $(adhoc_process)
 	touch $@
 
