@@ -182,6 +182,7 @@ if __name__ == "__main__":
         rc = runMake.go(target = 'moa_default_target',
                         verbose = options.verbose,
                         threads = options.threads,
+                        makeArgs = [],
                         extraMakeParameters = extraMakeParameters,            
                         background = options.background)
         sys.exit(rc)
@@ -231,7 +232,7 @@ if __name__ == "__main__":
     else:
         #fire arguments of to make
         rc = runMake.go(target = command,
-                        makeArgs=args,
+                        makeArgs=newargs,
                         threads = options.threads,
                         background = options.background,
                         extraMakeParameters = extraMakeParameters,
