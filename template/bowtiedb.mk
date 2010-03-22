@@ -41,8 +41,8 @@ bowtiedb: $(bowtiedb_name).1.ebwt
 
 #one of the database files
 $(bowtiedb_name).1.ebwt: $(bowtiedb_input_files)
-	-rm -f $(bowtiedb_name).*.ebwt	
-	bowtie-build $(call merge,$(comma),$^) $(bowtiedb_name)
+	-$e rm -f $(bowtiedb_name).*.ebwt
+	$e bowtie-build $(call merge,$(comma),$^) $(bowtiedb_name)
 	touch $(bowtiedb_name)
 
 bowtiedb_clean:
