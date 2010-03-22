@@ -69,23 +69,23 @@ test_moa_id_space=$(if $(call seq,"$(moa_id)","$(strip $(moa_id))"),,echo 'moa_i
 template_test:
 	@echo -n
 	@$(call test_moa_id_space)
-	$(foreach v,$(moa_must_define) $(moa_may_define),	\
+	@$(foreach v,$(moa_must_define) $(moa_may_define),	\
 		$(call var_defined,$(v)_help)					\
 		$(call var_defined,$(v)_type)					\
 		$(call var_correct_type,$(v))					\
 	)
-	$(foreach v, $(moa_may_define),						\
+	@$(foreach v, $(moa_may_define),						\
 		$(call var_defined,$(v)_default)				\
 	)
 
 template_extra_test:
-	RANDOMDIR=`mktemp -d`;                      		\
-	$(call warn,Executing unittest $* in $$RANDOMDIR);	\
-	cd $$RANDOMDIR;                        			\
-	moa new -t 'unittest' $*;                  		\
-	moa -v unittest_$* ;                    			\
-	if [[ "$$?" != "0" ]]; then 				\
-	$(call exer,unittest failed); 				\
-	fi;  							\
-	$(call warn,Finished executing unittest $*);        	\
-	rm -rf $$RANDOMDIR
+	RANDOMDIR=`mktemp -d`;                      			\
+	@$(call warn,Executing unittest $* in $$RANDOMDIR);	\
+	$e cd $$RANDOMDIR;                        				\
+	$e moa new -t 'unittest' $*;                  			\
+	$e moa -v unittest_$* ;                    				\
+	$e if [[ "$$?" != "0" ]]; then 							\
+		$(call exer,unittest failed); 						\
+	fi;  													\
+	$e $(call warn,Finished executing unittest $*);        	\
+	$e rm -rf $$RANDOMDIR

@@ -18,10 +18,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-moa frontend
+Moa frontend
 
 This script serves as a command dispatcher for all moa functionality
-
 """
 
 import os
@@ -54,29 +53,26 @@ import moa.project
 import moa.unittests
 from moa import utils
 from moa.exceptions import *
-from moa.checkTemplate import checkTemplate
+import moa.checkTemplate
 
-## Determine which plugins are loaded
-moaPlugins = moa.info.getPlugins()
-
-## Init the logger
+## Initialize the logger
 import moa.logger
 l = moa.logger.l
-#quick hack to set verbosity
+
+## A quick hack to set verbosity before reading command line arguments
 if '-v' in sys.argv:
     moa.logger.setVerbose()
 
-## Determine which plugins are loaded
+## Determine what plugins are loaded
 moaPlugins = moa.info.getPlugins()
-l.debug("Plugins %s" % moaPlugins)
-
-import moa.plugin.git
-## read plugin code
 moaPluginsLoaded = []
 moaPluginModules = {}
+l.debug("Plugins %s" % moaPlugins)
+
+## load the plugins as seperate modules. A plugin does not need to
+## have a python module.
 for plugin in moaPlugins:
     pyModule = 'moa.plugin.%s' % plugin
-    l.debug("attempt to load python module %s" % pyModule)
     try:
         _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
         moaPluginModules[plugin] = _m
@@ -85,29 +81,27 @@ for plugin in moaPlugins:
     except ImportError, e:
         if not str(e) == "No module named %s" % plugin:
             raise
+        l.debug("No python plugin module found for %s" % plugin)
 
 ## Command definitions
-moaCommands = {
-    'list' : 'List all known templates',
-    'set'  : 'Set or append to a configuration value. Variables should be defined as ' +
-             'KEY=VALUE pairs on the command-line',
-    'help' : 'Display help on the current job (not this help!)',
-    'show' : 'Display the currently set variables',
-    'run'  : 'Execute Moa, this runs the default action',    
-    }
+moaCommands = {}
 
+## Plugin: define Moa commands
 for p in moaPluginsLoaded:
     moaPluginModules[p].defineCommands(moaCommands)
     
+## start defining the command line interface
 USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
 _commands = moaCommands.keys()
 _commands.sort()
 for _c in _commands:
+    if moaCommands[_c].get('private', False):
+        continue
     USAGE += "\n".join(
         textwrap.wrap(
-            '%s: %s' % (_c, moaCommands[_c]),
-            initial_indent=' ',
-            subsequent_indent = '   ')) + "\n"
+            '%s: %s' % (_c, moaCommands[_c]['desc']),
+            initial_indent=' - ',
+            subsequent_indent = '     ')) + "\n"
 
 ## define & parse command line options  
 parser = optparse.OptionParser(usage=USAGE)
@@ -129,28 +123,29 @@ parser.add_option("-j", dest="threads",
 parser.add_option("-B", dest="remake", action='store_true',
                   help="Reexecute all targets (corresponds to make -B) ")
 
-parserN = optparse.OptionGroup(parser, "Moa new")
-parser.set_defaults(title="", directory=".")
+parser.add_option("--md", dest="makedebug", action='store_true',
+                  help="Run Make with -d : lots of extra debugging information")
 
-parserN.add_option("-t", "--title", dest="title", help="Job title")
-parserN.add_option("-d", "--directory", dest="directory",
-                  help="Directory to create the new template in (default: .)")
-parser.add_option_group(parserN)
-
+## See if the plugins have anything to add to the optparse instance:
 for p in moaPluginsLoaded:
-    moaPluginModules[p].defineOptions(parser)
+    if 'defineOptions' in dir(moaPluginModules[p]):
+        moaPluginModules[p].defineOptions(parser)
 
+## Parse the options
 (options, args) = parser.parse_args()
 
+## Proper setting of verbosity - after parsing the command lines
 if options.verbose:
     moa.logger.setVerbose()
 
+## Store all arguments in the environment - we might want to have a
+## look at them from the Makefiles
 os.putenv("MOAARGS", "%s" % str(args)[1:-1])
 
-
-### Initialize the plugins 
+### Start initializing the plugins
 for p in moaPluginsLoaded:
-    moaPluginModules[p].prepare(globals())
+    if 'prepare' in dir(moaPluginModules[p]):
+        moaPluginModules[p].prepare(globals())
 
 ### Determine project root (if there is one)
 projectRoot = moa.project.findProjectRoot()
@@ -158,84 +153,80 @@ if projectRoot:
     l.debug('Project root is %s' % projectRoot)
     os.putenv('MOAPROJECTROOT', projectRoot)
 
-### Check for deprecate template style
-checkTemplate(os.getcwd())
+### Check & fix deprecated template styles
+moa.checkTemplate.checkTemplate(os.getcwd())
 
-#make sure the MOA_THREADS env var is set - this is used by MOA later
-extraMakeParameters = []
-
-# threads need to be treated different from the other parameters.
-# multi-threaded operation is only allowed in the second phase
-# execution.
+## make sure the MOA_THREADS env var is set - this is used from insice
+## the Makefiles later threads need to be treated different from the
+## other parameters. multi-threaded operation is only allowed in the
+## second phase of execution.
 os.putenv('MOA_THREADS', "%s" % options.threads)
 
+## Define extra parameters to use with Make
+
+extraMakeParameters = []
 if options.remake:
     extraMakeParameters.append('-B')
+if options.makedebug:
+    extraMakeParameters.append('-d')
 
-##
-## Command dispatch
-## 
-if __name__ == "__main__":    
-    l.debug("MOABASE : %s" % MOABASE)
-    l.debug("Extra make parameters %s" % extraMakeParameters)
+## Command dispatcher
+if __name__ == "__main__":   
+    l.debug("Starting Moa command line dispatcher")
+    l.debug("MOABASE is '%s'" % MOABASE) 
+    l.debug("Extra make parameters are '%s'" % extraMakeParameters)
+    l.debug("Number of threads: '%s'" % options.threads)
+
+    ## If not arguments are given - run Make without any - hence
+    ## execute the default target
     if len(args) == 0:
-        rc = runMake.go(target = 'moa_default_target',
+        l.debug("No arguments, calling make")
+        rc = runMake.go(target = '',
                         verbose = options.verbose,
                         threads = options.threads,
                         makeArgs = [],
                         extraMakeParameters = extraMakeParameters,            
                         background = options.background)
         sys.exit(rc)
-
+    
+    ## Determine what the command is.
     command = args[0]
     newargs = args[1:]
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
-
-    if command == 'run':
-        rc = runMake.go(target = command,
-                        makeArgs=newargs,
-                        verbose=options.verbose,
+    l.debug('%s' % moaCommands)
+    if command in moaCommands:
+        if moaCommands[command].has_key('call'):
+            l.debug("using a callback for moa %s" % command)
+            moaCommands[command]['call'](os.getcwd(), options, newargs)
+        else:
+            l.debug("Calling make for command %s" % command)
+            rc = runMake.go(target = command,
+                        verbose = options.verbose,
                         threads = options.threads,
-                        extraMakeParameters = extraMakeParameters,
+                        makeArgs = newargs,
+                        extraMakeParameters = extraMakeParameters,            
                         background = options.background)
-        sys.exit(rc)
-    elif command == 'rawinfo':
-        pprint.pprint(moa.info.info(os.getcwd()))
-    elif command == 'status':
-        print moa.api.status(os.getcwd())
-        
-    #Create new jobs
-    elif command == 'job':
-        moa.job.handler(options, newargs)
-    elif command == 'new':
-        #shortcut for moa job new
-        moa.job.handler(options, args)
+            sys.exit(rc)
+    sys.exit()
 
-    #utilities
-    elif command == 'ren':
-        #renumber a moa job
-        moa.utils.renumber(os.getcwd(), args[1], args[2])
-    #pack & unpack trees
-    elif command == 'archive':
-        moa.archive.handler(options, newargs)
-    elif command == 'list':
-        #shortcut for moa job list
-        for job in moa.job.list():
-            print job
-    #configuration stuff
-    elif command == '__set':
-        moa.conf.handler(options, args)
-    #unittests
-    elif command == 'test':
-        moa.unittests.run(options, newargs)
-    else:
-        #fire arguments of to make
-        rc = runMake.go(target = command,
-                        makeArgs=newargs,
-                        threads = options.threads,
-                        background = options.background,
-                        extraMakeParameters = extraMakeParameters,
-                        verbose=options.verbose)
-        sys.exit(rc)
-    utils.exit()
+    # #utilities
+    # elif command == 'ren':
+    #     #renumber a moa job
+    #     moa.utils.renumber(os.getcwd(), args[1], args[2])
+    # #pack & unpack trees
+    # elif command == 'archive':
+    #     moa.archive.handler(options, newargs)
+    # #unittests
+    # elif command == 'test':
+    #     moa.unittests.run(options, newargs)
+    # else:
+    #     #fire arguments of to make
+    #     rc = runMake.go(target = command,
+    #                     makeArgs=newargs,
+    #                     threads = options.threads,
+    #                     background = options.background,
+    #                     extraMakeParameters = extraMakeParameters,
+    #                     verbose=options.verbose)
+    #     sys.exit(rc)
+    # utils.exit()

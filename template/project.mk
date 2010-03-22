@@ -48,6 +48,10 @@ project_prepare:
 .PHONY: project_post
 project_post:
 
+.PHONY: project_initialize
+project_initialize:
+	$(eval MOAPROJECTROOT=$(CURDIR))
+
 .PHONY: project
 project:
 

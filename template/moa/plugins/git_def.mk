@@ -18,23 +18,15 @@
 # 
 
 ################################################################################
-## configure ###################################################################
-#
-####  Set parameters
-#
-################################################################################
+## Git - use git to keep track of project history
 
-set_help = set a variable to moa.mk
+## Add a hook for project_init
+moa_hooks_postinit_project += moa_git_init_project
+moa_hooks_postinit += moa_git_init
 
-## Defer this to the moa script - we define this only as a an action
-## in Make to allow for hooks
-.PHONY: set moa_set_2
-set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
+## Add a hook after a var got set
+moa_hooks_postset += moa_git_postset
 
-moa_set_2:
-	moa $(minv) __set $(MOAARGS)
+#files that need to be stored in the repository 
+moa_git_files += Makefile moa.mk .gitignore
 
-.PHONY: moa_plugin_configure_test
-moa_plugin_configure_test:
-	$e moa set title='test'
-	grep 'title=test' moa.mk || ($(call exer,set title=test did not work))

@@ -34,25 +34,6 @@ from moa.exceptions import *
 
 l = moa.logger.l
 
-def handler(options, args):
-    """
-    parse the command line and save the arguments into moa.mk
-    """
-    cwd = os.getcwd()
-
-    command = args[0]
-    newArgs = args[1:]
-
-    ## This command is passed from make and argv[2] should be one long
-    ## string that needs parsing 
-    if command == '__set':
-        a = []
-        for arg in newArgs:
-            if not '=' in arg: continue
-            a.append(arg)
-        commandLineHandler(cwd, a)
-                
-
 def parseClArgs(args):
     """
     Parse the arguments defined on a commandline.
@@ -98,12 +79,6 @@ def parseClArgs(args):
                     'value' : v })
     return rv
     
-def commandLineHandler(wd, args):
-    l.debug("start parsing the commandline")
-    #parse all arguments
-    data = parseClArgs(args)
-    writeToConf(wd, data)
-
 def setVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
@@ -240,9 +215,9 @@ def writeToConf(wd, data):
         for v in data:
             if v['value']:
                 G.write("%(key)s%(operator)s%(value)s\n" % v)
-                l.info("%(key)s%(operator)s%(value)s\n" % v)
+                l.debug("%(key)s%(operator)s%(value)s\n" % v)
             else:
-                l.info("removing %s" % k)
+                l.debug("removing %s" % k)
 
         F.close()
         G.close()

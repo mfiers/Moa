@@ -31,7 +31,7 @@ gsmap_sfffile_help = SFF files with reads to map against the reference	\
   sequences
 
 moa_must_define += gsmap_name
-gsmap_name_type = filestring
+gsmap_name_type = string
 gsmap_name_help = Name identifying this mapping in the output gff
 
 moa_must_define += gsmap_reference_fasta

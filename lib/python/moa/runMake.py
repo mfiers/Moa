@@ -32,6 +32,7 @@ import moa.info
 import moa.utils
 from moa.exceptions import *
 
+@moa.utils.profiler2
 def _startMake(wd,
                makeArgs = [],
                verbose = True,
@@ -72,7 +73,7 @@ def _startMake(wd,
         FERR = None
         
     makeArgs.insert(0, 'make')
-    l.debug("RUNNING MAKE\n%s" % " ".join(makeArgs))
+    l.debug("RUNNING MAKE %s" % " ".join(makeArgs))
     p = subprocess.Popen(
         makeArgs,
         shell=False,

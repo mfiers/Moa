@@ -24,7 +24,9 @@ import os
 import optparse
 
 def defineCommands(commands):
-    commands['gitlog'] = 'display a version control log'
+    commands['gitlog'] = {
+        'desc' : 'display a version control log'
+        }
 
 def defineOptions(parser):
     parserG = optparse.OptionGroup(parser, 'Version control (Git)')

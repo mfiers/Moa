@@ -41,37 +41,35 @@ MOA_INCLUDE_PLUGIN_HELP= yes
 ##
 
 #return the type of a parameter
-moa_help_parameter_type=$(if $($(1)_type),$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if $($(1)_default),$(comma) default:$($(1)_default)))$(parC))
+moa_help_parameter_type=\
+	$(if $($(1)_type),\$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if $($(1)_default),$(comma) default:$($(1)_default)))$(parC))
 
 moa_help_md = % $(subst $(space),_,$(moa_title)) \n\
 % $(moa_author)							\n\
 % $(shell date)							\n\
 										\n\
-$(moa_description)						\n\
+$(moa_description_$(moa_id))			\n\
 										\n\
 \#Targets								\n\
 (empty)									\n\
-:   Leaving the target unspecified 		\n\
-:   executes the default target(s):     \n\
-:	($(moa_id)) 						\n\
+:   Execute the default target:         \n\
+:	**$(moa_id)** 						\n\
+$(moa_id)								\n\
+:   $($(moa_id)_help)					\n\
 clean									\n\
 :	removes all results from this job   \n\
 all										\n\
 :	executes the default target and 	\n\
 :   into subdirectories to execute any  \n\
 :	other moa makefile it encounters	\n\
-$(foreach id,$(moa_id),				  \
-$(id)									\n\
-:	$($(id)_help)						\n\
-)										\n\
-$(foreach id,$(moa_additional_targets),	  \
+$(foreach id,$(moa_additional_targets),	\
 $(id)									\n\
 :	$(moa_$(id)_help)					\n\
 )										\n\
 										\n\
 \#Parameters							\n\
 \#\# Required parameters				\n\
-$(foreach v,$(moa_must_define), 		  \
+$(foreach v,$(moa_must_define), 		\
 $(v)									\n\
 :   $(if $($(v)_help),$($(v)_help),undefined)	$(call moa_help_parameter_type,$(v)) \n\
 )										\n\
@@ -87,7 +85,7 @@ help_help = Show help
 
 .PHONY: help
 help:
-	@echo -e "$(call moa_help_md)" 					\
+	@echo -e "$(call moa_help_md)" 				\
 		| sed "s/^ //g"  						\
 		| sed "s/\[\[.*\]\]//g" 				\
 		| sed "s/[ \t]*$$//"					\

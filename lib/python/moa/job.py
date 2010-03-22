@@ -55,37 +55,6 @@ moa_postprocess:
 
 """
 
-def handler(options, args):
-    l.debug("running job.handler with ")
-    l.debug("  - with args %s" % args)
-    command = args[0]
-    newargs = args[1:]
-    if command == 'list':
-        list()
-    elif command == 'new':        
-        directory = options.directory
-        title = options.title
-
-        if len(newargs) == 0:
-            template = 'traverse'
-            params = []
-        elif '=' in newargs[0]:
-            template = 'traverse'
-            params = newargs
-        else:
-            template = newargs[0]
-            params = newargs[1:]
-
-        newJob(
-            template = template,
-            title = title,
-            wd = directory,
-            parameters = params,
-            force = options.force,
-            )
-    else:
-        l.error("Usage moa job [new|list]")
-        sys.exit()
         
 def check(what):
     """
@@ -128,11 +97,39 @@ def list():
     r.sort()
     return r
 
+def _getDescription(template):
+    """ Parse a template and extract the moa_description """
+    desc = ''
+    with open(os.path.join(TEMPLATEDIR, '%s.mk' % template), 'r') as F:
+        inDesc = False
+        while True:
+            line = F.readline()
+            if not line: break
+            line = line.strip()
+
+            if inDesc:
+                desc += " " + line
+            elif line[:15] == 'moa_description':
+                inDesc = True                
+                desc = line.split('=', 1)[1].strip()
+            if inDesc :
+                if desc and desc[-1] == '\\':
+                    desc = desc[:-1]
+                else:
+                    break
+
+    return " ".join(desc.split())
+
+def listLong():
+    for template in list():
+        yield template, _getDescription(template)
+
 def newJob(template,
            title = None,
            wd = '.',
            parameters = [],
-           force = False):
+           force = False,
+           noInit = False):
     """
     Create a new template based makefile in the current dir.
 
@@ -159,9 +156,8 @@ def newJob(template,
     #is this a valid template??
     check(template)
             
-    if not wd:
-        wd = '.'
-    if (wd != '.') and (not os.path.isdir(wd)):
+    if not wd: wd = os.getcwd()
+    if not os.path.isdir(wd):
         l.info("Creating wd %s" % wd)
         os.makedirs(wd)
 
@@ -221,13 +217,14 @@ def newJob(template,
         l.debug("and setting parameters %s" % parameters)        
         moa.conf.commandLineHandler(wd, parameters)
 
-    l.debug("Running moa initialization")
+    if noInit:
+        return
 
+    l.debug("Running moa initialization")
     moa.runMake.go(wd = wd,
                    target='initialize',
                    captureOut = False,
                    makeArgs=[],
-                   verbose=False)
-                   
+                   verbose=False)                   
     l.debug("Written %s, try: moa help" % makefile)
 

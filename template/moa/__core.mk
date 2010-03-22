@@ -27,6 +27,7 @@ __MOA_INCLUDE_CORE = yes
 include $(MOABASE)/template/moa/prepare.mk
 
 ##load the plugins: contains core - post definition
+
 $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
 )
@@ -45,32 +46,6 @@ $(foreach v,$(moa_must_define) $(moa_may_define), \
 	$(if $($v),, \
 		$(if $($v_default), \
 			$(eval $v=$($v_default))) ) )
-
-## Evaluate & load the filesets
-ifdef $(moa_id)_main_phase
-$(foreach v,$(_moa_filesets), \
-	$(eval $(v)_srtst=cat) \
-	$(if $(call seq,$($(v)_sort),u), \
-		$(eval $(v)_prtst=%A@)) \
-	$(if $(call seq,$($(v)_sort),t), \
-		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%A@)) \
-	$(if $(call seq,$($(v)_sort),tr), \
-		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%A@)) \
-	$(if $(call seq,$($(v)_sort),s), \
-		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%s)) \
-	$(if $(call seq,$($(v)_sort),sr), \
-		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%s)) \
-	$(if $($(v)_limit),$(eval $(v)_lmtst=|head -n $($(v)_limit))) \
-	$(eval $(v)_files=$(shell \
-				find $($(v)_dir)/ -maxdepth 1\
-					-name '$($(v)_glob).$($(v)_extension)' \
-					-printf '$($(v)_prtst)\t%p\n' \
-			| ( $($(v)_srtst) 2>/dev/null ) \
-			$($(v)_lmtst) \
-			| cut -f 2 )))
-endif
-
-moa_fileset_init = $(warning use of moa_fileset_init is deprecated)
 
 ################################################################################
 ## EXECUTION
@@ -213,7 +188,8 @@ initialize: \
 	$(moa_id)_initialize				\
 	$(moa_hooks_postinit_$(moa_id)) 	\
 	$(moa_hooks_postinit)
-	@echo -n
+	@echo -n "xx $(moa_id) $(moa_hooks_postinit_$(moa_id)) ### $(moa_hooks_postinit_project) xx"
+	@echo -n "xx $(moa_hooks_postinit) yy"
 
 ################################################################################
 # Cruising - i.e. run this template and then walk through all subdirs

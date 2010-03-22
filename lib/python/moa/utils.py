@@ -305,3 +305,36 @@ def flog(func):
         return func(*args, **kwargs)
     return flogger
                     
+
+
+def profileit(printlines=1):
+    """
+    Profiler decorator
+    """
+    import hotshot, hotshot.stats
+    def _my(func):
+        def _func(*args, **kargs):
+            prof = hotshot.Profile("profiling.data")
+            res = prof.runcall(func, *args, **kargs)
+            prof.close()
+            stats = hotshot.stats.load("profiling.data")
+            stats.strip_dirs()
+            stats.sort_stats('time', 'calls')
+            print ">>>---- Begin profiling print"
+            stats.print_stats(printlines)
+            print ">>>---- End profiling print"
+            return res
+        return _func
+    return _my
+
+def profiler2(func):
+    """
+    Profiler decorator
+    """
+    import time
+    def _func(*args, **kargs):
+        start = time.time()
+        res = func(*args, **kargs)
+        l.critical("executed %s %s" % (func, time.time() - start))
+        return res
+    return _func

@@ -17,24 +17,31 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-################################################################################
-## configure ###################################################################
-#
-####  Set parameters
-#
-################################################################################
+"""
+Help
+"""
 
-set_help = set a variable to moa.mk
+import os
+import sys
+import optparse
 
-## Defer this to the moa script - we define this only as a an action
-## in Make to allow for hooks
-.PHONY: set moa_set_2
-set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
+import moa.runMake
+import moa.info
+import moa.logger
+l = moa.logger.l
 
-moa_set_2:
-	moa $(minv) __set $(MOAARGS)
+def defineCommands(commands):
+    commands['help'] = {
+        'desc' : 'Display help on the current job (not this help!)',
+        'call' : showHelp
+        }
 
-.PHONY: moa_plugin_configure_test
-moa_plugin_configure_test:
-	$e moa set title='test'
-	grep 'title=test' moa.mk || ($(call exer,set title=test did not work))
+def showHelp(wd, options, args):
+    if not moa.info.isMoaDir(wd):
+        l.error("This is not a moa directory - you can run moa help only in")
+        l.error("the context of a Moa directory. You could try: moa --help")
+        sys.exit(-1)
+    moa.runMake.go(target = 'help', verbose = options.verbose)
+    
+
+

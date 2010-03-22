@@ -20,21 +20,32 @@
 ################################################################################
 ## configure ###################################################################
 #
-####  Set parameters
+####  filesets - predefined utilities to handle sets of files
 #
 ################################################################################
 
-set_help = set a variable to moa.mk
+## Evaluate & load the filesets
+ifdef $(moa_id)_main_phase
+$(foreach v,$(_moa_filesets), \
+	$(eval $(v)_srtst=cat) \
+	$(if $(call seq,$($(v)_sort),u), \
+		$(eval $(v)_prtst=%A@)) \
+	$(if $(call seq,$($(v)_sort),t), \
+		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%A@)) \
+	$(if $(call seq,$($(v)_sort),tr), \
+		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%A@)) \
+	$(if $(call seq,$($(v)_sort),s), \
+		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%s)) \
+	$(if $(call seq,$($(v)_sort),sr), \
+		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%s)) \
+	$(if $($(v)_limit),$(eval $(v)_lmtst=|head -n $($(v)_limit))) \
+	$(eval $(v)_files=$(shell \
+				find $($(v)_dir)/ -maxdepth 1\
+					-name '$($(v)_glob).$($(v)_extension)' \
+					-printf '$($(v)_prtst)\t%p\n' \
+			| ( $($(v)_srtst) 2>/dev/null ) \
+			$($(v)_lmtst) \
+			| cut -f 2 )))
+endif
 
-## Defer this to the moa script - we define this only as a an action
-## in Make to allow for hooks
-.PHONY: set moa_set_2
-set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
-
-moa_set_2:
-	moa $(minv) __set $(MOAARGS)
-
-.PHONY: moa_plugin_configure_test
-moa_plugin_configure_test:
-	$e moa set title='test'
-	grep 'title=test' moa.mk || ($(call exer,set title=test did not work))
+moa_fileset_init = $(warning use of moa_fileset_init is deprecated)

@@ -37,7 +37,15 @@ def getPlugins(wd = None):
     """
     Get the plugins for a certain directory
     """
-    if wd == None: wd = os.getcwd()
+    if wd == None: 
+        #this is somewhat odd - create a tempdir to read the default
+        #plugins from we should probably have a shortcut to just read
+        #the moa.conf & moa.conf.default files - but this works for now
+        testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')    
+        moa.utils.removeMoaFiles(testDir)
+        moa.api.newJob(template = 'traverse', wd = testDir,
+                       title='Testing plugins', noInit = True)
+        wd = testDir
     if not isMoaDir(wd):
         return []
     l.debug("getting plugins for %s" % wd)

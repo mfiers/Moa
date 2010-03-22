@@ -17,20 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-MOA_INCLUDE_PLUGIN_GIT= yes
-
 ################################################################################
 ## Git - use git to keep track of project history
-
-## Add a hook for project_init
-moa_hooks_postinit_project += moa_git_init_project
-moa_hooks_postinit += moa_git_init
-
-## Add a hook after a var got set
-moa_hooks_postset += moa_git_postset
-
-#files that need to be stored in the repository 
-moa_git_files += Makefile moa.mk .gitignore
 
 #Initialize a git project
 .PHONY: moa_git_init_project
@@ -56,6 +44,7 @@ endif
 moa_git_init_project: $(if $(MOA_UNITTESTS),,moa_git_init_project_2)
 
 moa_git_init_project_2:
+	$(call errr,Starting git init project)
 	if ! git status 2>&1 | grep -q 'Not a git repo' ; \
 	then \
 		if [[ "$$MOA_GITFORCEINIT" ]] && ls .git | grep -q config ; \
@@ -79,21 +68,24 @@ moa_git_init: $(if $(MOA_UNITTESTS),,moa_git_init_2)
 
 .PHONY: moa_git_init_2
 moa_git_init_2:
-	if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
-		git add $(minv) --all; \
+	-if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
+		for f in $(moa_git_files); do \
+			$(call echo,git adding $$f) ;\
+			git add $(minv) $$f; \
+		done; \
 		git commit -qa -m "$(commit_message)" >/dev/null; \
 	fi
 
+.PHONY: moa_git_postset_2 moa_git_postset gitlog
+moa_git_postset: moa_git_postset_2
 
-.PHONY: moa_git_postset
-moa_git_postset:
-	$e echo $(MOAPROJECTROOT);
+###$(if $(MOA_UNITTESTS),,moa_git_postset_2)
+
+moa_git_postset_2:
 	if [[ -d "$(MOAPROJECTROOT)/.git" ]]; then \
 		git add moa.mk; \
-		git commit -q -m "$(commit_message)" moa.mk ; \
+		git commit -q -m "$(commit_message)" moa.mk || true; \
 	fi
 
-
-.PHONY: gitlog
 gitlog:
 	git log --pretty=oneline --abbrev-commit
