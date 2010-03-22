@@ -26,6 +26,7 @@ import site
 import math
 import tempfile
 import optparse
+import numpy as np
 
 #moa specific libs - first set the path
 if not os.environ.has_key('MOABASE'):
@@ -34,7 +35,6 @@ if not os.environ.has_key('MOABASE'):
 #process the .pth file in the $MOABASE/bin folder !
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 import moa
-import stats.stats as s
 from moa.logger import l, setVerbose
 
 usage = \
@@ -53,7 +53,7 @@ STATS can by any of:
 parser = optparse.OptionParser(usage=usage)
 
 parser.add_option('-i', dest='infile',
-    help = 'input fasta file')
+    help = 'input fasta file. If undefined or "-", input is read from stdin')
 parser.set_defaults(delim="\t")
 
 parser.add_option('-d', dest='delim', help = 'output field delimiter')
@@ -71,14 +71,20 @@ parser.add_option('-e', dest='echo', action="store_true",
     help = 'echo unknown field ids (as opposed to raise an error)')
 
 (options, args) = parser.parse_args()
-if not options.infile:
-    raise Exception("Must define an inputfile!")
+#if not options.infile:
+#    raise Exception("Must define an inputfile!")
 
 if not args:
     args = ['id', 'length']
 
 def fastareader(f):
-    F = open(f)
+    if type(f) == type('hi'):
+        #it is probably a filename
+        F = open(f, 'r')
+    else:
+        #it is most likely stdin
+        F = f
+
     name, seq = "", []
     while True:
         l = F.readline()
@@ -136,7 +142,13 @@ def f_scaf10(name,seq):
 def f_scaf100(name,seq):
     return len(scaf100rex.split(seq))
 
-for name, seq in fastareader(options.infile):
+#Read and interpret  fasta input 
+if not options.infile or options.infile == '-':
+    inp = sys.stdin
+else:
+    inp = options.infile
+
+for name, seq in fastareader(inp):
     i += 1
     if options.maxno and i > options.maxno: 
         break
@@ -158,9 +170,7 @@ for name, seq in fastareader(options.infile):
                 else:
                     raise Exception("Unknown field %s" % what)
             sys.stdout.write(options.delim)
-
         sys.stdout.write("\n")
-
 
 if not options.stats:
     sys.exit(0)
@@ -169,10 +179,10 @@ if len(dd) == 0:
     l.error("no results")
     sys.exit(0)
 
-
 #start gathering of overall statistics
 stats = ['no', 'min', 'max', 'sum', 'mean', 'median',
-        'stdev', 'n10', 'n50', 'n90']
+        'stdev', 'n10', 'n50', 'n90', 'n10i', 'n50i', 
+         'n90i', 'over10k', 'over100k', 'over1m']
 data = dict([(x, []) for x in stats])
 
 def statAdd(d,w,v,what,store):
@@ -194,13 +204,14 @@ def statAdd(d,w,v,what,store):
         l.error("%s %s %s" % (d,w,v))
 
 def getNX(d, N):
-    cutoff = sum(d) * N
+    cutoff = np.sum(d) * N
     summ = 0
-    for x in d:
+    for i in range(len(d)):
+        x = d[i]
         result = x
         summ += x
         if summ > cutoff: break
-    return result
+    return result, i
 
 binsteps = options.histogramsteps
 
@@ -209,38 +220,41 @@ exportHist = {}
 exportHistBin = {}
 storeStats = {}
 
+print 'looking at args %s' % args
 for what in args:
     storeStats[what] = {}
-    d = dd[what]
-    if type(d[0]) == type('hi'):
+    rawd = dd[what]
+    if type(rawd[0]) == type('hi'):
         continue
 
-    #sort & reverse is necessary for the NXX stats
-    d.sort()
-    d.reverse()
+    d = np.array(rawd)
+    dsort = np.sort(d)[::-1]
     exportData[what] = d
 
-    _n50 = getNX(d, 0.5)
-    _n10 = getNX(d, 0.1)
-    _n90 = getNX(d, 0.9)
+    _n50, _n50no = getNX(dsort, 0.5)
+    _n10, _n10no = getNX(dsort, 0.1)
+    _n90, _n90no = getNX(dsort, 0.9)
         
     statAdd(data, 'no', len(d), what, storeStats)
     statAdd(data, 'max', d[0], what, storeStats)
     statAdd(data, 'min', d[-1], what, storeStats)
-    statAdd(data, 'sum', sum(d), what, storeStats)
-    statAdd(data, 'mean', s.mean(d), what, storeStats)
-    statAdd(data, 'median', s.median(d), what, storeStats)
-    statAdd(data, 'stdev', s.stdev(d), what, storeStats)
+    statAdd(data, 'sum', np.sum(d), what, storeStats)
+    statAdd(data, 'mean', np.mean(d), what, storeStats)
+    statAdd(data, 'median', np.median(d), what, storeStats)
+    statAdd(data, 'stdev', np.std(d), what, storeStats)
     statAdd(data, 'n10', _n10, what, storeStats)
+    statAdd(data, 'n10i', _n10no, what, storeStats)
     statAdd(data, 'n50', _n50, what, storeStats)
+    statAdd(data, 'n50i', _n50no, what, storeStats)
     statAdd(data, 'n90', _n90, what, storeStats)
+    statAdd(data, 'n90i', _n90no, what, storeStats)
+    statAdd(data, 'over10k', len(np.where(d>=1e4)[0]), what, storeStats)
+    statAdd(data, 'over100k', len(np.where(d>=1e5)[0]), what, storeStats)
+    statAdd(data, 'over1m', len(np.where(d>=1e6)[0]), what, storeStats)
 
-    XX = s.histogram(d, binsteps)
-    binmin = XX[1]
-    binmax = binmin + (XX[2] * len(XX[0]))
-    exportHist[what] = XX[0]
-    exportHistBin[what] = [binmin + (x * (float(binmax-binmin)/binsteps))
-                           for x in range(binsteps+1)]
+    hist, edges = np.histogram(d, binsteps, new=True)
+    exportHist[what] = hist
+    exportHistBin[what] = edges
 
 #print stats to screen
 print "".join(["%20s" % x for x in ([""] + args)])
@@ -273,7 +287,11 @@ F.close()
 
 l.info("#export data %s hist %s" % (dataFile, histFile))
 
-filebasename = os.path.basename(options.infile)
+if options.infile and options.infile != '-':
+    filebasename = os.path.basename(options.infile)
+else:
+    filebasename = 'fastainfo'
+
 if '.' in filebasename:
     filebasename = filebasename[:filebasename.rfind('.')]
 
