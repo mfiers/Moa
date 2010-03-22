@@ -106,6 +106,8 @@ moa_fileset_define = \
 	$(eval moa_must_define += $(1)_dir) \
 	$(eval moa_may_define += $(1)_extension) \
 	$(eval moa_may_define += $(1)_glob) \
+	$(eval moa_may_define += $(1)_sort) \
+	$(eval moa_may_define += $(1)_limit) \
 	$(eval $(1)_dir_help = $(3)) \
 	$(eval $(1)_dir_type = directory) \
 	$(eval $(1)_extension_help = file extension for the files in $(1)_dir) \
@@ -114,6 +116,14 @@ moa_fileset_define = \
 	$(eval $(1)_glob_help = glob to select a subset of files from $(1)_dir) \
 	$(eval $(1)_glob_type = string) \
 	$(eval $(1)_glob_default=*) \
+	$(eval $(1)_sort_help=Sort order. Choose from: u - unsorted, s - size, \
+		sr - size reverse, t - time, tr - time reverse ) \
+	$(eval $(1)_sort_type=set) \
+	$(eval $(1)_sort_default=u) \
+	$(eval $(1)_sort_choices=u s sr t tr) \
+	$(eval $(1)_limit_help=Number of files to use, if not defined: all files) \
+	$(eval $(1)_limit_default=) \
+	$(eval $(1)_limit_type=integer) \
 	$(eval _moa_filesets += $(1))
 
 

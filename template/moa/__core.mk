@@ -38,14 +38,37 @@ moa_list_plugins:
 
 ## Prepare - fill in the defaults of all variables
 ## Fill in the default values of each variable
+## Only do this in the main phase (it might take time for large
+## number of files
+
 $(foreach v,$(moa_must_define) $(moa_may_define), \
 	$(if $($v),, \
 		$(if $($v_default), \
 			$(eval $v=$($v_default))) ) )
 
 ## Evaluate & load the filesets
+ifdef $(moa_id)_main_phase
 $(foreach v,$(_moa_filesets), \
-	$(eval $(v)_files = $(wildcard $($(v)_dir)/$($(v)_glob).$($(v)_extension))))
+	$(eval $(v)_srtst=cat) \
+	$(if $(call seq,$($(v)_sort),u), \
+		$(eval $(v)_prtst=%A@)) \
+	$(if $(call seq,$($(v)_sort),t), \
+		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%A@)) \
+	$(if $(call seq,$($(v)_sort),tr), \
+		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%A@)) \
+	$(if $(call seq,$($(v)_sort),s), \
+		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%s)) \
+	$(if $(call seq,$($(v)_sort),sr), \
+		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%s)) \
+	$(if $($(v)_limit),$(eval $(v)_lmtst=|head -n $($(v)_limit))) \
+	$(eval $(v)_files=$(shell \
+				find $($(v)_dir)/ -maxdepth 1\
+					-name '$($(v)_glob).$($(v)_extension)' \
+					-printf '$($(v)_prtst)\t%p\n' \
+			| ( $($(v)_srtst) 2>/dev/null ) \
+			$($(v)_lmtst) \
+			| cut -f 2 )))
+endif
 
 moa_fileset_init = $(warning use of moa_fileset_init is deprecated)
 
@@ -66,13 +89,12 @@ moa_execute_targets = \
 	$(moa_id)_prepare \
 	$(moa_hooks_pre_run) \
 	$(moa_hooks_pre_run_$(moa_id)) \
-	$(moa_id) \
+	moa_main_target \
 	$(moa_id)_post \
 	moa_postprocess \
 	moa_run_postcommand \
 	moa_clean_runlock \
 	moa_finished
-
 
 ## The default Moa target - A single moa invocation calls a set of targets
 .PHONY: moa_default_target
@@ -162,8 +184,8 @@ ids:
 ## the main targets - we run these as separate make instances since I
 ## really cannot make Make to reevaluate what possible in-/output
 ## files are created inbetween steps
-moa_main_targets: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
-moa_main_targets:
+moa_main_target: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
+moa_main_target:
 	$(call echo,calling $(moa_id)) ;							\
 	$(MAKE) $(mins) $(minj) $(moa_id) 							\
 				$(moa_id)_main_phase=T ;
