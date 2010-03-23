@@ -32,7 +32,7 @@ import moa.info
 import moa.utils
 from moa.exceptions import *
 
-@moa.utils.profiler2
+#@moa.utils.profiler2
 def _startMake(wd,
                makeArgs = [],
                verbose = True,

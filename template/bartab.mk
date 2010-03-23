@@ -39,6 +39,7 @@ bartab_in_type = file
 
 moa_may_define += bartab_qin
 bartab_qin_help = Quality scores for the input fasta file
+bartab_qin_default = 
 bartab_qin_type = file
 
 moa_may_define += bartab_map

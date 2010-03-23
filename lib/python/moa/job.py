@@ -213,9 +213,11 @@ def newJob(template,
             F.close()       
             l.debug('Written moa.mk')
 
-    if parameters:
-        l.debug("and setting parameters %s" % parameters)        
-        moa.conf.commandLineHandler(wd, parameters)
+    params = []
+    for p in parameters:
+        if not '=' in p: continue
+        params.append(p)
+        moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
 
     if noInit:
         return

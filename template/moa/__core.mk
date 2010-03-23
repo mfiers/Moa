@@ -188,8 +188,8 @@ initialize: \
 	$(moa_id)_initialize				\
 	$(moa_hooks_postinit_$(moa_id)) 	\
 	$(moa_hooks_postinit)
-	@echo -n "xx $(moa_id) $(moa_hooks_postinit_$(moa_id)) ### $(moa_hooks_postinit_project) xx"
-	@echo -n "xx $(moa_hooks_postinit) yy"
+	@echo -n
+
 
 ################################################################################
 # Cruising - i.e. run this template and then walk through all subdirs

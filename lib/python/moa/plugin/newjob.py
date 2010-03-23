@@ -37,7 +37,8 @@ def defineOptions(parser):
     parser.set_defaults(title="", directory=".")
 
     parserN.add_option("-t", "--title", dest="title", help="Job title")
-    parserN.add_option("-d", "--directory", dest="directory",
+    parserN.add_option("-d", "--directory", 
+                       dest="directory",
                        help="Directory to create the new template in (default: .)")
     parser.add_option_group(parserN)
 
