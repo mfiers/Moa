@@ -50,7 +50,7 @@ def getPlugins(wd = None):
         return []
     l.debug("getting plugins for %s" % wd)
     result = moa.runMake.runMakeGetOutput(
-        verbose=False, wd = wd, target='moa_list_plugins').strip().split()
+        verbose=False, wd = wd, target='moa_list_plugins', makeArgs=[]).strip().split()
     l.debug("Plugins for '%s' are '%s'" % (
             wd, ', '.join(result)))
     return result

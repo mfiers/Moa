@@ -18,13 +18,14 @@
 # 
 adhoc_help = adhoc files
 
+$(call moa_fileset_define,adhoc_input,fasta,Input files for adhoc)
+
 # Help
-moa_id = adhoc
+moa_id=adhoc
 moa_title_adhoc = Run an ad-hoc analysis
 moa_description_adhoc = Run a specified oneliner or script on a set of	\
-inputfiles
+   inputfiles
 
-$(call moa_fileset_define,adhoc_input,*,Input files for adhoc)
 
 moa_may_define += adhoc_name_sed
 adhoc_name_sed_default = s/a/a/
@@ -39,14 +40,14 @@ adhoc_output_dir_type = directory
 
 moa_may_define += adhoc_parallel
 adhoc_parallel_default = F
-adhoc_parallel_help = allow parallel execution (T) or not (**F**). If	\
-  for example concatenating to one single file, you should not have		\
-  multiple threads.
+adhoc_parallel_help = allow parallel execution. If, for example,	\
+  concatenating to one single file, you should not have multiple	\
+  threads.
 adhoc_parallel_type = set
 adhoc_parallel_allowed = T F
 
 moa_may_define += adhoc_process
-adhoc_process_default = ln -f $$< $$(t)
+adhoc_process_default = ln -f \$< \$t
 adhoc_process_help = Command to process the files. If undefined,	\
   hardlink the files.
 adhoc_process_type = string
@@ -81,7 +82,7 @@ adhoc_prepare:
 .PHONY: adhoc_post
 adhoc_post:
 
-ifeq ($(g_parallel),F)
+ifeq ($(adhoc_parallel),F)
 .NOTPARALLEL: adhoc
 endif
 .PHONY: adhoc
@@ -98,8 +99,8 @@ touch/%: $(adhoc_input_dir)/%
 adhoc_clean: find_exclude_args = \
 	$(foreach v, $(adhoc_link_noclean), -not -name $(v))
 adhoc_clean: 
-	-if [ ! "$(g_output_dir)" == "." ]; then rm -rf $(g_output_dir); fi
+	-if [ ! "$(adhoc_output_dir)" == "." ]; then rm -rf $(adhoc_output_dir); fi
 	-rm -rf touch
-	-if [ "$(g_powerclean)" == "T" ]; then \
+	-if [ "$(adhoc_powerclean)" == "T" ]; then \
 		find . -maxdepth 1 -type f $(find_exclude_args) | \
 			xargs -n 20 rm -f ; fi

@@ -20,7 +20,7 @@ gather_help = gather files
 clean_help = Remove anything that is not called Makefile or moa.mk 
 
 # Help
-moa_id = gather
+moa_id += gather
 moa_title_gather = gather files
 moa_description_gather = gather a set of files and create hardlinks				\
  to. Hardlinks have as advantage that updates are noticed via the				\
@@ -89,6 +89,9 @@ gather_link_noclean ?= Makefile moa.mk
 
 
 VPATH = $(g_input_dir) 
+#vpath %.touch touch/
+#vpath % $(g_input_dir)
+#vpath %.touch touch/
 
 .PHONY: gather_prepare
 gather_prepare:
@@ -97,8 +100,14 @@ gather_prepare:
 		 mkdir $(g_output_dir);													\
 	fi
 
+	
 .PHONY: gather_post
 gather_post:
+
+gather_test:
+	$e echo '$(addprefix touch/, $(notdir $(foreach dir, $(g_input_dir), \
+		$(shell find $(dir)/ -maxdepth 1 -name "$(g_input_pattern)" -printf "%A@\t%p\n" \
+		| sort -nr | head -$(g_limit) | cut -f 2 ))))'
 
 
 ifeq ($(g_parallel),F)
@@ -106,7 +115,6 @@ ifeq ($(g_parallel),F)
 endif
 .PHONY: gather
 
-ifdef $(gather_main_phase)
 gather_input_files = \
 	$(foreach dir, $(g_input_dir), $(shell \
 		find $(dir)/ -maxdepth 1 -name "$(g_input_pattern)" \
@@ -116,15 +124,15 @@ gather_input_files = \
 			| cut -f 2 \
 			| xargs -n 1 basename \
 	))
-endif 
 
 .PHONY: gather
-gather:  $(addprefix $(CURDIR)/touch/, $(notdir $(gather_input_files)))
-	@echo processed $^
+gather: $(addprefix $(CURDIR)/touch/,$(gather_input_files))
 
+	
 $(CURDIR)/touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
 $(CURDIR)/touch/%: %
 	$(call echo,gatherer: considering $< - $(g_target))
+	$e echo $(g_process)
 	$e $(g_process)
 	touch $@
 

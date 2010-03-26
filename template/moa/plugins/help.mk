@@ -42,7 +42,7 @@ MOA_INCLUDE_PLUGIN_HELP= yes
 
 #return the type of a parameter
 moa_help_parameter_type=\
-	$(if $($(1)_type),\$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if $($(1)_default),$(comma) default:$($(1)_default)))$(parC))
+	$(if $($(1)_type),\$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if '$($(1)_default)',$(comma) default:$(value $(1)_default)))$(parC))
 
 moa_help_md = % $(subst $(space),_,$(moa_title)) \n\
 % $(moa_author)							\n\
@@ -104,7 +104,7 @@ help_latex:
 .PHONY: help_man
 help_man:
 	@echo $(pandocbin)
-	@echo -e "$(call moa_help_md)" 				\
+	@echo -e "$(call moa_help_md)" 			\
 		| sed "s/^ //g"  					\
 		| sed "s/\[\[.*\]\]//g" 			\
 		| sed "s/[ \t]*$$//"				\
@@ -112,7 +112,7 @@ help_man:
 
 .PHONY: help_markdown
 help_markdown:
-	@echo -e "$(call moa_help_md)" 				\
+	@echo -e "$(call moa_help_md)" 			\
 		| sed "s/^ //g"  					\
 		| sed "s/\[\[.*\]\]//g" 			\
 		| sed "s/[ \t]*$$//"

@@ -17,7 +17,7 @@ mancommand=nroff -c -mandoc 2>/dev/null | less -is
 
 # filesets - utilities to define sets of files
 # not - it is probably a good idea to load this early
-moa_plugins += filesets
+moa_plugins += fileset
 
 # configure - set a variable
 moa_plugins += configure

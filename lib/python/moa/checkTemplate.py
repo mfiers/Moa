@@ -23,6 +23,7 @@ to update them
 import os
 import re
 import sys
+import shutil
 import subprocess
 
 from moa.logger import l

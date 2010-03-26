@@ -41,6 +41,10 @@ def defineCommands(commands):
         'call' : status
         }
 
+    commands['show'] = {
+        'desc' : 'Show the configured parameters and their values',
+        }
+
     commands['list'] = {
         'desc' : 'List all known templates',
         'call' : listTemplates

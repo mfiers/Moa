@@ -24,7 +24,9 @@
 #
 ################################################################################
 
+
 ## Evaluate & load the filesets
+
 ifdef $(moa_id)_main_phase
 $(foreach v,$(_moa_filesets), \
 	$(eval $(v)_srtst=cat) \
@@ -40,7 +42,7 @@ $(foreach v,$(_moa_filesets), \
 		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%s)) \
 	$(if $($(v)_limit),$(eval $(v)_lmtst=|head -n $($(v)_limit))) \
 	$(eval $(v)_files=$(shell \
-				find $($(v)_dir)/ -maxdepth 1\
+				find $($(v)_dir)/ -maxdepth 1 \
 					-name '$($(v)_glob).$($(v)_extension)' \
 					-printf '$($(v)_prtst)\t%p\n' \
 			| ( $($(v)_srtst) 2>/dev/null ) \

@@ -26,8 +26,14 @@ __MOA_INCLUDE_CORE = yes
 #see if __prepare is already loaded, if not load:
 include $(MOABASE)/template/moa/prepare.mk
 
-##load the plugins: contains core - post definition
+## Prepare - fill in the defaults of all variables
+## Fill in the default values of each variable
+$(foreach v,$(moa_must_define) $(moa_may_define), \
+	$(if $($v),, \
+		$(if $($v_default), \
+			$(eval $v=$($v_default))) ) )
 
+##load the plugins: contains core - post definition
 $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
 )
@@ -37,15 +43,6 @@ $(foreach p,$(moa_plugins), \
 moa_list_plugins:
 	@echo $(moa_plugins)
 
-## Prepare - fill in the defaults of all variables
-## Fill in the default values of each variable
-## Only do this in the main phase (it might take time for large
-## number of files
-
-$(foreach v,$(moa_must_define) $(moa_may_define), \
-	$(if $($v),, \
-		$(if $($v_default), \
-			$(eval $v=$($v_default))) ) )
 
 ################################################################################
 ## EXECUTION
@@ -169,7 +166,7 @@ moa_main_target:
 ## after it..  this one calls all cleans. Note that the x_clean
 ## targets are called in reverse order.
 .PHONY: clean
-clean: clean_start $(call reverse, $(addsuffix _clean, $(moa_id)))
+clean: clean_start $(moa_id)_clean
 	-$e rm moa.out moa.err moa.success 2>/dev/null || true
 	-$e rm moa.failed moa.runlock lock 2>/dev/null || true
 
@@ -378,9 +375,13 @@ mustexist_%:
 .PHONY: show moa_showvar_%
 show: $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
 
+singlequote='
+#"' <- to satifsy emacs :(
+backslash=\$(empty)
+
 moa_showvar_%:		 
 	$e echo -ne '$*\t'	
-	$e echo '$(value $*)'
+	$e echo '$(subst $(singlequote),$(singlequote)$(backslash)$(singlequote)$(singlequote),$(value $*))'
 
 .PHONY: get moa_getvar_%
 get: $(addprefix moa_getvar_, $(filter $(var),$(moa_must_define) $(moa_may_define)))
