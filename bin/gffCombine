@@ -37,18 +37,20 @@ parser.add_option('-o', '--output', dest='outfile',
 parser.set_defaults(prepRefSearch=[], prepRefReplace=[])
 parser.add_option('--pprs', dest='prepRefSearch', metavar='REGEX', 
                   action='append',
-                  help='Allows search & replace regular expressions to help ' +
-                  'deal with invalidly formatted reference sets')
+                  help='Allows search & replace on the reference set ' +
+                  '(search term)')
+
 parser.add_option('--pprr', dest='prepRefReplace', metavar='REGEX', 
                   action='append',
-                  help='Allows search & replace regular expressions to help ' +
-                  'deal with invalidly formatted reference sets')
+                  help='Allows search & replace on the reference set ' +
+                  '(replace term)')
 
 parser.set_defaults(prepAppendSearch=[], prepAppendReplace=[])
 parser.add_option('--ppas', dest='prepAppendSearch',  metavar='REGEX', 
                   action='append',
                   help='Allows search & replace regular expressions to help ' +
                   'deal with invalidly formatted append sets')
+
 parser.add_option('--ppar', dest='prepAppendReplace', metavar='REGEX', 
                   action='append',
                   help='Allows search & replace regular expressions to help ' +
@@ -218,9 +220,7 @@ class GFFRECORD:
 
 
     def addAttribute(self, _key, _val, ignoreFilter = False):
-        """
-        Add an attribute to the record
-        """        
+        """ Add an attribute to the record """        
         
         _valList = []        
         for _tv in self.VALSPLIT.findall(_val+';'):
@@ -360,10 +360,14 @@ class GFFSET:
 
     def search(self, **kwargs):
         res = None
+        counter = 0
         for k in kwargs.keys():
-            i = self.indici[k]
-            if not res: res = i.get(kwargs[k])
+            counter += 1
+            i = self.indici[k]            
+            if counter == 1: res = i.get(kwargs[k])
             else: res &= i.get(kwargs[k])
+            if TRACE: print "filtering %s (%d results)" % (k, len(res))
+
             l.debug("res %s -  %s" % (k, len(res)))
         return res
         
@@ -417,6 +421,8 @@ l.debug("querybase %s" % querybase)
 i = 0
 appK = options.appendKey
 
+
+TRACE=False
 for rec in addset.getRecords():
     if options.featureAdd and rec.feature != options.featureAdd:
         l.debug("ignoring %s" % (str(rec)[:80]))
@@ -424,6 +430,11 @@ for rec in addset.getRecords():
 
     appV = options.appendVal % rec.getFormattedData()
     l.debug("appending %s -  %s" % (appK, appV))
+    if 'oxidored' in appV:
+        TRACE=True
+        print "appending ", appK, appV
+    else:
+        TRACE = False
 
     if i < 100:
         l.debug("%s" % rec)
@@ -436,10 +447,15 @@ for rec in addset.getRecords():
         l.info("processed %d records" % i)
    
     query[options.referenceKey] = rec.ref
-    
+    if TRACE:
+        print 'query: ', query
+
     l.debug("query %s" % (query))
         
-    for r in refset.search(**query):
+    results = refset.search(**query)
+    if TRACE:
+        print "no results", len(results)
+    for r in results:
         r.addAttribute(appK, appV, ignoreFilter=True)
         l.debug("post append")
         l.debug("     %s" % (r.pretty()))
