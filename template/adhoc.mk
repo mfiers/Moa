@@ -92,7 +92,7 @@ adhoc:  $(adhoc_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed $(adhoc_name_sed))
 touch/%: $(adhoc_input_dir)/%
-	$(call echo,considering $t)
+	$(call echo,considering $<)
 	$e $(adhoc_process)
 	touch $@
 
