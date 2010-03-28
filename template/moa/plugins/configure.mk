@@ -32,7 +32,7 @@ set_help = set a variable to moa.mk
 set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
 
 moa_set_2:
-	moa $(minv) __set $(MOAARGS)
+	moa $(minv) __set $(value MOAARGS)
 
 .PHONY: moa_plugin_configure_test
 moa_plugin_configure_test:
