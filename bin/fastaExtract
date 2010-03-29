@@ -21,8 +21,9 @@
 Extract a set of sequences from a multifasta file
 """
 
-import time
+import re
 import sys
+import time
 import copy
 import optparse
 
@@ -60,7 +61,12 @@ parser.add_option('-l', '--list', dest='list',
 parser.add_option('-f', '--fasta', dest='fasta',
     help = 'fasta file to extract from')
 
+parser.add_option('-R', '--regex', dest='regex',
+                   help='regular expression to extract the identifier ' + \
+                      'from the fasta headers')
+
 (options, args) = parser.parse_args()
+
 if not options.list:
     raise "Must define a list!"
 if not options.fasta:
@@ -70,13 +76,23 @@ def log(m):
     sys.stderr.write("fastaextractor: %s\n" % m)
 
 ids = [x.strip().split()[0] for x in open(options.list).readlines()]
+
 log("read %d ids" % len(ids))
         
 i = 0
-for id, header, seq in fastareader(options.fasta):
-    if not id in ids: continue
+cre = None
+if options.regex:
+    cre = re.compile(options.regex)
+    
+for seqId, header, seq in fastareader(options.fasta):
+
+    if cre: testId = cre.search("%s %s" % (seqId, header)).groups()[0]
+    else: testId = seqId
+
+    if not testId in ids: continue
+
     i += 1
-    print ">%s %s" % (id, header)
+    print ">%s %s" % (seqId, header)
     print "%s" % seq
 
 log("written %d sequences" % i)
