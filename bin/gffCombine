@@ -171,6 +171,7 @@ class GFFRECORD:
                     ls[8]+';'):  
                 _key = token.groupdict()['key']
                 _val = token.groupdict()['val']
+                _val = _val.replace('=', ':')
                 
                 self.addAttribute(_key, _val)
                       
@@ -266,7 +267,8 @@ class GFFRECORD:
                 v = self.attributes[k]
                 if type(v) == type([]):
                     v = ','.join(map(preprocess_attrib,v))
-                a.append('%s=%s' % (k, preprocess_attrib(v)))
+                if v:
+                    a.append('%s=%s' % (k, preprocess_attrib(v)))
                 
             return "\t".join([
                 self.ref, self.source, self.feature,
