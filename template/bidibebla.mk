@@ -34,13 +34,13 @@ bdbb_help = generate a list of bidirectional best blast hits.
 
 moa_prereq_simple += blastall formatdb
 
-moa_must_define += bdbb_input_fila_a
-bdbb_input_fila_a_help = First multifasta input file
-bdbb_input_fila_a_type = file
+moa_must_define += bdbb_input_file_a
+bdbb_input_file_a_help = First multifasta input file
+bdbb_input_file_a_type = file
 
-moa_must_define += bdbb_input_fila_b
-bdbb_input_fila_b_help = First multifasta input file
-bdbb_input_fila_b_type = file
+moa_must_define += bdbb_input_file_b
+bdbb_input_file_b_help = First multifasta input file
+bdbb_input_file_b_type = file
 
 moa_may_define += bdbb_protein
 bdbb_protein_type = set
@@ -62,48 +62,40 @@ bdbb_nothreads_type = integer
 #include moabasemoa	
 include $(MOABASE)/template/moa/core.mk
 
-bdbb_test:
-	$(e)echo "Input extension: '$(bdbb_input_extension)'"
-	$(e)echo "Real blast db  '$(real_bdbb_db)'"
-	$(e)echo "a blastdb file: '$(single_bdbb_db_file)'"
-	$(e)echo "real blast db: '$(real_bdbb_db)'"
-	$(e)echo "No inp files $(words $(bdbb_input_files))"
-	$(e)echo "No xml files $(words $(bdbb_output_files))"
-	$(e)echo "No gff files $(words $(bdbb_gff_files))"
-
 #echo Main target for blast
 .PHONY: blast
 bdbb: bdbb_output
 
-bdbb_output: bdbb_first_phase
-
-bdbb_first_phase: bdbb_blast_db_a
-	formatdb
-	blastall -i $(bdbb_input_fila_a)
-
-bdbb_blast_db_a:
-	formatdb -i $(bdbb_input_fila_a) \-
+bdbb_output: blast_program=$(if $(call seq,$(bdbb_protein),T),blastp,blastn)
+bdbb_output: baseA=$(shell basename $(bdbb_input_file_a))
+bdbb_output: baseB=$(shell basename $(bdbb_input_file_b))
+bdbb_output:
+	formatdb -i $(bdbb_input_file_a) -n $(baseA) \
 		-p $(bdbb_protein)
-
-
-#prepare for blast - i.e. create directories
-.PHONY: bdbb_prepare
-bdbb_prepare:
-
-.PHONY: bdbb_post
-bdbb_post:
-
-# create out/*xml - run BLAST 
-output:
-	$(e) $(call echo,Running BLAST on $<)
-	$(e)echo "Processing blast $*"
-	$(e)echo "Creating out.xml $@ from $<"
-	$(e)echo "Params $(bdbb_program) $(bdbb_db)"
-	blastall -i $< -p $(bdbb_program) -e $(bdbb_eval) -m 7 \
-		-a $(bdbb_nothreads) -d $(real_bdbb_db) \
-		-b $(bdbb_nohits) -v $(bdbb_nohits) \
-		-o $@
-
+	formatdb -i $(bdbb_input_file_b) -n $(baseB) \
+		-p $(bdbb_protein)
+	blastall -p $(blast_program) -i $(bdbb_input_file_a) \
+		-d $(baseB) -m 8 -v 1 -b 1 \
+		-e $(bdbb_eval) \
+		> $(baseA).out 
+	blastall -p $(blast_program) -i $(bdbb_input_file_b) \
+		-d $(baseA) -m 8 -b 1 -v 1 \
+		-e $(bdbb_eval) \
+		> $(baseB).out 
+	cat  $(baseA).out | cut -f-2 | awk '{print $$1 "___" $$2}' | sort | uniq > listA
+	cat  $(baseB).out | cut -f-2 | awk '{print $$2 "___" $$1}' | sort | uniq > listB
+	-rm -f bidibebla
+	for x in `cat listB`; do \
+		if grep -q $$x listA; then \
+			echo $$x | sed "s/___/\t/" >> bidibebla ;\
+		fi; \
+	done
+	echo -n "sequences in $(bdbb_input_file_a): " > report
+	grep ">" $(bdbb_input_file_a) | wc -l >> report
+	echo -n "sequences in $(bdbb_input_file_b): " >> report
+	grep ">" $(bdbb_input_file_b) | wc -l >> report
+	echo -n "number of best biderectional pairs found: " >> report
+	cat bidibebla | wc -l  >> report
 
 bdbb_clean:
-	-rm -rf output
+	-rm -rf *nin *nsq *out *nhr listA listB bidibebla
