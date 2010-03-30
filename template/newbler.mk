@@ -40,6 +40,27 @@ assembly. This is used to create an extra fasta file, named using this	\
 variable, that contain the generated contigs with their ids prepended	\
 with the library id.
 
+moa_may_define += newbler_mids
+newbler_mids_help = mids to use for this assembly
+newbler_mids_type = string
+newbler_mids_default = 
+
+moa_may_define += newbler_mid_configuration
+newbler_mid_configuration_help = Mid configuration file to use
+newbler_mid_configuration_type = file
+newbler_mid_configuration_default = 
+
+moa_may_define += newbler_min_identity
+newbler_min_identity_help = Minimal overalp identity used during assembly 
+newbler_min_identity_type = integer
+newbler_min_identity_default = 
+
+moa_may_define += newbler_largecontig_cutoff
+newbler_largecontig_cutoff_help = min length of a contig in 454LargeContigs.fna
+newbler_largecontig_cutoff_type = integer
+newbler_largecontig_cutoff_default = 
+
+
 ################################################################################
 ## Include MOABASE
 include $(MOABASE)/template/moa/core.mk
@@ -58,9 +79,19 @@ newbler_post:
 .PHONY: newbler
 newbler: 454AllContigs.fna 454LargeContigs.all.png 
 
+newbler_cl = runAssembly -ace -o . -consed \
+		$(if $(newbler_mid_configuration),-mcf $(newbler_mid_configuration)) \
+		$(if $(newbler_min_identity), -mi $(newbler_min_identity)) \
+		$(if $(newbler_largecontig_cutoff), -l $(newbler_largecontig_cutoff)) \
+		$(if $(newbler_mids), \
+				$(addprefix $(newbler_mids)@, $(newbler_input_files)),\
+				$(newbler_input_files))
+
 #454AllContigs.fna is one of the files generated
 454AllContigs.fna:
-	runAssembly -ace -o . -consed $(newbler_input_files)
+	echo "Executing"
+	echo $(newbler_cl)
+	$(newbler_cl)
 
 454LargeContigs.all.png:
 	fastaInfo -i 454LargeContigs.fna length gcfrac -b 20 -s > 454LargeContigs.stats
