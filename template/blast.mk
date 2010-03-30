@@ -103,16 +103,20 @@ include $(shell echo $$MOABASE)/template/moa/core.mk
 
 real_blast_db = $(if $(blast_db), $(shell echo "$(blast_db)" | sed "s/\.[pn]..$$//"))
 
-ifdef blast_main_phase  
-  blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
-  $(warning XXX indir $(blast_input_dir) inext $(blast_input_extension)  inf $(blast_input_files))
+#  blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
+#  $(warning XXX indir $(blast_input_dir) inext $(blast_input_extension)  inf $(blast_input_files))
 
+
+ifdef blast_main_phase  
   blast_output_files = $(addprefix out/, \
 	  $(notdir $(patsubst %.$(blast_input_extension), %.xml, $(blast_input_files))))
 
   blast_gff_files = $(addprefix gff/, \
 	  $(patsubst %.xml, %.gff, $(notdir $(blast_output_files))))
 endif
+
+$(warning blast input files $(blast_input_files))
+$(warning blast output files $(blast_output_files))
 
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
@@ -121,7 +125,7 @@ ifdef real_blast_db
 single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]s[dq] 2>/dev/null || true)
 endif 
 
-test:
+blasttest:
 	$(e)echo $(blast_input_dir)
 	$(e)echo $(blast_input_extension)
 	$(e)echo $(blast_input_dir)/*.$(blast_input_extension)

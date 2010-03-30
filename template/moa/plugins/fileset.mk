@@ -30,7 +30,7 @@
 ifdef $(moa_id)_main_phase
 $(foreach v,$(_moa_filesets), \
 	$(eval $(v)_srtst=cat) \
-	$(eval $(v)_realext=$(if $($(v)_extension),.$(v)_extension)) \
+	$(eval $(v)_realext=$(if $($(v)_extension),.$($(v)_extension))) \
 	$(if $(call seq,$($(v)_sort),u), \
 		$(eval $(v)_prtst=%A@)) \
 	$(if $(call seq,$($(v)_sort),t), \
