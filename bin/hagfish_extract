@@ -2,6 +2,7 @@
 
 import os
 import sys
+import pickle
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,8 +18,11 @@ parser.add_option('-v', dest='verbose', action="count",
                   help='Show debug information')
 parser.add_option('-x', dest='limit', type="int",
                   help='Limit the number of pairs to read per input file')
-parser.add_option('--skip_step_1' , dest='skip1', action="store_true",
-                  help='Skip parsing the BAM files - go to stats directly')
+parser.add_option('--skip_read' , dest='skipRead', action="store_true",
+                  help='Skip reading the BAM files, read the parsed BAM files ' + 
+                  'directly from disk')
+parser.add_option('--skip_stats' , dest='skipStat', action="store_true",
+                  help='Skip stat creating, read the stat data from disk')
 
 options, args = parser.parse_args()
 inputFiles = args
@@ -49,7 +53,7 @@ def runReturn(cl):
     return run(cl).communicate()[0].split('\n')
 
 def getSequenceInfo(inputFile):
-    sequences = {}
+    seqInfo = {}
     for line in runReturn('samtools view -H %s' % inputFile):
         line = line.strip()
         if not line: continue
@@ -57,20 +61,13 @@ def getSequenceInfo(inputFile):
             ls = line.split()
             seqId = ls[1][3:]
             seqLen = int(ls[2][3:])
-            if not sequences.has_key(seqId):
-                sequences[seqId] = {
-                    'length' : seqLen,
-                    'seenIn' : [inputFile],
-                    'start1' : [],
-                    'stop1' : [],
-                    'start2' : [],
-                    'stop2' : [],
-                    }
+            if not seqInfo.has_key(seqId):
+                seqInfo[seqId] = { 'length' : seqLen }
             else:
-                if sequences[seqId]['length'] != seqLen:
+                if seqInfo[seqId]['length'] != seqLen:
                     raise(Exception("problem with seqlen"))
-                sequences[seqId]['seenIn'].append(inputFile)
-    return sequences
+                seqInfo[seqId]['seenIn'].append(inputFile)
+    return seqInfo
     
 def readBAM(fileName):
     p = run("samtools view -f 2 %s" % fileName)
@@ -102,66 +99,99 @@ def smoother(a, steps):
         result += a[fr:to]        
     return result / float(steps)
 
-def doStats(bamname, sequences):
-    #concatenate all sequences into one
+def doStats(bamname, seqInfo, readPairs):
+
+    if not os.path.exists('stats'):
+        os.mkdir('stats')
     stats = {}
+
+    # concatenate all insertsizes of all readpairs of all sequences for
+    # this single bamfile into one
     insertSizes = np.concatenate(
-        [sequences[s]['stop2'] - sequences[s]['start1'] for 
-         s in sequences.keys()])
-    stats['bamname'] = bamname
+        [readPairs[s]['stop2'] - readPairs[s]['start1'] for 
+         s in readPairs.keys()])
 
     l.info("total no readpairs: %d" % len(insertSizes))
+
+    stats['nopairs'] = len(insertSizes)
     stats['median'] = np.median(insertSizes)
     stats['average'] = np.average(insertSizes)
 
+    # generate a histogram
     hist, edges = np.histogram(insertSizes, bins=500, range=(0, 30000), new=True)
     mids = 0.5 * (edges[1:] + edges[:-1])
 
-    #smooth by a moving average
+    #smooth the histogram (using a moving average)
     shist = smoother(hist, 10)
     smids = smoother(mids, 10)
     
+    # find the top of the peak
     top = np.argmax(shist)
     topInsert = smids[top]
-    l.info("insert size lies around %s" % topInsert)
+    stats['top'] = topInsert
+    l.info("insert size tops at %s" % topInsert)
     smoothMax = np.max(shist)
-    
+
+    #find the left & right borders of the peak
     leftB = top-1
     while (shist[leftB] > (0.1 * smoothMax)) and \
             (shist[leftB-1] < shist[leftB]) and \
-            leftB > 0:
-        leftB -= 1
+            leftB > 0: leftB -= 1
     topLeft = smids[leftB]
 
     rghtB = top+1
     while (shist[rghtB] > (0.1 * smoothMax)) and \
             (shist[rghtB+1] < shist[rghtB]) and \
-            rghtB < len(shist):
-        rghtB += 1
-    topRight = smids[rghtB]
-        
+            rghtB < len(shist): rghtB += 1
+    topRight = smids[rghtB]        
+    stats['left'] = topLeft
+    stats['right'] = topRight
+
+    # plot a figure
     l.info('plotting figure')
-    maxY = np.max(hist) * 1.1
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.vlines(topInsert,0,maxY)
-    ax.vlines(topLeft,0,maxY)
-    ax.vlines(topRight,0,maxY)
-    ax.plot(mids, hist, 'red')
-    plt.savefig(os.path.join(bamname + '.hist.png'))
+    plt.title('Insert size distribution for %s' % bamname,
+              fontdict={'size' : 10})
+    ax.plot(smids, shist, '#8888ff', linewidth=5,
+            label = "Smoothed histogram")
+    ax.plot(mids, hist, 'red', label='histogram')
+    minY, maxY = ax.get_axes().get_ylim()
+
+    ax.vlines(topInsert,minY,maxY, 'g',  linestyles='dotted',
+              label='Peak top')
+    ax.vlines(topLeft,minY,maxY, 'b', linestyles='dotted', 
+              label='left border peak')
+    ax.vlines(topRight,minY,maxY, 'r', linestyles='dotted', 
+              label='rigth border peak')
+
+    ax.legend(prop={'size' :'x-small'})
+    plt.savefig(os.path.join('stats', bamname + '.hist.png'))
 
     #write stats file for this library
-#    with open(bamname + '.stats') as F:
-#        F.write("readpairs %d" % )
+    with open(os.path.join('stats', bamname + '.stats'), 'w') as F:
+        for k in stats.keys():
+            l.debug("stat %s : %s" % (k, stats[k]))
+            F.write("%s\t%s\n" % (k, stats[k]))
+    
+    return stats
 
-def extract(inputFileName):
-    l.info('processing BAM file: %s' % inputFileName)
+def parseBam(seqInfo, inputFileName):
+
     basename = os.path.basename(inputFileName).replace('.bam', '')
-    l.info('Basename %s' % basename)
-    sequences = getSequenceInfo(inputFileName)
-    for x in sequences.keys():
-        l.info('Discovered sequence %s (%d nt)' % (x, sequences[x]['length']))
 
+    l.info('processing BAM file: %s' % inputFileName)
+    l.info('Basename %s' % basename)
+
+    readPairs = {}
+
+    for seqId in seqInfo.keys():
+        readPairs[seqId] = \
+            { 'start1' : [],
+              'stop1' : [],
+              'start2' : [],
+              'stop2' : [] }
+        
     limit = options.limit
     if not limit:
         limit = 1e18
@@ -171,63 +201,128 @@ def extract(inputFileName):
     for seqid, start1, stop1, start2, stop2 in readBAM(inputFileName):
         i += 1
         if i > limit: break
-        sequences[seqid]['start1'].append(start1)
-        sequences[seqid]['stop1'].append(stop1)
-        sequences[seqid]['start2'].append(start2)
-        sequences[seqid]['stop2'].append(stop2)
+        readPairs[seqid]['start1'].append(start1)
+        readPairs[seqid]['stop1'].append(stop1)
+        readPairs[seqid]['start2'].append(start2)
+        readPairs[seqid]['stop2'].append(stop2)
 
-    for x in sequences.keys():
-        if not os.path.exists(x):
-            os.mkdir(x)
-        seqdata = sequences[x]
-        l.info('Discovered %d pairs for %s' % (len(seqdata['start1']),x))
-        seqdata['alldata'] = np.array(
-            [ seqdata['start1'],
-              seqdata['stop1'],
-              seqdata['start2'],
-              seqdata['stop2'] 
-            ], dtype="uint")
+    # process the sequences - turn everyting into np.arrays 
+    # and write the data to numpy files - for quick reading in 
+    # later stage -> for example, when fiddling with the statistics
+    for seqId in seqInfo.keys():
+        if not os.path.exists(seqId):
+            os.mkdir(seqId)
+        rp = readPairs[seqId]
 
-        seqdata['start1'] = np.array(seqdata['start1'])
-        seqdata['stop1'] = np.array(seqdata['stop1'])
-        seqdata['start2'] = np.array(seqdata['start2'])
-        seqdata['stop2'] = np.array(seqdata['stop2'])
+        rp['start1'] = np.array(rp['start1'])
+        rp['stop1'] = np.array(rp['stop1'])
+        rp['start2'] = np.array(rp['start2'])
+        rp['stop2'] = np.array(rp['stop2'])
 
-        outname = os.path.join(x, basename + '.npy')
-        l.info('writing %s ' % outname)
-        np.save(outname, seqdata['alldata'])
-        l.debug('Done writing output')
+        outname = os.path.join(seqId, basename + '.readpairs')
+        np.savez(outname,
+                 start1 = rp['start1'],  
+                 stop1 = rp['stop1'],  
+                 start2 = rp['start2'],  
+                 stop2 = rp['stop2'])
+        l.info('wrote %d pairs for %s to disk' % (len(rp['start1']),seqId))
     
-    #write a list of all known sequences
-    with open('seqlist', 'w') as F:
-        for s in sequences.keys():
-            F.write("%s\n" % s)
+    return readPairs
+
+def normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats):
+    """
+    normalize and sort the readpairs 
+    
+    normalize -> subtract the peak insert size so that
+       all hover around zero
+
+    sort into three groups: below zero, around zero and above zero
+
+    We will do this per bamBase and per sequence
+    """    
+
+    for seqId in seqInfo.keys():
+
+        l.info("start calculating coverage plots for %s" % seqId)
+
+        rp = readPairs[seqId]
+        seqLen = seqInfo[seqId]['length']
+
+        l.debug("create coverage plot arrays")
+        r_ok = np.zeros(seqLen, dtype=np.int)
+        r_low = np.zeros(seqLen, dtype=np.int)
+        r_high = np.zeros(seqLen, dtype=np.int)
+
+        peakLow = stats['left']
+        peakHigh = stats['right']
+
+        def ff(a,b):
+            dist = b-a
+            if dist < peakLow:
+                r_low[a:b] += 1
+            elif dist > peakHigh:
+                r_high[a:b] += 1
+            else:
+                r_ok[a:b] += 1
+        FF=np.vectorize(ff)
+        l.debug("Start calculating coverage plots for %d readpairs" % len(rp['start1']))
+        FF(rp['start1'], rp['stop2'])
+        l.debug("Done calculating coverage plot")
         
-    doStats(basename, sequences)
+        #write the plots to disk      
+        l.debug("Start wrinting coverage plot to disk")
+        np.savez(os.path.join(seqId, bamBase + '.coverage'),
+                 r_low = r_low, 
+                 r_ok = r_ok, 
+                 r_high = r_high)
+        l.debug("wrote coverage plot to disk")
+
+def readBamDataFromDisk(seqInfo, bamBase):
+    readPairs = {}
+    for seqId in seqInfo.keys():
+        rp = {}
+        datafile = os.path.join(seqId, bamBase + '.readpairs.npz')
+        data = np.load(datafile)
+        rp['start1'] = data['start1']
+        rp['stop1'] = data['stop1']
+        rp['start2'] = data['start2']
+        rp['stop2'] = data['stop2']
+        l.info('%d records from %s' % (rp['start1'].shape[1], seqId))
+        readPairs[s] = rp
+    return readPairs
+
+def readStatsFromDisk(bamBase):
+    stats = {}
+    with open(os.path.join('stats', bamBase + '.stats'), 'r') as F:
+        for  line in F.readlines():
+            k, v = line.strip().split("\t")
+            stats[k] = float(v)
+    return stats
 
 if __name__ == '__main__':
-    if options.skip1:
-        l.info("skipping step 1 -reading older data")
-        seqIds = open('seqlist').read().strip().split()    
-        l.info("processing %d sequences" % len(seqIds))
-        #regenerate the sequences object for each of the 
-        for bamfile in open('bamlist').read().strip().split():
-            l.info('processing bamfile %s' % bamfile)
-            sequences = {}
-            for s in seqIds:
-                seqData = {}
-                datafile = os.path.join(s, bamfile + '.npy')
-                seqData['alldata'] = datafile
-                data = np.load(datafile)
-                l.info('%d records from %s' % (data.shape[1], datafile))
-                seqData['start1'] = data[0]
-                seqData['stop1'] = data[1]
-                seqData['start2'] = data[2]
-                seqData['stop2'] = data[3]
-                sequences[s] = seqData
-            doStats(bamfile, sequences)
-    else:
-        map(extract, inputFiles)
-        with open('bamlist', 'w') as F:
-            for i in inputFiles:                
-                F.write("%s\n" % os.path.basename(i).replace('.bam', ''))
+
+    for inputFile in inputFiles:
+        bamBase = os.path.basename(inputFile).replace('.bam', '')
+        l.info('processing bamfile %s' % bamBase)
+
+        seqInfo = getSequenceInfo(inputFile)
+        l.info('discovered %d sequences' % len(seqInfo))
+
+        # should we pars the BAM files & or read intermediate files
+        # from disk?
+        if options.skipRead:
+            l.info("skiping BAM parsing")
+            readPairs = readBamDataFromDisk(seqInfo, bamBase)
+        else:
+            readPairs = parseBam(seqInfo, inputFile)
+
+        # Should we do the stats? Or read the stats from disk??
+        if options.skipStat:
+            stats = readStatsFromDisk(bamBase)
+            l.info("read stats, peak is at %.0f" % stats['top'])
+        else:
+            stats = doStats(bamBase, seqInfo, readPairs)
+
+        #Sort the readpairs
+        normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats)
+            
