@@ -18,7 +18,7 @@
 # 
 adhoc_help = adhoc files
 
-$(call moa_fileset_define,adhoc_input,fasta,Input files for adhoc)
+$(call moa_fileset_define,adhoc_input,,Input files for adhoc)
 
 # Help
 moa_id=adhoc

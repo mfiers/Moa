@@ -30,6 +30,7 @@
 ifdef $(moa_id)_main_phase
 $(foreach v,$(_moa_filesets), \
 	$(eval $(v)_srtst=cat) \
+	$(eval $(v)_realext=$(if $($(v)_extension),.$(v)_extension)) \
 	$(if $(call seq,$($(v)_sort),u), \
 		$(eval $(v)_prtst=%A@)) \
 	$(if $(call seq,$($(v)_sort),t), \
@@ -43,7 +44,7 @@ $(foreach v,$(_moa_filesets), \
 	$(if $($(v)_limit),$(eval $(v)_lmtst=|head -n $($(v)_limit))) \
 	$(eval $(v)_files=$(shell \
 				find $($(v)_dir)/ -maxdepth 1 \
-					-name '$($(v)_glob).$($(v)_extension)' \
+					-name '$($(v)_glob)$($(v)_realext)' \
 					-printf '$($(v)_prtst)\t%p\n' \
 			| ( $($(v)_srtst) 2>/dev/null ) \
 			$($(v)_lmtst) \
