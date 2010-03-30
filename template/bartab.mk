@@ -73,6 +73,11 @@ bartab_trim_type = set
 bartab_trim_default = T
 bartab_trim_allowed = T F
 
+moa_may_define += bartab_extra_parameters
+bartab_extra_parameters_help = extra parameters to feed bartab
+bartab_extra_parameters_type = string
+bartab_extra_parameters_default = 
+
 #include the moa core libraries
 include $(shell echo $$MOABASE)/template/moa/core.mk
 
@@ -87,15 +92,20 @@ bartab_initialize:
 
 .PHONY: bartab_clean
 bartab_clean:
+	rm bartab.* 
 
 .PHONY: bartab
 bartab:
-	$e bartab -in $(bartab_in) \
+	$e bartab -v -in $(bartab_in) \
 		$(if $(bartab_qin), -qin $(bartab_qin)) \
 		$(if $(bartab_map), -map $(bartab_map)) \
 		$(if $(bartab_out), -out $(bartab_out)) \
 		$(if $(bartab_forward_primer), -for $(bartab_forward_primer)) \
 		$(if $(bartab_reverse_primer), -rev $(bartab_reverse_primer)) \
 		$(if $(bartab_min_length), -min $(bartab_min_length)) \
-		$(if $(call seq,$(bartab_trim),F),-xbar)
+		$(if $(call seq,$(bartab_trim),F),-xbar) \
+		$(bartab_extra_parameters) \
+		> bartab.out	
+
+
 
