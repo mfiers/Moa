@@ -1,0 +1,97 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import math
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+#import matplotlib.rc as rc
+import pylab as pl
+
+import logging
+import optparse
+import subprocess
+
+## Arguments: General options 
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+parser.set_defaults(ntPerLine=1e5)
+parser.add_option('-n', dest='ntPerLine',
+                  help='no nucleotides per band')
+
+options, args = parser.parse_args()
+
+inputDir = args[0]
+
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+
+if __name__ == '__main__':
+
+    if inputDir[-1] == '/': 
+        inputDir = inputDir[:-1]
+    seqId = os.path.basename(inputDir)
+
+    ntPerLine = int(float(options.ntPerLine))
+    l.info("nucleotides per line: %d" % ntPerLine)
+    
+    data = np.load(os.path.join(inputDir, 'combined.coverage.npz'))
+    r_ok = data['r_ok']
+    r_high = data['r_high']
+    r_low = data['r_low']
+        
+    seqLen = len(r_ok)
+
+    r_x = np.arange(seqLen, dtype="int")
+    r_z = np.zeros_like(r_x)
+
+    maxY = 200
+    r_ok_clipped = r_ok #np.clip(r_ok, 0, maxY)
+    
+    noLines = int(math.ceil(seqLen / float(ntPerLine)))
+    l.info("going to plot %d lines" % noLines)
+
+    fig = plt.figure()
+    fig.subplots_adjust(0.1,0.01,0.95,0.95)
+    for line in range(noLines):        
+        
+        nstart = line * ntPerLine
+        nstop = ((line+1) * ntPerLine) -1
+        l.info('printing line %d from %d to %d' % (line, nstart, nstop))
+        ax = fig.add_subplot(noLines,1,line+1)
+        if line == 0:
+            ax.set_title('Coverage plot for "%s"' % seqId) 
+        ax.fill_between(r_x[nstart:nstop], r_ok_clipped[nstart:nstop], r_z[nstart:nstop])
+
+        #ax.plot(r_x[nstart:nstop], r_ok_clipped[nstart:nstop], 'r')
+        ax.set_xlim(nstart,nstop)
+        ax.set_ylim(0,maxY)
+        ax.set_axis_off()
+        coordT = ax.text(nstart-(0.005 * ntPerLine),0, '%s' % nstart, ha='right')
+        plt.setp(coordT, size='small')
+        #ax.axis['left'].set_visible(False)
+        #ax.axis['bottom'].set_visible(False)
+
+    #ax = fig.add_subplot(111)
+    #ax.plot(r_ok, fillstyle='bottom' )
+    plt.savefig('%s.png' % (seqId))
+ 
