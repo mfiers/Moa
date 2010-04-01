@@ -6,6 +6,7 @@ import copy
 import shlex
 import logging
 import optparse
+import textwrap
 
 
 class DUMMY:
@@ -163,12 +164,16 @@ class GFFSET:
 gffSet = GFFSET(sys.argv[1], preload=False)
 fields = "ref source feature start stop score strand".split()
 for rec in gffSet.readRecords():
+    if rec._type == 'string': continue
     for f in fields:
-        print "%10s : %s" % (f, rec.__dict__[f])
+        wraf = "\n".join(textwrap.wrap(rec.__dict__[f], 80, 
+                             initial_indent='', subsequent_indent = ' ' * 18))
+        print "%10s : %s" % (f, wraf)
     for a in rec.attriblist:
         v = rec.__dict__[a].split(',')
         for vv in v:
-            print " attrib %10s : %s" % (a, vv)
+            wraf = ("\n" + ' ' * 13).join( textwrap.wrap(vv, 70))
+            print "%10s : %s" % (a[-10:], wraf)
         
-    print '-' * 100
+    print '-' * 90
 
