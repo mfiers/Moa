@@ -15,6 +15,10 @@ mancommand=nroff -c -mandoc 2>/dev/null | less -is
 
 ## plugins - Add functionality to Moa
 
+##
+## THE FOLLOWING PLUGINS ARE CORE PLUGINS _ DO NOT DELETE THESE!!
+##
+
 # filesets - utilities to define sets of files
 # not - it is probably a good idea to load this early
 moa_plugins += fileset
@@ -37,8 +41,16 @@ moa_plugins += test
 # info - display machine and human readable info on a job
 moa_plugins += info
 
+##
+## THE REMAINING PLUGINS ARE OPTIONAL - remove them at will
+##
+
 # Version control using git
 moa_plugins += git 
+
+# Some utilities for making moa easier to use
+moa_plugins += moautil 
+
 
 # state - report on the current state of the pipeline
 # moa_plugins += state
