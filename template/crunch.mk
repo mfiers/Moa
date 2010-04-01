@@ -60,8 +60,7 @@ crunch_output_files=$(foreach f1, $(crunch_input_files), \
 
 crunch_test:
 	echo $(crunch_input_files)
-	echo $(crunch_output_files)
-		
+	echo $(crunch_output_files)		
 crunch: $(crunch_output_files)
 
 
@@ -73,6 +72,6 @@ crunch_%:
 		blastall -p blastn -a $(crunch_nothreads) -m 8 		\
 			-i $(crunch_input_dir)/$$f1.$(ext) -d $$f2 -o $@;			\
 		rm $$f2.n??
-	
+
 crunch_clean:
 	-rm -f crunch_*

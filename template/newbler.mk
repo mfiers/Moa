@@ -77,7 +77,10 @@ newbler_post:
 	cat 454LargeContigs.fna | sed 's/>contig/>$(nln)_contig/' > $(nln).large.fasta 
 
 .PHONY: newbler
-newbler: 454AllContigs.fna 454LargeContigs.all.png 
+newbler: 454AllContigs.fna 
+
+
+#454LargeContigs.all.png 
 
 newbler_cl = runAssembly -ace -o . -consed \
 		$(if $(newbler_mid_configuration),-mcf $(newbler_mid_configuration)) \
