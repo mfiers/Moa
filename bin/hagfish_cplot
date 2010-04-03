@@ -7,6 +7,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
+import matplotlib as mpl
 #import matplotlib.rc as rc
 import pylab as pl
 
@@ -21,10 +22,18 @@ parser.add_option('-v', dest='verbose', action="count",
 parser.set_defaults(ntPerLine=1e5)
 parser.add_option('-n', dest='ntPerLine',
                   help='no nucleotides per band')
+parser.add_option('-S', dest='seqId',
+                  help='Sequence Id')
+parser.add_option('-l', dest='log', action='store_true',
+                  help='take the log10 of the coverage')
+parser.add_option('-s', dest='start',
+                  help='Start position (nt) of the plot')
+parser.add_option('-e', dest='end',
+                  help='End position (nt) of the plot')
 
 options, args = parser.parse_args()
 
-inputDir = args[0]
+inputFile = args[0]
 
 l = logging.getLogger('hagfish')
 handler = logging.StreamHandler()
@@ -44,54 +53,112 @@ elif options.verbose == 1:
 else:
     l.setLevel(logging.WARNING)
 
-
+def quant(x, w):
+    xs = np.sort(x)
+    return xs[int(len(xs) * w)]
+    
 if __name__ == '__main__':
 
-    if inputDir[-1] == '/': 
-        inputDir = inputDir[:-1]
-    seqId = os.path.basename(inputDir)
+    if options.seqId:
+        seqId = options.seqId
+    else:
+        seqId = os.path.basename(inputFile)\
+                .replace('.coverage.npz', '')\
+                .replace('.npz', '')
 
+    l.info("and I'm calling this sequence: %s" % seqId)
+    
     ntPerLine = int(float(options.ntPerLine))
     l.info("nucleotides per line: %d" % ntPerLine)
-    
-    data = np.load(os.path.join(inputDir, 'combined.coverage.npz'))
+
+    data = np.load(inputFile)
     r_ok = data['r_ok']
     r_high = data['r_high']
     r_low = data['r_low']
-        
+
     seqLen = len(r_ok)
 
-    r_x = np.arange(seqLen, dtype="int")
+    if options.start:
+        pStart = int(float(options.start))
+    else:
+        pStart = 0
+    if options.end:
+        pEnd = int(float(options.end))
+    else:
+        pEnd = seqLen
+
+    plotLen = pEnd - pStart
+    l.info("Plotting from %d to %d (%d nt)" % (
+        pStart, pEnd, plotLen))
+
+    r_all = r_low + r_high + r_ok
+    
+    if pStart > 0 or pEnd < seqLen:
+        r_ok = r_ok[pStart:pEnd]
+        r_low = r_low[pStart:pEnd]
+        r_high = r_high[pStart:pEnd]
+        r_all = r_all[pStart:pEnd]
+        
+    #max value - else all space is taken up by the peaks
+    maxY = quant(r_all, 0.80)
+    minY = 0
+    
+    r_x = np.arange(pStart, pEnd, dtype="int")
     r_z = np.zeros_like(r_x)
 
-    maxY = 200
-    r_ok_clipped = r_ok #np.clip(r_ok, 0, maxY)
+    r_low = -1 * r_low
     
-    noLines = int(math.ceil(seqLen / float(ntPerLine)))
+    noLines = int(math.ceil(plotLen / float(ntPerLine)))
     l.info("going to plot %d lines" % noLines)
+    l.info("y axis is between %d and %d" % (minY, maxY))
 
-    fig = plt.figure()
-    fig.subplots_adjust(0.1,0.01,0.95,0.95)
+    mpl.rcParams['axes.labelsize'] = 'x-small'
+    mpl.rcParams['xtick.labelsize'] = 'xx-small'
+    mpl.rcParams['ytick.labelsize'] = 'xx-small'
+
+    fig = plt.figure(figsize=(10,noLines))
+
+    _MC = 0.10 - (0.01 * min(8, noLines))
+    fig.subplots_adjust(0.03,_MC,0.95,0.98-(2*_MC))
+    
     for line in range(noLines):        
-        
-        nstart = line * ntPerLine
-        nstop = ((line+1) * ntPerLine) -1
-        l.info('printing line %d from %d to %d' % (line, nstart, nstop))
+    
+        nstart = pStart + (line * ntPerLine)
+        nstop = nstart + (ntPerLine - 1)
+
+        l.debug('printing line %d from %d to %d' % (
+            line, nstart, nstop))
+
         ax = fig.add_subplot(noLines,1,line+1)
         if line == 0:
-            ax.set_title('Coverage plot for "%s"' % seqId) 
-        ax.fill_between(r_x[nstart:nstop], r_ok_clipped[nstart:nstop], r_z[nstart:nstop])
+            ax.set_title('Coverage plot for "%s"' % seqId)
 
-        #ax.plot(r_x[nstart:nstop], r_ok_clipped[nstart:nstop], 'r')
-        ax.set_xlim(nstart,nstop)
-        ax.set_ylim(0,maxY)
-        ax.set_axis_off()
-        coordT = ax.text(nstart-(0.005 * ntPerLine),0, '%s' % nstart, ha='right')
-        plt.setp(coordT, size='small')
-        #ax.axis['left'].set_visible(False)
-        #ax.axis['bottom'].set_visible(False)
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            r_all[nstart:nstop],
+            color="#aa0000")
+            
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            r_ok[nstart:nstop],
+            color="green")
 
-    #ax = fig.add_subplot(111)
-    #ax.plot(r_ok, fillstyle='bottom' )
-    plt.savefig('%s.png' % (seqId))
+        ax.plot( r_x[nstart:nstop],
+                 r_ok[nstart:nstop],
+                 color='black')
+
+        ax.plot( r_x[nstart:nstop],
+                 r_all[nstart:nstop],
+                 color='black')
+        
+        ax.set_xlim(nstart,nstop+1)
+        ax.set_ylim(minY,maxY)
+        
+        yAx = ax.get_yaxis()
+        yAx.set_ticks(range(100, maxY, 200))
+        
+                
+    plt.savefig('%s.c.png' % (seqId))
  
