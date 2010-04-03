@@ -1,0 +1,243 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import math
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+import matplotlib as mpl
+#import matplotlib.rc as rc
+import pylab as pl
+
+import logging
+import optparse
+import subprocess
+
+## Arguments: General options 
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+parser.set_defaults(ntPerLine=1e5)
+parser.add_option('-n', dest='ntPerLine',
+                  help='no nucleotides per band')
+parser.add_option('-S', dest='seqId',
+                  help='Sequence Id')
+parser.add_option('-l', dest='log', action='store_true',
+                  help='take the log10 of the coverage')
+parser.add_option('-s', dest='start',
+                  help='Start position (nt) of the plot')
+parser.add_option('-e', dest='end',
+                  help='End position (nt) of the plot')
+parser.add_option('-C', dest='compare',
+                  help='If this is defined - it will become ' +
+                  'a comparative plot')
+
+
+options, args = parser.parse_args()
+
+inputFile = args[0]
+
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+def quant(x, w):
+    xs = np.sort(x)
+    return xs[int(len(xs) * w)]
+    
+if __name__ == '__main__':
+
+    if options.seqId:
+        seqId = options.seqId
+    else:
+        seqId = os.path.basename(inputFile)\
+                .replace('.coverage.npz', '')\
+                .replace('.npz', '')
+
+    l.info("and I'm calling this sequence: %s" % seqId)
+    
+    ntPerLine = int(float(options.ntPerLine))
+    l.info("nucleotides per line: %d" % ntPerLine)
+
+    data = np.load(inputFile)
+    r_ok = data['r_ok']
+    r_high = data['r_high']
+    r_low = data['r_low']
+
+    cdata = np.load(options.compare)
+    c_ok = cdata['r_ok']
+    c_high = cdata['r_high']
+    c_low = cdata['r_low']
+
+    seqLen = len(r_ok)
+
+    if options.start:
+        pStart = int(float(options.start))
+    else:
+        pStart = 0
+    if options.end:
+        pEnd = int(float(options.end))
+    else:
+        pEnd = seqLen
+
+    plotLen = pEnd - pStart
+    l.info("Plotting from %d to %d (%d nt)" % (
+        pStart, pEnd, plotLen))
+
+    #normalize the plots
+    r_all = r_low + r_high + r_ok
+    c_all = c_low + c_high + c_ok
+
+    r_ok = r_ok / float(np.median(r_ok))
+    c_ok = c_ok / float(np.median(c_ok)) 
+
+    r_all = r_all / float(np.median(r_ok))
+    c_all = c_all / float(np.median(c_ok)) 
+
+    if pStart > 0 or pEnd < seqLen:
+        r_ok = r_ok[pStart:pEnd]
+        r_all = r_all[pStart:pEnd]
+        
+        c_ok = c_ok[pStart:pEnd]
+        c_all = c_all[pStart:pEnd]
+        
+    
+    #max value - else all space is taken up by the peaks
+    maxY = max(quant(r_ok, 0.80), quant(c_ok, 0.80))
+    minY = -maxY
+        
+    r_x = np.arange(pStart, pEnd, dtype="int")
+    r_z = np.zeros_like(r_x)
+
+    noLines = int(math.ceil(plotLen / float(ntPerLine)))
+    l.info("going to plot %d lines" % noLines)
+    l.info("y axis is between %d and %d" % (minY, maxY))
+
+    mpl.rcParams['axes.labelsize'] = 'x-small'
+    mpl.rcParams['xtick.labelsize'] = 'xx-small'
+    mpl.rcParams['ytick.labelsize'] = 'xx-small'
+
+    fig = plt.figure(figsize=(10,2*noLines))
+    
+    _MC = 0.10 - (0.01 * min(8, noLines))
+    fig.subplots_adjust(0.03,_MC,0.95,0.98-(2*_MC))
+    
+    for line in range(noLines):        
+    
+        nstart = pStart + (line * ntPerLine)
+        nstop = nstart + (ntPerLine - 1)
+
+        l.debug('printing line %d from %d to %d' % (
+            line, nstart, nstop))
+
+        ax = fig.add_subplot(noLines,1,line+1)
+
+        if line == 0:
+            ax.set_title('Comparative coverate plot for "%s"' % seqId)
+
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            r_all[nstart:nstop],
+            color="#aa0000")
+            
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            r_ok[nstart:nstop],
+            color="green")
+
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            -1 * c_all[nstart:nstop],
+            color="#aa0000")
+            
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            -1 * c_ok[nstart:nstop],
+            color="green")
+
+        ax.plot( r_x[nstart:nstop],
+                 r_all[nstart:nstop],
+                 color='black')
+
+        ax.plot( r_x[nstart:nstop],
+                 r_ok[nstart:nstop],
+                 color='black')
+
+        ax.plot( r_x[nstart:nstop],
+                 -c_ok[nstart:nstop],
+                 color='black')
+
+        ax.plot( r_x[nstart:nstop],
+                 -c_all[nstart:nstop],
+                 color='black')
+
+
+        ax.set_xlim(nstart,nstop+1)
+        ax.set_ylim(minY,maxY)
+        
+        #yAx = ax.get_yaxis()
+        #yAx.set_ticks(range(100, maxY, 200))
+        
+        #coordT = ax.text(
+        #    nstart-(0.005 * ntPerLine), 0,
+        #    '%s' % nstart, ha='right')
+        
+        #plt.setp(coordT, size='small')
+
+        
+    plt.savefig('%s.cc.png' % (seqId))
+
+
+    #plot the log-comp plot
+    
+    fig = plt.figure(figsize=(10,2*noLines))
+    
+    _MC = 0.10 - (0.01 * min(8, noLines))
+    fig.subplots_adjust(0.03,_MC,0.95,0.98-(2*_MC))
+
+    cr = np.log10(r_ok / c_ok)
+    ymax = np.max(cr)
+    ymax = np.min(cr)
+    for line in range(noLines):        
+    
+        nstart = pStart + (line * ntPerLine)
+        nstop = nstart + (ntPerLine - 1)
+
+        l.debug('printing line %d from %d to %d' % (
+            line, nstart, nstop))
+
+        ax = fig.add_subplot(noLines,1,line+1)
+
+        if line == 0:
+            ax.set_title('logfrac comp. coverage plot for "%s"' % seqId)
+
+        ax.plot(r_x[nstart:nstop],
+            np.log10((r_ok[nstart:nstop]) / (c_ok[nstart:nstop])))
+        
+        ax.set_ylim(minY,maxY)
+#        ax.fill_between(
+#            r_x[nstart:nstop],
+#            r_z[nstart:nstop],            
+#            (r_ok[nstart:nstop]) / (c_ok[nstart:nstop]))
+
+    plt.savefig('%s.ccl.png' % (seqId))
