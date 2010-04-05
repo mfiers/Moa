@@ -16,10 +16,20 @@
  *     either class='epydoc' or class='toc' (CSS styles for both
  *     defined below).
  */
-body                        { background: #ffffff; color: #000000; }
+body                        { background: #ffffff; 
+                              color: #000000; 
+                              position: absolute;
+                              width: 815px;
+                              left: 50%;
+                              margin-left: -407px;
+                              background-image:url('images/shadow.png');
+                              background-repeat:repeat-y;
+                              background-position: center;
+                              font-family: "Trebuchet MS",Arial,Helvetica,sans-serif,"Lucida Sans";
+                            }
 p                           { margin-top: 0.5em; margin-bottom: 0.5em; }
 a:link                      { color: #0000ff; }
-a:visited                   { color: #204080; }
+a:visited                   { color: #551A8B; }
 dt                          { font-weight: bold; }
 h1                          { font-size: +140%; font-style: italic;
                               font-weight: bold; }
@@ -48,11 +58,24 @@ h3.epydoc                   { font-size: +115%; font-weight: bold;
                               margin-top: 0.2em; }
 td h3.epydoc                { font-size: +115%; font-weight: bold;
                               margin-bottom: 0; }
-table.navbar                { background: #a0c0ff; color: #000000;
-                              border: 2px groove #c0d0d0; }
-table.navbar table          { color: #000000; }
+table.navbar                { background-color: white;
+                              border: 1px solid black; 
+                            }
+table.navbar:first-child    { background-image:url('images/moa_logo_pfr_header.png');
+                              background-color: white;
+                              background-repeat:no-repeat;
+                              background-position: left top;
+                              margin-top: 2px;
+                              margin-left:0px;
+                              border: 0px; 
+                              height: 150px;
+                              padding-top:126px;
+                            }
+table.navbar tr             { margin-left: 20px; }
 th.navbar-select            { background: #70b0ff;
-                              color: #000000; } 
+                              color: #000000; 
+                            } 
+
 table.navbar a              { text-decoration: none; }  
 table.navbar a:link         { color: #0000ff; }
 table.navbar a:visited      { color: #204080; }
