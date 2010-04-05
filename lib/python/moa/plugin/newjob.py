@@ -48,7 +48,6 @@ def newJob(wd, options, args):
     """
 
     l.debug("Creating a new job ")
-    l.critical("  - with args %s" % args)
 
     if options.directory:
         wd = options.directory
