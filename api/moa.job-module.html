@@ -79,23 +79,6 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="handler"></a><span class="summary-sig-name">handler</span>(<span class="summary-sig-arg">options</span>,
-        <span class="summary-sig-arg">args</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="moa.job-pysrc.html#handler">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a href="moa.job-module.html#check" class="summary-sig-name">check</a>(<span class="summary-sig-arg">what</span>)</span><br />
       Check if a template exists</td>
           <td align="right" valign="top">
@@ -124,6 +107,39 @@
       
     </td>
   </tr>
+<tr class="private">
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="_getDescription"></a><span class="summary-sig-name">_getDescription</span>(<span class="summary-sig-arg">template</span>)</span><br />
+      Parse a template and extract the moa_description</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="moa.job-pysrc.html#_getDescription">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="listLong"></a><span class="summary-sig-name">listLong</span>()</span></td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="moa.job-pysrc.html#listLong">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
@@ -134,7 +150,8 @@
         <span class="summary-sig-arg">title</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">wd</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">.</code><code class="variable-quote">'</code></span>,
         <span class="summary-sig-arg">parameters</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
-        <span class="summary-sig-arg">force</span>=<span class="summary-sig-default">False</span>)</span><br />
+        <span class="summary-sig-arg">force</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">noInit</span>=<span class="summary-sig-default">False</span>)</span><br />
       Create a new template based makefile in the current dir.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.job-pysrc.html#newJob">source&nbsp;code</a></span>
@@ -167,14 +184,14 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="l"></a><span class="summary-name">l</span> = <code title="logging.getLogger('moa')">logging.getLogger('moa')</code>
+        <a name="l"></a><span class="summary-name">l</span> = <code title="moa.logger.l">moa.logger.l</code>
     </td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="MOABASE"></a><span class="summary-name">MOABASE</span> = <code title="'/home/mf/project/moa/'"><code class="variable-quote">'</code><code class="variable-string">/home/mf/project/moa/</code><code class="variable-quote">'</code></code>
+        <a name="MOABASE"></a><span class="summary-name">MOABASE</span> = <code title="'/home/mf/project/moa'"><code class="variable-quote">'</code><code class="variable-string">/home/mf/project/moa</code><code class="variable-quote">'</code></code>
     </td>
   </tr>
 <tr>
@@ -192,10 +209,10 @@
 ## Moa Makefile
 ## http://mfiers.github.com/Moa
 
--include moa.mk
-MOAMK_INCLUDE=done
+include $(MOABASE)/template/moa/prepare.mk
 
 ## moa_preprocess &amp; moa_postprocess are targets that can
+## be overridden here. They are executed before &amp; after
 ..."><code class="variable-quote">'</code><code class="variable-string">#!/usr/bin/env make\n## Moa Makefile\n#</code><code class="variable-ellipsis">...</code></code>
     </td>
   </tr>
@@ -289,7 +306,8 @@ MOAMK_INCLUDE=done
         <span class="sig-arg">title</span>=<span class="sig-default">None</span>,
         <span class="sig-arg">wd</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">.</code><code class="variable-quote">'</code></span>,
         <span class="sig-arg">parameters</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
-        <span class="sig-arg">force</span>=<span class="sig-default">False</span>)</span>
+        <span class="sig-arg">force</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">noInit</span>=<span class="sig-default">False</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="moa.job-pysrc.html#newJob">source&nbsp;code</a></span>&nbsp;
@@ -351,10 +369,10 @@ MOAMK_INCLUDE=done
 <code class="variable-string">## Moa Makefile</code>
 <code class="variable-string">## http://mfiers.github.com/Moa</code>
 <code class="variable-string"></code>
-<code class="variable-string">-include moa.mk</code>
-<code class="variable-string">MOAMK_INCLUDE=done</code>
+<code class="variable-string">include $(MOABASE)/template/moa/prepare.mk</code>
 <code class="variable-string"></code>
 <code class="variable-string">## moa_preprocess &amp; moa_postprocess are targets that can</code>
+<code class="variable-string">## be overridden here. They are executed before &amp; after</code>
 <code class="variable-ellipsis">...</code>
 </pre></td></tr></table>
 </dd>
@@ -390,7 +408,7 @@ MOAMK_INCLUDE=done
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Feb 11 14:17:21 2010
+    Generated by Epydoc 3.0 on Mon Apr  5 22:04:07 2010
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

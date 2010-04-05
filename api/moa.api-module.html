@@ -54,8 +54,13 @@
 </table>
 <!-- ==================== MODULE DESCRIPTION ==================== -->
 <h1 class="epydoc">Module api</h1><p class="nomargin-top"><span class="codelink"><a href="moa.api-pysrc.html">source&nbsp;code</a></span></p>
-<p>moa API</p>
-<p>A collection of functions forming the MOA API</p>
+<pre class="literalblock">
+
+moa API
+
+A collection of functions forming the MOA API
+
+</pre>
 
 <hr />
 <div class="fields">      <p><strong>Author:</strong>
@@ -80,7 +85,7 @@
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">String</span>
+      <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -97,7 +102,7 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">Boolean</span>
+      <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -131,7 +136,7 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">Dictionary</span>
+      <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -148,7 +153,7 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">String</span>
+      <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -189,7 +194,7 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="appendParameter"></a><span class="summary-sig-name">appendParameter</span>(<span class="summary-sig-arg">wd</span>,
+          <td><span class="summary-sig"><a href="moa.api-module.html#appendParameter" class="summary-sig-name">appendParameter</a>(<span class="summary-sig-arg">wd</span>,
         <span class="summary-sig-arg">key</span>,
         <span class="summary-sig-arg">value</span>)</span><br />
       Append the value to parameter 'key' (in path x)</td>
@@ -204,7 +209,7 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">List of Strings</span>
+      <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -225,7 +230,7 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="newJob"></a><span class="summary-sig-name">newJob</span>(<span class="summary-sig-arg">*args</span>,
+          <td><span class="summary-sig"><a href="moa.api-module.html#newJob" class="summary-sig-name">newJob</a>(<span class="summary-sig-arg">*args</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span><br />
       Creates a new job</td>
           <td align="right" valign="top">
@@ -307,7 +312,7 @@ files in place).</td>
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">Integer</span>
+      <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -415,7 +420,7 @@ files in place).</td>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="MOABASE"></a><span class="summary-name">MOABASE</span> = <code title="'/home/mf/project/moa/'"><code class="variable-quote">'</code><code class="variable-string">/home/mf/project/moa/</code><code class="variable-quote">'</code></code>
+        <a name="MOABASE"></a><span class="summary-name">MOABASE</span> = <code title="'/home/mf/project/moa'"><code class="variable-quote">'</code><code class="variable-string">/home/mf/project/moa</code><code class="variable-quote">'</code></code>
     </td>
   </tr>
 <tr>
@@ -458,17 +463,22 @@ files in place).</td>
     </td>
   </tr></table>
   
-  <p>Returns the value of the MOABASE environment variable. MOABASE
-should point to the root of the Moa installation</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>r = getMoaBase()
-<span class="py-prompt">&gt;&gt;&gt; </span>type(r) == type(<span class="py-string">''</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(os.path.join(r, <span class="py-string">'bin'</span>, <span class="py-string">'moa'</span>))
-<span class="py-output">True</span></pre>
+  <pre class="literalblock">
+
+Returns the value of the MOABASE environment variable. MOABASE
+should point to the root of the Moa installation
+
+&gt;&gt;&gt; r = getMoaBase()
+&gt;&gt;&gt; type(r) == type('')
+True
+&gt;&gt;&gt; os.path.exists(os.path.join(r, 'bin', 'moa'))
+True
+
+:returns: MOABASE
+:rtype: String
+
+</pre>
   <dl class="fields">
-    <dt>Returns: String</dt>
-        <dd>MOABASE</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -486,19 +496,22 @@ should point to the root of the Moa installation</p>
     </td>
   </tr></table>
   
-  <p>Is directory 'wd' a Moa directory?</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>isMoaDir(P_JOB)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>isMoaDir(P_EMPTY)
-<span class="py-output">False</span></pre>
+  <pre class="literalblock">
+
+Is directory 'wd' a Moa directory?
+
+&gt;&gt;&gt; isMoaDir(P_JOB)
+True
+&gt;&gt;&gt; isMoaDir(P_EMPTY)
+False
+
+:param wd: directory to check
+:type wd: String
+:returns: is wd a Moa directory
+:rtype: Boolean    
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - directory to check</li>
-    </ul></dd>
-    <dt>Returns: Boolean</dt>
-        <dd>is wd a Moa directory</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -516,29 +529,31 @@ should point to the root of the Moa installation</p>
     </td>
   </tr></table>
   
-  <p>Returns the status of a directory. It will return a one of the following status messages:</p>
-<ul class="rst-simple">
-<li>notadir: this is not an accessible directory</li>
-<li>notmoa: this is not a moa directory</li>
-<li>waiting: a moa job, not doing anything</li>
-<li>success: a moa job, not doing anything, but the last (background) run was successfull</li>
-<li>failed: A moa job, not doing anything, but the last (background) run failed</li>
-<li>running: this is a moa job &amp; currently executing (runlock exists)</li>
-<li>locked: this job is locked (i.e. a lock file exists)</li>
-</ul>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>result = status(P_JOB)
-<span class="py-prompt">&gt;&gt;&gt; </span>result <span class="py-keyword">in</span> [<span class="py-string">'waiting'</span>, <span class="py-string">'locked'</span>, <span class="py-string">'running'</span>]
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>moa.utils.removeMoaFiles(P_EMPTY)
-<span class="py-prompt">&gt;&gt;&gt; </span>result = status(P_EMPTY)
-<span class="py-prompt">&gt;&gt;&gt; </span>result == <span class="py-string">'notmoa'</span>
-<span class="py-output">True</span></pre>
+  <pre class="literalblock">
+
+Returns the status of a directory. It will return a one of the following status messages:
+
+- notadir: this is not an accessible directory
+- notmoa: this is not a moa directory
+- waiting: a moa job, not doing anything
+- success: a moa job, not doing anything, but the last (background) run was successfull
+- failed: A moa job, not doing anything, but the last (background) run failed
+- running: this is a moa job &amp; currently executing (runlock exists)       
+- locked: this job is locked (i.e. a lock file exists)
+
+&gt;&gt;&gt; result = status(P_JOB)
+&gt;&gt;&gt; result in ['waiting', 'locked', 'running']
+True
+&gt;&gt;&gt; moa.utils.removeMoaFiles(P_EMPTY)
+&gt;&gt;&gt; result = status(P_EMPTY)
+&gt;&gt;&gt; result == 'notmoa'
+True
+
+:param wd: Directory to return the status of
+:type wd: String
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - Directory to return the status of</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -556,96 +571,91 @@ should point to the root of the Moa installation</p>
     </td>
   </tr></table>
   
-  <p>Return information on a moa directory with the following keys:</p>
-<blockquote>
-<dl class="rst-docutils">
-<dt>moa_targets</dt>
-<dd>A list of callable targets for this job (i.e. you can use
-by running <tt class="rst-docutils literal"><span class="pre">moa</span> <span class="pre">TARGET</span></tt></dd>
-<dt>moa_description</dt>
-<dd>A short description (from the job template) what this job
-aims to do</dd>
-<dt>parameters</dt>
-<dd>A dictionary of parameters for this job. The keys in this
-dictionary is the name of the parameter</dd>
-</dl>
-</blockquote>
-<p>Each parameter values is again a dictionary with following keys:</p>
-<blockquote>
-<dl class="rst-docutils">
-<dt>mandatory</dt>
-<dd>This parameter is mandatory. If not provided, execution will
-fail (Boolean)</dd>
-<dt>help</dt>
-<dd>A short help text explaining the function of this parameter
-(String)</dd>
-<dt>default</dt>
-<dd>The default value of this parameter, if applicable (String)</dd>
-<dt>value</dt>
-<dd>The current value of this parameter (String)</dd>
-<dt>cardinality</dt>
-<dd>(<tt class="rst-docutils literal"><span class="pre">one</span></tt> or <tt class="rst-docutils literal"><span class="pre">many</span></tt>). The cardinality desribes how many
-values a parameter is allowed to have. In the case of
-<tt class="rst-docutils literal"><span class="pre">one</span></tt>, this parameter expects only one value. If
-cardinality if <tt class="rst-docutils literal"><span class="pre">many</span></tt>, the parameter accepts multiple
-values. It is important to note that GNU Make defines lists
-as a space separated string - a sentence is automatically a
-list of variables. There is no way to distinguish between a
-cardinality <tt class="rst-docutils literal"><span class="pre">one</span></tt> parameter with as value <tt class="rst-docutils literal"><span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span></tt> and a
-cardinality <tt class="rst-docutils literal"><span class="pre">many</span></tt> parameter with the values [<tt class="rst-docutils literal"><span class="pre">a</span></tt>,
-<tt class="rst-docutils literal"><span class="pre">b</span></tt>, <tt class="rst-docutils literal"><span class="pre">c</span></tt>].</dd>
-<dt>type</dt>
-<dd><p class="rst-first">(string) The type of this variables. can be:</p>
-<ul class="rst-simple">
-<li><tt class="rst-docutils literal"><span class="pre">string</span></tt></li>
-<li><tt class="rst-docutils literal"><span class="pre">directory</span></tt></li>
-<li><tt class="rst-docutils literal"><span class="pre">file</span></tt></li>
-<li><tt class="rst-docutils literal"><span class="pre">float</span></tt></li>
-<li><tt class="rst-docutils literal"><span class="pre">integer</span></tt></li>
-<li><tt class="rst-docutils literal"><span class="pre">set</span></tt></li>
-</ul>
-<p class="rst-last">Note that there is currently no type checkin in the moa core.</p>
-</dd>
-<dt>allowed</dt>
-<dd>(array) A list of allowed values, if of type set</dd>
-</dl>
-</blockquote>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>result = getInfo(P_JOB)
-<span class="py-prompt">&gt;&gt;&gt; </span>type(result) == type({})
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>result.has_key(<span class="py-string">'moa_targets'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>result.has_key(<span class="py-string">'moa_description'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>result.has_key(<span class="py-string">'parameters'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>parameters = result[<span class="py-string">'parameters'</span>]
-<span class="py-prompt">&gt;&gt;&gt; </span>parameters.has_key(<span class="py-string">'title'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>p_title = parameters[<span class="py-string">'title'</span>]
-<span class="py-prompt">&gt;&gt;&gt; </span>p_title.has_key(<span class="py-string">'category'</span>) <span class="py-keyword">and</span> p_title.has_key(<span class="py-string">'mandatory'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>p_title.has_key(<span class="py-string">'help'</span>) <span class="py-keyword">and</span> p_title.has_key(<span class="py-string">'default'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>p_title.has_key(<span class="py-string">'value'</span>) <span class="py-keyword">and</span> p_title.has_key(<span class="py-string">'allowed'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>p_title.has_key(<span class="py-string">'cardinality'</span>) <span class="py-keyword">and</span> p_title.has_key(<span class="py-string">'type'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>try: result2 = getInfo(<span class="py-string">'NOTAMOADIR'</span>)
-<span class="py-more">... </span><span class="py-keyword">except</span> NotAMoaDirectory: <span class="py-string">'ok!'</span>
-<span class="py-output">'ok!'</span></pre>
+  <pre class="literalblock">
+
+Return information on a moa directory with the following keys:
+
+    moa_targets
+       A list of callable targets for this job (i.e. you can use
+       by running ``moa TARGET``
+    moa_description
+       A short description (from the job template) what this job
+       aims to do
+    parameters
+      A dictionary of parameters for this job. The keys in this
+      dictionary is the name of the parameter
+
+Each parameter values is again a dictionary with following keys:
+
+    mandatory    
+      This parameter is mandatory. If not provided, execution will
+      fail (Boolean)      
+    help    
+      A short help text explaining the function of this parameter
+      (String)
+    default
+      The default value of this parameter, if applicable (String)      
+    value
+      The current value of this parameter (String)          
+    cardinality        
+      (``one`` or ``many``). The cardinality desribes how many
+      values a parameter is allowed to have. In the case of
+      ``one``, this parameter expects only one value. If
+      cardinality if ``many``, the parameter accepts multiple
+      values. It is important to note that GNU Make defines lists
+      as a space separated string - a sentence is automatically a
+      list of variables. There is no way to distinguish between a
+      cardinality ``one`` parameter with as value ``a b c`` and a
+      cardinality ``many`` parameter with the values [``a``,
+      ``b``, ``c``].           
+    type
+      (string) The type of this variables. can be:
+      
+      - ``string``
+      - ``directory``
+      - ``file``
+      - ``float``
+      - ``integer``
+      - ``set``
+
+      Note that there is currently no type checkin in the moa core.
+    allowed    
+      (array) A list of allowed values, if of type set
+
+
+&gt;&gt;&gt; result = getInfo(P_JOB)
+&gt;&gt;&gt; type(result) == type({})
+True
+&gt;&gt;&gt; result.has_key('moa_targets')
+True
+&gt;&gt;&gt; result.has_key('moa_description')
+True
+&gt;&gt;&gt; result.has_key('parameters')
+True
+&gt;&gt;&gt; parameters = result['parameters']
+&gt;&gt;&gt; parameters.has_key('title')
+True
+&gt;&gt;&gt; p_title = parameters['title']
+&gt;&gt;&gt; p_title.has_key('category') and p_title.has_key('mandatory')
+True
+&gt;&gt;&gt; p_title.has_key('help') and p_title.has_key('default')
+True
+&gt;&gt;&gt; p_title.has_key('value') and p_title.has_key('allowed')
+True
+&gt;&gt;&gt; p_title.has_key('cardinality') and p_title.has_key('type')
+True
+&gt;&gt;&gt; try: result2 = getInfo('NOTAMOADIR')
+... except NotAMoaDirectory: 'ok!'
+'ok!'
+
+:param wd: Directory to get information from
+:type wd: String
+:returns: information on the job
+:rtype: Dictionary
+:raises NotAMoaDirectory: If wd is not a moa directory
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - Directory to get information from</li>
-    </ul></dd>
-    <dt>Returns: Dictionary</dt>
-        <dd>information on the job</dd>
-    <dt>Raises:</dt>
-    <dd><ul class="nomargin-top">
-        <li><code><strong class='fraise'><a href="moa.exceptions.NotAMoaDirectory-class.html">NotAMoaDirectory</a></strong></code> - If wd is not a moa directory</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -664,38 +674,41 @@ cardinality <tt class="rst-docutils literal"><span class="pre">many</span></tt> 
     </td>
   </tr></table>
   
-  <p>Gets a parameter from a Moa job.</p>
-<p>This function reads the value of parameter 'key' from the moa.mk
-file. If 'path' is not a folder.</p>
-<p>When requesting a non-existing parameter, the function returns an
+  <pre class="literalblock">
+
+Gets a parameter from a Moa job.
+
+This function reads the value of parameter 'key' from the moa.mk
+file. If 'path' is not a folder.
+
+When requesting a non-existing parameter, the function returns an
 empty string. This is the fastest solution. If you want to know if
-a parameter exists, use the <a href="moa.api-module.html#getInfo" class="link">getInfo</a> function.</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>title = getParameter(P_JOB, <span class="py-string">'title'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>type(title) == type(<span class="py-string">'string'</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>len(title) &gt; 0
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>try: getParameter(<span class="py-string">'/'</span>, <span class="py-string">'title'</span>)
-<span class="py-more">... </span><span class="py-keyword">except</span> NotAMoaDirectory: <span class="py-string">'ok!'</span>
-<span class="py-output">'ok!'</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>result = getParameter(P_JOB, <span class="py-string">'NotExisitingParameter'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>type(result) == type(<span class="py-string">&quot;&quot;</span>)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>len(result) == 0
-<span class="py-output">True</span></pre>
+a parameter exists, use the `getInfo` function.
+
+&gt;&gt;&gt; title = getParameter(P_JOB, 'title')
+&gt;&gt;&gt; type(title) == type('string')
+True
+&gt;&gt;&gt; len(title) &gt; 0
+True
+&gt;&gt;&gt; try: getParameter('/', 'title')
+... except NotAMoaDirectory: 'ok!'
+'ok!'
+&gt;&gt;&gt; result = getParameter(P_JOB, 'NotExisitingParameter')
+&gt;&gt;&gt; type(result) == type(&quot;&quot;)
+True
+&gt;&gt;&gt; len(result) == 0
+True
+
+:param wd: directory to get a parameter from
+:type wd: String
+:param key: Name of the parameter to retrieve (for example 'title')
+:type key: String
+:returns: The value of the parameter
+:rtype: String
+:raises NotAMoaDirectory: If ``wd`` is not a Moa directory.
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - directory to get a parameter from</li>
-        <li><strong class="pname"><code>key</code></strong> (String) - Name of the parameter to retrieve (for example 'title')</li>
-    </ul></dd>
-    <dt>Returns: String</dt>
-        <dd>The value of the parameter</dd>
-    <dt>Raises:</dt>
-    <dd><ul class="nomargin-top">
-        <li><code><strong class='fraise'><a href="moa.exceptions.NotAMoaDirectory-class.html">NotAMoaDirectory</a></strong></code> - If <tt class="rst-docutils literal"><span class="pre">wd</span></tt> is not a Moa directory.</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -715,21 +728,56 @@ a parameter exists, use the <a href="moa.api-module.html#getInfo" class="link">g
     </td>
   </tr></table>
   
-  <p>Set a parameter</p>
-<p>Set the parameter <tt class="rst-docutils literal"><span class="pre">key</span></tt> in path <tt class="rst-docutils literal"><span class="pre">wd</span></tt> to value <tt class="rst-docutils literal"><span class="pre">value</span></tt>.</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>setParameter(P_JOB, <span class="py-string">'title'</span>, <span class="py-string">'test setParameter'</span>)</pre>
+  <pre class="literalblock">
+
+Set a parameter
+
+Set the parameter ``key`` in path ``wd`` to value ``value``.
+
+&gt;&gt;&gt; setParameter(P_JOB, 'title', 'test setParameter')
+
+:param wd: the Moa directory to use
+:type wd: String
+:param key: The name of the parameter to set
+:type key: String
+:param value: The value to set the parameter to.
+:type value: String
+:raises NotAMoaDirectory: If ``wd`` is not a Moa directory.
+    
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - the Moa directory to use</li>
-        <li><strong class="pname"><code>key</code></strong> (String) - The name of the parameter to set</li>
-        <li><strong class="pname"><code>value</code></strong> (String) - The value to set the parameter to.</li>
-    </ul></dd>
-    <dt>Raises:</dt>
-    <dd><ul class="nomargin-top">
-        <li><code><strong class='fraise'><a href="moa.exceptions.NotAMoaDirectory-class.html">NotAMoaDirectory</a></strong></code> - If <tt class="rst-docutils literal"><span class="pre">wd</span></tt> is not a Moa directory.</li>
-    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="appendParameter"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">appendParameter</span>(<span class="sig-arg">wd</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.api-pysrc.html#appendParameter">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+
+Append the value to parameter 'key' (in path x)
+
+&gt;&gt;&gt; setParameter(P_JOB, 'title', 'a')
+&gt;&gt;&gt; 
+appendParameter(P_JOB, 'title', 'b')
+&gt;&gt;&gt; test = getParameter(P_JOB, 'title')
+&gt;&gt;&gt;
+
+</pre>
+  <dl class="fields">
   </dl>
 </td></tr></table>
 </div>
@@ -747,12 +795,52 @@ a parameter exists, use the <a href="moa.api-module.html#getInfo" class="link">g
     </td>
   </tr></table>
   
-  <p>Return a list of valid moa templates</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>result = templateList()</pre>
+  <pre class="literalblock">
+
+Return a list of valid moa templates
+
+&gt;&gt;&gt; result = templateList()
+
+:returns: A list of moa templates
+:rtype: List of Strings
+
+</pre>
   <dl class="fields">
-    <dt>Returns: List of Strings</dt>
-        <dd>A list of moa templates</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="newJob"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">newJob</span>(<span class="sig-arg">*args</span>,
+        <span class="sig-arg">**kwargs</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.api-pysrc.html#newJob">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <pre class="literalblock">
+
+Creates a new job
+
+&gt;&gt;&gt; removeMoaFiles(P_EMPTY)
+&gt;&gt;&gt; newJob(template = 'moatest',
+...        title = 'test creating of jobs',
+...        wd=P_EMPTY)
+&gt;&gt;&gt; os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+True
+&gt;&gt;&gt; os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
+True
+&gt;&gt;&gt; removeMoaFiles(P_EMPTY)
+    
+
+</pre>
+  <dl class="fields">
   </dl>
 </td></tr></table>
 </div>
@@ -770,33 +858,37 @@ a parameter exists, use the <a href="moa.api-module.html#getInfo" class="link">g
     </td>
   </tr></table>
   
-  <p>Removes moa related files from a directory (but leaves all other
-files in place). The function deletes the following files:</p>
-<ul class="rst-simple">
-<li>Makefile</li>
-<li>moa.mk</li>
-<li>lock</li>
-<li>moa.runlock</li>
-</ul>
-<p>The function does not check if <code class="link">wd</code> is a moa directory or not.</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>makefile = os.path.join(P_EMPTY, <span class="py-string">'Makefile'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>moamk = os.path.join(P_EMPTY, <span class="py-string">'moa.mk'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>newJob(template = <span class="py-string">'moatest'</span>,
-<span class="py-more">... </span>       wd=P_EMPTY,
-<span class="py-more">... </span>       title=<span class="py-string">'test removeMoaFiles'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>removeMoaFiles(P_EMPTY)
-<span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(os.path.join(P_EMPTY, <span class="py-string">'Makefile'</span>))
-<span class="py-output">False</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(os.path.join(P_EMPTY, <span class="py-string">'moa.mk'</span>))
-<span class="py-output">False</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>removeMoaFiles(P_EMPTY)</pre>
+  <pre class="literalblock">
+
+Removes moa related files from a directory (but leaves all other
+files in place). The function deletes the following files:
+
+- Makefile
+- moa.mk
+- lock
+- moa.runlock
+
+The function does not check if `wd` is a moa directory or not.
+
+&gt;&gt;&gt; makefile = os.path.join(P_EMPTY, 'Makefile')
+&gt;&gt;&gt; moamk = os.path.join(P_EMPTY, 'moa.mk')
+&gt;&gt;&gt; newJob(template = 'moatest',
+...        wd=P_EMPTY,
+...        title='test removeMoaFiles')
+&gt;&gt;&gt; removeMoaFiles(P_EMPTY)
+&gt;&gt;&gt; os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+False
+&gt;&gt;&gt; os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
+False
+&gt;&gt;&gt; removeMoaFiles(P_EMPTY)
+
+
+:param wd: The pathname of the directory from which the Moa
+    files are to be removed
+:type wd: String
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - The pathname of the directory from which the Moa
-files are to be removed</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -814,21 +906,25 @@ files are to be removed</li>
     </td>
   </tr></table>
   
-  <p>Return output of a MOA run</p>
-<p>This function reads the moa.out file in a MOA directory and
-returns its content.</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>F = open(os.path.join(P_JOB, <span class="py-string">'moa.out'</span>),<span class="py-string">'w'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>F.write(<span class="py-string">'tst'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>F.close()
-<span class="py-prompt">&gt;&gt;&gt; </span>getMoaOut(P_JOB) == <span class="py-string">'tst'</span>
-<span class="py-output">True</span></pre>
+  <pre class="literalblock">
+
+Return output of a MOA run
+
+This function reads the moa.out file in a MOA directory and
+returns its content.
+
+&gt;&gt;&gt; F = open(os.path.join(P_JOB, 'moa.out'),'w')
+&gt;&gt;&gt; F.write('tst')
+&gt;&gt;&gt; F.close()
+&gt;&gt;&gt; getMoaOut(P_JOB) == 'tst'
+True
+
+:param wd: The pathname of the directory from which the Moa
+    files are to be removed
+:type wd: String
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - The pathname of the directory from which the Moa
-files are to be removed</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -846,18 +942,21 @@ files are to be removed</li>
     </td>
   </tr></table>
   
-  <p>Return moa error</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>F = open(os.path.join(P_JOB, <span class="py-string">'moa.err'</span>),<span class="py-string">'w'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>F.write(<span class="py-string">'tsterr'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>F.close()
-<span class="py-prompt">&gt;&gt;&gt; </span>getMoaErr(P_JOB) == <span class="py-string">'tsterr'</span>
-<span class="py-output">True</span></pre>
+  <pre class="literalblock">
+
+Return moa error
+
+&gt;&gt;&gt; F = open(os.path.join(P_JOB, 'moa.err'),'w')
+&gt;&gt;&gt; F.write('tsterr')
+&gt;&gt;&gt; F.close()
+&gt;&gt;&gt; getMoaErr(P_JOB) == 'tsterr'
+True
+
+:param wd: the Moa directory
+:type wd: String
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - the Moa directory</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -879,49 +978,53 @@ files are to be removed</li>
     </td>
   </tr></table>
   
-  <p>execute Moa</p>
-<p>This function executes moa in path <tt class="rst-docutils literal"><span class="pre">wd</span></tt>.</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>removeMoaFiles(P_TEST)
-<span class="py-prompt">&gt;&gt;&gt; </span>newJob(template = <span class="py-string">'moatest'</span>,
-<span class="py-more">... </span>       wd = P_TEST,
-<span class="py-more">... </span>       title = <span class="py-string">'Test moa run'</span>,
-<span class="py-more">... </span>       parameters = [<span class="py-string">'txt=testRunMoa'</span>])
-<span class="py-prompt">&gt;&gt;&gt; </span>runMoa(wd=P_TEST, background=False)
-<span class="py-output">0</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>output = getMoaOut(P_TEST)
-<span class="py-prompt">&gt;&gt;&gt; </span>len(output) &gt; 0
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span><span class="py-string">'Starting MOA'</span> <span class="py-keyword">in</span> output
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>target = os.path.join(P_TEST, <span class="py-string">'moa_test'</span>)
-<span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(target)
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>open(target).read().strip() == <span class="py-string">'testRunMoa'</span>
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>runMoa(wd=P_TEST, target= <span class="py-string">'clean'</span>, background=False)
-<span class="py-output">0</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>output = getMoaOut(P_TEST)
-<span class="py-prompt">&gt;&gt;&gt; </span>os.path.exists(target)
-<span class="py-output">False</span></pre>
+  <pre class="literalblock">
+
+execute Moa
+
+This function executes moa in path ``wd``.
+
+&gt;&gt;&gt; moa.utils.removeFiles(P_TEST, recursive=True)
+&gt;&gt;&gt; newJob(template = 'moatest',
+...        wd = P_TEST, 
+...        title = 'Test moa run',
+...        parameters = ['txt=testRunMoa'])
+&gt;&gt;&gt; runMoa(wd=P_TEST, background=False)
+0
+&gt;&gt;&gt; output = getMoaOut(P_TEST)
+&gt;&gt;&gt; len(output) &gt; 0
+True
+&gt;&gt;&gt; 'Starting MOA' in output
+True
+&gt;&gt;&gt; target = os.path.join(P_TEST, 'moa_test')
+&gt;&gt;&gt; os.path.exists(target)
+True
+&gt;&gt;&gt; open(target).read().strip() == 'testRunMoa'
+True
+&gt;&gt;&gt; runMoa(wd=P_TEST, target= 'clean', background=False)
+0
+&gt;&gt;&gt; output = getMoaOut(P_TEST)
+&gt;&gt;&gt; os.path.exists(target)
+False
+
+:param wd: The pathname of the directory from which the Moa
+    files are to be removed
+:type wd: String
+:param target: The Make target to execute (for example clean)
+:type target: String
+:param threads: No of threads to run Moa with.
+:type threads: Integer
+:param background: Return immediately, do not wait for Moa to
+   finish (default True). 
+:type background: Boolean
+:raises NotAMoaDirectory: if ``wd`` is not a moa directory
+:returns: If background==True, then the return value means
+  nothing. Otherwise it is Moa return code. Anything other than 0
+  (zero) means that there was an error.
+:rtype: Integer
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - The pathname of the directory from which the Moa
-files are to be removed</li>
-        <li><strong class="pname"><code>target</code></strong> (String) - The Make target to execute (for example clean)</li>
-        <li><strong class="pname"><code>threads</code></strong> (Integer) - No of threads to run Moa with.</li>
-        <li><strong class="pname"><code>background</code></strong> (Boolean) - Return immediately, do not wait for Moa to
-finish (default True).</li>
-    </ul></dd>
-    <dt>Returns: Integer</dt>
-        <dd>If background==True, then the return value means
-nothing. Otherwise it is Moa return code. Anything other than 0
-(zero) means that there was an error.</dd>
-    <dt>Raises:</dt>
-    <dd><ul class="nomargin-top">
-        <li><code><strong class='fraise'><a href="moa.exceptions.NotAMoaDirectory-class.html">NotAMoaDirectory</a></strong></code> - if <tt class="rst-docutils literal"><span class="pre">wd</span></tt> is not a moa directory</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -954,7 +1057,7 @@ nothing. Otherwise it is Moa return code. Anything other than 0
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Feb 11 14:17:21 2010
+    Generated by Epydoc 3.0 on Mon Apr  5 22:04:07 2010
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

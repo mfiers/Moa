@@ -80,9 +80,10 @@
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td><span class="summary-sig"><a href="moa.runMake-module.html#_startMake" class="summary-sig-name" onclick="show_private();">_startMake</a>(<span class="summary-sig-arg">wd</span>,
-        <span class="summary-sig-arg">makeArgs</span>,
+        <span class="summary-sig-arg">makeArgs</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
         <span class="summary-sig-arg">verbose</span>=<span class="summary-sig-default">True</span>,
         <span class="summary-sig-arg">captureOut</span>=<span class="summary-sig-default">False</span>,
+        <span class="summary-sig-arg">extraMakeParameters</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
         <span class="summary-sig-arg">captureOutName</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span><br />
       Start Make</td>
           <td align="right" valign="top">
@@ -100,12 +101,14 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="_runMake"></a><span class="summary-sig-name">_runMake</span>(<span class="summary-sig-arg">wd</span>=<span class="summary-sig-default">None</span>,
+          <td><span class="summary-sig"><a href="moa.runMake-module.html#_runMake" class="summary-sig-name" onclick="show_private();">_runMake</a>(<span class="summary-sig-arg">wd</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">target</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
         <span class="summary-sig-arg">makeArgs</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
         <span class="summary-sig-arg">verbose</span>=<span class="summary-sig-default">True</span>,
         <span class="summary-sig-arg">captureOut</span>=<span class="summary-sig-default">False</span>,
-        <span class="summary-sig-arg">threads</span>=<span class="summary-sig-default">1</span>)</span><br />
+        <span class="summary-sig-arg">threads</span>=<span class="summary-sig-default">1</span>,
+        <span class="summary-sig-arg">extraMakeParameters</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">captureOutName</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span><br />
       Actually run make</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.runMake-pysrc.html#_runMake">source&nbsp;code</a></span>
@@ -122,13 +125,15 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="go"></a><span class="summary-sig-name">go</span>(<span class="summary-sig-arg">wd</span>=<span class="summary-sig-default">None</span>,
+          <td><span class="summary-sig"><a href="moa.runMake-module.html#go" class="summary-sig-name">go</a>(<span class="summary-sig-arg">wd</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">target</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
         <span class="summary-sig-arg">makeArgs</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="summary-sig-arg">extraMakeParameters</span>=<span class="summary-sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
         <span class="summary-sig-arg">verbose</span>=<span class="summary-sig-default">True</span>,
         <span class="summary-sig-arg">threads</span>=<span class="summary-sig-default">1</span>,
         <span class="summary-sig-arg">background</span>=<span class="summary-sig-default">False</span>,
         <span class="summary-sig-arg">captureOut</span>=<span class="summary-sig-default">None</span>,
+        <span class="summary-sig-arg">captureOutName</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>,
         <span class="summary-sig-arg">exitWhenDone</span>=<span class="summary-sig-default">False</span>)</span><br />
       Run Make</td>
           <td align="right" valign="top">
@@ -148,7 +153,8 @@
         <tr>
           <td><span class="summary-sig"><a name="runMakeGetOutput"></a><span class="summary-sig-name">runMakeGetOutput</span>(<span class="summary-sig-arg">*args</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span><br />
-      Run runmake, wait for it to finish &amp; return the output</td>
+      Run runmake, wait for it to finish &amp; return the output - we 
+      capture the output in a random name (to preven collisions)</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.runMake-pysrc.html#runMakeGetOutput">source&nbsp;code</a></span>
             
@@ -164,7 +170,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="moa.runMake-module.html#getOutput" class="summary-sig-name">getOutput</a>(<span class="summary-sig-arg">wd</span>)</span><br />
+          <td><span class="summary-sig"><a href="moa.runMake-module.html#getOutput" class="summary-sig-name">getOutput</a>(<span class="summary-sig-arg">wd</span>,
+        <span class="summary-sig-arg">outName</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span><br />
       Get the output from a moa run</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.runMake-pysrc.html#getOutput">source&nbsp;code</a></span>
@@ -181,7 +188,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="moa.runMake-module.html#getError" class="summary-sig-name">getError</a>(<span class="summary-sig-arg">wd</span>)</span><br />
+          <td><span class="summary-sig"><a href="moa.runMake-module.html#getError" class="summary-sig-name">getError</a>(<span class="summary-sig-arg">wd</span>,
+        <span class="summary-sig-arg">outName</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span><br />
       Get the stderr of a moa run</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.runMake-pysrc.html#getError">source&nbsp;code</a></span>
@@ -244,9 +252,10 @@
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">_startMake</span>(<span class="sig-arg">wd</span>,
-        <span class="sig-arg">makeArgs</span>,
+        <span class="sig-arg">makeArgs</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
         <span class="sig-arg">verbose</span>=<span class="sig-default">True</span>,
         <span class="sig-arg">captureOut</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">extraMakeParameters</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
         <span class="sig-arg">captureOutName</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span>
   </h3>
   </td><td align="right" valign="top"
@@ -264,11 +273,83 @@
         <li><strong class="pname"><code>makeArgs</code></strong> (String or List of Strings) - Arguments to pass to make</li>
         <li><strong class="pname"><code>verbose</code></strong> (Boolean) - Have make be silent or generate lots of output</li>
         <li><strong class="pname"><code>captureOut</code></strong> (Boolean) - If True the output will be written to moa.out and moa.err</li>
-        <li><strong class="pname"><code>captureOutName</code></strong> (String) - Basename of the file where the moa output will be captured to</li>
+        <li><strong class="pname"><code>extraMakeParameters</code></strong> (List of Strings) - Extra parameters to pass to make (such as -B)</li>
+        <li><strong class="pname"><code>captureOutName</code></strong> (String) - Basename of the file where the moa output will be captured.</li>
     </ul></dd>
     <dt>Raises:</dt>
     <dd><ul class="nomargin-top">
         <li><code><strong class='fraise'>NotMoaDirectory</strong></code> - If ``wd`` is not a Moa directory</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="_runMake"></a>
+<div class="private">
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">_runMake</span>(<span class="sig-arg">wd</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">target</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">makeArgs</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">verbose</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">captureOut</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">threads</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">extraMakeParameters</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">captureOutName</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.runMake-pysrc.html#_runMake">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Actually run make</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>wd</code></strong> (String) - Working directory</li>
+        <li><strong class="pname"><code>target</code></strong> (String) - Makefile target to execute</li>
+        <li><strong class="pname"><code>makeArgs</code></strong> (List of Strings) - Arguments to pass onto Make</li>
+        <li><strong class="pname"><code>verbose</code></strong> (Boolean) - Verbose output</li>
+        <li><strong class="pname"><code>extraMakeParameters</code></strong> (List of Strings) - Extra parameters to pass to make (such as -B)</li>
+        <li><strong class="pname"><code>captureOut</code></strong> (Boolean) - Capture the output in log files</li>
+        <li><strong class="pname"><code>captureOutName</code></strong> (String) - Basename for the log files that will capture the output</li>
+        <li><strong class="pname"><code>threads</code></strong> (Integer) - Number of threads to run Make with</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="go"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">go</span>(<span class="sig-arg">wd</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">target</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">makeArgs</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">extraMakeParameters</span>=<span class="sig-default"><code class="variable-group">[</code><code class="variable-group">]</code></span>,
+        <span class="sig-arg">verbose</span>=<span class="sig-default">True</span>,
+        <span class="sig-arg">threads</span>=<span class="sig-default">1</span>,
+        <span class="sig-arg">background</span>=<span class="sig-default">False</span>,
+        <span class="sig-arg">captureOut</span>=<span class="sig-default">None</span>,
+        <span class="sig-arg">captureOutName</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>,
+        <span class="sig-arg">exitWhenDone</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.runMake-pysrc.html#go">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Run Make</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>captureOut</code></strong> (Boolean) - Capture the output in log files</li>
+        <li><strong class="pname"><code>extraMakeParameters</code></strong> (List of Strings) - Extra parameters to pass to Make</li>
+        <li><strong class="pname"><code>captureOutName</code></strong> (String) - Basename for the log files that will capture the output</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -280,7 +361,8 @@
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">getOutput</span>(<span class="sig-arg">wd</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getOutput</span>(<span class="sig-arg">wd</span>,
+        <span class="sig-arg">outName</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="moa.runMake-pysrc.html#getOutput">source&nbsp;code</a></span>&nbsp;
@@ -298,8 +380,12 @@
 <span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>moa.utils.removeMoaFiles(P_EMPTY)
 <span class="py-prompt">&gt;&gt;&gt; </span>getOutput(P_EMPTY) == <span class="py-string">''</span>
 <span class="py-output">True</span></pre>
-  <p>:param wd: the Moa directory :type wd: String</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>wd</code></strong> (String) - the Moa directory</li>
+        <li><strong class="pname"><code>outName</code></strong> (String) - Basename of the output to retrieve</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -310,7 +396,8 @@
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">getError</span>(<span class="sig-arg">wd</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">getError</span>(<span class="sig-arg">wd</span>,
+        <span class="sig-arg">outName</span>=<span class="sig-default"><code class="variable-quote">'</code><code class="variable-string">moa</code><code class="variable-quote">'</code></span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="moa.runMake-pysrc.html#getError">source&nbsp;code</a></span>&nbsp;
@@ -324,8 +411,12 @@
 <span class="py-prompt">&gt;&gt;&gt; </span>F.close()
 <span class="py-prompt">&gt;&gt;&gt; </span>getError(P_EMPTY) == <span class="py-string">'tsterr'</span>
 <span class="py-output">True</span></pre>
-  <p>:param wd: the Moa directory :type wd: String</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>wd</code></strong> (String) - the Moa directory</li>
+        <li><strong class="pname"><code>outName</code></strong> (String) - Basename of the output to retrieve</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -358,7 +449,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Feb 11 14:17:21 2010
+    Generated by Epydoc 3.0 on Mon Apr  5 22:04:07 2010
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

@@ -54,7 +54,7 @@
 </table>
 <!-- ==================== MODULE DESCRIPTION ==================== -->
 <h1 class="epydoc">Module conf</h1><p class="nomargin-top"><span class="codelink"><a href="moa.conf-pysrc.html">source&nbsp;code</a></span></p>
-Moa script - get and set variables to the moa.mk file
+<p>Moa script - get and set variables to the moa.mk file</p>
 
 <!-- ==================== FUNCTIONS ==================== -->
 <a name="section-Functions"></a>
@@ -79,24 +79,6 @@ Moa script - get and set variables to the moa.mk file
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="handler"></a><span class="summary-sig-name">handler</span>(<span class="summary-sig-arg">options</span>,
-        <span class="summary-sig-arg">args</span>)</span><br />
-      parse the command line and save the arguments into moa.mk</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="moa.conf-pysrc.html#handler">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a href="moa.conf-module.html#parseClArgs" class="summary-sig-name">parseClArgs</a>(<span class="summary-sig-arg">args</span>)</span><br />
       Parse the arguments defined on a commandline.</td>
           <td align="right" valign="top">
@@ -114,27 +96,11 @@ Moa script - get and set variables to the moa.mk file
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="commandLineHandler"></a><span class="summary-sig-name">commandLineHandler</span>(<span class="summary-sig-arg">wd</span>,
-        <span class="summary-sig-arg">args</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="moa.conf-pysrc.html#commandLineHandler">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="setVar"></a><span class="summary-sig-name">setVar</span>(<span class="summary-sig-arg">wd</span>,
+          <td><span class="summary-sig"><a href="moa.conf-module.html#setVar" class="summary-sig-name">setVar</a>(<span class="summary-sig-arg">wd</span>,
         <span class="summary-sig-arg">key</span>,
         <span class="summary-sig-arg">value</span>)</span><br />
-      Convenience function - set the variable 'key' to a value in directory wd</td>
+      Convenience function - set the variable 'key' to a value in directory
+      wd</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.conf-pysrc.html#setVar">source&nbsp;code</a></span>
             
@@ -150,10 +116,11 @@ Moa script - get and set variables to the moa.mk file
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="appendVar"></a><span class="summary-sig-name">appendVar</span>(<span class="summary-sig-arg">wd</span>,
+          <td><span class="summary-sig"><a href="moa.conf-module.html#appendVar" class="summary-sig-name">appendVar</a>(<span class="summary-sig-arg">wd</span>,
         <span class="summary-sig-arg">key</span>,
         <span class="summary-sig-arg">value</span>)</span><br />
-      Convenience function - set the variable 'key' to a value in directory wd</td>
+      Convenience function - set the variable 'key' to a value in directory
+      wd</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="moa.conf-pysrc.html#appendVar">source&nbsp;code</a></span>
             
@@ -165,7 +132,7 @@ Moa script - get and set variables to the moa.mk file
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">String</span>
+      <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
@@ -221,7 +188,7 @@ Moa script - get and set variables to the moa.mk file
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a name="l"></a><span class="summary-name">l</span> = <code title="logging.getLogger('moa')">logging.getLogger('moa')</code>
+        <a name="l"></a><span class="summary-name">l</span> = <code title="moa.logger.l">moa.logger.l</code>
     </td>
   </tr>
 <tr>
@@ -264,32 +231,105 @@ Moa script - get and set variables to the moa.mk file
     </td>
   </tr></table>
   
-  <p>Parse the arguments defined on a commandline.</p>
-<pre class="py-doctest">
-<span class="py-prompt">&gt;&gt;&gt; </span>r = parseClArgs([<span class="py-string">'aap=1'</span>, <span class="py-string">'noot=2'</span>, <span class="py-string">'noot=3'</span>,
-<span class="py-more">... </span>                 <span class="py-string">'mies=test'</span>, <span class="py-string">'mies+=roos'</span>])
-<span class="py-prompt">&gt;&gt;&gt; </span>type(r) == type([])
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>type(r[0]) == type({})
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>r[0][<span class="py-string">'key'</span>] == <span class="py-string">'aap'</span>
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>r[1][<span class="py-string">'operator'</span>] == <span class="py-string">'='</span>
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>r[2][<span class="py-string">'value'</span>] == <span class="py-string">'3'</span>
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>r[4][<span class="py-string">'operator'</span>] == <span class="py-string">'+='</span>
-<span class="py-output">True</span>
-<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>len(r) == 5
-<span class="py-output">True</span></pre>
+  <pre class="literalblock">
+
+Parse the arguments defined on a commandline.
+
+:param args: command line arguments, as passed on by sys.argv or
+    optparse. It is expected to be a list of strings of the
+    following format; 'param=value' or 'param+=value' No spaces
+    are allowed between the parameter name, value and operator.
+:type args: String of List of Strings
+
+
+&gt;&gt;&gt; r = parseClArgs(['aap=1', 'noot=2', 'noot=3',
+...                  'mies=test', 'mies+=roos'])
+&gt;&gt;&gt; type(r) == type([])
+True
+&gt;&gt;&gt; type(r[0]) == type({})
+True
+&gt;&gt;&gt; r[0]['key'] == 'aap'
+True
+&gt;&gt;&gt; r[1]['operator'] == '='
+True
+&gt;&gt;&gt; r[2]['value'] == '3'
+True
+&gt;&gt;&gt; r[4]['operator'] == '+='
+True
+&gt;&gt;&gt; len(r) == 5
+True
+    
+
+</pre>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>args</code></strong> (String of List of Strings) - command line arguments, as passed on by sys.argv or
-optparse. It is expected to be a list of strings of the
-following format; 'param=value' or 'param+=value' No spaces
-are allowed between the parameter name, value and operator.</li>
-    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="setVar"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">setVar</span>(<span class="sig-arg">wd</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.conf-pysrc.html#setVar">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convenience function - set the variable 'key' to a value in directory 
+  wd</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span><span class="py-keyword">import</span> random
+<span class="py-prompt">&gt;&gt;&gt; </span>testTitle = <span class="py-string">'title %d'</span> % random.randint(0,10000)
+<span class="py-prompt">&gt;&gt;&gt; </span>setVar(P_JOB, <span class="py-string">'title'</span>, testTitle)
+<span class="py-prompt">&gt;&gt;&gt; </span>title = getVar(P_JOB, <span class="py-string">'title'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>title == testTitle
+<span class="py-output">True</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>try: setVar(P_EMPTY, <span class="py-string">'title'</span>, <span class="py-string">'test setvar in a non-moa dir'</span>)
+<span class="py-more">... </span><span class="py-keyword">except</span> NotAMoaDirectory:
+<span class="py-more">... </span>  <span class="py-string">'Fine'</span>
+<span class="py-output">'Fine'</span></pre>
+  <dl class="fields">
+  </dl>
+</td></tr></table>
+</div>
+<a name="appendVar"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">appendVar</span>(<span class="sig-arg">wd</span>,
+        <span class="sig-arg">key</span>,
+        <span class="sig-arg">value</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="moa.conf-pysrc.html#appendVar">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Convenience function - set the variable 'key' to a value in directory 
+  wd</p>
+<pre class="py-doctest">
+<span class="py-prompt">&gt;&gt;&gt; </span>setVar(P_JOB, <span class="py-string">'title'</span>, <span class="py-string">'one'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>getVar(P_JOB, <span class="py-string">'title'</span>)
+<span class="py-output">'one'</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>appendVar(P_JOB, <span class="py-string">'title'</span>, <span class="py-string">'two'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>appendVar(P_JOB, <span class="py-string">'title'</span>, <span class="py-string">'three'</span>)
+<span class="py-prompt">&gt;&gt;&gt; </span>getVar(P_JOB, <span class="py-string">'title'</span>)
+<span class="py-output">'one two three'</span>
+<span class="py-output"></span><span class="py-prompt">&gt;&gt;&gt; </span>moa.utils.removeMoaFiles(P_EMPTY)
+<span class="py-prompt">&gt;&gt;&gt; </span>try: appendVar(P_EMPTY, <span class="py-string">'title'</span>, <span class="py-string">'test setvar in a non-moa dir'</span>)
+<span class="py-more">... </span><span class="py-keyword">except</span> NotAMoaDirectory:
+<span class="py-more">... </span>  <span class="py-string">'Fine'</span>
+<span class="py-output">'Fine'</span></pre>
+  <dl class="fields">
   </dl>
 </td></tr></table>
 </div>
@@ -313,14 +353,10 @@ are allowed between the parameter name, value and operator.</li>
 <span class="py-prompt">&gt;&gt;&gt; </span>setVar(P_JOB, <span class="py-string">'title'</span>, <span class="py-string">'test getVar'</span>)
 <span class="py-prompt">&gt;&gt;&gt; </span>getVar(P_JOB, <span class="py-string">'title'</span>)
 <span class="py-output">'test getVar'</span></pre>
+  <p>:param wd: Directory to retrieve the variable from :type wd: String 
+  :param key: The name of the parameter to retrieve :type key: String 
+  :returns: The value of the parameter :rtype: String</p>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>wd</code></strong> (String) - Directory to retrieve the variable from</li>
-        <li><strong class="pname"><code>key</code></strong> (String) - The name of the parameter to retrieve</li>
-    </ul></dd>
-    <dt>Returns: String</dt>
-        <dd>The value of the parameter</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -353,7 +389,7 @@ are allowed between the parameter name, value and operator.</li>
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Feb 11 14:17:21 2010
+    Generated by Epydoc 3.0 on Mon Apr  5 22:04:07 2010
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
