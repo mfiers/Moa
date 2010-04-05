@@ -39,6 +39,7 @@ site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
+import moa
 import moa.job
 import moa.archive
 from moa import runMake
@@ -171,18 +172,10 @@ if __name__ == "__main__":
     l.debug("Extra make parameters are '%s'" % extraMakeParameters)
     l.debug("Number of threads: '%s'" % options.threads)
 
-    ## If not arguments are given - run Make without any - hence
-    ## execute the default target
+    ## If not arguments are given - run 'moa run'
     if len(args) == 0:
-        l.debug("No arguments, calling make")
-        returnCode = runMake.go(target = '',
-                        verbose = options.verbose,
-                        threads = options.threads,
-                        makeArgs = [],
-                        extraMakeParameters = extraMakeParameters,            
-                        background = options.background)
-        sys.exit(returnCode)
-    
+        args = ['run']
+
     ## Determine what the command is.
     command = args[0]
     newargs = args[1:]
