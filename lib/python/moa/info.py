@@ -50,7 +50,8 @@ def getPlugins(wd = None):
         return []
     l.debug("getting plugins for %s" % wd)
     result = moa.runMake.runMakeGetOutput(
-        verbose=False, wd = wd, target='moa_list_plugins', makeArgs=[]).strip().split()
+        verbose=False, wd = wd,
+        target='moa_list_plugins', makeArgs=[]).strip().split()
     l.debug("Plugins for '%s' are '%s'" % (
             wd, ', '.join(result)))
     return result
@@ -151,7 +152,8 @@ def _checkRunlock(d):
 
 def status(d):
     """
-    Returns the status of a directory. It will return a one of the following status messages:
+    Returns the status of a directory. It will return a one of the
+    following status messages:
 
        - notmoa - this is not a moa directory
        - waiting - a moa job, not doing anything

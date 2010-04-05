@@ -86,15 +86,24 @@ def list():
         True
     """
     r = []
-    for f in os.listdir(TEMPLATEDIR):
-        if f[0] == '.': continue
-        if f[0] == '_': continue
-        if f[0] == '#': continue
-        if f[-1] == '~': continue
-        if f == 'gsml': continue
-        if not '.mk' in f: continue
-        r.append(f.replace('.mk', ''))
-    r.sort()
+    for path, dirs, files in os.walk(TEMPLATEDIR):
+        relPath = path.replace(TEMPLATEDIR, '')
+        if relPath and relPath[0] == '/':
+            relPath = relPath[1:]
+        if relPath[:3] == 'moa' :
+            continue
+        if relPath[:4] == 'util' :
+            continue
+        if relPath and relPath[-1] != '/':
+            relPath += '/'
+        files.sort()
+        for f in files:
+            if f[0] == '.': continue
+            if f[0] == '_': continue
+            if f[0] == '#': continue
+            if f[-1] == '~': continue
+            if not '.mk' in f: continue
+            r.append(relPath  + f.replace('.mk', ''))
     return r
 
 def _getDescription(template):
@@ -117,7 +126,6 @@ def _getDescription(template):
                     desc = desc[:-1]
                 else:
                     break
-
     return " ".join(desc.split())
 
 def listLong():

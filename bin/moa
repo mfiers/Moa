@@ -24,14 +24,10 @@ This script serves as a command dispatcher for all moa functionality
 """
 
 import os
-import re
 import sys
 import site
-import shutil
-import pprint
 import optparse
 import textwrap
-import subprocess
 
 #moa specific libs - first prepare for loading libs
 if not os.environ.has_key('MOABASE'):
@@ -51,8 +47,6 @@ import moa.info
 import moa.api
 import moa.project
 import moa.unittests
-from moa import utils
-from moa.exceptions import *
 import moa.checkTemplate
 
 ## Initialize the logger
@@ -92,9 +86,9 @@ for p in moaPluginsLoaded:
     
 ## start defining the command line interface
 USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
-_commands = moaCommands.keys()
-_commands.sort()
-for _c in _commands:
+moaCommandNames = moaCommands.keys()
+moaCommandNames.sort()
+for _c in moaCommandNames:
     if moaCommands[_c].get('private', False):
         continue
     USAGE += "\n".join(
@@ -181,13 +175,13 @@ if __name__ == "__main__":
     ## execute the default target
     if len(args) == 0:
         l.debug("No arguments, calling make")
-        rc = runMake.go(target = '',
+        returnCode = runMake.go(target = '',
                         verbose = options.verbose,
                         threads = options.threads,
                         makeArgs = [],
                         extraMakeParameters = extraMakeParameters,            
                         background = options.background)
-        sys.exit(rc)
+        sys.exit(returnCode)
     
     ## Determine what the command is.
     command = args[0]
@@ -200,16 +194,16 @@ if __name__ == "__main__":
             moaCommands[command]['call'](os.getcwd(), options, newargs)
         else:
             l.debug("Calling make for command %s" % command)
-            rc = runMake.go(target = command,
+            returnCode = runMake.go(target = command,
                         verbose = options.verbose,
                         threads = options.threads,
                         makeArgs = newargs,
                         extraMakeParameters = extraMakeParameters,            
                         background = options.background)
-            sys.exit(rc)
+            sys.exit(returnCode)
     else:
         l.debug("not defined - passing on to Moa")
-        rc = runMake.go(target = command,
+        returnCode = runMake.go(target = command,
                         verbose = options.verbose,
                         threads = options.threads,
                         makeArgs = newargs,

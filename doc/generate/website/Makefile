@@ -24,7 +24,7 @@ imagesao: moa.css $(shell find ../../images)
 	cp moa.css ../../html/
 	cp -r ../../images/ ../../html/
 	cp ../../manual.pdf ../../html/moa_manual.pdf
-	cp -r ../../api ../../html/moa_manual
+	cp -r ../../api ../../html/api
 
 ../../html/index.html: index.template.html header.html footer.html
 	cat header.html > $@
