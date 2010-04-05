@@ -13,11 +13,11 @@
 		<div style="width: 815px;">
 		  <div style="clear: left;">
 			<div style="float: left; vertical-align:text-bottom">
-			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
 			</div>
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
-				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
 			</a>
 			</div>
 		  </div>
@@ -26,7 +26,7 @@
 			  &nbsp;&nbsp;
 			</div>
 			<div style="float: left;">
-			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
 			</div>
 		  </div>
 		</div>
@@ -36,8 +36,6 @@
 			  <div style="text-align: right;">
                  <a href="introduction.html">Introduction</a><br>
                  <a href="installation.html">Installation</a><br>
-                 <a href="using.html">Usage</a><br>
-                 <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
                  <hr>
@@ -51,90 +49,96 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">blat.mk</h1>
-<h1 id="targets"
->Targets</h1
-><dl
-><dt
-  >(empty)</dt
-  ><dd
-  >Leaving the target unspecified executes the default target(s): (blat )</dd
+<p
+>Run BLAT on an set of input files (query) vs a database.</p
+><div id="targets"
+><h1
+  >Targets</h1
+  ><dl
   ><dt
-  >clean</dt
-  ><dd
-  >removes all results from this job</dd
-  ><dt
-  >all</dt
-  ><dd
-  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-  ></dl
-><p
->blat :</p
-><h1 id="parameters"
->Parameters</h1
-><h2 id="required-parameters"
->Required parameters</h2
-><dl
-><dt
-  >blat_db</dt
-  ><dd
-  >type of the database (dna, prot or dnax) (['dna',|'prot',|'dnax']**)</dd
-  ><dt
-  >blat_input_file</dt
-  ><dd
-  >input query file. If this variable is not defined, the combination of blat_input_dir and blat_input_extension is used to find a list of input files (file)</dd
-  ><dt
-  >blat_input_dir</dt
-  ><dd
-  >source field in the generated gff (directory)</dd
-  ><dt
-  >blat_gff_source</dt
-  ><dd
-  >Source field for the generated GFF files (string)</dd
-  ><dt
-  >title</dt
-  ><dd
-  >A job name - Describe what you are doing (string)</dd
-  ></dl
-><h2 id="optional-parameters"
->Optional parameters</h2
-><dl
-><dt
-  >blat_input_extension</dt
-  ><dd
-  >extension of the input files (string, default:fasta)</dd
-  ><dt
-  >blat_eval</dt
-  ><dd
-  >evalue cutoff to select the reported hits on (defaults to 1e-15) (float, default:1e-10)</dd
-  ><dt
-  >blat_db_id_list</dt
-  ><dd
-  >a sorted list of db ids and descriptions, enhances the report generated (file)</dd
-  ><dt
-  >blat_db_type</dt
-  ><dd
-  >type of the database (dna, prot or dnax) (['<em
-    >dna</em
-    >',|'prot',|'<em
-    >dna</em
-    >x'])</dd
-  ><dt
-  >blat_query_type</dt
-  ><dd
-  >type of the query (dna, rna, prot, dnax or rnax) (['<em
-    >dna</em
-    >',|'rna',|'prot',|'<em
-    >dna</em
-    >x',|'rnax'])</dd
-  ><dt
-  >moa_precommand</dt
-  ><dd
-  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
-  ><dt
-  >moa_postcommand</dt
-  ><dd
-  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
-  ></dl
+    >(empty)</dt
+    ><dd
+    >Execute the default target:</dd
+    ><dd
+    ><strong
+      >blat</strong
+      ></dd
+    ></dl
+  ><p
+  >blat : clean : removes all results from this job all : executes the default target and : into subdirectories to execute any : other moa makefile it encounters</p
+  ></div
+><div id="parameters"
+><h1
+  >Parameters</h1
+  ><div id="required-parameters"
+  ><h2
+    >Required parameters</h2
+    ><dl
+    ><dt
+      >blat_db</dt
+      ><dd
+      >type of the database (dna, prot or dnax) (['dna',|'prot',|'dnax']**)</dd
+      ><dt
+      >blat_input_file</dt
+      ><dd
+      >input query file. If this variable is not defined, the combination of blat_input_dir and blat_input_extension is used to find a list of input files (file, default:)</dd
+      ><dt
+      >blat_input_dir</dt
+      ><dd
+      >source field in the generated gff (directory, default:)</dd
+      ><dt
+      >blat_gff_source</dt
+      ><dd
+      >Source field for the generated GFF files (string, default:)</dd
+      ><dt
+      >title</dt
+      ><dd
+      >A job name - Describe what you are doing (string, default:)</dd
+      ></dl
+    ></div
+  ><div id="optional-parameters"
+  ><h2
+    >Optional parameters</h2
+    ><dl
+    ><dt
+      >blat_input_extension</dt
+      ><dd
+      >extension of the input files (string, default:fasta)</dd
+      ><dt
+      >blat_eval</dt
+      ><dd
+      >evalue cutoff to select the reported hits on (defaults to 1e-15) (float, default:1e-10)</dd
+      ><dt
+      >blat_db_id_list</dt
+      ><dd
+      >a sorted list of db ids and descriptions, enhances the report generated (file, default:)</dd
+      ><dt
+      >blat_db_type</dt
+      ><dd
+      >type of the database (dna, prot or dnax) (['<em
+	>dna</em
+	>',|'prot',|'<em
+	>dna</em
+	>x'])</dd
+      ><dt
+      >blat_query_type</dt
+      ><dd
+      >type of the query (dna, rna, prot, dnax or rnax) (['<em
+	>dna</em
+	>',|'rna',|'prot',|'<em
+	>dna</em
+	>x',|'rnax'])</dd
+      ><dt
+      >moa_precommand</dt
+      ><dd
+      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string, default:)</dd
+      ><dt
+      >moa_postcommand</dt
+      ><dd
+      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string, default:)</dd
+      ></dl
+    ></div
+  ></div
 >
 </div>
 </div>

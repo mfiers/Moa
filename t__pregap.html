@@ -13,11 +13,11 @@
 		<div style="width: 815px;">
 		  <div style="clear: left;">
 			<div style="float: left; vertical-align:text-bottom">
-			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
 			</div>
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
-				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
 			</a>
 			</div>
 		  </div>
@@ -26,7 +26,7 @@
 			  &nbsp;&nbsp;
 			</div>
 			<div style="float: left;">
-			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
 			</div>
 		  </div>
 		</div>
@@ -36,8 +36,6 @@
 			  <div style="text-align: right;">
                  <a href="introduction.html">Introduction</a><br>
                  <a href="installation.html">Installation</a><br>
-                 <a href="using.html">Usage</a><br>
-                 <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
                  <hr>
@@ -51,84 +49,102 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">pregap.mk</h1>
-<h1 id="targets"
->Targets</h1
-><dl
-><dt
-  >(empty)</dt
-  ><dd
-  >Leaving the target unspecified executes the default target(s): (pregap)</dd
+<p
+>Run Pregap. Note that running phrap could be a part of this.</p
+><div id="targets"
+><h1
+  >Targets</h1
+  ><dl
   ><dt
-  >clean</dt
-  ><dd
-  >removes all results from this job</dd
-  ><dt
-  >all</dt
-  ><dd
-  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-  ><dt
-  >pregap</dt
-  ><dd
-  >Run pregap</dd
-  ></dl
-><h1 id="parameters"
->Parameters</h1
-><h2 id="required-parameters"
->Required parameters</h2
-><dl
-><dt
-  >input_dir</dt
-  ><dd
-  >Directory with the input data (string)</dd
-  ><dt
-  >input_pattern</dt
-  ><dd
-  >file name pattern (string)</dd
-  ><dt
-  >cloning_vector</dt
-  ><dd
-  >File containing the cloning vector (file)</dd
-  ><dt
-  >sequencing_vector</dt
-  ><dd
-  >File containing the sequencing vector (file)</dd
-  ><dt
-  >ecoli_screenseq</dt
-  ><dd
-  >File containing ecoli screen sequences (file)</dd
-  ><dt
-  >repeat_masker_lib</dt
-  ><dd
-  >File with a repeatmasker library (file)</dd
-  ><dt
-  >vector_primerfile</dt
-  ><dd
-  >File with the vector primers (file)</dd
-  ><dt
-  >title</dt
-  ><dd
-  >A job name - Describe what you are doing (string)</dd
-  ></dl
-><h2 id="optional-parameters"
->Optional parameters</h2
-><dl
-><dt
-  >quality_value_clip</dt
-  ><dd
-  >quality cutoff (integer, default:10)</dd
-  ><dt
-  >pregap_template</dt
-  ><dd
-  >the template pregap config file to use. if not defined, Moa tries ./files/pregap.config. (file, default:./files/pregap.config.)</dd
-  ><dt
-  >moa_precommand</dt
-  ><dd
-  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
-  ><dt
-  >moa_postcommand</dt
-  ><dd
-  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
-  ></dl
+    >(empty)</dt
+    ><dd
+    >Execute the default target:</dd
+    ><dd
+    ><strong
+      >pregap</strong
+      ></dd
+    ><dt
+    >pregap</dt
+    ><dd
+    >Run pregap</dd
+    ><dt
+    >clean</dt
+    ><dd
+    >removes all results from this job</dd
+    ><dt
+    >all</dt
+    ><dd
+    >executes the default target and</dd
+    ><dd
+    >into subdirectories to execute any</dd
+    ><dd
+    >other moa makefile it encounters</dd
+    ></dl
+  ></div
+><div id="parameters"
+><h1
+  >Parameters</h1
+  ><div id="required-parameters"
+  ><h2
+    >Required parameters</h2
+    ><dl
+    ><dt
+      >input_dir</dt
+      ><dd
+      >Directory with the input data (string, default:)</dd
+      ><dt
+      >input_pattern</dt
+      ><dd
+      >file name pattern (string, default:)</dd
+      ><dt
+      >cloning_vector</dt
+      ><dd
+      >File containing the cloning vector (file, default:)</dd
+      ><dt
+      >sequencing_vector</dt
+      ><dd
+      >File containing the sequencing vector (file, default:)</dd
+      ><dt
+      >ecoli_screenseq</dt
+      ><dd
+      >File containing ecoli screen sequences (file, default:)</dd
+      ><dt
+      >repeat_masker_lib</dt
+      ><dd
+      >File with a repeatmasker library (file, default:)</dd
+      ><dt
+      >vector_primerfile</dt
+      ><dd
+      >File with the vector primers (file, default:)</dd
+      ><dt
+      >title</dt
+      ><dd
+      >A job name - Describe what you are doing (string, default:)</dd
+      ></dl
+    ></div
+  ><div id="optional-parameters"
+  ><h2
+    >Optional parameters</h2
+    ><dl
+    ><dt
+      >quality_value_clip</dt
+      ><dd
+      >quality cutoff (integer, default:10)</dd
+      ><dt
+      >pregap_template</dt
+      ><dd
+      >the template pregap config file to use. if not defined, Moa tries ./files/pregap.config. (file, default:./files/pregap.config.)</dd
+      ><dt
+      >moa_precommand</dt
+      ><dd
+      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string, default:)</dd
+      ><dt
+      >moa_postcommand</dt
+      ><dd
+      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string, default:)</dd
+      ></dl
+    ></div
+  ></div
 >
 </div>
 </div>

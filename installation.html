@@ -13,11 +13,11 @@
 		<div style="width: 815px;">
 		  <div style="clear: left;">
 			<div style="float: left; vertical-align:text-bottom">
-			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
 			</div>
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
-				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
 			</a>
 			</div>
 		  </div>
@@ -26,7 +26,7 @@
 			  &nbsp;&nbsp;
 			</div>
 			<div style="float: left;">
-			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
 			</div>
 		  </div>
 		</div>
@@ -36,8 +36,6 @@
 			  <div style="text-align: right;">
                  <a href="introduction.html">Introduction</a><br>
                  <a href="installation.html">Installation</a><br>
-                 <a href="using.html">Usage</a><br>
-                 <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
                  <hr>
@@ -51,125 +49,137 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">Installation</h1>
-<h1 id="prerequisites"
->Prerequisites</h1
-><p
->Moa is developed on Ubuntu  and RHEL  Linux and is expected to operate without much problems on most modern Linux distributions. Moa is depends on the following list of software. The version numbers are an indication, not strict prerequisites. Other, even older, versions might work.</p
-><ul
-><li
+<div id="prerequisites"
+><h1
+  >Prerequisites</h1
   ><p
-    ><a href="http://www.gnu.org/software/make/"
-      >Gnu Make</a
-      > 3.81</p
-    ></li
+  >Moa is developed on Ubuntu  and RHEL  Linux and is expected to operate without much problems on most modern Linux distributions. Moa is depends on the following list of software. The version numbers are an indication, not strict prerequisites. Other, even older, versions might work.</p
+  ><ul
   ><li
+    ><p
+      ><a href="http://www.gnu.org/software/make/"
+	>Gnu Make</a
+	> 3.81</p
+      ></li
+    ><li
+    ><p
+      ><a href="http://git-scm.com/"
+	>Git</a
+	> 1.6. To download the Moa software. Alternatively it is possible to download a tarball.</p
+      ></li
+    ><li
+    ><p
+      ><a href="http://python.org"
+	>Python</a
+	> 2.6. Python version 2.5 and lower will not work, several supporting scripts use 2.6 specific functionality</p
+      ></li
+    ><li
+    ><p
+      ><a href="http://www.gnu.org/software/bash/"
+	>Bash</a
+	>. Many of the embedded scripts expect the Bash shell. Luckily, Bash is the default shell of almost all Linux distributions.</p
+      ></li
+    ><li
+    ><p
+      ><a href="http://sourceforge.net/gsml"
+	>Gnu Make Standard Library</a
+	> (GSML). A set of standard routines for Gnu Make. GSML is embedded in this distribution.</p
+      ></li
+    ></ul
+  ><div id="couchdb"
+  ><h2
+    >Couchdb</h2
+    ><p
+    >Moa can use Apache's Couchdb as a central storage of information on Moa jobs. allowing other Moa jobs to refer hereto. If you want to use this, the following prerequisites are added to the list:</p
+    ><ul
+    ><li
+      ><p
+	><a href="http://couchdb.apache.org/"
+	  >Apache Couchdb</a
+	  > 0.9.0. Only when using couchdb functionality, see the chapter on Couchdb</p
+	></li
+      ><li
+      ><p
+	><a href="http://code.google.com/p/couchdb-python/"
+	  >Couchdb-python</a
+	  >. Only when using couchdb functionality, see the chapter on Couchdb</p
+	></li
+      ></ul
+    ><p
+    >For more information, read the chapter on couchdb.</p
+    ></div
+  ><div id="bioinformatics-tools"
+  ><h2
+    >Bioinformatics tools</h2
+    ><p
+    >Each of the wrapped tools, obviously, requires that these tools are present. Usually, unless mentioned otherwise, Moa expects all tools to be installed in the system PATH. All requirements are described in the reference chapter.</p
+    ></div
+  ><div id="deciding-where-to-install-moa"
+  ><h2
+    >Deciding where to install Moa</h2
+    ><p
+    >You will need to choose a location to install Moa to, this usually depends on who is going to use the software. Moa can be installed system wide for all users of this machine, for example in <code
+      >/opt/moa</code
+      >. However, if you will be the only person using Moa, install it in your home directory, for example under <code
+      >~/moa</code
+      >. The remainder of this chapter assumes an installation in your home directory.</p
+    ></div
+  ></div
+><div id="downloading-moa"
+><h1
+  >Downloading Moa</h1
   ><p
-    ><a href="http://git-scm.com/"
-      >Git</a
-      > 1.6. To download the Moa software. Alternatively it is possible to download a tarball.</p
-    ></li
-  ><li
-  ><p
-    ><a href="http://python.org"
-      >Python</a
-      > 2.6. Python version 2.5 and lower will not work, several supporting scripts use 2.6 specific functionality</p
-    ></li
-  ><li
-  ><p
-    ><a href="http://www.gnu.org/software/bash/"
-      >Bash</a
-      >. Many of the embedded scripts expect the Bash shell. Luckily, Bash is the default shell of almost all Linux distributions.</p
-    ></li
-  ><li
-  ><p
-    ><a href="http://sourceforge.net/gsml"
-      >Gnu Make Standard Library</a
-      > (GSML). A set of standard routines for Gnu Make. GSML is embedded in this distribution.</p
-    ></li
-  ></ul
-><h2 id="couchdb"
->Couchdb</h2
-><p
->Moa can use Apache's Couchdb as a central storage of information on Moa jobs. allowing other Moa jobs to refer hereto. If you want to use this, the following prerequisites are added to the list:</p
-><ul
-><li
-  ><p
-    ><a href="http://couchdb.apache.org/"
-      >Apache Couchdb</a
-      > 0.9.0. Only when using couchdb functionality, see the chapter on Couchdb</p
-    ></li
-  ><li
-  ><p
-    ><a href="http://code.google.com/p/couchdb-python/"
-      >Couchdb-python</a
-      >. Only when using couchdb functionality, see the chapter on Couchdb</p
-    ></li
-  ></ul
-><p
->For more information, read the chapter on couchdb.</p
-><h2 id="bioinformatics-tools"
->Bioinformatics tools</h2
-><p
->Each of the wrapped tools, obviously, requires that these tools are present. Usually, unless mentioned otherwise, Moa expects all tools to be installed in the system PATH. All requirements are described in the reference chapter.</p
-><h2 id="deciding-where-to-install-moa"
->Deciding where to install Moa</h2
-><p
->You will need to choose a location to install Moa to, this usually depends on who is going to use the software. Moa can be installed system wide for all users of this machine, for example in <code
-  >/opt/moa</code
-  >. However, if you will be the only person using Moa, install it in your home directory, for example under <code
-  >~/moa</code
-  >. The remainder of this chapter assumes an installation in your home directory.</p
-><h1 id="downloading-moa"
->Downloading Moa</h1
-><p
->Moa is hosted at github:</p
-><pre
-><code
-  >http://github.com/mfiers/Moa
+  >Moa is hosted at github:</p
+  ><pre
+  ><code
+    >http://github.com/mfiers/Moa
 </code
-  ></pre
-><p
->Currently there are no stable releases so the best option is to download the latest version of the software, this can be done using <a href="http://git-scm.com/"
-  >Git</a
-  > or by downloading a source archive.</p
-><h2 id="using-git"
->Using Git</h2
-><p
->Using git is a good choice as long as there are no releases. Git makes it very easy to stay up to date with the latest version and, even better, allows anybody to submit bugfixes to the Moa repository (more on that later). To download Moa using Git, enter the following commands (assuming you're installing Moa in your home directory):</p
-><pre
-><code
-  >cd ~
+    ></pre
+  ><p
+  >Currently there are no stable releases so the best option is to download the latest version of the software, this can be done using <a href="http://git-scm.com/"
+    >Git</a
+    > or by downloading a source archive.</p
+  ><div id="using-git"
+  ><h2
+    >Using Git</h2
+    ><p
+    >Using git is a good choice as long as there are no releases. Git makes it very easy to stay up to date with the latest version and, even better, allows anybody to submit bugfixes to the Moa repository (more on that later). To download Moa using Git, enter the following commands (assuming you're installing Moa in your home directory):</p
+    ><pre
+    ><code
+      >cd ~
 git clone git://github.com/mfiers/Moa.git moa
 </code
-  ></pre
-><h2 id="downloading-an-archive"
->Downloading an archive</h2
-><p
->As an alternative, it is possible to download an (automatically generated) archive of the latest Moa version <a href="http://github.com/mfiers/Moa/tarball/master"
-  >here</a
-  >, for example, using the following commands:</p
-><pre
-><code
-  >wget http://github.com/mfiers/Moa/tarball/master
+      ></pre
+    ></div
+  ><div id="downloading-an-archive"
+  ><h2
+    >Downloading an archive</h2
+    ><p
+    >As an alternative, it is possible to download an (automatically generated) archive of the latest Moa version <a href="http://github.com/mfiers/Moa/tarball/master"
+      >here</a
+      >, for example, using the following commands:</p
+    ><pre
+    ><code
+      >wget http://github.com/mfiers/Moa/tarball/master
 </code
-  ></pre
-><p
->The archive that is downloaded will have a rather long name that looks something like <code
-  >mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz</code
-  >. This archive needs to be unpacked in a temporary directory and then moved to its final location:</p
-><pre
-><code
-  >mkdir /tmp/moa_install
+      ></pre
+    ><p
+    >The archive that is downloaded will have a rather long name that looks something like <code
+      >mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz</code
+      >. This archive needs to be unpacked in a temporary directory and then moved to its final location:</p
+    ><pre
+    ><code
+      >mkdir /tmp/moa_install
 cd /tmp/moa_install
 tar xvzf mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz
 mv mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz ~/moa
 </code
-  ></pre
-><p
->After following either procdure; downloading the archive or using Git, the source code tree should be should be in its final location. The tree should contain the following directories:</p
-><pre
-><code
-  >./moa
+      ></pre
+    ><p
+    >After following either procdure; downloading the archive or using Git, the source code tree should be should be in its final location. The tree should contain the following directories:</p
+    ><pre
+    ><code
+      >./moa
     ./bin
     ./doc
     ./etc
@@ -183,36 +193,40 @@ mv mfiers-Moa-b13ddf78c6a1ae9a714c7d9979a1b1de0ed08462.tar.gz ~/moa
     ./README
     ./VERSION
 </code
-  ></pre
-><h1 id="configuration"
->Configuration</h1
-><p
->Configuration of Moa is simple: The Moa <code
-  >/bin/</code
-  > directory must be included in the PATH and an environment variable must be set pointing to the Moa directory. The easiest way to do this is by adding the following lines to your <code
-  >.bashrc</code
-  >:</p
-><pre
-><code
-  >export PATH=/opt/moa/bin:$PATH
+      ></pre
+    ></div
+  ></div
+><div id="configuration"
+><h1
+  >Configuration</h1
+  ><p
+  >Configuration of Moa is simple: The Moa <code
+    >/bin/</code
+    > directory must be included in the PATH and an environment variable must be set pointing to the Moa directory. The easiest way to do this is by adding the following lines to your <code
+    >.bashrc</code
+    >:</p
+  ><pre
+  ><code
+    >export PATH=/opt/moa/bin:$PATH
 export MOABASE=/opt/moa
 </code
-  ></pre
-><p
->and run:</p
-><pre
-><code
-  > source .bashrc
+    ></pre
+  ><p
+  >and run:</p
+  ><pre
+  ><code
+    > source .bashrc
 </code
-  ></pre
-><p
->Also, if you are running Moa to be used by all users of your system system, please remember the file attributes correctly:</p
-><pre
-><code
-  >chmod a+rX -R $MOABASE
+    ></pre
+  ><p
+  >Also, if you are running Moa to be used by all users of your system system, please remember the file attributes correctly:</p
+  ><pre
+  ><code
+    >chmod a+rX -R $MOABASE
 chmod a+rx $MOABASE/bin/*
 </code
-  ></pre
+    ></pre
+  ></div
 >
 </div>
 </div>

@@ -13,7 +13,7 @@ body {
 	margin-top: 0px;
 	color: #000;
     background-color: #fff;
-	background-image: url(shadow.png);
+	background-image: url(images/shadow.png);
 	background-position:center;
 	background-repeat: repeat-y;
 }
@@ -33,6 +33,12 @@ li {
 	text-align: left;
 }
 
+hr {
+    border: 0;
+    height: 1px;
+    widht: 81%;
+    background-color: black;
+}
 #navbar {
 	background-color: #51002d;
 	margin: 0px;

@@ -13,11 +13,11 @@
 		<div style="width: 815px;">
 		  <div style="clear: left;">
 			<div style="float: left; vertical-align:text-bottom">
-			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
 			</div>
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
-				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
 			</a>
 			</div>
 		  </div>
@@ -26,7 +26,7 @@
 			  &nbsp;&nbsp;
 			</div>
 			<div style="float: left;">
-			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
 			</div>
 		  </div>
 		</div>
@@ -36,8 +36,6 @@
 			  <div style="text-align: right;">
                  <a href="introduction.html">Introduction</a><br>
                  <a href="installation.html">Installation</a><br>
-                 <a href="using.html">Usage</a><br>
-                 <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
                  <hr>
@@ -51,62 +49,76 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">ncbi.mk</h1>
-<p
->Download a set of sequences from NCBI based on a query string (ncbi_query) and database (ncbi_db). This tempate will run only once (!), after a succesful run it creates a 'lock' file that you need to remove to rerun</p
-><h1 id="targets"
->Targets</h1
-><dl
-><dt
-  >(empty)</dt
-  ><dd
-  >Leaving the target unspecified executes the default target(s): (getFromNcbi)</dd
+<div id="targets"
+><h1
+  >Targets</h1
+  ><dl
   ><dt
-  >clean</dt
-  ><dd
-  >removes all results from this job</dd
-  ><dt
-  >all</dt
-  ><dd
-  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-  ><dt
-  >getFromNcbi</dt
-  ><dd
-  >Downloads from NCBI</dd
-  ></dl
-><h1 id="parameters"
->Parameters</h1
-><h2 id="required-parameters"
->Required parameters</h2
-><dl
-><dt
-  >ncbi_query</dt
-  ><dd
-  >NCBI query (for example txid9397[Organism%3Aexp]) (string)</dd
-  ><dt
-  >title</dt
-  ><dd
-  >A job name - Describe what you are doing (string)</dd
-  ></dl
-><h2 id="optional-parameters"
->Optional parameters</h2
-><dl
-><dt
-  >ncbi_db</dt
-  ><dd
-  >NCBI database (string, default:nuccore)</dd
-  ><dt
-  >ncbi_sequence_name</dt
-  ><dd
-  >Sequence name to download. When this parameter is set, the template assumes that only one sequence is to be downloaded, the rest will be discarded. (string)</dd
-  ><dt
-  >moa_precommand</dt
-  ><dd
-  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
-  ><dt
-  >moa_postcommand</dt
-  ><dd
-  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
-  ></dl
+    >(empty)</dt
+    ><dd
+    >Execute the default target:</dd
+    ><dd
+    ><strong
+      >ncbi</strong
+      ></dd
+    ><dt
+    >ncbi</dt
+    ><dd
+    >Downloads from NCBI</dd
+    ><dt
+    >clean</dt
+    ><dd
+    >removes all results from this job</dd
+    ><dt
+    >all</dt
+    ><dd
+    >executes the default target and</dd
+    ><dd
+    >into subdirectories to execute any</dd
+    ><dd
+    >other moa makefile it encounters</dd
+    ></dl
+  ></div
+><div id="parameters"
+><h1
+  >Parameters</h1
+  ><div id="required-parameters"
+  ><h2
+    >Required parameters</h2
+    ><dl
+    ><dt
+      >ncbi_query</dt
+      ><dd
+      >NCBI query (for example txid9397[Organism%3Aexp]) (string, default:)</dd
+      ><dt
+      >title</dt
+      ><dd
+      >A job name - Describe what you are doing (string, default:)</dd
+      ></dl
+    ></div
+  ><div id="optional-parameters"
+  ><h2
+    >Optional parameters</h2
+    ><dl
+    ><dt
+      >ncbi_db</dt
+      ><dd
+      >NCBI database (string, default:nuccore)</dd
+      ><dt
+      >ncbi_sequence_name</dt
+      ><dd
+      >Sequence name to download. When this parameter is set, the template assumes that only one sequence is to be downloaded, the rest will be discarded. (string, default:)</dd
+      ><dt
+      >moa_precommand</dt
+      ><dd
+      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string, default:)</dd
+      ><dt
+      >moa_postcommand</dt
+      ><dd
+      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string, default:)</dd
+      ></dl
+    ></div
+  ></div
 >
 </div>
 </div>
