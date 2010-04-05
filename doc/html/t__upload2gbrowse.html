@@ -13,11 +13,11 @@
 		<div style="width: 815px;">
 		  <div style="clear: left;">
 			<div style="float: left; vertical-align:text-bottom">
-			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
 			</div>
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
-				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
 			</a>
 			</div>
 		  </div>
@@ -26,7 +26,7 @@
 			  &nbsp;&nbsp;
 			</div>
 			<div style="float: left;">
-			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
 			</div>
 		  </div>
 		</div>
@@ -36,8 +36,6 @@
 			  <div style="text-align: right;">
                  <a href="introduction.html">Introduction</a><br>
                  <a href="installation.html">Installation</a><br>
-                 <a href="using.html">Usage</a><br>
-                 <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
                  <hr>
@@ -51,120 +49,112 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">upload2gbrowse.mk</h1>
-<p
->A library that aids in uploading FASTA and GFF to a Generic Genome Browser database. This template is only to be used embedded in another template. This library expects that the following variables are preset; gup_fasta_dir, gup_gff_dir gup_upload_fasta, gup_upload_gff</p
-><h1 id="targets"
->Targets</h1
-><dl
-><dt
-  >(empty)</dt
-  ><dd
-  >Leaving the target unspecified executes the default target(s): (upload2gbrowse)</dd
+<div id="targets"
+><h1
+  >Targets</h1
+  ><dl
   ><dt
-  >clean</dt
-  ><dd
-  >removes all results from this job</dd
-  ><dt
-  >all</dt
-  ><dd
-  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-  ></dl
-><p
->upload2gbrowse :</p
-><dl
-><dt
-  >initGbrowse</dt
-  ><dd
-  >Clean &amp; initalize a gbrowse database. <strong
+    >(empty)</dt
+    ><dd
+    >Execute the default target:</dd
+    ><dd
+    ><strong
+      >upload2gbrowse</strong
+      ></dd
+    ></dl
+  ><p
+  >upload2gbrowse : clean : removes all results from this job all : executes the default target and : into subdirectories to execute any : other moa makefile it encounters initGbrowse : Clean &amp; initalize a gbrowse database. <strong
     >Warning: all data will be lost!</strong
-    ></dd
-  ><dt
-  >gupgo</dt
-  ><dd
-  >Actually do the upload. upload2gbrowse NEVER does this automatically!</dd
-  ></dl
-><h1 id="parameters"
->Parameters</h1
-><h2 id="required-parameters"
->Required parameters</h2
-><dl
-><dt
-  >gup_upload_fasta</dt
-  ><dd
-  >upload fasta to gbrowse (T/F) (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >gup_upload_gff</dt
-  ><dd
-  >upload gff to gbrowse (T/F) (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >gup_user</dt
-  ><dd
-  >gbrowse db user. If not defined, this defaults to 'moa'. (string)</dd
-  ><dt
-  >gup_db</dt
-  ><dd
-  >gbrowse database. If not defined, this defaults to 'moa'. (string)</dd
-  ><dt
-  >title</dt
-  ><dd
-  >A job name - Describe what you are doing (string)</dd
-  ></dl
-><h2 id="optional-parameters"
->Optional parameters</h2
-><dl
-><dt
-  >gup_fasta_dir</dt
-  ><dd
-  >input directory with fasta files to upload to gbrowse (directory)</dd
-  ><dt
-  >gup_gff_dir</dt
-  ><dd
-  >input directory with gff files to upload to gbrowse (directory)</dd
-  ><dt
-  >gup_gff_extension</dt
-  ><dd
-  >extension of the GFF files to upload (.gff) (string, default:gff)</dd
-  ><dt
-  >gup_fasta_extension</dt
-  ><dd
-  >extension of the FASTA files to upload (.fasta) (string, default:fasta)</dd
-  ><dt
-  >gup_upload_fasta</dt
-  ><dd
-  >upload fasta to gbrowse (T/F) (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >gup_upload_gff</dt
-  ><dd
-  >upload gff to gbrowse (T/F) (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >gup_force_upload</dt
-  ><dd
-  >upload to gbrowse, ignore gup_lock and upload all, not only files newer that upload_gff or upload_fasta (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >marks_extensions</dt
-  ><dd
-  >Add some extensions to the Gbrowse database to be initalized, for use by Mark. (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >moa_precommand</dt
-  ><dd
-  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
-  ><dt
-  >moa_postcommand</dt
-  ><dd
-  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
-  ></dl
+    > gupgo : Actually do the upload. upload2gbrowse NEVER does this automatically!</p
+  ></div
+><div id="parameters"
+><h1
+  >Parameters</h1
+  ><div id="required-parameters"
+  ><h2
+    >Required parameters</h2
+    ><dl
+    ><dt
+      >gup_upload_fasta</dt
+      ><dd
+      >upload fasta to gbrowse (T/F) (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >gup_upload_gff</dt
+      ><dd
+      >upload gff to gbrowse (T/F) (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >gup_user</dt
+      ><dd
+      >gbrowse db user. If not defined, this defaults to 'moa'. (string, default:)</dd
+      ><dt
+      >gup_db</dt
+      ><dd
+      >gbrowse database. If not defined, this defaults to 'moa'. (string, default:)</dd
+      ><dt
+      >title</dt
+      ><dd
+      >A job name - Describe what you are doing (string, default:)</dd
+      ></dl
+    ></div
+  ><div id="optional-parameters"
+  ><h2
+    >Optional parameters</h2
+    ><dl
+    ><dt
+      >gup_fasta_dir</dt
+      ><dd
+      >input directory with fasta files to upload to gbrowse (directory, default:)</dd
+      ><dt
+      >gup_gff_dir</dt
+      ><dd
+      >input directory with gff files to upload to gbrowse (directory, default:)</dd
+      ><dt
+      >gup_gff_extension</dt
+      ><dd
+      >extension of the GFF files to upload (.gff) (string, default:gff)</dd
+      ><dt
+      >gup_fasta_extension</dt
+      ><dd
+      >extension of the FASTA files to upload (.fasta) (string, default:fasta)</dd
+      ><dt
+      >gup_upload_fasta</dt
+      ><dd
+      >upload fasta to gbrowse (T/F) (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >gup_upload_gff</dt
+      ><dd
+      >upload gff to gbrowse (T/F) (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >gup_force_upload</dt
+      ><dd
+      >upload to gbrowse, ignore gup_lock and upload all, not only files newer that upload_gff or upload_fasta (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >marks_extensions</dt
+      ><dd
+      >Add some extensions to the Gbrowse database to be initalized, for use by Mark. (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >moa_precommand</dt
+      ><dd
+      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string, default:)</dd
+      ><dt
+      >moa_postcommand</dt
+      ><dd
+      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string, default:)</dd
+      ></dl
+    ></div
+  ></div
 >
 </div>
 </div>

@@ -13,11 +13,11 @@
 		<div style="width: 815px;">
 		  <div style="clear: left;">
 			<div style="float: left; vertical-align:text-bottom">
-			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
 			</div>
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
-				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
 			</a>
 			</div>
 		  </div>
@@ -26,7 +26,7 @@
 			  &nbsp;&nbsp;
 			</div>
 			<div style="float: left;">
-			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
 			</div>
 		  </div>
 		</div>
@@ -36,8 +36,6 @@
 			  <div style="text-align: right;">
                  <a href="introduction.html">Introduction</a><br>
                  <a href="installation.html">Installation</a><br>
-                 <a href="using.html">Usage</a><br>
-                 <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
                  <hr>
@@ -51,72 +49,86 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">act_crunch.mk</h1>
-<p
->Discover the bidirectional best blast hit between two sets of sequences</p
-><h1 id="targets"
->Targets</h1
-><dl
-><dt
-  >(empty)</dt
-  ><dd
-  >Leaving the target unspecified executes the default target(s): (crunch)</dd
+<div id="targets"
+><h1
+  >Targets</h1
+  ><dl
   ><dt
-  >clean</dt
-  ><dd
-  >removes all results from this job</dd
-  ><dt
-  >all</dt
-  ><dd
-  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-  ><dt
-  >crunch</dt
-  ><dd
-  >generate a list of bidirectional best blast hits.</dd
-  ></dl
-><h1 id="parameters"
->Parameters</h1
-><h2 id="required-parameters"
->Required parameters</h2
-><dl
-><dt
-  >crunch_input_fila_a</dt
-  ><dd
-  >First multifasta input file (file)</dd
-  ><dt
-  >crunch_input_fila_b</dt
-  ><dd
-  >First multifasta input file (file)</dd
-  ><dt
-  >title</dt
-  ><dd
-  >A job name - Describe what you are doing (string)</dd
-  ></dl
-><h2 id="optional-parameters"
->Optional parameters</h2
-><dl
-><dt
-  >moa_precommand</dt
-  ><dd
-  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
-  ><dt
-  >moa_postcommand</dt
-  ><dd
-  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
-  ><dt
-  >crunch_protein</dt
-  ><dd
-  >Are we looking at proteins? (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >crunch_eval</dt
-  ><dd
-  >e value cutoff (float, default:1e-10)</dd
-  ><dt
-  >crunch_nothreads</dt
-  ><dd
-  >threads to run crunch with (note the overlap with the Make -j parameter) (integer, default:4)</dd
-  ></dl
+    >(empty)</dt
+    ><dd
+    >Execute the default target:</dd
+    ><dd
+    ><strong
+      >crunch</strong
+      ></dd
+    ><dt
+    >crunch</dt
+    ><dd
+    >generate a list of bidirectional best blast hits.</dd
+    ><dt
+    >clean</dt
+    ><dd
+    >removes all results from this job</dd
+    ><dt
+    >all</dt
+    ><dd
+    >executes the default target and</dd
+    ><dd
+    >into subdirectories to execute any</dd
+    ><dd
+    >other moa makefile it encounters</dd
+    ></dl
+  ></div
+><div id="parameters"
+><h1
+  >Parameters</h1
+  ><div id="required-parameters"
+  ><h2
+    >Required parameters</h2
+    ><dl
+    ><dt
+      >title</dt
+      ><dd
+      >A job name - Describe what you are doing (string, default:)</dd
+      ><dt
+      >crunch_input_fila_a</dt
+      ><dd
+      >First multifasta input file (file, default:)</dd
+      ><dt
+      >crunch_input_fila_b</dt
+      ><dd
+      >First multifasta input file (file, default:)</dd
+      ></dl
+    ></div
+  ><div id="optional-parameters"
+  ><h2
+    >Optional parameters</h2
+    ><dl
+    ><dt
+      >moa_precommand</dt
+      ><dd
+      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string, default:)</dd
+      ><dt
+      >moa_postcommand</dt
+      ><dd
+      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string, default:)</dd
+      ><dt
+      >crunch_protein</dt
+      ><dd
+      >Are we looking at proteins? (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >crunch_eval</dt
+      ><dd
+      >e value cutoff (float, default:1e-10)</dd
+      ><dt
+      >crunch_nothreads</dt
+      ><dd
+      >threads to run crunch with (note the overlap with the Make -j parameter) (integer, default:4)</dd
+      ></dl
+    ></div
+  ></div
 >
 </div>
 </div>

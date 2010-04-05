@@ -10,7 +10,7 @@
 \usepackage[usenames,dvipsnames]{color}
 \hypersetup{urlcolor=OliveGreen,citecolor=OliveGreen,linkcolor=BrickRed,colorlinks=true}
 \setcounter{tocdepth}{1}
-\usepackage[super]{natbib}
+\usepackage[super,comma,sort]{natbib}
 \renewcommand{\familydefault}{\sfdefault}
 \renewcommand{\thefootnote}{\alph{footnote}} 
 
@@ -69,10 +69,6 @@
 \input{introduction}
 \chapter{Installation\label{ch:installation}}
 \input{installation}
-\chapter{Using Moa\label{ch:using}}
-\input{using}
-\chapter{Using GBrowse\label{ch:gbrowse}}
-\input{gbrowse}
 \chapter{Extending Moa\label{ch:extending}}
 \input{extending}
 \appendix
@@ -80,5 +76,5 @@
 \input{reference}
 
 \addcontentsline{toc}{chapter}{Bibliography}
-\bibliography{manual}
+\bibliography{../../moa}
 \end{document}

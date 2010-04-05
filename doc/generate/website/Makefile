@@ -1,7 +1,6 @@
 
 ## this is to get the location of pandoc - assuming it's defined there
-include $(shell echo $$MOABASE)/etc/moa.conf.mk
-
+include $(MOABASE)/etc/moa.conf.mk
 
 introduction_title = Introduction
 installation_title = Installation
@@ -9,43 +8,44 @@ using_title = Using Moa
 gbrowse_title = Using GBrowse with Moa
 extending_title = Extending Moa
 
-chapters =					\
-	index.html				\
-	introduction.html 			\
-	installation.html  			\
-	using.html 				\
-	gbrowse.html 				\
-	extending.html				\
+chapters = \
+	index.html \
+	introduction.html \
+	installation.html \
+	using.html \
+	extending.html \
 	reference.html
 
 .PHONY: all
-all: imagesao $(addprefix ../../html/,$(chapters)) 
+all: imagesao $(addprefix ../../html/,$(chapters))
 
 .PHONY: imagesao
-imagesao: moa.css images/moa_logo_small.png  images/moa_logo_smaller.png
+imagesao: moa.css $(shell find ../../images)
 	cp moa.css ../../html/
-	cp -r images/* ../../html	
+	cp -r ../../images/ ../../html/
 	cp ../../manual.pdf ../../html/moa_manual.pdf
-	#cp ../../api ../../html/ -R
+	cp -r ../../api ../../html/moa_manual
 
 ../../html/index.html: index.template.html header.html footer.html
 	cat header.html > $@
-	cat index.template.html 								\
-		| sed "s/#DATE#/$(shell date)/" 					\
-		| sed "s/#MOAVERSION#/$(shell 						\
-				cat ../../../VERSION)/" 						\
-		| sed "s/#GITVERSION#/$(shell 						\
-				git show | head -1 | cut -f 2 -d' ')/" 		\
-		| sed "s/#GITBRANCH#/$(shell 						\
-				git branch | head -1 | cut -f 2 -d' ')/" 	\
+	cat index.template.html \
+		| sed "s/#DATE#/$(shell date)/" \
+		| sed "s/#MOAVERSION#/$(shell \
+				cat ../../../VERSION)/" \
+		| sed "s/#GITVERSION#/$(shell \
+				git show | head -1 | cut -f 2 -d' ')/" \
+		| sed "s/#GITBRANCH#/$(shell \
+				git branch | head -1 | cut -f 2 -d' ')/" \
 		>> $@
 	cat footer.html >> $@
 
-notemplate=__moaBase.mk moaBase.mk __moaBaseHelp.mk __moaBasePre.mk __moaBaseTest.mk __moaBaseVar.mk __upload2gbrowse.mk
-templates=$(patsubst %.mk,%,								\
-				$(sort $(filter-out $(notemplate),			\
-					$(notdir $(wildcard 					\
-						$(shell echo $$MOABASE)/template/*.mk)))))
+notemplate=__moaBase.mk moaBase.mk __moaBaseHelp.mk \
+	__moaBasePre.mk __moaBaseTest.mk __moaBaseVar.mk \
+	__upload2gbrowse.mk
+
+templates=$(patsubst %.mk,%, \
+		$(sort $(filter-out $(notemplate), \
+		$(notdir $(wildcard $(MOABASE)/template/*.mk)))))
 
 temptex=$(addprefix ../../html/t__,$(addsuffix .html,$(templates)))
 
@@ -59,7 +59,7 @@ temptex=$(addprefix ../../html/t__,$(addsuffix .html,$(templates)))
 	echo "</ul>" >> $@
 	cat footer.html >> $@
 
-../../html/t__%.html: $(shell echo $$MOABASE)/template/%.mk
+../../html/t__%.html: $(MOABASE)/template/%.mk
 	cat header.html > $@
 	echo '<h1 id="chapterTitle">$*.mk</h1>' >> $@
 	$(MAKE) -s -f $< help_markdown \

@@ -27,12 +27,11 @@ import optparse
 import moa.conf
 from moa.logger import l
 
+SET_DESC = '''Set, append, change or remove variables from the configuration of a Moa job.'''
+
 def defineCommands(commands):
     commands['set'] = {
-        'desc' : 'Set or append to a configuration value. Variables ' + \
-            'should be defined as "KEY=VALUE" pairs on the command-line.' + \
-            'Variables can be unset using "KEY=", and in certain cases it ' +\
-            'is possible to append variables to a value using "KEY+=VALUE"',
+        'desc' : SET_DESC,
         }
 
     commands['__set'] = {

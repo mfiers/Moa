@@ -4,15 +4,15 @@ include $(shell echo $$MOABASE)/etc/moa.conf.mk
 notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk __moaBasePre.mk __moaBaseTest.mk\
 	__moaBaseHelp.mk moaBasePre.mk __moaBaseVar.mk moaBasePre.mk
 
-#templates=$(filter-out $notemplate,$(notdir $(wildcard $$MOABASE/template/*.mk)))
-templates=$(sort $(filter-out $(notemplate),$(notdir $(wildcard $(shell echo $$MOABASE)/template/*.mk))))
+templates=$(sort $(filter-out $(notemplate),\
+					$(notdir $(wildcard $(shell echo $$MOABASE)/template/*.mk))))
+
 temptex=$(addprefix ./templates/,$(patsubst %.mk,%.tex,$(templates)))
 
 chapters = 						\
 	introduction.tex 			\
 	installation.tex  			\
 	using.tex 					\
-	gbrowse.tex 				\
 	extending.tex				\
 	reference.tex				\
 	manual.tex 					
@@ -52,10 +52,8 @@ manual.tex: manual.template.tex
 			git branch | head -1 | cut -f 2 -d' ')/"	\
 			> manual.tex
 
-%.tex:
-	cat ../../markdown/$*.md \
-		| $(pandocbin) -f markdown -t latex \
-		> $*.tex
+%.tex: ../../markdown/%.md
+	cat $< | $(pandocbin) -f markdown -t latex > $@
 
 clean:
 	-rm *.aux *.bbl *.log *.blg *~ *.toc

@@ -4,14 +4,14 @@
 ## where is pandoc binary located? 
 ## default is use the pandoc in the path
 
-pandocbin ?= $(shell which pandoc)
+pandocbin = pandoc
+#pandocbin ?= $(shell which pandoc)
 
 ## How to process man output, use the mand command:
 #mancommand=man -l -
 
 ## or, this is possibly safer:
 mancommand=nroff -c -mandoc 2>/dev/null | less -is
-
 
 ## plugins - Add functionality to Moa
 

@@ -13,11 +13,11 @@
 		<div style="width: 815px;">
 		  <div style="clear: left;">
 			<div style="float: left; vertical-align:text-bottom">
-			  <img id="menulogo" align="middle" src="moa_logo_title.png">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
 			</div>
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
-				<img src="pfr_logo.jpg" alt="" height="87" width="351" border="0">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
 			</a>
 			</div>
 		  </div>
@@ -26,7 +26,7 @@
 			  &nbsp;&nbsp;
 			</div>
 			<div style="float: left;">
-			  <img src="scoop.jpg" alt="" height="31" width="100" border="0">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
 			</div>
 		  </div>
 		</div>
@@ -36,8 +36,6 @@
 			  <div style="text-align: right;">
                  <a href="introduction.html">Introduction</a><br>
                  <a href="installation.html">Installation</a><br>
-                 <a href="using.html">Usage</a><br>
-                 <a href="gbrowse.html">Gbrowse</a><br>
                  <a href="extending.html">Extend Moa</a><br>
                  <a href="reference.html">Reference</a><br>
                  <hr>
@@ -51,110 +49,124 @@
 			<div id="homepage_container">
 			
 <h1 id="chapterTitle">lftp.mk</h1>
-<p
->Use LFTP to download files. This template has two modi, one is set 'lftp_mode' to 'mirror' data, in which case both 'lftp_url' and 'lftp_pattern' (default *) are used. The other modus is 'lftp_mode=get', when one file defined by 'lftp_url' is downloaded. In the mirror mode it is possible to download only those files that are newer as the files already downloaded by using the 'lftp_timestamp' parameter</p
-><h1 id="targets"
->Targets</h1
-><dl
-><dt
-  >(empty)</dt
-  ><dd
-  >Leaving the target unspecified executes the default target(s): (lftp)</dd
+<div id="targets"
+><h1
+  >Targets</h1
+  ><dl
   ><dt
-  >clean</dt
-  ><dd
-  >removes all results from this job</dd
-  ><dt
-  >all</dt
-  ><dd
-  >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
-  ><dt
-  >lftp</dt
-  ><dd
-  >execute the download</dd
-  ></dl
-><h1 id="parameters"
->Parameters</h1
-><h2 id="required-parameters"
->Required parameters</h2
-><dl
-><dt
-  >lftp_url</dt
-  ><dd
-  >The base url to download from (string)</dd
-  ><dt
-  >title</dt
-  ><dd
-  >A job name - Describe what you are doing (string)</dd
-  ></dl
-><h2 id="optional-parameters"
->Optional parameters</h2
-><dl
-><dt
-  >lftp_timestamp</dt
-  ><dd
-  >Depend on lftp to decide if a file needs updating, else a touchfile is created that you need to delete or touch before updating (T/<em
-    >F</em
-    >) (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >lftp_powerclean</dt
-  ><dd
-  >Do brute force cleaning (T/F). Remove all files, except moa.mk &amp; Makefile when calling make clean. Defaults to F. (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >lftp_noclean</dt
-  ><dd
-  >set of files not to be deleted by the powerclean (string, default:moa.mk Makefile)</dd
-  ><dt
-  >lftp_pattern</dt
-  ><dd
-  >glob pattern to download (string, default:'*')</dd
-  ><dt
-  >lftp_lock</dt
-  ><dd
-  >Lock this job after running. This means that you will have to manually unlock the job before lftp actually reruns. This is a good choice if your downloading large datasets or have a slow connection (<em
-    >T</em
-    >|F)</dd
-  ><dt
-  >lftp_user</dt
-  ><dd
-  >username for the remote site (string)</dd
-  ><dt
-  >lftp_pass</dt
-  ><dd
-  >password for the remote site, note that this can be defined on the commandline using: 'make lftp_pass=PASSWORD' (password)</dd
-  ><dt
-  >lftp_output_dir</dt
-  ><dd
-  >subdir to create &amp; write all output to. If not defined, data will be downloaded to directory containing the Makefile (directory, default:.)</dd
-  ><dt
-  >lftp_dos2unix</dt
-  ><dd
-  >Run dos2unix to prevent problems with possible dos text files (T|<em
-    >F</em
-    >)</dd
-  ><dt
-  >lftp_mode</dt
-  ><dd
-  >Mode of operation - 'mirror' or 'get'. Mirror enables timestamping. Get just gets a single file. If using get, consider setting depend_lftp_timestamp to F. When using 'get', the full url should be in lftp_url. lftp_pattern is ignored. Defaults to mirror. (mirror|<em
-    >get</em
-    >)</dd
-  ><dt
-  >lftp_get_name</dt
-  ><dd
-  >target name of the file to download (string)</dd
-  ><dt
-  >moa_precommand</dt
-  ><dd
-  >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
-  ><dt
-  >moa_postcommand</dt
-  ><dd
-  >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
-  ></dl
+    >(empty)</dt
+    ><dd
+    >Execute the default target:</dd
+    ><dd
+    ><strong
+      >lftp</strong
+      ></dd
+    ><dt
+    >lftp</dt
+    ><dd
+    >execute the download</dd
+    ><dt
+    >clean</dt
+    ><dd
+    >removes all results from this job</dd
+    ><dt
+    >all</dt
+    ><dd
+    >executes the default target and</dd
+    ><dd
+    >into subdirectories to execute any</dd
+    ><dd
+    >other moa makefile it encounters</dd
+    ></dl
+  ></div
+><div id="parameters"
+><h1
+  >Parameters</h1
+  ><div id="required-parameters"
+  ><h2
+    >Required parameters</h2
+    ><dl
+    ><dt
+      >lftp_url</dt
+      ><dd
+      >The base url to download from (string, default:)</dd
+      ><dt
+      >title</dt
+      ><dd
+      >A job name - Describe what you are doing (string, default:)</dd
+      ></dl
+    ></div
+  ><div id="optional-parameters"
+  ><h2
+    >Optional parameters</h2
+    ><dl
+    ><dt
+      >lftp_timestamp</dt
+      ><dd
+      >Depend on lftp to decide if a file needs updating, else a touchfile is created that you need to delete or touch before updating (T/<em
+	>F</em
+	>) (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >lftp_powerclean</dt
+      ><dd
+      >Do brute force cleaning (T/F). Remove all files, except moa.mk &amp; Makefile when calling make clean. Defaults to F. (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >lftp_noclean</dt
+      ><dd
+      >set of files not to be deleted by the powerclean (string, default:moa.mk Makefile)</dd
+      ><dt
+      >lftp_pattern</dt
+      ><dd
+      >glob pattern to download (string, default:'*')</dd
+      ><dt
+      >lftp_lock</dt
+      ><dd
+      >Lock this job after running. This means that you will have to manually unlock the job before lftp actually reruns. This is a good choice if your downloading large datasets or have a slow connection (<em
+	>T</em
+	>|F)</dd
+      ><dt
+      >lftp_user</dt
+      ><dd
+      >username for the remote site (string, default:)</dd
+      ><dt
+      >lftp_pass</dt
+      ><dd
+      >password for the remote site, note that this can be defined on the commandline using: 'make lftp_pass=PASSWORD' (password, default:)</dd
+      ><dt
+      >lftp_output_dir</dt
+      ><dd
+      >subdir to create &amp; write all output to. If not defined, data will be downloaded to directory containing the Makefile (directory, default:.)</dd
+      ><dt
+      >lftp_dos2unix</dt
+      ><dd
+      >Run dos2unix to prevent problems with possible dos text files (T|<em
+	>F</em
+	>)</dd
+      ><dt
+      >lftp_mode</dt
+      ><dd
+      >Mode of operation - 'mirror' or 'get'. Mirror enables timestamping. Get just gets a single file. If using get, consider setting depend_lftp_timestamp to F. When using 'get', the full url should be in lftp_url. lftp_pattern is ignored. Defaults to mirror. (mirror|<em
+	>get</em
+	>)</dd
+      ><dt
+      >lftp_get_name</dt
+      ><dd
+      >target name of the file to download (string, default:)</dd
+      ><dt
+      >moa_precommand</dt
+      ><dd
+      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string, default:)</dd
+      ><dt
+      >moa_postcommand</dt
+      ><dd
+      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string, default:)</dd
+      ></dl
+    ></div
+  ></div
 >
 </div>
 </div>
