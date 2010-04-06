@@ -115,9 +115,6 @@ ifdef blast_main_phase
 	  $(patsubst %.xml, %.gff, $(notdir $(blast_output_files))))
 endif
 
-$(warning blast input files $(blast_input_files))
-$(warning blast output files $(blast_output_files))
-
 # determine the name of a single blast db file.. to get the 
 # dependencies correct...
 
