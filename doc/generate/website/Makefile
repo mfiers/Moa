@@ -39,30 +39,29 @@ imagesao: moa.css $(shell find ../../images)
 		>> $@
 	cat footer.html >> $@
 
-notemplate=__moaBase.mk moaBase.mk __moaBaseHelp.mk \
-	__moaBasePre.mk __moaBaseTest.mk __moaBaseVar.mk \
-	__upload2gbrowse.mk
-
-templates=$(patsubst %.mk,%, \
-		$(sort $(filter-out $(notemplate), \
-		$(notdir $(wildcard $(MOABASE)/template/*.mk)))))
-
-temptex=$(addprefix ../../html/t__,$(addsuffix .html,$(templates)))
+slash=/
+template2html=$(addsuffix .html, \
+		$(addprefix ../../html/t___,$(subst $(slash),___,$(1))))
+html2template=$(addsuffix .mk,\
+		$(addprefix $(MOABASE)/template/,\
+			$(subst ___,$(slash),$(1))))
+templates=$(shell moa list)
+temptex=$(foreach v,$(templates),$(call template2html,$(v)))
 
 ../../html/reference.html: $(temptex)
 	cat header.html > $@
 	cat reference.template.html >> $@
 	echo "<ul>" >> $@
-	for tem in $(templates); do \
-		echo "<li><a href='./t__$$tem.html'>$$tem</a></li>" >> $@ ;\
+	for tem in $(temptex); do \
+		echo "<li><a href='./"`basename $$tem`"'>"`basename $$tem | sed "s/t___//" | sed "s/___/\//g" | sed "s/\.html$$//"`"</a></li>" >> $@ ;\
 	done
 	echo "</ul>" >> $@
 	cat footer.html >> $@
 
-../../html/t__%.html: $(MOABASE)/template/%.mk
+../../html/t___%.html:
 	cat header.html > $@
-	echo '<h1 id="chapterTitle">$*.mk</h1>' >> $@
-	$(MAKE) -s -f $< help_markdown \
+	echo '<h1 id="chapterTitle">'$(subst ___,$(slash),$*)'</h1>' >> $@
+	$(MAKE) -s -f $(call html2template,$*) help_markdown \
 		| $(pandocbin) -f markdown -t html 		\
 		>> $@
 	cat footer.html >> $@

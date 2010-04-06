@@ -1,13 +1,12 @@
 include $(shell echo $$MOABASE)/etc/moa.conf.mk
 
-
-notemplate=__moaBase.mk moaBase.mk __upload2gbrowse.mk __moaBasePre.mk __moaBaseTest.mk\
-	__moaBaseHelp.mk moaBasePre.mk __moaBaseVar.mk moaBasePre.mk
-
-templates=$(sort $(filter-out $(notemplate),\
-					$(notdir $(wildcard $(shell echo $$MOABASE)/template/*.mk))))
-
-temptex=$(addprefix ./templates/,$(patsubst %.mk,%.tex,$(templates)))
+template2html=$(addsuffix .tex,$(addprefix t___,$(subst /,___,$(1))))
+html2template=$(addsuffix .mk,\
+		$(addprefix $(MOABASE)/template/,\
+			$(subst ___,/,$(1))))
+templates=$(shell moa list)
+temptex=$(foreach v,$(templates),$(call template2html,$(v)))
+#temptex=$(addprefix ./templates/,$(patsubst %.mk,%.tex,$(templates)))
 
 chapters = 						\
 	introduction.tex 			\
@@ -27,19 +26,21 @@ manual: prepare $(chapters)
 
 .PHONY: prepare
 prepare:
-	-mkdir templates
 
+$(warning $(temptex))
 reference.tex:  $(temptex)
-	cat ../../markdown/templates_header.md \
-		| $(pandocbin) -f markdown -t latex \
-		> reference.tex
+	#cat ../../markdown/templates_header.md \
+	#		| $(pandocbin) -f markdown -t latex \
+	#	> reference.tex
 	for f in $(temptex); do \
 		cat $$f >> reference.tex ;\
 	done
 
-./templates/%.tex: $(shell echo $$MOABASE)/template/%.mk
-	echo "\section{${subst _,\_,$*}}" > $@
-	make -sf $$MOABASE/template/$*.mk help_latex >> $@
+slash=/
+t___%.tex: 
+	template=$(MOABASE)/template/$(subst ___,$(slash),$*).mk; \
+	 	echo "\section{${subst _,\_,${subst ___,/,$*}}}" > $@ ;\
+		make -sf $$template help_latex >> $@
 
 manual.tex: manual.template.tex
 	cat manual.template.tex 							\
@@ -58,6 +59,7 @@ manual.tex: manual.template.tex
 clean:
 	-rm *.aux *.bbl *.log *.blg *~ *.toc
 	-rm -rf templates
+	-rm t___*
 	-rm configuration.tex  	\
 		creating.tex   		\
 		execution.tex		\
