@@ -42,41 +42,45 @@ MOA_INCLUDE_PLUGIN_HELP= yes
 
 #return the type of a parameter
 moa_help_parameter_type=\
-	$(if $($(1)_type),\$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),*$($(1)_default)*,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if '$($(1)_default)',$(comma) default:$(value $(1)_default)))$(parC))
+    $(if $($(1)_type),\$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),**$($(1)_default)**,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if '$($(1)_default)',$(if $(value $(1)_default),$(comma) default:$(value $(1)_default))))$(parC))
 
 moa_help_md = % $(subst $(space),_,$(moa_title)) \n\
-% $(moa_author)							\n\
-% $(shell date)							\n\
-										\n\
-$(moa_description_$(moa_id))			\n\
-										\n\
-\#Targets								\n\
-(empty)									\n\
-:   Execute the default target:         \n\
-:	**$(moa_id)** 						\n\
-$(moa_id)								\n\
-:   $($(moa_id)_help)					\n\
-clean									\n\
-:	removes all results from this job   \n\
-all										\n\
-:	executes the default target and 	\n\
-:   into subdirectories to execute any  \n\
-:	other moa makefile it encounters	\n\
-$(foreach id,$(moa_additional_targets),	\
-$(id)									\n\
-:	$(moa_$(id)_help)					\n\
-)										\n\
-										\n\
-\#Parameters							\n\
-\#\# Required parameters				\n\
-$(foreach v,$(moa_must_define), 		\
-$(v)									\n\
-:   $(if $($(v)_help),$($(v)_help),undefined)	$(call moa_help_parameter_type,$(v)) \n\
-)										\n\
-\#\# Optional parameters				\n\
-$(foreach v,$(moa_may_define), 			\
-$(v)									\n\
-:   $(if $($(v)_help),$($(v)_help),undefined)	$(call moa_help_parameter_type,$(v)) \n\
+% $(moa_author)                         \n\
+% $(shell date)                         \n\
+                                        \n\
+$(moa_description_$(moa_id))            \n\
+                                        \n\
+\#Targets                               \n\
+(empty)                                 \n\
+:    Execute the default target ($(moa_id)) 	\n\
+$(moa_id)                               		\n\
+:    $(if $(moa_description_$(moa_id)),$		\
+		(moa_description_$(moa_id)),			\
+		(Warning - a lazy developer refused 	\
+			to write a single line specifying 	\
+			what this template is supposed 		\
+			to do!!)) 							\n\
+clean                                   		\n\
+:    removes all results from this job   		\n\
+all                                     		\n\
+:    executes the default target and    \
+     into subdirectories to execute any \
+     other moa makefile it encounters   \n\
+$(foreach id,$(moa_additional_targets), \
+$(id)                                   \n\
+:   $(moa_$(id)_help)                   \n\
+)                                       \n\
+                                        \n\
+\#Parameters                            \n\
+\#\# Required parameters                \n\
+$(foreach v,$(moa_must_define),         \
+$(v)                                    \n\
+:   $(if $($(v)_help),$($(v)_help),undefined)   $(call moa_help_parameter_type,$(v)) \n\
+)                                       \n\
+\#\# Optional parameters                \n\
+$(foreach v,$(moa_may_define),          \
+$(v)                                    \n\
+:   $(if $($(v)_help),$($(v)_help),undefined)   $(call moa_help_parameter_type,$(v)) \n\
 )
 
 
@@ -85,9 +89,9 @@ help_help = Show help
 
 .PHONY: help
 help:
-	@echo -e "$(call moa_help_md)" 				\
-		| sed "s/^ //g"  						\
-		| sed "s/\[\[.*\]\]//g" 				\
+	@echo -e "$(call moa_help_md)"				\
+		| sed "s/^ //g"							\
+		| sed "s/\[\[.*\]\]//g"					\
 		| sed "s/[ \t]*$$//"					\
 		| $(pandocbin) -s -f markdown -t man	\
 		| $(mancommand)
@@ -99,21 +103,21 @@ help_latex:
 		| sed "s/[ \t]*$$//"				\
 		| sed "s/^#/##/"					\
 		| $(pandocbin) -f markdown -t latex		\
-		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g" 	
+		| sed "s/\[\[\(.*\)\]\]/\\\\citep\{\1\}/g"	
 
 .PHONY: help_man
 help_man:
 	@echo $(pandocbin)
-	@echo -e "$(call moa_help_md)" 			\
-		| sed "s/^ //g"  					\
-		| sed "s/\[\[.*\]\]//g" 			\
+	@echo -e "$(call moa_help_md)"			\
+		| sed "s/^ //g"						\
+		| sed "s/\[\[.*\]\]//g"				\
 		| sed "s/[ \t]*$$//"				\
 		| $(pandocbin) -s -f markdown -t man
 
 .PHONY: help_markdown
 help_markdown:
-	@echo -e "$(call moa_help_md)" 			\
-		| sed "s/^ //g"  					\
-		| sed "s/\[\[.*\]\]//g" 			\
+	@echo -e "$(call moa_help_md)"			\
+		| sed "s/^ //g"						\
+		| sed "s/\[\[.*\]\]//g"				\
 		| sed "s/[ \t]*$$//"
 

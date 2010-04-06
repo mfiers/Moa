@@ -48,35 +48,66 @@
 		  <div id="center_content">
 			<div id="homepage_container">
 			
-<div style="text-align:center">
-  <img src="images/moa_logo_small.png" border="0"><br>
-  <div id="MoaDetails">
-	  <center>
-		<table cellspacing="5">
-		  <tr>
-			<th style="text-align:right;">Version</th>
-			<td>0.9.1</td>
-		  </tr>
-		  <tr>
-			<th style="text-align:right;">Date</th>
-			<td>Wed Apr  7 07:04:27 NZST 2010</td>
-		  </tr>
-		  <tr>
-			<th style="text-align:right;">Author</th>
-			<td>Mark Fiers</td>
-		  </tr>
-		  <tr>
-			<th style="text-align:right;">Git branch</th>
-			<td>master</td>
-		  </tr>
-		  <tr>
-			<th style="text-align:right;">Git version</th>
-			<td>2dcb01a63da542557b0afa95c82849bb299a41e3</td>
-		  </tr>
-		</table>
-	  </center>
-  </div>
-</div>
+<h1 id="chapterTitle">repeatmasker</h1>
+<div id="targets"
+><h1
+  >Targets</h1
+  ><dl
+  ><dt
+    >(empty)</dt
+    ><dd
+    >Execute the default target (repm)</dd
+    ><dt
+    >repm</dt
+    ><dd
+    >(Warning - a lazy developer refused to write a single line specifying what this template is supposed to do!!)</dd
+    ><dt
+    >clean</dt
+    ><dd
+    >removes all results from this job</dd
+    ><dt
+    >all</dt
+    ><dd
+    >executes the default target and into subdirectories to execute any other moa makefile it encounters</dd
+    ></dl
+  ></div
+><div id="parameters"
+><h1
+  >Parameters</h1
+  ><div id="required-parameters"
+  ><h2
+    >Required parameters</h2
+    ><dl
+    ><dt
+      >repm_input_file</dt
+      ><dd
+      >blast database of the reference set (file)</dd
+      ><dt
+      >title</dt
+      ><dd
+      >A job name - Describe what you are doing (string)</dd
+      ></dl
+    ></div
+  ><div id="optional-parameters"
+  ><h2
+    >Optional parameters</h2
+    ><dl
+    ><dt
+      >repm_species</dt
+      ><dd
+      >species (string, default:repmfolds)</dd
+      ><dt
+      >moa_precommand</dt
+      ><dd
+      >A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile. (string)</dd
+      ><dt
+      >moa_postcommand</dt
+      ><dd
+      >A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile. (string)</dd
+      ></dl
+    ></div
+  ></div
+>
 </div>
 </div>
   
