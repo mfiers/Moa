@@ -148,3 +148,16 @@ moa_postprocess target in the local Makefile.
 moa_postcommand_category = advanced
 moa_postcommand_type = string
 moa_postcommand_default=
+
+################################################################################
+##
+## Template loader
+
+moa_load=$(eval include \
+	$(if $(wildcard ~/.moa/template/$(1).mk),\
+		~/.moa/template/$(1).mk,\
+		$(if $(wildcard $(MOABASE)/template/$(1).mk),\
+			$(MOABASE)/template/$(1).mk,\
+			$(error Cannot find a template called $(1))\
+		)\
+	))

@@ -195,7 +195,7 @@ def newJob(template,
     l.debug("Start writing %s" % makefile)
     F = open(makefile, 'w')
     F.write(NEW_MAKEFILE_HEADER)
-    F.write("include $(MOABASE)/template/%s.mk\n" % template)
+    F.write("$(call moa_load,%s)\n" % template)
 
     #include moabase
     F.close()

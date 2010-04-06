@@ -41,21 +41,54 @@ def checkTemplate(path):
     Run all current template tests - see if any needs updating
     """
 
-    _check_deprecated_001(path)
+    makefilePath = os.path.join(path, 'Makefile')
+
+    if not os.path.exists(makefilePath):
+        l.error("template check failed - cannot find a Makefile")
+    
+    makefile = open(makefilePath).readlines()
+    
+    _check_deprecated_001(path, makefilePath, makefile)
+    _check_deprecated_002(path, makefilePath, makefile)
 
 
+##
+## Make sure the $(call moa_load construct is used)
+##
+def _check_deprecated_002(path, makefilePath, makefile):
+    for line in makefile:
+        if not 'include $(MOABASE)' in line: continue
+        if 'prepare.mk' in line: continue
+        break
+    else: return
+
+    #if we're here - need to update the Makefile
+    l.error("Fixing Makefile")
+    shutil.move(makefilePath, makefilePath + '.old')
+    F = open(makefilePath, 'w')
+    for line in makefile:
+        if ('include $(MOABASE)' in line) and (not 'prepare.mk' in line):
+            line = line.replace('include $(MOABASE)/template/', '$(call moa_load,')\
+                   .replace('.mk', ')')
+        F.write(line)
+    F.close()
+    l.error("Updated old style Makefile - everything looks fine (check anyway!)")
+    sys.exit()
+    
+        
+        
 
 ##
 ## Check for deprecated style makefile
 ##
-def _check_deprecated_001(path):
+def _check_deprecated_001(path, makefilePath, makefile):
 
     makefile = os.path.join(path, 'Makefile')
 
-
     _check = subprocess.Popen("cat %s 2>/dev/null |grep dont_include_moabase " % makefile,
                               shell=True,
-                              stdout=subprocess.PIPE).communicate()[0].strip()    
+                              stdout=subprocess.PIPE).communicate()[0].strip()
+    
     if 'dont_include_moabase' in _check:
         includeline=re.compile(r'include \$\(shell echo \$\$MOABASE\)/template/.*\.mk$')
         l.warning("Old style Makefile in %s, automatically updating!" % makefile)

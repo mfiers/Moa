@@ -70,7 +70,7 @@ def testPlugins():
                    title='Testing plugins')
         
     for plugin in moa.info.getPlugins(wd = testDir):
-        l.info("testing plugin %s" % plugin)
+        l.debug("start testing plugin %s" % plugin)
         rc = moa.runMake.go(wd=testDir,
                             target='moa_plugin_%s_test' % plugin,
                             background=False,
@@ -86,6 +86,8 @@ def testPlugins():
                 pluginFailures += 1
                 l.error("Error running plugin test for %s" % plugin)
                 l.error(err)
+        else:
+            l.info("Success testing %s" % plugin)
                                      
         result = moa.api.getMoaOut(wd=testDir).strip()
         if result:
