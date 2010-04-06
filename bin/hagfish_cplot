@@ -30,6 +30,10 @@ parser.add_option('-s', dest='start',
                   help='Start position (nt) of the plot')
 parser.add_option('-e', dest='end',
                   help='End position (nt) of the plot')
+parser.add_option('--ymax', dest='ymax',
+                  help='Max value for the y axis')
+parser.add_option('-o', dest='outfile',
+                  help='Output file name')
 
 options, args = parser.parse_args()
 
@@ -64,13 +68,11 @@ if __name__ == '__main__':
     else:
         seqId = os.path.basename(inputFile)\
                 .replace('.coverage.npz', '')\
+                .replace('.combined', '')\
                 .replace('.npz', '')
 
     l.info("and I'm calling this sequence: %s" % seqId)
     
-    ntPerLine = int(float(options.ntPerLine))
-    l.info("nucleotides per line: %d" % ntPerLine)
-
     data = np.load(inputFile)
     r_ok = data['r_ok']
     r_high = data['r_high']
@@ -88,27 +90,39 @@ if __name__ == '__main__':
         pEnd = seqLen
 
     plotLen = pEnd - pStart
+
+    ntPerLine = int(float(options.ntPerLine))
+    if ntPerLine > plotLen:
+        ntPerLine = plotLen
+
+    l.info("nucleotides per line: %d" % ntPerLine)
+
+
     l.info("Plotting from %d to %d (%d nt)" % (
         pStart, pEnd, plotLen))
 
     r_all = r_low + r_high + r_ok
     
-    if pStart > 0 or pEnd < seqLen:
-        r_ok = r_ok[pStart:pEnd]
-        r_low = r_low[pStart:pEnd]
-        r_high = r_high[pStart:pEnd]
-        r_all = r_all[pStart:pEnd]
-        
+    #if pStart > 0 or pEnd < seqLen:
+    #    r_ok = r_ok[pStart:pEnd]
+    #    r_low = r_low[pStart:pEnd]
+    #    r_high = r_high[pStart:pEnd]
+    #    r_all = r_all[pStart:pEnd]
+
     #max value - else all space is taken up by the peaks
-    maxY = quant(r_all, 0.80)
+    if options.ymax:
+        maxY = int(options.ymax)
+    else:
+        maxY = quant(r_all, 0.80)
     minY = 0
     
-    r_x = np.arange(pStart, pEnd, dtype="int")
+    r_x = np.arange(0, seqLen, dtype="int")
     r_z = np.zeros_like(r_x)
 
     r_low = -1 * r_low
     
     noLines = int(math.ceil(plotLen / float(ntPerLine)))
+
     l.info("going to plot %d lines" % noLines)
     l.info("y axis is between %d and %d" % (minY, maxY))
 
@@ -116,10 +130,10 @@ if __name__ == '__main__':
     mpl.rcParams['xtick.labelsize'] = 'xx-small'
     mpl.rcParams['ytick.labelsize'] = 'xx-small'
 
-    fig = plt.figure(figsize=(10,noLines))
+    fig = plt.figure(figsize=(10,noLines+2))
 
     _MC = 0.10 - (0.01 * min(8, noLines))
-    fig.subplots_adjust(0.03,_MC,0.95,0.98-(2*_MC))
+    fig.subplots_adjust(0.03,_MC,0.95,0.95-(2*_MC))
     
     for line in range(noLines):        
     
@@ -131,7 +145,14 @@ if __name__ == '__main__':
 
         ax = fig.add_subplot(noLines,1,line+1)
         if line == 0:
-            ax.set_title('Coverage plot for "%s"' % seqId)
+            ax.set_title('Coverage plot for "%s" (%d to %d)' % (
+                    seqId, pStart, pEnd))
+
+        ax.plot(
+            r_x[nstart:nstop],
+            r_all[nstart:nstop],
+            )
+        print r_x[nstart:nstop], r_ok[nstart:nstop]
 
         ax.fill_between(
             r_x[nstart:nstop],
@@ -159,6 +180,8 @@ if __name__ == '__main__':
         yAx = ax.get_yaxis()
         yAx.set_ticks(range(100, maxY, 200))
         
-                
-    plt.savefig('%s.c.png' % (seqId))
+    if options.outfile:            
+        plt.savefig(options.outfile)
+    else:
+        plt.savefig('%s.c.png' % (seqId))
  

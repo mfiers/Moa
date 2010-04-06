@@ -122,8 +122,8 @@ def doStats(bamname, seqInfo, readPairs):
     mids = 0.5 * (edges[1:] + edges[:-1])
 
     #smooth the histogram (using a moving average)
-    shist = smoother(hist, 10)
-    smids = smoother(mids, 10)
+    shist = smoother(hist, 15)
+    smids = smoother(mids, 15)
     
     # find the top of the peak
     top = np.argmax(shist)
@@ -325,4 +325,43 @@ if __name__ == '__main__':
 
         #Sort the readpairs
         normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats)
+    #now combine the data for all sequences into one coverage plot
+    
+    #concatenate all coverage plots into one per sequence
+    for seqId in seqInfo.keys():
+    
+        r_ok = None
+        r_low = None
+        r_high = None
+        
+        inputDir = seqId
+        for inputFile in os.listdir(inputDir):
+            if not inputFile[-13:] == '.coverage.npz': continue
             
+            #this should not be necessary
+            if 'combined.coverage.npz' in inputFile: continue
+
+            bamBase = os.path.basename(inputFile).replace(
+                '.coverage.npz', '')
+
+            l.info("processing %s" % inputFile)
+            #read the coverage plots
+
+            data = np.load(os.path.join(inputDir, inputFile))
+            if r_ok == None:
+                r_ok = data['r_ok']
+                r_high = data['r_high']
+                r_low = data['r_low']
+            else:
+                r_ok += data['r_ok']
+                r_high += data['r_high']
+                r_low += data['r_low']
+
+            l.debug("Max low ok high %d %d %d" % (
+                    np.max(r_low), np.max(r_ok), np.max(r_high)))
+
+        np.savez(seqId + '.combined.coverage',
+                 r_ok = r_ok,
+                 r_high = r_high,
+                 r_low = r_low)
+
