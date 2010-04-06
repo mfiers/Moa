@@ -1,0 +1,296 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import math
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+import matplotlib as mpl
+#import matplotlib.rc as rc
+import pylab as pl
+
+import logging
+import optparse
+import subprocess
+
+## Arguments: General options 
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+parser.set_defaults(ntPerLine=1e5)
+parser.add_option('-s', dest='start',
+                  help='Start position (nt) of the plot')
+parser.add_option('-e', dest='end',
+                  help='End position (nt) of the plot')
+parser.add_option('--dpi', dest='dpi',
+                  help='DPI of the plot')
+
+parser.add_option('--ymax', dest='ymax',
+                  help='Max value for the y axis')
+parser.add_option('--ymin', dest='ymin',
+                  help='Min value for the y axis')
+parser.add_option('-o', dest='outfile',
+                  help='Output file name')
+
+options, args = parser.parse_args()
+
+inputDir = args[0]
+
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+
+cl = 0.5
+cdict = {
+    'red'  :  ((0., cl, cl), (0.5, 0., 0.), (1., 0., 0.)),
+    'green':  ((0., 0., 0.), (0.5, cl, cl), (1., 0., 0.)),
+    'blue' :  ((0., 0., 0.), (0.5, 0., 0.), (1., cl, cl))
+}
+my_cmap = mpl.colors.LinearSegmentedColormap('my_colormap', cdict, 1024)
+
+    
+def quant(x, w):
+    xs = np.sort(x)
+    return xs[int(len(xs) * w)]
+
+def readStatsFromDisk(bamBase):
+    stats = {}
+    with open(os.path.join('stats', bamBase + '.stats'), 'r') as F:
+        for  line in F.readlines():
+            k, v = line.strip().split("\t")
+            stats[k] = float(v)
+    return stats
+    
+if __name__ == '__main__':
+
+    seqId = inputDir
+    seqLen = 0
+
+    
+    #load the combined coverage plot
+    ccov = np.load(seqId + '.combined.coverage.npz')
+    r_ok = ccov['r_ok']
+    r_high = ccov['r_high']
+    r_low = ccov['r_low']
+    r_all = r_ok + r_high + r_low
+    r_z = np.zeros_like(r_ok)
+    seqLen =  len(r_ok)
+    r_x = np.arange(0, seqLen, dtype="int")
+
+    if options.start:
+        pStart = int(float(options.start))
+    else:
+         pStart = 0
+    if options.end:
+         pEnd = min(seqLen, int(float(options.end)))
+    else:
+        pEnd = seqLen
+
+    plotLen = pEnd - pStart
+
+    
+    mpl.rcParams['axes.labelsize'] = 'x-small'
+    mpl.rcParams['xtick.labelsize'] = 'xx-small'
+    mpl.rcParams['ytick.labelsize'] = 'xx-small'
+
+    fig = plt.figure(figsize=(10,2))
+    fig.subplots_adjust(0.05,0.1,0.95,0.9)
+    ax1 = fig.add_subplot(111)
+
+    r_lowok = r_low + r_ok
+    r_all = r_low + r_ok + r_high
+
+    ax1.fill_between(
+        r_x[pStart:pEnd],
+        r_z[pStart:pEnd], 
+        r_low[pStart:pEnd],
+        color="#8888ff")
+    ax1.fill_between(
+        r_x[pStart:pEnd],
+        r_low[pStart:pEnd],
+        r_lowok[pStart:pEnd],
+        color="#88ff88")
+    ax1.fill_between(
+        r_x[pStart:pEnd],
+        r_lowok[pStart:pEnd],
+        r_all[pStart:pEnd],
+        color="#ff8888")
+
+    ax = ax1.twinx()
+    #ax.set_xlim(nstart,nstop+1)
+
+    l.info("processing %s (%d nt long)" % (seqId, seqLen))
+    inputFileCount = 0
+    for inputFile in os.listdir(inputDir):        
+        if not '.readpairs.npz' in inputFile:
+            continue
+        inputFileCount += 1
+        #if inputFileCount != 4: continue
+
+        bamBase = inputFile.replace('.readpairs.npz', '')
+
+        #load data
+        data = np.load(os.path.join(
+                inputDir, inputFile))
+        start1 = data['start1']
+        stop2 = data['stop2']
+
+        l.info("read %d readpairs from %s" % (len(start1), bamBase))
+        
+
+        #try to load stats for this file
+        stats = readStatsFromDisk(bamBase)
+        top = stats['top']
+        l.info("Stats; low %d, peak %d, high %d" % (
+                stats['left'],  stats['top'], 
+                stats['right']))
+        #normalized insert sizes for this dataset
+        inserts = (stop2 - start1) - top
+        
+        def ffcol(i):
+            if i < stats['left']:
+                return "#0000aa"
+            if i > stats['right']:
+                return "#aa0000"
+            return "#00aa00"
+
+        FF=np.vectorize(ffcol)
+        colors = FF(stop2 - start1)
+        
+        mids = start1 + ((stop2 - start1) * 0.5)
+        half = (stop2 - start1) / 2.
+        mids = start1 + half
+
+        ax.hlines(inserts, start1, stop2, colors=colors, 
+                  linewidth=0.1, alpha=0.8)
+                 
+        #ax.quiver(stop2, inserts, 0.5 * (start1 - stop2), inserts*1.25, colors,
+        #          headwidth=1, headlength=1, width=0.001, cmap=my_cmap)
+        ax.set_xlim(pStart, pEnd)
+
+
+    if options.ymin and options.ymax:
+        ax.set_ylim(int(options.ymin), int(options.ymax))
+    elif options.ymin:
+        ax.set_ylim(int(options.ymin), None)
+    elif options.ymax:
+        ax.set_ylim(None, int(options.ymax))
+
+
+    if options.outfile:            
+        outName = options.outfile
+    else:
+        outName = '%s.rp.png' % (seqId)
+
+    if options.dpi:
+        dpi = int(options.dpi)
+    else:
+        dpi = None
+
+
+    
+    plt.savefig('%s' % (outName), dpi=dpi)
+
+        
+
+
+    # ntPerLine = int(float(options.ntPerLine))
+    # if ntPerLine > plotLen:
+    #     ntPerLine = plotLen
+
+    # l.info("nucleotides per line: %d" % ntPerLine)
+
+
+    # l.info("Plotting from %d to %d (%d nt)" % (
+    #     pStart, pEnd, plotLen))
+
+    # r_all = r_low + r_high + r_ok
+    
+    # #if pStart > 0 or pEnd < seqLen:
+    # #    r_ok = r_ok[pStart:pEnd]
+    # #    r_low = r_low[pStart:pEnd]
+    # #    r_high = r_high[pStart:pEnd]
+    # #    r_all = r_all[pStart:pEnd]
+
+    # #max value - else all space is taken up by the peaks
+    # if options.ymax:
+    #     maxY = int(options.ymax)
+    # else:
+    #     maxY = quant(r_all, 0.80)
+    # minY = 0
+    
+    # r_x = np.arange(0, seqLen, dtype="int")
+    # r_z = np.zeros_like(r_x)
+
+    # r_low = -1 * r_low
+    
+    # noLines = int(math.ceil(plotLen / float(ntPerLine)))
+
+    # l.info("going to plot %d lines" % noLines)
+    # l.info("y axis is between %d and %d" % (minY, maxY))
+
+
+    # _MC = 0.10 - (0.01 * min(8, noLines))
+    # fig.subplots_adjust(0.03,_MC,0.95,0.95-(2*_MC))
+    
+    # for line in range(noLines):        
+    
+    #     nstart = pStart + (line * ntPerLine)
+    #     nstop = nstart + (ntPerLine - 1)
+
+    #     l.debug('printing line %d from %d to %d' % (
+    #         line, nstart, nstop))
+
+    #     ax = fig.add_subplot(noLines,1,line+1)
+    #     if line == 0:
+    #         ax.set_title('Coverage plot for "%s" (%d to %d)' % (
+    #                 seqId, pStart, pEnd))
+
+    #     ax.plot(
+    #         r_x[nstart:nstop],
+    #         r_all[nstart:nstop],
+    #         )
+    #     print r_x[nstart:nstop], r_ok[nstart:nstop]
+
+    #     ax.fill_between(
+    #         r_x[nstart:nstop],
+    #         r_z[nstart:nstop],
+    #         r_all[nstart:nstop],
+    #         color="#aa0000")
+            
+    #     ax.fill_between(
+    #         r_x[nstart:nstop],
+    #         r_z[nstart:nstop],
+    #         r_ok[nstart:nstop],
+    #         color="green")
+
+    #     ax.plot( r_x[nstart:nstop],
+    #              r_ok[nstart:nstop],
+    #              color='black')
+
+    #     ax.plot( r_x[nstart:nstop],
+    #              r_all[nstart:nstop],
+    #              color='black')
+        
+        
+    #     yAx = ax.get_yaxis()
+    #     yAx.set_ticks(range(100, maxY, 200))
+        
+ 
