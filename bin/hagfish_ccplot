@@ -38,6 +38,7 @@ parser.add_option('-C', dest='compare',
 options, args = parser.parse_args()
 
 inputFile = args[0]
+compareToFile = args[1]
 
 l = logging.getLogger('hagfish')
 handler = logging.StreamHandler()
@@ -67,6 +68,7 @@ if __name__ == '__main__':
         seqId = options.seqId
     else:
         seqId = os.path.basename(inputFile)\
+                .replace('.combined', '')\
                 .replace('.coverage.npz', '')\
                 .replace('.npz', '')
 
@@ -80,7 +82,7 @@ if __name__ == '__main__':
     r_high = data['r_high']
     r_low = data['r_low']
 
-    cdata = np.load(options.compare)
+    cdata = np.load(compareToFile)
     c_ok = cdata['r_ok']
     c_high = cdata['r_high']
     c_low = cdata['r_low']
@@ -101,25 +103,40 @@ if __name__ == '__main__':
         pStart, pEnd, plotLen))
 
     #normalize the plots
-    r_all = r_low + r_high + r_ok
-    c_all = c_low + c_high + c_ok
 
     r_ok = r_ok / float(np.median(r_ok))
     c_ok = c_ok / float(np.median(c_ok)) 
+    r_low = r_low / float(np.median(r_low))
+    c_low = c_low / float(np.median(c_low)) 
+    r_high = r_high / float(np.median(r_high))
+    c_high = c_high / float(np.median(c_high)) 
 
-    r_all = r_all / float(np.median(r_ok))
-    c_all = c_all / float(np.median(c_ok)) 
+    # remove zero's - bad for fractions - bad for logs
+    minval = 1e-10
+    r_ok = np.maximum(r_ok, minval)
+    c_ok = np.maximum(c_ok, minval)
+    r_low = np.maximum(r_low, minval)
+    c_low = np.maximum(c_low, minval)
+    r_high = np.maximum(r_high, minval)
+    c_high = np.maximum(c_high, minval)
 
     if pStart > 0 or pEnd < seqLen:
         r_ok = r_ok[pStart:pEnd]
-        r_all = r_all[pStart:pEnd]
-        
         c_ok = c_ok[pStart:pEnd]
-        c_all = c_all[pStart:pEnd]
+        r_high = r_high[pStart:pEnd]
+        c_high = c_high[pStart:pEnd]
+        r_low = r_low[pStart:pEnd]
+        c_low = c_low[pStart:pEnd]
+
+    #calculate the logfrac
+    lf_ok = np.log10(r_ok / c_ok)
+    lf_high = np.log10(r_high / c_high)
+    lf_low = np.log10(r_low / c_low)
         
     
     #max value - else all space is taken up by the peaks
-    maxY = max(quant(r_ok, 0.80), quant(c_ok, 0.80))
+    
+    maxY = max(quant(r_ok, 0.90), quant(c_ok, 0.90))
     minY = -maxY
         
     r_x = np.arange(pStart, pEnd, dtype="int")
@@ -154,56 +171,40 @@ if __name__ == '__main__':
         ax.fill_between(
             r_x[nstart:nstop],
             r_z[nstart:nstop],
-            r_all[nstart:nstop],
-            color="#aa0000")
+            r_low[nstart:nstop],
+            color="blue")
             
         ax.fill_between(
             r_x[nstart:nstop],
-            r_z[nstart:nstop],
-            r_ok[nstart:nstop],
+            r_low[nstart:nstop],
+            r_low[nstart:nstop] + r_ok[nstart:nstop],
             color="green")
+
+        ax.fill_between(
+             r_x[nstart:nstop],
+             r_low[nstart:nstop] + r_ok[nstart:nstop],
+             r_low[nstart:nstop] + r_ok[nstart:nstop] + r_high[nstart:nstop],
+             color="red")
 
         ax.fill_between(
             r_x[nstart:nstop],
             r_z[nstart:nstop],
-            -1 * c_all[nstart:nstop],
-            color="#aa0000")
+            -1 * c_low[nstart:nstop],
+            color="blue")
             
-        ax.fill_between(
-            r_x[nstart:nstop],
-            r_z[nstart:nstop],
-            -1 * c_ok[nstart:nstop],
-            color="green")
+        # ax.fill_between(
+        #     r_x[nstart:nstop],
+        #     -1 * c_low[nstart:nstop],
+        #     -1 * (c_low[nstart:nstop] + c_ok[nstart:nstop]),
+        #     color="green")
 
-        ax.plot( r_x[nstart:nstop],
-                 r_all[nstart:nstop],
-                 color='black')
+        # ax.fill_between(
+        #     r_x[nstart:nstop],
+        #     -1 * ( c_low[nstart:nstop] + c_ok[nstart:nstop]),
+        #     -1 * ( c_low[nstart:nstop] + c_ok[nstart:nstop] + c_high[nstart:nstop]),
+        #     color="red")
 
-        ax.plot( r_x[nstart:nstop],
-                 r_ok[nstart:nstop],
-                 color='black')
-
-        ax.plot( r_x[nstart:nstop],
-                 -c_ok[nstart:nstop],
-                 color='black')
-
-        ax.plot( r_x[nstart:nstop],
-                 -c_all[nstart:nstop],
-                 color='black')
-
-
-        ax.set_xlim(nstart,nstop+1)
-        ax.set_ylim(minY,maxY)
-        
-        #yAx = ax.get_yaxis()
-        #yAx.set_ticks(range(100, maxY, 200))
-        
-        #coordT = ax.text(
-        #    nstart-(0.005 * ntPerLine), 0,
-        #    '%s' % nstart, ha='right')
-        
-        #plt.setp(coordT, size='small')
-
+#        ax.set_ylim(minY,maxY)
         
     plt.savefig('%s.cc.png' % (seqId))
 
@@ -231,13 +232,15 @@ if __name__ == '__main__':
         if line == 0:
             ax.set_title('logfrac comp. coverage plot for "%s"' % seqId)
 
-        ax.plot(r_x[nstart:nstop],
-            np.log10((r_ok[nstart:nstop]) / (c_ok[nstart:nstop])))
+#        ax.plot(r_x[nstart:nstop],
+#            np.log10((r_ok[nstart:nstop]) / (c_ok[nstart:nstop])))
         
-        ax.set_ylim(minY,maxY)
-#        ax.fill_between(
-#            r_x[nstart:nstop],
-#            r_z[nstart:nstop],            
-#            (r_ok[nstart:nstop]) / (c_ok[nstart:nstop]))
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],            
+            lf_ok[nstart:nstop],
+            color="#00aa00", alpha=0.8)
+
+#        ax.set_ylim(minY,maxY)
 
     plt.savefig('%s.ccl.png' % (seqId))
