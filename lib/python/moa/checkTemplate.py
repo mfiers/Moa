@@ -87,7 +87,11 @@ def checkTemplate(path):
             l.debug("Discovered template %s" % template)
             continue
         if line in ['.PHONY: moa_preprocess', 'moa_preprocess:',
-                    '.PHONY: moa_postprocess', 'moa_postprocess:']:
+                    '.PHONY: moa_postprocess', 'moa_postprocess:',
+                    '-include moa.mk', 'MOAMK_INCLUDE=done',
+                    '@echo preprocess commands go here',
+                    '@echo Postprocess commands go here..',
+                    ]:
             continue
         
         superfluousLines = True
