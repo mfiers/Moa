@@ -43,16 +43,6 @@ NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
 
 include $(MOABASE)/template/moa/prepare.mk
 
-## moa_preprocess & moa_postprocess are targets that can
-## be overridden here. They are executed before & after
-## the main execution
-
-.PHONY: moa_preprocess
-moa_preprocess:
-
-.PHONY: moa_postprocess
-moa_postprocess:
-
 """
 
         
@@ -137,7 +127,8 @@ def newJob(template,
            wd = '.',
            parameters = [],
            force = False,
-           noInit = False):
+           noInit = False,
+           silent = False):
     """
     Create a new template based makefile in the current dir.
 
@@ -169,7 +160,7 @@ def newJob(template,
         l.info("Creating wd %s" % wd)
         os.makedirs(wd)
 
-    if not title and template != 'traverse':
+    if (not silent) and (not title) and (not template == 'traverse'):
         l.debug("no title (template %s)" % template)
         l.warning("It is strongly recommended to specify a title")
         l.warning("You can still do so by using moa set title='somthing meaningful'")

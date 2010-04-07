@@ -148,9 +148,6 @@ if projectRoot:
     l.debug('Project root is %s' % projectRoot)
     os.putenv('MOAPROJECTROOT', projectRoot)
 
-### Check & fix deprecated template styles
-moa.checkTemplate.checkTemplate(os.getcwd())
-
 ## make sure the MOA_THREADS env var is set - this is used from insice
 ## the Makefiles later threads need to be treated different from the
 ## other parameters. multi-threaded operation is only allowed in the
@@ -173,35 +170,46 @@ if __name__ == "__main__":
     l.debug("Number of threads: '%s'" % options.threads)
 
     ## If not arguments are given - run 'moa run'
-    if len(args) == 0:
-        args = ['run']
+#    if len(args) == 0:
+#        args = ['moa_default_target']
 
     ## Determine what the command is.
-    command = args[0]
-    newargs = args[1:]
+    command = ""
+    newargs = []
+    if len(args) > 0:
+        command = args[0]
+        newargs = args[1:]
+
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
+
+    #see if there is a callback - else we're going to call Make
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
             l.debug("using a callback for moa %s" % command)
             moaCommands[command]['call'](os.getcwd(), options, newargs)
+            sys.exit()
+            
+    cwd = os.getcwd()
+    if not moa.info.isMoaDir(cwd):
+        if command:
+            l.error("Need to run moa %s in a Moa directory" % command)
         else:
-            l.debug("Calling make for command %s" % command)
-            returnCode = runMake.go(target = command,
-                        verbose = options.verbose,
-                        threads = options.threads,
-                        makeArgs = newargs,
-                        extraMakeParameters = extraMakeParameters,            
-                        background = options.background)
-            sys.exit(returnCode)
-    else:
-        l.debug("not defined - passing on to Moa")
-        returnCode = runMake.go(target = command,
-                        verbose = options.verbose,
-                        threads = options.threads,
-                        makeArgs = newargs,
-                        extraMakeParameters = extraMakeParameters,            
-                        background = options.background)
+            l.error("Need to run moa without arguments in a Moa directory")
+        sys.exit(1)
+                
+    ### Check & fix deprecated template styles
+    moa.checkTemplate.checkTemplate(os.getcwd())
+
+
+    l.debug("Calling make for command %s" % command)
+    returnCode = runMake.go(target = command,
+                            verbose = options.verbose,
+                            threads = options.threads,
+                            makeArgs = newargs,
+                            extraMakeParameters = extraMakeParameters,            
+                            background = options.background)
+    sys.exit(returnCode)
         
 
     # #utilities

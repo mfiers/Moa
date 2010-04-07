@@ -47,12 +47,12 @@ def defineCommands(commands):
 
     commands['list'] = {
         'desc' : 'List all known templates',
-        'call' : listTemplates
+        'call' : listTemplates,
         }
 
     commands['listlong'] = {
         'desc' : 'List all known templates, showing a short description',
-        'call' : listTemplatesLong
+        'call' : listTemplatesLong,
         }
 
 def listTemplates(wd, options, args):
