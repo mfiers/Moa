@@ -349,34 +349,29 @@ def getMoaErr(wd):
 def qr(cl):
     return subprocess.Popen(cl, stdout=subprocess.PIPE, shell=True).communicate()[0]
 
-def runMoa(wd=None, target="", threads=1, background=True, verbose=False):
+def runMoa(wd,
+           target="",
+           threads=1,
+           background=True,
+           verbose=False):
     """
     execute Moa
 
     This function executes moa in path ``wd``.
 
     >>> moa.utils.removeFiles(P_TEST, recursive=True)
-    >>> newJob(template = 'moatest',
+    >>> newJob(template = 'traverse',
     ...        wd = P_TEST, 
     ...        title = 'Test moa run',
     ...        parameters = ['txt=testRunMoa'])
-    >>> runMoa(wd=P_TEST, background=False)
+    >>> runMoa(P_TEST, background=False)
     0
-    >>> output = getMoaOut(P_TEST)
+    >>> output = getMoaOut(P_TEST).strip()
     >>> len(output) > 0
-    True
-    >>> 'Starting MOA' in output
-    True
-    >>> target = os.path.join(P_TEST, 'moa_test')
-    >>> os.path.exists(target)
-    True
-    >>> open(target).read().strip() == 'testRunMoa'
     True
     >>> runMoa(wd=P_TEST, target= 'clean', background=False)
     0
     >>> output = getMoaOut(P_TEST)
-    >>> os.path.exists(target)
-    False
     
     :param wd: The pathname of the directory from which the Moa
         files are to be removed
@@ -398,7 +393,6 @@ def runMoa(wd=None, target="", threads=1, background=True, verbose=False):
     return moa.runMake.go(wd = wd,
                    target = target,
                    threads = threads,
-                   makeArgs = [],
                    background= background,
                    verbose = verbose,
                    captureOut = True)

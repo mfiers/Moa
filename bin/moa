@@ -111,7 +111,7 @@ parser.add_option("--bg", dest="background",
                   action="store_true", help="Run moa in the background")
 
 parser.set_defaults(threads=1)
-parser.add_option("-j", dest="threads",
+parser.add_option("-j", dest="threads", type='int',
                   help="threads to use when running Make (corresponds " +
                   "to the make -j parameter)")
 
@@ -119,7 +119,8 @@ parser.add_option("-B", dest="remake", action='store_true',
                   help="Reexecute all targets (corresponds to make -B) ")
 
 parser.add_option("--md", dest="makedebug", action='store_true',
-                  help="Run Make with -d : lots of extra debugging information")
+                  help="Run Make with -d : lots of extra debugging "+
+                  "information")
 
 ## See if the plugins have anything to add to the optparse instance:
 for p in moaPluginsLoaded:
@@ -129,7 +130,7 @@ for p in moaPluginsLoaded:
 ## Parse the options
 (options, args) = parser.parse_args()
 
-## Proper setting of verbosity - after parsing the command lines
+## Proper setting of verbosity - after parsing of the command line
 if options.verbose:
     moa.logger.setVerbose()
 
@@ -148,7 +149,7 @@ if projectRoot:
     l.debug('Project root is %s' % projectRoot)
     os.putenv('MOAPROJECTROOT', projectRoot)
 
-## make sure the MOA_THREADS env var is set - this is used from insice
+## make sure the MOA_THREADS env var is set - this is used from inside
 ## the Makefiles later threads need to be treated different from the
 ## other parameters. multi-threaded operation is only allowed in the
 ## second phase of execution.
@@ -156,22 +157,18 @@ os.putenv('MOA_THREADS', "%s" % options.threads)
 
 ## Define extra parameters to use with Make
 
-extraMakeParameters = []
+makeArgs = set()
 if options.remake:
-    extraMakeParameters.append('-B')
+    makeArgs.add('-B')
 if options.makedebug:
-    extraMakeParameters.append('-d')
+    makeArgs.add('-d')
 
 ## Command dispatcher
-if __name__ == "__main__":   
-    l.debug("Starting Moa command line dispatcher")
-    l.debug("MOABASE is '%s'" % MOABASE) 
-    l.debug("Extra make parameters are '%s'" % extraMakeParameters)
-    l.debug("Number of threads: '%s'" % options.threads)
-
-    ## If not arguments are given - run 'moa run'
-#    if len(args) == 0:
-#        args = ['moa_default_target']
+if __name__ == "__main__":
+    cwd = os.getcwd()
+    l.debug("MOABASE is '%s'" % MOABASE)
+    if options.threads > 1:
+        l.debug("Running make with %d threads" % options.threads)
 
     ## Determine what the command is.
     command = ""
@@ -183,34 +180,36 @@ if __name__ == "__main__":
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
 
-    #see if there is a callback - else we're going to call Make
+    #see if there is a callback - If so call it
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
             l.debug("using a callback for moa %s" % command)
             moaCommands[command]['call'](os.getcwd(), options, newargs)
             sys.exit()
-            
-    cwd = os.getcwd()
+
+    #No callback, defer this to Make
+    
+    #append the arguments to make (if there are any)
+    makeArgs.update(set(newargs))
     if not moa.info.isMoaDir(cwd):
         if command:
-            l.error("Need to run moa %s in a Moa directory" % command)
+            l.error("'moa %s' must be executed within a Moa directory" %
+                    command)
         else:
-            l.error("Need to run moa without arguments in a Moa directory")
+            l.error("'moa' must be executed within a Moa directory")
         sys.exit(1)
                 
     ### Check & fix deprecated template styles
-    moa.checkTemplate.checkTemplate(os.getcwd())
-
+    moa.checkTemplate.checkTemplate(cwd)
 
     l.debug("Calling make for command %s" % command)
-    returnCode = runMake.go(target = command,
+    returnCode = runMake.go(cwd,
+                            target = command,
                             verbose = options.verbose,
                             threads = options.threads,
-                            makeArgs = newargs,
-                            extraMakeParameters = extraMakeParameters,            
+                            makeArgs = makeArgs,
                             background = options.background)
     sys.exit(returnCode)
-        
 
     # #utilities
     # elif command == 'ren':

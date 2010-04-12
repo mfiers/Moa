@@ -28,6 +28,7 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
+#in this case we define a default title
 title ?= traverse node
 
 

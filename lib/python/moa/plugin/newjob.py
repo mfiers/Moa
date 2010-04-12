@@ -63,7 +63,7 @@ def newJob(wd, options, args):
     else:
         template = args[0]
         params = args[1:]
-        
+
     moa.job.newJob( template = template,
                     title = title,
                     wd = wd,

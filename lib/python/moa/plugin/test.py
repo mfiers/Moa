@@ -37,7 +37,4 @@ def defineCommands(commands):
         }
 
 def runTests(wd, options, args):
-    moa.unittests.run(options, args[1:])
-    
-
-
+    moa.unittests.run(options, args)

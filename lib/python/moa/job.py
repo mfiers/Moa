@@ -160,12 +160,13 @@ def newJob(template,
         l.info("Creating wd %s" % wd)
         os.makedirs(wd)
 
-    if (not silent) and (not title) and (not template == 'traverse'):
+    if (not silent) and (not title) and \
+           (not template == 'traverse'):
         l.debug("no title (template %s)" % template)
-        l.warning("It is strongly recommended to specify a title")
-        l.warning("You can still do so by using moa set title='somthing meaningful'")
+        l.warning("You must specify a job title")
+        l.warning("You can still do so by using: ")
+        l.warning("moa set title='somthing meaningful'")
         title = ""
-
     if title:
         l.debug('creating a new moa makefile with title "%s" in %s' % (
             title, wd))
@@ -217,15 +218,14 @@ def newJob(template,
         if not '=' in p: continue
         params.append(p)
         moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
-
-    if noInit:
-        return
+        
+    if noInit: return
 
     l.debug("Running moa initialization")
     moa.runMake.go(wd = wd,
                    target='initialize',
                    captureOut = False,
-                   makeArgs=[],
-                   verbose=False)                   
+                   captureErr = False,
+                   verbose=False)
     l.debug("Written %s, try: moa help" % makefile)
 

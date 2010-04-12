@@ -28,6 +28,7 @@ include $(MOABASE)/template/moa/prepare.mk
 
 ## Prepare - fill in the defaults of all variables
 ## Fill in the default values of each variable
+
 $(foreach v,$(moa_must_define) $(moa_may_define), \
 	$(if $($v),, \
 		$(if $($v_default), \
@@ -103,7 +104,7 @@ moa_run_postcommand:
 
 
 moa_welcome:
-	@$(call echo, Starting MOA $(MAKECMDGOALS) in $(CURDIR))
+	@$(call warn, Starting MOA $(MAKECMDGOALS) in $(CURDIR))
 
 ###############################################################################
 # Variable definition - post moa.mk include
@@ -123,7 +124,7 @@ moa_set_runlock:
 			rm moa.runlock; \
 		fi; \
 	fi; \
-	$(call echo,Locking job for this run); \
+	$(call debug,Locking job for this run); \
 	$(call echo,$(shell ps -p $$PPID -o comm=)); \
 	echo $$PPID > moa.runlock
 
@@ -374,6 +375,7 @@ mustexist_%:
 
 .PHONY: show moa_showvar_%
 show: $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
+
 
 singlequote='
 #"' <- to satifsy emacs :(

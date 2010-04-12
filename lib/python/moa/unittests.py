@@ -61,59 +61,72 @@ def testModule(m):
     failures += f
     tests += t
     
-def testPlugins():
+def testPlugins(args=[]):
     global pluginFailures
     global pluginTests
     testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')    
-    moa.utils.removeMoaFiles(testDir)
-    moa.api.newJob(template = 'traverse', wd = testDir,
-                   title='Testing plugins')
         
     for plugin in moa.info.getPlugins(wd = testDir):
+        if args and not plugin in args:
+            continue
+        l.debug("Starting a new plugin test")
+        moa.utils.removeMoaFiles(testDir)
+        moa.api.newJob(template = 'adhoc',
+                       wd = testDir,
+                       title='Testing plugin %s' % plugin)
         l.debug("start testing plugin %s" % plugin)
         rc = moa.runMake.go(wd=testDir,
                             target='moa_plugin_%s_test' % plugin,
                             background=False,
                             verbose=False,
                             captureOut=True,
+                            captureErr=True,
                             makeArgs = [])
         pluginTests += 1
         if rc != 0:
             err = moa.api.getMoaErr(wd=testDir)
+            print err
             if 'No rule to make target' in str(err):
                 l.warning("No tests defined for plugin %s" % plugin)
             else:
                 pluginFailures += 1
-                l.error("Error running plugin test for %s" % plugin)
-                l.error(err)
+                l.error("Error running plugin test for %s (%s)" %
+                        (plugin, rc))
+                err = moa.api.getMoaErr(wd=testDir).strip()
+                out = moa.api.getMoaOut(wd=testDir).strip()
+                if err:
+                    l.error("stderr:")
+                    l.error(err)
+                if out:
+                    l.error("stdout:")
+                    l.error(out)
         else:
             l.info("Success testing %s" % plugin)
                                      
-        result = moa.api.getMoaOut(wd=testDir).strip()
-        if result:
-            print result
+        #result = moa.api.getMoaOut(wd=testDir).strip()
+        #if result:
+        #    print result
 
-def testTemplates():
+def testTemplates(which=None, verbose=False):
     global templateFailures
     global templateTests
-    testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')    
-    for templateFile in os.listdir(os.path.join(MOABASE, 'template')):
-        
-        if not templateFile[-3:] == '.mk': continue
-        if templateFile[:2] == '__': continue
-        if templateFile[:7] == 'moaBase': continue
-           
-        template = templateFile[:-3]        
+    testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')
+    for template in moa.job.list():
+        if which and template != which: continue
+    
         l.debug("testing template %s" % template)
         templateTests  += 1
         
         moa.api.removeMoaFiles(testDir)
-        moa.api.newJob(template = template, wd = testDir,
-                       title='Testing template %s' % template)
+        moa.job.newJob(
+            template = template,
+            wd = testDir,
+            title='Testing template %s' % template)
         
         rc = moa.runMake.go(wd=testDir,
                             target='template_test', 
                             background=False,
+                            verbose = verbose,
                             makeArgs = [])
         if rc != 0:
             templateFailures += 1
@@ -155,6 +168,9 @@ def testTemplateExtensive(template, verbose=False):
 def run(options, args):
 
     os.putenv('MOA_UNITTESTS', "yes")
+    if args:
+        l.info("Testing '%s'" % " ".join(args))
+
     if not args:
         l.info("Start running python doctests")
         setSilent()        
@@ -171,7 +187,7 @@ def run(options, args):
         
         l.info("Finished running of python unittests")
         l.info("Ran %d test, %d failed" % (tests, failures))
-
+        
         l.info("Start running basic template tests")
         testTemplates()
         l.info("Ran %d template test, %d failed" % (
@@ -183,30 +199,34 @@ def run(options, args):
                 pluginTests, pluginFailures))
         l.info("Finished running plugin tests")
         sys.exit()
-        
-    for what in args:
-        if what == 'plugins':
-            l.info("Start running plugin tests")
-            testPlugins()
-            l.info("Ran %d plugin test, %d failed" % (
-                    pluginTests, pluginFailures))
-            l.info("Finished running plugin tests")
-            
-        elif what == 'templates':
-            l.info("Start running basic template tests")
-            testTemplates()
-            l.info("Ran %d template test, %d failed" % (templateTests, templateFailures))
-            l.info("Finished running basic template tests")
-        elif what[:4] == 'moa.':            
-            l.info("testing moa python module %s" % what)
-            setSilent()
-            eval("testModule(%s)" % what)
-            if options.verbose: setVerbose()
-            else: setInfo()
-            l.info("Finished running unittests for %s" % what)
-            l.info("Ran %d test, %d failed" % (tests, failures))
-        else:
-            #assume it is a template
-            testTemplateExtensive(what, verbose =options.verbose)
+
+    elif args[0] == 'plugins':
+        l.info("Start running plugin tests")
+        testPlugins(args[1:])
+        l.info("Ran %d plugin test, %d failed" % (
+                pluginTests, pluginFailures))
+        l.info("Finished running plugin tests")
+    elif args[0] == 'plugin':
+        l.info("Start running plugin tests")
+        testPlugins(args[1:])
+    elif args[0] == 'templates':
+        l.info("Start running basic template tests")
+        testTemplates()
+        l.info("Ran %d template test, %d failed" % (
+            templateTests, templateFailures))
+        l.info("Finished running basic template tests")
+    elif args[0][:4] == 'moa.':            
+        l.info("testing moa python module %s" % args[0])
+        setSilent()
+        eval("testModule(%s)" % args[0])
+        if options.verbose: setVerbose()
+        else: setInfo()
+        l.info("Finished running unittests for %s" % args[0])
+        l.info("Ran %d test, %d failed" % (tests, failures))
+    else:
+        #Assume it is a templat
+        testTemplates(args[0], verbose=options.verbose)
+        testTemplateExtensive(args[0], verbose=options.verbose)
+
         
     

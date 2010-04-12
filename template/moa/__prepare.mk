@@ -35,6 +35,9 @@ include $(MOABASE)/template/util/gmsl
 MOA_INCLUDE_ETCMOACONF = yes
 include $(MOABASE)/etc/moa.conf.mk
 
+## Load user specific configuration
+-include ~/.moa/moa.conf.mk
+
 ## Load moa project wide configuration
 ifdef MOAPROJECTROOT
 	MOA_INCLUDE_PROJECTCONF = yes
@@ -50,7 +53,7 @@ $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/template/moa/plugins/$(p)_def.mk) \
 )
 
-## Files that moa uses
+## Files that moa recognizes
 moa_system_files = Makefile moa.mk
 
 ## some help variables
@@ -69,21 +72,23 @@ parC:=)
 
 #a colorful mark, showing that this comes from moabase
 ifeq ($(MOAANSI),no)
+moadebug := DEBUG:
 moamark := MOA:
 moaerrr := MOAERROR:
 moawarn := MOAWARN:
 moatest := MOATEST:
 else
-moamark := \033[0;42;30mm\033[0m
+moadebug := \033[0;41;30mDEBUG\033[0m
+moamark := \033[0;42;30mMOA\033[0m
 moaerrr := \033[0;1;37;41m!!!\033[0m
 moawarn := \033[0;43m>>\033[0m
 moatest := \033[0;42mTEST:\033[0m
 endif
-echo = echo -e "$(moamark) $(strip $(1))"
+
 warn = echo -e "$(moawarn) $(strip $(1))"
-tstm = echo -e "$(moatest) $(strip $(1))"
-errr = echo -e "$(moaerrr) $(strip $(1))"
-exer = echo -e "$(moaerrr) $(strip $(1)) - exiting"; exit -1
+tstm = echo -e "$(moatest) $(strip $(1))" 1>&2
+errr = echo -e "$(moaerrr) $(strip $(1))" 1>&2
+exer = echo -e "$(moaerrr) $(strip $(1)) - exiting"  1>&2; exit -1
 exerUnlock = ( if [[ "$(strip $(1))" ]]; 		\
 	then echo -e "$(moaerrr) $(strip $(1))"; 	\
 	fi; 										\
@@ -96,10 +101,14 @@ ifdef MOA_VERBOSE
 e=
 minv=-v
 mins=
+debug = echo -e "$(moadebug) $(strip $(1))"
+echo = echo -e "$(moamark) $(strip $(1))"
 else
 e=@
 minv=
 mins=-s
+debug = true
+echo = true
 endif
 
 

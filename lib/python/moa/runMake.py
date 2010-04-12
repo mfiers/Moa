@@ -32,63 +32,16 @@ import moa.info
 import moa.utils
 from moa.exceptions import *
 
-#@moa.utils.profiler2
-def _startMake(wd,
-               makeArgs = [],
-               verbose = True,
-               captureOut = False,
-               extraMakeParameters = [],
-               captureOutName = 'moa'):
-    """
-    Start Make
-
-    A function that starts Make (but does not wait for it to finish)
-    in directory `wd`
-    
-    @param wd: Directory in which to execute make
-    @type wd: String
-    @param makeArgs: Arguments to pass to make
-    @type makeArgs: String or List of Strings
-    @param verbose: Have make be silent or generate lots of output
-    @type verbose: Boolean
-    @param captureOut: If True the output will be written to moa.out
-      and moa.err
-    @type captureOut: Boolean
-    @param extraMakeParameters: Extra parameters to pass to make (such as -B)
-    @type extraMakeParameters: List of Strings
-    @param captureOutName: Basename of the file where the moa output
-        will be captured.
-    @type captureOutName: String
-    @raises NotMoaDirectory: If ``wd`` is not a Moa directory    
-    """
-
-    l.debug("attempting to start make in %s" % wd)     
-    
-    if captureOut:
-        FOUT = open(os.path.join(wd, '%s.out' % captureOutName), 'w')
-        FERR = open(os.path.join(wd, '%s.err' % captureOutName), 'w')
-        os.putenv('MOAANSI', 'no')
-    else:
-        FOUT = None
-        FERR = None
-        
-    makeArgs.insert(0, 'make')
-    l.debug("RUNNING MAKE %s" % " ".join(makeArgs))
-    p = subprocess.Popen(
-        makeArgs,
-        shell=False,
-        cwd = wd,
-        stdout = FOUT,
-        stderr = FERR)
-    return p
-
-
-def _runMake(wd = None, target = "", makeArgs = [],
-             verbose=True, captureOut = False, threads=1,
-             extraMakeParameters= [],
+def _runMake(wd,
+             target = "",
+             makeArgs = None,
+             makefile = "",
+             verbose=True,
+             threads=1,
+             captureOut = False,
+             captureErr = False,
              captureOutName='moa'
              ):
-
     """
     Actually run make
     
@@ -97,11 +50,9 @@ def _runMake(wd = None, target = "", makeArgs = [],
     @param target: Makefile target to execute
     @type target: String
     @param makeArgs: Arguments to pass onto Make
-    @type makeArgs: List of Strings
+    @type makeArgs: set of Strings
     @param verbose: Verbose output
     @type verbose: Boolean
-    @param extraMakeParameters: Extra parameters to pass to make (such as -B)
-    @type extraMakeParameters: List of Strings
     @param captureOut: Capture the output in log files
     @type captureOut: Boolean
     @param captureOutName: Basename for the log files that will
@@ -112,56 +63,75 @@ def _runMake(wd = None, target = "", makeArgs = [],
     
     """
     
-    if not moa.info.isMoaDir(wd):
-        raise NotAMoaDirectory(wd)
+    if not makeArgs:
+        makeArgs = set()
 
-    #prepare arguments & environment
-    l.debug("Incoming make parameters %s" % makeArgs)
-    if type(makeArgs) == type("str"):
-        makeArgs = makeArgs.split()
-
-    l.debug("Extra parameters for make %s" % extraMakeParameters)
-    for extraParam in extraMakeParameters:
-        makeArgs.insert(0,extraParam)
-
-    #we do not want all default rules (since we're not compiling software)
-    makeArgs.insert(0, '-r')
+    if makefile:
+        l.debug("executing makefile %s" % makefile)
+        makeArgs.add('-f %s' % makefile)
+        
+    # prepare arguments & environment
+    # we do not want all default rules (since we're not compiling
+    # software)
+    makeArgs.add('-r')
 
     if verbose:
+        # used inside the moa templates
         os.putenv('MOA_VERBOSE', "-v")
     else:
-        makeArgs.insert(0, '-s')
+        # -s keeps make silent
+        makeArgs.add('-s')
 
-    os.putenv('MOA_MAKE_PARAMETERS', " ".join(makeArgs))
+    # most moa templates do not allow threads, but will use them
+    # in handle threads very well
     os.putenv('MOA_THREADS', "%s" % threads)
-    l.debug("moa make parameters: %s" % " ".join(makeArgs))
         
-    if target:
-        makeArgs.insert(0, target)
+    if target: makeArgs.add(target)
 
-    p = _startMake(wd = wd,
-                   makeArgs = makeArgs,
-                   verbose=verbose,
-                   extraMakeParameters = extraMakeParameters,
-                   captureOut = captureOut,
-                   captureOutName=captureOutName)
+    FERR = None
+    FOUT = None
+    
+    if captureErr:
+        FERR = open(os.path.join(wd, '%s.err' % captureOutName), 'w')
+        os.putenv('MOAANSI', 'no')
+    if captureOut:
+        FOUT = open(os.path.join(wd, '%s.out' % captureOutName), 'w')
+
+           
+    l.debug("Starting Make now in %s" % wd)
+    l.debug(" - with arguments: '%s'" % " ".join(makeArgs))
+    p = subprocess.Popen(
+        ['make'] + " ".join(list(makeArgs)).split(),
+        shell=False,
+        cwd = wd,
+        stdout = FOUT,
+        stderr = FERR)
+
     out,err = p.communicate()
     
     rc = p.returncode
     if rc == 0:
         l.debug("Succesfully finished make in %s" % (wd))
     else:
-        l.debug("Error running make in %s. Return code %s" % (wd, rc))
+        if verbose:
+            l.error("Error running make in %s. Return code %s" % (wd, rc))
+        else:
+            l.debug("Error running make in %s. Return code %s" % (wd, rc))
     return rc
+
+# deprecated function name
+#def go(*args, **kwargs):
+#    runMake(*args, **kwargs)
 
 def go(wd = None,
        target = "",
-       makeArgs = [],
-       extraMakeParameters=[],
+       makeArgs = set(),
+       makefile = "",
        verbose=True,
        threads=1,
        background = False,
        captureOut = None,
+       captureErr = None,
        captureOutName='moa',
        exitWhenDone=False ):    
     """
@@ -169,18 +139,17 @@ def go(wd = None,
     
     @param captureOut: Capture the output in log files
     @type captureOut: Boolean
-    @param extraMakeParameters: Extra parameters to pass to Make
-    @type extraMakeParameters: List of Strings
     @param captureOutName: Basename for the log files that will
       capture the output
     @type captureOutName: String
     
     """
     if not wd:
+        l.warning("runMake needs a directory")
+        sys.exit(-1)
         wd = os.getcwd()
         
-    if background:
-        
+    if background:  
         # Unless defined otherwise, write the output to
         # moa.out and moa.err when backgrounding
         if captureOut == None: captureOut = True
@@ -202,14 +171,13 @@ def go(wd = None,
     if captureOut == None:
         captureOut = False
 
-    l.debug("starting _runMake with target '%s', args %s " % (
-            target, makeArgs))
     rc = _runMake(wd = wd,
                   target=target,
                   makeArgs = makeArgs,
-                  extraMakeParameters = extraMakeParameters,
+                  makefile = makefile,
                   verbose=verbose,
                   threads = threads,
+                  captureErr = captureErr,
                   captureOut = captureOut,
                   captureOutName = captureOutName )
 
@@ -228,24 +196,19 @@ def go(wd = None,
     if exitWhenDone:
         sys.exit(rc)
     
-def runMakeGetOutput(*args, **kwargs):
+def runMakeGetOutput(wd, **kwargs):
     """
     Run runmake, wait for it to finish & return the output -
     we capture the output in a random name (to preven collisions)
 
     """
     outName = 'moa.%d' % os.getpid()
-    l.debug("runMakeGetOutput args %s kwargs %s" % (args, kwargs))
-    if not kwargs.has_key('wd'):
-        wd = os.getcwd()
-        kwargs['wd'] = wd
-    else: 
-        wd = kwargs['wd']
+    l.debug("runMakeGetOutput in %s kwargs %s" % (wd, kwargs))
 
     kwargs['captureOut'] = True
     kwargs['captureOutName'] = outName
     kwargs['background'] = False
-    go(*args, **kwargs)
+    go(wd, **kwargs)
     output = getOutput(wd, outName)
     moa.utils.removeMoaOutfiles(wd, outName)
     return output

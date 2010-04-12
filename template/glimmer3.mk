@@ -67,7 +67,7 @@ gup_gffsource ?= $(blast_gff_source)
 
 #check if we have the ubuntu package installed - if so, prefix all commands
 #with tigr-glimmer
-ifeq ($(shell which tigr-glimmer),)
+ifeq ($(shell which tigr-glimmer 2>&1 || true),)
 exec_prefix=tigr_glimmer
 else
 exec_prefix=

@@ -170,10 +170,10 @@ blast_clean:
 	-rm blast_report
 
 blast_unittest:	
-	moa new -d 10.blastdb -t 'test blast db' blastdb							\
+	moa new -d 10.blastdb -t 'test blast db' blastdb \
 			bdb_fasta_file=$$MOADATA/dna/test01.fasta bdb_name=test
 	cd 10.blastdb; moa 
-	moa new -d 20.blast -t 'test blast' blast									\
+	moa new -d 20.blast -t 'test blast' blast \
 			blast_db=../10.blastdb/test blast_input_dir=$$MOADATA/dna
 	cd 20.blast; moa 
 	cd 20.blast; ls

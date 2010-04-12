@@ -306,26 +306,55 @@ def flog(func):
     return flogger
                     
 
-
-def profileit(printlines=1):
+# #def logCaller():
+#     def _m(func):
+#         def _f(*args, **kwargs):
+#             import traceback
+#             _n = func.__name__
+#             caller = traceback.extract_stack()[-3]
+#             print caller
+#             for l in  traceback.format_stack():
+#                 print l
+#                 #    with open("logCallerl.error("calling %s" % func)
+#             return func
+#         return _f
+#     return _m
+    
+def logCaller(func):
     """
     Profiler decorator
     """
-    import hotshot, hotshot.stats
-    def _my(func):
-        def _func(*args, **kargs):
-            prof = hotshot.Profile("profiling.data")
-            res = prof.runcall(func, *args, **kargs)
-            prof.close()
-            stats = hotshot.stats.load("profiling.data")
-            stats.strip_dirs()
-            stats.sort_stats('time', 'calls')
-            print ">>>---- Begin profiling print"
-            stats.print_stats(printlines)
-            print ">>>---- End profiling print"
-            return res
-        return _func
-    return _my
+    import traceback
+    def _func(*args, **kargs):
+        ch = []
+        for c in traceback.extract_stack()[-4:-1]:
+            ch.append("%s:%s:%s" % (
+                c[0].split('/')[-1],
+                c[2], c[1]))
+        l.error("%s called by %s" % (
+            func.__name__,
+            ", ".join(ch)))
+        res = func(*args, **kargs)
+        return res
+    return _func
+
+def logCallerVerbose(func):
+    """
+    Profiler decorator
+    """
+    import traceback
+    def _func(*args, **kargs):
+        ch = []
+        l.error("### CALLING %s" % func.__name__)
+        for c in traceback.extract_stack()[-8:]:
+            l.error("### TB %s %s %s" % (
+                c[0].split('/')[-1],
+                c[2], c[1]))
+        l.error("### ARGS %s " % " ".join(args))
+        l.error("### KWRG %s" % str(kargs))
+        res = func(*args, **kargs)
+        return res
+    return _func
 
 def profiler2(func):
     """

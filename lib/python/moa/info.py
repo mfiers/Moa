@@ -25,7 +25,6 @@ import sys
 import commands
 
 from moa.logger import l
-from moa import runMake
 from moa.exceptions import *
 import moa.utils
 import moa.runMake
@@ -37,23 +36,24 @@ def getPlugins(wd = None):
     """
     Get the plugins for a certain directory
     """
-    if wd == None: 
-        #this is somewhat odd - create a tempdir to read the default
-        #plugins from we should probably have a shortcut to just read
-        #the moa.conf & moa.conf.default files - but this works for now
-        testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')    
-        moa.utils.removeMoaFiles(testDir)
-        moa.api.newJob(template = 'traverse', wd = testDir,
-                       title='Testing plugins', noInit = True)
-        wd = testDir
-    if not isMoaDir(wd):
-        return []
-    l.debug("getting plugins for %s" % wd)
-    result = moa.runMake.runMakeGetOutput(
-        verbose=False, wd = wd,
-        target='moa_list_plugins', makeArgs=[]).strip().split()
-    l.debug("Plugins for '%s' are '%s'" % (
-            wd, ', '.join(result)))
+    if not wd:
+        wd = os.getcwd()
+        
+    if isMoaDir(wd):
+        #inside a moa job: executed a regular moa call
+        result = moa.runMake.runMakeGetOutput(
+            wd, target='moa_list_plugins', verbose=False
+            ).strip().split()
+    else:
+        # If executed outside of a moa job we'll use a specific
+        # Makefile that loads the configuration and prints out the
+        # plugins globally configured
+        result = moa.runMake.runMakeGetOutput(
+            wd, target='get_moa_plugins',
+            makefile = "%s/template/moa/getPluginList.mk" % MOABASE
+            ).strip().split()
+                
+    l.debug("Plugins for '%s' are '%s'" % (wd, str(result)))
     return result
 
 
@@ -255,14 +255,13 @@ def info(wd):
 
     outBaseName = '.moa.%d' % os.getpid()
     l.debug("using %s" % outBaseName)
-    rc = runMake.go(
-        wd = wd,
+    rc = moa.runMake.go(wd,
         background=False,
         target='info',
         verbose=False,
         captureOut=True,
         captureOutName = outBaseName)
-    out = runMake.getOutput(wd, outBaseName)
+    out = moa.runMake.getOutput(wd, outBaseName)
     #remove the output files
     moa.utils.removeMoaOutfiles(wd, outBaseName)
     

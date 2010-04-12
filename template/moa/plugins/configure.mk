@@ -36,5 +36,12 @@ moa_set_2:
 
 .PHONY: moa_plugin_configure_test
 moa_plugin_configure_test:
-	$e moa set title='test'
-	grep 'title=test' moa.mk || ($(call exer,set title=test did not work))
+	$e moa set title=test
+	moa show | grep -P "title\s+test" || \
+		($(call exer,set title=VALUE did not work))
+	$e moa set title+=two
+	$e moa show | grep -P "title\s+test two" || \
+		($(call exer,set title+=VALUE does not work))
+	$e moa set title=
+	$e moa show | grep -P "^title\s*$$" || \
+		($(call exer,unset title does not work))

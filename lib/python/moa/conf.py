@@ -168,13 +168,10 @@ def writeToConf(wd, data):
 
     if not moa.info.isMoaDir(wd):
         raise NotAMoaDirectory(wd)
-
     
     moamk = os.path.join(wd, 'moa.mk')
     moamktmp = os.path.join(wd, 'moa.mk.tmp')
     moamklock = os.path.join(wd, 'moa.mk.lock')
-
-    
     
     #refd is a refactoring of data - allows easy checking
     refd = dict([(x['key'],x) for x in data])
