@@ -23,6 +23,7 @@ Help
 
 import os
 import sys
+import shlex
 import optparse
 import moa.conf
 from moa.logger import l
@@ -32,16 +33,26 @@ SET_DESC = '''Set, append, change or remove variables from the configuration of 
 def defineCommands(commands):
     commands['set'] = {
         'desc' : SET_DESC,
+        'call' : configSet,
         }
 
-    commands['__set'] = {
-        'private' : True,
-        'call' : configSet }
+#    commands['__set'] = {
+#        'private' : True,
+#        'call' : configSet }
+
 
 def configSet(wd, options, args):
     """
     parse the command line and save the arguments into moa.mk
     """
+    
+    #call the preset hooks
+    moa.runMake.go(wd = wd,
+                   target='moa_pre_set',
+                   captureOut = False,
+                   captureErr = False,
+                   verbose=False)
+
     command = args[0]
     newArgs = args[1:]
 
@@ -51,6 +62,14 @@ def configSet(wd, options, args):
         params.append(arg)
 
     moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
+
+    #call the postset hooks
+    moa.runMake.go(wd = wd,
+                   target='moa_post_set',
+                   captureOut = False,
+                   captureErr = False,
+                   verbose=False)
+
 
 
     

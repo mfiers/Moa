@@ -136,7 +136,7 @@ if options.verbose:
 
 ## Store all arguments in the environment - we might want to have a
 ## look at them from the Makefiles
-os.putenv("MOAARGS", "%s" % str(args)[1:-1])
+os.putenv("MOAARGS", "%s" % " ".join(["'" + str(x) + "'" for x in args]))
 
 ### Start initializing the plugins
 for p in moaPluginsLoaded:
@@ -157,11 +157,11 @@ os.putenv('MOA_THREADS', "%s" % options.threads)
 
 ## Define extra parameters to use with Make
 
-makeArgs = set()
+makeArgs = []
 if options.remake:
-    makeArgs.add('-B')
+    makeArgs.append('-B')
 if options.makedebug:
-    makeArgs.add('-d')
+    makeArgs.append('-d')
 
 ## Command dispatcher
 if __name__ == "__main__":
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     #No callback, defer this to Make
     
     #append the arguments to make (if there are any)
-    makeArgs.update(set(newargs))
+    makeArgs.extend(newargs)
     if not moa.info.isMoaDir(cwd):
         if command:
             l.error("'moa %s' must be executed within a Moa directory" %

@@ -50,7 +50,7 @@ def _runMake(wd,
     @param target: Makefile target to execute
     @type target: String
     @param makeArgs: Arguments to pass onto Make
-    @type makeArgs: set of Strings
+    @type makeArgs: list of Strings
     @param verbose: Verbose output
     @type verbose: Boolean
     @param captureOut: Capture the output in log files
@@ -63,30 +63,33 @@ def _runMake(wd,
     
     """
     
-    if not makeArgs:
-        makeArgs = set()
+    if makeArgs == None:
+        makeArgs = []
 
-    if makefile:
-        l.debug("executing makefile %s" % makefile)
-        makeArgs.add('-f %s' % makefile)
-        
     # prepare arguments & environment
     # we do not want all default rules (since we're not compiling
     # software)
-    makeArgs.add('-r')
+    if not '-r' in makeArgs:
+        makeArgs.append('-r')
 
     if verbose:
         # used inside the moa templates
         os.putenv('MOA_VERBOSE', "-v")
     else:
         # -s keeps make silent
-        makeArgs.add('-s')
+        if not '-s' in makeArgs:
+            makeArgs.append('-s')
+
+    if makefile:
+        makeArgs.append("-f")
+        makeArgs.append(makefile)
 
     # most moa templates do not allow threads, but will use them
     # in handle threads very well
     os.putenv('MOA_THREADS', "%s" % threads)
         
-    if target: makeArgs.add(target)
+    if target and not target in makeArgs: 
+        makeArgs.append(target)
 
     FERR = None
     FOUT = None
@@ -99,9 +102,9 @@ def _runMake(wd,
 
            
     l.debug("Starting Make now in %s" % wd)
-    l.debug(" - with arguments: '%s'" % " ".join(makeArgs))
+    l.debug(" - with arguments: '%s'" % str(makeArgs))
     p = subprocess.Popen(
-        ['make'] + " ".join(list(makeArgs)).split(),
+        ['make'] + makeArgs,
         shell=False,
         cwd = wd,
         stdout = FOUT,
@@ -125,7 +128,7 @@ def _runMake(wd,
 
 def go(wd = None,
        target = "",
-       makeArgs = set(),
+       makeArgs = None,
        makefile = "",
        verbose=True,
        threads=1,
@@ -144,6 +147,9 @@ def go(wd = None,
     @type captureOutName: String
     
     """
+    if makeArgs == None:
+        makeArgs= []
+
     if not wd:
         l.warning("runMake needs a directory")
         sys.exit(-1)
