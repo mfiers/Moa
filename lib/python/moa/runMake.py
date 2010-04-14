@@ -109,10 +109,11 @@ def _runMake(wd,
         cwd = wd,
         stdout = FOUT,
         stderr = FERR)
-
+    l.debug("Make has started with pid %d" % p.pid)
     out,err = p.communicate()
-    
     rc = p.returncode
+    l.debug("Make has finished with rc %d " % rc)
+
     if rc == 0:
         l.debug("Succesfully finished make in %s" % (wd))
     else:

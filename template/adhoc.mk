@@ -66,6 +66,13 @@ adhoc_powerclean_help = Do brute force cleaning (T/F). Remove all		\
 adhoc_powerclean_type = set
 adhoc_powerclean_allowed = T F
 
+moa_may_define += adhoc_combine
+adhoc_combine_help = Use all input files at once (Note, use $$^ (all input files) or $$@ (newer input files) instead of $$<)
+adhoc_combine_type = set
+adhoc_combine_default = F
+adhoc_combine_allowed = T F
+
+
 #########################################################################
 #Include base moa code - does variable checks & generates help
 include $(shell echo $$MOABASE)/template/moa/core.mk
@@ -85,9 +92,10 @@ adhoc_post:
 ifeq ($(adhoc_parallel),F)
 .NOTPARALLEL: adhoc
 endif
-.PHONY: adhoc
 
 .PHONY: adhoc
+ifeq ($(adhoc_combine),F)
+
 adhoc:  $(adhoc_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed $(adhoc_name_sed))
@@ -95,6 +103,13 @@ touch/%: $(adhoc_input_dir)/%
 	$(call echo,considering $<)
 	$e $(adhoc_process)
 	touch $@
+else
+
+adhoc: $(adhoc_input_files)
+	$(call warn,execuing $(words $^) input file(s) at once)
+	$e $(adhoc_process)
+
+endif
 
 adhoc_clean: find_exclude_args = \
 	$(foreach v, $(adhoc_link_noclean), -not -name $(v))
