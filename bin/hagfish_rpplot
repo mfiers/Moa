@@ -33,10 +33,13 @@ parser.add_option('--ymin', dest='ymin',
                   help='Min value for the y axis')
 parser.add_option('-o', dest='outfile',
                   help='Output file name')
+parser.set_defaults(format='png')
+parser.add_option('-f', dest='format',
+                  help='Output format (pdf, ps, svg, png)')
 
 options, args = parser.parse_args()
 
-inputDir = args[0]
+seqId = args[0]
 
 l = logging.getLogger('hagfish')
 handler = logging.StreamHandler()
@@ -80,12 +83,11 @@ def readStatsFromDisk(bamBase):
     
 if __name__ == '__main__':
 
-    seqId = inputDir
     seqLen = 0
 
-    
+    combCovData = os.path.join('combined', seqId + '.combined.coverage.npz')
     #load the combined coverage plot
-    ccov = np.load(seqId + '.combined.coverage.npz')
+    ccov = np.load(combCovData)
     r_ok = ccov['r_ok']
     r_high = ccov['r_high']
     r_low = ccov['r_low']
@@ -114,41 +116,40 @@ if __name__ == '__main__':
     fig.subplots_adjust(0.05,0.1,0.95,0.9)
     ax1 = fig.add_subplot(111)
 
-    r_lowok = r_low + r_ok
-    r_all = r_low + r_ok + r_high
+    r_okhalf = 0.5 * r_ok
+    r_lowok = -( r_okhalf + r_low)
+    r_highok = r_okhalf + r_high
+    maxY = max(np.max(r_lowok), np.max(r_highok))
 
     ax1.fill_between(
         r_x[pStart:pEnd],
-        r_z[pStart:pEnd], 
-        r_low[pStart:pEnd],
+        -1 * r_okhalf[pStart:pEnd], 
+        r_lowok[pStart:pEnd],
         color="#8888ff")
     ax1.fill_between(
         r_x[pStart:pEnd],
-        r_low[pStart:pEnd],
-        r_lowok[pStart:pEnd],
+        -r_okhalf[pStart:pEnd],
+        r_okhalf[pStart:pEnd],
         color="#88ff88")
     ax1.fill_between(
         r_x[pStart:pEnd],
-        r_lowok[pStart:pEnd],
-        r_all[pStart:pEnd],
+        r_okhalf[pStart:pEnd],
+        r_highok[pStart:pEnd],
         color="#ff8888")
 
     ax = ax1.twinx()
-    #ax.set_xlim(nstart,nstop+1)
+    ax.set_ylim(-maxY, maxY)
 
     l.info("processing %s (%d nt long)" % (seqId, seqLen))
     inputFileCount = 0
-    for inputFile in os.listdir(inputDir):        
-        if not '.readpairs.npz' in inputFile:
-            continue
+    l.info("start reading & plotting te readpairs")
+    for bamBase in os.listdir('readpairs'):
+        inputFile = os.path.join('readpairs', bamBase, seqId + '.readpairs.npz')
         inputFileCount += 1
-        #if inputFileCount != 4: continue
-
-        bamBase = inputFile.replace('.readpairs.npz', '')
+        l.info('loading %s' % inputFile)
 
         #load data
-        data = np.load(os.path.join(
-                inputDir, inputFile))
+        data = np.load(inputFile)
         start1 = data['start1']
         stop2 = data['stop2']
 
@@ -163,6 +164,8 @@ if __name__ == '__main__':
                 stats['right']))
         #normalized insert sizes for this dataset
         inserts = (stop2 - start1) - top
+        
+        maxY = max(max(inserts), -min(inserts))
         
         def ffcol(i):
             if i < stats['left']:
@@ -179,12 +182,12 @@ if __name__ == '__main__':
         mids = start1 + half
 
         ax.hlines(inserts, start1, stop2, colors=colors, 
-                  linewidth=0.1, alpha=0.8)
+                  linewidth=0.25, alpha=0.6)
                  
         #ax.quiver(stop2, inserts, 0.5 * (start1 - stop2), inserts*1.25, colors,
         #          headwidth=1, headlength=1, width=0.001, cmap=my_cmap)
         ax.set_xlim(pStart, pEnd)
-
+        ax.set_ylim(-maxY, maxY)
 
     if options.ymin and options.ymax:
         ax.set_ylim(int(options.ymin), int(options.ymax))
@@ -197,7 +200,8 @@ if __name__ == '__main__':
     if options.outfile:            
         outName = options.outfile
     else:
-        outName = '%s.rp.png' % (seqId)
+        outName = '%s.rp.%s' % (
+            seqId, options.format)
 
     if options.dpi:
         dpi = int(options.dpi)

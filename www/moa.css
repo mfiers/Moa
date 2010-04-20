@@ -1,0 +1,55 @@
+
+
+
+body {
+	font-family: Verdana, Geneva, sans-serif
+
+}
+
+.moaHeader {
+	clear: both;
+	padding: 0px;
+	margin: 0px;
+	margin-bottom: 10px;
+	border-bottom: 2px solid black;
+}
+
+.moaInfo {
+	margin: 0px;
+	margin-left: 100px;
+	padding: 5px;	
+	widht: 95%;
+}
+
+.moaLogo {
+	border-radius: 5px;
+	padding: 5px;
+	float: left;
+	margin: 0px;
+	width: 87px;
+}
+
+.moaBreadCrumbs {
+	float: right;
+}
+
+.moaBreadCrumb {
+	display: inline;
+	padding: 2px;
+	margin-left: 2px;
+	-moz-border-radius: 3px; 
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background-color: #aaa;
+	border: 1px solid #999;
+}
+
+.moaActiveBreadCrumb {
+	display: inline;
+	padding: 2px;
+	margin-left: 2px;
+	-moz-border-radius: 3px; 
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	background-color: #aba;
+}
