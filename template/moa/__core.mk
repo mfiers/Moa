@@ -373,24 +373,15 @@ mustexist_%:
 #
 ################################################################################
 
-.PHONY: show moa_showvar_%
-show: $(addprefix moa_showvar_, $(moa_must_define) $(moa_may_define))
-
-
-singlequote='
+sq='
 #"' <- to satifsy emacs :(
 backslash=\$(empty)
-
-moa_showvar_%:		 
-	$e echo -ne '$*\t'	
-	$e echo '$(subst $(singlequote),$(singlequote)$(backslash)$(singlequote)$(singlequote),$(value $*))'
-
-.PHONY: get moa_getvar_%
-get: $(addprefix moa_getvar_, $(filter $(var),$(moa_must_define) $(moa_may_define)))
-
-moa_getvar_%:
-	@echo '$(value $*)'
-
+.PHONY: show moa_showvar_%
+show:
+	$e echo -n
+	$e $(foreach var,$(moa_must_define) $(moa_may_define), \
+		echo -ne "$(var)\t"; \
+		echo '$(subst $(sq),$(sq)$(backslash)$(sq)$(sq),$(value $(var)))';)
 
 ################################################################################
 ## make showvars ###############################################################

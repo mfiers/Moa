@@ -24,6 +24,16 @@ parser.add_option('--skip_read' , dest='skipRead', action="store_true",
 parser.add_option('--skip_stats' , dest='skipStat', action="store_true",
                   help='Skip stat creating, read the stat data from disk')
 
+parser.add_option('--skip_coverage' , dest='skipCoverage', action="store_true",
+                  help='Skip generating of the coverage plots')
+
+parser.add_option('--skip_combine' , dest='skipCombine', action="store_true",
+                  help='Skip combining the coverate plots')
+
+parser.add_option('--minLen', dest='minLen',
+                  help='Minimal sequence length - ignore sequence shorter than ' +
+                  'this length')
+
 options, args = parser.parse_args()
 inputFiles = args
 l = logging.getLogger('hagfish')
@@ -53,7 +63,9 @@ def runReturn(cl):
     return run(cl).communicate()[0].split('\n')
 
 def getSequenceInfo(inputFile):
+    minSeqLen = int(float(options.minLen))
     seqInfo = {}
+    l.debug("get sequence info from %s" % inputFile)
     for line in runReturn('samtools view -H %s' % inputFile):
         line = line.strip()
         if not line: continue
@@ -182,6 +194,8 @@ def parseBam(seqInfo, inputFileName):
 
     l.info('processing BAM file: %s' % inputFileName)
     l.info('Basename %s' % basename)
+    if not os.path.exists(os.path.join('readpairs', basename)):
+        os.makedirs(os.path.join('readpairs', basename))
 
     readPairs = {}
 
@@ -201,6 +215,8 @@ def parseBam(seqInfo, inputFileName):
     for seqid, start1, stop1, start2, stop2 in readBAM(inputFileName):
         i += 1
         if i > limit: break
+        if i % int(1e6) == 0: l.info("%d reads processed" % i)
+
         readPairs[seqid]['start1'].append(start1)
         readPairs[seqid]['stop1'].append(stop1)
         readPairs[seqid]['start2'].append(start2)
@@ -210,8 +226,8 @@ def parseBam(seqInfo, inputFileName):
     # and write the data to numpy files - for quick reading in 
     # later stage -> for example, when fiddling with the statistics
     for seqId in seqInfo.keys():
-        if not os.path.exists(seqId):
-            os.mkdir(seqId)
+        #if not os.path.exists('readseqId):
+        #    os.mkdir(seqId)
         rp = readPairs[seqId]
 
         rp['start1'] = np.array(rp['start1'])
@@ -219,7 +235,7 @@ def parseBam(seqInfo, inputFileName):
         rp['start2'] = np.array(rp['start2'])
         rp['stop2'] = np.array(rp['stop2'])
 
-        outname = os.path.join(seqId, basename + '.readpairs')
+        outname = os.path.join('readpairs', basename, seqId + '.readpairs')
         np.savez(outname,
                  start1 = rp['start1'],  
                  stop1 = rp['stop1'],  
@@ -240,6 +256,9 @@ def normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats):
 
     We will do this per bamBase and per sequence
     """    
+
+    if not os.path.exists(os.path.join('coverage', bamBase)):
+        os.makedirs(os.path.join('coverage', bamBase))
 
     for seqId in seqInfo.keys():
 
@@ -266,12 +285,17 @@ def normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats):
                 r_ok[a:b] += 1
         FF=np.vectorize(ff)
         l.debug("Start calculating coverage plots for %d readpairs" % len(rp['start1']))
-        FF(rp['start1'], rp['stop2'])
-        l.debug("Done calculating coverage plot")
+        if len(rp['start1']) > 0:
+            FF(rp['start1'], rp['stop2'])
+            l.debug("Done calculating coverage plot")
+        else:
+            l.debug("Not much to do for zero readpairs")
+
         
         #write the plots to disk      
         l.debug("Start wrinting coverage plot to disk")
-        np.savez(os.path.join(seqId, bamBase + '.coverage'),
+
+        np.savez(os.path.join('coverage', bamBase, seqId + '.coverage'),
                  r_low = r_low, 
                  r_ok = r_ok, 
                  r_high = r_high)
@@ -281,14 +305,15 @@ def readBamDataFromDisk(seqInfo, bamBase):
     readPairs = {}
     for seqId in seqInfo.keys():
         rp = {}
-        datafile = os.path.join(seqId, bamBase + '.readpairs.npz')
+        datafile = os.path.join('readpairs', bamBase, seqId + '.readpairs.npz')
         data = np.load(datafile)
         rp['start1'] = data['start1']
         rp['stop1'] = data['stop1']
         rp['start2'] = data['start2']
         rp['stop2'] = data['stop2']
-        l.info('%d records from %s' % (rp['start1'].shape[1], seqId))
-        readPairs[s] = rp
+        
+        l.info('%s records from %s' % (rp['start1'].shape, seqId))
+        readPairs[seqId] = rp
     return readPairs
 
 def readStatsFromDisk(bamBase):
@@ -323,31 +348,36 @@ if __name__ == '__main__':
         else:
             stats = doStats(bamBase, seqInfo, readPairs)
 
-        #Sort the readpairs
-        normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats)
+        if not options.skipCoverage:
+            #Sort the readpairs
+            normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats)
+
+    if options.skipCombine:
+        #then we're done
+        sys.exit()
+
     #now combine the data for all sequences into one coverage plot
-    
+
     #concatenate all coverage plots into one per sequence
+    if not os.path.exists('combined'):
+        os.mkdir('combined')
+
     for seqId in seqInfo.keys():
-    
+
         r_ok = None
         r_low = None
         r_high = None
-        
-        inputDir = seqId
-        for inputFile in os.listdir(inputDir):
-            if not inputFile[-13:] == '.coverage.npz': continue
-            
-            #this should not be necessary
-            if 'combined.coverage.npz' in inputFile: continue
 
-            bamBase = os.path.basename(inputFile).replace(
-                '.coverage.npz', '')
+        for inputDir in os.listdir('coverage'):
+            inputFile = os.path.join('coverage', inputDir, seqId + '.coverage.npz')
 
-            l.info("processing %s" % inputFile)
+            bamBase = inputDir
+
+            l.info("processing %s" % bamBase)
+            l.info("input file %s" % inputFile)
             #read the coverage plots
 
-            data = np.load(os.path.join(inputDir, inputFile))
+            data = np.load(inputFile)
             if r_ok == None:
                 r_ok = data['r_ok']
                 r_high = data['r_high']
@@ -360,7 +390,8 @@ if __name__ == '__main__':
             l.debug("Max low ok high %d %d %d" % (
                     np.max(r_low), np.max(r_ok), np.max(r_high)))
 
-        np.savez(seqId + '.combined.coverage',
+
+        np.savez(os.path.join('combined', seqId + '.combined.coverage'),
                  r_ok = r_ok,
                  r_high = r_high,
                  r_low = r_low)

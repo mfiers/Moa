@@ -48,6 +48,12 @@ mum_plot_raw_allowed = T F
 mum_plot_raw_default = F
 
 
+moa_may_define += mum_matchmode
+mum_matchmode_help = use all matching fragments (max) or only unique matchers (mum)
+mum_matchmode_type = set
+mum_matchmode_default = mum
+mum_matchmode_allowed = mum max
+
 include $(shell echo $$MOABASE)/template/moa/core.mk
 
 mum_a_set = $(addprefix a__, $(mum_input_a_files))
@@ -72,8 +78,9 @@ bix = $(mum_input_b_extension)
 $(mum_a_set): a__%: $(mum_b_set)
 	$e for against in $?; do											\
 		prefix=`basename $* .$(aix)`__`basename $$against .$(bix)` ;	\
-		nucmer --maxmatch -b $(mum_breaklen) --prefix=$$prefix			\
-				$* $$against || true ;									\
+		nucmer $(if $(call seq,$(mum_matchmode),max),--maxmatch,--mum)  \
+			-b $(mum_breaklen) --prefix=$$prefix						\
+			$* $$against || true ;										\
 		show-coords -rcl $$prefix.delta > $$prefix.coords || true;		\
 		mummerplot -R $* -Q $$against --layout							\
 				-t png -p $$prefix $$prefix.delta || true;				\

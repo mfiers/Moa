@@ -99,6 +99,9 @@ def isMoaDir(d):
         if 'MOABASE' in line:
             isMoa = True
             break
+        if '$(call moa_load' in line:
+            isMoa = True
+            break
     F.close()        
     return isMoa
 
@@ -143,7 +146,12 @@ def _checkRunlock(d):
     processName = commands.getoutput("ps -p %d -o comm=" % pid)
     if processName != 'make':
         l.warning("Stale lock file (or so it seems) - removing")
-        os.unlink(runlockfile)
+        try:
+            os.unlink(runlockfile)
+        except OSError:
+            #Probably do not have the rights to remove the runlock file
+            #so, ignore it
+            pass
         return False
 
     return True
@@ -216,7 +224,10 @@ def getTitle(wd):
     """
     if not isMoaDir(wd):
         raise NotAMoaDirectory(wd)
-    with open(os.path.join(wd, 'moa.mk')) as F:
+    moamk = os.path.join(wd, 'moa.mk')
+    if not os.path.exists(moamk):
+        return "(title not specified)"
+    with open(moamk) as F:
         for line in F.readlines():
             m = reFindTitle.match(line)
             if not m: continue
