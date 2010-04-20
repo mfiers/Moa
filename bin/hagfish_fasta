@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import pickle
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+
+import logging
+import optparse
+import subprocess
+
+## Arguments: General options 
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+
+options, args = parser.parse_args()
+
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+
+if __name__ == '__main__':
+    allInputs = args
+    if len(allInputs) == 0:
+        for i in os.listdir('combined'):
+            if not '.combined.coverage.npz' in i:
+                continue
+            allInputs.append(
+                os.path.join('combined', i))
+    for input in allInputs:
+        if not '.npz' in input:
+            seqId = input
+            coverageFile = os.path.join(
+                'combined', 
+                '%s.combined.coverage.npz' % seqId)
+        else:
+            coverageFile = input
+            seqId = input.split('/')[-1]\
+                .replace('.combined.coverage.npz', '')
+
+        l.info('sequence id %s' % seqId)
+        l.info('loading %s' % coverageFile)
+        data = np.load(coverageFile)
+        r_ok = data['r_ok']
+        r_low = data['r_low']
+        r_high = data['r_high']
+        seqLen = len(r_ok)
+        if seqLen < 10000: continue
+        l.info('loaded %d nt max: (loh) %d %d %d' % 
+               (seqLen, np.max(r_ok), 
+                np.max(r_low), np.max(r_high)))
+        #start output
+        if not os.path.exists('fasta'):
+            os.mkdir('fasta')
+        FOK = open(os.path.join('fasta', '%s.ok.fasta' % seqId), 'w')
+        FHI = open(os.path.join('fasta', '%s.high.fasta' % seqId), 'w')
+        FLO = open(os.path.join('fasta', '%s.low.fasta' % seqId), 'w')
+        FOK.write(">%s_ok pseudo coverage plot\n")
+        FHI.write(">%s_hi pseudo coverage plot - high\n")
+        FLO.write(">%s_lo pseudo coverage plot - low\n")
+        for i in range(0, seqLen, 80):
+            FOK.write("%s\n" % " ".join(map(str,r_ok[i:i+80])))
+            FHI.write("%s\n" % " ".join(map(str, r_high[i:i+80])))
+            FLO.write("%s\n" % " ".join(map(str, r_low[i:i+80])))
+
+        FOK.close()
+        FHI.close()
+        FLO.close()
+
