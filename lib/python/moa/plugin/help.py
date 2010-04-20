@@ -41,7 +41,7 @@ def showHelp(wd, options, args):
         l.error("This is not a moa directory - you can run moa help only in")
         l.error("the context of a Moa directory. You could try: moa --help")
         sys.exit(-1)
-    moa.runMake.go(target = 'help', verbose = options.verbose)
+    moa.runMake.go(wd, target = 'help', verbose = options.verbose)
     
 
 
