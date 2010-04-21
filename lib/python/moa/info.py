@@ -210,6 +210,9 @@ def template(wd):
                and (not '/template/moa/' in line):
                 template = line.strip().split('/')[-1].replace('.mk', '')
                 return template
+            if '$(call moa_load,' in line:
+                template = line.split(',')[1][:-2]
+                return template
 
 reFindTitle=re.compile(r'title\+?= *(.*?) *$')
 def getTitle(wd):

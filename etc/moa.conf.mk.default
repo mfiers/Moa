@@ -46,7 +46,7 @@ moa_plugins += info
 ##
 
 # Version control using git
-moa_plugins += git 
+#moa_plugins += git 
 
 # Some utilities for making moa easier to use
 moa_plugins += moautil 

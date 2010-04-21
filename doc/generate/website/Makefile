@@ -12,9 +12,12 @@ chapters = \
 	index.html \
 	introduction.html \
 	installation.html \
-	using.html \
+	commands.html \
 	extending.html \
 	reference.html
+
+.PHONY: test
+	@echo hello
 
 .PHONY: all
 all: imagesao $(addprefix ../../html/,$(chapters))
@@ -57,6 +60,11 @@ temptex=$(foreach v,$(templates),$(call template2html,$(v)))
 	done
 	echo "</ul>" >> $@
 	cat footer.html >> $@
+
+#../../html/commands.html: $(wildcard  ../../markdown/commands/*.md)
+#		for x in $(sort $^); do \
+#		echo $$x;
+#	done
 
 ../../html/t___%.html:
 	cat header.html > $@

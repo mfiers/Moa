@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.6
+#!/usr/bin/env python
 
 import os
 import sys
@@ -52,16 +52,26 @@ def linkify(cwd):
         return cwd
 
     ls = []
-    ls.append("<div class='moaBreadCrumb'><a href='%s'>%s</a></div>" % (webRoot, dataRoot))
-    
+
     pathUntilNow = webRoot
     steps =  cwd[len(dataRoot)+1:].split('/')
+
+    if len(steps) == 1:
+        firstCrumbClass = 'moaBreadCrumb moaBreadCrumbActive'
+    else:
+        firstCrumbClass = 'moaBreadCrumb'
+
+    ls.append("<div class='%s' onclick='window.location.replace(\"%s\");'>%s</div>" % (
+        firstCrumbClass, webRoot, 'root'))
+        
+    
     if len(steps) > 2:
         for r in steps[:-2]:
             pathUntilNow += '/' + r
-            ls.append("<div class='moaBreadCrumb'><a href='%s'>%s</a></div>" % (pathUntilNow, r))
+            onclick = 'window.location.replace("%s")' % pathUntilNow
+            ls.append("<div class='moaBreadCrumb' onclick='%s'>%s</div>" % (onclick, r))
     if len(steps) > 1:
-        ls.append("<div class='moaActiveBreadCrumb'>%s</div>" % steps[-2])
+        ls.append("<div class='moaBreadCrumb moaBreadCrumbActive'>%s</div>" % steps[-2])
     return "".join(ls)
 
 print "Content-type: text/html"
@@ -70,27 +80,11 @@ print
 moacwd = getLocalDir()
 linkcwd = linkify(moacwd)
 
-HEADERTEMPLATE = \
-"""
-<html>
-  <head><title>Index of %(moacwd)s</title></head>
-  <link rel=stylesheet href="/moa/moa.css" type="text/css" media=screen>
-  <body>
-    <div class='moaHeader'>
-      <div class='moaLogo'>
-        <img src='/moa/images/moa_logo_smaller.png'>
-      </div>
-	  <div class='moaBreadCrumbs'>
-          %(linkcwd)s
-	  </div>
-      <div class='moaInfo'>
-        %(moaInfo)s
-      </div>
-      <div style='clear: both;'></div>
-    </div>
-"""
+
+HEADERTEMPLATE = open('headerTemplate.html').read()
 
 if not moa.info.isMoaDir(moacwd):
+    status = 'notmoa'
     moaInfo = """
     <b>This directory does not contain a Moa job</b>
 	""" % locals()
@@ -100,12 +94,16 @@ if not moa.info.isMoaDir(moacwd):
 status = moa.info.status(moacwd)
 template = moa.info.template(moacwd)
 jobTitle = moa.info.getTitle(moacwd)
+allinfo = moa.info.info(moacwd)
 
 moaInfo = """
-  <table>
-    <tr><td colspan='2'><b>%(jobTitle)s</b></td> </tr>
-    <tr><td colspan='2'>template: %(template)s, status: %(status)s</td> </tr>
-  </table>
+<div class='moaTitleBar'>
+ <div class='moaTemplate'>%(template)s</div>
+ <div class='moaTitle'>
+    %(jobTitle)s
+  </div>
+  <div class='moaStatus'>job is: %(status)s</div>
+</div>
 """ % locals()
  
 print HEADERTEMPLATE % locals()

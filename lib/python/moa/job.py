@@ -75,6 +75,7 @@ def list():
         >>> 'gather' in result
         True
     """
+    l.critical("moa.job.list")
     r = []
     for path, dirs, files in os.walk(TEMPLATEDIR):
         relPath = path.replace(TEMPLATEDIR, '')
