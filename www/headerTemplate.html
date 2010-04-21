@@ -1,0 +1,48 @@
+<html>
+  <head><title>Index of %(moacwd)s</title>
+<!--  <link type="text/css" href="/moa/css/flick/jquery-ui-1.8.custom.css" rel="stylesheet" />	-->
+  <link rel='stylesheet' href='/moa/css/moa.css' type='text/css' media='screen'>
+  <link rel='stylesheet' href='/moa/css/moa.table.css' type='text/css' media='screen'>
+  
+  <script type="text/javascript" src="/moa/js/jquery.js"></script>
+  <script type="text/javascript" src="/moa/js/jquery.dataTables.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+       //Remove the load-in-progress window
+       $("#loadInProgress").detach();
+       //Extract the header 
+       var fr = $("table:first > tbody > tr:first");
+       fr.detach();
+       //Remove the first row (link to parent dir)
+       $("table:first > tbody > tr:first").remove()
+       $("table:first").css("width", "100%%");
+       $("table:first").prepend('<thead></thead>');
+       $("table:first > thead").append(fr);
+       $("table:first").dataTable({
+          "sDom": '<"top"pi>rt<"bottom"fl<"clear">',
+          "sPaginationType": "full_numbers",
+        });
+    });
+  </script>
+  </head>
+  <body>
+      <div class='moaHeader'>
+        <div class='moaLogo'>
+          <img src='/moa/images/moa_logo_%(status)s.png' >
+        </div>
+        <div class='moaInfo'>
+          %(moaInfo)s
+        </div>
+        <div style='clear: both;'></div>
+        <div class='moaBreadCrumbs'>
+          %(linkcwd)s
+          <div style='clear: both;'></div>
+        </div>
+        <div style='clear: both;'></div>
+      </div>
+      <div id='loadInProgress'>
+        <img id='moaProgress' src='/moa/images/moa_progress.gif'><br>
+        <b>Loading data<br>please be patient</b>
+        <div style='clear: both;'></div>
+      </div>
+
