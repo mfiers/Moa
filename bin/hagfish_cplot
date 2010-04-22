@@ -19,11 +19,12 @@ import subprocess
 parser = optparse.OptionParser()
 parser.add_option('-v', dest='verbose', action="count", 
                   help='Show debug information')
-parser.set_defaults(ntPerLine=1e5)
+parser.set_defaults(ntPerLine=1e6)
 parser.add_option('-n', dest='ntPerLine',
                   help='no nucleotides per band')
-parser.add_option('-S', dest='seqId',
-                  help='Sequence Id')
+parser.add_option('-i', dest='inputFile',
+                  help='input file with the coverage data (npz, if not specified, '+
+                  'the input file name will be inferred from the sequence Id')
 parser.add_option('-l', dest='log', action='store_true',
                   help='take the log10 of the coverage')
 parser.add_option('-s', dest='start',
@@ -34,10 +35,12 @@ parser.add_option('--ymax', dest='ymax',
                   help='Max value for the y axis')
 parser.add_option('-o', dest='outfile',
                   help='Output file name')
+parser.add_option('-f', dest='format', action='append',
+                  help='Output format (may be defined more than once)')
 
 options, args = parser.parse_args()
 
-inputFile = args[0]
+seqId = args[0]
 
 l = logging.getLogger('hagfish')
 handler = logging.StreamHandler()
@@ -63,16 +66,20 @@ def quant(x, w):
     
 if __name__ == '__main__':
 
-    if options.seqId:
-        seqId = options.seqId
-    else:
-        seqId = os.path.basename(inputFile)\
-                .replace('.coverage.npz', '')\
-                .replace('.combined', '')\
-                .replace('.npz', '')
+    # if options.seqId:
+    #     seqId = options.seqId
+    # else:
+    #     seqId = os.path.basename(inputFile)\
+    #             .replace('.coverage.npz', '')\
+    #             .replace('.combined', '')\
+    #             .replace('.npz', '')
 
     l.info("and I'm calling this sequence: %s" % seqId)
-    
+    if options.inputFile:
+        inputFile = options.inputFile
+    else:
+        inputFile = os.path.join('combined', 
+                                 '%s.combined.coverage.npz' % seqId)
     data = np.load(inputFile)
     r_ok = data['r_ok']
     r_high = data['r_high']
@@ -86,6 +93,7 @@ if __name__ == '__main__':
         pStart = 0
     if options.end:
         pEnd = int(float(options.end))
+        if pEnd > seqLen: pEnd = seqLen
     else:
         pEnd = seqLen
 
@@ -96,7 +104,6 @@ if __name__ == '__main__':
         ntPerLine = plotLen
 
     l.info("nucleotides per line: %d" % ntPerLine)
-
 
     l.info("Plotting from %d to %d (%d nt)" % (
         pStart, pEnd, plotLen))
@@ -113,7 +120,9 @@ if __name__ == '__main__':
     if options.ymax:
         maxY = int(options.ymax)
     else:
-        maxY = quant(r_all, 0.80)
+        maxY1 = quant(r_all[pStart:pEnd], 0.90)
+        maxY2 = quant(r_ok[pStart:pEnd], 0.90)
+        maxY = min(maxY1, maxY2 * 2)
     minY = 0
     
     r_x = np.arange(0, seqLen, dtype="int")
@@ -179,9 +188,16 @@ if __name__ == '__main__':
         
         yAx = ax.get_yaxis()
         yAx.set_ticks(range(100, maxY, 200))
-        
+
     if options.outfile:            
-        plt.savefig(options.outfile)
+        outFileName = options.outfile
     else:
-        plt.savefig('%s.c.png' % (seqId))
+        outFileName = seqId
+
+    if options.start or options.end:
+        outFileName += "_%d_%d" % (pStart, pEnd)
+
+    for f in options.format:
+        plt.savefig('%s.%s' % (outFileName, f))
+
  

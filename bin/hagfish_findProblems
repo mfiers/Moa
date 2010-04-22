@@ -1,0 +1,129 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import string
+
+import numpy as np
+
+import logging
+import optparse
+
+## Arguments: General options 
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+
+parser.set_defaults(window=20)
+parser.add_option('-w', dest='window', type="int",
+                  help='window size')
+
+parser.set_defaults(cutoff=20)
+parser.add_option('-c', dest='cutoff', type="int",
+                  help='coverage cutoff, if the average coverage ' + 
+                  'is below this value, we assume something is going on')
+
+parser.set_defaults(nsallowed = 0.01)
+parser.add_option('-n', dest='nsallowed', type='float',
+                  help = 'fraction of Ns allowd in a problem region for it ' +
+                  'to be reported')
+
+options, args = parser.parse_args()
+
+seqId = args[0]
+
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+def error(message):
+    l.critical(message)
+    sys.exit(-1)
+
+if __name__ == '__main__':
+
+    l.info('Processing %s' % seqId)
+
+    coverageFile = os.path.join(
+        'combined', 
+        '%s.combined.coverage.npz' % seqId)
+
+    gapFile = os.path.join(
+        'gaps', 
+        '%s.gaps.npz' % seqId)
+
+    l.info('loading coverage data')
+    cData = np.load(coverageFile)
+
+    l.info('loading gap data')
+    gData = np.load(gapFile)
+    
+    r_ok = cData['r_ok']
+    gaps = gData['gaps']
+    seqLen = len(r_ok)
+    l.info('loaded info on %d nt' % len(r_ok))
+    if not len(gaps) == len(r_ok):
+        error("gaps & coverage data have different lenghts")
+
+    #moving window
+    windowSize = options.window
+    cutoff = options.cutoff
+    start = 0
+    while start < seqLen - windowSize:
+        end = start + windowSize
+        lc = np.median(r_ok[start:end])
+        if lc < cutoff:
+            #try to extend:
+            #we assume we only have to extend to the right
+            newEnd  = end
+            newStart = start
+            while True:
+                newEnd += windowSize / 2
+                newStart += windowSize / 2
+                lc = np.median(r_ok[newStart:newEnd])
+                #no terminal regions
+                if newEnd >= seqLen: 
+                    sys.exit()
+                if lc >= cutoff:
+                    break
+
+            #do not report a terminal regions with a low coverage
+            #this is to be expected
+            if start == 0:
+                start = newEnd
+                continue
+
+            noNs = np.sum(gaps[start:newEnd])
+            nfrac = noNs / float(newEnd - start)
+            if nfrac > options.nsallowed:
+                start = newEnd
+                continue
+            print "\t".join(
+                map(str, 
+                    [seqId, 'hagfish', 'HPAE', start, newEnd, 
+                     (newEnd - start) - noNs, '.', '.', '.', 
+                     ";".join(
+                            ['ID=HPAE_%s_%s' % (seqId, start),
+                             'Parent=%s' % seqId,
+                             'noNs=%d' % noNs,
+                             'fracNs=%.2f' % nfrac] )
+                     ]))
+
+            start = newEnd
+        else:
+            start += windowSize / 2
+        

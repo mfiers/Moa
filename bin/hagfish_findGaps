@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import string
+
+import numpy as np
+
+import logging
+import optparse
+
+import Queue
+import threading
+
+## Arguments: General options 
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+
+
+options, args = parser.parse_args()
+
+inputFiles = args
+
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+def error(message):
+    l.critical(message)
+    sys.exit(-1)
+
+def fastaRead(inputFile):
+
+    with open(inputFile) as F:
+
+        seqId, seq = "", []
+        line = F.readline().strip()
+        if not line[0] == '>': 
+            error("invalid fasta format %s" % inputFile)
+
+        seqId = line[1:].split()[0]
+        for line in F:
+            if line[0] == '>':
+                yield seqId, "".join(seq)
+                seqId = line[1:].split()[0]
+                seq = []
+            else:
+                seq.append(line.strip().lower())
+        #yield the last pair
+        if seq:
+            yield seqId, "".join(seq)
+
+TTABLE = string.maketrans(
+    'nabcdefghijklmopqrstuvwxyz', 
+    '10000000000000000000000000')    
+
+def gapfinder():
+    while True:
+        seqId, seq = seqPool.get()
+        l.info("gapfinding in %s" % seqId)
+        seq = seq.translate(TTABLE)
+        gaps = np.array(map(int, list(seq)))
+        l.info("discovered %d Ns in %s" % (
+                len(np.nonzero(gaps)[0]),
+                seqId))
+        outputfile = os.path.join('gaps', '%s.gaps' % seqId)
+        np.savez(outputfile, gaps = gaps)
+        seqPool.task_done()
+
+    
+if __name__ == '__main__':
+
+    if not os.path.exists('gaps'):
+        os.mkdir('gaps')
+
+    seqPool = Queue.Queue()    
+
+    #start n threads
+    for x in range(8):
+        l.info("starting thread %d" % x)
+        t = threading.Thread(target=gapfinder)
+        t.setDaemon(True)
+        t.start()
+
+    for inputFile in inputFiles:
+        l.info('start processing %s' % inputFile)
+        for seqId, seq in fastaRead(inputFile):
+            l.info("loaded %s (%d nt)" % (seqId, len(seq)))
+            seqPool.put((seqId, seq))
+
+    seqPool.join()

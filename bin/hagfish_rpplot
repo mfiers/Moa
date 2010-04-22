@@ -24,6 +24,9 @@ parser.add_option('-s', dest='start',
                   help='Start position (nt) of the plot')
 parser.add_option('-e', dest='end',
                   help='End position (nt) of the plot')
+parser.add_option('-F', dest='flank',
+                  help='No of flanking nt to add to the plot')
+
 parser.add_option('--dpi', dest='dpi',
                   help='DPI of the plot')
 
@@ -33,8 +36,9 @@ parser.add_option('--ymin', dest='ymin',
                   help='Min value for the y axis')
 parser.add_option('-o', dest='outfile',
                   help='Output file name')
-parser.set_defaults(format='png')
-parser.add_option('-f', dest='format',
+
+parser.set_defaults(format=['png'])
+parser.add_option('-f', dest='format', action='append',
                   help='Output format (pdf, ps, svg, png)')
 
 options, args = parser.parse_args()
@@ -86,6 +90,10 @@ if __name__ == '__main__':
     seqLen = 0
 
     combCovData = os.path.join('combined', seqId + '.combined.coverage.npz')
+    gapData = os.path.join('gaps', seqId + '.gaps.npz')
+
+    gaps = np.load(gapData)['gaps']
+
     #load the combined coverage plot
     ccov = np.load(combCovData)
     r_ok = ccov['r_ok']
@@ -96,12 +104,17 @@ if __name__ == '__main__':
     seqLen =  len(r_ok)
     r_x = np.arange(0, seqLen, dtype="int")
 
+    if options.flank:
+        flank = int(float(options.flank))
+    else: 
+        flank = 0
+
     if options.start:
-        pStart = int(float(options.start))
+        pStart = max(0, int(float(options.start)) - flank)
     else:
          pStart = 0
     if options.end:
-         pEnd = min(seqLen, int(float(options.end)))
+         pEnd = min(seqLen, int(float(options.end))+flank)
     else:
         pEnd = seqLen
 
@@ -112,36 +125,51 @@ if __name__ == '__main__':
     mpl.rcParams['xtick.labelsize'] = 'xx-small'
     mpl.rcParams['ytick.labelsize'] = 'xx-small'
 
-    fig = plt.figure(figsize=(10,2))
+    fig = plt.figure(figsize=(10,4))
     fig.subplots_adjust(0.05,0.1,0.95,0.9)
     ax1 = fig.add_subplot(111)
 
     r_okhalf = 0.5 * r_ok
     r_lowok = -( r_okhalf + r_low)
     r_highok = r_okhalf + r_high
-    maxY = max(np.max(r_lowok), np.max(r_highok))
+    maxY = max(
+        np.max(r_lowok[pStart:pEnd]), 
+        np.max(r_highok[pStart:pEnd]))
 
+
+    #GAPS
+    ax1.fill_between(
+        r_x[pStart:pEnd],
+        gaps[pStart:pEnd] * (-maxY),
+        gaps[pStart:pEnd] * (maxY),
+        color='#666666')
+
+    #LOW
     ax1.fill_between(
         r_x[pStart:pEnd],
         -1 * r_okhalf[pStart:pEnd], 
         r_lowok[pStart:pEnd],
-        color="#8888ff")
+        color="#1D1AB2")
+    #OK
     ax1.fill_between(
         r_x[pStart:pEnd],
         -r_okhalf[pStart:pEnd],
         r_okhalf[pStart:pEnd],
-        color="#88ff88")
+        color="#62E200")
+    #HIGH
     ax1.fill_between(
         r_x[pStart:pEnd],
         r_okhalf[pStart:pEnd],
         r_highok[pStart:pEnd],
-        color="#ff8888")
+        color="#E60042")
 
+    ax1.set_ylim(-maxY * 2, maxY)
     ax = ax1.twinx()
-    ax.set_ylim(-maxY, maxY)
+
 
     l.info("processing %s (%d nt long)" % (seqId, seqLen))
     inputFileCount = 0
+    maxY, minY = 0,0
     l.info("start reading & plotting te readpairs")
     for bamBase in os.listdir('readpairs'):
         inputFile = os.path.join('readpairs', bamBase, seqId + '.readpairs.npz')
@@ -165,14 +193,18 @@ if __name__ == '__main__':
         #normalized insert sizes for this dataset
         inserts = (stop2 - start1) - top
         
-        maxY = max(max(inserts), -min(inserts))
+        maxY = max(maxY, max(inserts))
+        minY = min(minY, min(inserts))
         
         def ffcol(i):
+            #LOW
             if i < stats['left']:
-                return "#0000aa"
+                return "#0B0974"
+            #HIGH
             if i > stats['right']:
-                return "#aa0000"
-            return "#00aa00"
+                return "#95002B"
+            #OK
+            return "#409300"
 
         FF=np.vectorize(ffcol)
         colors = FF(stop2 - start1)
@@ -186,31 +218,34 @@ if __name__ == '__main__':
                  
         #ax.quiver(stop2, inserts, 0.5 * (start1 - stop2), inserts*1.25, colors,
         #          headwidth=1, headlength=1, width=0.001, cmap=my_cmap)
-        ax.set_xlim(pStart, pEnd)
-        ax.set_ylim(-maxY, maxY)
+    ax.set_xlim(pStart, pEnd)
+    maxY = max(maxY, -minY)
+    #ax.set_ylim(-maxY, maxY * 2)
 
     if options.ymin and options.ymax:
         ax.set_ylim(int(options.ymin), int(options.ymax))
     elif options.ymin:
-        ax.set_ylim(int(options.ymin), None)
+        ax.set_ylim(int(options.ymin), 20000)
     elif options.ymax:
-        ax.set_ylim(None, int(options.ymax))
-
+        ax.set_ylim(-10000, int(options.ymax))
+    else:
+        ax.set_ylim(-10000, 20000)
 
     if options.outfile:            
         outName = options.outfile
     else:
-        outName = '%s.rp.%s' % (
-            seqId, options.format)
+        outName = seqId
+        
+    if options.start or options.end:
+        outName += '_%d_%d' % (pStart, pEnd)
 
     if options.dpi:
         dpi = int(options.dpi)
     else:
         dpi = None
 
-
-    
-    plt.savefig('%s' % (outName), dpi=dpi)
+    for format in options.format:
+        plt.savefig('%s.rp.%s' % (outName, format), dpi=dpi)
 
         
 

@@ -18,6 +18,8 @@ parser.add_option('-v', dest='verbose', action="count",
                   help='Show debug information')
 parser.add_option('-x', dest='limit', type="int",
                   help='Limit the number of pairs to read per input file')
+
+
 parser.add_option('--skip_read' , dest='skipRead', action="store_true",
                   help='Skip reading the BAM files, read the parsed BAM files ' + 
                   'directly from disk')
@@ -30,6 +32,11 @@ parser.add_option('--skip_coverage' , dest='skipCoverage', action="store_true",
 parser.add_option('--skip_combine' , dest='skipCombine', action="store_true",
                   help='Skip combining the coverate plots')
 
+parser.set_defaults(maxInsert='20e4')
+parser.add_option('--max', dest='maxInsert', 
+                   help='max insert size to consider while creating the coverage plots')
+
+parser.set_defaults(minLen='1e4')
 parser.add_option('--minLen', dest='minLen',
                   help='Minimal sequence length - ignore sequence shorter than ' +
                   'this length')
@@ -63,9 +70,27 @@ def runReturn(cl):
     return run(cl).communicate()[0].split('\n')
 
 def getSequenceInfo(inputFile):
+
+    if not os.path.exists('seqInfo'):
+        os.mkdir('seqInfo')
+
     minSeqLen = int(float(options.minLen))
     seqInfo = {}
     l.debug("get sequence info from %s" % inputFile)
+
+
+    bamBase = os.path.basename(inputFile).replace('.bam', '')
+    seqInfoFile = os.path.join('seqInfo', '%s.seqinfo' % bamBase)
+
+    # see if we can load a pre-prepared seqInfo file - this is a lot faster than
+    # going through samtools.
+    if os.path.exists(seqInfoFile):
+        l.info("Reading cached seqInfo for %s" % bamBase)
+        with open(seqInfoFile) as F:
+            seqInfo = pickle.load(F)
+        return seqInfo
+                             
+    # nope, use samtools, be patient
     for line in runReturn('samtools view -H %s' % inputFile):
         line = line.strip()
         if not line: continue
@@ -79,6 +104,11 @@ def getSequenceInfo(inputFile):
                 if seqInfo[seqId]['length'] != seqLen:
                     raise(Exception("problem with seqlen"))
                 seqInfo[seqId]['seenIn'].append(inputFile)
+
+    #write a seqinfo file to disk - for a later call
+    with open(seqInfoFile, 'w') as F:
+        pickle.dump(seqInfo, F)
+
     return seqInfo
     
 def readBAM(fileName):
@@ -210,12 +240,16 @@ def parseBam(seqInfo, inputFileName):
     if not limit:
         limit = 1e18
 
+    maxInsert  = int(float(options.maxInsert))
+
     #start processing bam file
     i = 0
     for seqid, start1, stop1, start2, stop2 in readBAM(inputFileName):
         i += 1
         if i > limit: break
         if i % int(1e6) == 0: l.info("%d reads processed" % i)
+
+        if stop2-start1 > maxInsert: continue
 
         readPairs[seqid]['start1'].append(start1)
         readPairs[seqid]['stop1'].append(stop1)
@@ -260,11 +294,16 @@ def normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats):
     if not os.path.exists(os.path.join('coverage', bamBase)):
         os.makedirs(os.path.join('coverage', bamBase))
 
+    covPlotCount = 0
     for seqId in seqInfo.keys():
+        covPlotCount += 1
+        if covPlotCount % 500 == 0:
+            l.debug("Calculated %d coverage plots (startin %s now)" % seqId)
 
-        l.info("start calculating coverage plots for %s" % seqId)
+        l.debug("start calculating coverage plots for %s" % seqId)
 
         rp = readPairs[seqId]
+
         seqLen = seqInfo[seqId]['length']
 
         l.debug("create coverage plot arrays")
@@ -283,6 +322,7 @@ def normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats):
                 r_high[a:b] += 1
             else:
                 r_ok[a:b] += 1
+
         FF=np.vectorize(ff)
         l.debug("Start calculating coverage plots for %d readpairs" % len(rp['start1']))
         if len(rp['start1']) > 0:
@@ -307,13 +347,21 @@ def readBamDataFromDisk(seqInfo, bamBase):
         rp = {}
         datafile = os.path.join('readpairs', bamBase, seqId + '.readpairs.npz')
         data = np.load(datafile)
-        rp['start1'] = data['start1']
-        rp['stop1'] = data['stop1']
-        rp['start2'] = data['start2']
-        rp['stop2'] = data['stop2']
+
+        #filter out those readpairs that are below a cutoff length
+        maxInsert  = int(float(options.maxInsert))
+        goodPairs = np.less_equal(data['stop2'] - data['start1'], maxInsert)
+
+        rp['start1'] = np.extract(goodPairs, data['start1'])
+        rp['stop1'] = np.extract(goodPairs, data['stop1'])
+        rp['start2'] = np.extract(goodPairs, data['start2'])
+        rp['stop2'] = np.extract(goodPairs, data['stop2'])
         
-        l.info('%s records from %s' % (rp['start1'].shape, seqId))
+        noRecs = rp['start1'].shape[0]
+        if noRecs > 0:
+            l.info('%s records from %s' % (noRecs, seqId))
         readPairs[seqId] = rp
+
     return readPairs
 
 def readStatsFromDisk(bamBase):
