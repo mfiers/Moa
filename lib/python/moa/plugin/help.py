@@ -43,5 +43,3 @@ def showHelp(wd, options, args):
         sys.exit(-1)
     moa.runMake.go(wd, target = 'help', verbose = options.verbose)
     
-
-

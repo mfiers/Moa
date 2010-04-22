@@ -172,48 +172,48 @@ table.display td.center {
  * DataTables row classes
  */
 table.display tr.odd.gradeA {
-	background-color: #ddffdd;
+	background-color: #D6E4E1;
 }
 
 table.display tr.even.gradeA {
-	background-color: #eeffee;
+	background-color: #FFFFFF;
 }
 
 table.display tr.odd.gradeA {
-	background-color: #ddffdd;
+	background-color: #BFCFCC;
 }
 
 table.display tr.even.gradeA {
-	background-color: #eeffee;
+	background-color: #FFFFFF;
 }
 
 table.display tr.odd.gradeC {
-	background-color: #ddddff;
+	background-color: #D6E4E1;
 }
 
 table.display tr.even.gradeC {
-	background-color: #eeeeff;
+	background-color: #FFFFFF;
 }
 
 table.display tr.odd.gradeX {
-	background-color: #ffdddd;
+	background-color: #D6E4E1;
 }
 
 table.display tr.even.gradeX {
-	background-color: #ffeeee;
+	background-color: #FFFFFF;
 }
 
 table.display tr.odd.gradeU {
-	background-color: #ddd;
+	background-color: #D6E4E1;
 }
 
 table.display tr.even.gradeU {
-	background-color: #eee;
+	background-color: #FFFFFF;
 }
 
 
 tr.odd {
-	background-color: #E2E4FF;
+	background-color: #BFCFCC;
 }
 
 tr.even {
@@ -301,11 +301,11 @@ td.details {
 }
 
 table.display tr.even.row_selected td {
-	background-color: #B0BED9;
+	background-color: #9DB2B1;
 }
 
 table.display tr.odd.row_selected td {
-	background-color: #9FAFD1;
+	background-color: #9DB2B1;
 }
 
 
@@ -314,7 +314,7 @@ table.display tr.odd.row_selected td {
  */
 /* For the standard odd/even */
 tr.odd td.sorting_1 {
-	background-color: #D3D6FF;
+	background-color: #9DB2B1;
 }
 
 tr.odd td.sorting_2 {
@@ -326,7 +326,7 @@ tr.odd td.sorting_3 {
 }
 
 tr.even td.sorting_1 {
-	background-color: #EAEBFF;
+	background-color: #BFCFCC;
 }
 
 tr.even td.sorting_2 {
@@ -449,7 +449,7 @@ tr.even.gradeU td.sorting_3 {
  * Row highlighting example
  */
 .ex_highlight #example tbody tr.even:hover, #example tbody tr.even td.highlighted {
-	background-color: #ECFFB3;
+	background-color: #8C9C9A;
 }
 
 .ex_highlight #example tbody tr.odd:hover, #example tbody tr.odd td.highlighted {

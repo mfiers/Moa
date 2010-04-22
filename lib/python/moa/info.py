@@ -72,7 +72,6 @@ def getMoaBase():
     """
     return MOABASE
 
-
 def isMoaDir(d):
     """
     Is directory d a 'moa' directory?
@@ -206,8 +205,10 @@ def template(wd):
         raise NotAMoaDirectory(wd)
     with open(os.path.join(wd, 'Makefile')) as F:
         for line in F.readlines():
-            if 'include $(MOABASE)/template' in line \
-               and (not '/template/moa/' in line):
+            if 'include' in line \
+                    and 'MOABASE' in line \
+                    and '/template/' in line \
+                    and (not '/template/moa/' in line):
                 template = line.strip().split('/')[-1].replace('.mk', '')
                 return template
             if '$(call moa_load,' in line:

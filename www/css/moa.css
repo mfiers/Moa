@@ -27,6 +27,21 @@ a:active { color: #A31E39; }
 
 }
 
+.tooltip {
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: 3;
+   display: none;
+   background-color: #D6E4E1;
+   -moz-border-radius: 6px;                                                                                                                                                                                                                 
+   -webkit-border-radius: 6px;
+   border-radius: 6px;     
+   padding: 5px;
+   color: black;
+   border: 1px solid #485C5A;
+}
+
 .moaInfo {
 	margin: 0px;
 	margin-left: 100px;

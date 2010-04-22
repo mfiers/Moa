@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.6
 
 import os
 import sys
@@ -104,6 +104,9 @@ moaInfo = """
   </div>
   <div class='moaStatus'>job is: %(status)s</div>
 </div>
+<pre>
+%(allinfo)s
+</pre>
 """ % locals()
  
 print HEADERTEMPLATE % locals()
