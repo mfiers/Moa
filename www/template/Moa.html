@@ -1,0 +1,23 @@
+<%inherit file="base.html"/>
+
+<%def name="moaTemplateInfo()">
+<div class='moaTemplateDescription jqmWindow' id="dialog">
+<a href='#' class='jqmClose'>Close</a>
+<br>
+${description}
+</div>
+</%def>
+
+
+<%def name="infoBlock()">
+<div class='moaTitleBar'>
+  <div class='moaTemplate'>${template}</div>
+  <div class='moaTitle'>
+    ${jobTitle} 
+  </div>
+  <div class='moaStatus'>job is: ${status}</div>
+</div>
+
+${moaTemplateInfo()}
+
+</%def>

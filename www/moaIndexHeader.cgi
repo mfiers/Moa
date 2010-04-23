@@ -4,9 +4,11 @@ import os
 import sys
 import site
 
+from mako.template import Template
+from mako.lookup import TemplateLookup
+
 import cgi
 import cgitb; cgitb.enable()  # for troubleshooting
-
 
 if not os.environ.has_key('MOABASE'):
     raise Exception("MOABASE is undefined")
@@ -40,74 +42,36 @@ def getLocalDir():
         moadir = moadir[:moadir.index('?')]
     return moadir
 
-def linkify(cwd):
-    """
-    Create a html path with links to the respective directories
-
-    """
-    dataRoot = getDataRoot()
-    webRoot = getWebRoot()
-
-    if cwd.find(dataRoot) != 0:
-        return cwd
-
-    ls = []
-
-    pathUntilNow = webRoot
-    steps =  cwd[len(dataRoot)+1:].split('/')
-
-    if len(steps) == 1:
-        firstCrumbClass = 'moaBreadCrumb moaBreadCrumbActive'
-    else:
-        firstCrumbClass = 'moaBreadCrumb'
-
-    ls.append("<div class='%s' onclick='window.location.replace(\"%s\");'>%s</div>" % (
-        firstCrumbClass, webRoot, 'root'))
-        
-    
-    if len(steps) > 2:
-        for r in steps[:-2]:
-            pathUntilNow += '/' + r
-            onclick = 'window.location.replace("%s")' % pathUntilNow
-            ls.append("<div class='moaBreadCrumb' onclick='%s'>%s</div>" % (onclick, r))
-    if len(steps) > 1:
-        ls.append("<div class='moaBreadCrumb moaBreadCrumbActive'>%s</div>" % steps[-2])
-    return "".join(ls)
-
-print "Content-type: text/html"
-print
-
+d = {'MOABASE' : MOABASE}
 moacwd = getLocalDir()
-linkcwd = linkify(moacwd)
+d['requestUri'] = os.environ.get('REQUEST_URI')
+d['moacwd'] = moacwd
+d['status'] = 'notmoa'
+d['dataRoot'] = getDataRoot()
+d['webRoot'] = getWebRoot()
 
+templateLookup = TemplateLookup(
+    directories=['/'],
+    module_directory='/tmp/mako_modules' )
 
-HEADERTEMPLATE = open('headerTemplate.html').read()
-
+#Fire off a generic page without any information if this is not a Moa dir
 if not moa.info.isMoaDir(moacwd):
-    status = 'notmoa'
-    moaInfo = """
-    <b>This directory does not contain a Moa job</b>
-	""" % locals()
-    print HEADERTEMPLATE % locals()
+    pageTemplate =  Template(filename='%s/www/template/notMoa.html' % MOABASE,
+                             lookup=templateLookup)
+    print pageTemplate.render(**d)
     sys.exit()
 
-status = moa.info.status(moacwd)
-template = moa.info.template(moacwd)
-jobTitle = moa.info.getTitle(moacwd)
-allinfo = moa.info.info(moacwd)
+#ok, this must be a moa directory: gather information
 
-moaInfo = """
-<div class='moaTitleBar'>
- <div class='moaTemplate'>%(template)s</div>
- <div class='moaTitle'>
-    %(jobTitle)s
-  </div>
-  <div class='moaStatus'>job is: %(status)s</div>
-</div>
-<pre>
-%(allinfo)s
-</pre>
-""" % locals()
- 
-print HEADERTEMPLATE % locals()
+d['status'] = moa.info.status(moacwd)
+d['template'] = moa.info.template(moacwd)
+d['jobTitle'] = moa.info.getTitle(moacwd)
+d['allinfo'] = moa.info.info(moacwd)
+d['description'] = d['allinfo'].get('moa_description', '')
+
+pageTemplate =  Template(
+    filename='%s/www/template/Moa.html'% MOABASE,
+    lookup=templateLookup)
+print pageTemplate.render(**d)
+
 

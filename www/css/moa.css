@@ -134,8 +134,7 @@ div#loadInProgress {
 	-moz-border-radius: 6px; 
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
-	background-color: #8C9C9A;
-	layer-background-color: #8C9C9A;
+	background-color: #BFCFCC;
 }
 img#moaProgress {
     padding-top: 20px;

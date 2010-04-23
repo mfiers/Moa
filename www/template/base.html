@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<%def name="infoBlock()">
+Undefined
+</%def>
+
+<%def name="breadCrumbs()">
+<%include file="breadcrumbs.html" />
+</%def>
+
+<%def name="documentready()">
+<%include file="document.ready.js" />
+</%def>
+
+<%def name="loadInProgress()">
+<div id="loadInProgress">
+  <img id="moaProgress" src="/moa/images/moa_progress.gif">
+    <br>
+      <b>Loading data<br>please be patient</b>
+      <div style="clear: both;"></div>
+ </div>
+</%def>
+
+<html>
+  <head><title>Index of ${moacwd}</title>
+
+  <link rel="stylesheet" href="/moa/css/moa.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="/moa/css/moa.table.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="/moa/css/jqModal.css" type="text/css" media="screen">
+
+  <script type="text/javascript" src="/moa/js/jquery.js"></script>
+  <script type="text/javascript" src="/moa/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/moa/js/jqModal.js"></script>
+
+  <script type="text/javascript">
+    ${documentready()}
+  </script>
+  </head>
+  <body>
+      ${self.loadInProgress()}
+
+      <div class="moaHeader">
+        <div class="moaLogo">
+          <img src="/moa/images/moa_logo_${status}.png" >
+        </div>
+        <div class="moaInfo">
+          ${self.infoBlock()}
+        </div>
+        <div style="clear: both;"></div>
+        <div class="moaBreadCrumbs()">
+          ${self.breadCrumbs()}
+          <div style="clear: both;"></div>
+        </div>
+        <div style="clear: both;"></div>
+      </div>
+
