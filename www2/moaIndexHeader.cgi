@@ -56,7 +56,7 @@ templateLookup = TemplateLookup(
 
 #Fire off a generic page without any information if this is not a Moa dir
 if not moa.info.isMoaDir(moacwd):
-    pageTemplate =  Template(filename='%s/www/template/notMoa.html' % MOABASE,
+    pageTemplate =  Template(filename='%s/www2/template/notMoa.html' % MOABASE,
                              lookup=templateLookup)
     print pageTemplate.render(**d)
     sys.exit()
@@ -70,7 +70,7 @@ d['allinfo'] = moa.info.info(moacwd)
 d['description'] = d['allinfo'].get('moa_description', '')
 
 pageTemplate =  Template(
-    filename='%s/www/template/Moa.html'% MOABASE,
+    filename='%s/www2/template/Moa.html'% MOABASE,
     lookup=templateLookup)
 print pageTemplate.render(**d)
 
