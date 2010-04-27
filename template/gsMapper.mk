@@ -20,8 +20,8 @@
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_id = gsmap
-moa_title_gsmap = GSMapper
-moa_description_gsmap = Run the Roche GS Reference mapper
+template_title = GSMapper
+template_description = Run the Roche GS Reference mapper
 
 #variables
 moa_must_define += gsmap_sfffile

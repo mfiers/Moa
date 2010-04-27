@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = gmapdb
-moa_title_gmapdb = gmapdb index builder
-moa_description_gmapdb = Builds gmapdb index from a reference	\
+template_title = gmapdb index builder
+template_description = Builds gmapdb index from a reference	\
   sequence
 
 #variables

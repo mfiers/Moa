@@ -17,9 +17,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-moa_title = Glimmer3
+template_title = Glimmer3
 
-moa_description = Predicts (prokaryotic) using glimmer3.
+template_description = Predicts (prokaryotic) using glimmer3.
 
 moa_id = glimmer3
 

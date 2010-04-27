@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = varscan
-moa_title_varscan = Varscan
-moa_description_varscan = Run VARSCAN to detect snps
+template_title = Varscan
+template_description = Run VARSCAN to detect snps
 
 #variables
 moa_must_define += varscan_input_file

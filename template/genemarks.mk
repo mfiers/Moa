@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-moa_title = geneMarkS
-moa_description = predict genes using geneMarkS 
+template_title = geneMarkS
+template_description = predict genes using geneMarkS 
 moa_id = genemarks
 moa_genemarks_help = Predict genes using geneMarkS
 

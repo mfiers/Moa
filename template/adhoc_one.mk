@@ -16,26 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id = traverse
-template_title = Traverse
-template_description = Do nothing, except be a part in executing full	\
-directory structures
 
-traverse_help = Do nothing - no need to call this. 
-#Include base moa code - does '*:blastn.self' variable checks & generates help
+moa_id=adhoc_one
+template_title = Run an ad-hoc onliner
+template_description = Run an adhoc oneliner - without moa defined input files
 
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moa/core.mk
-endif
+moa_must_define += adhoc_process
+adhoc_one_process_help = The one-liner to execute
+adhoc_one_process_type = string
 
-#in this case we define a default title
-title ?= traverse node
+#########################################################################
+#Include base moa code - does variable checks & generates help
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
+.PHONY: adhoc_one:
+adhoc_one:
+	$e $(adhoc_process)
 
-traverse_main:
-	@echo "Traversing through `pwd`"
-
-traverse_prepare:
-traverse:
-traverse_post:
-traverse_clean:
+.PHONY: adhoc_one_clean:
+adhoc_one_clean: 

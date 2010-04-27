@@ -21,8 +21,8 @@ maintarget: check mummer
 ################################################################################
 # Variable checks & definition & help
 moa_id = clustalw
-moa_title_mummer = clustalw
-moa_description_mummer = Run clustalw on two sets of sequences
+template_title = clustalw
+template_description = Run clustalw on two sets of sequences
 
 #targets
 clustalw_help = run clustalw

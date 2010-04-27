@@ -21,8 +21,8 @@ moa_targets += ncbi
 ncbi_help = Download some data from NCBI
 
 moa_id = ncbi
-moa_title = "Download from NCBI"
-moa_description = Download a set of sequences from NCBI based on a		\
+template_title = "Download from NCBI"
+template_description = Download a set of sequences from NCBI based on a		\
   query string (ncbi_query) and database (ncbi_db). This tempate will	\
   run only once (!), after a succesful run it creates a 'lock' file		\
   that you need to remove to rerun

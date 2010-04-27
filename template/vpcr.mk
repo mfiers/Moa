@@ -18,8 +18,8 @@
 # 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = VPCR
-moa_description = Virtual PCR, based on Bowtie
+template_title = VPCR
+template_description = Virtual PCR, based on Bowtie
 
 moa_id = vpcr
 

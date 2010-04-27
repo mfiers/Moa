@@ -22,8 +22,8 @@ ifndef dont_include_moabase
 endif
 
 moa_id = fq2bq
-moa_title_maq_fasta2bfa = Convert FASTQ to BFQ
-moa_description_maq_fasta2bfa = Converts a FASTQ file to MAQ BFQ	\
+template_title = Convert FASTQ to BFQ
+template_description = Converts a FASTQ file to MAQ BFQ	\
 format.
 
 #variables

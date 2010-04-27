@@ -18,8 +18,8 @@
 # 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = Blast
-moa_description = Wraps BLAST [[Alt90]], the most popular similarity	\
+template_title = Blast
+template_description = Wraps BLAST [[Alt90]], the most popular similarity	\
   search tool in bioinformatics
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)	\
   [[Alt90]] suite of tools

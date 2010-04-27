@@ -18,8 +18,8 @@
 # 
 moa_id = vmatch
 
-moa_title_vmatch = Vmatch
-moa_description_vmatch = Run VMATCH on an set of input files (query) \
+template_title = Vmatch
+template_description = Run VMATCH on an set of input files (query) \
   vs a database index.
 
 #variables

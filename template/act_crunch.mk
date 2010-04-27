@@ -18,8 +18,8 @@
 # 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = Bidirectional best BLAST hit
-moa_description = Discover the bidirectional best blast hit between two \
+template_title = Bidirectional best BLAST hit
+template_description = Discover the bidirectional best blast hit between two \
   sets of sequences
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
   [[Alt90]] suite of tools

@@ -20,8 +20,8 @@
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_id = newbler
-moa_title_newbler = Newbler
-moa_description_newbler = Run a simple, out of the box, newbler		\
+template_title = Newbler
+template_description = Run a simple, out of the box, newbler		\
 assembly.															\
 																	\
 As an extra feature, this template automatically creates uniquely	\

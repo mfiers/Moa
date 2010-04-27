@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_title = Library for uploading data to GBrowse
-moa_description = A library that aids in uploading FASTA and GFF	\
+template_title = Library for uploading data to GBrowse
+template_description = A library that aids in uploading FASTA and GFF	\
   to a Generic Genome Browser database. This template is only to be	\
   used embedded in another template. This library expects that the	\
   following variables are preset; gup_fasta_dir, gup_gff_dir		\

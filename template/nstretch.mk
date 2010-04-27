@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = nstretch
-moa_title_nstretch = Nstretch
-moa_description_nstretch = Run NSTRETCH on an set of input files 
+template_title = Nstretch
+template_description = Run NSTRETCH on an set of input files 
 
 #variables
 moa_must_define += nstretch_input_dir

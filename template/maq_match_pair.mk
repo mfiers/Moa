@@ -22,8 +22,8 @@ ifndef dont_include_moabase
 endif
 
 moa_id = maqpair
-moa_title_maq_fasta2bfa = MAQ paired ends mapper
-moa_description_maq_fasta2bfa = Map paired ends to a reference	\
+template_title = MAQ paired ends mapper
+template_description = Map paired ends to a reference	\
 sequence using MAQ
 
 #variables

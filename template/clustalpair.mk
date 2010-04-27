@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = clustalpair
-moa_title_mummer = clustalw
-moa_description_mummer = Run clustalw on two sets of sequences
+template_title = clustalw
+template_description = Run clustalw on two sets of sequences
 
 #targets
 clustalpair_help = run clustalw

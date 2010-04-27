@@ -16,13 +16,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-maintarget: not doing anything
 
 ################################################################################
 # Help
 moa_id = empty
-moa_title_empty = 
-moa_description_empty = 
+template_title = 
+template_description = 
 
 ################################################################################
 # Variable definition (non obligatory ones)

@@ -18,8 +18,8 @@
 # 
 moa_id = scaf
 
-moa_title_scaf = Scaffolder
-moa_description_scaffolder = Scaffold a set of input files based on a	\
+template_title = Scaffolder
+template_description = Scaffold a set of input files based on a	\
   blast against a reference sequence. This software is written around	\
   bambus
 

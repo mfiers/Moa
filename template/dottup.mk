@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = dottup
-moa_title_dottup = EMBOSS Dottup
-moa_description_dottup = Use dottup (from EMBOSS) to compare two sets			\
+template_title = EMBOSS Dottup
+template_description = Use dottup (from EMBOSS) to compare two sets			\
 of sequences
 
 #targets

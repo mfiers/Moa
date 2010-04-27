@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 
 moa_id = moatest
-moa_title = Unittest template
-moa_description = Not to be used - is used by unitmoatests
+template_title = Unittest template
+template_description = Not to be used - is used by unitmoatests
 
 moatest_help = Do nothing - no need to call this. 
 

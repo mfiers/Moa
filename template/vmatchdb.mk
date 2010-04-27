@@ -22,8 +22,8 @@
 include $(MOABASE)/template/moa/prepare.mk
 
 moa_id = vmatchdb
-moa_title = vmatch database builder
-moa_description = Builds a vmatchdb index from a sequence
+template_title = vmatch database builder
+template_description = Builds a vmatchdb index from a sequence
 
 #variables
 

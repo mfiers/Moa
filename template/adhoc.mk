@@ -22,8 +22,8 @@ $(call moa_fileset_define,adhoc_input,,Input files for adhoc)
 
 # Help
 moa_id=adhoc
-moa_title_adhoc = Run an ad-hoc analysis
-moa_description_adhoc = Run a specified oneliner or script on a set of	\
+template_title = Run an ad-hoc analysis
+template_description = Run a specified oneliner or script on a set of	\
    inputfiles
 
 

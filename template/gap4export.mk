@@ -22,8 +22,8 @@ clean_help = Clean up.
 
 # Help
 moa_id = gap4export
-moa_title_gap4export = Assembly export using gap4
-moa_description_gap4export = Export data from an assembly using gap4
+template_title = Assembly export using gap4
+template_description = Export data from an assembly using gap4
 
 #varables that NEED to be defined
 moa_must_define += ge_input_dir

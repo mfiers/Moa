@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_title = Initalize GBrowse
-moa_description = Initalizes a GBrowse database, including some			\
+template_title = Initalize GBrowse
+template_description = Initalizes a GBrowse database, including some			\
   additional features (extra columns & tables used by other software    \
   developed by the author)
 gup_gffsource = Not used, this is a dummy

@@ -16,16 +16,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_title = GFF from FASTA
-moa_description = Derive GFF from a FASTA file, usually to accompany the 		\
+template_title = GFF from FASTA
+template_description = Derive GFF from a FASTA file, usually to accompany the 		\
 	Sequence for upload to a generic genome browser database.
 moa_fasta2gff_help = Generate GFF from a fasta file
 
 # Help
 moa_id = fasta2gff
-moa_title_fasta2gff = Fasta to gff
-moa_description_fasta2gff = Create gff from a fasta file to accompany upload to \
-  a gbrowse db
 
 #varables that NEED to be defined
 moa_must_define += f2g_gffsource

@@ -22,8 +22,8 @@
 include $(MOABASE)/template/moa/prepare.mk
 
 moa_id = bowtie
-moa_title_bowtie = Bowtie
-moa_description_bowtie = Run BOWTIE on an set of input files (query) \
+template_title = Bowtie
+template_description = Run BOWTIE on an set of input files (query) \
   vs a database index.
 
 #variables

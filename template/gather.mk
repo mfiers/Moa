@@ -21,8 +21,8 @@ clean_help = Remove anything that is not called Makefile or moa.mk
 
 # Help
 moa_id += gather
-moa_title_gather = gather files
-moa_description_gather = gather a set of files and create hardlinks				\
+template_title = gather files
+template_description = gather a set of files and create hardlinks				\
  to. Hardlinks have as advantage that updates are noticed via the				\
  timestamp. Hence, make recognizes them.
 
@@ -100,7 +100,6 @@ gather_prepare:
 		 mkdir $(g_output_dir);													\
 	fi
 
-	
 .PHONY: gather_post
 gather_post:
 
@@ -128,7 +127,7 @@ gather_input_files = \
 .PHONY: gather
 gather: $(addprefix $(CURDIR)/touch/,$(gather_input_files))
 
-	
+
 $(CURDIR)/touch/%: g_target=$(shell echo "$(g_output_dir)/$*" | sed $(g_name_sed))
 $(CURDIR)/touch/%: %
 	$(call echo,gatherer: considering $< - $(g_target))

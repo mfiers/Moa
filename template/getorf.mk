@@ -21,9 +21,9 @@
 #include moabasepre
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = Getorf
+template_title = Getorf
 
-moa_description = Predicts open reading frames using the EMBOSS	\
+template_description = Predicts open reading frames using the EMBOSS	\
   [[emboss]] getorf tool.
 
 moa_prerequisites += The [EMBOSS]() [[emboss]] suite of tools

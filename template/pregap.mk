@@ -23,15 +23,12 @@ moa_main_target: check pregap
 # Definitions
 # targets that the enduser might want to use
 moa_targets += pregap pregap_post clean
-pregap_help = Run pregap
-#pregap_post_help = Check if there is manual (version 1) assembly, and if so, \
-# link the .1 assembly to BACID.z.aux. Else, link the automated assemly to .z.
 clean_help = Clean up.
 
 # Help
 moa_id = pregap
-moa_title_pregap = Pregap
-moa_description_pregap = Run Pregap. Note that running phrap could be a part of this. 
+template_title = Pregap
+template_description = Run Pregap. Note that running phrap could be a part of this. 
 
 # Output definition
 moa_outputs += pregap

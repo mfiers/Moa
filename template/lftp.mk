@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-moa_title = lftp
-moa_description = Use LFTP to download files. This template has two				\
+template_title = lftp
+template_description = Use LFTP to download files. This template has two				\
   modi, one is set 'lftp_mode' to 'mirror' data, in which case both				\
   'lftp_url' and 'lftp_pattern' (default *) are used. The other modus			\
   is 'lftp_mode=get', when one file defined by 'lftp_url' is					\

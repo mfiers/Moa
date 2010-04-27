@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_title = Hadoop Blast
-moa_description = Runs BLAST on a hadoop cluster
+template_title = Hadoop Blast
+template_description = Runs BLAST on a hadoop cluster
 moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)				\
 [[Alt90]] suite of tools and Hadoop.
 moa_id = h_blast

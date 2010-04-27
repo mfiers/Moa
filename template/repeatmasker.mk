@@ -18,8 +18,8 @@
 # 
 moa_id = repm
 
-moa_title_repm = Repmfolder
-moa_description_repmfolder = Repmfold a set of input files based on a	\
+template_title = Repmfolder
+template_description = Repmfold a set of input files based on a	\
   blast against a reference sequence. This software is written around	\
   bambus
 

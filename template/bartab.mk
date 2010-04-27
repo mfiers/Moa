@@ -18,8 +18,8 @@
 # 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = Bartab
-moa_description = BARTAB - a tool to process sff files
+template_title = Bartab
+template_description = BARTAB - a tool to process sff files
 
 moa_id = bartab
 

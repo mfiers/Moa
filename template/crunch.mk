@@ -18,8 +18,8 @@
 # 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = Create ACT crunch files for use with Artemis ACT
-moa_description = Create a crunch file for use with the Artemis ACT \
+template_title = Create ACT crunch files for use with Artemis ACT
+template_description = Create a crunch file for use with the Artemis ACT \
   comparison tool. 
 
 moa_id = crunch

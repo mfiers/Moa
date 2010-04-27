@@ -28,8 +28,8 @@ clean_fasta_help = Cleanup of a FASTA file (in place!)
 
 # Help
 moa_id = clean_fasta
-moa_title_cleanfasta = clean Fasta
-moa_description_cleanfasta = Convert files to unix format and convert all characters \
+template_title = clean Fasta
+template_description = Convert files to unix format and convert all characters \
  that are not an A,C,G,T or N to N. 
 
 # Output definition

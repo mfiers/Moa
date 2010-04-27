@@ -21,9 +21,9 @@
 #include moabasepre
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = Revseq
+template_title = Revseq
 
-moa_description = This Moa template takes a set of      		\
+template_description = This Moa template takes a set of      		\
   input FASTA sequences and determines the reverse    			\
   complement using the EMBOSS revseq utility.
 

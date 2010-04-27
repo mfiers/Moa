@@ -18,8 +18,8 @@
 # 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_title = sffinfo
-moa_description = Roche sffinfor tool - extract information from sff files
+template_title = sffinfo
+template_description = Roche sffinfor tool - extract information from sff files
 
 moa_id = sffinfo
 

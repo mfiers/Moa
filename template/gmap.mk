@@ -18,8 +18,8 @@
 # 
 moa_id = gmap
 
-moa_title_gmap = Gmap
-moa_description_gmap = Run GMAP on an set of input files (query) \
+template_title = Gmap
+template_description = Run GMAP on an set of input files (query) \
   vs a database index.
 
 #variables
