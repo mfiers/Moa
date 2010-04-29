@@ -22,6 +22,7 @@ Functions to retrieve information from Moa directories
 import os
 import re
 import sys
+import time
 import commands
 
 from moa.logger import l
@@ -84,6 +85,11 @@ def isMoaDir(d):
         
     """
     makefile = os.path.join(d, 'Makefile')
+    if not os.access(makefile, os.R_OK):
+        #ok, this might be a moa directory, but
+        #you do not have sufficient permissions
+        return False
+    
     l.debug('isMoaDir: checking %s' % makefile)
     if not os.path.exists(makefile):
         return False
@@ -240,65 +246,65 @@ def getTitle(wd):
     
 def info(wd):
     """
-    Retrieve a lot of information on a job
+    Retrieve a lot of information on a template
 
-    >>> result = info(P_JOB)
+    >>> d =  moa.job.newTestJob(template='adhoc')
+    >>> result = info(d)
     >>> type(result) == type({})
     True
     >>> result.has_key('moa_targets')
     True
-    >>> result.has_key('moa_description')
+    >>> 'clean' in result['moa_targets']
     True
-    >>> try: result2 = info('NOTAMOADIR')
+    >>> result.has_key('template_description')
+    True
+    >>> len(result['template_description']) > 0
+    True
+    >>> try: result2 = info('/NOTMOA')
     ... except NotAMoaDirectory: 'ok!'
     'ok!'
 
-    :param wd: Moa directory to retrieve info from
-    :type wd: String
+    @param wd: Moa directory to retrieve info from
+    @type wd: String
     
-    :raises NotAMoaDirectory: when wd is not a Moa directory or does
+    @raises NotAMoaDirectory: when wd is not a Moa directory or does
        not exists
     
     """
 
     if not isMoaDir(wd):
         raise NotAMoaDirectory(wd)
-    
-    rv = {
-        'parameters' : {}
-        }
+
+    #prepare the output data structure
+    rv = { 'parameters' : {} }
 
     outBaseName = '.moa.%d' % os.getpid()
     l.debug("using %s" % outBaseName)
-    rc = moa.runMake.go(wd,
-        background=False,
-        target='info',
-        verbose=False,
-        captureOut=True,
-        captureOutName = outBaseName)
-    out = moa.runMake.getOutput(wd, outBaseName)
-    #remove the output files
-    moa.utils.removeMoaOutfiles(wd, outBaseName)
+    #get the information from Moa
+    job = moa.runMake.MOAMAKE( wd,
+                               background=False,
+                               stealth = True,
+                               target='info',
+                               verbose=False,
+                               captureOut=True,
+                               captureName = 'tempfile')
+    job.run()
+    out = job.getOutput()
+    job.finish()
     
-    outlines = out.split("\n")
-    while True:
-        if len(outlines) == 0: break
-        line = outlines.pop(0).strip()
+    for line in out.split("\n"):
+        line = line.strip()
         if not line: continue
 
         ls = line.split("\t")
         what = ls[0]
         if len(ls) > 1:
             val = " ".join(ls[1:])
-        else:
-            val = ""
+        else: val = ""
         
-        if what == 'moa_title':
-            rv['moa_title'] = val
-        elif what == 'moa_description':
-            rv[what] = val
-        elif what == 'moa_targets':
+        if what == 'moa_targets':
             rv[what] = val.split()
+                  
         elif what == 'parameter':
             parname = None            
             pob = {}
@@ -319,9 +325,110 @@ def info(wd):
             if pob.get('cardinality') == 'many':
                 pob['value'] = pob.get('value').split()
             rv['parameters'][parname] = pob
+            
+        else:
+            rv[what] = val
+
+    #add some extra information - template creation time
+    template_name = rv['moa_id']
+    template_file = os.path.join(MOABASE, 'template', '%s.mk' % template_name)
+    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(template_file)
+    rv['template_creation_date'] = time.ctime(ctime)
+    rv['template_modification_date'] = time.ctime(mtime)
+
+    #prepare a category ordering
+    cats = {}
+    for pk in rv['parameters'].keys():
+        cat = rv['parameters'][pk]['category']                              
+        if not cats.has_key(cat): cats[cat] = []
+        cats[cat].append(pk)
+    catorder = cats.keys()
+    catorder.sort()
+    if "''" in catorder:
+        catorder.remove('')
+        catorder.insert(0, '')
+    if 'advanced' in catorder:
+        catorder.remove('advanced')
+        catorder.append('advanced')
+    for c in cats.keys():
+        cats[c].sort()
+
+    rv['parameter_category_order'] = catorder
+    rv['parameter_categories'] = cats
+
     return rv
 
+def getErr(wd):
+    """
+    Return the error output of a job
 
+        >>> d =  moa.job.newTestJob(template='adhoc', title='test')
+        >>> #we'r not setting adhoc_input_dir: Should result in an error
+        >>> job = moa.runMake.MOAMAKE(wd=d, verbose=False, captureErr=True)
+        >>> rc = job.run()
+        >>> #check if there really was an error
+        >>> rc > 0
+        True
+        >>> err = getErr(d)
+        >>> len(err) > 0
+        True
+        >>> 'adhoc_input_dir' in err
+        True
+
+    @param wd: Directory (containing a moa job) from which
+      we want to retrieve the moa stderr output
+    @type wd: string
+    @returns: the stderr output of the last Moa run
+    @rtype: string
+    
+    """
+    errFile = os.path.join(wd, 'moa.err')
+
+    if not os.path.exists(errFile):
+        return ""
+
+    if not os.access(errFile, os.R_OK):
+        raise MoaPermissionDenied(errFile)
+
+    l.debug("reading error from %s" % errFile)
+    return open(errFile).read()
+
+def getOut(wd):
+    """
+    Return the job output
+
+        >>> d =  moa.job.newTestJob(template='adhoc_one',
+        ...          title='test job',
+        ...          parameters=['adhoc_one_process=echo konijn'])
+        >>> job = moa.runMake.MOAMAKE(wd=d, verbose=False,
+        ...       captureOut=True, captureErr=True)
+        >>> rc = job.run()
+        >>> rc ==  0
+        True
+        >>> out = getOut(d)
+        >>> len(out) > 0
+        True
+        >>> 'konijn' in out
+        True
+
+    @param wd: Directory (containing a moa job) from which
+      we want to retrieve the moa sdtout output
+    @type wd: string
+    @returns: the stdout output of the last Moa run
+    @rtype: string
+    
+
+    """
+    outFile = os.path.join(wd, 'moa.out')
+
+    if not os.path.exists(outFile):
+        return ""
+
+    if not os.access(outFile, os.R_OK):
+        raise MoaPermissionDenied(outFile)
+
+    l.debug("reading out from %s" % outFile)
+    return open(outFile).read()
     
     
 

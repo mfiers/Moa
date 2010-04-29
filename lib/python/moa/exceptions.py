@@ -24,3 +24,8 @@ class MoaFileError(Exception):
     """Error handling a file """
     def __str__(self):
         return "Moa error handling file"
+
+class MoaPermissionDenied(Exception):
+    """Permission denied - you do not have the rights to perform this opperation """
+    def __str__(self):
+        return "Permission denied"

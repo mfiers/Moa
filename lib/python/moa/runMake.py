@@ -23,8 +23,8 @@ Run GNU Make
 
 import os
 import sys
-
-import optparse
+import time
+import tempfile
 import subprocess
 
 from  moa.logger import l
@@ -32,176 +32,244 @@ import moa.info
 import moa.utils
 from moa.exceptions import *
 
-def _runMake(wd,
-             target = "",
-             makeArgs = None,
-             makefile = "",
-             verbose=True,
-             threads=1,
-             captureOut = False,
-             captureErr = False,
-             captureOutName='moa'
-             ):
+class MOAMAKE:
     """
-    Actually run make
-    
-    @param wd: Working directory
-    @type wd: String
-    @param target: Makefile target to execute
-    @type target: String
-    @param makeArgs: Arguments to pass onto Make
-    @type makeArgs: list of Strings
-    @param verbose: Verbose output
-    @type verbose: Boolean
-    @param captureOut: Capture the output in log files
-    @type captureOut: Boolean
-    @param captureOutName: Basename for the log files that will
-      capture the output
-    @type captureOutName: String
-    @param threads: Number of threads to run Make with
-    @type threads: Integer
-    
+    A wrapper for running Make
+
     """
-    
-    if makeArgs == None:
-        makeArgs = []
-
-    # prepare arguments & environment
-    # we do not want all default rules (since we're not compiling
-    # software)
-    if not '-r' in makeArgs:
-        makeArgs.append('-r')
-
-    if verbose:
-        # used inside the moa templates
-        os.putenv('MOA_VERBOSE', "-v")
-    else:
-        # -s keeps make silent
-        if not '-s' in makeArgs:
-            makeArgs.append('-s')
-
-    if makefile:
-        makeArgs.append("-f")
-        makeArgs.append(makefile)
-
-    # most moa templates do not allow threads, but will use them
-    # in handle threads very well
-    os.putenv('MOA_THREADS', "%s" % threads)
+    def __init__(self,
+                 wd,
+                 target = "",
+                 makeArgs = None,
+                 makefile = "",
+                 background = False,
+                 verbose=False,
+                 stealth=False,
+                 threads=1,
+                 captureOut = None,
+                 captureErr = None,
+                 captureName = 'moa' ):
+        """
+        @param wd: Working directory
+        @type wd: String
+        @param target: Makefile target to execute
+        @type target: String
+        @param makeArgs: Arguments to pass onto Make
+        @type makeArgs: list of Strings
+        @param verbose: Verbose output
+        @type verbose: Boolean
+        @param stealth: Run stealthily - do not write moa.success 
+        @type stealth: Boolean
+        @param captureOut: Capture the output in log files
+        @type captureOut: Boolean
+        @param captureName: Basename for the log files that will
+            capture the output
+        @type captureName: String
+        @param threads: Number of threads to run Make with
+        @type threads: Integer
+        """
         
-    if target and not target in makeArgs: 
-        makeArgs.append(target)
+        self.wd = wd
+        self.target = target
+        self.makefile = makefile
+        self.verbose = verbose
+        self.stealth = stealth
+        self.background = background
+        self.threads = threads
+        self.captureName = captureName
+        self.captureOut = captureOut
+        self.captureErr = captureErr
 
-    FERR = None
-    FOUT = None
-    
-    if captureErr:
-        FERR = open(os.path.join(wd, '%s.err' % captureOutName), 'w')
-        os.putenv('MOAANSI', 'no')
-    if captureOut:
-        FOUT = open(os.path.join(wd, '%s.out' % captureOutName), 'w')
+        #for k in self.__dict__.keys():
+        #    l.critical("%s %s" % (k, self.__dict__[k]))
 
-           
-    l.debug("Starting Make now in %s" % wd)
-    l.debug(" - with arguments: '%s'" % str(makeArgs))
-    p = subprocess.Popen(
-        ['make'] + makeArgs,
-        shell=False,
-        cwd = wd,
-        stdout = FOUT,
-        stderr = FERR)
-    l.debug("Make has started with pid %d" % p.pid)
-    out,err = p.communicate()
-    rc = p.returncode
-    l.debug("Make has finished with rc %d " % rc)
-
-    if rc == 0:
-        l.debug("Succesfully finished make in %s" % (wd))
-    else:
-        if verbose:
-            l.error("Error running make in %s. Return code %s" % (wd, rc))
+        # determine if we need to capture the output
+        # if undefined (captureOut == None!).
+        # default to True when backgrounding, otherwise
+        # not
+        if self.captureOut == None:
+            if self.background: self.captureOut = True
+            else: self.captureOut = False
+        if self.captureErr == None:
+            if self.background: self.captureErr = True
+            else: self.captureErr = False
+        
+        if makeArgs == None:
+            self.makeArgs = []
         else:
-            l.debug("Error running make in %s. Return code %s" % (wd, rc))
+            self.makeArgs = makeArgs
+
+        if self.target:
+            self.makeArgs.append(self.target)
+
+        #see if we need to run with another makefile
+        #that Makefile in the cwd
+        if makefile:
+            self.makeArgs.append('-f')
+            self.makeArgs.append(self.makefile)
+            
+        # -r make Make not use its default rules
+        # mostly aimed at compiling & building software
+        if not '-r' in self.makeArgs:
+            self.makeArgs.append('-r')
+            
+        if self.verbose:
+            # used inside the moa templates
+            os.putenv('MOA_VERBOSE', "-v")
+        else:
+            # -s keeps make silent
+            if not '-s' in self.makeArgs:
+                self.makeArgs.append('-s')
+                
+        # most moa templates do not allow threads, but will use them
+        # in handle threads very well
+        os.putenv('MOA_THREADS', "%s" % threads)
+
+        #prepare capturing of output
+        self.FERR = None
+        self.FOUT = None
+
+        self.captureErrName = ""
+        self.captureOutName = ""
+        
+        if self.captureErr:
+            #do not want any ANSI colored output
+            #l.critical('preparing caperr %s'% self.captureErr)
+            os.putenv('MOAANSI', 'no')
+            if self.captureName == 'tempfile':
+                self.FERR = tempfile.NamedTemporaryFile(
+                    delete=False,
+                    prefix='tmpMoaErr')
+                self.captureErrName = self.FERR.name
+            else:
+                self.captureErrName = os.path.join(wd, '%s.err' % self.captureName)
+                self.FERR = open(self.captureErrName, 'w')
+
+        if self.captureOut:
+            if self.captureName == 'tempfile':
+                self.FOUT = tempfile.NamedTemporaryFile(
+                    delete=False,
+                    prefix='tmpMoaOut')
+                self.captureOutName = self.FOUT.name
+            else:
+                self.captureOutName = os.path.join(wd, '%s.out' % self.captureName)
+                self.FOUT = open(self.captureOutName, 'w')
+
+
+    def run(self):
+        """
+        Start Make
+        """
+
+        if self.background:
+            # try to fork
+            child = os.fork()
+            if child != 0:
+                # This is the parent thread - return
+                return child
+            l.debug("Child thread - start executing - start run %s" % child)
+
+        self.runStartTime = time.time()
+        
+        #remove the last job status
+        if not self.stealth:
+            if os.path.exists(os.path.join(self.wd, 'moa.success')):
+                os.unlink(os.path.join(self.wd, 'moa.success'))
+            if os.path.exists(os.path.join(self.wd, 'moa.failed')):
+                os.unlink(os.path.join(self.wd, 'moa.failed'))
+
+        l.debug("Starting Make now in %s" % self.wd)
+        l.debug(" - with arguments: '%s'" % str(self.makeArgs))
+        self.commandLine = " ".join(["make"] + self.makeArgs)
+        
+        self.p = subprocess.Popen(
+            ['make'] + self.makeArgs,
+            shell=False,
+            cwd = self.wd,
+            stdout = self.FOUT,
+            stderr = self.FERR)
+
+        if self.FOUT:
+            self.FOUT.close()
+        if self.FERR:
+            self.FERR.close()
+            
+        l.debug("Make has started with pid %d" % self.p.pid)
+        self.pid = self.p.pid
+        self.out, self.err = self.p.communicate()
+        self.rc = self.p.returncode
+        self.runStopTime = time.time()
+        
+        #write a success or error file
+        if not self.stealth:
+            if self.rc == 0:
+                F = open(os.path.join(self.wd, 'moa.success'), 'w')
+                F.write(self._report())
+                F.close()
+            else:
+                F = open(os.path.join(self.wd, 'moa.failed'), 'w')
+                F.write(self._report())
+                F.close()
+
+        l.debug("Make has finished with rc %d " % self.rc)
+        return self.rc
+
+    def _report(self):
+        report = "\n".join([
+            'Process id: %d' % self.pid,
+            'Return code: %d' % self.rc,
+            'Command line: %s' % self.commandLine,
+            'Target: %s' % self.target,
+            'Working directory: %s' % self.wd,
+            'Start: %s' % time.asctime(time.localtime(self.runStartTime)),
+            'End: %s' % time.asctime(time.localtime(self.runStopTime)),
+            'Duration: %.4f sec' % (self.runStopTime - self.runStartTime)]) + "\n"
+        
+        return report
+
+    def finish(self):
+        
+        if self.rc == 0:
+            l.debug("Succesfully finished make in %s" % (self.wd))
+        else:
+            if self.verbose:
+                l.error("Error running make in %s. Return code %s" % (
+                    self.wd, self.rc))
+            else:
+                l.debug("Error running make in %s. Return code %s" % (
+                    self.wd, self.rc))
+                
+        if self.captureName:
+            if self.captureOut: os.unlink(self.captureOutName)
+            if self.captureErr: os.unlink(self.captureErrName)
+
+    def getOutput(self):
+        """
+        Get the output from a moa run
+        """
+        if not os.path.exists(self.captureOutName):
+            return ""
+        l.debug("reading output from %s" % self.captureOutName)
+        return open(self.captureOutName).read()
+
+    def getError(self):
+        """
+        Get the stderr of a moa run
+
+        @returns: stderr output of this job (if captured)
+        @rtype: string
+        """
+        if not os.path.exists(self.captureErrName):
+            return ""
+        l.debug("reading error from %s" % self.captureErrName)
+        return open(self.captureErrName).read()
+
+def go(*args, **kwargs):
+    """convenience function"""
+    job = MOAMAKE(*args, **kwargs)
+    rc = job.run()
     return rc
 
-# deprecated function name
-#def go(*args, **kwargs):
-#    runMake(*args, **kwargs)
-
-def go(wd = None,
-       target = "",
-       makeArgs = None,
-       makefile = "",
-       verbose=True,
-       threads=1,
-       background = False,
-       captureOut = None,
-       captureErr = None,
-       captureOutName='moa',
-       exitWhenDone=False ):    
-    """
-    Run Make
-    
-    @param captureOut: Capture the output in log files
-    @type captureOut: Boolean
-    @param captureOutName: Basename for the log files that will
-      capture the output
-    @type captureOutName: String
-    
-    """
-    if makeArgs == None:
-        makeArgs= []
-
-    if not wd:
-        l.warning("runMake needs a directory")
-        sys.exit(-1)
-        wd = os.getcwd()
-        
-    if background:  
-        # Unless defined otherwise, write the output to
-        # moa.out and moa.err when backgrounding
-        if captureOut == None: captureOut = True
-
-        if os.path.exists(os.path.join(wd, 'moa.success')):
-            os.unlink(os.path.join(wd, 'moa.success'))
-        if os.path.exists(os.path.join(wd, 'moa.failed')):
-            os.unlink(os.path.join(wd, 'moa.failed'))
-            
-        # try to fork
-        child = os.fork()
-        if child != 0:
-            l.debug("Parent thread - finish")
-            return True
-        l.debug("Child (pid=%d). Start make" % child)
-
-    # Unless specified otherwise, just write all output
-    # to the terminal
-    if captureOut == None:
-        captureOut = False
-
-    rc = _runMake(wd = wd,
-                  target=target,
-                  makeArgs = makeArgs,
-                  makefile = makefile,
-                  verbose=verbose,
-                  threads = threads,
-                  captureErr = captureErr,
-                  captureOut = captureOut,
-                  captureOutName = captureOutName )
-
-    if background:
-        if rc == 0:
-            F = open(os.path.join(wd, 'moa.success'), 'w')
-            F.write("%s" % rc)
-            F.close()
-        else:
-            F = open(os.path.join(wd, 'moa.failed'), 'w')
-            F.write("%s" % rc)
-            F.close()
-    else:            
-        return rc
-        
-    if exitWhenDone:
-        sys.exit(rc)
     
 def runMakeGetOutput(wd, **kwargs):
     """
@@ -209,58 +277,12 @@ def runMakeGetOutput(wd, **kwargs):
     we capture the output in a random name (to preven collisions)
 
     """
-    outName = 'moa.%d' % os.getpid()
     l.debug("runMakeGetOutput in %s kwargs %s" % (wd, kwargs))
-
-    kwargs['captureOut'] = True
-    kwargs['captureOutName'] = outName
     kwargs['background'] = False
-    go(wd, **kwargs)
-    output = getOutput(wd, outName)
-    moa.utils.removeMoaOutfiles(wd, outName)
+    kwargs['captureOut'] = True
+    kwargs['captureName'] = 'tempfile'
+    job = MOAMAKE(wd, **kwargs)
+    job.run()
+    output = job.getOutput()
+    job.finish()
     return output
-
-def getOutput(wd, outName='moa'):
-    """
-    Get the output from a moa run
-
-    >>> moa.utils.removeMoaFiles(P_EMPTY)
-    >>> F = open(os.path.join(P_EMPTY, 'moa.out'),'w')
-    >>> F.write('tst')
-    >>> F.close()
-    >>> getOutput(P_EMPTY) == 'tst'
-    True
-    >>> moa.utils.removeMoaFiles(P_EMPTY)
-    >>> getOutput(P_EMPTY) == ''
-    True
-
-    @param wd: the Moa directory
-    @type wd: String
-    @param outName: Basename of the output to retrieve
-    @type outName: String
-    """
-    outfile = os.path.join(wd, '%s.out' % outName)
-    if not os.path.exists(outfile):
-        return ""    
-    return open(outfile).read()
-
-def getError(wd, outName='moa'):
-    """
-    Get the stderr of a moa run
-
-    >>> F = open(os.path.join(P_EMPTY, 'moa.err'),'w')
-    >>> F.write('tsterr')
-    >>> F.close()
-    >>> getError(P_EMPTY) == 'tsterr'
-    True
-
-    @param wd: the Moa directory
-    @type wd: String
-    @param outName: Basename of the output to retrieve
-    @type outName: String
-    """
-    errfile = os.path.join(wd, '%s.err' % outName)
-    if not os.path.exists(errfile):
-        return ""    
-    return open(errfile).read()
-

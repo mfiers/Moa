@@ -38,11 +38,11 @@ def parseClArgs(args):
     """
     Parse the arguments defined on a commandline.
 
-    :param args: command line arguments, as passed on by sys.argv or
+    @param args: command line arguments, as passed on by sys.argv or
         optparse. It is expected to be a list of strings of the
         following format; 'param=value' or 'param+=value' No spaces
         are allowed between the parameter name, value and operator.
-    :type args: String of List of Strings
+    @type args: String of List of Strings
     
 
     >>> r = parseClArgs(['aap=1', 'noot=2', 'noot=3',
@@ -168,11 +168,19 @@ def writeToConf(wd, data):
 
     if not moa.info.isMoaDir(wd):
         raise NotAMoaDirectory(wd)
-    
+
     moamk = os.path.join(wd, 'moa.mk')
     moamktmp = os.path.join(wd, 'moa.mk.tmp')
     moamklock = os.path.join(wd, 'moa.mk.lock')
+
+    if os.path.exists(moamk):
+        if not os.access(moamk, os.W_OK):
+            raise MoaPermissionDenied(wd)
+    else:
+        if not os.access(wd, os.W_OK):
+            raise MoaPermissionDenied(wd)
     
+
     #refd is a refactoring of data - allows easy checking
     refd = dict([(x['key'],x) for x in data])
     l.debug("Changing variable: %s" % ", ".join(refd.keys()))

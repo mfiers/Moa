@@ -24,6 +24,7 @@ Create new jobs.
 import os
 import re
 import sys
+import tempfile
 
 import moa.utils
 import moa.logger
@@ -54,7 +55,11 @@ def check(what):
         True
         >>> check('nonexistingtemplate')
         False
-
+        >>> check('emboss/revseq')
+        True
+        >>> check('moa/base')
+        False
+        
     """
     templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
     if not os.path.exists(templatefile):
@@ -68,14 +73,21 @@ def list():
         >>> result = list()
         >>> len(result) > 0
         True
-        >>> '__moaBase' in result
-        False
         >>> type(result) == type([])
         True
-        >>> 'gather' in result
+        >>> 'adhoc' in result
         True
+        >>> '__moaBase' in result
+        False
+        >>> 'moa/base' in result
+        False
+        >>> 'emboss/revseq' in result
+        True
+
+    @returns: a list with all known templates
+    @rtype: a list of strings
+    
     """
-    l.critical("moa.job.list")
     r = []
     for path, dirs, files in os.walk(TEMPLATEDIR):
         relPath = path.replace(TEMPLATEDIR, '')
@@ -98,7 +110,23 @@ def list():
     return r
 
 def _getDescription(template):
-    """ Parse a template and extract the moa_description """
+    """
+    Parse a template and extract the template_description
+
+        >>> desc = _getDescription('adhoc')
+        >>> type(desc) == type('hi')
+        True
+        >>> len(desc) > 0
+        True
+        >>> 'The' in desc
+        True
+        
+    @param template: the name of the template to get the
+      description from
+    @type template: string
+    @returns: template_description
+    @rtype: string
+    """
     desc = ''
     with open(os.path.join(TEMPLATEDIR, '%s.mk' % template), 'r') as F:
         inDesc = False
@@ -109,7 +137,7 @@ def _getDescription(template):
 
             if inDesc:
                 desc += " " + line
-            elif line[:15] == 'moa_description':
+            elif line.find('template_description') == 0:
                 inDesc = True                
                 desc = line.split('=', 1)[1].strip()
             if inDesc :
@@ -120,35 +148,91 @@ def _getDescription(template):
     return " ".join(desc.split())
 
 def listLong():
+    """
+    Returns a generator yielding tuples of all templates and a
+    corresponding description.
+
+        >>> ll = listLong()
+        >>> fi = ll.next()
+        >>> type(fi) == type((1,2))
+        True
+        >>> type(fi[0]) == type('hi')
+        True
+        >>> type(fi[1]) == type('hi')
+        True
+
+    @returns: a generator yielding (name, description) tupels
+    @rtype: generator
+    """
     for template in list():
         yield template, _getDescription(template)
 
+def newTestJob(*args, **kwargs):
+    """
+    Test function - creates a temp directory and uses that to
+    instantiate the job in. This function returns the directory where
+    the job is created. All parameters are passed on to L{newJob}
+
+        >>> d = newTestJob('traverse')
+        >>> type(d) == type('hi')
+        True
+        >>> os.path.exists(d)
+        True
+        >>> os.path.exists(os.path.join(d, 'Makefile'))
+        True
+        >>> job = moa.runMake.MOAMAKE(wd = d, captureErr=True)
+        >>> rc = job.run()
+        >>> type(rc) == type(1)
+        True
+    
+    @returns: The directory where the job was created
+    @rtype: string
+    """
+
+    d = tempfile.mkdtemp()
+    kwargs['wd'] = d
+    newJob(*args, **kwargs)
+    return d
+    
 def newJob(template,
            title = None,
            wd = '.',
            parameters = [],
            force = False,
-           noInit = False,
-           silent = False):
+           noInit = False):
     """
     Create a new template based makefile in the current dir.
 
+        >>> d = tempfile.mkdtemp()
+        >>> newJob(template = 'adhoc',
+        ...        title = 'test job creation',
+        ...        wd=d, parameters=['moa_precommand="ls"'])
+        >>> os.path.exists(os.path.join(d, 'Makefile'))
+        True
+        >>> os.path.exists(os.path.join(d, 'moa.mk'))
+        True
+        >>> moa.conf.getVar(d, 'title')
+        'test job creation'
+        >>> moa.conf.getVar(d, 'moa_precommand')
+        '"ls"'
 
-    >>> moa.utils.removeMoaFiles(P_EMPTY)
-    >>> newJob(template = 'moatest',
-    ...        title = 'test job creation',
-    ...        wd=P_EMPTY,
-    ...        parameters=['moa_precommand="ls"'])
-    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
-    True
-    >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
-    True
-    >>> moa.conf.getVar(P_EMPTY, 'title')
-    'test job creation'
-    >>> moa.conf.getVar(P_EMPTY, 'moa_precommand')
-    '"ls"'
-    >>> moa.utils.removeMoaFiles(P_EMPTY)
-        
+    @param template: The template to use for the new job
+    @param wd: Where to create the new job
+    @param title: Title of the newly created job
+    @type title: String
+    @param wd: Directory to create the new job
+    @type wd: String
+    @param parameters: A list of parameters for initialization
+    @type parameters: List of strings. Each of the strings should
+       have the following form: 'key=some value'
+    @param force: Force job creation - this overwrites older jobs
+       in the same directory
+    @type force: boolean
+    @param noInit: Skip initialization. Normally moa calls
+       `make init`. If this flag is set, this step is skipped
+    @type noInit: boolean
+    @returns: Nothing
+
     """
     l.debug("Creating template '%s'" % template)
     l.debug("- in wd %s" % wd)
@@ -161,8 +245,16 @@ def newJob(template,
         l.info("Creating wd %s" % wd)
         os.makedirs(wd)
 
-    if (not silent) and (not title) and \
-           (not template == 'traverse'):
+    # check if a title is defined as 'title=something' on the
+    # commandline, as opposed to using the -t option
+    if not title:
+        for p in parameters:
+            if p.find('title=') == 0:
+                title = p.split('=',1)[1].strip()
+                parameters.remove(p)
+                break
+        
+    if (not title) and (not template == 'traverse'):
         l.debug("no title (template %s)" % template)
         l.warning("You must specify a job title")
         l.warning("You can still do so by using: ")
@@ -183,7 +275,6 @@ def newJob(template,
         if not force:
             l.critical("makefile exists, use -f (--force) to overwrite")
             sys.exit(1)
-
 
     l.debug("Start writing %s" % makefile)
     F = open(makefile, 'w')
@@ -223,10 +314,13 @@ def newJob(template,
     if noInit: return
 
     l.debug("Running moa initialization")
-    moa.runMake.go(wd = wd,
-                   target='initialize',
-                   captureOut = False,
-                   captureErr = False,
-                   verbose=False)
+    job = moa.runMake.MOAMAKE(wd = wd,
+                              target='initialize',
+                              captureOut = False,
+                              captureErr = False,
+                              stealth = True,
+                              verbose=False)
+    job.run()
+    job.finish()
     l.debug("Written %s, try: moa help" % makefile)
 

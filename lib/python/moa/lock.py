@@ -39,8 +39,15 @@ def lockJob(d):
     """
     if not moa.info.isMoaDir(d):
         raise NotAMoaDirectory(d)
-    
+
     lockFile = os.path.join(d, 'lock')
+    
+    if os.path.exists(lockFile):
+        return True
+    
+    if not os.access(d, os.W_OK):
+        raise MoaPermissionDenied(wd)
+
     with file(lockFile, 'a'):
         os.utime(lockFile, None)
 
@@ -62,5 +69,12 @@ def unlockJob(d):
     """
     if not moa.info.isMoaDir(d):
         raise NotAMoaDirectory(d)
+
+    lockfile = os.path.join(d, 'lock')
+    if not os.path.exists(lockfile):
+        return True
+
+    if not os.access(lockfile, os.W_OK):
+        raise MoaPermissionDenied(d)
     
-    os.unlink(os.path.join(d, 'lock'))
+    os.unlink(lockfile)

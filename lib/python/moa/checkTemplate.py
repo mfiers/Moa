@@ -16,7 +16,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
- Check template - checks templates for old style templates and tries
+Check template - checks templates for old style templates and tries
 to update them 
 """
 

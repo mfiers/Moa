@@ -23,8 +23,7 @@ moa API
 A collection of functions forming the MOA API
 
 """
-__docformat__ = "restructuredtext en"
-__authors__ = "Mark Fiers, William Demchick"
+__authors__ = "Mark Fiers"
 
 import os
 import sys
@@ -66,24 +65,34 @@ def isMoaDir(wd):
     >>> isMoaDir(P_EMPTY)
     False
 
-    :param wd: directory to check
-    :type wd: String
-    :returns: is wd a Moa directory
-    :rtype: Boolean    
+    @param wd: directory to check
+    @type wd: String
+    @returns: is wd a Moa directory
+    @rtype: Boolean    
     """
     return moa.info.isMoaDir(wd)
 
 def status(wd):
     """
-    Returns the status of a directory. It will return a one of the following status messages:
+    Returns the status of a directory. It will return a one of the
+    following status messages:
 
-    - notadir: this is not an accessible directory
-    - notmoa: this is not a moa directory
-    - waiting: a moa job, not doing anything
-    - success: a moa job, not doing anything, but the last (background) run was successfull
-    - failed: A moa job, not doing anything, but the last (background) run failed
-    - running: this is a moa job & currently executing (runlock exists)       
-    - locked: this job is locked (i.e. a lock file exists)
+        - notadir: this is not an accessible directory
+        
+        - notmoa: this is not a moa directory
+        
+        - waiting: a moa job, not doing anything
+        
+        - success: a moa job, not doing anything, but the last
+          (background) run was successfull
+        
+        - failed: A moa job, not doing anything, but the last
+          (background) run failed
+        
+        - running: this is a moa job & currently executing (runlock
+          exists)
+                
+        - locked: this job is locked (i.e. a lock file exists)
 
     >>> result = status(P_JOB)
     >>> result in ['waiting', 'locked', 'running']
@@ -93,8 +102,8 @@ def status(wd):
     >>> result == 'notmoa'
     True
 
-    :param wd: Directory to return the status of
-    :type wd: String
+    @param wd: Directory to return the status of
+    @type wd: String
     """
     return moa.info.status(wd)
     
@@ -102,52 +111,68 @@ def getInfo(wd):
     """
     Return information on a moa directory with the following keys:
 
-        moa_targets
-           A list of callable targets for this job (i.e. you can use
-           by running ``moa TARGET``
-        moa_description
-           A short description (from the job template) what this job
-           aims to do
-        parameters
-          A dictionary of parameters for this job. The keys in this
-          dictionary is the name of the parameter
+        - B{moa_targets}: A list of callable targets for this job
+            (i.e. you can use by running ``moa TARGET``
 
-    Each parameter values is again a dictionary with following keys:
+        - B{template_description}: A short description (from the job
+            template) what this job aims to do parameters A dictionary
+            of parameters for this job. The keys in this dictionary is
+            the name of the parameter
 
-        mandatory    
-          This parameter is mandatory. If not provided, execution will
-          fail (Boolean)      
-        help    
-          A short help text explaining the function of this parameter
-          (String)
-        default
-          The default value of this parameter, if applicable (String)      
-        value
-          The current value of this parameter (String)          
-        cardinality        
-          (``one`` or ``many``). The cardinality desribes how many
-          values a parameter is allowed to have. In the case of
-          ``one``, this parameter expects only one value. If
-          cardinality if ``many``, the parameter accepts multiple
-          values. It is important to note that GNU Make defines lists
-          as a space separated string - a sentence is automatically a
-          list of variables. There is no way to distinguish between a
-          cardinality ``one`` parameter with as value ``a b c`` and a
-          cardinality ``many`` parameter with the values [``a``,
-          ``b``, ``c``].           
-        type
-          (string) The type of this variables. can be:
-          
-          - ``string``
-          - ``directory``
-          - ``file``
-          - ``float``
-          - ``integer``
-          - ``set``
+        - B{title}: The title of this jobs
 
-          Note that there is currently no type checkin in the moa core.
-        allowed    
-          (array) A list of allowed values, if of type set
+        - B{description}: A short description for this specific job
+
+        - B{parameters}: A list of parameters, each a dict with the
+            following keys
+
+                - B{mandatory}: (Boolean) This parameter is
+                    mandatory. If not provided, execution will fail
+
+
+                - B{help}: (String) A short help text explaining the
+                    function of this parameter (String)
+
+                - B{default}: (String) The default value of this
+                    parameter, if applicable
+
+                - B{value}: (String) The current value of this
+                  parameter
+
+
+                - B{cardinality}: (``one`` or ``many``). The
+                    cardinality desribes how many values a parameter
+                    is allowed to have. In the case of ``one``, this
+                    parameter expects only one value. If cardinality
+                    if ``many``, the parameter accepts multiple
+                    values. It is important to note that GNU Make
+                    defines lists as a space separated string - a
+                    sentence is automatically a list of
+                    variables. There is no way to distinguish between
+                    a cardinality ``one`` parameter with as value ``a
+                    b c`` and a cardinality ``many`` parameter with
+                    the values [``a``, ``b``, ``c``].
+
+                - B{type}: (string) variable type of this
+                  variable. can be:
+
+                        - ``string``
+
+                        - ``directory``
+
+                        - ``file``
+
+                        - ``float``
+
+                        - ``integer``
+
+                        - ``set``
+
+                  Note that there is currently no type checkin in the
+                  moa core.
+
+                - B{allowed}: (list) A list of allowed values,
+                  if of type set
 
 
     >>> result = getInfo(P_JOB)
@@ -155,7 +180,7 @@ def getInfo(wd):
     True
     >>> result.has_key('moa_targets')
     True
-    >>> result.has_key('moa_description')
+    >>> result.has_key('template_description')
     True
     >>> result.has_key('parameters')
     True
@@ -175,11 +200,11 @@ def getInfo(wd):
     ... except NotAMoaDirectory: 'ok!'
     'ok!'
     
-    :param wd: Directory to get information from
-    :type wd: String
-    :returns: information on the job
-    :rtype: Dictionary
-    :raises NotAMoaDirectory: If wd is not a moa directory
+    @param wd: Directory to get information from
+    @type wd: String
+    @returns: information on the job
+    @rtype: Dictionary
+    @raises NotAMoaDirectory: If wd is not a moa directory
     """
     return moa.info.info(wd)
 
@@ -209,13 +234,13 @@ def getParameter(wd, key):
     >>> len(result) == 0
     True
 
-    :param wd: directory to get a parameter from
-    :type wd: String
-    :param key: Name of the parameter to retrieve (for example 'title')
-    :type key: String
-    :returns: The value of the parameter
-    :rtype: String
-    :raises NotAMoaDirectory: If ``wd`` is not a Moa directory.
+    @param wd: directory to get a parameter from
+    @type wd: String
+    @param key: Name of the parameter to retrieve (for example 'title')
+    @type key: String
+    @returns: The value of the parameter
+    @rtype: String
+    @raises NotAMoaDirectory: If ``wd`` is not a Moa directory.
     """
     return moa.conf.getVar(wd, key)
 
@@ -227,13 +252,13 @@ def setParameter(wd, key, value):
     
     >>> setParameter(P_JOB, 'title', 'test setParameter')
 
-    :param wd: the Moa directory to use
-    :type wd: String
-    :param key: The name of the parameter to set
-    :type key: String
-    :param value: The value to set the parameter to.
-    :type value: String
-    :raises NotAMoaDirectory: If ``wd`` is not a Moa directory.
+    @param wd: the Moa directory to use
+    @type wd: String
+    @param key: The name of the parameter to set
+    @type key: String
+    @param value: The value to set the parameter to.
+    @type value: String
+    @raises NotAMoaDirectory: If ``wd`` is not a Moa directory.
         
     """    
     moa.conf.setVar(wd, key, value)
@@ -285,29 +310,28 @@ def removeMoaFiles(wd):
     Removes moa related files from a directory (but leaves all other
     files in place). The function deletes the following files:
     
-    - Makefile
-    - moa.mk
-    - lock
-    - moa.runlock
+        - Makefile
+        - moa.mk
+        - lock
+        - moa.runlock
 
     The function does not check if `wd` is a moa directory or not.
-
-    >>> makefile = os.path.join(P_EMPTY, 'Makefile')
-    >>> moamk = os.path.join(P_EMPTY, 'moa.mk')
-    >>> newJob(template = 'moatest',
-    ...        wd=P_EMPTY,
+    
+    >>> dir = moa.job.newTestJob(template='traverse',
     ...        title='test removeMoaFiles')
-    >>> removeMoaFiles(P_EMPTY)
-    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+    >>> makefile = os.path.join(dir, 'Makefile')
+    >>> moamk = os.path.join(dir, 'moa.mk')
+    >>> removeMoaFiles(dir)
+    >>> os.path.exists(os.path.join(dir, 'Makefile'))
     False
-    >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
+    >>> os.path.exists(os.path.join(dir, 'moa.mk'))
     False
-    >>> removeMoaFiles(P_EMPTY)
+    >>> removeMoaFiles(dir)
     
     
-    :param wd: The pathname of the directory from which the Moa
+    @param wd: The pathname of the directory from which the Moa
         files are to be removed
-    :type wd: String
+    @type wd: String
     """
     moa.utils.removeMoaFiles(wd)
 
@@ -322,80 +346,50 @@ def getMoaOut(wd):
     >>> F = open(os.path.join(P_JOB, 'moa.out'),'w')
     >>> F.write('tst')
     >>> F.close()
-    >>> getMoaOut(P_JOB) == 'tst'
+    >>> moa.info.getOut(P_JOB) == 'tst'
     True
     
-    :param wd: The pathname of the directory from which the Moa
+    @param wd: The pathname of the directory from which the Moa
         files are to be removed
-    :type wd: String
+    @type wd: String
     """
-    return moa.runMake.getOutput(wd)
+    return moa.info.getOut(wd)
 
 def getMoaErr(wd):
     """
     Return moa error
 
-    >>> F = open(os.path.join(P_JOB, 'moa.err'),'w')
-    >>> F.write('tsterr')
-    >>> F.close()
-    >>> getMoaErr(P_JOB) == 'tsterr'
-    True
-
-    :param wd: the Moa directory
-    :type wd: String
+    See L{moa.info.getErr}
     """
-    return moa.runMake.getError(wd)
+    return moa.info.getErr(wd)
 
-def qr(cl):
-    return subprocess.Popen(cl, stdout=subprocess.PIPE, shell=True).communicate()[0]
-
-def runMoa(wd,
-           target="",
-           threads=1,
-           background=True,
-           verbose=False):
+def runMoa(*args, **kwargs):
     """
     execute Moa
 
     This function executes moa in path ``wd``.
 
-    >>> moa.utils.removeFiles(P_TEST, recursive=True)
-    >>> newJob(template = 'traverse',
-    ...        wd = P_TEST, 
-    ...        title = 'Test moa run',
-    ...        parameters = ['txt=testRunMoa'])
-    >>> runMoa(P_TEST, background=False)
+    >>> dir = moa.job.newTestJob(
+    ...   template = 'adhoc_one',
+    ...   title = 'Test moa run',
+    ...   parameters = ['adhoc_one_process=echo "hi"'])
+    >>> runMoa(dir, verbose=False, captureOut=True )
     0
-    >>> output = getMoaOut(P_TEST).strip()
+    >>> output = getMoaOut(dir).strip()
     >>> len(output) > 0
     True
-    >>> runMoa(wd=P_TEST, target= 'clean', background=False)
+    >>> runMoa(wd=dir, target= 'clean', background=False)
     0
-    >>> output = getMoaOut(P_TEST)
-    
-    :param wd: The pathname of the directory from which the Moa
-        files are to be removed
-    :type wd: String
-    :param target: The Make target to execute (for example clean)
-    :type target: String
-    :param threads: No of threads to run Moa with.
-    :type threads: Integer
-    :param background: Return immediately, do not wait for Moa to
-       finish (default True). 
-    :type background: Boolean
-    :raises NotAMoaDirectory: if ``wd`` is not a moa directory
-    :returns: If background==True, then the return value means
-      nothing. Otherwise it is Moa return code. Anything other than 0
-      (zero) means that there was an error.
-    :rtype: Integer
+    >>> output = getMoaOut(dir)
+
+    All parameters are passed on to L{moa.runMake.go}
+    constructor
+
+    @returns: If background==True the pid, else the return code
+    @rtype: Integer
     """
-    l.debug("executing make in %s" % wd)
-    return moa.runMake.go(wd = wd,
-                   target = target,
-                   threads = threads,
-                   background= background,
-                   verbose = verbose,
-                   captureOut = True)
+    l.debug("API: executing runMake")
+    return moa.runMake.go(*args, **kwargs)
 
 #Depreacted, these will be removed once William has changed his code
 def is_directory_moa(wd):

@@ -70,12 +70,12 @@ def testPlugins(args=[]):
         if args and not plugin in args:
             continue
         l.debug("Starting a new plugin test")
-        moa.utils.removeMoaFiles(testDir)
-        moa.api.newJob(template = 'adhoc',
-                       wd = testDir,
-                       title='Testing plugin %s' % plugin)
+        wd = moa.job.newTestJob(
+            template = 'adhoc_one',
+            title='Testing plugin %s' % plugin)
+        
         l.debug("start testing plugin %s" % plugin)
-        rc = moa.runMake.go(wd=testDir,
+        rc = moa.runMake.go(wd=wd,
                             target='moa_plugin_%s_test' % plugin,
                             background=False,
                             verbose=False,
@@ -84,14 +84,14 @@ def testPlugins(args=[]):
                             makeArgs = [])
         pluginTests += 1
         if rc != 0:
-            err = moa.api.getMoaErr(wd=testDir)
-            print err
+            err = moa.info.getErr(wd)
             if 'No rule to make target' in str(err):
                 l.warning("No tests defined for plugin %s" % plugin)
             else:
                 pluginFailures += 1
-                l.error("Error running plugin test for %s (%s)" %
-                        (plugin, rc))
+                l.error("Error running plugin test for %s (%s, %s)" %
+                        (plugin, rc, wd))
+                l.error("Error message:\n%s" % err)
                 err = moa.api.getMoaErr(wd=testDir).strip()
                 out = moa.api.getMoaOut(wd=testDir).strip()
                 if err:
