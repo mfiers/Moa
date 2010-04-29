@@ -1,5 +1,8 @@
 /*
-color0=A31E39
+Green #1DA343
+Red  #A31E39
+
+Greys - dark to light
 color1=485C5A
 color2=8C9C9A
 color3=9DB2B1
@@ -7,8 +10,11 @@ color4=BFCFCC
 color5=D6E4E1
 */
 body {
-	font-family: Verdana, Geneva, sans-serif
+	font-family: Verdana, Geneva, sans-serif;
+    padding:0px;
+    margin: 0px;
 }
+html { margin: 0px; padding: 0px; }
 
 a:link { color: black }
 a:visited { color: black }
@@ -19,12 +25,9 @@ a:active { color: #A31E39; }
 	clear: both;
 	padding: 0px;
 	margin: 0px;
-	margin-bottom: 10px;
-	-moz-border-radius: 6px; 
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-    background-color: #8aa;
-
+    padding: 2px;
+	margin-bottom: 0px;
+    background-color: #fff;
 }
 
 .tooltip {
@@ -34,7 +37,7 @@ a:active { color: #A31E39; }
    z-index: 3;
    display: none;
    background-color: #D6E4E1;
-   -moz-border-radius: 6px;                                                                                                                                                                                                                 
+   -moz-border-radius: 6px; 
    -webkit-border-radius: 6px;
    border-radius: 6px;     
    padding: 5px;
@@ -43,10 +46,10 @@ a:active { color: #A31E39; }
 }
 
 .moaInfo {
-	margin: 0px;
-	margin-left: 100px;
-	padding: 5px;	
-	widht: 95%;
+}
+
+.moaFiles {
+
 }
 
 .moaLogo {
@@ -58,15 +61,19 @@ a:active { color: #A31E39; }
     height: 90px;
 }
 
-.moaBreadCrumbs {
-    height: 26px;
-}
-
 .moaBreadCrumbs a:link { color: white }
 .moaBreadCrumbs a:visited { color: white }
 .moaBreadCrumbs a:hover { color: #A31E39; }
 .moaBreadCrumbs a:active { color: #A31E39; }
 
+.moaTopRow{
+    display: absolute;
+    left: 100px;
+    top: 0px;
+    right: 0px;
+	margin: 0px;
+    padding: 0px;
+}
 .moaTitle {
     float: left;
     padding: 2px;
@@ -78,13 +85,18 @@ a:active { color: #A31E39; }
     font-weight: bold;
     padding: 2px;
     padding-right: 5px;
+    margin-right: 5px;
     padding-left: 5px;
-    -moz-border-radius: 6px; 
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
+    -moz-border-radius: 2px; 
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
 	background-color: #8C9C9A;
     color: white;    
 	border: 1px solid #485C5A;
+}
+
+.moaMenu {
+    float: right
 }
 
 .moaTemplate {
@@ -92,32 +104,66 @@ a:active { color: #A31E39; }
     cursor: pointer;
 	float: left;
 	padding: 2px;
+    margin: 0px;
     padding-right: 5px;
-    padding-left: 5px;
-	-moz-border-radius: 6px; 
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	background-color: #8C9C9A;
-    color: white;    
-	border: 1px solid #485C5A;
+    padding-left: 8px;
+    -moz-border-top-left-radius: 4px; 
+	-webkit-border-top-left-radius: 4px;
+	border-top-left-radius: 4px;
+    -moz-border-bottom-left-radius: 4px; 
+	-webkit-border-bottom-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+    color: black;
+    background-color: D6E4E1;
+	border-right: 2px solid black;
 }
 
+.moaBreadCrumbs {
+    width: 100%;
+    //border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    padding: 5px;
+}
+
+.moaMessage {
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 20px;
+    display: none;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    padding: 5px;
+    background-color:  #A31E39;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+.moaEditString {
+	font-family: Verdana, Geneva, sans-serif;
+    font-weight: bold;
+    width: 60%;
+    border: 0px;
+    padding: 3px;
+    -moz-border-radius: 2px; 
+	-webkit-border-radius: 2px;	
+    border: 1px solid black;
+    margin-left: 4px;
+}
 .moaBreadCrumb {
     font-weight: bold;
     cursor: pointer;
-	display: inline;
-	padding: 5px;
-	margin-left: 2px;
-	-moz-border-radius: 6px; 
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	background-color: #8C9C9A;
-    color: white;    
-	border: 1px solid #485C5A;
+	padding: 2px;
+    margin: 2px;
+    color: #9DB2B1;    
 }
 
 .moaBreadCrumbActive {
-	background-color: #A31E39;
+//	background-color: #D6E4E1;
+    color: black;
     cursor: auto;
     margin-left: auto;
     margin-right: auto;

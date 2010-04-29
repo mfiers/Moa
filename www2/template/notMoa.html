@@ -1,7 +1,13 @@
 <%inherit file="base.html"/>
 
-<%def name="infoBlock()">
-<b>This is not a Moa directory</b>
+<%def name="moaTopRow()">
+<div class="moaTitle">
+  <b>This directory does not contain a Moa job</b><br>
+  <span style="font-size:xx-small; font-weight:100">
+    &nbsp;&nbsp;&nbsp;(or you do not have sufficient privileges to access it)
+  </span>
+</div>
+<div class="moaMenu">
+  ${self.moaMenu()}
+</div>
 </%def>
-
-

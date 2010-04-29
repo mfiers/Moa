@@ -145,23 +145,23 @@ table.display td.center {
  */
 
 .sorting_asc {
-	background: url('../images/sort_asc.png') no-repeat center right;
+	background: url('/moa/images/sort_asc.png') no-repeat center right;
 }
 
 .sorting_desc {
-	background: url('../images/sort_desc.png') no-repeat center right;
+	background: url('/moa/images/sort_desc.png') no-repeat center right;
 }
 
 .sorting {
-	background: url('../images/sort_both.png') no-repeat center right;
+	background: url('/moa/images/sort_both.png') no-repeat center right;
 }
 
 .sorting_asc_disabled {
-	background: url('../images/sort_asc_disabled.png') no-repeat center right;
+	background: url('/moa/images/sort_asc_disabled.png') no-repeat center right;
 }
 
 .sorting_desc_disabled {
-	background: url('../images/sort_desc_disabled.png') no-repeat center right;
+	background: url('/moa/images/sort_desc_disabled.png') no-repeat center right;
 }
 
 
@@ -172,52 +172,58 @@ table.display td.center {
  * DataTables row classes
  */
 table.display tr.odd.gradeA {
-	background-color: #D6E4E1;
+	background-color: #white;
 }
 
 table.display tr.even.gradeA {
 	background-color: #FFFFFF;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 table.display tr.odd.gradeA {
-	background-color: #BFCFCC;
+	background-color: #white;
 }
 
 table.display tr.even.gradeA {
 	background-color: #FFFFFF;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 table.display tr.odd.gradeC {
-	background-color: #D6E4E1;
+	background-color: #white;
 }
 
 table.display tr.even.gradeC {
 	background-color: #FFFFFF;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 table.display tr.odd.gradeX {
-	background-color: #D6E4E1;
+	background-color: #white;
 }
 
 table.display tr.even.gradeX {
 	background-color: #FFFFFF;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 table.display tr.odd.gradeU {
-	background-color: #D6E4E1;
+	background-color: #white;
 }
 
 table.display tr.even.gradeU {
 	background-color: #FFFFFF;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 
 tr.odd {
-	background-color: #BFCFCC;
+	background-color: #white;
 }
 
 tr.even {
-	background-color: white;
+	background-color: #eee;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 
@@ -228,9 +234,9 @@ tr.even {
  * Misc
  */
 .top, .bottom {
-	padding: 15px;
-	background-color: #F5F5F5;
-	border: 1px solid #CCCCCC;
+	padding: 10px;
+	background-color: #D6E4E1;
+	border-bottom: 2px solid black;
 }
 
 .top .dataTables_info {
@@ -272,7 +278,7 @@ td.details {
 }
 
 .paging_full_numbers {
-	width: 400px;
+	width: 500px;
 	height: 22px;
 	line-height: 22px;
 }
@@ -289,7 +295,7 @@ td.details {
 }
 
 .paging_full_numbers span.paginate_button {
-	background-color: #ddd;
+	background-color: #fff;
 }
 
 .paging_full_numbers span.paginate_button:hover {
@@ -297,11 +303,12 @@ td.details {
 }
 
 .paging_full_numbers span.paginate_active {
-	background-color: #99B3FF;
+	background-color: #BFCFCC;
 }
 
 table.display tr.even.row_selected td {
 	background-color: #9DB2B1;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 table.display tr.odd.row_selected td {
@@ -314,27 +321,30 @@ table.display tr.odd.row_selected td {
  */
 /* For the standard odd/even */
 tr.odd td.sorting_1 {
-	background-color: #9DB2B1;
+	background-color: #white;
 }
 
 tr.odd td.sorting_2 {
-	background-color: #DADCFF;
+	background-color: #white;
 }
 
 tr.odd td.sorting_3 {
-	background-color: #E0E2FF;
+	background-color: #sorting;
 }
 
 tr.even td.sorting_1 {
-	background-color: #BFCFCC;
+	background-color: #D6E4E1;
+    border-bottom: 1px dotted #BFCFCC;
 }
 
 tr.even td.sorting_2 {
-	background-color: #F2F3FF;
+	background-color: #D6E4E1;
+    border-bottom: 1px dotted #BFCFCC;
 }
 
 tr.even td.sorting_3 {
-	background-color: #F9F9FF;
+	background-color: #D6E4E1;
+    border-bottom: 1px dotted #BFCFCC;
 }
 
 
@@ -362,14 +372,18 @@ tr.odd.gradeA td.sorting_3 {
 
 tr.even.gradeA td.sorting_1 {
 	background-color: #d5ffd5;
+    border-bottom: 1px dotted #D6E4E1;
+
 }
 
 tr.even.gradeA td.sorting_2 {
 	background-color: #e2ffe2;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.even.gradeA td.sorting_3 {
 	background-color: #e2ffe2;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.odd.gradeC td.sorting_1 {
@@ -386,14 +400,17 @@ tr.odd.gradeC td.sorting_3 {
 
 tr.even.gradeC td.sorting_1 {
 	background-color: #d5d5ff;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.even.gradeC td.sorting_2 {
 	background-color: #e2e2ff;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.even.gradeC td.sorting_3 {
 	background-color: #e2e2ff;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.odd.gradeX td.sorting_1 {
@@ -410,14 +427,17 @@ tr.odd.gradeX td.sorting_3 {
 
 tr.even.gradeX td.sorting_1 {
 	background-color: #ffd5d5;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.even.gradeX td.sorting_2 {
 	background-color: #ffe2e2;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.even.gradeX td.sorting_3 {
 	background-color: #ffe2e2;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.odd.gradeU td.sorting_1 {
@@ -434,15 +454,19 @@ tr.odd.gradeU td.sorting_3 {
 
 tr.even.gradeU td.sorting_1 {
 	background-color: #d5d5d5;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.even.gradeU td.sorting_2 {
 	background-color: #e2e2e2;
+    border-bottom: 1px dotted #D6E4E1;
 }
 
 tr.even.gradeU td.sorting_3 {
 	background-color: #e2e2e2;
+    border-bottom: 1px dotted #D6E4E1;
 }
+
 
 
 /*

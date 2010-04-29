@@ -42,11 +42,21 @@ $(document).ready(function() {
           "bStateSave": true,
         });
 
-    //Prepare the 
+    //Prepare the popup for template description
     $(".moaTemplateDescription").jqm({
         overlay: 0, trigger: false,})
     .jqmAddTrigger($(".moaTemplate"))
-    .jqmAddClose(".moaTemplateDescription")
+    .jqmAddClose(".moaTemplateDescription");
 
+    //add a few triggers to the message div
+    $(".moaMessage")
+        .mouseenter(
+            function() {$(".moaMessage").hide();});
+                      
+//Init the menu
+    $('#jsddm > li').bind('mouseover', jsddm_open);
+	$('#jsddm > li').bind('mouseout',  jsddm_timer);
+
+    document.onclick = jsddm_close;
     
 });

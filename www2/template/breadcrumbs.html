@@ -23,12 +23,10 @@ else:
 %>
 
 % for block in blocks:
-<div class="${block['class']}"
+<span class="${block['class']}"
 % if not 'moaBreadCrumbActive' in block['class']:
         onclick='window.location.replace("${block["link"]}")'
    % endif
->
-${block['name']} 
-</div>
+>${block['name']}</span><b>/</b>
 % endfor    
 

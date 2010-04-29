@@ -7,27 +7,28 @@
 .jqmWindow {
     display: none;
 
-    text-align: center;
+    text-align: left;
 	-moz-border-radius: 6px; 
 	-webkit-border-radius: 6px;
     
     position: fixed;
-    top: 17%;
+    top: 10%;
     left: 50%;
     
-    margin-left: -300px;
-    width: 600px;
+    margin-left: -400px;
+    width: 800px;
     
     background-color: #BFCFCC;
-    
+    overflow:auto;
+    max-height: 80%;
     border: 1px solid black;
     padding: 12px;
 }
 
 .jqmClose{
-    display: block;
+    float:right;
+    display:block;
     font-size: small;
-    text-align:right;
 }
 
 .jqmOverlay { background-color: #000; }

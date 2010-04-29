@@ -1,7 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-
-<%def name="infoBlock()">
-Undefined
+<%def name="moaTopRow()">
+<b>undefined</b>
 </%def>
 
 <%def name="breadCrumbs()">
@@ -10,6 +8,16 @@ Undefined
 
 <%def name="documentready()">
 <%include file="document.ready.js" />
+</%def>
+
+<%def name="moaMenu()">
+<ul id="jsddm"> 
+   <%include file="menu.moa.html" />
+</ul>
+</%def>
+
+<%def name="extraJS()">
+console.log("EXTRAJS is not defined");
 </%def>
 
 <%def name="loadInProgress()">
@@ -21,36 +29,38 @@ Undefined
  </div>
 </%def>
 
-<html>
-  <head><title>Index of ${moacwd}</title>
-
   <link rel="stylesheet" href="/moa/css/moa.css" type="text/css" media="screen">
   <link rel="stylesheet" href="/moa/css/moa.table.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="/moa/css/moa.menu.css" type="text/css" media="screen">
   <link rel="stylesheet" href="/moa/css/jqModal.css" type="text/css" media="screen">
 
   <script type="text/javascript" src="/moa/js/jquery.js"></script>
   <script type="text/javascript" src="/moa/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/moa/js/jquery.menu.js"></script>
   <script type="text/javascript" src="/moa/js/jqModal.js"></script>
 
   <script type="text/javascript">
+
     ${documentready()}
+    ${self.extraJS()}
+
   </script>
+
   </head>
   <body>
       ${self.loadInProgress()}
-
+      <div class="moaMessage"></div>
       <div class="moaHeader">
         <div class="moaLogo">
-          <img src="/moa/images/moa_logo_${status}.png" >
+          <img src="/moa/images/moa_logo_${status}.png" />
         </div>
-        <div class="moaInfo">
-          ${self.infoBlock()}
+        <div class="moaTopRow">
+          ${self.moaTopRow()}
         </div>
-        <div style="clear: both;"></div>
-        <div class="moaBreadCrumbs()">
-          ${self.breadCrumbs()}
-          <div style="clear: both;"></div>
-        </div>
-        <div style="clear: both;"></div>
+        <div style="clear:both;"></div>
       </div>
-
+      <div class="moaBreadCrumbs">
+        ${self.breadCrumbs()}
+      </div>
+      <div class='moaFiles'>
+        
