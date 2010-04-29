@@ -18,38 +18,45 @@
 # 
 adhoc_help = adhoc files
 
+dol:=$
+
 $(call moa_fileset_define,adhoc_input,,Input files for adhoc)
 
 # Help
 moa_id=adhoc
-template_title = Run an ad-hoc analysis
-template_description = Run a specified oneliner or script on a set of	\
-   inputfiles
-
+template_title = Execute an ad hoc analysis
+template_description = The ad hoc template aids in executing a one	\
+  line on a set of input files.
 
 moa_may_define += adhoc_name_sed
 adhoc_name_sed_default = s/a/a/
-adhoc_name_sed_help = SED expression to be executed on each file name -	\
-  allows you to change file names
+adhoc_name_sed_help = A sed expression which can be used to derive the	\
+output file name for each input file (excluding the path). The sed		\
+expression is executed for each input file name, and the result is		\
+available as $$t in the $$(adhoc_process) statement. Make sure that		\
+you use single quotes when specifying this on the command line
+
 adhoc_name_sed_type = string
 
 moa_may_define += adhoc_output_dir
 adhoc_output_dir_default = .
-adhoc_output_dir_help = Output subdirectory, defaults to '.'
+adhoc_output_dir_help = Output subdirectory
 adhoc_output_dir_type = directory
 
 moa_may_define += adhoc_parallel
 adhoc_parallel_default = F
-adhoc_parallel_help = allow parallel execution. If, for example,	\
-  concatenating to one single file, you should not have multiple	\
-  threads.
+adhoc_parallel_help = Allow parallel execution. Use with care (for		\
+example when concatenating many files into one big one). You can use	\
+the -j parameter to specify the number of threads
 adhoc_parallel_type = set
 adhoc_parallel_allowed = T F
 
 moa_may_define += adhoc_process
-adhoc_process_default = ln -f \$< \$t
-adhoc_process_help = Command to process the files. If undefined,	\
-  hardlink the files.
+adhoc_process_default = ln -f $$< $$t
+adhoc_process_help = Command to execute for each input file. The path	\
+to the input file is available as $$< and the output file as $$t.	\
+(it is not mandatory to use both parameters, for example 				\
+"cat $$< > output" would concatenate all files into one big file
 adhoc_process_type = string
 
 moa_may_define += adhoc_limit
@@ -67,7 +74,8 @@ adhoc_powerclean_type = set
 adhoc_powerclean_allowed = T F
 
 moa_may_define += adhoc_combine
-adhoc_combine_help = Use all input files at once (Note, use $$^ (all input files) or $$@ (newer input files) instead of $$<)
+adhoc_combine_help = Use all input files at once (Note, use $$^ (all	\
+input files) or $$@ (newer input files) instead of $$<)
 adhoc_combine_type = set
 adhoc_combine_default = F
 adhoc_combine_allowed = T F
