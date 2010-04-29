@@ -167,6 +167,9 @@ moa_main_target:
 ## after it..  this one calls all cleans. Note that the x_clean
 ## targets are called in reverse order.
 .PHONY: clean
+
+clean_help = Remove all job data (not the job itself). This does works	\
+  only if the template has properly implemented the clean target.
 clean: clean_start $(moa_id)_clean
 	-$e rm moa.out moa.err moa.success 2>/dev/null || true
 	-$e rm moa.failed moa.runlock lock 2>/dev/null || true
