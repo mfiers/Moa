@@ -1,0 +1,8 @@
+Process id: 13118
+Return code: 0
+Command line: make get_moa_plugins -f /home/mf/project/moa/template/moa/getPluginList.mk -r -s
+Target: get_moa_plugins
+Working directory: /home/mf/project/moa/doc/markdown/templates
+Start: Thu Apr 29 16:44:13 2010
+End: Thu Apr 29 16:44:13 2010
+Duration: 0.0037 sec
