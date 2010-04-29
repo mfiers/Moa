@@ -44,5 +44,6 @@ moa_plugin_configure_test:
 	$e moa show | grep -P "title\s+test two" || \
 		($(call exer,set title+=VALUE does not work))
 	$e moa set title=
-	$e moa show | grep -P "^title\s*$$" || \
-		($(call exer,unset title does not work))
+	$e moa show | grep -P "^title\s*$$" \
+		&& ($(call exer,unset title does not work)) \
+		|| true;

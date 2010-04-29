@@ -28,6 +28,13 @@ template_title = Execute an ad hoc analysis
 template_description = The ad hoc template aids in executing a one	\
   line on a set of input files.
 
+moa_may_define += adhoc_touch
+adhoc_touch_help = use touch files to track if input files have	\
+changed.
+adhoc_touch_type = set
+adhoc_touch_default = T
+adhoc_touch_allowed = T F
+
 moa_may_define += adhoc_name_sed
 adhoc_name_sed_default = s/a/a/
 adhoc_name_sed_help = A sed expression which can be used to derive the	\
@@ -50,6 +57,7 @@ example when concatenating many files into one big one). You can use	\
 the -j parameter to specify the number of threads
 adhoc_parallel_type = set
 adhoc_parallel_allowed = T F
+adhoc_parallel_category = advanced
 
 moa_may_define += adhoc_process
 adhoc_process_default = ln -f $$< $$t
@@ -91,7 +99,9 @@ adhoc_link_noclean ?= Makefile moa.mk
 
 .PHONY: adhoc_prepare
 adhoc_prepare:
-	-$e mkdir touch 2>/dev/null || true
+	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
+		mkdir touch 2>/dev/null || true; \
+	fi
 	-$e [[ "$(adhoc_output_dir)" == "." ]] || mkdir $(adhoc_output_dir)
 
 .PHONY: adhoc_post
@@ -110,7 +120,9 @@ touch/%: t=$(shell echo '$*' | sed $(adhoc_name_sed))
 touch/%: $(adhoc_input_dir)/%
 	$(call echo,considering $<)
 	$e $(adhoc_process)
-	touch $@
+	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
+		touch $@; \
+	fi
 else
 
 adhoc: $(adhoc_input_files)

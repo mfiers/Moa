@@ -43,14 +43,14 @@ def getPlugins(wd = None):
     if isMoaDir(wd):
         #inside a moa job: executed a regular moa call
         result = moa.runMake.runMakeGetOutput(
-            wd, target='moa_list_plugins', verbose=False
-            ).strip().split()
+            wd, target='moa_list_plugins', verbose=False,
+            stealth=True ).strip().split()
     else:
         # If executed outside of a moa job we'll use a specific
         # Makefile that loads the configuration and prints out the
         # plugins globally configured
         result = moa.runMake.runMakeGetOutput(
-            wd, target='get_moa_plugins',
+            wd, target='get_moa_plugins', stealth=True,
             makefile = "%s/template/moa/getPluginList.mk" % MOABASE
             ).strip().split()
                 
@@ -352,6 +352,15 @@ def info(wd):
         catorder.append('advanced')
     for c in cats.keys():
         cats[c].sort()
+        #make sure the mandatory parameters come first in the
+        #ordering
+        parMan = []; parOpt = []
+        for p in cats[c]:
+            if rv['parameters'][p]['mandatory']:
+                parMan.append(p)
+            else:
+                parOpt.append(p)
+        cats[c] = parMan + parOpt
 
     rv['parameter_category_order'] = catorder
     rv['parameter_categories'] = cats

@@ -62,7 +62,7 @@ def showHelp(wd, options, args):
     else:
         templateDoc = ""
     data['template_manual'] = templateDoc
-    jenv = Environment(loader=FileSystemLoader('%s/doc/templates' % MOABASE))
+    jenv = Environment(loader=FileSystemLoader('%s/doc/jinja_templates' % MOABASE))
     manTemplate = jenv.get_template('template.help.md')
 
     markdown = manTemplate.render(d = data)
@@ -74,6 +74,8 @@ def showHelp(wd, options, args):
     man,err = p.communicate()
 
 
+
+    
     p2 = Popen("nroff -c -mandoc".split(),
                stdin=PIPE, stdout=PIPE, stderr=PIPE)
     p2.stdin.write(man)

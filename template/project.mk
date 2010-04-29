@@ -20,10 +20,9 @@
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-template_title = Project
-
-template_description = Create a new project. All subdirectories of this				\
-  directory are automatically a part of this project
+template_title = Create a project
+template_description = Create a new project, a placeholder for project	\
+settings, and used by several plugins.
 
 moa_id = project
 project_help = This template does not do anything - it is a project				\

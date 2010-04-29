@@ -193,8 +193,8 @@ if __name__ == "__main__":
     makeArgs.extend(newargs)
     if not moa.info.isMoaDir(cwd):
         if command:
-            l.error("'moa %s' must be executed within a Moa directory" %
-                    command)
+            l.error("Unknown command: 'moa %s'" % command)
+            l.error("Maybe it should be executed in a Moa directory?")
         else:
             l.error("'moa' must be executed within a Moa directory")
         sys.exit(1)
