@@ -203,12 +203,13 @@ if __name__ == "__main__":
     moa.checkTemplate.checkTemplate(cwd)
 
     l.debug("Calling make for command %s" % command)
-    returnCode = runMake.go(cwd,
-                            target = command,
-                            verbose = options.verbose,
-                            threads = options.threads,
-                            makeArgs = makeArgs,
-                            background = options.background)
+    job = runMake.MOAMAKE(cwd,
+                          target = command,
+                          verbose = options.verbose,
+                          threads = options.threads,
+                          makeArgs = makeArgs,
+                          background = options.background)
+    returnCode = job.run()    
     sys.exit(returnCode)
 
     # #utilities
