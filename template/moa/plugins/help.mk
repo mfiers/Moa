@@ -44,18 +44,18 @@ MOA_INCLUDE_PLUGIN_HELP= yes
 moa_help_parameter_type=\
     $(if $($(1)_type),\$(parO)$(if $(call seq,$($(1)_type),set),$(subst $(strip $($(1)_default)),**$($(1)_default)**,$(subst $(space),$(sep),$(strip $($(1)_allowed)))),$(strip $($(1)_type))$(if '$($(1)_default)',$(if $(value $(1)_default),$(comma) default:$(value $(1)_default))))$(parC))
 
-moa_help_md = % $(subst $(space),_,$(moa_title)) \n\
-% $(moa_author)                         \n\
+moa_help_md = % $(subst $(space),_,$(template_title)) \n\
+% $(template_author)                         \n\
 % $(shell date)                         \n\
                                         \n\
-$(moa_description_$(moa_id))            \n\
+$(template_description)            		\n\
                                         \n\
 \#Targets                               \n\
 (empty)                                 \n\
 :    Execute the default target ($(moa_id)) 	\n\
 $(moa_id)                               		\n\
-:    $(if $(moa_description_$(moa_id)),$		\
-		(moa_description_$(moa_id)),			\
+:    $(if $(template_description),		\
+		$(template_description),			\
 		(Warning - a lazy developer refused 	\
 			to write a single line specifying 	\
 			what this template is supposed 		\

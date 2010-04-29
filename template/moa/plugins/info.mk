@@ -30,12 +30,22 @@ info_keyvallist = "$(1)" : [$(call merge,$(comma),$(foreach v,$(2),"$(subst '"',
 .PHONY: info info_header info_parameters info_parameters_optional	\
 		info_parameters_required
 
-info: info_header info_parameters
+info: info_header info_targets info_parameters
 
 info_header:
-	@echo -e 'moa_title\t$(moa_title)'
-	@echo -e 'moa_description\t$(moa_description)'
+	@echo -e 'moa_id\t$(moa_id)'
+	@echo -e 'template_title\t$(template_title)'
+	@echo -e 'template_description\t$(template_description)'
+	@echo -e 'template_author\t$(template_author)'
+	@echo -e 'title\t$(title)'
+	@echo -e 'description\t$(description)'
 	@echo -e 'moa_targets\t$(moa_id) all clean $(moa_additional_targets)'
+
+info_targets: $(addprefix info_target_help_, all clean $(moa_additional_targets))
+
+info_target_help_%:
+	@echo -e "$*_help\t$($*_help)"
+
 
 info_parameters: info_parameters_required info_parameters_optional
 
@@ -50,7 +60,7 @@ info_par_%:
 	@echo -en '\tname=$*'
 	@echo -en '\tmandatory=$(mandatory)'
 	@echo -en '\ttype=$*'
-	@echo -en '\tvalue=$($*)'
+	@echo -en '\tvalue=$(value $*)'
 	@echo -en '\tdefault=$($*_default)'
 	@echo -en '\tallowed=$($*_allowed)'
 	@echo -en '\ttype=$($*_type)'
@@ -59,3 +69,13 @@ info_par_%:
 	@echo -en '\thelp=$($*_help)'
 	@echo
 
+
+.PHONY: moa_plugin_info_test
+moa_plugin_info_test:
+	x=`moa info` ;\
+		(echo $$x | grep -q 'moa_id' ) || \
+			($(call exer,moa info does not contain moa_id)); \
+		(echo $$x | grep - q'template_title') || \
+			($(call exer,moa info does not contain template_title)); \
+		(echo $$x | grep -q 'template_description') || \
+			($(call exer,moa info does not contain template_description)); \

@@ -26,17 +26,14 @@
 
 set_help = set a variable to moa.mk
 
-## Defer this to the moa script - we define this only as a an action
-## in Make to allow for hooks
-#.PHONY: set moa_set_2
-#set: $(moa_hooks_preset) moa_set_2 $(moa_hooks_postset)
+#the actual set routine is handled by the moa-python code
 
 moa_pre_set: $(moa_hooks_preset) 
 
 moa_post_set: $(moa_hooks_postset)
 
-moa_set_2:
-	moa $(minv) __set $(value MOAARGS)
+#moa_set_2:#
+#	moa $(minv) __set $(value MOAARGS)
 
 .PHONY: moa_plugin_configure_test
 moa_plugin_configure_test:

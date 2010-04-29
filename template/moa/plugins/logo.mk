@@ -33,3 +33,5 @@ moa_logo:
 
 .PHONY: moa_plugin_logo_test
 moa_plugin_logo_test:
+	[[ -f $(MOABASE)/share/logo/moa.logo.txt ]] || \
+		($(call exer,Cannot find the logo file))

@@ -42,7 +42,7 @@ moa_fileset_define = \
 		sr - size reverse, t - time, tr - time reverse ) \
 	$(eval $(1)_sort_type=set) \
 	$(eval $(1)_sort_default=u) \
-	$(eval $(1)_sort_choices=u s sr t tr) \
+	$(eval $(1)_sort_allowed=u s sr t tr) \
 	$(eval $(1)_limit_help=Number of files to use, if not defined: all files) \
 	$(eval $(1)_limit_default=) \
 	$(eval $(1)_limit_type=integer) \
