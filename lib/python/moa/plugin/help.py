@@ -23,12 +23,19 @@ Help
 
 import os
 import sys
+import pydoc
+import pprint
 import optparse
+from subprocess import Popen, PIPE
+
+from jinja2 import Environment, FileSystemLoader
 
 import moa.runMake
 import moa.info
 import moa.logger
 l = moa.logger.l
+
+MOABASE=os.environ['MOABASE']
 
 def defineCommands(commands):
     commands['help'] = {
@@ -38,8 +45,39 @@ def defineCommands(commands):
 
 def showHelp(wd, options, args):
     if not moa.info.isMoaDir(wd):
-        l.error("This is not a moa directory - you can run moa help only in")
-        l.error("the context of a Moa directory. You could try: moa --help")
+        l.error("This is not a moa directory - `moa help` should be executed in")
+        l.error("the context of a Moa directory. Try `moa --help`")
         sys.exit(-1)
-    moa.runMake.go(wd, target = 'help', verbose = options.verbose)
+    #moa.runMake.go(wd, target = 'help', verbose = options.verbose)
+
+    data = moa.info.info(wd)
+    #see if there is a manual in $MOABASE/doc/markdown/templates
+    moaId = data['moa_id']
+    templateDoc = os.path.join(MOABASE, 'doc', 'markdown',
+                               'templates', '%s.md' % moaId)
+
+    #load & render the jinja2 template
+    if os.path.exists(templateDoc):
+        templateDoc = open(templateDoc).read()
+    else:
+        templateDoc = ""
+    data['template_manual'] = templateDoc
+    jenv = Environment(loader=FileSystemLoader('%s/doc/templates' % MOABASE))
+    manTemplate = jenv.get_template('template.help.md')
+
+    markdown = manTemplate.render(d = data)
     
+    #convert jinja2 to 
+    p = Popen("pandoc -s -f markdown -t man".split(),
+              stdin=PIPE, stdout=PIPE)    
+    p.stdin.write(markdown)
+    man,err = p.communicate()
+
+
+    p2 = Popen("nroff -c -mandoc".split(),
+               stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    p2.stdin.write(man)
+    doc, err = p2.communicate()
+    
+
+    pydoc.pager(doc)

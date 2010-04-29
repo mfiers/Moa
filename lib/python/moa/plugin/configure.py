@@ -47,11 +47,13 @@ def configSet(wd, options, args):
     """
     
     #call the preset hooks
-    moa.runMake.go(wd = wd,
-                   target='moa_pre_set',
-                   captureOut = False,
-                   captureErr = False,
-                   verbose=False)
+    job = moa.runMake.MOAMAKE(wd = wd,
+                              target='moa_pre_set',
+                              captureOut = False,
+                              captureErr = False,
+                              verbose=False)
+    job.run()
+    job.finish()
 
     params = []
     for arg in args:
@@ -62,11 +64,13 @@ def configSet(wd, options, args):
     moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
 
     #call the postset hooks
-    moa.runMake.go(wd = wd,
-                   target='moa_post_set',
-                   captureOut = False,
-                   captureErr = False,
-                   verbose=False)
+    job = moa.runMake.MOAMAKE(wd = wd,
+                              target='moa_post_set',
+                              captureOut = False,
+                              captureErr = False,
+                              verbose=False)
+    job.run()
+    job.finish()
 
 
 
