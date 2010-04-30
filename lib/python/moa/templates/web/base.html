@@ -1,0 +1,75 @@
+Content-type: text/html
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <link rel="stylesheet" href="/moa/css/moa.css" 
+          type="text/css" media="screen">
+    <link rel="stylesheet" href="/moa/css/moa.table.css" 
+          type="text/css" media="screen">
+    <link rel="stylesheet" href="/moa/css/moa.menu.css" 
+          type="text/css" media="screen">
+    <link rel="stylesheet" href="/moa/css/jqModal.css" 
+          type="text/css" media="screen">
+
+  <script type="text/javascript" src="/moa/js/jquery.js"></script>
+  <script type="text/javascript" src="/moa/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/moa/js/jquery.menu.js"></script>
+  <script type="text/javascript" src="/moa/js/jqModal.js"></script>
+
+  <script type="text/javascript">
+
+    {% block documentready %}
+    {%include "web/document.ready.js" %}
+    {% endblock %}
+    
+    {% block extraJS %}
+    console.log("EXTRAJS is not defined");
+    {% endblock %}
+
+  </script>
+  
+</head>
+<body>
+  {% block moaTemplateInfo %}
+  {% endblock %}
+
+  {% block loadInProgress %}
+  <div id="loadInProgress">
+    <img id="moaProgress" src="/moa/images/moa_progress.gif">
+    <br>
+    <b>Loading data<br>please be patient</b>
+    <div style="clear: both;"></div>
+  </div>
+  {% endblock %}
+
+  <div class="moaMessage"></div>
+  <div class="moaHeader">
+    <div class="moaLogo">
+      <img src="/moa/images/moa_logo_{{ status }}.png" />
+    </div>
+    <div class="moaTopRow">
+      {% block moaMenu %}
+      <div class="moaMenu">
+        <ul id="jsddm"> 
+          {%include "web/menu.moa.html" %}
+        </ul>
+      </div>
+      {% endblock %}
+      {% block moaTempate %}
+      {% endblock %}
+      {% block moaTitle %}
+      <div class="moaTitle">
+        undefined
+      </div>
+      {% endblock %}
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+  <div class="moaBreadCrumbs">
+    {% block breadCrumbs %}
+    {% include 'web/breadcrumbs.html' %}
+    {% endblock %}
+  </div>
+  <div class='moaFiles'>
+        

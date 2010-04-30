@@ -23,7 +23,7 @@
 (* denotes a mandatory parameter)
 {% for cat in d.parameter_category_order -%}
 {% if cat -%}
-{{ '##'}} {{ cat }} parameters
+{{ '##'}} {{ cat|capitalize }} parameters
 {% endif -%}
 {% for pn in d.parameter_categories[cat] -%}
 {% set par = d.parameters[pn] %}

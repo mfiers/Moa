@@ -4,8 +4,10 @@ import os
 import sys
 import site
 
-from mako.template import Template
-from mako.lookup import TemplateLookup
+from jinja2 import Environment, PackageLoader
+
+#from mako.template import Template
+#from mako.lookup import TemplateLookup
 
 import cgi
 import cgitb; cgitb.enable()  # for troubleshooting
@@ -13,10 +15,14 @@ import cgitb; cgitb.enable()  # for troubleshooting
 if not os.environ.has_key('MOABASE'):
     raise Exception("MOABASE is undefined")
 
+
 MOABASE = os.environ['MOABASE']
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 
 import moa.info
+
+#initialize the jinja environment
+jenv = Environment(loader=PackageLoader('moa', 'templates'))
 
 def getWebRoot():
     webRoot = os.environ.get('MOAWEBROOT')
@@ -42,22 +48,53 @@ def getLocalDir():
         moadir = moadir[:moadir.index('?')]
     return moadir
 
+def getBreadCrumbs():
+    ## Prepare breadcrumbs
+    if moacwd.find(dataRoot) != 0:
+        blocks = [{'name' : moacwd,
+                   'class' : 'moaBreadCrumb',
+                   'link' : requestUri,
+                   'notlast' : True}]
+    else:
+        pathUntilNow = webRoot
+        steps = moacwd[len(dataRoot)+1:].split('/')
+
+        blocks = [{'name' : webRoot,
+                   'class' : 'moaBreadCrumb',
+                   'link' : webRoot,
+                   'notLast' : True }]
+
+        if len(steps) > 1:        
+            for r in steps[:-1]:
+                pathUntilNow += '/' + r
+                blocks.append({'name' : r,
+                               'class' : 'moaBreadCrumb',
+                               'link' : pathUntilNow,
+                               'notLast' : True })
+
+        blocks[-1]['class'] += ' moaBreadCrumbActive'
+        blocks[-1]['notLast'] = False
+    return blocks
+
 d = {'MOABASE' : MOABASE}
 moacwd = getLocalDir()
 d['requestUri'] = os.environ.get('REQUEST_URI')
 d['moacwd'] = moacwd
 d['status'] = 'notmoa'
-d['dataRoot'] = getDataRoot()
-d['webRoot'] = getWebRoot()
+dataRoot = getDataRoot()
+d['dataRoot'] = dataRoot
+webRoot = getWebRoot()
+d['webRoot'] = webRoot
+d['blocks']  = getBreadCrumbs()
 
-templateLookup = TemplateLookup(
-    directories=['/'],
-    module_directory='/tmp/mako_modules' )
+
+#templateLookup = TemplateLookup(
+#    directories=['/'],
+#    module_directory='/tmp/mako_modules' )
 
 #Fire off a generic page without any information if this is not a Moa dir
 if not moa.info.isMoaDir(moacwd):
-    pageTemplate =  Template(filename='%s/www2/template/notMoa.html' % MOABASE,
-                             lookup=templateLookup)
+    pageTemplate = jenv.get_template('web/notMoa.html')
     print pageTemplate.render(**d)
     sys.exit()
 
@@ -71,9 +108,7 @@ d['parameterKeys'] = d['allinfo']['parameters'].keys()
 d['parameterKeys'].sort()
 d['description'] = d['allinfo'].get('template_description', '')
 
-pageTemplate = Template(
-    filename='%s/www2/template/Moa.html'% MOABASE,
-    lookup=templateLookup)
+pageTemplate = jenv.get_template('web/Moa.html')
 
 print pageTemplate.render(**d)
 

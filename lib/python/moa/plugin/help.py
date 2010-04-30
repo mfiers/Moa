@@ -72,9 +72,6 @@ def showHelp(wd, options, args):
               stdin=PIPE, stdout=PIPE)    
     p.stdin.write(markdown)
     man,err = p.communicate()
-
-
-
     
     p2 = Popen("nroff -c -mandoc".split(),
                stdin=PIPE, stdout=PIPE, stderr=PIPE)
