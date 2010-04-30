@@ -155,6 +155,8 @@ class MOAMAKE:
                 self.captureOutName = os.path.join(wd, '%s.out' % self.captureName)
                 self.FOUT = open(self.captureOutName, 'w')
 
+        #         l.critical("prepared moa job with parameters:")#
+        # l.critical("  %s" % self.makeArgs)
 
     def run(self):
         """

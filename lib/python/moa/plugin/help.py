@@ -28,7 +28,7 @@ import pprint
 import optparse
 from subprocess import Popen, PIPE
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, PackageLoader
 
 import moa.runMake
 import moa.info
@@ -61,9 +61,11 @@ def showHelp(wd, options, args):
         templateDoc = open(templateDoc).read()
     else:
         templateDoc = ""
+        
     data['template_manual'] = templateDoc
-    jenv = Environment(loader=FileSystemLoader('%s/doc/jinja_templates' % MOABASE))
-    manTemplate = jenv.get_template('template.help.md')
+
+    jenv = Environment(loader=PackageLoader('moa', 'templates'))
+    manTemplate = jenv.get_template('help/template.help.md')
 
     markdown = manTemplate.render(d = data)
     

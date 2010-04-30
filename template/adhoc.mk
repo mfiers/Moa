@@ -16,11 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-adhoc_help = adhoc files
 
-dol:=$
-
-$(call moa_fileset_define,adhoc_input,,Input files for adhoc)
+$(call moa_fileset_define_opt,adhoc_input,,Input files for adhoc)
 
 # Help
 moa_id=adhoc
@@ -30,7 +27,7 @@ template_description = The ad hoc template aids in executing a one	\
 
 moa_may_define += adhoc_touch
 adhoc_touch_help = use touch files to track if input files have	\
-changed.
+	changed.
 adhoc_touch_type = set
 adhoc_touch_default = T
 adhoc_touch_allowed = T F
@@ -38,11 +35,10 @@ adhoc_touch_allowed = T F
 moa_may_define += adhoc_name_sed
 adhoc_name_sed_default = s/a/a/
 adhoc_name_sed_help = A sed expression which can be used to derive the	\
-output file name for each input file (excluding the path). The sed		\
-expression is executed for each input file name, and the result is		\
-available as $$t in the $$(adhoc_process) statement. Make sure that		\
-you use single quotes when specifying this on the command line
-
+  output file name for each input file (excluding the path). The sed	\
+  expression is executed for each input file name, and the result is	\
+  available as $$t in the $$(adhoc_process) statement. Make sure that	\
+  you use single quotes when specifying this on the command line
 adhoc_name_sed_type = string
 
 moa_may_define += adhoc_output_dir
@@ -50,28 +46,23 @@ adhoc_output_dir_default = .
 adhoc_output_dir_help = Output subdirectory
 adhoc_output_dir_type = directory
 
-moa_may_define += adhoc_parallel
-adhoc_parallel_default = F
-adhoc_parallel_help = Allow parallel execution. Use with care (for		\
-example when concatenating many files into one big one). You can use	\
-the -j parameter to specify the number of threads
-adhoc_parallel_type = set
-adhoc_parallel_allowed = T F
-adhoc_parallel_category = advanced
+moa_may_define += adhoc_mode
+adhoc_mode_default = seq
+adhoc_mode_help = Adhoc operation mode: *seq*, sequential: process the	\
+  input files one by one; *par*, parallel: process the input files in	\
+  parallel (use with `-j`); *all*: process all input files at once (use	\
+  `$$^` in `adhoc_process`) and *simple*: Ignore input files, just		\
+  execute `adhoc_process` once.
+adhoc_mode_type = set
+adhoc_mode_allowed = seq par all simple
 
 moa_may_define += adhoc_process
-adhoc_process_default = ln -f $$< $$t
+adhoc_process_default = echo "need a sensbile command"
 adhoc_process_help = Command to execute for each input file. The path	\
-to the input file is available as $$< and the output file as $$t.	\
-(it is not mandatory to use both parameters, for example 				\
+  to the input file is available as $$< and the output file as $$t.	\
+  (it is not mandatory to use both parameters, for example 				\
 "cat $$< > output" would concatenate all files into one big file
 adhoc_process_type = string
-
-moa_may_define += adhoc_limit
-adhoc_limit_default = 1000000
-adhoc_limit_help = limit the number of files adhoced (with the most	\
-  recent files first, defaults to 1mln)
-adhoc_limit_type = integer
 
 moa_may_define += adhoc_powerclean
 adhoc_powerclean_default = F
@@ -81,17 +72,9 @@ adhoc_powerclean_help = Do brute force cleaning (T/F). Remove all		\
 adhoc_powerclean_type = set
 adhoc_powerclean_allowed = T F
 
-moa_may_define += adhoc_combine
-adhoc_combine_help = Use all input files at once (Note, use $$^ (all	\
-input files) or $$@ (newer input files) instead of $$<)
-adhoc_combine_type = set
-adhoc_combine_default = F
-adhoc_combine_allowed = T F
-
-
 #########################################################################
-#Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moa/core.mk
+#Include moa core
+include $(MOABASE)/template/moa/core.mk
 
 adhoc_touch_files=$(addprefix touch/,$(notdir $(adhoc_input_files)))
 
@@ -100,21 +83,28 @@ adhoc_link_noclean ?= Makefile moa.mk
 .PHONY: adhoc_prepare
 adhoc_prepare:
 	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
-		mkdir touch 2>/dev/null || true; \
+		mkdir touch || true; \
+	else \
+		rm -rf touch || true; \
 	fi
 	-$e [[ "$(adhoc_output_dir)" == "." ]] || mkdir $(adhoc_output_dir)
 
 .PHONY: adhoc_post
 adhoc_post:
 
-ifeq ($(adhoc_parallel),F)
+################################################################################
+## adhoc mode: seq
+
+## Check if the input_dir is defined
+adhoc_check:
+	$(if $(adhoc_input_dir),,\
+		$(call exerUnlock, Need to define adhoc_input_dir))
+
+ifeq ($(adhoc_mode),seq)
+
 .NOTPARALLEL: adhoc
-endif
 
-.PHONY: adhoc
-ifeq ($(adhoc_combine),F)
-
-adhoc:  $(adhoc_touch_files)
+adhoc: adhoc_check $(adhoc_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed $(adhoc_name_sed))
 touch/%: $(adhoc_input_dir)/%
@@ -123,10 +113,44 @@ touch/%: $(adhoc_input_dir)/%
 	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
 		touch $@; \
 	fi
-else
 
-adhoc: $(adhoc_input_files)
-	$(call warn,execuing $(words $^) input file(s) at once)
+endif
+
+################################################################################
+## adhoc mode: par
+ifeq ($(adhoc_mode),par)
+
+adhoc: adhoc_check $(adhoc_touch_files)
+
+touch/%: t=$(shell echo '$*' | sed $(adhoc_name_sed))
+touch/%: $(adhoc_input_dir)/%
+	$(call echo,considering $<)
+	$e $(adhoc_process)
+	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
+		touch $@; \
+	fi
+
+endif
+
+################################################################################
+## adhoc mode: all
+ifeq ($(adhoc_mode),all)
+
+adhoc: adhoc_check  $(if $(call seq,$(adhoc_touch),T),$(adhoc_touch_files))
+	$(call echo,considering $(words $<) files)
+	$e $(adhoc_process)
+
+touch/%: $(adhoc_input_dir)/%
+	touch $@;
+endif
+
+
+################################################################################
+## adhoc mode: all
+ifeq ($(adhoc_mode),simple)
+
+adhoc: 
+	$(call echo,Running adhoc without input files)
 	$e $(adhoc_process)
 
 endif
@@ -139,3 +163,45 @@ adhoc_clean:
 	-if [ "$(adhoc_powerclean)" == "T" ]; then \
 		find . -maxdepth 1 -type f $(find_exclude_args) | \
 			xargs -n 20 rm -f ; fi
+
+
+adhoc_unittest:
+	mkdir 10.input
+	echo -n '1' > 10.input/test.1.input
+	echo -n '2' > 10.input/test.2.input
+	echo -n '3' > 10.input/test.3.input
+	echo -n '4' > 10.input/test.4.input
+	echo -n '5' > 10.input/what.5.input
+	moa set adhoc_mode=simple
+	moa set adhoc_process='cat 10.input/* > test.1'
+	moa
+	cat test.1
+	[[ "`cat test.1`" == "12345" ]]
+	moa set adhoc_mode=seq
+	moa set adhoc_input_dir=10.input
+	moa set adhoc_input_extensions=input
+	moa set adhoc_input_glob=test.*
+	moa set adhoc_process='cat $$< >> test.2'
+	moa
+	cat test.2
+	[[ "`cat test.2`" == "1234" ]]
+	moa set adhoc_name_sed='s/input/output/'
+	moa set adhoc_process='cat $$< > $$t'
+	moa
+	ls
+	[[ ! (-e test.1.output) ]]
+	moa clean
+	moa
+	moa show
+	ls
+	[[ -e test.1.output ]]
+	rm test.?.output
+	touch 10.input/test.2.input
+	moa
+	[[ -e test.2.output ]]
+	[[ ! (-e test.1.output) ]]
+	moa set adhoc_touch=F
+	rm test.?.output
+	moa
+	[[  (-e test.1.output) ]]
+	moa set adhoc_touch=T

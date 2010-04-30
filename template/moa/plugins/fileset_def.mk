@@ -24,8 +24,8 @@
 #
 ################################################################################
 
-moa_fileset_define = \
-	$(eval moa_must_define += $(1)_dir) \
+
+__moa_fileset_define_all = \
 	$(eval moa_may_define += $(1)_extension) \
 	$(eval moa_may_define += $(1)_glob) \
 	$(eval moa_may_define += $(1)_sort) \
@@ -48,6 +48,14 @@ moa_fileset_define = \
 	$(eval $(1)_limit_type=integer) \
 	$(eval _moa_filesets += $(1))
 
+moa_fileset_define = \
+	$(eval moa_must_define += $(1)_dir) \
+	$(call __moa_fileset_define_all,$1,$2,$3)
+
+moa_fileset_define_opt = \
+	$(eval moa_may_define += $(1)_dir) \
+	$(eval $(1)_dir_default = ) \
+	$(call __moa_fileset_define_all,$1,$2,$3)
 
 ## functions to remap filesets
 ## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)

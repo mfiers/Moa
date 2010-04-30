@@ -4,7 +4,9 @@
 {{ '#' }}NAME
 {{ d.moa_id }}
 
-{{ '#' }} DESCRIPTION {{ d.template_title }}
+{{ '#' }} DESCRIPTION 
+
+{{ d.template_title }}
 
 {% if d.template_manual %}
 {{ d.template_manual }}
