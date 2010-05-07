@@ -54,7 +54,7 @@ prereq_glimmer3_installed:
 	@$(call checkPrereqPath,formatdb)
 
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moa/core.mk
+include $(MOABASE)/template/moa/core.mk
 
 # End of the generic part - from here on you're on your own :)
 

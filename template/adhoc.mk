@@ -76,7 +76,12 @@ adhoc_powerclean_allowed = T F
 #Include moa core
 include $(MOABASE)/template/moa/core.mk
 
+ifeq ($(adhoc_mode),simple)
+adhoc_touch=F
+else
 adhoc_touch_files=$(addprefix touch/,$(notdir $(adhoc_input_files)))
+endif
+
 
 adhoc_link_noclean ?= Makefile moa.mk
 
@@ -92,14 +97,13 @@ adhoc_prepare:
 .PHONY: adhoc_post
 adhoc_post:
 
-################################################################################
-## adhoc mode: seq
-
 ## Check if the input_dir is defined
 adhoc_check:
 	$(if $(adhoc_input_dir),,\
 		$(call exerUnlock, Need to define adhoc_input_dir))
 
+################################################################################
+## adhoc mode: seq
 ifeq ($(adhoc_mode),seq)
 
 .NOTPARALLEL: adhoc
@@ -177,6 +181,7 @@ adhoc_unittest:
 	moa
 	cat test.1
 	[[ "`cat test.1`" == "12345" ]]
+	rm test.1
 	moa set adhoc_mode=seq
 	moa set adhoc_input_dir=10.input
 	moa set adhoc_input_extensions=input
@@ -185,6 +190,7 @@ adhoc_unittest:
 	moa
 	cat test.2
 	[[ "`cat test.2`" == "1234" ]]
+	rm test.2
 	moa set adhoc_name_sed='s/input/output/'
 	moa set adhoc_process='cat $$< > $$t'
 	moa
@@ -202,6 +208,7 @@ adhoc_unittest:
 	[[ ! (-e test.1.output) ]]
 	moa set adhoc_touch=F
 	rm test.?.output
-	moa
+	moa -v
+	ls
 	[[  (-e test.1.output) ]]
 	moa set adhoc_touch=T

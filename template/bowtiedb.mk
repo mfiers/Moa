@@ -23,7 +23,6 @@ moa_id = bowtiedb
 template_title = Bowtie index builder
 template_description = Builds a bowtie index from a reference sequence
 
-
 #########################################################################
 # Prerequisite testing
 moa_prereq_simple += bowtie-build

@@ -4,7 +4,7 @@ import os
 import sys
 import site
 
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, FileSystemLoader
 
 #from mako.template import Template
 #from mako.lookup import TemplateLookup
@@ -22,7 +22,9 @@ site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 import moa.info
 
 #initialize the jinja environment
-jenv = Environment(loader=PackageLoader('moa', 'templates'))
+jenv = Environment(
+    loader=FileSystemLoader(
+        os.path.join(MOABASE, 'doc')))
 
 def getWebRoot():
     webRoot = os.environ.get('MOAWEBROOT')
@@ -88,13 +90,9 @@ d['webRoot'] = webRoot
 d['blocks']  = getBreadCrumbs()
 
 
-#templateLookup = TemplateLookup(
-#    directories=['/'],
-#    module_directory='/tmp/mako_modules' )
-
 #Fire off a generic page without any information if this is not a Moa dir
 if not moa.info.isMoaDir(moacwd):
-    pageTemplate = jenv.get_template('web/notMoa.html')
+    pageTemplate = jenv.get_template('jinja2/web/notMoa.html')
     print pageTemplate.render(**d)
     sys.exit()
 
@@ -108,7 +106,7 @@ d['parameterKeys'] = d['allinfo']['parameters'].keys()
 d['parameterKeys'].sort()
 d['description'] = d['allinfo'].get('template_description', '')
 
-pageTemplate = jenv.get_template('web/Moa.html')
+pageTemplate = jenv.get_template('jinja2/web/Moa.html')
 
 print pageTemplate.render(**d)
 
