@@ -24,6 +24,7 @@ import re
 import sys
 import time
 import commands
+import subprocess
 
 from moa.logger import l
 from moa.exceptions import *
@@ -110,6 +111,32 @@ def isMoaDir(d):
     F.close()        
     return isMoa
 
+def getVersion():
+    """
+    Get the current MOA version
+    """
+    version = open(os.path.join(MOABASE, 'VERSION')).read().strip()
+    return version
+
+def _simpleExec(cl, cwd=None):
+    rv = subprocess.Popen(
+        cl.split(), cwd = cwd, stdout=subprocess.PIPE).communicate()[0]
+    return rv
+
+def getGitVersion():
+    """
+    Return the git version for Moa
+    """
+    r =  _simpleExec("git show", MOABASE)
+    return r.strip().split()[1]
+
+def getGitBranch():
+    """
+    Return the current git branch
+    """
+    r =  _simpleExec("git branch", MOABASE)
+    return r.strip().split()[1]
+    
 def _checkRunlock(d):
     """
     Check if the runlock file actually points to a proper process
@@ -202,6 +229,29 @@ def status(d):
     if os.path.exists(failedfile):
         return "failed"
     return "waiting"
+
+def getTemplateFile(name):
+    """
+    Return the file corresponding to the template name
+    """
+    
+    try1 = os.path.join(
+        os.path.expanduser('~'), 'moa', 'template',
+        '%s.mk' % name)
+    if os.path.exists(try1):
+        return try1
+    
+    try2 = os.path.join(MOABASE, 'template', '%s.mk' % name)
+    if os.path.exists(try2):
+        return try2
+
+    raise Exception("Cannot find template file")
+    
+def getTemplateName(wd):
+    """
+    A better name for L{template}
+    """    
+    return template(wd)
 
 def template(wd):
     """
@@ -329,10 +379,12 @@ def info(wd):
         else:
             rv[what] = val
 
-    #add some extra information - template creation time
-    template_name = rv['moa_id']
-    template_file = os.path.join(MOABASE, 'template', '%s.mk' % template_name)
-    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(template_file)
+    #add some extra information - template name &  creation time
+    templateName = getTemplateName(wd)
+    templateFile = getTemplateFile(templateName)
+    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime) = os.stat(templateFile)
+    rv['template_name'] = templateName
+    rv['template_file'] = templateFile
     rv['template_creation_date'] = time.ctime(ctime)
     rv['template_modification_date'] = time.ctime(mtime)
 

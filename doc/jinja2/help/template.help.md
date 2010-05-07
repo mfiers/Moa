@@ -1,34 +1,34 @@
-% {{ d.moa_id }}
-% {{ d.template_author }}
-% {{ d.template_modification_date}}
+% {{ moa_id }}
+% {{ template_author }}
+% {{ template_modification_date}}
 {{ '#' }}NAME
-{{ d.moa_id }}
+{{ moa_id }}
 
 {{ '#' }} DESCRIPTION 
 
-{{ d.template_title }}
+{{ template_title }}
 
-{% if d.template_manual %}
-{{ d.template_manual }}
+{% if template_manual %}
+{{ template_manual }}
 {% endif %}
 
 {{ '#' }} TARGETS
-(empty) / {{ d.moa_id }}
-:    {{ d.template_description }}
-{% for target in d.moa_targets -%}
-{% if target != d.moa_id -%}
+(empty) / {{ moa_id }}
+:    {{ template_description }}
+{% for target in moa_targets -%}
+{% if target != moa_id -%}
 {{ target }}
 :    {{ d[target + '_help'] }}
 {% endif %}
 {% endfor %}
 {{ '#' }} PARAMETERS
 (* denotes a mandatory parameter)
-{% for cat in d.parameter_category_order -%}
+{% for cat in parameter_category_order -%}
 {% if cat -%}
 {{ '##'}} {{ cat|capitalize }} parameters
 {% endif -%}
-{% for pn in d.parameter_categories[cat] -%}
-{% set par = d.parameters[pn] %}
+{% for pn in parameter_categories[cat] -%}
+{% set par = parameters[pn] %}
 {% if par.mandatory %}*{%- endif %}{{ pn }}
 :    {{ par.help }}  
      
