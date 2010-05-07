@@ -4,7 +4,9 @@
 {{ '#' }}NAME
 {{ d.moa_id }}
 
-{{ '#' }} DESCRIPTION {{ d.template_title }}
+{{ '#' }} DESCRIPTION 
+
+{{ d.template_title }}
 
 {% if d.template_manual %}
 {{ d.template_manual }}
@@ -28,25 +30,24 @@
 {% for pn in d.parameter_categories[cat] -%}
 {% set par = d.parameters[pn] %}
 {% if par.mandatory %}*{%- endif %}{{ pn }}
-:    {{ par.help }}  
-     
+:    {{ par.help }}
+
      * data type: {{ par.type }}
 {%- if par.type == 'set' -%}
 {{ ' ' }}({% for a in par.allowed -%}
-{% if a == par.default -%}__{% endif -%}
-{{ a }}
+{% if a == par.default -%}__{% endif -%}{{ a }}
 {%- if a == par.default -%}__{% endif -%}
-{%- if not loop.last %}, {% endif -%}
+{%- if not loop.last -%}, {% endif -%}
 {%- endfor -%})
-{% else %}
+{%- else -%}
 {%- if par.default %}
-    * default: {{ par.default }}
+     * default: `{{ par.default }}`
 {%- endif -%}
 {%- endif -%}
 {%- if par.value %}
-    * current value: `{{ par.value }}`
+     * current value: `{{ par.value }}`
 {%- else %}
-    * currently not defined
+     * currently not defined
 {%- endif %}
 
 {% endfor -%}
