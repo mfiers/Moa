@@ -9,3 +9,4 @@ fi
 
 export MOABASE=`dirname $(dirname $(cd ${BASH_ARGV%/*} && echo $PWD/${BASH_ARGV##*/}))`
 export PATH=$MOABASE/bin:$PATH
+export PYTHONPATH=$MOABASE/lib/python:$PYTHONPATH
