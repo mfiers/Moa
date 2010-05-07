@@ -1,0 +1,20 @@
+{% extends "jinja2/manual/html/base.html" %}
+
+{% block content %}
+<h1>Overview of Moa templates</h1>
+
+<div style="float: left">
+<ul>
+{% for t in templates %}
+<li><b><a href='template_{{t|replace('/','__')}}.html'>{{ t }}</a></b></li>
+{% if loop.index == (loop.length // 3) + 1 %}
+</ul></div><div style="float: left"><ul>
+{% endif %}
+{% if loop.index == (2 * (loop.length // 3) + 2) %}
+</ul></div><div style="float: left"><ul>
+{% endif %}
+{% endfor %}
+</ul>
+</div>
+<div style="clear:both"></div>
+{% endblock %}
