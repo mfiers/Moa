@@ -46,7 +46,7 @@ function saveEditBox(event) {
    if ( event.data.oldValue !==  box.val()) {
        console.log("storing new val " + box.val());
        event.data.oldElem.html(box.val());
-       moaSet("${moacwd}",
+       moaSet("{{ moacwd }}",
               event.data.oldElem.attr('id'),
               box.val());
    }
@@ -58,7 +58,7 @@ function saveEditBox(event) {
 
 function editTitle() {
    var mt=$('.moaTitle');
-   var val = mt.html().trim()
+   var val = mt.html().trim();
    mt.after('<input type="text" class="moaEditString" id="title" value="'+val+'" />');
    mt.hide();
    $('.moaEditString')

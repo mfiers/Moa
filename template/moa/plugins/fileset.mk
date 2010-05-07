@@ -26,8 +26,8 @@
 
 
 ## Evaluate & load the filesets
-
 ifdef $(moa_id)_main_phase
+
 $(foreach v,$(_moa_filesets), \
 	$(eval $(v)_srtst=cat) \
 	$(eval $(v)_realext=$(if $($(v)_extension),.$($(v)_extension))) \

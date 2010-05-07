@@ -1,13 +1,10 @@
-<%inherit file="base.html"/>
+{% extends "jinja2/web/base.html" %}
 
-<%def name="moaTopRow()">
+{% block moaTitle %}
 <div class="moaTitle">
   <b>This directory does not contain a Moa job</b><br>
   <span style="font-size:xx-small; font-weight:100">
     &nbsp;&nbsp;&nbsp;(or you do not have sufficient privileges to access it)
   </span>
 </div>
-<div class="moaMenu">
-  ${self.moaMenu()}
-</div>
-</%def>
+{% endblock %}

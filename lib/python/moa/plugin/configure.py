@@ -28,11 +28,11 @@ import optparse
 import moa.conf
 from moa.logger import l
 
-SET_DESC = '''Set, append, change or remove variables from the configuration of a Moa job.'''
 
 def defineCommands(commands):
     commands['set'] = {
-        'desc' : SET_DESC,
+        'desc' : 'Set, append, change or remove variables from the ' +
+        'configuration of a Moa job.',
         'call' : configSet,
         }
 

@@ -96,7 +96,9 @@ a:active { color: #A31E39; }
 }
 
 .moaMenu {
-    float: right
+    float: right;
+	display: none;
+
 }
 
 .moaTemplate {

@@ -255,10 +255,9 @@ def newJob(template,
                 break
         
     if (not title) and (not template == 'traverse'):
-        l.debug("no title (template %s)" % template)
-        l.warning("You must specify a job title")
-        l.warning("You can still do so by using: ")
-        l.warning("moa set title='somthing meaningful'")
+        l.warning("You *must* specify a job title")
+        l.warning("You can still do so by running: ")
+        l.warning("   moa set title='something descriptive'")
         title = ""
     if title:
         l.debug('creating a new moa makefile with title "%s" in %s' % (

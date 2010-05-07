@@ -1,22 +1,49 @@
+The adhoc template is used to execute simple, one-line, commands, on a
+set of input files. This template can run in four different modes:
 
-The adhoc template is used to execute simple commands (typically a
-oneliner) on a set of input files. Input files are defined using the
-`adhoc_input_*`, parameters. Each of the input files is then processed
-by the command specified in `adhoc_process`. The path to input file is
-available to the `adhoc_process` commandline using the `$<`
-variable. The output file is available using `$t`. The default output
-file name is the basename of the input file. It is possible, however,
-to change the output filename using a `sed` expression (in parameters
-`adhoc_name_sed`. 
+* *seq* (default): Run the command sequentially on a set of input
+files
+* *par*: Run the command in parallel on the input files, to be used
+together with the `-j NOTHREADS` parameter.  
+* *all*: Run the command once on all input files (use `$^`)
+* *simple*: Run the command without any input files
 
-The default operation is to (hard) link all files to the current
-directory using the following command:
+Input files are defined using the `adhoc_input_*`, parameters. The
+command can be defined by setting `adhoc_process`. Note that commands
+must be enclosed by single quotes (') to make sure that bash
+interprets it as a single command and does not try to expand
+variables. Another important thing to note is that if you would like
+to use dollar signs (for example for environment variables) you need
+to escape these with an extra `$` (so, `$$HOME` would refer to the
+user home directory)
 
-    ln $< $t
+## seq, par
+
+Both the `seq` and `par` modes process the each of the input files
+seperatly by the command specified in `adhoc_process`. The path to
+input file is available to the `adhoc_process` commandline through the
+`$<` variable. The output file name is available using `$t`. 
+
+The default output file name is the basename of the input file. It is
+possible, however, to change the output filename using a `sed`
+expression (`adhoc_name_sed`).
+
+## all
+
+All inputfiles are fed to the commandline at once. The list of input
+files is available as `$^`.
+
+## examples
+
+A simple example is to create a link in the current directory to the
+input files. This can be done by setting adhoc to the `par` mode and
+setting`'adhoc_process` to `ln $< $t`.
     
-Another, more complex example, is to extract the headers from a set of
+A more complex example would be to extract the headers from a set of
 input sequences and filter them for a keyword ("mitochon") and store
-the IDs of hitting sequences into a single output file.
+the IDs of hitting sequences into a single output file. This must be
+run in the `seq` modus to prevent several threads writing to the
+output files at the same time.
 
     head -1 $< | cut -c2- | grep -i mitochon \
         | cut -d' ' -f 1 >> hits

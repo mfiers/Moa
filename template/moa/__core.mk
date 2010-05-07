@@ -34,10 +34,12 @@ $(foreach v,$(moa_must_define) $(moa_may_define), \
 		$(if $($v_default), \
 			$(eval $v=$($v_default))) ) )
 
+
 ##load the plugins: contains core - post definition
 $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/template/moa/plugins/$(p).mk) \
 )
+
 
 ##moa_list_plugins - list all loaded plugins
 .PHONY: moa_list_plugins

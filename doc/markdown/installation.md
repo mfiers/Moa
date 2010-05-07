@@ -11,7 +11,7 @@ Other, even older, versions might work.
 * [Gnu Make](http://www.gnu.org/software/make/) (3.81)
 
 * [Git](http://git-scm.com/) (1.6). Used to download the latest version,
-  and possibly by the git plugin. 
+  and optionally by the git plugin. 
 
 * [Python](http://python.org) (2.6). Python version 2.5 and lower or
   3.0 will not work.
@@ -24,11 +24,13 @@ Other, even older, versions might work.
   set of standard routines for Gnu Make. GSML is distributed together
   with Moa.
  
-* [Pandoc](http://johnmacfarlane.net/pandoc/) (Preferably 1.5). Pandoc
-  is used in generating the on the fly help for which the ancient
-  0.46, bundled with Ubuntu, will also work. Pandoc is also used to
-  generating LaTeX & HTML documentation. For these a recent version is
-  strongly recommended.
+* [Pandoc](http://johnmacfarlane.net/pandoc/) (Preferably 1.5) is used
+  in generating help. Pandoc is also used to generating Pdf and HTML
+  documentation. A recent version is recommended.
+
+* [Jinja2](http://jinja.pocoo.org/2/) is used together with Pandoc to
+  generate the documentation, website, pdf manual, man
+  pages. If you have easy_install: `easy_install jinja2`.
 
 ## Bioinformatics tools
 

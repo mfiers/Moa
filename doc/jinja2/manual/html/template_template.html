@@ -1,0 +1,66 @@
+{% extends "jinja2/manual/html/base.html" %}
+
+{% block content %}
+
+<h1>Moa template: {{template_name}}</h1>
+</h3>{{ template_title }}</h3>
+
+<h2> DESCRIPTION </h2>
+
+{{ template_title }}
+
+{% if template_manual %}
+{{ template_manual }}
+{% endif %}
+
+<h2> Targets </h2>
+
+<ul>
+<li><b>(empty) / {{ d.moa_id }}</b>: {{ d.template_description }}</li>
+{% for target in d.moa_targets -%}
+{%   if target != d.moa_id -%}
+<li><b>{{ target }}</b>: {{ d[target + '_help'] }}</li>
+{%   endif %}
+{% endfor %}
+</ul>
+
+<h2>PARAMETERS</h2>
+(* denotes a mandatory parameter)
+{% for cat in d.parameter_category_order -%}
+{%   if cat -%}
+<h3>{{ cat|capitalize }} parameters</h3>
+{%   endif -%}
+<ul>
+{%   for pn in d.parameter_categories[cat] -%}
+{%     set par = d.parameters[pn] %}
+<li><b>{% if par.mandatory %}*{%- endif %}{{ pn }}</b>: {{ par.help }}<br>
+Data type: {{ par.type }}
+{%-    if par.type == 'set' -%}
+{{ ', ' }}
+{%-       for a in par.allowed -%}
+{%-         if a == par.default -%}<u>{% endif -%}
+{{ a }}
+{%-         if a == par.default -%}</u>{% endif -%}
+{%-         if not loop.last -%}|{%- endif -%}
+{%-       endfor -%}
+{%-    else -%}
+{%-       if par.default -%}
+, Default: "{{ par.default }}"
+{%-       endif -%}
+{%-    endif -%}{{ '.' }}
+</li>
+{%-   endfor -%}
+</ul>
+{% endfor -%}
+
+<h2>Miscellaneous </h2>
+<ul>
+<li>Template last modified on {{ template_modification_date}}</li>
+<li>Template author {{ template_author }}</li>
+<li>Moa_id: {{ moa_id }}</li>
+<li>Template name: {{template_name}}</li>
+<li>Template file: {{template_file}}</li>
+</ul>
+
+
+{% endblock %}

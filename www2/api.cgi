@@ -34,6 +34,13 @@ def moaSet(form, data):
     v = form['val'].value
     moa.conf.setVar(wd, k, v)
     return 'Successfully set %s to: %s' % (k,v)
+
+def moaRun(form, data):
+    wd = form['wd'].value
+    template = form.get('target', "")
+    job = moa.job.MOAMAKE(
+        wd = wd, bg = True, target = target)
+    return "Started job %s in %s" % (target, wd)
     
 if __name__ == "__main__":
 
@@ -41,11 +48,9 @@ if __name__ == "__main__":
     req = os.environ['PATH_INFO'][1:]
     wd = form['wd']
     
-    data = {
-        'success': False,
-        'req' : req,
-        }
-
+    data = { 'success': False,
+             'req' : req }
+    
     try:
         func = 'moa%s' % req.capitalize()
         try:
@@ -61,62 +66,4 @@ if __name__ == "__main__":
     print "Content-type: application/json"
     print
     print json.dumps(data)
-    
-
-## def getWebRoot():
-##     webRoot = os.environ.get('MOAWEBROOT')
-##     if webRoot[-1] == '/':
-##         webRoot = webRoot[:-1]
-##     return webRoot
-
-## def getDataRoot():
-##     dataRoot = os.environ.get('MOADATAROOT')
-##     if dataRoot[-1] == '/':
-##         dataRoot = dataRoot[:-1]
-##     return dataRoot
-
-## def getLocalDir():
-##     requestUri = os.environ.get('REQUEST_URI')
-##     dataRoot = getDataRoot()
-##     webRoot = getWebRoot()
-
-##     if requestUri.find(webRoot) != 0:
-##         return False
-##     moadir = dataRoot + requestUri[len(webRoot):]
-##     if '?' in moadir:
-##         moadir = moadir[:moadir.index('?')]
-##     return moadir
-
-## d = {'MOABASE' : MOABASE}
-## moacwd = getLocalDir()
-## d['requestUri'] = os.environ.get('REQUEST_URI')
-## d['moacwd'] = moacwd
-## d['status'] = 'notmoa'
-## d['dataRoot'] = getDataRoot()
-## d['webRoot'] = getWebRoot()
-
-## templateLookup = TemplateLookup(
-##     directories=['/'],
-##     module_directory='/tmp/mako_modules' )
-
-## #Fire off a generic page without any information if this is not a Moa dir
-## if not moa.info.isMoaDir(moacwd):
-##     pageTemplate =  Template(filename='%s/www2/template/notMoa.html' % MOABASE,
-##                              lookup=templateLookup)
-##     print pageTemplate.render(**d)
-##     sys.exit()
-
-## #ok, this must be a moa directory: gather information
-
-## d['status'] = moa.info.status(moacwd)
-## d['template'] = moa.info.template(moacwd)
-## d['jobTitle'] = moa.info.getTitle(moacwd)
-## d['allinfo'] = moa.info.info(moacwd)
-## d['description'] = d['allinfo'].get('moa_description', '')
-
-## pageTemplate =  Template(
-##     filename='%s/www2/template/Moa.html'% MOABASE,
-##     lookup=templateLookup)
-## print pageTemplate.render(**d)
-
 

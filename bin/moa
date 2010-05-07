@@ -25,21 +25,18 @@ This script serves as a command dispatcher for all moa functionality
 
 import os
 import sys
-import site
 import optparse
 import textwrap
 
-#moa specific libs - first prepare for loading libs
 if not os.environ.has_key('MOABASE'):
-    raise Exception("MOABASE is undefined")
-
-#process the .pth file in the $MOABASE/bin folder !
-site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
+    print "The environment variable MOABASE is not set"
+    print "please refer to the documentation or run"
+    print "source (PATH/TO/MOA/INSTALL/bin/moainit.sh)"
+    sys.exit(1)
 
 MOABASE = os.environ["MOABASE"]
-TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
-import moa
+#moa specific libs
 import moa.job
 import moa.archive
 from moa import runMake
