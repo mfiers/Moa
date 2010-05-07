@@ -1,0 +1,236 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import math
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+import matplotlib as mpl
+#import matplotlib.rc as rc
+import pylab as pl
+
+import logging
+import optparse
+import subprocess
+
+## Arguments: General options 
+parser = optparse.OptionParser()
+parser.add_option('-v', dest='verbose', action="count", 
+                  help='Show debug information')
+parser.set_defaults(ntPerLine=1e5)
+parser.add_option('-n', dest='ntPerLine',
+                  help='no nucleotides per band')
+parser.add_option('-S', dest='seqId',
+                  help='Sequence Id')
+parser.add_option('-l', dest='log', action='store_true',
+                  help='take the log10 of the coverage')
+parser.add_option('-s', dest='start',
+                  help='Start position (nt) of the plot')
+parser.add_option('-e', dest='end',
+                  help='End position (nt) of the plot')
+parser.add_option('-C', dest='compare',
+                  help='If this is defined - it will become ' +
+                  'a comparative plot')
+
+options, args = parser.parse_args()
+
+inputFile = args[0]
+compareToFile = args[1]
+
+l = logging.getLogger('hagfish')
+handler = logging.StreamHandler()
+logmark = chr(27) + '[0;37;44mHAGFISH' + \
+          chr(27) + '[0m ' 
+
+formatter = logging.Formatter(
+    logmark + '%(levelname)-6s %(message)s')
+
+handler.setFormatter(formatter)
+l.addHandler(handler)
+
+if options.verbose >= 2:
+    l.setLevel(logging.DEBUG)
+elif options.verbose == 1:
+    l.setLevel(logging.INFO)
+else:
+    l.setLevel(logging.WARNING)
+
+def quant(x, w):
+    xs = np.sort(x)
+    return xs[int(len(xs) * w)]
+    
+if __name__ == '__main__':
+
+    if options.seqId:
+        seqId = options.seqId
+    else:
+        seqId = os.path.basename(inputFile)\
+                .replace('.combined', '')\
+                .replace('.coverage.npz', '')\
+                .replace('.npz', '')
+
+    l.info("and I'm calling this sequence: %s" % seqId)
+    
+    ntPerLine = int(float(options.ntPerLine))
+    l.info("nucleotides per line: %d" % ntPerLine)
+
+    data = np.load(inputFile)
+    r_ok = data['r_ok']
+    r_high = data['r_high']
+    r_low = data['r_low']
+
+    cdata = np.load(compareToFile)
+    c_ok = cdata['r_ok']
+    c_high = cdata['r_high']
+    c_low = cdata['r_low']
+
+    seqLen = len(r_ok)
+
+    if options.start:
+        pStart = int(float(options.start))
+    else:
+        pStart = 0
+    if options.end:
+        pEnd = min(seqLen, int(float(options.end)))
+    else:
+        pEnd = seqLen
+
+    plotLen = pEnd - pStart
+    l.info("Plotting from %d to %d (%d nt)" % (
+        pStart, pEnd, plotLen))
+
+    # normalize the plots
+    # divide by median
+    r_all = r_ok + r_low + r_high
+    c_all = c_ok + c_low + c_high
+    r_median = float(np.median(r_all))
+    c_median = float(np.median(c_all))
+
+    r_ok = r_ok / r_median
+    c_ok = c_ok / c_median
+    r_low = r_low / r_median
+    c_low = c_low / c_median
+    r_high = r_high / r_median
+    c_high = c_high / c_median
+
+    # if pStart > 0 or pEnd < seqLen:
+    #     r_ok = r_ok[pStart:pEnd]
+    #     c_ok = c_ok[pStart:pEnd]
+    #     r_high = r_high[pStart:pEnd]
+    #     c_high = c_high[pStart:pEnd]
+    #     r_low = r_low[pStart:pEnd]
+    #     c_low = c_low[pStart:pEnd]
+
+    #max value - else all space is taken up by the peaks
+
+    maxY = max(quant(r_ok+r_low+r_high, 0.90), quant(c_ok+c_low+c_high, 0.90))
+    minY = -maxY
+        
+    r_x = np.arange(0, seqLen, dtype="int")
+    r_z = np.zeros_like(r_x)
+
+    noLines = int(math.ceil(plotLen / float(ntPerLine)))
+    l.info("going to plot %d lines" % noLines)
+    l.info("y axis is between %d and %d" % (minY, maxY))
+
+    mpl.rcParams['axes.labelsize'] = 'x-small'
+    mpl.rcParams['xtick.labelsize'] = 'xx-small'
+    mpl.rcParams['ytick.labelsize'] = 'xx-small'
+
+    fig = plt.figure(figsize=(10,2*noLines))    
+    _MC = 0.10 - (0.01 * min(8, noLines))
+    fig.subplots_adjust(0.03,_MC,0.95,0.98-(2*_MC))
+
+    for line in range(noLines):        
+    
+        nstart = pStart + (line * ntPerLine)
+        nstop = nstart + (ntPerLine - 1)
+
+        l.debug('printing line %d from %d to %d' % (
+            line, nstart, nstop))
+
+        ax = fig.add_subplot(noLines,1,line+1)
+
+        if line == 0:
+            ax.set_title('Comparative coverate plot for "%s"' % seqId)
+
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            r_low[nstart:nstop],
+            color="blue")
+            
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_low[nstart:nstop],
+            r_low[nstart:nstop] + r_ok[nstart:nstop],
+            color="green")
+
+        ax.fill_between(
+             r_x[nstart:nstop],
+             r_low[nstart:nstop] + r_ok[nstart:nstop],
+             (r_low[nstart:nstop]
+              + r_ok[nstart:nstop]
+              + r_high[nstart:nstop]),
+             color="red")
+
+        ax.fill_between(
+            r_x[nstart:nstop],
+            -1 * (c_low[nstart:nstop] + c_ok[nstart:nstop])
+            -1 * (c_low[nstart:nstop]
+                  + c_ok[nstart:nstop]
+                  + c_high[nstart:nstop]),
+            color="red")
+        
+        ax.fill_between(
+            r_x[nstart:nstop],
+            -1 * c_low[nstart:nstop],
+            -1 * (c_low[nstart:nstop] + c_ok[nstart:nstop]),
+            color="green")
+
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            -1 * c_low[nstart:nstop],
+            color="blue")
+        
+        ax.set_ylim(minY,maxY)
+        ax.set_xlim(nstart, nstop)
+        
+    plt.savefig('%s.cc.png' % (seqId))
+
+    fig = plt.figure(figsize=(10,2*noLines))    
+    _MC = 0.10 - (0.01 * min(8, noLines))
+    fig.subplots_adjust(0.03,_MC,0.95,0.98-(2*_MC))
+
+    diff = r_ok - c_ok
+    
+    l.info("minmax diff %s %s" % (
+        quant(diff, 0.90),
+        quant(diff, 0.10)))
+    maxY = max(quant(diff, 0.90), -quant(diff, 0.10))
+
+    for line in range(noLines):        
+    
+        nstart = pStart + (line * ntPerLine)
+        nstop = nstart + (ntPerLine - 1)
+
+        l.debug('printing line %d from %d to %d' % (
+            line, nstart, nstop))
+
+        ax = fig.add_subplot(noLines,1,line+1)
+
+        if line == 0:
+            ax.set_title('subtracted coverage plot for "%s"' % seqId)
+
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],            
+            diff[nstart:nstop],
+            color="green", alpha=0.8)
+
+        ax.set_ylim(-maxY,maxY)
+         
+    plt.savefig('%s.ccs.png' % (seqId))
