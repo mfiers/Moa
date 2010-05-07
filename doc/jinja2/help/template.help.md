@@ -5,11 +5,7 @@
 {{ moa_id }}
 
 {{ '#' }} DESCRIPTION 
-<<<<<<< HEAD:doc/jinja_templates/template.help.md
-
 {{ d.template_title }}
-=======
->>>>>>> 4a1b10035cf299966adcb0540ff0fabbc8556db5:doc/jinja2/help/template.help.md
 
 {{ template_title }}
 
