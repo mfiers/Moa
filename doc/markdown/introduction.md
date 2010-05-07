@@ -1,19 +1,21 @@
 **NOTE: both the software and the manual are under development. Expect
   things to change.**
 
+# Introduction
+
 A bioinformatics project is often build up of many separate,
 interdependent, steps. Once projects get bigger it becomes necessary
-to organize and automate such a project. There is number of different
-ways to automate a bioinformatics project \citep{Fie08, Pot04, Oinn04,
+to organize and automate such a project. There are many different ways
+to automate a bioinformatics project \citep{Fie08, Pot04, Oinn04,
 Tay07}. Many bioinformaticians, however, continue writing tailor-made
-scripts to organize and automate their work. Scripting has some
-obvious advantages, of which flexibility is probably most important. A
-downside to scripting is that projects usually do not scale very well
-and easily become cluttered.
+scripts to organize and automate their work. Scripting has obvious
+advantages, most importantly flexibility. The downside to scripting is
+that projects usually do not scale very well and easily become
+cluttered.
 
-Moa is aimed at organizing and automating a bioinformatics project
-without losing the flexibility of tailor made scripts. The best way to
-understand what Moa aims to achieve is by example:
+Moa is aimed at organizing and automating command line bioinformatics
+project without losing the flexibility of tailor made scripts. The
+best way to understand how Moa aims to achieve this is by an example:
 
     moa new blast -t "run a demo"
     moa set blast_db=/data/blast/db/nt
