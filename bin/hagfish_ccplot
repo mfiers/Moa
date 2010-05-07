@@ -34,7 +34,6 @@ parser.add_option('-C', dest='compare',
                   help='If this is defined - it will become ' +
                   'a comparative plot')
 
-
 options, args = parser.parse_args()
 
 inputFile = args[0]
