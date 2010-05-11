@@ -156,7 +156,7 @@ def doStats(bamname, seqInfo, readPairs):
     stats['average'] = np.average(insertSizes)
 
     # generate a histogram
-    hist, edges = np.histogram(insertSizes, bins=500, range=(0, 30000), new=True)
+    hist, edges = np.histogram(insertSizes, bins=500, range=(0, 10 * stats['median']), new=True)
     mids = 0.5 * (edges[1:] + edges[:-1])
 
     #smooth the histogram (using a moving average)
@@ -250,6 +250,8 @@ def parseBam(seqInfo, inputFileName):
     i = 0; j=0
     for seqId, start1, stop1, start2, stop2 in readBAM(inputFileName):
         j += 1
+
+        if j % 500000 == 0 : l.debug('processed %d readpairs' % j)
 
         if seqInfo[seqId]['length'] < minSeqLen: continue
         if stop2-start1 > maxInsert: continue
