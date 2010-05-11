@@ -5,7 +5,7 @@
 ## Load moa system wide configuration
 -include $(MOABASE)/etc/moa.conf.mk
 
--include ~/.moa/moa.conf.mk
+-include $(HOME)/.moa/moa.conf.mk
 
 .DEFAULT_GOAL := get_moa_plugins
 .PHONY: get_moa_plugins
