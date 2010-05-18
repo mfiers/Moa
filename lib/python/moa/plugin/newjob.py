@@ -42,18 +42,10 @@ def defineOptions(parser):
                        help="Directory to create the new template in (default: .)")
     parser.add_option_group(parserN)
 
-def newJob(wd, options, args):
-    """
-    Create a new job 
-    """
-
-    l.debug("Creating a new job ")
-
-    if options.directory:
-        wd = options.directory
-
-    title = options.title
-
+def _parseArgs(args):
+    '''
+    Parse the arguments
+    '''
     if len(args) == 0:
         template = 'traverse'
         params = []
@@ -63,6 +55,21 @@ def newJob(wd, options, args):
     else:
         template = args[0]
         params = args[1:]
+    return template, params
+    
+def newJob(wd, options, args):
+    """
+    Create a new job 
+    """
+
+    template, params = _parseArgs(args)
+    l.debug("Creating a new '%s' job" % template)
+
+    if options.directory:
+        wd = options.directory
+
+    title = options.title
+
 
     moa.job.newJob( template = template,
                     title = title,

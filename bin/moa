@@ -26,7 +26,6 @@ This script serves as a command dispatcher for all moa functionality
 import os
 import sys
 import optparse
-import textwrap
 
 if not os.environ.has_key('MOABASE'):
     print "The environment variable MOABASE is not set"
@@ -49,53 +48,28 @@ import moa.checkTemplate
 
 ## Initialize the logger
 import moa.logger
-l = moa.logger.l
-
+from moa.logger import l
 ## A quick hack to set verbosity before reading command line arguments
-if '-v' in sys.argv:
+if ('-v' in sys.argv) or ('-vv' in sys.argv):
     moa.logger.setVerbose()
 
-## Determine what plugins are loaded
-moaPlugins = moa.info.getPlugins()
-moaPluginsLoaded = []
-moaPluginModules = {}
-l.debug("Plugins %s" % moaPlugins)
+## load moa core modules - these handle most of the operation
+from moa.commands import moaCommands
+from moa.plugins import moaPlugins
+#from moa.hooks import moaHooks
+import moa.moajob
+import moa.invocation
 
-## load the plugins as seperate modules. A plugin does not need to
-## have a python module.
-for plugin in moaPlugins:
-    pyModule = 'moa.plugin.%s' % plugin
-    try:
-        _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
-        moaPluginModules[plugin] = _m
-        moaPluginsLoaded.append(plugin)
-        l.debug("Successfully Loaded module %s" % pyModule)
-    except ImportError, e:
-        if not str(e) == "No module named %s" % plugin:
-            raise
-        l.debug("No python plugin module found for %s" % plugin)
+moaHooks = {}
 
-## Command definitions
-moaCommands = {}
+## Register plugin defined commands
+moaPlugins.registerCommands(moaCommands)
 
-## Plugin: define Moa commands
-for p in moaPluginsLoaded:
-    moaPluginModules[p].defineCommands(moaCommands)
-    
 ## start defining the command line interface
-USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
-moaCommandNames = moaCommands.keys()
-moaCommandNames.sort()
-for _c in moaCommandNames:
-    if moaCommands[_c].get('private', False):
-        continue
-    USAGE += "\n".join(
-        textwrap.wrap(
-            '%s: %s' % (_c, moaCommands[_c]['desc']),
-            initial_indent=' - ',
-            subsequent_indent = '     ')) + "\n"
+USAGE = moaCommands.generateUsageString(
+    "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n")
 
-## define & parse command line options  
+## define & parse command line options
 parser = optparse.OptionParser(usage=USAGE)
 
 parser.add_option('-f', '--force', dest='force', action='store_true',
@@ -120,9 +94,7 @@ parser.add_option("--md", dest="makedebug", action='store_true',
                   "information")
 
 ## See if the plugins have anything to add to the optparse instance:
-for p in moaPluginsLoaded:
-    if 'defineOptions' in dir(moaPluginModules[p]):
-        moaPluginModules[p].defineOptions(parser)
+moaPlugins.registerOptions(parser)
 
 ## Parse the options
 (options, args) = parser.parse_args()
@@ -131,63 +103,31 @@ for p in moaPluginsLoaded:
 if options.verbose:
     moa.logger.setVerbose()
 
-## Store all arguments in the environment - we might want to have a
-## look at them from the Makefiles
-os.putenv("MOAARGS", "%s" % " ".join(["'" + str(x) + "'" for x in args]))
-
-### Start initializing the plugins
-for p in moaPluginsLoaded:
-    if 'prepare' in dir(moaPluginModules[p]):
-        moaPluginModules[p].prepare(globals())
-
-### Determine project root (if there is one)
-projectRoot = moa.project.findProjectRoot()
-if projectRoot:
-    l.debug('Project root is %s' % projectRoot)
-    os.putenv('MOAPROJECTROOT', projectRoot)
-
-## make sure the MOA_THREADS env var is set - this is used from inside
-## the Makefiles later threads need to be treated different from the
-## other parameters. multi-threaded operation is only allowed in the
-## second phase of execution.
-os.putenv('MOA_THREADS', "%s" % options.threads)
-
-## Define extra parameters to use with Make
-
-makeArgs = []
-if options.remake:
-    makeArgs.append('-B')
-if options.makedebug:
-    makeArgs.append('-d')
-
 ## Command dispatcher
 if __name__ == "__main__":
-    cwd = os.getcwd()
+
     l.debug("MOABASE is '%s'" % MOABASE)
-    if options.threads > 1:
-        l.debug("Running make with %d threads" % options.threads)
 
-    ## Determine what the command is.
-    command = ""
-    newargs = []
-    if len(args) > 0:
-        command = args[0]
-        newargs = args[1:]
+    ## Invocation object contains as much information as possible on
+    ## this specific moa run.
+    i = moa.invocation.get(options, args)
 
-    l.debug("start moa %s" % command)
-    l.debug("with args %s" % args[1:])
-
+    ### Prepare plugins
+    moaPlugins.prepare(i)
+    l.debug('possible commands %s' % moaCommands.keys())
     #see if there is a callback - If so call it
-    if command in moaCommands:
-        if moaCommands[command].has_key('call'):
-            l.debug("using a callback for moa %s" % command)
-            moaCommands[command]['call'](os.getcwd(), options, newargs)
+    if moaCommands.hasCallback(i.command):
+            moa.hooks.run('before', command, globals())                
+            moaCommands.executeCallback(i)
+            #same thing - post-function-hooks
+            moa.hooks.run('after', command, globals())
+            
             sys.exit()
 
     #No callback, defer this to Make
     
     #append the arguments to make (if there are any)
-    makeArgs.extend(newargs)
+    #moaInvocation.makeArgs.extend(newargs)
     if not moa.info.isMoaDir(cwd):
         if command:
             l.error("Unknown command: 'moa %s'" % command)
@@ -204,7 +144,7 @@ if __name__ == "__main__":
                           target = command,
                           verbose = options.verbose,
                           threads = options.threads,
-                          makeArgs = makeArgs,
+                          makeArgs = moaInvocation.makeArgs,
                           background = options.background)
     returnCode = job.run()    
     sys.exit(returnCode)

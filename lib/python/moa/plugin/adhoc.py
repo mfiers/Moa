@@ -30,14 +30,14 @@ import moa.logger
 l = moa.logger.l
 
 def defineCommands(commands):
-    commands['a'] = { 
+    commands['adhoc'] = { 
         'desc' : 'Quickly create an adhoc analysis',
         'call' : createAdhoc
         }
 
 def defineOptions(parser):
     parserN = optparse.OptionGroup(parser, "Moa adhoc (a)")
-    parser.set_defaults(mode="seq", directory=".")
+    parser.set_defaults(directory=".")
     try:
         parserN.add_option("-t", "--title", dest="title", help="Job title")
         parserN.add_option("-d", "--directory", 
@@ -45,7 +45,7 @@ def defineOptions(parser):
                            help="Directory to create the new template in (default: .)")
     except optparse.OptionConflictError:
         pass # probably already defined in the newjob plugin
-    parserN.add_option("-m", "--mode",
+    parserN.add_option("--mode",
                        dest="mode",
                        help="Directory to create the new template in (default: .)")
     parserN.add_option("-i", "--input",
@@ -59,33 +59,36 @@ def createAdhoc(wd, options, args):
     Create an adhoc job
     """
 
-    command = ""
-    params = []
+    command = " ".join(args).strip()
+    if not command:
+        l.critical("need to specify a command")
+        sys.exit(-1)
 
-    if len(args) > 0: command = args[0]
-    if len(args) > 1: params = args[1:]
-    
+    l.critical('command is: %s' % command)
+    params = []
     mode = None
-    if options.mode:        
+    if options.mode:
         if not options.mode in ['seq', 'par', 'all', 'simple']:
             l.critical("Unknown adhoc mode: %s" % options.mode)
-            sys.exit(-1)        
+            sys.exit(-1)
         mode = options.mode
     elif '$<' in command:
         mode = 'seq'
-        l.info("Setting adhoc mode to 'seq', change to 'par' if you are confident ")
-        l.info("that parallel operation is possible")
+        l.info("Setting adhoc mode to 'seq', change to 'par' if you are ")
+        l.info(" confident that parallel operation is possible")
     elif ('$^' in command) or ('$?' in command):
         mode = 'all'
-        l.info("Setting mode to 'all' - processing all files in one go")
+        l.info("Observed '$^' or '$?', setting mode to 'all'")
+        l.info("Processing all files in one go")
     else:
         mode = 'simple'
-        l.info('did not see $? or $^ in the command line - assuming no input files')
+        l.info('did not see $? or $^ in the command line')
+        l.info('assuming no input files, setting mode to "simple"')
 
     params += ['adhoc_mode=%s' % options.mode]
 
     if options.input:
-        l.debug("interpreting adhoc input: %s" % options.input) 
+        l.debug("interpreting adhoc input: %s" % options.input)
         i = options.input
         if i[-1] == '/':
             p = 'adhoc_input_dir=%s' % i

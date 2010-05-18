@@ -46,14 +46,6 @@ chapters = ['introduction', 'installation',
             'commands', 'templates', 'extending',
             'reference']
 
-COMMANDS = None
-
-def prepare(d):
-    """
-    initialize this plugin
-    """
-    global COMMANDS
-    COMMANDS = d['moaCommands']
     
 def defineCommands(commands):
     commands['help'] = {
@@ -155,9 +147,11 @@ def markdown2html(md):
     return html
 
 def getRenderData(wd):
-    
-    global COMMANDS
-    commandOrder = COMMANDS.keys()
+    """
+    collect a lot of data on this specific job - this is meant to be
+    dispatched of the jinja template
+    """
+    commandOrder = moaCommands.keys()
     commandOrder.sort()
     
     data = {
@@ -166,7 +160,7 @@ def getRenderData(wd):
         'date_generated' : time.ctime(),
         'git_version' : moa.info.getGitVersion(),
         'git_branch' : moa.info.getGitBranch(),
-        'commands' : COMMANDS,
+        'commands' : moaCommands,
         'templates' : moa.job.list(),
         'command_order' : commandOrder,
     }
@@ -222,7 +216,7 @@ def createHtmlManual(wd, options, args):
         data['content'] = content
         render('%s.html' % c, data)
         
-    for c in COMMANDS:
+    for c in moaCommands:
         #see if there is a markdown manual for this command
         try:
             commandTemplate = JENV.get_template('markdown/commands/%s.md' % c)
@@ -233,7 +227,7 @@ def createHtmlManual(wd, options, args):
         #render the command template 
         data['content'] = content
         data['command_name'] = c
-        data['command_desc'] = COMMANDS[c].get('desc', "")
+        data['command_desc'] = moaCommands[c].get('desc', "")
         render('command_%s.html' % c, data, template='command_template.html')
 
     for t in data['templates']:
