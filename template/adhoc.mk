@@ -76,9 +76,6 @@ adhoc_powerclean_allowed = T F
 #Include moa core
 include $(MOABASE)/template/moa/core.mk
 
-adhoc_sif:
-	@echo $(adhoc_input_files)
-
 ifeq ($(adhoc_mode),simple)
 adhoc_touch=F
 else
@@ -128,7 +125,6 @@ endif
 ifeq ($(adhoc_mode),par)
 
 adhoc: adhoc_check $(adhoc_touch_files)
-		@echo $(adhoc_input_files)
 
 touch/%: t=$(shell echo '$*' | sed $(adhoc_name_sed))
 touch/%: $(adhoc_input_dir)/%
@@ -144,12 +140,12 @@ endif
 ## adhoc mode: all
 ifeq ($(adhoc_mode),all)
 
-adhoc: adhoc_check adhoc_all
-
-adhoc_all: $(adhoc_input_files)
-	$(call echo,considering $(words $^) files)
+adhoc: adhoc_check  $(if $(call seq,$(adhoc_touch),T),$(adhoc_touch_files))
+	$(call echo,considering $(words $<) files)
 	$e $(adhoc_process)
 
+touch/%: $(adhoc_input_dir)/%
+	touch $@;
 endif
 
 
