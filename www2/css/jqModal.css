@@ -18,10 +18,11 @@
     margin-left: -400px;
     width: 800px;
     
-    background-color: #BFCFCC;
+    background-color: white;
+    color: #173C48;
     overflow:auto;
     max-height: 80%;
-    border: 1px solid black;
+    border: 2px solid #FE5D44;
     padding: 12px;
 }
 

@@ -1,7 +1,8 @@
 /* menu styles */
 #jsddm
-{	margin: 0;
-	padding: 0
+{	margin: 0px;
+	padding: 0px;
+    margin-right: 5px;
 }
 
 
@@ -10,29 +11,33 @@
 	list-style: none;
 	font-size: 12px;
 }
+#jsddm li:hover {	
+    background-color: #B6E8B4;
+    margin: 0px;
+}
+
 
 #jsddm li a
 {	display: block;
-	background: #D6E4E1;
-	padding: 5px 12px;
+	padding: 5px 5px;
 	text-decoration: none;
-	border-right: 1px solid white;
-	width: 70px;
-	color: black;
+	border: 0;
 	white-space: nowrap}
 
 #jsddm li a:hover {	
-    background: #BFCFCC;
-    color: white;
-
+    
 }
 
 #jsddm li ul
 {	margin: 0;
 	padding: 0;
 	position: absolute;
+    right:5px;
 	visibility: hidden;
-	border-top: 1px solid white}
+	border-top: 1px solid #173C48;
+	border-bottom: 1px solid #173C48;
+
+}
 
 #jsddm li ul li
 {	float: none;
@@ -40,8 +45,12 @@
 
 #jsddm li ul li a
 {	width: auto;
-	background: #D6E4E1;
-	color: black}
+	background: #B6E8B4;
+	color: #173C48;
+}
 
 #jsddm li ul li a:hover
-{	background: #BFCFCC}
+{	background: #FE5D44;
+    color: #173C48;
+
+}

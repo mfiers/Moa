@@ -25,13 +25,10 @@
 {% block moaMenu %}
 <div class="moaMenu">
 <ul id="jsddm"> 
-  <li><a>Configure</a>
+  <li><a><img src="/moa/images/pen-16.gif"></a>
     <ul>
-      <a href='#'><small>Experimental</small></a>
-      <a href='#'><small>use with</small></a>
-      <a href='#'><small>care</small></a>
-      <a href='#' onclick="moaAjaxCall('lock', {wd: '{{ moacwd }}'});">Lock</a>
-      <a href='#' onclick="moaAjaxCall('unlock', {wd: '{{ moacwd }}'});">Unlock</a>
+      <li><a href='#' onclick="moaAjaxCall('lock', {wd: '{{ moacwd }}'});">Lock</a></li>
+      <li><a href='#' onclick="moaAjaxCall('unlock', {wd: '{{ moacwd }}'});">Unlock</a></li>
     </ul>
   </li>
   {% include "jinja2/web/menu.moa.html" %}
@@ -40,7 +37,7 @@
 {% endblock %}
 
 {% block moaTemplate %}
-<div class="moaTemplate">
+<div class="moaTemplate">{{allinfo.moa_id }}
 </div>
 {% endblock %}
 

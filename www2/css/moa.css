@@ -16,10 +16,10 @@ body {
 }
 html { margin: 0px; padding: 0px; }
 
-a:link { color: black }
-a:visited { color: black }
-a:hover { color: #A31E39; }
-a:active { color: #A31E39; }
+a:link { color: #173C48 }
+a:visited { color: #173C48 }
+a:hover { color: #FE5D44; }
+a:active { color: #FE5D44; }
 
 .moaHeader {
 	clear: both;
@@ -53,12 +53,11 @@ a:active { color: #A31E39; }
 }
 
 .moaLogo {
-	border-radius: 5px;
-	padding: 5px;
+	padding: 3px;
 	float: left;
 	margin: 0px;
 	width: 87px;
-    height: 90px;
+    height: 80px;
 }
 
 .moaBreadCrumbs a:link { color: white }
@@ -97,8 +96,6 @@ a:active { color: #A31E39; }
 
 .moaMenu {
     float: right;
-	display: none;
-
 }
 
 .moaTemplate {
@@ -116,7 +113,7 @@ a:active { color: #A31E39; }
 	-webkit-border-bottom-left-radius: 4px;
 	border-bottom-left-radius: 4px;
     color: black;
-    background-color: D6E4E1;
+    background-color: #B6E8B4;
 	border-right: 2px solid black;
 }
 
@@ -189,4 +186,34 @@ img#moaProgress {
     display:block;
     margin-left: auto;
     margin-right: auto;
+}
+
+/*file table */
+.moaPgFilelist {
+    border-collapse: collapse;
+    width: 100%;
+    margin-left:5px;
+}
+
+.moaPgFilelist tr {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+.moaPgFilelist td.moaPgNotLeft {
+    border: 0px;
+    border-left: 1px solid black;
+    padding: 2px;
+    padding-left: 4px;
+    margin: 0px;
+}
+
+.moaPgFilelist .moaPgFileInfo {
+    font-size: 9px;
+    color: #83988E;
+}
+
+.moaPgFilelist .moaPgIcon {
+    padding-right: 2px;
 }

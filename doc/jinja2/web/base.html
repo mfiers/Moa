@@ -11,10 +11,13 @@ Content-type: text/html
           type="text/css" media="screen">
     <link rel="stylesheet" href="/moa/css/jqModal.css" 
           type="text/css" media="screen">
+    <link rel="stylesheet" href="/moa/css/jquery.pagination.css" 
+          type="text/css" media="screen">
 
   <script type="text/javascript" src="/moa/js/jquery.js"></script>
   <script type="text/javascript" src="/moa/js/jquery.dataTables.js"></script>
   <script type="text/javascript" src="/moa/js/jquery.menu.js"></script>
+  <script type="text/javascript" src="/moa/js/jquery.pagination.js"></script>
   <script type="text/javascript" src="/moa/js/jqModal.js"></script>
 
   <script type="text/javascript">
@@ -56,7 +59,9 @@ Content-type: text/html
         </ul>
       </div>
       {% endblock %}
-      {% block moaTempate %}
+      {% block moaTemplate %}
+      <div class="moaTemplate">no template
+      </div>
       {% endblock %}
       {% block moaTitle %}
       <div class="moaTitle">
