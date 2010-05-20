@@ -86,7 +86,7 @@ $(document).ready(function()
 
     //experiment with the file list
     var pgItemsPerPage = 60;
-    var pgNoColumns = 5;
+    var pgNoColumns = 3;
     var pgData;
 
     var fileToIcon = {
@@ -124,10 +124,21 @@ $(document).ready(function()
 
                     }
                 }
+				var txt = data[q].txt;
+				var nwTxt = "<span class='moaPgFilename'>";
+				var brC = 0;
+				while (txt.length > 0) {
+					if (brC > 0) nwTxt += "<br>&nbsp;&nbsp;..&nbsp;";
+					brC++;
+					nwTxt += txt.substring(0,30);
+					txt = txt.substring(30);
+				}
+				nwTxt += "</span>";
                 res += '<a href="' + data[q].link + '"'
                 if (! data[q].isdir) res += ' target="_blank" ';
                 res +='>';
-                res += data[q].txt + '</a><br><span class="moaPgFileInfo">';
+                res += nwTxt;
+				res += '</a><br><span class="moaPgFileInfo">';
                 res += data[q].modified;
                 if (data[q].size.trim() !== '-') res += ', ' + data[q].size;
                 res += '</small></td>';
