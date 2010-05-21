@@ -13,6 +13,10 @@ import optparse
 parser = optparse.OptionParser()
 parser.add_option('-v', dest='verbose', action="count", 
                   help='Show debug information')
+parser.add_option('-s', dest='source', 
+                  help='Source field for the GFF output')
+parser.add_option('-b', dest='binSize',  type='int',
+                  help='binSize')
 
 options, args = parser.parse_args()
 
@@ -34,6 +38,42 @@ elif options.verbose == 1:
 else:
     l.setLevel(logging.WARNING)
 
+
+def generate_histogram(F,
+                       seqId,
+                       group,
+                       data, 
+                       bin,
+                       source):
+    
+    if bin == 1:
+        for i in range(len(data)):
+            v = data[i]
+            F.write("\t".join([
+                        seqId,
+                        source,
+                        'bin_%s_%s' % (group, bin),
+                        str(i+1),
+                        str(i+2),
+                        '%d' % v,
+                        '+',
+                        '.',
+                        'bin %s:%s' % (seqId, source)
+                        ]) + "\n")
+    else:
+        for r in range(0, len(data)+bin-1,bin):
+            F.write("\t".join([
+                        seqId,
+                        source,
+                        'bin_%s_%s' % (group, bin),
+                        str(r+1),
+                        str(r+bin),
+                        '%.1f' % np.average(data[r:r+bin-1]),
+                        '+',
+                        '.',
+                        'bin %s_%s' % (source, seqId)
+                        ]) + "\n")
+            
 if __name__ == '__main__':
     
     #read an arbitrary seqId file
@@ -51,44 +91,31 @@ if __name__ == '__main__':
         
     l.info("discovered %d sequences" % len(seqInfo))
 
-    seqId = args[0]
-    l.info("creating gff for %s" % seqId)
+    binSize = options.binSize
+    if len(args) > 0:
+        seqIds = args
+    else:
+        seqIds = seqInfo.keys()
 
-    if not os.path.exists('combined'):
-        os.mkdir('combined')
+    if not os.path.exists('gff'):
+        os.mkdir('gff')
 
-    for seqId in seqInfo.keys():
+    FA = open(os.path.join('gff', 'coverage.ok.%d.gff' % binSize), 'w')
 
-        r_ok = None
-        r_low = None
-        r_high = None
+    for seqId in seqIds:
+        coverageFile = os.path.join('combined', '%s.combined.coverage.npz' % seqId)
+        if not os.path.exists(coverageFile):
+            continue
+        l.info('processing %s' % coverageFile)
+        data = np.load(coverageFile)
+        r_ok = data['r_ok']
+        r_low = data['r_low']
+        r_high = data['r_high']
 
-        for inputDir in os.listdir('coverage'):
-            inputFile = os.path.join('coverage', inputDir, seqId + '.coverage.npz')
-            if not os.path.exists(inputFile):
-                l.debug("skiping %s (%d nt)" % (seqId, seqInfo[seqId]['length']))
-                break
-            bamBase = inputDir
+        seqLen = len(r_ok)
+        l.info("sequence length of %s is %d" % (seqId, seqLen))
+        
+        generate_histogram(FA, seqId, 'ok', r_ok, binSize, options.source)
 
-            l.info("processing %s (%s)" % (bamBase,inputFile))
+    FA.close()
 
-            #read the coverage plots
-            data = np.load(inputFile)
-            if r_ok == None:
-                r_ok = data['r_ok']
-                r_high = data['r_high']
-                r_low = data['r_low']
-            else:
-                r_ok += data['r_ok']
-                r_high += data['r_high']
-                r_low += data['r_low']
-
-            l.debug("Max low ok high %d %d %d" % (
-                    np.max(r_low), np.max(r_ok), np.max(r_high)))
-
-
-        np.savez(os.path.join('combined', seqId + '.combined.coverage'),
-                 r_ok = r_ok,
-                 r_high = r_high,
-                 r_low = r_low)
- 

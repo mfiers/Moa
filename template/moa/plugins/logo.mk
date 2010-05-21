@@ -30,6 +30,7 @@ moa_logo:
 	-$e if [[ ! ("$(MOAANSI)" == "no") ]]; then \
 		if [[ ! ("$(MOA_UNITTESTS)" == "yes") ]]; then \
 			cat $(MOABASE)/share/logo/moa.logo.txt;		\
+			$(call warn, Starting MOA $(MAKECMDGOALS) in $(CURDIR)); \
 		fi; \
 	fi
 

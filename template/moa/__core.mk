@@ -106,7 +106,6 @@ moa_run_postcommand:
 
 
 moa_welcome:
-	@$(call warn, Starting MOA $(MAKECMDGOALS) in $(CURDIR))
 
 ###############################################################################
 # Variable definition - post moa.mk include

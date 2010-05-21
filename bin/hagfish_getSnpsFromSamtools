@@ -63,38 +63,19 @@ def getSequenceInfo():
     return seqInfo
 
 
-def gapfinder():
-    while True:
-        seqId, seq = seqPool.get()
-        l.info("gapfinding in %s" % seqId)
-        seq = seq.translate(TTABLE)
-        gaps = np.array(map(int, list(seq)))
-        l.info("discovered %d Ns in %s" % (
-                len(np.nonzero(gaps)[0]),
-                seqId))
-        outputfile = os.path.join('gaps', '%s.gaps' % seqId)
-        np.savez(outputfile, gaps = gaps)
-        seqPool.task_done()
-
-    
 if __name__ == '__main__':
 
-    if not os.path.exists('gaps'):
-        os.mkdir('gaps')
+    seqInfo = getSequenceInfo()
 
-    seqPool = Queue.Queue()    
+    if not os.path.exists('snps'):
+        os.mkdir('snps')
 
-    #start n threads
-    for x in range(8):
-        l.info("starting thread %d" % x)
-        t = threading.Thread(target=gapfinder)
-        t.setDaemon(True)
-        t.start()
+    seqId = None
 
-    for inputFile in inputFiles:
-        l.info('start processing %s' % inputFile)
-        for seqId, seq in fastaRead(inputFile):
-            l.info("loaded %s (%d nt)" % (seqId, len(seq)))
-            seqPool.put((seqId, seq))
-
-    seqPool.join()
+    with open(inputFile) as F:
+        for line in F.readline():
+            si, pos, rest = line.split(None, 2)
+            if si != seqId:
+                if seqId != None:
+                    
+                

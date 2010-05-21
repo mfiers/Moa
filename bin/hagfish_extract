@@ -18,7 +18,8 @@ parser.add_option('-v', dest='verbose', action="count",
                   help='Show debug information')
 parser.add_option('-x', dest='limit', type="int",
                   help='Limit the number of pairs to read per input file')
-
+parser.add_option('--onlySeqInfo', dest='onlySeqInfo', action='store_true',
+                  help='only process the seqInfo of the first bam input file')
 
 parser.add_option('--skip_read' , dest='skipRead', action="store_true",
                   help='Skip reading the BAM files, read the parsed BAM files ' + 
@@ -395,6 +396,12 @@ def readStatsFromDisk(bamBase):
     return stats
 
 if __name__ == '__main__':
+
+    if options.onlySeqInfo:
+        inFile = inputFiles[0]
+        l.info("getting seqInfo from %s" % inFile)
+        seqInfo = getSequenceInfo(inFile)
+        sys.exit()               
 
     for inputFile in inputFiles:
         bamBase = os.path.basename(inputFile).replace('.bam', '')

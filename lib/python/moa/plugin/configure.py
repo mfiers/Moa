@@ -58,7 +58,7 @@ def configSet(wd, options, args):
     params = []
     for arg in args:
         if not '=' in arg: continue
-        l.critical("setting %s" % arg)
+        l.debug("setting %s" % arg)
         params.append(arg)
 
     moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
