@@ -18,33 +18,6 @@ $(document).ready(function()
     //Remove the header
     var fr = $("table:first > tbody > tr:first").detach();
 
-    //Remove the first row (link to parent dir)
-    //$("table:first > tbody > tr:first").remove();
-    //$("table:first").prepend("<thead></thead>");
-    //$("table:first > thead").append(fr);
-    
-    // remove the 4th column - some sort of a remains of the
-    // description?? 
-    //$("table:first > tbody > tr").each(function(index) {
-    //    $(this).contents().eq(4).remove();
-    //    });
-
-    //Remove the icon links (why again??)
-    //$("table:first > tbody > tr > td:first-child > a").removeAttr('href');
-    //$("table:first > tbody > tr > td:nth-child(2) > a:not([href$='/'])").attr('target', '_blank');
-
-    
-        /*var t = $(this)
-        var icon = t.contents('td:first > a').html();
-        t.contents('td:first').html(icon);
-
-        var secondCell = t.contents().eq(2);
-        var href= secondCell.contents('a').attr('href');
-        console.log(href);
-        if (href.charAt(href.length-1) != '/') {
-            $(this).attr('target', '_blank');
-         }});*/
-
     //filter the table 
     var data = [];
     $("table:first > tbody > tr").not(':first').each(
@@ -64,14 +37,6 @@ $(document).ready(function()
     //remove the table
     $("table:first").remove();
      
-    //Convert the file info table into a dataTable 
-    // $("table:first").dataTable(
-    //     {
-    //         "sDom": '<"top"pi>rt<"bottom"fl<"clear">',
-    //         "sPaginationType": "full_numbers",
-    //         "iDisplayLength" : "5",
-    //     });
-
     //Prepare the popup for template description
     $(".moaTemplateDescription").jqm({
         overlay: 0, trigger: false,})
@@ -125,22 +90,17 @@ $(document).ready(function()
 
                     }
                 }
-				var txt = data[q].txt;
+				var txt = data[q].link;
 				var nwTxt = "<span class='moaPgFilename'>";
 				var brC = 0;
-				while (txt.length > 0) {
-					if (brC > 0) nwTxt += "<span class='moaPgFilename"+brC+"'>";
-					nwTxt += txt.substring(0,10);
-					if (brC > 0) nwTxt += "</span>";
-					if (brC > 6) break;
-					brC++;
-					txt = txt.substring(10);
-				}
-				nwTxt += "</span>";
-                res += '<a href="' + data[q].link + '"'
+                if (txt.length > 40) {
+                    txt = txt.substring(0,18) + 
+                        '..' + txt.substring(txt.length-18);
+                }
+                res += '<a href="' + data[q].link + '"';
                 if (! data[q].isdir) res += ' target="_blank" ';
                 res +='>';
-                res += nwTxt;
+                res += txt;
 				res += '</a><br><span class="moaPgFileInfo">';
                 res += data[q].modified;
                 if (data[q].size.trim() !== '-') res += ', ' + data[q].size;
