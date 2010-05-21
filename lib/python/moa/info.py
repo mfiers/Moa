@@ -391,7 +391,7 @@ def info(wd):
     #prepare a category ordering
     cats = {}
     for pk in rv['parameters'].keys():
-        cat = rv['parameters'][pk]['category']                              
+        cat = rv['parameters'][pk].get('category', '')
         if not cats.has_key(cat): cats[cat] = []
         cats[cat].append(pk)
     catorder = cats.keys()

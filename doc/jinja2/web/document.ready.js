@@ -86,7 +86,7 @@ $(document).ready(function()
 
     //experiment with the file list
     var pgItemsPerPage = 60;
-    var pgNoColumns = 3;
+    var pgNoColumns = 4;
     var pgData;
 
     var fileToIcon = {
@@ -108,7 +108,8 @@ $(document).ready(function()
             {
                 var q = (page_index * pgItemsPerPage) + (noRows * j) + i;
                 if (q >= max) break;
-                if (j == 0) res += '</tr><tr><td class="moaPgLeft">';                
+                if ((i > 0) && (j == 0)) res += '</tr><tr>';
+				if (j == 0) res += '<td class="moaPgLeft">';                
                 else res += '<td class="moaPgNotLeft">';
                 if (data[q].isdir) res += '<img class="moaPgIcon" src="/moa/images/folder-16.gif">';
                 else 
@@ -128,10 +129,12 @@ $(document).ready(function()
 				var nwTxt = "<span class='moaPgFilename'>";
 				var brC = 0;
 				while (txt.length > 0) {
-					if (brC > 0) nwTxt += "<br>&nbsp;&nbsp;..&nbsp;";
+					if (brC > 0) nwTxt += "<span class='moaPgFilename"+brC+"'>";
+					nwTxt += txt.substring(0,10);
+					if (brC > 0) nwTxt += "</span>";
+					if (brC > 6) break;
 					brC++;
-					nwTxt += txt.substring(0,30);
-					txt = txt.substring(30);
+					txt = txt.substring(10);
 				}
 				nwTxt += "</span>";
                 res += '<a href="' + data[q].link + '"'
