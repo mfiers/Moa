@@ -191,7 +191,8 @@ img#moaProgress {
 /*file table */
 .moaPgFilelist {
     border-collapse: collapse;
-    width: 100%;
+    max-width: 100%;
+	width: 100%;
     margin-left:5px;
 }
 
@@ -201,12 +202,14 @@ img#moaProgress {
     border: 0px;
 }
 
-.moaPgFilelist td.moaPgNotLeft {
+.moaPgFilelist td {
     border: 0px;
-    border-left: 1px solid black;
     padding: 2px;
     padding-left: 4px;
     margin: 0px;
+}
+.moaPgFilelist td.moaPgNotLeft {
+    border-left: 1px solid black;
 }
 
 .moaPgFilelist .moaPgFileInfo {
@@ -216,4 +219,28 @@ img#moaProgress {
 
 .moaPgFilelist .moaPgIcon {
     padding-right: 2px;
+}
+
+moaPgFilename1 {
+	letter-spacing: 1px;
+}
+.moaPgFilename2 {
+	letter-spacing: 0px;
+	font-size: small;
+}
+.moaPgFilename3 {
+	letter-spacing: -1px;
+	font-size: x-small;
+}
+.moaPgFilename4 {
+	letter-spacing: -2px;
+	font-size: x-small;
+}
+.moaPgFilename5 {
+	letter-spacing: -3px;
+	font-size: xx-small;
+}
+.moaPgFilename6 {
+	letter-spacing: -4px;
+	font-size:xx- small;
 }
