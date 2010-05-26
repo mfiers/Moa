@@ -27,7 +27,7 @@ $(document).ready(function()
             o = { 'link' : fca.attr('href'),
                   'txt' : fca.html(),
                   'modified' : $(this).contents().eq(2).html(),
-                  'size' : $(this).contents().eq(3).html(), };
+                  'size' : $(this).contents().eq(3).html() };
             if (o.link[o.link.length-1] === '/') o.isdir = true;
             else o.isdir = false;
 
@@ -39,7 +39,7 @@ $(document).ready(function()
      
     //Prepare the popup for template description
     $(".moaTemplateDescription").jqm({
-        overlay: 0, trigger: false,})
+        overlay: 0, trigger: false})
     .jqmAddTrigger($(".moaTemplate"))
     .jqmAddClose(".moaTemplateDescription");
 
@@ -51,7 +51,7 @@ $(document).ready(function()
 
     //experiment with the file list
     var pgItemsPerPage = 60;
-    var pgNoColumns = 4;
+    var pgNoColumns = 3;
     var pgData;
 
     var fileToIcon = {
@@ -93,9 +93,9 @@ $(document).ready(function()
 				var txt = data[q].link;
 				var nwTxt = "<span class='moaPgFilename'>";
 				var brC = 0;
-                if (txt.length > 40) {
-                    txt = txt.substring(0,18) + 
-                        '..' + txt.substring(txt.length-18);
+                if (txt.length > 50) {
+                    txt = txt.substring(0,24) + 
+                        '...' + txt.substring(txt.length-24);
                 }
                 res += '<a href="' + data[q].link + '"';
                 if (! data[q].isdir) res += ' target="_blank" ';

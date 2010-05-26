@@ -44,7 +44,6 @@ function moaSet(wd, key, val) {
 function saveEditBox(event) {
    var box = $(this);
    if ( event.data.oldValue !==  box.val()) {
-       console.log("storing new val " + box.val());
        event.data.oldElem.html(box.val());
        moaSet("{{ moacwd }}",
               event.data.oldElem.attr('id'),
@@ -64,7 +63,6 @@ function editTitle() {
    $('.moaEditString')
        .keydown(function(event) {
                if (event.keyCode == 13) {
-                   console.debug('lost focus');
                    $(event.target).blur();
                }
            })
