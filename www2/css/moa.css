@@ -21,15 +21,6 @@ a:visited { color: #173C48 }
 a:hover { color: #FE5D44; }
 a:active { color: #FE5D44; }
 
-.moaHeader {
-	clear: both;
-	padding: 0px;
-	margin: 0px;
-    padding: 2px;
-	margin-bottom: 0px;
-    background-color: #fff;
-}
-
 .tooltip {
    position: absolute;
    top: 0;
@@ -48,31 +39,45 @@ a:active { color: #FE5D44; }
 .moaInfo {
 }
 
+.moaBreadCrumbs .moaBreadCrumb a:link { color: white }
+.moaBreadCrumbs .moaBreadCrumb a:visited { color: white }
+.moaBreadCrumbs .moaBreadCrumb a:hover { color: #A31E39; }
+.moaBreadCrumbs .moaBreadCrumb a:active { color: #A31E39; }
+
+
 .moaFiles {
 
+}
+
+.moaHeader {
+	clear: both;
+	padding: 0px;
+	margin: 0px;
+    padding: 2px;
+	border-bottom: 2px solid black;
+    background-color: #fff;
 }
 
 .moaLogo {
 	padding: 3px;
 	float: left;
 	margin: 0px;
-	width: 87px;
-    height: 80px;
+	width: 45px;
+    height: 40px;
 }
 
-.moaBreadCrumbs a:link { color: white }
-.moaBreadCrumbs a:visited { color: white }
-.moaBreadCrumbs a:hover { color: #A31E39; }
-.moaBreadCrumbs a:active { color: #A31E39; }
+.moaHeaderRight {
+    float: left;
+}
 
 .moaTopRow{
-    display: absolute;
-    left: 100px;
-    top: 0px;
-    right: 0px;
-	margin: 0px;
-    padding: 0px;
+    clear: both;
+    background-color: purple;
 }
+.moaSecondRow{
+    clear: both;
+}
+
 .moaTitle {
     float: left;
     padding: 2px;
@@ -92,6 +97,11 @@ a:active { color: #FE5D44; }
 	background-color: #8C9C9A;
     color: white;    
 	border: 1px solid #485C5A;
+}
+.moaTabs {
+    background-color: #ffffaa;
+    padding-right: 4px;
+    border-bottom: 2px solid black;
 }
 
 .moaMenu {
@@ -117,11 +127,38 @@ a:active { color: #FE5D44; }
 	border-right: 2px solid black;
 }
 
-.moaBreadCrumbs {
-    width: 100%;
-    //border-top: 2px solid black;
+.moaBreadCrumb {
+    padding-bottom: 3px;
+}
+
+.jobDescription {
+    float: left;
+    padding: 10px;
+    padding-top: 0px;
+    margin-top: 0px;
+    border: 2px solid black;
+    background-color: white;
     border-bottom: 2px solid black;
-    padding: 5px;
+    padding-bottom: 25px;
+    max-height: 500px;
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
+    overflow:auto;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.jobDescriptionMinimize {
+    float:center;
+    width: 80px;
+    margin: 0px;    
+    margin-left: 50%;
+    margin-right: 50%;
+    padding: 4px;
+    font-size: 8px;
+    border: 1px solid black;
+    border-bottom: 0px;
 }
 
 .moaMessage {

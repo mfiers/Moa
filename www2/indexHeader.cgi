@@ -3,11 +3,9 @@
 import os
 import sys
 import site
+import subprocess
 
 from jinja2 import Environment, FileSystemLoader
-
-#from mako.template import Template
-#from mako.lookup import TemplateLookup
 
 import cgi
 import cgitb; cgitb.enable()  # for troubleshooting
@@ -24,7 +22,7 @@ import moa.info
 #initialize the jinja environment
 jenv = Environment(
     loader=FileSystemLoader(
-        os.path.join(MOABASE, 'doc')))
+        os.path.join(MOABASE, 'share', 'jinja2', 'www')))
 
 def getWebRoot():
     webRoot = os.environ.get('MOAWEBROOT')
@@ -50,6 +48,19 @@ def getLocalDir():
         moadir = moadir[:moadir.index('?')]
     return moadir
 
+def getDescription(cwd):
+    dfile = os.path.join(cwd, 'moa.description')
+    if not os.path.exists(dfile):
+        return ""
+    else:
+        description = open(dfile).read()
+        #convert from jinja-markdown to html!
+        p = subprocess.Popen("pandoc -f markdown -t html".split(),
+                  stdin=subprocess.PIPE, stdout=subprocess.PIPE)    
+        p.stdin.write(description)
+        html,err = p.communicate()
+        return html
+        
 def getBreadCrumbs():
     ## Prepare breadcrumbs
     if moacwd.find(dataRoot) != 0:
@@ -88,11 +99,11 @@ d['dataRoot'] = dataRoot
 webRoot = getWebRoot()
 d['webRoot'] = webRoot
 d['blocks']  = getBreadCrumbs()
-
+d['jobDescription'] = getDescription(moacwd)
 
 #Fire off a generic page without any information if this is not a Moa dir
 if not moa.info.isMoaDir(moacwd):
-    pageTemplate = jenv.get_template('jinja2/web/notMoa.html')
+    pageTemplate = jenv.get_template('notMoa.html')
     print pageTemplate.render(**d)
     sys.exit()
 
@@ -106,7 +117,7 @@ d['parameterKeys'] = d['allinfo']['parameters'].keys()
 d['parameterKeys'].sort()
 d['description'] = d['allinfo'].get('template_description', '')
 
-pageTemplate = jenv.get_template('jinja2/web/Moa.html')
+pageTemplate = jenv.get_template('Moa.html')
 
 print pageTemplate.render(**d)
 

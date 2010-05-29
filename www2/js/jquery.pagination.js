@@ -16,7 +16,7 @@
 	$.PaginationCalculator = function(maxentries, opts) {
 		this.maxentries = maxentries;
 		this.opts = opts;
-	}
+	};
 	
 	$.extend($.PaginationCalculator.prototype, {
 		/**
@@ -138,7 +138,7 @@
 		link_to:"#",
 		prev_text:"Prev",
 		next_text:"Next",
-		ellipse_text:"...",
+		ellipse_text:"<small>...</small>",
 		prev_show_always:true,
 		next_show_always:true,
 		renderer:"defaultRenderer",

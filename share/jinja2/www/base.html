@@ -21,9 +21,8 @@ Content-type: text/html
   <script type="text/javascript" src="/moa/js/jqModal.js"></script>
 
   <script type="text/javascript">
-
     {% block documentready %}
-    {%include "jinja2/web/document.ready.js" %}
+    {%include "document.ready.js" %}
     {% endblock %}
     
     {% block extraJS %}
@@ -44,36 +43,49 @@ Content-type: text/html
     <div style="clear: both;"></div>
   </div>
   {% endblock %}
-
   <div class="moaMessage"></div>
+
   <div class="moaHeader">
     <div class="moaLogo">
       <img src="/moa/images/moa_logo_{{ status }}.png" />
     </div>
-    <div class="moaTopRow">
-      {% block moaMenu %}
-      <div class="moaMenu">
-        <ul id="jsddm"> 
-          {%include "jinja2/web/menu.moa.html" %}
-        </ul>
-      </div>
-      {% endblock %}
-      {% block moaTemplate %}
-      <div class="moaTemplate">no template
-      </div>
-      {% endblock %}
-      {% block moaTitle %}
-      <div class="moaTitle">
-        undefined
-      </div>
-      {% endblock %}
-    </div>
-    <div style="clear:both;"></div>
+    <div class="moaHeaderRight">
+      <div class="moaTopRow">
+        {% block moaMenu %}
+        <div class="moaMenu">
+          <ul id="jsddm"> 
+            {%include "menu.moa.html" %}
+          </ul>
+        </div><!-- <div class="moaMenu"> -->
+        {% endblock %}
+        {% block moaTemplate %}
+        <div class="moaTemplate">no template</div>
+        {% endblock %}
+        {% block moaTitle %}
+        <div class="moaTitle">
+          undefined
+        </div><!--<div class="moaTitle">-->
+        {% endblock %}
+      </div> <!-- <div class="moaTopRow"> -->
+      <div class="moaSecondRow">
+        {% block breadCrumbs %}
+        {% include 'breadcrumbs.html' %}
+        {% endblock %}
+      </div> <!-- <div class="moaSecondRow"> -->
+    </div><!--</moaHeaderRight>-->
+    <div style='clear:both;'></div>
+  </div><!-- /moaHeader -->
+  <div class='moaTabs'>
+    <span class='moaTab'>Files</span>
+    <span class='moaTab'>Template</span>
   </div>
-  <div class="moaBreadCrumbs">
-    {% block breadCrumbs %}
-    {% include 'jinja2/web/breadcrumbs.html' %}
-    {% endblock %}
+  <div>
+    <span class='paginatedMenu'></s pan>
   </div>
-  <div class='moaFiles'>
-        
+  {% if jobDescription %}
+  <div class='jobDescription'>
+    <div class='jobDescriptionMinimize'><b>&uarr;&uarr;&uarr;</b></div>
+    {{ jobDescription }}
+  </div>
+  {% endif %}
+  <div class='paginatedResults'></div>

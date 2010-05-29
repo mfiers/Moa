@@ -1,7 +1,7 @@
-{% extends "jinja2/web/base.html" %}
+{% extends "base.html" %}
 
 {% block extraJS %}
-{% include "jinja2/web/moa.js" %}
+{% include "moa.js" %}
 {% endblock %}
 
 {% block moaTemplateInfo %}
@@ -31,7 +31,7 @@
       <li><a href='#' onclick="moaAjaxCall('unlock', {wd: '{{ moacwd }}'});">Unlock</a></li>
     </ul>
   </li>
-  {% include "jinja2/web/menu.moa.html" %}
+  {% include "menu.moa.html" %}
 </ul>
 </div>
 {% endblock %}

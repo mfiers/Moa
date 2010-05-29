@@ -50,7 +50,7 @@ $(document).ready(function()
                       
 
     //experiment with the file list
-    var pgItemsPerPage = 60;
+    var pgItemsPerPage = 30;
     var pgNoColumns = 3;
     var pgData;
 
@@ -115,13 +115,29 @@ $(document).ready(function()
         data.length,
         {
 		    items_per_page: pgItemsPerPage, 
-		    callback: paginateCallback
+            num_display_entries: 3,
+            num_edge_entries: 1,
+		    callback: paginateCallback,
+            prev_show_always: false,
+            next_show_always: false
         }
     );
     
 //Init the menu
     $('#jsddm > li').bind('mouseover', jsddm_open);
 	$('#jsddm > li').bind('mouseout',  jsddm_timer);
-
     document.onclick = jsddm_close;    
+
+//Init the description box
+    $('.jobDescriptionMinimize').toggle(
+        function() 
+        {
+            $('.jobDescription').hide();
+        },
+     function() 
+        {
+            $('.jobDescription').show();
+        }
+
+    );
 });
