@@ -28,7 +28,55 @@ import optparse
 import moa.conf
 import moa.job
 import moa.info
+import moa.plugin
+from moa.logger import l
 import textwrap
+
+class Info(moa.plugin.BasePlugin):
+
+    def registerCommands(self):
+        self.data['moaCommands']['rawinfo'] = {
+            'private' : True,
+            'call' : rawInfo
+            }
+
+        self.data['moaCommands']['status'] = {
+            'private' : True,
+            'call' : self.status
+            }
+
+        self.data['moaCommands']['show'] = {
+            'desc' : 'Show the configured parameters and their values',
+            }
+
+        self.data['moaCommands']['list'] = {
+            'desc' : 'List all known templates',
+            'call' : self.listTemplates,
+            }
+
+        self.data['moaCommands']['listlong'] = {
+            'desc' : 'List all known templates, showing a short description',
+            'call' : self.listTemplatesLong,
+            }
+
+
+    def listTemplates(self, wd, options, args):
+        for job in moa.job.list():
+            print job
+
+    def listTemplatesLong(self, wd, options, args):
+        for job, info in moa.job.listLong():
+            for line in textwrap.wrap(
+                '%s: %s' % (job, info),
+                initial_indent=' - ',
+                subsequent_indent = '     '):
+                print line
+
+    def rawInfo(self, wd, options, args):
+        pprint.pprint(moa.info.info(wd))
+
+    def status(self, wd, options, args):
+        print moa.info.status(wd)
 
 def defineCommands(commands):
     commands['rawinfo'] = {

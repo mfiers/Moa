@@ -27,7 +27,11 @@ import optparse
 
 import moa.job
 import moa.logger
+import moa.plugin
 l = moa.logger.l
+
+#class Adhoc(moa.plugin.BasePlugin):
+#    pass
 
 def defineCommands(commands):
     commands['adhoc'] = { 

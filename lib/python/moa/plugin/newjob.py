@@ -23,7 +23,11 @@ Git
 import optparse
 import moa.job
 import moa.logger
+import moa.plugin
 l = moa.logger.l 
+
+#class Newjob(moa.plugin.BasePlugin):
+#    pass
 
 def defineCommands(commands):
     commands['new'] = {

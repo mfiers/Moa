@@ -30,7 +30,8 @@ import moa.info
 import moa.logger
 l = moa.logger.l
 
-def defineCommands(commands):
+def defineCommands(data):
+    commands = data['moaCommands']
     commands['test'] = {
         'desc' : 'Run Moa unittests',
         'call' : runTests

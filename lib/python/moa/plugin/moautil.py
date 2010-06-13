@@ -25,7 +25,11 @@ import os
 import re
 import shutil
 import optparse
+import moa.plugin
 from moa.logger import l
+
+#class Moautil(moa.plugin.BasePlugin):
+#    pass
 
 def defineCommands(commands):
     commands['cp'] = {

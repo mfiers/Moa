@@ -26,8 +26,11 @@ import sys
 import shlex
 import optparse
 import moa.conf
+#import moa.plugin
 from moa.logger import l
 
+#class Configure(moa.plugin.BasePlugin):
+#    pass
 
 def defineCommands(commands):
     commands['set'] = {

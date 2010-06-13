@@ -25,9 +25,12 @@ import optparse
 
 import moa.logger
 import moa.plugin.newjob
+import moa.plugin
 l = moa.logger.l
 import moa.hooks
 
+class Git(moa.plugin.BasePlugin):
+    pass
 
 def defineCommands(commands):
     commands['gitlog'] = {

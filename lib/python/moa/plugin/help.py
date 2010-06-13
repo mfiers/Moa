@@ -37,7 +37,11 @@ import moa.runMake
 import moa.info
 import moa.job
 import moa.logger
+import moa.plugin
 l = moa.logger.l
+
+#class Help(moa.plugin.BasePlugin):
+#    pass
 
 MOABASE=os.environ['MOABASE']
 JENV = None
