@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+	<title>MOA - Makefiles in bioinformatics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+    
+  </head>
+  <body>
+	<center>
+	  <div id="wrapper">
+		<div style="width: 815px;">
+		  <div style="clear: left;">
+			<div style="float: left; vertical-align:text-bottom">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
+			</div>
+			<div style="float: right;">
+			  <a href="http://www.plantandfood.co.nz/">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
+			  </a>
+			</div>
+		  </div>
+		  <div style="clear: left;">
+			<div style="float: left; width: 715px; height: 31px; background-color: rgb(81, 0, 45);">
+			  &nbsp;&nbsp;
+			</div>
+			<div style="float: left;">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
+			</div>
+		  </div>
+		</div>
+		<div style="clear: left;">
+		  <div id="left">
+			<div style="width: 160px;">
+			  <div style="text-align: right;">
+                
+                <a href="introduction.html">Introduction</a><br>
+                
+                <a href="installation.html">Installation</a><br>
+                
+                <a href="commands.html">Commands</a><br>
+                
+                <a href="templates.html">Templates</a><br>
+                
+                <a href="extending.html">Extending</a><br>
+                
+                <a href="reference.html">Reference</a><br>
+                
+			  </div>
+			</div>
+		  </div>
+		  <div id="center_content">
+			<div id="homepage_container">
+              
+
+<h1>Moa template: sam2bam</h1>
+</h3>Convert SAM to BAM using samtools</h3>
+
+<h2> DESCRIPTION </h2>
+
+Convert SAM to BAM using samtools
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="" />
+</head>
+<body>
+
+</body>
+</html>
+
+
+
+
+<h2> Targets </h2>
+
+<ul>
+<li><b>(empty) / sam2bam</b>: Converts a FASTQ file to MAQ BFQ format.</li>
+
+<li><b>all</b>: Recursively run through all subdirectories (use make all action=XXX to run make XXX recursively)</li>
+
+<li><b>clean</b>: Remove all job data (not the job itself). This does works only if the template has properly implemented the clean target.</li>
+
+
+</ul>
+
+<h2>PARAMETERS</h2>
+(* denotes a mandatory parameter)
+<h3>Input parameters</h3>
+<ul>
+
+<li><b>*sam2bam_input_dir</b>: input SAM files<br>
+Data type: directory.
+</li>
+<li><b>sam2bam_input_extension</b>: file extension for the files in sam2bam_input_dir<br>
+Data type: string, Default: "sam".
+</li>
+<li><b>sam2bam_input_glob</b>: glob to select a subset of files from sam2bam_input_dir<br>
+Data type: string, Default: "*".
+</li>
+<li><b>sam2bam_input_limit</b>: Number of files to use, if not defined: all files<br>
+Data type: integer.
+</li>
+<li><b>sam2bam_input_sort</b>: Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t - time, tr - time reverse<br>
+Data type: set, <u>u</u>|s|sr|t|tr.
+</li></ul>
+<h3>System parameters</h3>
+<ul>
+
+<li><b>*title</b>: A name for this job<br>
+Data type: string.
+</li>
+<li><b>description</b>: A longer description for this job<br>
+Data type: string.
+</li></ul>
+<h3>Advanced parameters</h3>
+<ul>
+
+<li><b>moa_postcommand</b>: A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile.<br>
+Data type: string.
+</li>
+<li><b>moa_precommand</b>: A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile.<br>
+Data type: string.
+</li></ul>
+<h2>Miscellaneous </h2>
+<ul>
+<li>Template last modified on Tue Apr 27 13:55:45 2010</li>
+<li>Template author Mark Fiers</li>
+<li>Moa_id: sam2bam</li>
+<li>Template name: sam2bam</li>
+<li>Template file: /home/mf/project/moa/template/sam2bam.mk</li>
+</ul>
+
+
+
+			</div>
+          </div>          
+          <p>&nbsp;</p>
+          <div class="footer_text" id="footer">
+            <small>This page is generated on Tue Jun 15 09:37:34 2010</small><br>
+            &copy 2009 PLANT &amp; FOOD RESEARCH | 
+            <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a>
+          </div>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>

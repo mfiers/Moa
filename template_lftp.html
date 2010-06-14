@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+	<title>MOA - Makefiles in bioinformatics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+    
+  </head>
+  <body>
+	<center>
+	  <div id="wrapper">
+		<div style="width: 815px;">
+		  <div style="clear: left;">
+			<div style="float: left; vertical-align:text-bottom">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
+			</div>
+			<div style="float: right;">
+			  <a href="http://www.plantandfood.co.nz/">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
+			  </a>
+			</div>
+		  </div>
+		  <div style="clear: left;">
+			<div style="float: left; width: 715px; height: 31px; background-color: rgb(81, 0, 45);">
+			  &nbsp;&nbsp;
+			</div>
+			<div style="float: left;">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
+			</div>
+		  </div>
+		</div>
+		<div style="clear: left;">
+		  <div id="left">
+			<div style="width: 160px;">
+			  <div style="text-align: right;">
+                
+                <a href="introduction.html">Introduction</a><br>
+                
+                <a href="installation.html">Installation</a><br>
+                
+                <a href="commands.html">Commands</a><br>
+                
+                <a href="templates.html">Templates</a><br>
+                
+                <a href="extending.html">Extending</a><br>
+                
+                <a href="reference.html">Reference</a><br>
+                
+			  </div>
+			</div>
+		  </div>
+		  <div id="center_content">
+			<div id="homepage_container">
+              
+
+<h1>Moa template: lftp</h1>
+</h3>lftp</h3>
+
+<h2> DESCRIPTION </h2>
+
+lftp
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="" />
+</head>
+<body>
+
+</body>
+</html>
+
+
+
+
+<h2> Targets </h2>
+
+<ul>
+<li><b>(empty) / lftp</b>: Use LFTP to download files. This template has two modi, one is set lftp_mode to mirror data, in which case both lftp_url and lftp_pattern (default *) are used. The other modus is lftp_mode=get, when one file defined by lftp_url is downloaded. In the mirror mode it is possible to download only those files that are newer as the files already downloaded by using the lftp_timestamp parameter</li>
+
+<li><b>all</b>: Recursively run through all subdirectories (use make all action=XXX to run make XXX recursively)</li>
+
+<li><b>clean</b>: Remove all job data (not the job itself). This does works only if the template has properly implemented the clean target.</li>
+
+
+</ul>
+
+<h2>PARAMETERS</h2>
+(* denotes a mandatory parameter)
+<ul>
+
+<li><b>*lftp_url</b>: The base url to download from<br>
+Data type: string.
+</li>
+<li><b>lftp_dos2unix</b>: Run dos2unix to prevent problems with possible dos text files<br>
+Data type: set, T|<u>F</u>.
+</li>
+<li><b>lftp_get_name</b>: target name of the file to download<br>
+Data type: string.
+</li>
+<li><b>lftp_lock</b>: Lock this job after running. This means that you will have to manually unlock the job before lftp actually reruns. This is a good choice if your downloading large datasets or have a slow connection<br>
+Data type: set, <u>T</u>|F.
+</li>
+<li><b>lftp_mode</b>: Mode of operation - mirror or get. Mirror enables timestamping. Get just gets a single file. If using get, consider setting depend_lftp_timestamp to F. When using get, the full url should be in lftp_url. lftp_pattern is ignored. Defaults to mirror.<br>
+Data type: set, mirror|<u>get</u>.
+</li>
+<li><b>lftp_output_dir</b>: subdir to create & write all output to. If not defined, data will be downloaded to directory containing the Makefile<br>
+Data type: directory, Default: ".".
+</li>
+<li><b>lftp_pass</b>: password for the remote site, note that this can be defined on the commandline using: make lftp_pass=PASSWORD<br>
+Data type: password.
+</li>
+<li><b>lftp_pattern</b>: glob pattern to download<br>
+Data type: string, Default: "*".
+</li>
+<li><b>lftp_powerclean</b>: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile when calling make clean. Defaults to F.<br>
+Data type: set, T|<u>F</u>.
+</li>
+<li><b>lftp_timestamp</b>: Depend on lftp to decide if a file needs updating, else a touchfile is created that you need to delete or touch before updating (T/*F*)<br>
+Data type: set, T|<u>F</u>.
+</li>
+<li><b>lftp_user</b>: username for the remote site<br>
+Data type: string.
+</li></ul>
+<h3>System parameters</h3>
+<ul>
+
+<li><b>*title</b>: A name for this job<br>
+Data type: string.
+</li>
+<li><b>description</b>: A longer description for this job<br>
+Data type: string.
+</li></ul>
+<h3>Advanced parameters</h3>
+<ul>
+
+<li><b>lftp_noclean</b>: set of files not to be deleted by the powerclean<br>
+Data type: string, Default: "moa.mk Makefile".
+</li>
+<li><b>moa_postcommand</b>: A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile.<br>
+Data type: string.
+</li>
+<li><b>moa_precommand</b>: A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile.<br>
+Data type: string.
+</li></ul>
+<h2>Miscellaneous </h2>
+<ul>
+<li>Template last modified on Tue Apr 27 13:55:45 2010</li>
+<li>Template author Mark Fiers</li>
+<li>Moa_id: lftp</li>
+<li>Template name: lftp</li>
+<li>Template file: /home/mf/project/moa/template/lftp.mk</li>
+</ul>
+
+
+
+			</div>
+          </div>          
+          <p>&nbsp;</p>
+          <div class="footer_text" id="footer">
+            <small>This page is generated on Tue Jun 15 09:37:34 2010</small><br>
+            &copy 2009 PLANT &amp; FOOD RESEARCH | 
+            <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a>
+          </div>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>

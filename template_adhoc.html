@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+	<title>MOA - Makefiles in bioinformatics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<link href="moa.css" rel="stylesheet" type="text/css">
+	<link rel="icon" type="image/ico" href="favicon.ico">
+    
+  </head>
+  <body>
+	<center>
+	  <div id="wrapper">
+		<div style="width: 815px;">
+		  <div style="clear: left;">
+			<div style="float: left; vertical-align:text-bottom">
+			  <img id="menulogo" align="middle" src="images/moa_logo_title.png">
+			</div>
+			<div style="float: right;">
+			  <a href="http://www.plantandfood.co.nz/">
+				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
+			  </a>
+			</div>
+		  </div>
+		  <div style="clear: left;">
+			<div style="float: left; width: 715px; height: 31px; background-color: rgb(81, 0, 45);">
+			  &nbsp;&nbsp;
+			</div>
+			<div style="float: left;">
+			  <img src="images/scoop.jpg" alt="" height="31" width="100" border="0">
+			</div>
+		  </div>
+		</div>
+		<div style="clear: left;">
+		  <div id="left">
+			<div style="width: 160px;">
+			  <div style="text-align: right;">
+                
+                <a href="introduction.html">Introduction</a><br>
+                
+                <a href="installation.html">Installation</a><br>
+                
+                <a href="commands.html">Commands</a><br>
+                
+                <a href="templates.html">Templates</a><br>
+                
+                <a href="extending.html">Extending</a><br>
+                
+                <a href="reference.html">Reference</a><br>
+                
+			  </div>
+			</div>
+		  </div>
+		  <div id="center_content">
+			<div id="homepage_container">
+              
+
+<h1>Moa template: adhoc</h1>
+</h3>Execute an ad hoc analysis</h3>
+
+<h2> DESCRIPTION </h2>
+
+Execute an ad hoc analysis
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="" />
+</head>
+<body>
+<p
+>The adhoc template is used to execute simple, one-line, commands, on a set of input files. This template can run in four different modes:</p
+><ul
+><li
+  ><em
+    >seq</em
+    > (default): Run the command sequentially on a set of input files</li
+  ><li
+  ><em
+    >par</em
+    >: Run the command in parallel on the input files, to be used together with the <code
+    >-j NOTHREADS</code
+    > parameter.<br
+     /></li
+  ><li
+  ><em
+    >all</em
+    >: Run the command once on all input files (use <code
+    >$^</code
+    >)</li
+  ><li
+  ><em
+    >simple</em
+    >: Run the command without any input files</li
+  ></ul
+><p
+>Input files are defined using the <code
+  >adhoc_input_*</code
+  >, parameters. The command can be defined by setting <code
+  >adhoc_process</code
+  >. Note that commands must be enclosed by single quotes (') to make sure that bash interprets it as a single command and does not try to expand variables. Another important thing to note is that if you would like to use dollar signs (for example for environment variables) you need to escape these with an extra <code
+  >$</code
+  > (so, <code
+  >$$HOME</code
+  > would refer to the user home directory)</p
+><div id="seq-par"
+><h2
+  >seq, par</h2
+  ><p
+  >Both the <code
+    >seq</code
+    > and <code
+    >par</code
+    > modes process the each of the input files seperatly by the command specified in <code
+    >adhoc_process</code
+    >. The path to input file is available to the <code
+    >adhoc_process</code
+    > commandline through the <code
+    >$&lt;</code
+    > variable. The output file name is available using <code
+    >$t</code
+    >.</p
+  ><p
+  >The default output file name is the basename of the input file. It is possible, however, to change the output filename using a <code
+    >sed</code
+    > expression (<code
+    >adhoc_name_sed</code
+    >).</p
+  ></div
+><div id="all"
+><h2
+  >all</h2
+  ><p
+  >All inputfiles are fed to the commandline at once. The list of input files is available as <code
+    >$^</code
+    >.</p
+  ></div
+><div id="examples"
+><h2
+  >examples</h2
+  ><p
+  >A simple example is to create a link in the current directory to the input files. This can be done by setting adhoc to the <code
+    >par</code
+    > mode and setting<code
+    >'adhoc_process</code
+    > to <code
+    >ln $&lt; $t</code
+    >.</p
+  ><p
+  >A more complex example would be to extract the headers from a set of input sequences and filter them for a keyword (&quot;mitochon&quot;) and store the IDs of hitting sequences into a single output file. This must be run in the <code
+    >seq</code
+    > modus to prevent several threads writing to the output files at the same time.</p
+  ><pre
+  ><code
+    >head -1 $&lt; | cut -c2- | grep -i mitochon \
+    | cut -d' ' -f 1 &gt;&gt; hits
+</code
+    ></pre
+  ><p
+  >To configure moa to use this command, you must enclose the command in single quotes (bash will try to expand variables inbetween double quotes):</p
+  ><pre
+  ><code
+    >moa set adhoc_process='head -1 $&lt; | cut -c2- \
+    | grep -i mitochon | cut -d&quot; &quot; -f 1 &gt;&gt; hits'
+</code
+    ></pre
+  ><p
+  >The <code
+    >$t</code
+    > parameter is not used here. It is not obligatory to do so.</p
+  ><p
+  >The results are all concatentated together (<code
+    >&gt;&gt;</code
+    >)into a single <code
+    >hits</code
+    > file. The <code
+    >adhoc</code
+    > template tracks which input files have been processed (using a zero length file in the <code
+    >./touch</code
+    > directory). Upon reexecuting moa only those files that are new or have changed since the last run are executed. If you are sure that no input files will change, then this jobs should operate fine. If you are not sure, or if you would like to generate fresh results upon a rerun, it is wiser to remove the output file before running:</p
+  ><pre
+  ><code
+    >moa set moa_precommand='rm hits || true'
+moa set adhoctouch=F
+</code
+    ></pre
+  ><p
+  >The first parameter is executed at the start of each moa run and deletes the hits file. The <code
+    >|| true</code
+    > makes sure that it does not exit with an error, (for example if there is no <code
+    >hits</code
+    > file to delete), since that would halt the execution of Moa. The latter parameter stops Moa from using touch files to track if input files have changed.</p
+  ></div
+>
+</body>
+</html>
+
+
+
+
+<h2> Targets </h2>
+
+<ul>
+<li><b>(empty) / adhoc</b>: The ad hoc template aids in executing a one line on a set of input files.</li>
+
+<li><b>all</b>: Recursively run through all subdirectories (use make all action=XXX to run make XXX recursively)</li>
+
+<li><b>clean</b>: Remove all job data (not the job itself). This does works only if the template has properly implemented the clean target.</li>
+
+
+</ul>
+
+<h2>PARAMETERS</h2>
+(* denotes a mandatory parameter)
+<ul>
+
+<li><b>adhoc_mode</b>:  operation mode: *seq*, sequential: process the input files one by one; *par*, parallel: process the input files in parallel (use with `-j`); *all*: process all input files at once (use `$^` in `adhoc_process`) and *simple*: Ignore input files, just execute `adhoc_process` once.<br>
+Data type: set, <u>seq</u>|par|all|simple.
+</li>
+<li><b>adhoc_name_sed</b>: A sed expression which can be used to derive the output file name for each input file (excluding the path). The sed expression is executed for each input file name, and the result is available as $t in the $(adhoc_process) statement. Make sure that you use single quotes when specifying this on the command line<br>
+Data type: string, Default: "s/a/a/".
+</li>
+<li><b>adhoc_output_dir</b>: Output subdirectory<br>
+Data type: directory, Default: ".".
+</li>
+<li><b>adhoc_powerclean</b>: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile when calling make clean. Defaults to F.<br>
+Data type: set, T|<u>F</u>.
+</li>
+<li><b>adhoc_process</b>: Command to execute for each input file. The path to the input file is available as $< and the output file as $t. (it is not mandatory to use both parameters, for example "cat $< > output" would concatenate all files into one big file<br>
+Data type: string, Default: "echo "need a sensbile command"".
+</li>
+<li><b>adhoc_touch</b>: use touch files to track if input files have changed.<br>
+Data type: set, <u>T</u>|F.
+</li></ul>
+<h3>Input parameters</h3>
+<ul>
+
+<li><b>adhoc_input_dir</b>: Input files for adhoc<br>
+Data type: directory.
+</li>
+<li><b>adhoc_input_extension</b>: file extension for the files in adhoc_input_dir<br>
+Data type: string.
+</li>
+<li><b>adhoc_input_glob</b>: glob to select a subset of files from adhoc_input_dir<br>
+Data type: string, Default: "*".
+</li>
+<li><b>adhoc_input_limit</b>: Number of files to use, if not defined: all files<br>
+Data type: integer.
+</li>
+<li><b>adhoc_input_sort</b>: Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t - time, tr - time reverse<br>
+Data type: set, <u>u</u>|s|sr|t|tr.
+</li></ul>
+<h3>System parameters</h3>
+<ul>
+
+<li><b>*title</b>: A name for this job<br>
+Data type: string.
+</li>
+<li><b>description</b>: A longer description for this job<br>
+Data type: string.
+</li></ul>
+<h3>Advanced parameters</h3>
+<ul>
+
+<li><b>moa_postcommand</b>: A single shell command to be executed after the Moa is finished. For more complex processing please override the moa_postprocess target in the local Makefile.<br>
+Data type: string.
+</li>
+<li><b>moa_precommand</b>: A single command to be executed before the main operation starts. For more complicated processing, please override the moa_preprocess target in the local Makefile.<br>
+Data type: string.
+</li></ul>
+<h2>Miscellaneous </h2>
+<ul>
+<li>Template last modified on Fri May 21 15:14:55 2010</li>
+<li>Template author Mark Fiers</li>
+<li>Moa_id: adhoc</li>
+<li>Template name: adhoc</li>
+<li>Template file: /home/mf/project/moa/template/adhoc.mk</li>
+</ul>
+
+
+
+			</div>
+          </div>          
+          <p>&nbsp;</p>
+          <div class="footer_text" id="footer">
+            <small>This page is generated on Tue Jun 15 09:37:34 2010</small><br>
+            &copy 2009 PLANT &amp; FOOD RESEARCH | 
+            <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a>
+          </div>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>
