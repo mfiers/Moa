@@ -1,11 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
   <head>
 	<title>MOA - Makefiles in bioinformatics</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<link href="moa.css" rel="stylesheet" type="text/css">
 	<link rel="icon" type="image/ico" href="favicon.ico">
-
+    
   </head>
   <body>
 	<center>
@@ -18,7 +19,7 @@
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
 				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
-			</a>
+			  </a>
 			</div>
 		  </div>
 		  <div style="clear: left;">
@@ -34,82 +35,374 @@
 		  <div id="left">
 			<div style="width: 160px;">
 			  <div style="text-align: right;">
-                 <a href="introduction.html">Introduction</a><br>
-                 <a href="installation.html">Installation</a><br>
-                 <a href="extending.html">Extend Moa</a><br>
-                 <a href="reference.html">Reference</a><br>
-                 <hr>
-                 <a href="moa_manual.pdf">Manual in PDF</a>
-                 <hr>
-                 <a href="api/index.html">Python API</a><br>
+                
+                <a href="introduction.html">Introduction</a><br>
+                
+                <a href="installation.html">Installation</a><br>
+                
+                <a href="commands.html">Commands</a><br>
+                
+                <a href="templates.html">Templates</a><br>
+                
+                <a href="extending.html">Extending</a><br>
+                
+                <a href="reference.html">Reference</a><br>
+                
 			  </div>
 			</div>
 		  </div>
 		  <div id="center_content">
 			<div id="homepage_container">
-			
-<h1 id="chapterTitle">Template reference</h1>
-<ul>
-<li><a href='./t___act_crunch.html'>act_crunch</a></li>
-<li><a href='./t___adhoc.html'>adhoc</a></li>
-<li><a href='./t___bartab.html'>bartab</a></li>
-<li><a href='./t___bidibebla.html'>bidibebla</a></li>
-<li><a href='./t___blast.html'>blast</a></li>
-<li><a href='./t___blastSingle.html'>blastSingle</a></li>
-<li><a href='./t___blastdb.html'>blastdb</a></li>
-<li><a href='./t___blat.html'>blat</a></li>
-<li><a href='./t___bowtie.html'>bowtie</a></li>
-<li><a href='./t___bowtiedb.html'>bowtiedb</a></li>
-<li><a href='./t___cleanFasta.html'>cleanFasta</a></li>
-<li><a href='./t___clustalgroup.html'>clustalgroup</a></li>
-<li><a href='./t___clustalpair.html'>clustalpair</a></li>
-<li><a href='./t___clustalw.html'>clustalw</a></li>
-<li><a href='./t___concatenate.html'>concatenate</a></li>
-<li><a href='./t___create.gbrowse.db.html'>create.gbrowse.db</a></li>
-<li><a href='./t___crunch.html'>crunch</a></li>
-<li><a href='./t___dottup.html'>dottup</a></li>
-<li><a href='./t___dottupSelf.html'>dottupSelf</a></li>
-<li><a href='./t___empty.html'>empty</a></li>
-<li><a href='./t___fasta2gff.html'>fasta2gff</a></li>
-<li><a href='./t___gap4export.html'>gap4export</a></li>
-<li><a href='./t___gather.html'>gather</a></li>
-<li><a href='./t___genemarks.html'>genemarks</a></li>
-<li><a href='./t___getorf.html'>getorf</a></li>
-<li><a href='./t___glimmer3.html'>glimmer3</a></li>
-<li><a href='./t___gmap.html'>gmap</a></li>
-<li><a href='./t___gmapdb.html'>gmapdb</a></li>
-<li><a href='./t___gsMapper.html'>gsMapper</a></li>
-<li><a href='./t___h_blast.html'>h_blast</a></li>
-<li><a href='./t___lftp.html'>lftp</a></li>
-<li><a href='./t___maq_fasta2bfa.html'>maq_fasta2bfa</a></li>
-<li><a href='./t___maq_fastq2bfq.html'>maq_fastq2bfq</a></li>
-<li><a href='./t___maq_match_pair.html'>maq_match_pair</a></li>
-<li><a href='./t___moatest.html'>moatest</a></li>
-<li><a href='./t___mummer.html'>mummer</a></li>
-<li><a href='./t___ncbi.html'>ncbi</a></li>
-<li><a href='./t___newbler.html'>newbler</a></li>
-<li><a href='./t___nstretch.html'>nstretch</a></li>
-<li><a href='./t___pregap.html'>pregap</a></li>
-<li><a href='./t___project.html'>project</a></li>
-<li><a href='./t___repeatmasker.html'>repeatmasker</a></li>
-<li><a href='./t___revseq.html'>revseq</a></li>
-<li><a href='./t___sam2bam.html'>sam2bam</a></li>
-<li><a href='./t___scaffolder.html'>scaffolder</a></li>
-<li><a href='./t___sffinfo.html'>sffinfo</a></li>
-<li><a href='./t___traverse.html'>traverse</a></li>
-<li><a href='./t___varscan.html'>varscan</a></li>
-<li><a href='./t___vmatch.html'>vmatch</a></li>
-<li><a href='./t___vmatchdb.html'>vmatchdb</a></li>
-<li><a href='./t___vpcr.html'>vpcr</a></li>
-<li><a href='./t___emboss___revseq.html'>emboss/revseq</a></li>
-</ul>
-</div>
-</div>
-  
-<p>&nbsp;</p><div class="footer_text" id="footer">&copy 2009 PLANT &amp; FOOD RESEARCH | <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a></div>
-</div>
-</div></center>
-
-
+              
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="" />
+</head>
+<body>
+<div id="reference"
+><h1
+  >Reference</h1
+  ><div id="moa-makefile-load-order"
+  ><h2
+    >Moa Makefile load order</h2
+    ><p
+    >Makefiles are sensitive to the order in which definitions are made, and thus the order in which the include files are loaded. Moa broadly recognizes two stages: &quot;definition&quot; and &quot;implementation&quot;. The implementation phase starts once the moa core library is loaded.</p
+    ><p
+    >Moa makefile load starts with loading the template makefile in the current work directory. This Makefile loads a number of other makefiles that load more Makefiles. The following list shows a detailed load order</p
+    ><ol style="list-style-type: decimal;"
+    ><li
+      ><strong
+	>Makefile</strong
+	>: The Makefile in the working directory<ol style="list-style-type: decimal;"
+	><li
+	  ><p
+	    ><strong
+	      >prepare.mk</strong
+	      >: initial definitions. At the start of the prepare.mk file the following files are loaded:</p
+	    ><ol style="list-style-type: decimal;"
+	    ><li
+	      ><strong
+		>gmsl</strong
+		>: The <a href="http://gmsl.sourceforge.net/"
+		>GNU Make Standard library</a
+		>, a number of utilities for use in Makefiles.</li
+	      ><li
+	      ><strong
+		>global configuration</strong
+		> (<code
+		>$(MOABASE)/etc/moa.conf</code
+		>): This file loads the global default configuration file ( <code
+		>$(MOABASE)/etc/moa.conf.mk.default</code
+		>)</li
+	      ><li
+	      ><strong
+		>Project configuration</strong
+		>: (if present). Moa attempts to find this in the first parent directory of the current working directory that contains a moa project with template &quot;project&quot;.</li
+	      ><li
+	      ><strong
+		>Local configuration</strong
+		> (<code
+		>moa.mk</code
+		>)</li
+	      ><li
+	      ><strong
+		>Plugin definitions</strong
+		>: For each plugin name defined in the variable <code
+		>moa_plugins</code
+		>, moa attempts to load a file called <code
+		>$(MOABASE)/template/moa/plugins/PLUGINNAME_def.mk</code
+		>.</li
+	      ></ol
+	    ><p
+	    >Once these files are loaded, more Moa specific definitions follow in <code
+	      >prepare.mk</code
+	      ></p
+	    ></li
+	  ><li
+	  ><p
+	    ><strong
+	      >template Makefile</strong
+	      >: (<code
+	      >$(MOABASE)/template/TEMPLATENAME.mk</code
+	      >) A makefile specific for the job at hand. This template Makefile might attempt to load prepare.mk, unless it was already loaded earlier. The first part of the template Makefile is used for defining template specific variables.</p
+	    ><p
+	    >The definition phase of a Moa Makefile is concluded by loading:</p
+	    ><ol style="list-style-type: decimal;"
+	    ><li
+	      ><strong
+		>Moa core</strong
+		> (<code
+		>$(MOABASE)/template/moa/core.mk</code
+		>). The first thing the Moa core libraries do is loading a set of plugins:<ol style="list-style-type: decimal;"
+		><li
+		  ><strong
+		    >Plugin cores</strong
+		    >: (<code
+		    >$(MOABASE)/template/moa/plugins/PLUGINNAME.mk</code
+		    >)</li
+		  ></ol
+		></li
+	      ></ol
+	    ><p
+	    >After the plugins are loaded moa defines a number of core targets, most importantly, the default target that defines the execution order (see the next paragraph). As much of the functionality as possible is definined as a plubin.</p
+	    ></li
+	  ></ol
+	>Once the core library has loaded, the template specific targets are parsed.</li
+      ></ol
+    ></div
+  ><div id="execution-order"
+  ><h2
+    >Execution order</h2
+    ><div id="moa-run"
+    ><h3
+      ><code
+	>moa run</code
+	></h3
+      ><ul
+      ><li
+	><code
+	  >moa_hooks_prewelcome</code
+	  ></li
+	><li
+	><code
+	  >moa_welcome</code
+	  ></li
+	><li
+	><code
+	  >moa_hooks_precheck</code
+	  ></li
+	><li
+	><code
+	  >moa_check</code
+	  ></li
+	><li
+	><code
+	  >moa_prepare</code
+	  ></li
+	><li
+	><code
+	  >$(moa_id)_prepare</code
+	  ></li
+	><li
+	><code
+	  >$(moa_id)</code
+	  ></li
+	><li
+	><code
+	  >$(moa_id)_post</code
+	  ></li
+	><li
+	><code
+	  >moa_post</code
+	  ></li
+	></ul
+      ></div
+    ><div id="moa-set"
+    ><h3
+      ><code
+	>moa set</code
+	></h3
+      ><ul
+      ><li
+	><code
+	  >moa_hooks_preset</code
+	  ></li
+	><li
+	>(python routine)</li
+	><li
+	><code
+	  >moa_hooks_postset</code
+	  ></li
+	></ul
+      ></div
+    ></div
+  ><div id="environment-variables"
+  ><h2
+    >Environment variables</h2
+    ><p
+    >These environment variables are recognized by Moa:</p
+    ><dl
+    ><dt
+      ><code
+	>MOAANSI</code
+	></dt
+      ><dd
+      ><p
+	>The default is to use (ANSI) colored characters in the output. To prevent this from happening, set this (environment) variable to <code
+	  >no</code
+	  >.</p
+	></dd
+      ><dt
+      ><code
+	>MOAPROJECTROOT</code
+	></dt
+      ><dd
+      ><p
+	>The root of a moa project - project root is a parent directory of the current directoy that has a moa job with template <code
+	  >project</code
+	  >. If there is no project root, this variable is undefined.</p
+	></dd
+      ></dl
+    ></div
+  ><div id="global-functions"
+  ><h2
+    >Global functions</h2
+    ><p
+    >These function are meant to be used at the top level of a Makefile (meaning, not inside a target command block). Function can be called using: (Note, some of this should go to plugin docs)</p
+    ><dl
+    ><dt
+      ><code
+	>$(call moa_fileset_define,ID,EXTENSION,HELP)</code
+	></dt
+      ><dd
+      ><p
+	>Define a set of files to be recoginized by Moa.</p
+	></dd
+      ><dt
+      ><code
+	>$(call moa_fileset_remap,INPUT_ID,OUTPUT_ID,OUTPUT_EXTENSION)</code
+	></dt
+      ><dd
+      ><p
+	>Remap a set of input files to ....</p
+	></dd
+      ><dt
+      ><code
+	>$(call moa_fileset_remap_nodir,INPUT_ID,OUTPUT_ID,OUTPUT_EXTENSION)</code
+	></dt
+      ><dd
+      ><p
+	>as <code
+	  >moa_fileset_remap</code
+	  >, but without prefixing the set with a subdirectory</p
+	></dd
+      ></dl
+    ></div
+  ><div id="command-functions"
+  ><h2
+    >Command functions</h2
+    ><p
+    >The following commands render a command that can be executed inside a target command block</p
+    ><ul
+    ><li
+      ><code
+	>$(call echo,TEXT)</code
+	></li
+      ></ul
+    ><p
+    >~ Returns an echo statement for the text with a green block prepended. The color allows for easy recognition of the echo'd statements. Note that these only work within the code block of a target.</p
+    ><ul
+    ><li
+      ><code
+	>$(call errr,TEXT)</code
+	></li
+      ></ul
+    ><p
+    >~ as <code
+      >$(call echo,TEXT)</code
+      >, but with a red marker (error)</p
+    ><dl
+    ><dt
+      ><code
+	>$(call exer,TEXT)</code
+	></dt
+      ><dd
+      ><p
+	>as <code
+	  >$(call errr,TEXT)</code
+	  >, but exits the Makefile with an error</p
+	></dd
+      ><dt
+      ><code
+	>$(call exerUnlock,TEXT)</code
+	></dt
+      ><dd
+      ><p
+	>as <code
+	  >$(call exer,TEXT)</code
+	  >, but remove the Moa lockfile</p
+	></dd
+      ><dt
+      ><code
+	>$(call warn,TEXT)</code
+	></dt
+      ><dd
+      ><p
+	>as <code
+	  >$(call echo,TEXT)</code
+	  >, but with a yellow marker</p
+	></dd
+      ></dl
+    ></div
+  ><div id="variables"
+  ><h2
+    >Variables</h2
+    ><dl
+    ><dt
+      >$(comma)</dt
+      ><dd
+      ><p
+	>a comma</p
+	></dd
+      ><dt
+      >$e</dt
+      ><dd
+      ><p
+	>Can be used in place of Makefile &quot;@&quot;. A @ prepended to a command inside a target in a Makefile supresses echoing of that line during execution. If $e is used, then supression is depending on executing moa with the -v (verbose) parameter.</p
+	></dd
+      ><dt
+      >$(empty)</dt
+      ><dd
+      ><p
+	>empty</p
+	></dd
+      ><dt
+      >$(parC)</dt
+      ><dd
+      ><p
+	>parentheses close</p
+	></dd
+      ><dt
+      >$(parO)</dt
+      ><dd
+      ><p
+	>parentheses open</p
+	></dd
+      ><dt
+      >$(sep)</dt
+      ><dd
+      ><p
+	>contains the pipe symbol &quot;|&quot;</p
+	></dd
+      ><dt
+      >$(space)</dt
+      ><dd
+      ><p
+	>a single space</p
+	></dd
+      ></dl
+    ></div
+  ></div
+>
 </body>
+</html>
+
+
+
+			</div>
+          </div>          
+          <p>&nbsp;</p>
+          <div class="footer_text" id="footer">
+            <small>This page is generated on Tue Jun 15 09:37:34 2010</small><br>
+            &copy 2009 PLANT &amp; FOOD RESEARCH | 
+            <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a>
+          </div>
+        </div>
+      </div>
+    </center>
+  </body>
 </html>

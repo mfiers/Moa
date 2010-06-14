@@ -1,11 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
 <html>
   <head>
 	<title>MOA - Makefiles in bioinformatics</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<link href="moa.css" rel="stylesheet" type="text/css">
 	<link rel="icon" type="image/ico" href="favicon.ico">
-
+    
   </head>
   <body>
 	<center>
@@ -18,7 +19,7 @@
 			<div style="float: right;">
 			  <a href="http://www.plantandfood.co.nz/">
 				<img src="images/pfr_logo.jpg" alt="" height="87" width="351" border="0">
-			</a>
+			  </a>
 			</div>
 		  </div>
 		  <div style="clear: left;">
@@ -34,21 +35,34 @@
 		  <div id="left">
 			<div style="width: 160px;">
 			  <div style="text-align: right;">
-                 <a href="introduction.html">Introduction</a><br>
-                 <a href="installation.html">Installation</a><br>
-                 <a href="extending.html">Extend Moa</a><br>
-                 <a href="reference.html">Reference</a><br>
-                 <hr>
-                 <a href="moa_manual.pdf">Manual in PDF</a>
-                 <hr>
-                 <a href="api/index.html">Python API</a><br>
+                
+                <a href="introduction.html">Introduction</a><br>
+                
+                <a href="installation.html">Installation</a><br>
+                
+                <a href="commands.html">Commands</a><br>
+                
+                <a href="templates.html">Templates</a><br>
+                
+                <a href="extending.html">Extending</a><br>
+                
+                <a href="reference.html">Reference</a><br>
+                
 			  </div>
 			</div>
 		  </div>
 		  <div id="center_content">
 			<div id="homepage_container">
-			
-<h1 id="chapterTitle">Installation</h1>
+              
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="" />
+</head>
+<body>
 <div id="prerequisites"
 ><h1
   >Prerequisites</h1
@@ -71,7 +85,7 @@
     ><p
       ><a href="http://git-scm.com/"
 	>Git</a
-	> (1.6). Used to download the latest version, and possibly by the git plugin.</p
+	> (1.6). Used to download the latest version, and optionally by the git plugin.</p
       ></li
     ><li
     ><p
@@ -95,7 +109,15 @@
     ><p
       ><a href="http://johnmacfarlane.net/pandoc/"
 	>Pandoc</a
-	> (Preferably 1.5). Pandoc is used in generating the on the fly help for which the ancient 0.46, bundled with Ubuntu, will also work. Pandoc is also used to generating LaTeX &amp; HTML documentation. For these a recent version is strongly recommended.</p
+	> (Preferably 1.5) is used in generating help. Pandoc is also used to generating Pdf and HTML documentation. A recent version is recommended.</p
+      ></li
+    ><li
+    ><p
+      ><a href="http://jinja.pocoo.org/2/"
+	>Jinja2</a
+	> is used together with Pandoc to generate the documentation, website, pdf manual, man pages. If you have easy_install: <code
+	>easy_install jinja2</code
+	>.</p
       ></li
     ></ul
   ><div id="bioinformatics-tools"
@@ -203,13 +225,21 @@ chmod a+rx $MOABASE/bin/*
   >Moa should now work.</p
   ></div
 >
-</div>
-</div>
-  
-<p>&nbsp;</p><div class="footer_text" id="footer">&copy 2009 PLANT &amp; FOOD RESEARCH | <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a></div>
-</div>
-</div></center>
-
-
 </body>
+</html>
+
+
+
+			</div>
+          </div>          
+          <p>&nbsp;</p>
+          <div class="footer_text" id="footer">
+            <small>This page is generated on Tue Jun 15 09:37:34 2010</small><br>
+            &copy 2009 PLANT &amp; FOOD RESEARCH | 
+            <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a>
+          </div>
+        </div>
+      </div>
+    </center>
+  </body>
 </html>

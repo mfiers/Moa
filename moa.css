@@ -18,6 +18,11 @@ body {
 	background-repeat: repeat-y;
 }
 
+th {
+    text-align: left;
+    vertical-align: top;
+    padding-right: 5px;
+}
 td {
 	font-size:0.8em;
 }
