@@ -1,0 +1,343 @@
+/*
+Green #1DA343
+Red  #A31E39
+
+Greys - dark to light
+color1=485C5A
+color2=8C9C9A
+color3=9DB2B1
+color4=BFCFCC
+color5=D6E4E1
+*/
+body {
+	font-family: Verdana, Arial, sans-serif;
+    padding:0px;
+    margin: 0px;
+	font-size: 62.5%;
+
+}
+html { margin: 0px; padding: 0px; }
+
+a:link { color: #173C48 }
+a:visited { color: #173C48 }
+a:hover { color: #FE5D44; }
+a:active { color: #FE5D44; }
+
+.moaBreadCrumbs .moaBreadCrumb a:link { color: white }
+.moaBreadCrumbs .moaBreadCrumb a:visited { color: white }
+.moaBreadCrumbs .moaBreadCrumb a:hover { color: #A31E39; }
+.moaBreadCrumbs .moaBreadCrumb a:active { color: #A31E39; }
+
+
+.moaHeader {
+	clear: both;
+	padding: 0px;
+	margin: 0px;
+    padding: 2px;
+	border-bottom: 2px solid black;
+    background-color: #fff;
+}
+
+.moaLogo {
+    postion: absolute;
+    left: 0px; 
+    top: 0px;
+	padding: 3px;
+	float: left;
+	margin: 0px;
+	width: 45px;
+    height: 40px;
+}
+
+.moaTopRow {
+    position: absolute;
+    left: 50px;
+    top: 2px;
+    right: 20px;
+    height: 14px;
+    padding: 3px;
+}
+
+.moaSecondRow{
+    position: absolute;
+    left: 50px;
+    top: 25px;
+    right: 20px;
+	font-size: 120%;
+}
+
+#tabs {
+    position: absolute;
+    left: 0px;
+    top: 45px;
+    right: 0px;
+    bottom: 4px;
+}
+
+.ui-tabs {
+    border: 0px;
+    padding: 0px;
+}
+
+.ui-tabs-nav {
+    -moz-border-radius: 0px; 
+	-webkit-border-radius: 0px;
+    border-radius: 0px;
+    border: 0px;
+    padding: 0px;
+    padding-left: 5px !important;
+}
+.ui-tabs-panel {
+    border-radius: 0px;
+    border: 0px;
+    padding: 5px 0px 5px 0px !important;
+    margin: 5px;
+}
+
+.moaTitle {
+    margin: 2px !important;
+    padding: 2px !important;
+    padding-left: 4px;
+	font-size: 120%;
+}
+
+.moaEditTitle {
+    width: 80%;
+    border: 0px !important;
+    padding: 0px !important;
+    margin: 0 0 0 4 px !important;
+}
+
+.moaTemplate {
+	font-size: 120%;
+    font-weight: bold;
+    cursor: pointer;
+	padding: 2px;
+    margin: 0px;
+    padding-right: 5px;
+    padding-left: 8px;
+    color: black;
+	border-right: 2px solid black;
+}
+
+.moaStatus {
+    float: right;
+    font-weight: bold;
+    padding: 2px;
+    padding-right: 5px;
+    margin-right: 5px;
+    padding-left: 5px;
+    -moz-border-radius: 2px; 
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	background-color: #8C9C9A;
+    color: white;    
+	border: 1px solid #485C5A;
+}
+
+#fileFilter {
+    display: inline;
+    border: 1px solid black;
+}
+
+.fileListNav {
+    border-bottom:2px solid black;
+    padding: 0 5 5 5px;
+    width: 100%;
+}
+.moaMenu {
+    position: absolute;
+    right: 3px;
+    top: 3px;
+    z-index: 10;
+}
+
+.moaBreadCrumb {
+    padding-bottom: 3px;
+}
+
+.jobDescription {
+    float: left;
+    padding: 10px;
+    padding-top: 0px;
+    margin-top: 0px;
+    border: 2px solid black;
+    background-color: white;
+    border-bottom: 2px solid black;
+    padding-bottom: 25px;
+    max-height: 500px;
+    margin-left: 10%;
+    margin-right: 10%;
+    width: 80%;
+    overflow:auto;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.fileBlock {
+    clear: both;
+    width: 100%;    
+    padding: 4px;
+}
+
+.fileBlockName {
+    float: left;
+    width: 50%;    
+    padding: 4px;
+}
+.fileBlockSize {
+    float: left;
+    width: 20%;    
+    padding: 4px;
+}
+.fileBlockModified {
+    float: left;
+    width: 20%;    
+    padding: 4px;
+}
+.fileName {
+    float: left;
+    width: 50%;
+}
+
+.fileColumn {
+    float: left;
+    padding: 4px;
+    border: 1px solid red;
+}
+.jobDescriptionMinimize {
+    float:center;
+    width: 80px;
+    margin: 0px;    
+    margin-left: 50%;
+    margin-right: 50%;
+    padding: 4px;
+    font-size: 8px;
+    border: 1px solid black;
+    border-bottom: 0px;
+}
+
+.moaMessage {
+    width: 100%;
+    font-size: 180%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 20px;
+    display: none;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    padding: 5px;
+    background-color:  #A31E39;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.moaBreadCrumb {
+    font-weight: bold;
+    cursor: pointer;
+	padding: 2px;
+    margin: 2px;
+    color: #9DB2B1;    
+}
+
+.moaBreadCrumbActive {
+//	background-color: #D6E4E1;
+    color: black;
+    cursor: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div#loadInProgress {
+    position: absolute;
+    left: 50%;
+    top: 200px;
+    width: 300px;
+    margin-left: -150px;
+    height: 200px;
+    text-align: center;
+	-moz-border-radius: 6px; 
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	background-color: #BFCFCC;
+}
+img#moaProgress {
+    padding-top: 20px;
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#moaParameters {
+    font-size: 100%;
+}
+
+#moaParameters th {
+    text-align: left;
+}
+#moaParameters td {
+    text-align: left;
+    padding: 4px;
+}
+
+
+/*file table */
+.moaPgFilelist {
+    border-collapse: collapse;
+    max-width: 100%;
+	width: 100%;
+    margin-left:5px;
+}
+
+.moaPgFilelist tr {
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+.moaPgFilelist td {
+    border: 0px;
+    padding: 2px;
+    padding-left: 4px;
+    margin: 0px;
+}
+.moaPgFilelist td.moaPgNotLeft {
+    border-left: 1px solid black;
+}
+
+.moaPgFilelist .moaPgFileInfo {
+    font-size: 9px;
+    color: #83988E;
+}
+
+.moaPgFilelist .moaPgIcon {
+    padding-right: 2px;
+}
+
+moaPgFilename1 {
+	letter-spacing: 1px;
+}
+.moaPgFilename2 {
+	letter-spacing: 0px;
+	font-size: small;
+}
+.moaPgFilename3 {
+	letter-spacing: -1px;
+	font-size: x-small;
+}
+.moaPgFilename4 {
+	letter-spacing: -2px;
+	font-size: x-small;
+}
+.moaPgFilename5 {
+	letter-spacing: -3px;
+	font-size: xx-small;
+}
+.moaPgFilename6 {
+	letter-spacing: -4px;
+	font-size:xx- small;
+}
