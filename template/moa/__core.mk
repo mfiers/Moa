@@ -32,8 +32,9 @@ include $(MOABASE)/template/moa/prepare.mk
 $(foreach v,$(moa_must_define) $(moa_may_define), \
 	$(if $($v),, \
 		$(if $($v_default), \
-			$(eval $v=$($v_default))) ) )
-
+			$(eval $v=$($v_default))) ) \
+	$(if $($(v)_formatter),$(eval $(v)_f=$(call $(v)_formatter,$($v)))) \
+)
 
 ##load the plugins: contains core - post definition
 $(foreach p,$(moa_plugins), \
@@ -76,18 +77,26 @@ moa_execute_targets = \
 .DEFAULT_GOAL := moa_default_target
 moa_default_target: $(moa_execute_targets)
 
+.PHONY: moa_run_precommand
+ifdef moa_precommand
 moa_run_precommand:
-	$e if [[ "$(value moa_precommand)" ]]; then \
-		$(call echo,Running precommand); \
-	fi
+	$(call echo,Running precommand)
+	$(call warn,$(value moa_precommand))
 	$e $(moa_precommand)
+else:
+moa_run_precommand:
+
+endif
 
 .PHONY: moa_run_postcommand
+ifdef moa_postcommand
 moa_run_postcommand:
-	$e if [ "$(value moa_postcommand)" ]; then \
-		$(call echo, Running postcommand); \
-	fi
+	$(call echo, Running postcommand)
 	$e $(moa_postcommand)
+else
+moa_run_postcommand:
+
+endif
 
 #$(if ifneq(($(strip $(moa_postcommand)),)),$(moa_postcommand))
 

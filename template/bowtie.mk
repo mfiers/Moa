@@ -64,6 +64,13 @@ bowtie_reverse_suffix_default = _2
 bowtie_reverse_suffix_help = Last part of the sequence name identifying a file with reverse reads
 bowtie_reverse_suffix_type = string
 
+moa_may_define += bowtie_msi
+bowtie_msi_help = Merge, sort and index? If *T* use samtools to merge	\
+ all bamfiles into one, sort them and create an index
+bowtie_msi_type = set
+bowtie_msi_default = F
+bowtie_msi_allowed = T F
+
 moa_may_define += bowtie_output_format
 bowtie_output_format_default = bam
 bowtie_output_format_help = Format of the output file
@@ -135,8 +142,8 @@ bowtie_output_files = $(addprefix pair_, $(addsuffix .$(bowtie_output_format),\
 		$(patsubst %$(bfn).$(bowtie_input_extension), %, $(notdir $(bowtie_input_files)))))
 else
 bowtie_input_files = $(wildcard $(bowtie_input_dir)/$(bowtie_input_glob).$(bowtie_input_extension))
-bowtie_output_files = $(addprefix single_, $(addsuffix .$(bowtie_output_format),\
-		$(patsubst %$(bfn).$(bowtie_input_extension), %, $(notdir $(bowtie_input_files)))))
+bowtie_output_files = $(addprefix unpaired_,$(addsuffix .$(bowtie_output_format),\
+		$(patsubst %.$(bowtie_input_extension), %, $(notdir $(bowtie_input_files)))))
 endif
 
 .PHONY: bowtie_prepare
@@ -147,9 +154,11 @@ bowtie_post:
 
 test: test_input $(addprefix check_exists_, $(bowtie_output_files))
 
-test_input:
+t:
 	@echo "INPUT"
-	@for x in $(bowtie_input_files); do echo $$x; done
+	@for x in $(bowtie_input_files); do echo input $$x; done
+	@echo "OUTPUT"
+	@for x in $(bowtie_output_files); do echo output $$x; done
 
 check_exists_%:
 	$e if [[ -f '*x' ]]; then echo -n "* "; fi
@@ -157,13 +166,26 @@ check_exists_%:
 
 comma:=,
 .PHONY: bowtie
-bowtie: $(bowtie_output_files)
-	@echo Processed $(bowtie_output_files)
+bowtie: $(bowtie_output_files) bowtie_msi
 
-single_%.$(bowtie_output_format): \
-		$(bowtie_input_dir)/%.$(bowtie_input_extension)
-	echo bowtie $(bowtie_input_format_param) \
-		$(bowtie_extra_params) $(bowtie_db) $< $(bowtie_output_convert) > $@ 
+bowtie_msi: $(if $(call seq,$(bowtie_msi),T),all.sorted.bam.bai)
+
+all.sorted.bam.bai: all.sorted.bam
+	$(call warn,Start indexing)
+	samtools index $<
+
+all.sorted.bam: all.merged.bam
+	$(call warn,Start sorting)
+	samtools sort $< all.sorted
+
+all.merged.bam: $(bowtie_output_files)
+	if [[ $(words $^) > 1 ]]; then \
+		$(call warn,Start merging) ;\
+		samtools merge $@ $^ ;\
+	else \
+		$(call echo,Only one bam file - linking) ;\
+		ln $^ $@ -s ;\
+	fi
 
 imn=$(bowtie_insertsize_min)
 imx=$(bowtie_insertsize_max)
@@ -186,6 +208,12 @@ pair_%.$(bowtie_output_format): \
 				$(bowtie_output_convert) \
 				> $@
 
+unpaired_%.$(bowtie_output_format): $(bowtie_input_dir)/%.$(bowtie_input_extension)
+	@echo "hi $<"
+	@echo "bowtie $(bowtie_input_format_param) $(bowtie_output_format_param) $(bowtie_extra_params) $(bowtie_db) $< $(bowtie_output_convert)"
+	bowtie $(bowtie_input_format_param) $(bowtie_extra_params) $(bowtie_output_format_param) $(bowtie_db) $< $(bowtie_output_convert) > $@
+
 bowtie_clean:
-	-rm -f $(bowtie_output_file)
+	-rm -f $(bowtie_output_files)
+
 

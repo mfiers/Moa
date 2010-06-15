@@ -1,0 +1,10 @@
+{% for block in blocks %}
+<span class="{{ block.class }}"
+      {%- if block.notLast -%}
+      onclick='window.location.replace("{{ block.link }}")'
+      {%- else -%}
+      onclick='$("#tabs").tabs("select", "#fileBrowser")'
+      {%- endif -%}
+>{{ block.name }}</span><b>/</b>
+{% endfor %}
+

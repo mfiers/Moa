@@ -199,6 +199,7 @@ def newJob(template,
            wd = '.',
            parameters = [],
            force = False,
+           titleCheck = True,
            noInit = False):
     """
     Create a new template based makefile in the current dir.
@@ -254,7 +255,7 @@ def newJob(template,
                 parameters.remove(p)
                 break
         
-    if (not title) and (not template == 'traverse'):
+    if (not title) and titleCheck and (not template == 'traverse'):
         l.warning("You *must* specify a job title")
         l.warning("You can still do so by running: ")
         l.warning("   moa set title='something descriptive'")

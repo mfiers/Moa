@@ -138,11 +138,11 @@ title_type = string
 title_help = A name for this job
 title_category = system
 
-moa_may_define += description
-description_type = string
-description_help = A longer description for this job
-description_default = 
-description_category = system
+# moa_may_define += description
+# description_type = string
+# description_help = A longer description for this job
+# description_default = 
+# description_category = system
 
 ## author of this template..
 template_author ?= Mark Fiers

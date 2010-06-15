@@ -90,9 +90,7 @@ if __name__ == '__main__':
     seqLen = 0
 
     combCovData = os.path.join('combined', seqId + '.combined.coverage.npz')
-    gapData = os.path.join('gaps', seqId + '.gaps.npz')
 
-    gaps = np.load(gapData)['gaps']
 
     #load the combined coverage plot
     ccov = np.load(combCovData)
@@ -103,6 +101,12 @@ if __name__ == '__main__':
     r_z = np.zeros_like(r_ok)
     seqLen =  len(r_ok)
     r_x = np.arange(0, seqLen, dtype="int")
+
+    gapData = os.path.join('gaps', seqId + '.gaps.npz')
+    try:
+        gaps = np.load(gapData)['gaps']
+    except IOError:
+        gaps = np.zeros(seqLen)
 
     if options.flank:
         flank = int(float(options.flank))

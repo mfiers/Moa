@@ -60,7 +60,7 @@ $(moa_id):
 	Rscript --vanilla moa.R
 else
 
-$(moa_id): moa_id)_touch_files
+$(moa_id): $(moa_id)_touch_files
 
 touch/%: $($(moa_id)_input_dir)/%
 	$(call echo,Processing $<)

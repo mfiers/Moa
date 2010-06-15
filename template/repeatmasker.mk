@@ -16,41 +16,66 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id = repm
+moa_id = repmask
 
-template_title = Repmfolder
-template_description = Repmfold a set of input files based on a	\
-  blast against a reference sequence. This software is written around	\
-  bambus
+template_title = Repeatmasker
+template_description = Run a default repeatmask on the input sequences
+
+$(call moa_fileset_define,$(moa_id)_input,fasta,Input files for $(moa_id))
 
 #variables
-moa_must_define += repm_input_file
-repm_input_file_help = blast database of the reference set
-repm_input_file_type = file
+ 
+moa_may_define += repmask_species
+repmask_species_default = 
+repmask_species_help = Repeatmasker species
+repmask_species_type = string
+repmask_species_formatter = $(if $(1),-spe $(1))
 
-moa_may_define += repm_species
-repm_species_default = repmfolds
-repm_species_help = species 
-repm_species_type = string
+moa_may_define += $(moa_id)_simple
+$(moa_id)_simple_help = Mask *only* low complex/simple repeats, not	\
+  interspersed repeats (Repeatmasker -(no)int parameter)
+$(moa_id)_simple_type = set
+$(moa_id)_simple_default = F
+$(moa_id)_simple_allowed = T F
+$(moa_id)_simple_formatter = $(if $(call seq,$(1),T),-int,noint)
+
+moa_may_define += $(moa_id)_quick
+$(moa_id)_quick_help = Quick job
+$(moa_id)_quick_type = set
+$(moa_id)_quick_default = F
+$(moa_id)_quick_allowed = T F
+$(moa_id)_quick_formatter = $(if $(call seq,$(1),T),-qq)
+
+moa_may_define += $(moa_id)_parallel
+$(moa_id)_parallel_help = No of threads to run in parallel
+$(moa_id)_parallel_type = integer
+$(moa_id)_parallel_default = 4
+$(moa_id)_parallel_formatter = -pa $(1)
 
 include $(MOABASE)/template/moa/core.mk
+## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)
+$(call moa_fileset_remap_nodir,$(moa_id)_input,$(moa_id)_output,masked)
 
-##### Derived variables for this run
+.PHONY: repmask_prepare
+repmask_prepare:
+
+.PHONY: repmask_post
+repmask_post:
+
+.PHONY: repmask
+repmask: $($(moa_id)_output_files)
+
+./%.masked: $($(moa_id)_input_dir)/%.$($(moa_id)_input_extension)
+	ln $< . -s
+	$e RepeatMasker \
+		$($(moa_id)_simple_f) \
+		$($(moa_id)_quick_f) \
+		$($(moa_id)_species_f) \
+		$($(moa_id)_parallel_f) \
+		`basename $<`
 
 
-.PHONY: repm_prepare
-repm_prepare:
+repmask_clean:
 
-.PHONY: repm_post
-repm_post:
 
-.PHONY: repm
-repm: $(repm_prefix).png
-
-$(repm_prefix).png: $(repm_input_file) $(repm_reference_file)
-	repmfolder -v \
-		-i $< -r $(repm_reference_file) -p $(repm_prefix)
-
-repm_clean:
-	rm -f $(repm_prefix).*
 

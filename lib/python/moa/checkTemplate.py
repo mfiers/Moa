@@ -108,7 +108,7 @@ def checkTemplate(path):
     l.error("Deprecated template, fixing. Please check!")
     shutil.move(makefilePath, makefilePath + '.old')
     moa.job.newJob(template=template, wd=path,
-                   noInit=True, silent=True)
+                   noInit=True, titleCheck=False)
     sys.exit(0)
 
     

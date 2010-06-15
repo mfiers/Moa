@@ -46,52 +46,35 @@ import moa.api
 import moa.project
 import moa.unittests
 import moa.checkTemplate
+import moa.plugins
+import moa.commands
 
 ## Initialize the logger
 import moa.logger
 l = moa.logger.l
 
-## A quick hack to set verbosity before reading command line arguments
+## A hack to set verbosity before reading command line arguments
 if '-v' in sys.argv:
     moa.logger.setVerbose()
 
-## Determine what plugins are loaded
-moaPlugins = moa.info.getPlugins()
-moaPluginsLoaded = []
-moaPluginModules = {}
-l.debug("Plugins %s" % moaPlugins)
-
-## load the plugins as seperate modules. A plugin does not need to
-## have a python module.
-for plugin in moaPlugins:
-    pyModule = 'moa.plugin.%s' % plugin
-    try:
-        _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
-        moaPluginModules[plugin] = _m
-        moaPluginsLoaded.append(plugin)
-        l.debug("Successfully Loaded module %s" % pyModule)
-    except ImportError, e:
-        if not str(e) == "No module named %s" % plugin:
-            raise
-        l.debug("No python plugin module found for %s" % plugin)
+## Initialze the plugins
+plugins = moa.plugins.Plugins()
 
 ## Command definitions
-moaCommands = {}
+commands = moa.commands.Commands()
+plugins.register(commands = commands)
+plugins.run('defineCommands')
 
-## Plugin: define Moa commands
-for p in moaPluginsLoaded:
-    moaPluginModules[p].defineCommands(moaCommands)
-    
 ## start defining the command line interface
 USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
-moaCommandNames = moaCommands.keys()
+moaCommandNames = commands.keys()
 moaCommandNames.sort()
 for _c in moaCommandNames:
-    if moaCommands[_c].get('private', False):
+    if commands[_c].get('private', False):
         continue
     USAGE += "\n".join(
         textwrap.wrap(
-            '%s: %s' % (_c, moaCommands[_c]['desc']),
+            '%s: %s' % (_c, commands[_c]['desc']),
             initial_indent=' - ',
             subsequent_indent = '     ')) + "\n"
 
@@ -120,12 +103,14 @@ parser.add_option("--md", dest="makedebug", action='store_true',
                   "information")
 
 ## See if the plugins have anything to add to the optparse instance:
-for p in moaPluginsLoaded:
-    if 'defineOptions' in dir(moaPluginModules[p]):
-        moaPluginModules[p].defineOptions(parser)
+plugins.register(parser=parser)
+plugins.run('defineOptions')
 
 ## Parse the options
 (options, args) = parser.parse_args()
+
+## make sure that the options are accessible to the plugins
+plugins.register(options = options, args = args)
 
 ## Proper setting of verbosity - after parsing of the command line
 if options.verbose:
@@ -135,10 +120,8 @@ if options.verbose:
 ## look at them from the Makefiles
 os.putenv("MOAARGS", "%s" % " ".join(["'" + str(x) + "'" for x in args]))
 
-### Start initializing the plugins
-for p in moaPluginsLoaded:
-    if 'prepare' in dir(moaPluginModules[p]):
-        moaPluginModules[p].prepare(globals())
+### Start plugin initialization
+plugins.run('prepare')
 
 ### Determine project root (if there is one)
 projectRoot = moa.project.findProjectRoot()
@@ -153,7 +136,6 @@ if projectRoot:
 os.putenv('MOA_THREADS', "%s" % options.threads)
 
 ## Define extra parameters to use with Make
-
 makeArgs = []
 if options.remake:
     makeArgs.append('-B')
@@ -163,7 +145,10 @@ if options.makedebug:
 ## Command dispatcher
 if __name__ == "__main__":
     cwd = os.getcwd()
-    l.debug("MOABASE is '%s'" % MOABASE)
+
+    plugins.register(cwd = cwd)
+    plugins.register(MOABASE = MOABASE)
+
     if options.threads > 1:
         l.debug("Running make with %d threads" % options.threads)
 
@@ -177,11 +162,11 @@ if __name__ == "__main__":
     l.debug("start moa %s" % command)
     l.debug("with args %s" % args[1:])
 
-    #see if there is a callback - If so call it
-    if command in moaCommands:
-        if moaCommands[command].has_key('call'):
-            l.debug("using a callback for moa %s" % command)
-            moaCommands[command]['call'](os.getcwd(), options, newargs)
+    #see if there is a callback to a plugin - If so call it
+    if command in commands:
+        if commands[command].has_key('call'):
+            l.debug("using a callback for moa %s" % command)            
+            plugins.runCallback(commands[command])
             sys.exit()
 
     #No callback, defer this to Make

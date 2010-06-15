@@ -10,3 +10,6 @@ fi
 export MOABASE=`dirname $(dirname $(cd ${BASH_ARGV%/*} && echo $PWD/${BASH_ARGV##*/}))`
 export PATH=$MOABASE/bin:$PATH
 export PYTHONPATH=$MOABASE/lib/python:$PYTHONPATH
+#for x in $MOABASE/share/plugin/init/*.sh; do
+#	. $x
+#done

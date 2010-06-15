@@ -11,26 +11,11 @@ import matplotlib as mpl
 
 inputFile = sys.argv[1]
 
-kmers = []
-
-KMERSIZE=6
-
-def fqReader(fileName):
-    with open(fileName) as F:
-        while True:
-            l1 = F.readline()
-            l2 = F.readline()
-            l3 = F.readline()
-            l4 = F.readline()
-            yield l2.lower().strip()
-
-
-#get the first sequence
-SR = fqReader(inputFile)
-sq = SR.next()
-data = np.zeros((len(sq)-KMERSIZE+1,4 ** KMERSIZE),dtype=np.int32)
-print 'created data structure', data.shape
-errs = np.zeros((len(sq)-KMERSIZE+1),dtype=np.int32)
+basename, KMERSIZE, x = inputFile.rsplit('.', 2)
+print 'loading', inputFile
+print 'basename', basename
+KMERSIZE = int(KMERSIZE)
+print 'KMERSIZE', KMERSIZE
 
 # A 0   C 1   G 2   T 3
 tra = string.maketrans('acgt', '0123')
@@ -47,25 +32,15 @@ def no2nt(n):
     return (('%%%ds' % KMERSIZE) % baseN(n, 4)).translate(trb).replace(' ', 'a')
 
 n = 0
-if 'reg' in sys.argv:
-    for sq in fqReader(inputFile):
-        n += 1
-        if n  > 1000000: break
-        for i in range(0, len(sq) + 1 - KMERSIZE):
-            kmer = sq[i:i+KMERSIZE]
-            try: kval = nt2no(kmer)
-            except ValueError:
-                errs[i] += 1
-                continue
-            data[i,kval] += 1
-    np.savez('tmp', data = data, errs = errs)
-else:
-    x = np.load('tmp.npz')
-    data = x['data']
-    errs = x['errs']
+
+x = np.load(inputFile)
+data = x['data']
+errs = x['errs']
 
 noReads = np.sum(data[0]) + errs[0]
+
 print 'no reads', noReads
+
 for x in range(5):
     print len(data[x]), np.sum(data[x]), np.std(data[x]), data[x]
 
@@ -75,11 +50,7 @@ maxs = np.apply_along_axis(np.max, 1, data)
 
 stds2 = np.apply_along_axis(np.std, 0, data)
 
-basename = os.path.basename(inputFile)
-
-def corr2flat(x):
-    return np.correlate(
-
+basename = os.path.basename(inputFile).replace('.npz', '')
 
 def create_fig():
     return plt.figure(figsize=(10,5))
@@ -134,6 +105,19 @@ for x in range(len(stds2)):
         ax.plot(data[:,x], label=no2nt(x))
 plt.legend(prop = legProps, ncol=2)
 plt.savefig('%s.freq.most.variable.kmers.png' % basename, dpi=200)
+
+#ALL kmers
+fig = create_fig()
+ax = fig.add_subplot(1,1,1)
+ax.set_title('frequency per position of all kmers (%d)' % KMERSIZE)
+plt.xlabel('position')
+plt.ylabel('frequency')
+
+i = 0
+cutoff = np.sort(stds2)[-6];
+for x in range(len(stds2)):
+    ax.plot(data[:,x], color='black', alpha=0.3, linewidth=1)
+plt.savefig('%s.freq.all.kmers.png' % basename, dpi=200)
 
 #ten random kmers
 fig = create_fig()

@@ -17,16 +17,29 @@ __moa_is_moadir() {
 	fi
 }
 
+__moa_get_template() {
+	echo `grep '$(call moa_load,' Makefile  | sed "s/.*,\(.*\))/\1/"`
+}
+
 __moa_all_templates() {
 	#return a list of all known moa templates
-	echo `moa list`
+	if [[ ! ( -e ~/.moa/cache/list ) ]]; then
+		mkdir -p ~/.moa/cache
+		moa list > ~/.moa/cache/list
+	fi
+	echo `cat ~/.moa/cache/list`
 }	
 
 __moa_all_vars() {
 	#return a list of all known moa templates
 	if [[ $(__moa_is_moadir) == "yes" ]]
 	then
-		echo `moa showvars 2>/dev/null`
+		template=$(__moa_get_template)
+		if [[ ! ( -e "~/.moa/cache/template/$template" ) ]]; then
+			mkdir -p ~/.moa/cache/template
+			moa showvars 2>/dev/null > ~/.moa/cache/template/$template
+		fi		
+		echo `cat ~/.moa/cache/template/$template`
 	fi
 }		
 

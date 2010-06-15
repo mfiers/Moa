@@ -45,6 +45,12 @@ ncbi_sequence_name_help = Sequence name to download. When this			\
 ncbi_sequence_name_type = string
 ncbi_sequence_name_default = 
 
+moa_may_define += ncbi_skip_split
+ncbi_skip_split_help = Skip splitting the incoming fasta into separate fasta files 
+ncbi_skip_split_type = set
+ncbi_skip_split_default = T
+ncbi_skip_split_allowed = T F
+
 prereqlist += prereq_xml_twig_tools prereq_wget
 
 prereq_xml_twig_tools:
@@ -73,12 +79,15 @@ ncbi_post:
 
 .PHONY: ncbi
 ncbi: tmp.fasta
-	if [[ -n "$(ncbi_sequence_name)" ]]; then 								\
-		cat tmp.fasta 														\
-			| sed "s/^>.*$$/>$(ncbi_sequence_name)/"							\
-			| fastaSplitter -f - -n 1 -o fasta;								\
-	else																	\
-		fastaSplitter -f tmp.fasta -o fasta;								\
+	if [[ -n "$(ncbi_sequence_name)" ]]; then 					\
+		cat tmp.fasta 											\
+			| sed "s/^>.*$$/>$(ncbi_sequence_name)/"			\
+			| fastaSplitter -f - -n 1 -o fasta;					\
+	else														\
+		if [[ "$(ncbi_skip_split)" == "T" ]]; then 				\
+			ln tmp.fasta out.fasta;								\
+		else													\
+			fastaSplitter -f tmp.fasta -o fasta; 				\
 	fi
 	touch lock
 

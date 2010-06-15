@@ -3,19 +3,21 @@
 
 # Introduction
 
-A bioinformatics project is often build up of many separate,
-interdependent, steps. Once projects get bigger it becomes necessary
-to organize and automate such a project. There are many different ways
-to automate a bioinformatics project \citep{Fie08, Pot04, Oinn04,
-Tay07}. Many bioinformaticians, however, continue writing tailor-made
-scripts to organize and automate their work. Scripting has obvious
-advantages, most importantly flexibility. The downside to scripting is
-that projects usually do not scale very well and easily become
-cluttered.
+A bioinformatics project is often consists of many separate,
+interdependent, steps. Once a project gets bigger it becomes vital to
+apply some organization and automation.
 
-Moa is aimed at organizing and automating command line bioinformatics
-project without losing the flexibility of tailor made scripts. The
-best way to understand how Moa aims to achieve this is by an example:
+There are many different ways to automate a bioinformatics project
+\citep{Fie08, Pot04, Oinn04, Tay07}. Many bioinformaticians, however,
+continue using the command-line or tailor-made scripts to organize and
+automate their work. This has obvious advantages, most importantly
+flexibility. Potential downsides to scripting are that a project
+easily becomes disorganized and untrackable unless explicit measures
+are taken.
+
+Moa aims to assist in organizing, automating and maintaining a command
+line bioinformatics project without losing flexibility. The best way
+to understand how Moa aims to achieve this is by an example:
 
     moa new blast -t "run a demo"
     moa set blast_db=/data/blast/db/nt
@@ -25,30 +27,29 @@ best way to understand how Moa aims to achieve this is by an example:
 
 In the first line, a new BLAST \citep{Alt90} job (titled "run demo")
 is created in the current directory. What really happens is that Moa
-creates a small script (a Makefile to be precise) that imports a BLAST
-specific template. The next two lines set a few parameters for
-BLAST. In the last line Moa is executed and 'blasts' the input
-sequences (in `../sequences`) against the database in
-`/data/blast/db/nt`. BLAST output files (XML) are generated and
-converted to GFF (GFF conversion is an extra, not part of the BLAST
-suite). The last line is probably the most special; it is a single
-(shell) commmand that will be executed after BLAST is executed (there
-is also a corresponding `moa_preprocess`). In this case all BLAST hits
-that have the word "polymerase" in their description are gathered into
-a single GFF file. 
+creates a script (Makefile) that imports a BLAST specific template.
+The next two lines set a few parameters for BLAST. In the last line
+Moa is executed and 'blasts' the input sequences (in `../sequences`)
+against the database in `/data/blast/db/nt`. BLAST output files (XML)
+are generated and converted to GFF (GFF conversion is an extra, not
+part of the BLAST suite). The one to last statement is probably most
+remarkable; it is a single (shell) commmand that will be executed
+after BLAST is executed (there is a corresponding `moa_preprocess`).
+This shell comamand filters all BLAST hits that have the word
+"polymerase" in their description into a separater GFF file.
 
-Moa employs [GNU make](http://www.gnu.org/software/make) to create and
-use building blocks in bioinformatics data analysis. GNU Make is
-originally developed to aid in compiling software. Compilation usually
-involves the execution of many interdependent compilation and linker
-steps. GNU make is able to compile large software projects with tens
-of thousands of source files based on a Makefile that describes how a
-target file is to be created. GNU Make is flexible enough to be used
-with practically any programming language. Moreover, GNU Make can be
-used to automate any series of commands as long as they can be
-executed from the command line. It is therefore not only possible, but
-an excellent idea (not mine), to use Gnu Make in bioinformatics
-projects (see [biowiki](http://biowiki.org/MakefileManifesto),
+Moa employs [GNU make](http://www.gnu.org/software/make) to describe
+its building blocks. GNU Make is originally developed for software
+compilation. Compilation usually involves the execution of many
+interdependent compilation and linker steps. GNU make is able to
+compile large software projects with tens of thousands of source files
+based on a Makefile that describes how a target file is to be
+created. GNU Make is flexible enough to be used with practically any
+programming language. Moreover, GNU Make can be used to automate any
+series of commands as long as they can be executed from the command
+line. It is therefore not only possible, but an excellent idea (not
+mine), to use Gnu Make in bioinformatics projects (see
+[biowiki](http://biowiki.org/MakefileManifesto),
 [nodalpoint](http://archive.nodalpoint.org/2007/03/18/a_pipeline_is_a_makefile)
 or [biomake](http://skam.sourceforge.net/))
 

@@ -77,14 +77,15 @@ bix = $(mum_input_b_extension)
 
 $(mum_a_set): a__%: $(mum_b_set)
 	$e for against in $?; do											\
+		if [ "$$against" == "$*" ]; then continue; fi;					\
 		prefix=`basename $* .$(aix)`__`basename $$against .$(bix)` ;	\
 		nucmer $(if $(call seq,$(mum_matchmode),max),--maxmatch,--mum)  \
 			-b $(mum_breaklen) --prefix=$$prefix						\
 			$* $$against || true ;										\
 		show-coords -rcl $$prefix.delta > $$prefix.coords || true;		\
-		mummerplot -R $* -Q $$against --layout							\
+		mummerplot -R $* -Q $$against --layout --large --color			\
 				-t png -p $$prefix $$prefix.delta || true;				\
-		mummerplot -R $* -Q $$against --layout							\
+		mummerplot -R $* -Q $$against --layout	--large --color 		\
 				-t postscript -p $$prefix $$prefix.delta || true;		\
 		if [[ "$(mum_plot_raw)" == "T" ]]; then							\
 			mummerplot -t png -p Raw_$$prefix $$prefix.delta || true;	\

@@ -140,9 +140,9 @@ $(glimmer3_gff_files): gff/%.g3.gff: out/%.g3.predict
 		| awk ' {																	\
 					printf "$*\t$(glimmer3_gff_source)\tCDS\t";						\
 					if ($$4 > 0) { 													\
-						printf "%s\t%s\t%s\t+\t%s", $$2, $$3, $$5, $$4; } 			\
+						printf "%s\t%s\t%s\t+\t%s", $$2, $$3, $$5, substr($$4,2,1); } 			\
 					else { 															\
-						printf "%s\t%s\t%s\t-\t%s", $$3, $$2, $$5, $$4; } 			\
+						printf "%s\t%s\t%s\t-\t%s", $$3, $$2, $$5, substr($$4,2,1); } 			\
 					printf "\tID=%s;Name=%s\n", $$1, $$1;							\
 				} ' 																\
 		> $@

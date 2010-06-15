@@ -52,7 +52,7 @@ scaf_post:
 scaf: $(scaf_prefix).png
 
 $(scaf_prefix).png: $(scaf_input_file) $(scaf_reference_file)
-	scaffolder -v \
+	scaffolder $(minv) \
 		-i $< -r $(scaf_reference_file) -p $(scaf_prefix)
 
 scaf_clean:

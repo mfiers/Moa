@@ -75,7 +75,10 @@ if not options.fasta:
 def log(m):
     sys.stderr.write("fastaextractor: %s\n" % m)
 
-ids = [x.strip().split()[0] for x in open(options.list).readlines()]
+if options.list == '-':
+    ids = sys.stdin.read().split()
+else:
+    ids = open(options.list).read().split()
 
 log("read %d ids" % len(ids))
         
@@ -93,7 +96,9 @@ for seqId, header, seq in fastareader(options.fasta):
 
     i += 1
     print ">%s %s" % (seqId, header)
-    print "%s" % seq
+    while seq:       
+        print "%s" % seq[:80]
+        seq = seq[80:]
 
 log("written %d sequences" % i)
 

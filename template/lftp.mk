@@ -119,8 +119,10 @@ include $(shell echo $$MOABASE)/template/moa/core.mk
 ifdef lftp_user
 ifdef lftp_pass
 	lftp_auth = -u $(lftp_user),$(lftp_pass)
+	curl_auth = -u '$(lftp_user):$(lftp_pass)'
 else
 	lftp_auth = -u $(lftp_user)
+	curl_auth = -u $(lftp_user)
 endif
 endif
 
@@ -142,12 +144,13 @@ lftp_mirror:
 
 .PHONY: lftp_get
 lftp_get: _addcl=$(if $(lftp_get_name),-o $(lftp_get_name))
+lftp_get: _server=$(shell echo "$(lftp_url)" | sed -r "s|(http[s]?:\/\/)?([^ \/]*)\/.*$$|\2|")
 lftp_get:
+	$e $(call echo,Getting data from server $(_server))
 	$e cd $(lftp_output_dir);									\
 		for xx in $(lftp_url); do								\
-			$(call echo,Downloading $$xx $(lftp_auth));			\
-			echo lftp $(lftp_auth) -e "get $(_addcl) '$$xx'; exit";	\
-			lftp $(lftp_auth) -e "get $(_addcl) '$$xx'; exit";	\
+			echo curl -Ok $(curl_auth) "$$xx" ;\
+			curl -Ok $(curl_auth) "$$xx";\
 		done
 	$e if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
