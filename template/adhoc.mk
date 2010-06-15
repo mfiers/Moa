@@ -43,6 +43,12 @@ $(moa_id)_name_sed_help = A sed expression which can be used to derive the	\
   you use single quotes when specifying this on the command line
 $(moa_id)_name_sed_type = string
 
+moa_may_define += $(moa_id)_r_mode
+$(moa_id)_r_mode_help = R mode is a dedication mode to run R scripts 
+$(moa_id)_r_mode_type = set
+$(moa_id)_r_mode_default = F
+$(moa_id)_r_mode_allowed = T F
+
 moa_may_define += $(moa_id)_output_dir
 $(moa_id)_output_dir_default = .
 $(moa_id)_output_dir_help = Output subdirectory
@@ -59,7 +65,7 @@ $(moa_id)_mode_type = set
 $(moa_id)_mode_allowed = seq par all simple
 
 moa_may_define += $(moa_id)_process
-$(moa_id)_process_default = echo "need a sensbile command"
+$(moa_id)_process_default = echo "needs a sensbile command"
 $(moa_id)_process_help = Command to execute for each input file. The path	\
   to the input file is available as $$< and the output file as $$t.	\
   (it is not mandatory to use both parameters, for example 				\
@@ -82,6 +88,21 @@ ifeq ($($(moa_id)_mode),simple)
 $(moa_id)_touch=F
 else
 $(moa_id)_touch_files=$(addprefix touch/,$(notdir $($(moa_id)_input_files)))
+endif
+
+
+ifeq ($($(moa_id)_r_mode),T)
+ifeq ($($(moa_id)_process),$($(moa_id)_process_default))
+ifeq ($($(moa_id)_mode),all)
+$(moa_id)_process=Rscript --vanilla moa.R --args $^ 
+else
+ifeq ($($(moa_id)_mode),simple)
+$(moa_id)_process=Rscript --vanilla moa.R
+else
+$(moa_id)_process=Rscript --vanilla moa.R --args $< > $t
+endif
+endif
+endif
 endif
 
 
@@ -115,7 +136,8 @@ $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
 touch/%: t=$(shell echo '$*' | sed $($(moa_id)_name_sed))
 touch/%: $($(moa_id)_input_dir)/%
 	$(call echo,considering $<)
-	$e $($(moa_id)_process)
+	$(call warn,running '$($(moa_id)_process)')
+	$($(moa_id)_process)
 	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
 		touch $@; \
 	fi
@@ -131,7 +153,7 @@ $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
 touch/%: t=$(shell echo '$*' | sed $($(moa_id)_name_sed))
 touch/%: $($(moa_id)_input_dir)/%
 	$(call echo,considering $<)
-	$e $($(moa_id)_process)
+	$($(moa_id)_process)
 	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
 		touch $@; \
 	fi
@@ -142,9 +164,12 @@ endif
 ## $(moa_id) mode: all
 ifeq ($($(moa_id)_mode),all)
 
-$(moa_id): $(moa_id)_check  $(if $(call seq,$($(moa_id)_touch),T),$($(moa_id)_touch_files))
+$(moa_id):  $(moa_id)_check $(moa_id)_all
+
+$(moa_id)_all: $($(moa_id)_input_files)
 	$(call echo,considering $(words $<) files)
-	$e $($(moa_id)_process)
+	$(call warn,Running $($(moa_id)_process))
+	$($(moa_id)_process)
 
 touch/%: $($(moa_id)_input_dir)/%
 	touch $@;
@@ -152,17 +177,17 @@ endif
 
 
 ################################################################################
-## $(moa_id) mode: all
+## $(moa_id) mode: simple
 ifeq ($($(moa_id)_mode),simple)
 
-$(moa_id): 
+$(moa_id):
 	$(call echo,Running $(moa_id) without input files)
-	$e $($(moa_id)_process)
-
+	$($(moa_id)_process)
 endif
 
 $(moa_id)_clean: find_exclude_args = \
 	$(foreach v, $($(moa_id)_link_noclean), -not -name $(v))
+
 $(moa_id)_clean: 
 	-if [ ! "$($(moa_id)_output_dir)" == "." ]; then rm -rf $($(moa_id)_output_dir); fi
 	-rm -rf touch
