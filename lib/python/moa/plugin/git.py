@@ -25,20 +25,18 @@ import optparse
 
 import moa.logger
 import moa.plugin.newjob
-import moa.plugin
-l = moa.logger.l
 import moa.hooks
 
-class Git(moa.plugin.BasePlugin):
-    pass
+l = moa.logger.l
 
-def defineCommands(commands):
-    commands['gitlog'] = {
+def defineCommands(data):
+    data['commands']['gitlog'] = {
         'desc' : 'display a version control log'
         }
 
-def defineOptions(parser):
-    parserG = optparse.OptionGroup(parser, 'Version control (Git)')
+def defineOptions(data):
+    parserG = optparse.OptionGroup(
+        data['parser'], 'Version control (Git)')
     
     parserG.add_option('--git-force-init', action='store_true',
                        dest='gitForceInit',
@@ -48,34 +46,34 @@ def defineOptions(parser):
                        dest='gitMessage',
                       help = 'Commit message for git')
     
-    parser.add_option_group(parserG)
+    data['parser'].add_option_group(parserG)
 
 
-def prepare(g):
-    if g['options'].gitForceInit:
+def prepare(data):
+    if data['options'].gitForceInit:
         os.putenv("MOA_GITFORCEINIT", "yes")
-    if g['options'].gitMessage:
-        os.putenv("MOA_GITMESSAGE", g['options'].gitMessage)
-    elif g['args'] == 'new' and g['options'].title:
-        os.putenv("MOA_GITMESSAGE", "Creating: " + g['options'].title)
-    elif g['args'] and g['args'][0] == 'set':
+    if data['options'].gitMessage:
+        os.putenv("MOA_GITMESSAGE", data['options'].gitMessage)
+    elif data['args'] == 'new' and data['options'].title:
+        os.putenv("MOA_GITMESSAGE", "Creating: " + data['options'].title)
+    elif data['args'] and data['args'][0] == 'set':
         os.putenv("MOA_GITMESSAGE", "moa set '%s'" %
-                  " ".join(g['args'][1:]).replace('"',''))
+                  " ".join(data['args'][1:]).replace('"',''))
         
-    if not g['moaHooks'].has_key('postSet'):
-        g['moaHooks']['postSet'] = []
+    if not data['moaHooks'].has_key('postSet'):
+        data['moaHooks']['postSet'] = []
 
 
     moa.hooks.add('after', 'set', gitPostSet)
     moa.hooks.add('after', 'new', gitPostNew)
     
-def gitPostSet(g):
+def gitPostSet(data):
     """
     Function to run after running conf.set
     """
     l.critical("running git postset")
 
-def gitPostNew(g):
+def gitPostNew(data):
     """
     Run after creating a new job - probably need to store stuff
     in the repos, or, if this is a project -we might even need
@@ -86,9 +84,9 @@ def gitPostNew(g):
     #    startNewGitRepos(g)
     #l.debug("running git post new for template %s" % template)
     
-def startNewGitRepos(g):
+def startNewGitRepos(data):
     """
     Start a new git repository
     """
-    wd = g['wd']
+    wd = data['wd']
     

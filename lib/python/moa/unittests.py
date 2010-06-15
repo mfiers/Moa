@@ -168,6 +168,9 @@ def testTemplateExtensive(template, verbose=False):
     
 def run(options, args):
 
+    #remove the first argument from args (should be 'test')
+    args.pop(0)
+
     os.putenv('MOA_UNITTESTS', "yes")
     if args:
         l.info("Testing '%s'" % " ".join(args))

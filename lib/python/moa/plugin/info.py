@@ -32,82 +32,36 @@ import moa.plugin
 from moa.logger import l
 import textwrap
 
-class Info(moa.plugin.BasePlugin):
-
-    def registerCommands(self):
-        self.data['moaCommands']['rawinfo'] = {
-            'private' : True,
-            'call' : rawInfo
-            }
-
-        self.data['moaCommands']['status'] = {
-            'private' : True,
-            'call' : self.status
-            }
-
-        self.data['moaCommands']['show'] = {
-            'desc' : 'Show the configured parameters and their values',
-            }
-
-        self.data['moaCommands']['list'] = {
-            'desc' : 'List all known templates',
-            'call' : self.listTemplates,
-            }
-
-        self.data['moaCommands']['listlong'] = {
-            'desc' : 'List all known templates, showing a short description',
-            'call' : self.listTemplatesLong,
-            }
-
-
-    def listTemplates(self, wd, options, args):
-        for job in moa.job.list():
-            print job
-
-    def listTemplatesLong(self, wd, options, args):
-        for job, info in moa.job.listLong():
-            for line in textwrap.wrap(
-                '%s: %s' % (job, info),
-                initial_indent=' - ',
-                subsequent_indent = '     '):
-                print line
-
-    def rawInfo(self, wd, options, args):
-        pprint.pprint(moa.info.info(wd))
-
-    def status(self, wd, options, args):
-        print moa.info.status(wd)
-
-def defineCommands(commands):
-    commands['rawinfo'] = {
+def defineCommands(data):
+    data['commands']['rawinfo'] = {
         'private' : True,
         'call' : rawInfo
         }
 
-    commands['status'] = {
+    data['commands']['status'] = {
         'private' : True,
         'call' : status
         }
 
-    commands['show'] = {
+    data['commands']['show'] = {
         'desc' : 'Show the configured parameters and their values',
         }
 
-    commands['list'] = {
+    data['commands']['list'] = {
         'desc' : 'List all known templates',
         'call' : listTemplates,
         }
 
-    commands['listlong'] = {
+    data['commands']['listlong'] = {
         'desc' : 'List all known templates, showing a short description',
         'call' : listTemplatesLong,
         }
 
-def listTemplates(wd, options, args):
+def listTemplates(data):
     for job in moa.job.list():
         print job
 
-def listTemplatesLong(wd, options, args):
+def listTemplatesLong(data):
     for job, info in moa.job.listLong():
         for line in textwrap.wrap(
             '%s: %s' % (job, info),
@@ -115,8 +69,8 @@ def listTemplatesLong(wd, options, args):
             subsequent_indent = '     '):
             print line
 
-def rawInfo(wd, options, args):
-    pprint.pprint(moa.info.info(wd))
+def rawInfo(data):
+    pprint.pprint(moa.info.info(data['wd']))
 
-def status(wd, options, args):
-    print moa.info.status(wd)
+def status(data):
+    print moa.info.status(data['wd'])

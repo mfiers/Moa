@@ -29,22 +29,22 @@ l = moa.logger.l
 #class Newjob(moa.plugin.BasePlugin):
 #    pass
 
-def defineCommands(commands):
-    commands['new'] = {
+def defineCommands(data):
+    data['commands']['new'] = {
         'desc' : 'Create a new Moa job in the current directory (unless -d ' + \
             'is defined)',
         'call' : newJob
         }
 
-def defineOptions(parser):
-    parserN = optparse.OptionGroup(parser, "Moa new")
-    parser.set_defaults(title="", directory=".")
+def defineOptions(data):
+    parserN = optparse.OptionGroup(data['parser'], "Moa new")
+    data['parser'].set_defaults(title="", directory=".")
 
     parserN.add_option("-t", "--title", dest="title", help="Job title")
     parserN.add_option("-d", "--directory", 
                        dest="directory",
                        help="Directory to create the new template in (default: .)")
-    parser.add_option_group(parserN)
+    data['parser'].add_option_group(parserN)
 
 def _parseArgs(args):
     '''

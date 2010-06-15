@@ -26,40 +26,35 @@ import sys
 import shlex
 import optparse
 import moa.conf
-#import moa.plugin
 from moa.logger import l
 
-#class Configure(moa.plugin.BasePlugin):
-#    pass
-
-def defineCommands(commands):
-    commands['set'] = {
+def defineCommands(data):
+    data['commands']['set'] = {
         'desc' : 'Set, append, change or remove variables from the ' +
         'configuration of a Moa job.',
         'call' : configSet,
         }
 
-#    commands['__set'] = {
-#        'private' : True,
-#        'call' : configSet }
-
-
-def configSet(wd, options, args):
+def configSet(data):
     """
     parse the command line and save the arguments into moa.mk
     """
-    
+    wd = data['wd']
+    optons = data['options']
+    args = data['args']
+
     #call the preset hooks
     job = moa.runMake.MOAMAKE(wd = wd,
                               target='moa_pre_set',
                               captureOut = False,
                               captureErr = False,
                               verbose=False)
+    
     job.run()
     job.finish()
 
     params = []
-    for arg in args:
+    for arg in data['args']:
         if not '=' in arg: continue
         l.debug("setting %s" % arg)
         params.append(arg)
@@ -74,7 +69,3 @@ def configSet(wd, options, args):
                               verbose=False)
     job.run()
     job.finish()
-
-
-
-    

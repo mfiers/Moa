@@ -28,16 +28,16 @@ import sys
 import UserDict
 import moa.info
 from moa.logger import l
-from moa.commands import moaCommands
 
 ## Load & handle plugins
-class MOAPLUGINS(UserDict.DictMixin):
+class Plugins(UserDict.DictMixin):
 
     def __init__(self):
         ## Determine what plugins are loaded
         self.plugins = {}
+        self.data = {}
         self.allPlugins = moa.info.getPlugins()        
-        l.debug("Plugins %s" % self.allPlugins)
+        l.debug("Plugins %s" % ", ".join(self.allPlugins))
         ## load the plugins as seperate modules. A plugin does not need to
         self.initialize()
 
@@ -46,7 +46,7 @@ class MOAPLUGINS(UserDict.DictMixin):
         attempt to load the python part of the plugins
         """
         ## do we have a python module??
-        l.debug('Start plugin initalization')
+        l.debug('Start plugin init')
         for plugin in self.allPlugins:
             pyModule = 'moa.plugin.%s' % plugin
             try:
@@ -58,20 +58,28 @@ class MOAPLUGINS(UserDict.DictMixin):
                     raise
                 l.debug("No python plugin module found for %s" % plugin)
 
-    def registerCommands(self, moaCommands):
-        for p in self.loadedPlugins(hasFunction='defineCommands'):
-            l.critical("command registration for %s" % p)
-            p.defineCommands(moaCommands)
+    def register(self, **kwargs):
+        """
+        Keep track of a dictionary of data that might be used
+        by any of the plugins - this seems cleaner than relying
+        on using globals
+        """
+        self.data.update(kwargs)
+            
+    def run(self, command):
+        for p in self.keys():
+            if not command in dir(self[p]):
+                continue
 
-    def registerOptions(self, parser):
-        for p in self.loadedPlugins(hasFunction='defineOptions'):
-            p.defineOptions(parser)
 
-    def prepare(self, moaInvocation):
-        for p in self.loadedPlugins(hasFunction='prepare'):
-            p.prepare(moaInvocation)
-
-
+            eval("self[p].%s(self.data)" % command)
+            
+    def runCallback(self, command):
+        """
+        Run a plugin callback 
+        """
+        command['call'](self.data)
+            
     # Implement the basic functions for a dict
     #
     def __getitem__(self, item):
@@ -83,18 +91,6 @@ class MOAPLUGINS(UserDict.DictMixin):
     def keys(self):
         return self.plugins.keys()
 
-    def loadedPlugins(self, hasFunction=None):
-        """
-        Returns a loaded plugin modules
-        """
-        for p in self.allPlugins:
-            if not self.has_key(p): continue
-            if hasFunction and \
-               not hasFunction in dir(p):
-                l.critical('ignoring %s' % p
-                continue            
-            yield self[p]
-
-#Create a global placeholder for this moa run
-moaPlugins = MOAPLUGINS()
+#Should I create a global placeholder for this moa run??
+moaPlugins = Plugins()
 

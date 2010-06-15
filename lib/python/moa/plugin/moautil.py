@@ -25,32 +25,24 @@ import os
 import re
 import shutil
 import optparse
-import moa.plugin
 from moa.logger import l
 
-#class Moautil(moa.plugin.BasePlugin):
-#    pass
-
-def defineCommands(commands):
-    commands['cp'] = {
+def defineCommands(data):
+    data['commands']['cp'] = {
         'desc' : 'Copy a moa job (only the configuration, not the data), '+
         'use moa cp DIR_FROM DIR_TO',
         'call' : moacp }
         
-
-
 def moacp(wd, options, args):
     """
     Copy a moa job - 
       0 create a new directory
       1 copy the configuration
 
-    TODO: adapt relative links
+    TODO: adapt file & dir links
     """
-    if len(args) > 1:
-        dirto = args[1]
-    else:
-        dirto = '.'
+    if len(args) > 1: dirto = args[1]
+    else: dirto = '.'
 
     dirfrom = args[0]
 

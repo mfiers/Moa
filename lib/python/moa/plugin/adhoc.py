@@ -33,15 +33,15 @@ l = moa.logger.l
 #class Adhoc(moa.plugin.BasePlugin):
 #    pass
 
-def defineCommands(commands):
-    commands['adhoc'] = { 
+def defineCommands(data):
+    data['commands']['adhoc'] = { 
         'desc' : 'Quickly create an adhoc analysis',
         'call' : createAdhoc
         }
 
-def defineOptions(parser):
-    parserN = optparse.OptionGroup(parser, "Moa adhoc (a)")
-    parser.set_defaults(directory=".")
+def defineOptions(data):
+    parserN = optparse.OptionGroup(data['parser'], "Moa adhoc (a)")
+    data['parser'].set_defaults(directory=".")
     try:
         parserN.add_option("-t", "--title", dest="title", help="Job title")
         parserN.add_option("-d", "--directory", 
@@ -55,15 +55,18 @@ def defineOptions(parser):
     parserN.add_option("-i", "--input",
                        dest="input",
                        help="Input files for this adhoc job")
-    parser.add_option_group(parserN)
+    data['parser'].add_option_group(parserN)
 
 
-def createAdhoc(wd, options, args):
+def createAdhoc(data):
     """
     Create an adhoc job
     """
-
+    wd = data['wd']
+    optons = data['options']
+    args = data['args']
     command = " ".join(args).strip()
+    
     if not command:
         l.critical("need to specify a command")
         sys.exit(-1)

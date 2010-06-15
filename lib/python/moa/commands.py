@@ -31,7 +31,7 @@ from moa.logger import l
 
 
 ## Command definitions
-class MOACOMMANDS(UserDict.DictMixin):
+class Commands(UserDict.DictMixin):
 
     def __init__(self):
         self.commands = {}
@@ -73,7 +73,4 @@ class MOACOMMANDS(UserDict.DictMixin):
                     initial_indent=' - ',
                     subsequent_indent = '     ')) + "\n"
         return u
-
-#Create a global placeholder for this moa run
-moaCommands = MOACOMMANDS()
 
