@@ -47,10 +47,7 @@ def defineOptions(parser):
         pass # probably already defined in the newjob plugin
     parserN.add_option("--mode",
                        dest="mode",
-                       help="Directory to create the new template in (default: .)")
-    parserN.add_option("-i", "--input",
-                       dest="input",
-                       help="Input files for this adhoc job")
+                       help="Adhoc mode to run")
     parser.add_option_group(parserN)
 
 
@@ -58,7 +55,8 @@ def createAdhoc(wd, options, args):
     """
     Create an adhoc job
     """
-
+    for k in os.environ:
+        print "%30s %s" % (k, os.environ[k])
     command = " ".join(args).strip()
     if not command:
         l.critical("need to specify a command")
