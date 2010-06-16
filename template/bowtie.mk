@@ -71,6 +71,11 @@ bowtie_msi_type = set
 bowtie_msi_default = F
 bowtie_msi_allowed = T F
 
+moa_may_define += bowtie_basename
+bowtie_basename_help = basename for generating the merged, sorted and indexed files
+bowtie_basename_type = string
+bowtie_basename_default = all
+
 moa_may_define += bowtie_output_format
 bowtie_output_format_default = bam
 bowtie_output_format_help = Format of the output file
@@ -168,17 +173,17 @@ comma:=,
 .PHONY: bowtie
 bowtie: $(bowtie_output_files) bowtie_msi
 
-bowtie_msi: $(if $(call seq,$(bowtie_msi),T),all.sorted.bam.bai)
+bowtie_msi: $(if $(call seq,$(bowtie_msi),T),$(bowtie_basename).sorted.bam.bai)
 
-all.sorted.bam.bai: all.sorted.bam
+$(bowtie_basename).sorted.bam.bai: $(bowtie_basename).sorted.bam
 	$(call warn,Start indexing)
 	samtools index $<
 
-all.sorted.bam: all.merged.bam
+$(bowtie_basename).sorted.bam: $(bowtie_basename).merged.bam
 	$(call warn,Start sorting)
-	samtools sort $< all.sorted
+	samtools sort $< $(bowtie_basename).sorted
 
-all.merged.bam: $(bowtie_output_files)
+$(bowtie_basename).merged.bam: $(bowtie_output_files)
 	if [[ $(words $^) > 1 ]]; then \
 		$(call warn,Start merging) ;\
 		samtools merge $@ $^ ;\
