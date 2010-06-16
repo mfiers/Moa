@@ -85,12 +85,12 @@ moawarn := \033[0;43m>>\033[0m
 moatest := \033[0;42mTEST:\033[0m
 endif
 
-warn = echo -e "$(moawarn) $(strip $(1))" 1>&2
-tstm = echo -e "$(moatest) $(strip $(1))" 1>&2
-errr = echo -e "$(moaerrr) $(strip $(1))" 1>&2
-exer = echo -e "$(moaerrr) $(strip $(1)) - exiting"  1>&2; exit -1
+warn = echo -e "$(moawarn)"'$(strip $(1))' 1>&2
+tstm = echo -e "$(moatest)"'$(strip $(1))' 1>&2
+errr = echo -e "$(moaerrr)"'$(strip $(1))' 1>&2
+exer = echo -e "$(moaerrr)"'$(strip $(1)) - exiting'  1>&2; exit -1
 exerUnlock = ( if [[ "$(strip $(1))" ]]; 		\
-	then echo -e "$(moaerrr) $(strip $(1))" 1>&2 ; 	\
+	then echo -e "$(moaerrr)"'$(strip $(1))' 1>&2 ; 	\
 	fi; 										\
 	rm -f moa.runlock || true ); 				\
 	exit -1 

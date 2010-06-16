@@ -5,6 +5,9 @@ $(document).ready(function()
 
     //Remove the header
     var fr = $("table:last > tbody > tr:first").detach();
+	$("table:last > tbody > tr:first").detach();
+	$("table:last tbody tr td:nth-child(5)").detach();
+	//console.log($("table:last > tbody > tr > td:last").detach());
     //And insert it again as a proper thead
     $("table:last").prepend($('<thead></thead>').append(fr));
     //and now pick up the complete table and dump it in the correct div

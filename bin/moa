@@ -47,7 +47,7 @@ import moa.project
 import moa.unittests
 import moa.checkTemplate
 import moa.plugins
-import moa.commands
+import moa.moaCommands
 
 ## Initialize the logger
 import moa.logger
@@ -61,20 +61,20 @@ if '-v' in sys.argv:
 plugins = moa.plugins.Plugins()
 
 ## Command definitions
-commands = moa.commands.Commands()
-plugins.register(commands = commands)
+moaCommands = moa.moaCommands.Commands()
+plugins.register(commands = moaCommands)
 plugins.run('defineCommands')
 
 ## start defining the command line interface
 USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
-moaCommandNames = commands.keys()
+moaCommandNames = moaCommands.keys()
 moaCommandNames.sort()
 for _c in moaCommandNames:
-    if commands[_c].get('private', False):
+    if moaCommands[_c].get('private', False):
         continue
     USAGE += "\n".join(
         textwrap.wrap(
-            '%s: %s' % (_c, commands[_c]['desc']),
+            '%s: %s' % (_c, moaCommands[_c]['desc']),
             initial_indent=' - ',
             subsequent_indent = '     ')) + "\n"
 
@@ -160,13 +160,13 @@ if __name__ == "__main__":
         newargs = args[1:]
 
     l.debug("start moa %s" % command)
-    l.debug("with args %s" % args[1:])
-
+    l.debug("with args %s" % newargs)
+    plugins.register(newargs = newargs)
     #see if there is a callback to a plugin - If so call it
-    if command in commands:
-        if commands[command].has_key('call'):
+    if command in moaCommands:
+        if moaCommands[command].has_key('call'):
             l.debug("using a callback for moa %s" % command)            
-            plugins.runCallback(commands[command])
+            plugins.runCallback(moaCommands[command])
             sys.exit()
 
     #No callback, defer this to Make

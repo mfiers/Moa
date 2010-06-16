@@ -80,8 +80,7 @@ moa_default_target: $(moa_execute_targets)
 .PHONY: moa_run_precommand
 ifdef moa_precommand
 moa_run_precommand:
-	$(call echo,Running precommand)
-	$(call warn,$(value moa_precommand))
+	$(call warn,running moa_precommand)
 	$e $(moa_precommand)
 else:
 moa_run_precommand:

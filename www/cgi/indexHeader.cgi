@@ -22,7 +22,7 @@ import moa.info
 #initialize the jinja environment
 jenv = Environment(
     loader=FileSystemLoader(
-        os.path.join(MOABASE, 'www2', 'jinja2')))
+        os.path.join(MOABASE, 'www', 'jinja2')))
 
 def getWebRoot():
     webRoot = os.environ.get('MOAWEBROOT')
