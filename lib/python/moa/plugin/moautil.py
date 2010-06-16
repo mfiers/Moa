@@ -23,9 +23,11 @@ Moa utilities
 
 import os
 import re
+import sys
 import shutil
 import optparse
 from moa.logger import l
+import moa.info
 
 def defineCommands(data):
     data['commands']['cp'] = {
@@ -33,7 +35,26 @@ def defineCommands(data):
         'use moa cp DIR_FROM DIR_TO',
         'call' : moacp }
         
-def moacp(wd, options, args):
+    data['commands']['kill'] = {
+        'desc' : 'Kill a running moa job',
+        'call' : moakill }
+
+def moakill(data):
+    """
+    kill a running job
+    """
+    cwd = data['cwd']
+
+    if not moa.info.status(cwd) == 'running': 
+        l.warning("Moa does not seem to be running!")
+        sys.exit(-1)
+
+    pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
+    l.critical("killing job %d" % pid)
+    os.kill(pid)
+
+        
+def moacp(data):
     """
     Copy a moa job - 
       0 create a new directory
@@ -41,6 +62,10 @@ def moacp(wd, options, args):
 
     TODO: adapt file & dir links
     """
+    wd = data['cwd']
+    options = data['options']
+    args = data['args']
+
     if len(args) > 1: dirto = args[1]
     else: dirto = '.'
 

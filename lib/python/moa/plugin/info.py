@@ -70,7 +70,7 @@ def listTemplatesLong(data):
             print line
 
 def rawInfo(data):
-    pprint.pprint(moa.info.info(data['wd']))
+    pprint.pprint(moa.info.info(data['cwd']))
 
 def status(data):
-    print moa.info.status(data['wd'])
+    print moa.info.status(data['cwd'])
