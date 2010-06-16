@@ -69,7 +69,7 @@ def parseClArgs(args):
             l.error("Invalid key/value pair %s" % a)
         if '+=' in a:
             k, v = [x.strip() for x in a.split('+=', 1)]
-            o = '+='
+            o = '+='            
         else:
             o = '='
             k, v = [x.strip() for x in a.split('=', 1)]

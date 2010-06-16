@@ -21,10 +21,10 @@
 Help
 """
 
+import re
 import os
 import sys
-import shlex
-import optparse
+import readline
 import moa.conf
 from moa.logger import l
 
@@ -35,13 +35,13 @@ def defineCommands(data):
         'call' : configSet,
         }
 
+
 def configSet(data):
     """
     parse the command line and save the arguments into moa.mk
     """
-    wd = data['wd']
-    optons = data['options']
-    args = data['args']
+    wd = data['cwd']
+    args = data['newargs']
 
     #call the preset hooks
     job = moa.runMake.MOAMAKE(wd = wd,
@@ -53,13 +53,34 @@ def configSet(data):
     job.run()
     job.finish()
 
-    params = []
-    for arg in data['args']:
-        if not '=' in arg: continue
-        l.debug("setting %s" % arg)
-        params.append(arg)
+    newArgs = []
 
-    moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
+    #see if we need to query the user for input somehwere
+    for a in args:
+        rea = re.match(r'([a-zA-Z0-9_]+)(\+?=)\?', a)
+        if rea:
+            ky = rea.groups()[0]
+            op = rea.groups()[1]
+
+            df = moa.conf.getVar(wd, ky)
+            
+            def _rl_set_hook():
+                readline.insert_text(df)
+
+            readline.set_startup_hook(_rl_set_hook)
+            vl = raw_input("%s=" % ky)
+            readline.set_startup_hook() 
+
+            newArgs.append("%s%s%s" % (ky, op, vl))
+            l.critical('raw input for key "%s" operator "%s" value "%s"' % (ky, op, vl))
+        else:
+            newArgs.append(a)
+
+    l.critical('%s' % args)
+    l.critical('%s' % newArgs)
+    parsedArgs = moa.conf.parseClArgs(newArgs)
+
+    moa.conf.writeToConf(wd, parsedArgs)
 
     #call the postset hooks
     job = moa.runMake.MOAMAKE(wd = wd,
