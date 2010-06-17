@@ -63,8 +63,8 @@ def createAdhoc(data):
     Create an adhoc job
     """
 
-    wd = data['wd']
-    optons = data['options']
+    wd = data['cwd']
+    options = data['options']
     args = data['args']
 
     command = " ".join(args).strip()

@@ -61,10 +61,14 @@ def _parseArgs(args):
         params = args[1:]
     return template, params
     
-def newJob(wd, options, args):
+def newJob(data):
     """
     Create a new job 
     """
+    
+    wd = data['cwd']
+    args = data['newargs']
+    options = data['options']
 
     template, params = _parseArgs(args)
     l.debug("Creating a new '%s' job" % template)

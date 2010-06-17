@@ -72,12 +72,9 @@ def configSet(data):
             readline.set_startup_hook() 
 
             newArgs.append("%s%s%s" % (ky, op, vl))
-            l.critical('raw input for key "%s" operator "%s" value "%s"' % (ky, op, vl))
         else:
             newArgs.append(a)
 
-    l.critical('%s' % args)
-    l.critical('%s' % newArgs)
     parsedArgs = moa.conf.parseClArgs(newArgs)
 
     moa.conf.writeToConf(wd, parsedArgs)
