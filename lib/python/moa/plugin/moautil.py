@@ -64,7 +64,7 @@ def moacp(data):
     """
     wd = data['cwd']
     options = data['options']
-    args = data['args']
+    args = data['newargs']
 
     if len(args) > 1: dirto = args[1]
     else: dirto = '.'

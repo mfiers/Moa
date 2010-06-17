@@ -66,9 +66,8 @@ def testModule(m):
 def testPlugins(args=[]):
     global pluginFailures
     global pluginTests
-    testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')    
         
-    for plugin in moa.info.getPlugins(wd = testDir):
+    for plugin in moa.info.getPlugins():
         if args and not plugin in args:
             continue
         l.debug("Starting a new plugin test")
@@ -85,6 +84,9 @@ def testPlugins(args=[]):
                             captureErr=True,
                             makeArgs = [])
         pluginTests += 1
+        
+        err = moa.info.getErr(wd).strip()
+        out = moa.info.getOut(wd).strip()
         if rc != 0:
             err = moa.info.getErr(wd)
             if 'No rule to make target' in str(err):
@@ -94,8 +96,7 @@ def testPlugins(args=[]):
                 l.error("Error running plugin test for %s (%s, %s)" %
                         (plugin, rc, wd))
                 l.error("Error message:\n%s" % err)
-                err = moa.api.getMoaErr(wd=testDir).strip()
-                out = moa.api.getMoaOut(wd=testDir).strip()
+            
                 if err:
                     l.error("stderr:")
                     l.error(err)
@@ -103,40 +104,35 @@ def testPlugins(args=[]):
                     l.error("stdout:")
                     l.error(out)
         else:
+            l.debug(err)
+            l.debug(out)
             l.info("Success testing %s" % plugin)
                                      
-        #result = moa.api.getMoaOut(wd=testDir).strip()
-        #if result:
-        #    print result
-
 def testTemplates(which=None, verbose=False):
     global templateFailures
     global templateTests
-    testDir = os.path.join(MOABASE, 'test', '00.base', '99.test')
     for template in moa.job.list():
         if which and template != which: continue
     
         l.debug("testing template %s" % template)
         templateTests  += 1
         
-        moa.api.removeMoaFiles(testDir)
-        moa.job.newJob(
+        wd = moa.job.newTestJob(
             template = template,
-            wd = testDir,
             title='Testing template %s' % template)
         
-        rc = moa.runMake.go(wd=testDir,
+        rc = moa.runMake.go(wd=wd,
                             target='template_test', 
                             background=False,
                             verbose = verbose,
                             makeArgs = [])
         if rc != 0:
             templateFailures += 1
-            err = moa.api.getMoaErr(wd=testDir)
+            err = moa.api.getMoaErr(wd)
             l.error("Error running template test for template %s" % template)
             l.error(err)
                                      
-        result = moa.api.getMoaOut(wd=testDir).strip()
+        result = moa.api.getMoaOut(wd).strip()
         if result:
             print result
 

@@ -43,6 +43,12 @@ def defineCommands(data):
         'call' : status
         }
 
+    data['commands']['template'] = {
+        'private' : False,
+        'call' : template,
+        'desc' : 'Show the template of this moa job'
+        }
+
     data['commands']['show'] = {
         'desc' : 'Show the configured parameters and their values',
         }
@@ -74,3 +80,6 @@ def rawInfo(data):
 
 def status(data):
     print moa.info.status(data['cwd'])
+
+def template(data):
+    print moa.info.getTemplateName(data['cwd'])

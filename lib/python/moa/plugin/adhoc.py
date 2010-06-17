@@ -22,6 +22,7 @@ Adhoc - some utilities to quickly create adhoc jobs
 """
 
 import os
+import re
 import sys
 import optparse
 
@@ -48,13 +49,14 @@ def defineOptions(data):
                            dest="directory",
                            help="Directory to create the new template in (default: .)")
     except optparse.OptionConflictError:
-        pass # probably already defined in the newjob plugin
+        pass # these options are probably already defined in the newjob plugin
+    
     parserN.add_option("--mode",
                        dest="mode",
-                       help="Adhoc mode to run")
+                       help="Adhoc mode to run (omit for an educated guess)")
     parserN.add_option("-i", "--input",
                        dest="input",
-                       help="Input files for this adhoc job")
+                       help="Input files for this adhoc job (omit for an educated guess)")
     data['parser'].add_option_group(parserN)
 
 
@@ -63,19 +65,20 @@ def createAdhoc(data):
     Create an adhoc job
     """
 
-    wd = data['wd']
-    optons = data['options']
-    args = data['args']
+    wd = data['cwd']
+    options = data['options']
+    args = data['newargs']
 
     command = " ".join(args).strip()
     
     if not command:
-        l.critical("need to specify a command")
-        sys.exit(-1)
+        command=moa.utils.askUser('command=', '')
 
-    l.critical('command is: %s' % command)
+    l.info('command is: %s' % command)
     params = []
     mode = None
+
+
     if options.mode:
         if not options.mode in ['seq', 'par', 'all', 'simple']:
             l.critical("Unknown adhoc mode: %s" % options.mode)
@@ -89,6 +92,7 @@ def createAdhoc(data):
         mode = 'all'
         l.info("Observed '$^' or '$?', setting mode to 'all'")
         l.info("Processing all files in one go")
+    elif
     else:
         mode = 'simple'
         l.info('did not see $? or $^ in the command line')

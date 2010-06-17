@@ -26,6 +26,7 @@ import os
 import sys
 import readline
 import moa.conf
+import moa.utils
 from moa.logger import l
 
 def defineCommands(data):
@@ -63,21 +64,12 @@ def configSet(data):
             op = rea.groups()[1]
 
             df = moa.conf.getVar(wd, ky)
-            
-            def _rl_set_hook():
-                readline.insert_text(df)
-
-            readline.set_startup_hook(_rl_set_hook)
-            vl = raw_input("%s=" % ky)
-            readline.set_startup_hook() 
+            vl = moa.utils.askUser("%s="%ky,df)
 
             newArgs.append("%s%s%s" % (ky, op, vl))
-            l.critical('raw input for key "%s" operator "%s" value "%s"' % (ky, op, vl))
         else:
             newArgs.append(a)
 
-    l.critical('%s' % args)
-    l.critical('%s' % newArgs)
     parsedArgs = moa.conf.parseClArgs(newArgs)
 
     moa.conf.writeToConf(wd, parsedArgs)

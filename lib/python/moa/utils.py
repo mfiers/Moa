@@ -25,8 +25,10 @@ import os
 import re
 import sys
 import time
+import glob
 import errno
 import shutil
+import readline
 import contextlib
 
 from moa.logger import l
@@ -70,6 +72,29 @@ def exit(rc=0):
 ################################################################################
 ## Handle moa directories
 
+def fsCompleter(text, state):
+    if os.path.isdir(text) and not text[-1] == '/': text += '/'
+    pos = glob.glob(text + '*')
+    try:
+        return pos[state]
+    except IndexError:
+        return None
+    
+def askUser(prompt, default):
+        
+    def _rl_set_hook():
+        readline.insert_text(default)
+    readline.set_completer_delims("\n `~!@#$%^&*()-=+[{]}\|;:'\",<>?")
+    readline.set_startup_hook(_rl_set_hook)
+    readline.set_completer(fsCompleter)
+    readline.parse_and_bind("tab: complete")
+    
+    vl = raw_input(prompt)
+    readline.set_startup_hook() 
+    return vl    
+
+
+    
 def renumber(path, fr, to):
     """
     Renumber a moa job

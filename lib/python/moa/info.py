@@ -444,7 +444,6 @@ def getErr(wd):
     
     """
     errFile = os.path.join(wd, 'moa.err')
-
     if not os.path.exists(errFile):
         return ""
 
