@@ -65,8 +65,8 @@ def defineCommands(data):
 
 def showHelp(data):
     wd = data['cwd']
-    optons = data['options']
-    args = data['args']
+    options = data['options']
+    args = data['newargs']
 
     global JENV
     JENV = jinja2.Environment(loader=jinja2.FileSystemLoader(
@@ -102,13 +102,10 @@ help on a template  : moa help TEMPLATE
 website and manual  : http://mfiers.github.com/Moa/
 """
 
-def pageTemplateHelp(data):
+def pageTemplateHelp(wd, options, args):
     """
     create the help document for a specific template / job 
     """
-    wd = data['cwd']
-    optons = data['options']
-    args = data['args']
 
     jobData = moa.info.info(wd)
     moaId = jobData['moa_id']

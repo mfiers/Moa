@@ -65,9 +65,10 @@ def newJob(data):
     """
     Create a new job 
     """
-    cwd = data['cwd']
+    wd = data['cwd']
     options = data['options']
     args = data['newargs']
+
     template, params = _parseArgs(args)
     l.debug("Creating a new '%s' job" % template)
 
