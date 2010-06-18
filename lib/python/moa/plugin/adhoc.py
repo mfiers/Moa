@@ -31,8 +31,18 @@ import moa.logger
 import moa.plugin
 l = moa.logger.l
 
-#class Adhoc(moa.plugin.BasePlugin):
-#    pass
+def _sourceOrTarget(g):
+    """
+    Determine if this glob is a likely source or
+    target, depending on where the output is aimed to go
+    """
+    d = g.groups()[0]
+    if not d: return 'target'
+    if d[:2] == './': return 'target'
+
+    if d[:2] == '..': return 'source'
+    if d[0] == '/': return 'source'
+    return 'target'
 
 def defineCommands(data):
     data['commands']['adhoc'] = { 
@@ -51,12 +61,9 @@ def defineOptions(data):
     except optparse.OptionConflictError:
         pass # these options are probably already defined in the newjob plugin
     
-    parserN.add_option("--mode",
+    parserN.add_option("-m", "--mode",
                        dest="mode",
                        help="Adhoc mode to run (omit for an educated guess)")
-    parserN.add_option("-i", "--input",
-                       dest="input",
-                       help="Input files for this adhoc job (omit for an educated guess)")
     data['parser'].add_option_group(parserN)
 
 
@@ -72,57 +79,114 @@ def createAdhoc(data):
     command = " ".join(args).strip()
     
     if not command:
-        command=moa.utils.askUser('command=', '')
+        command=moa.utils.askUser('adhoc_command=', '')
 
-    l.info('command is: %s' % command)
+    l.info('Parsing command: %s' % command)
     params = []
     mode = None
-
-
+    searchGlobs = True
+        
     if options.mode:
+        mode = options.mode
+        if options.mode == 'simple': searchGlobs = False
         if not options.mode in ['seq', 'par', 'all', 'simple']:
             l.critical("Unknown adhoc mode: %s" % options.mode)
             sys.exit(-1)
-        mode = options.mode
     elif '$<' in command:
         mode = 'seq'
-        l.info("Setting adhoc mode to 'seq', change to 'par' if you are ")
-        l.info(" confident that parallel operation is possible")
+        searchGlobs = False
     elif ('$^' in command) or ('$?' in command):
         mode = 'all'
-        l.info("Observed '$^' or '$?', setting mode to 'all'")
-        l.info("Processing all files in one go")
-    elif
+        searchGlobs = False
+        l.warn("Observed '$^' or '$?', setting mode to 'all'")
+        l.warn("Processing all files in one go")
+
+    #see if we have to look for file globs
+    if not searchGlobs:
+        l.info("No recognizable globs found")
     else:
+        #it appears to make sens to see if there is a glob in the command
+        #reFindGlob = re.compile(r"^(.*)\s+([^ *?]+" +
+        #                        os.sep +
+        #                        r")([^ *]*\*[^ *]*?)((?:\.[^ .*]+)?)\s+(.*)$")
+        refindGlob = re.compile(r"([^ *]+" + os.sep + ")?([^ *]*\*[^ *]*?)((?:\.[^ .*]+)?)")
+        globs = []
+        for g in refindGlob.finditer(command):
+            globs.append(g)
+
+        if globs:
+            globReplace = '$<', '$t'                                
+            mode = 'seq'
+            if len(globs) > 2:
+                raise Exception("Too many globs ??  I not understand :(")
+            if len(globs) == 2:
+                st1 = _sourceOrTarget(globs[0])
+                st2 = _sourceOrTarget(globs[1])
+                if st1 == st2:
+                    l.warn("Unsure wich is the source &  target glob, assuming:")
+                    inGlob,outGlob = globs
+                if st1 == 'source': inGlob,outGlob = globs
+                else:
+                    outGlob,inGlob = globs
+                    globReplace = '$t', '$<'
+                    
+                l.info("Input glob: %s" % inGlob.group())
+                l.info("Output glob: %s" % outGlob.group())
+            else:
+                l.info("Input glob: %s" % globs[0].group())
+                inGlob, outGlob = globs[0], None
+
+            inD, inG, inE = inGlob.groups()
+            if not inD: inD = ""
+            if not inE: inE = ""
+            l.info(" - set input dir        : %s" % inD)
+            l.info(" - set input glob       : %s" % inG)
+            l.info(" - set input extension  : %s" % inE[1:])
+
+            params += ['adhoc_input_dir=%s' % inD]
+            params += ['adhoc_input_glob=%s' % inG]
+            params += ['adhoc_input_extension=%s' % inE[1:]]
+
+            if outGlob:
+                ouD, ouG, ouE = outGlob.groups()
+                if not ouD: ouD = ""
+                if not ouE: ouE = ""
+                ogg = outGlob.groups()
+
+                ouG1, ouG2 = ouG.split('*')
+                sed = r"s^\(.*\)%s^%s%s\1%s%s^g" % (
+                    inE.replace('.', '\.'),
+                    ouD.replace('/', '/'),
+                    ouG.split('*')[0],
+                    ouG.split('*')[1],
+                    ouE
+                    )
+                l.info(" - set name_sed         : %s " % sed)
+                l.info(" - set output dir       : %s " % ouD)
+                params += ['adhoc_output_dir=%s' % ouD]
+                params += ['adhoc_name_sed=%s' % sed]
+
+            #hack the commandline
+            for i in range(len(globs)-1, -1, -1):
+                g = globs[i]
+                command = command[:g.start()] + globReplace[i] + command[g.end():]
+
+    if not mode:
         mode = 'simple'
-        l.info('did not see $? or $^ in the command line')
-        l.info('assuming no input files, setting mode to "simple"')
 
-    params += ['adhoc_mode=%s' % options.mode]
-
-    if options.input:
-        l.debug("interpreting adhoc input: %s" % options.input)
-        i = options.input
-        if i[-1] == '/':
-            p = 'adhoc_input_dir=%s' % i
-            params.append(p)
-            l.info('setting %s' % p)
-        else:
-            path, rest = i.rsplit('/', 1)
-            p = 'adhoc_input_dir=%s' % path
-            l.debug('setting %s' % p)
-            params.append(p)
-            l.info('setting %s' % p)
-            if '.' in rest:
-                glob, ext = rest.rsplit('.', 1)
-                if glob != '*':
-                    l.debug('setting glob to %s' % glob)
-                    params.append('adhoc_input_glob=%s' % glob)
-                l.debug('setting extension to %s' % ext)
-                params.append('adhoc_input_extension=%s' % ext)
-          
-    if command: 
+    if command:
+        l.info(" - set command          : %s" % command)
         params.append('adhoc_process=%s' % command)
+
+    l.info(" - set mode             : %s" % mode)
+
+    if mode == 'seq':
+        l.warn("Note: adhoc is running in sequential ('seq') mode. If ")
+        l.warn("you are confident that jobs do not interfere, you might ")
+        l.warn("consider setting adhoc to parallel operation:")
+        l.warn("$ set adhoc_mode=par")
+               
+
 
     l.debug('setting parameters %s' % params)
     moa.job.newJob(template='adhoc',

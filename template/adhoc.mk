@@ -133,9 +133,10 @@ ifeq ($($(moa_id)_mode),seq)
 
 $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
 
-touch/%: t=$(shell echo '$*' | sed $($(moa_id)_name_sed))
+touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
 touch/%: $($(moa_id)_input_dir)/%
-	$(call echo,considering $<)
+	echo $(shell echo '$($(moa_id)_name_sed)')
+	$(call warn,considering $< -- $t)
 	$(call warn,running '$($(moa_id)_process)')
 	$($(moa_id)_process)
 	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
