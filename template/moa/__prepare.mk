@@ -53,8 +53,8 @@ $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/template/moa/plugins/$(p)_def.mk) \
 )
 
-## Files that moa recognizes
-moa_system_files = Makefile moa.mk
+## Files that are a part of the moa configuration
+moa_files = Makefile moa.mk
 
 ## some help variables
 warn_on := \033[0;41;37m

@@ -37,13 +37,18 @@ def defineCommands(data):
         }
 
 def defineOptions(data):
+    parser = data['parser']
     parserN = optparse.OptionGroup(data['parser'], "Moa new")
     data['parser'].set_defaults(title="", directory=".")
 
     parserN.add_option("-t", "--title", dest="title", help="Job title")
-    parserN.add_option("-d", "--directory", 
-                       dest="directory",
-                       help="Directory to create the new template in (default: .)")
+
+    try:
+        parser.add_option("-d", dest="directory",
+                      help="Create/unpack the job/pipeline in this directory")
+    except optparse.OptionConflictError:
+        pass #could have been defined in plugin/pack.py
+
     data['parser'].add_option_group(parserN)
 
 def _parseArgs(args):

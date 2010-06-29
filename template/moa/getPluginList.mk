@@ -7,7 +7,10 @@
 
 -include ~/.moa/moa.conf.mk
 
+-include ./moa.mk
+
 .DEFAULT_GOAL := get_moa_plugins
 .PHONY: get_moa_plugins
 get_moa_plugins:
 	@echo  $(moa_plugins)
+

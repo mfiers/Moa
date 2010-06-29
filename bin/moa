@@ -165,7 +165,7 @@ if __name__ == "__main__":
     #see if there is a callback to a plugin - If so call it
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
-            l.debug("using a callback for moa %s" % command)            
+            l.debug("using a callback for moa %s" % command)
             plugins.runCallback(moaCommands[command])
             sys.exit()
 

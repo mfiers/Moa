@@ -31,6 +31,7 @@ import shutil
 import readline
 import contextlib
 
+import moa.job
 from moa.logger import l
 from moa.exceptions import *
 
@@ -220,14 +221,13 @@ def touch(path, times=None):
     Borrowed from:
     http://stackoverflow.com/questions/1158076/implement-touch-using-python
 
-    >>> removeFiles(P_EMPTY, recursive=True)
-    >>> testFile = os.path.join(P_EMPTY, 'test.file')
+    >>> wd = moa.job.newTestJob('traverse')
+    >>> testFile = os.path.join(wd, 'test.file')
     >>> os.path.exists(testFile)
     False
     >>> touch(testFile)
     >>> os.path.exists(testFile)
     True
-    >>> removeFiles(P_EMPTY, recursive=True)
 
     @param path: The filename to touch
     @type path: String    

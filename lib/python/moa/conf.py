@@ -79,7 +79,7 @@ def parseClArgs(args):
                     'value' : v })
     return rv
     
-def setVar(wd, key, value):
+def setVar(wd, key, value, relPathCorrection = None):
     """
     Convenience function - set the variable 'key' to a value in directory wd
 
@@ -95,7 +95,25 @@ def setVar(wd, key, value):
         'Fine'
 
 
-    """    
+    """
+
+    # See if we can correct for relative paths
+    # experimental!!
+    if relPathCorrection \
+       and relPathCorrection != '.' \
+       and value \
+       and value[0] != '/':
+        
+        jobInfo = moa.info.info(wd)
+        dataType = jobInfo['parameters'][key]['type']
+        if dataType in ['directory', 'file']:
+            l.info("Attempting a relative path correction for %s" % key)
+            l.info(" correcting %s" % value)
+            l.info(" with %s" % relPathCorrection)
+            newVal = os.sep.join([relPathCorrection, value])
+            l.info(" new value %s" % newVal)
+            value = newVal
+        
     writeToConf(wd, [{'key' : key,
                   'operator' : '=',
                   'value' : value}])

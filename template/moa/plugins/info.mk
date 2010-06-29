@@ -39,6 +39,7 @@ info_header:
 	@echo -e 'template_author\t$(template_author)'
 	@echo -e 'title\t$(title)'
 	@echo -e 'description\t$(description)'
+	@echo -e 'moa_files\t$(moa_files)'
 	@echo -e 'moa_targets\t$(moa_id) all clean $(moa_additional_targets)'
 
 info_targets: $(addprefix info_target_help_, all clean $(moa_additional_targets))

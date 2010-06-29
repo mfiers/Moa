@@ -71,32 +71,36 @@ include $(shell echo $$MOABASE)/template/moa/core.mk
 ncbi_prepare:
 	-mkdir fasta
 	-rm tmp.xml 
-	-rm tmp.fasta 
+	-rm fasta.tmp 
 	-rm fasta/*.fasta
 
 .PHONY: ncbi_post
 ncbi_post:
 
 .PHONY: ncbi
-ncbi: tmp.fasta
-	if [[ -n "$(ncbi_sequence_name)" ]]; then 					\
-		cat tmp.fasta 											\
-			| sed "s/^>.*$$/>$(ncbi_sequence_name)/"			\
-			| fastaSplitter -f - -n 1 -o fasta;					\
-	else														\
-		if [[ "$(ncbi_skip_split)" == "T" ]]; then 				\
-			ln tmp.fasta out.fasta;								\
-		else													\
-			fastaSplitter -f tmp.fasta -o fasta; 				\
+ncbi: fasta.tmp
+	$e if [[ -n "$(ncbi_sequence_name)" ]]; then \
+		cat fasta.tmp \
+			| sed "s/^>.*$$/>$(ncbi_sequence_name)/" \
+			| fastaSplitter -f - -n 1 -o fasta; \
+	else \
+		if [[ "$(ncbi_skip_split)" == "T" ]]; then \
+			ln fasta.tmp out.fasta \
+				|| $(call warn,Cannot create out.fasta); \
+		else \
+			fastaSplitter -f fasta.tmp -o fasta; \
+		fi \
 	fi
 	touch lock
 
+
+
 #the fasta file as downloaded from NCBI
-tmp.fasta: webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
-tmp.fasta: queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
-tmp.fasta: tmp.xml
+fasta.tmp: webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
+fasta.tmp: queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
+fasta.tmp: tmp.xml
 	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&rettype=fasta&retmode=text&usehistory=y" \
-		-O tmp.fasta
+		-O fasta.tmp
 
 #tmp.xml contains the IDs of the sequences to download
 tmp.xml: 
@@ -104,4 +108,4 @@ tmp.xml:
 		-O tmp.xml
 
 ncbi_clean:
-	-$e rm -r fasta tmp.xml tmp.fasta lock 2>/dev/null
+	-$e rm -r fasta tmp.xml fasta.tmp lock 2>/dev/null
