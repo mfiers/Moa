@@ -145,7 +145,9 @@ def pack(data):
     if args:
         if args[0] == 'unpack': return unpack(data)
         elif args[0] == 'list' : return listPacks(data)
-        elif args[0] == 'rm' : return rmPack(data)        
+        elif args[0] == 'rm' : return rmPack(data)
+        elif args[0] == 'args' : return packArgs(data)
+        elif args[0] == 'create': args = args[1:]
     
 
     packName, packPath = _getPackName(data)
@@ -249,20 +251,65 @@ def unpack(data):
     l.error("Could not locate pack %s" % originalPackname)
     sys.exit(-1)
 
-def listPacks(data):
-    packDir = os.path.join(
+
+def _getPackDirs():
+    """
+    Return all directories that could contain a pack
+    Create the user pack dir, if it does not exists
+    """
+    
+    rv = []
+
+    _pd =  os.path.join(
         os.path.expanduser('~'), '.moa', 'packs')
-    for f in os.listdir(packDir):
-        if f[-8:] == '.tar.bz2':
-            packFile = os.path.join(packDir, f)
-            TF = tarfile.open(packFile, 'r:bz2')
-            try:
-                PAF = TF.extractfile('moa.packargs').read()
-            except KeyError:
-                PAF = ""
-                pass #moa.packargs does not seem to exists
-            TF.close
-            print "%s\t%s" % (f[:-8], PAF)
+    if not os.path.exists(_pd):
+        os.makedirs(_pd)
+    rv.append(_pd)
+        
+    #see if there is a global packdir
+    _pd = os.path.join('etc', 'moa', 'packs')
+    if os.path.exists(_pd):
+        rv.append(_pd)
+        
+    return rv
+
+def _getPackFile(packName):
+    """
+    Returns the file location of a pack
+    """
+    for packDir in _getPackDirs():
+        packFile = os.path.join(packDir, "%s.tar.bz2" % packName)
+        if os.path.exists(packFile):
+            return packFile
+    return None
+
+
+def _getPackArgs(packFile):
+    TF = tarfile.open(packFile, 'r:bz2')
+    try:
+        PAF = TF.extractfile('moa.packargs').read()
+    except KeyError:
+        PAF = ""
+        pass #moa.packargs does not seem to exists
+    TF.close
+    return PAF
+    
+def packArgs(data):
+    """
+    Get the arguments that a packfile was created with
+    """
+    args = data['newargs']
+    packName = args[1]
+    packFile = _getPackFile(packName)    
+    print _getPackArgs(packFile)
+    
+def listPacks(data):
+    for packDir in _getPackDirs():
+        for f in os.listdir(packDir):
+            if f[-8:] == '.tar.bz2':
+                packFile = os.path.join(packDir, f)
+                packArgs = _getPackArgs(packFile)
+                print "%s\t%s" % (f[:-8], packArgs)
 
 def rmPack(data):
     packDir = os.path.join(
