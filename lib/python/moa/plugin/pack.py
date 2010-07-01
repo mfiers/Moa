@@ -18,7 +18,7 @@
 # 
 
 """
-Arch - saves pipelines, or parts of pipelines for reuse
+Pack - saves pipelines, or parts of pipelines for reuse
 """
 
 import os
@@ -72,7 +72,51 @@ def prepare(data):
     packPath = os.path.join(os.path.expanduser('~'), '.moa', 'packs')
     if not os.path.exists(packPath):
         os.makedirs(packPath)
+
+def _getPackDirs():
+    """
+    Return all directories that could contain a pack
+    Create the user pack dir, if it does not exists
+    """
+    
+    rv = []
+
+    _pd =  os.path.join(
+        os.path.expanduser('~'), '.moa', 'packs')
+    if not os.path.exists(_pd):
+        os.makedirs(_pd)
+    rv.append(_pd)
         
+    #see if there is a global packdir
+    _pd = os.path.join('etc', 'moa', 'packs')
+    if os.path.exists(_pd):
+        rv.append(_pd)
+        
+    return rv
+
+def _getPackFile(packName):
+    """
+    Returns the file location of a pack
+    """
+    if os.path.exists(packName):
+        return packName
+
+    for packDir in _getPackDirs():
+        packFile = os.path.join(packDir, "%s.tar.bz2" % packName)
+        if os.path.exists(packFile):
+            return packFile
+    return None
+
+
+def _getPackArgs(packFile):
+    TF = tarfile.open(packFile, 'r:bz2')
+    try:
+        PAF = TF.extractfile('moa.packargs').read()
+    except KeyError:
+        PAF = ""
+        pass #moa.packargs does not seem to exists
+    TF.close
+    return PAF.split()
     
 def _addPath(wd, pth,  tar):
     l.info("Checking %s" % pth)
@@ -177,122 +221,47 @@ def pack(data):
 
     l.info("done packing")
     TF.close()
-
-
-def _unpack2(data, packName):
-    options = data['options']
-    if options.directory:
-        target = options.directory
-        if not os.path.exists(target):
-            os.makedirs(target)        
-    else:
-        target = '.'
-    if (not options.force) and (moa.info.isMoaDir(target)):
-        l.error("There is already a moa job in %s" % target)
-        l.error("Use force (-f) to unpack it here")
-        sys.exit(-1)
-
-    #prepare for a relative path correction..
-    wd = data['cwd']    
-    relPathCorrection = os.path.relpath(wd, target)
-        
-    l.info("Unpackiving %s" % packName)
-    options
-    TF = tarfile.open(name = packName, mode = 'r:bz2')
-    TF.extractall(path=target)
-    TF.close()
-
-    #see if we were called with extra arguments
-    args = data['newargs'][1:]
-    l.info("called with args: %s" % " ".join(args))
-    
-    #process pack arguments
-    #see if we can find & open a packargs file
-    packArgsFile = os.path.join(target, 'moa.packargs')
-    if not os.path.exists(packArgsFile):
-        #we're done!
-        return True
-    with open(packArgsFile) as F:
-        packArgs = F.read().strip().split()
-    os.unlink(packArgsFile)
-    l.info("read packargs %s" % " ".join(packArgs))
-    if args and not packArgs:
-        l.error("You have supplied extra arguments, but there are none "
-                "specified in the pack - not setting anything")
-        return
-    if len(args) > len(packArgs):
-        l.error("You've supplied more arguments that the pack defines "
-                "- Not setting anything")
-        return
-    
-    for a in range(len(args)):
-        l.info("setting %s to %s" % (packArgs[a], args[a]))
-        moa.conf.setVar(target, packArgs[a], args[a],
-                        relPathCorrection = relPathCorrection)
         
 def unpack(data):
     args = data['newargs']
     packName = args[0]
     originalPackname = packName
+    packFile = _getPackFile(packName)
+    if not packFile:
+        l.error("cannot locate a packfile for %s" % packName)
+        sys.exit(-1)
 
-    #discover where the archive is
-    if os.path.exists(packName):
-        return _unpack2(data, packName)
-    if os.path.exists("%s.tar.bz2" % packName):
-        return _unpack2(data, "%s.tar.bz2" % packName)
-    if not packName[-8:] == '.tar.bz2':
-        packName += '.tar.bz2'
-    packLoc = os.path.join(
-        os.path.expanduser('~'), '.moa', 'packs', packName)
-    l.debug("chekcing %s"% packLoc)
-    if os.path.exists(packLoc):
-        return _unpack2(data, packLoc)
+    options = data['options']
+    if options.directory:
+        target = options.directory
+        if not os.path.exists(target):
+            os.makedirs(target)        
+    else: target = '.'
 
-    l.error("Could not locate pack %s" % originalPackname)
-    sys.exit(-1)
+    if (not options.force) and (moa.info.isMoaDir(target)):
+        l.error("There is already a moa job in %s" % target)
+        l.error("Use force (-f) to unpack it here")
+        sys.exit(-1)
 
 
-def _getPackDirs():
-    """
-    Return all directories that could contain a pack
-    Create the user pack dir, if it does not exists
-    """
-    
-    rv = []
+    packArgs = _getPackArgs(packFile)
+    providedArgs = data['newargs'][1:]
 
-    _pd =  os.path.join(
-        os.path.expanduser('~'), '.moa', 'packs')
-    if not os.path.exists(_pd):
-        os.makedirs(_pd)
-    rv.append(_pd)
+    if len(packArgs) != len(providedArgs):
+        l.error("Provided the wrong amount of arguments")
+        l.error("This packfile needs to be called with the")
+        l.error("following arguments:")
+        l.error("   %s" % " ".join(packArgs))
+        if not options.force: sys.exit(-1)
+        else:
+            l.error("continuing anyway (force)")
         
-    #see if there is a global packdir
-    _pd = os.path.join('etc', 'moa', 'packs')
-    if os.path.exists(_pd):
-        rv.append(_pd)
-        
-    return rv
+    os.unlink(packArgsFile)
 
-def _getPackFile(packName):
-    """
-    Returns the file location of a pack
-    """
-    for packDir in _getPackDirs():
-        packFile = os.path.join(packDir, "%s.tar.bz2" % packName)
-        if os.path.exists(packFile):
-            return packFile
-    return None
+    for a in range(len(providedArgs)):
+        l.info("setting %s to %s" % (packArgs[a], args[a]))
+        moa.conf.setVar(target, packArgs[a], args[a])
 
-
-def _getPackArgs(packFile):
-    TF = tarfile.open(packFile, 'r:bz2')
-    try:
-        PAF = TF.extractfile('moa.packargs').read()
-    except KeyError:
-        PAF = ""
-        pass #moa.packargs does not seem to exists
-    TF.close
-    return PAF
     
 def packArgs(data):
     """
@@ -309,7 +278,7 @@ def listPacks(data):
             if f[-8:] == '.tar.bz2':
                 packFile = os.path.join(packDir, f)
                 packArgs = _getPackArgs(packFile)
-                print "%s\t%s" % (f[:-8], packArgs)
+                print "%s\t%s" % (f[:-8], " ".join(packArgs))
 
 def rmPack(data):
     packDir = os.path.join(
