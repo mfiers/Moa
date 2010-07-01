@@ -131,45 +131,25 @@ if __name__ == '__main__':
 
     fig = plt.figure(figsize=(10,4))
     fig.subplots_adjust(0.05,0.1,0.95,0.9)
-    ax1 = fig.add_subplot(111)
-
-    r_okhalf = 0.5 * r_ok
-    r_lowok = -( r_okhalf + r_low)
-    r_highok = r_okhalf + r_high
-    maxY = max(
-        np.max(r_lowok[pStart:pEnd]), 
-        np.max(r_highok[pStart:pEnd]))
-
-
-    #GAPS
-    ax1.fill_between(
-        r_x[pStart:pEnd],
-        gaps[pStart:pEnd] * (-maxY),
-        gaps[pStart:pEnd] * (maxY),
-        color='#666666')
-
-    #LOW
-    ax1.fill_between(
-        r_x[pStart:pEnd],
-        -1 * r_okhalf[pStart:pEnd], 
-        r_lowok[pStart:pEnd],
-        color="#1D1AB2")
-    #OK
-    ax1.fill_between(
-        r_x[pStart:pEnd],
-        -r_okhalf[pStart:pEnd],
-        r_okhalf[pStart:pEnd],
-        color="#62E200")
-    #HIGH
-    ax1.fill_between(
-        r_x[pStart:pEnd],
-        r_okhalf[pStart:pEnd],
-        r_highok[pStart:pEnd],
-        color="#E60042")
-
-    ax1.set_ylim(-maxY * 2, maxY)
-    ax = ax1.twinx()
-
+    ax = fig.add_subplot(111)
+    # #LOW
+    # ax1.fill_between(
+    #     r_x[pStart:pEnd],
+    #     -1 * r_okhalf[pStart:pEnd], 
+    #     r_lowok[pStart:pEnd],
+    #     color="#1D1AB2")
+    # #OK
+    # ax1.fill_between(
+    #     r_x[pStart:pEnd],
+    #     -r_okhalf[pStart:pEnd],
+    #     r_okhalf[pStart:pEnd],
+    #     color="#62E200")
+    # #HIGH
+    # ax1.fill_between(
+    #     r_x[pStart:pEnd],
+    #     r_okhalf[pStart:pEnd],
+    #     r_highok[pStart:pEnd],
+    #     color="#E60042")
 
     l.info("processing %s (%d nt long)" % (seqId, seqLen))
     inputFileCount = 0
@@ -200,6 +180,13 @@ if __name__ == '__main__':
         maxY = max(maxY, max(inserts))
         minY = min(minY, min(inserts))
         
+        #GAPS
+        ax.fill_between(
+            r_x[pStart:pEnd],
+            gaps[pStart:pEnd] * (-maxY),
+            gaps[pStart:pEnd] * (maxY),
+            color='#666666')
+
         def ffcol(i):
             #LOW
             if i < stats['left']:
@@ -222,6 +209,7 @@ if __name__ == '__main__':
                  
         #ax.quiver(stop2, inserts, 0.5 * (start1 - stop2), inserts*1.25, colors,
         #          headwidth=1, headlength=1, width=0.001, cmap=my_cmap)
+
     ax.set_xlim(pStart, pEnd)
     maxY = max(maxY, -minY)
     #ax.set_ylim(-maxY, maxY * 2)

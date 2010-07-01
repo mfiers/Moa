@@ -69,26 +69,83 @@ elif options.verbose == 1:
 else:
     l.setLevel(logging.WARNING)
 
+
+
+def smooth(x,window_len=11,window='hanning'):
+    """smooth the data using a window with requested size.
+    
+    This method is based on the convolution of a scaled window with the signal.
+    The signal is prepared by introducing reflected copies of the signal 
+    (with the window size) in both ends so that transient parts are minimized
+    in the begining and end part of the output signal.
+    
+    input:
+        x: the input signal 
+        window_len: the dimension of the smoothing window; should be an odd integer
+        window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
+            flat window will produce a moving average smoothing.
+
+    output:
+        the smoothed signal
+        
+    example:
+
+    t=linspace(-2,2,0.1)
+    x=sin(t)+randn(len(t))*0.1
+    y=smooth(x)
+    
+    see also: 
+    
+    np.hanning, np.hamming, np.bartlett, np.blackman, np.convolve
+    scipy.signal.lfilter
+ 
+    TODO: the window parameter could be the window itself if an array instead of a string   
+    """
+
+    if x.ndim != 1:
+        raise ValueError, "smooth only accepts 1 dimension arrays."
+
+    if x.size < window_len:
+        raise ValueError, "Input vector needs to be bigger than window size."
+
+    if window_len<3: return x
+
+    if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+        raise ValueError, "Window must be one of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
+
+    s=np.r_[2*x[0]-x[window_len:1:-1],x,2*x[-1]-x[-1:-window_len:-1]]
+    #print(len(s))
+    if window == 'flat': #moving average
+        w=np.ones(window_len,'d')
+    else:
+        w=eval('np.'+window+'(window_len)')
+
+    y=np.convolve(w/w.sum(),s,mode='same')
+    return y[window_len-1:-window_len+1]
+
+
+def smoother(a, steps):
+    result = np.zeros(len(a) - steps + 1)
+    for fr in range(steps):
+        to = - (steps - fr - 1)
+        if to == 0: to = None
+        result += a[fr:to]        
+    return result / float(steps)
+
+
 def quant(x, w):
     xs = np.sort(x)
     return xs[int(len(xs) * w)]
     
 if __name__ == '__main__':
 
-    # if options.seqId:
-    #     seqId = options.seqId
-    # else:
-    #     seqId = os.path.basename(inputFile)\
-    #             .replace('.coverage.npz', '')\
-    #             .replace('.combined', '')\
-    #             .replace('.npz', '')
-
-    l.info("and I'm calling this sequence: %s" % seqId)
+    l.info("Sequence id: %s" % seqId)
     if options.inputFile:
         inputFile = options.inputFile
     else:
         inputFile = os.path.join('combined', 
                                  '%s.combined.coverage.npz' % seqId)
+
     data = np.load(inputFile)
     r_ok = data['r_ok']
     r_high = data['r_high']
@@ -120,21 +177,12 @@ if __name__ == '__main__':
     r_all = r_low + r_high + r_ok
     r_okh = 0.5 * r_ok
 
-    #if pStart > 0 or pEnd < seqLen:
-    #    r_ok = r_ok[pStart:pEnd]
-    #    r_low = r_low[pStart:pEnd]
-    #    r_high = r_high[pStart:pEnd]
-    #    r_all = r_all[pStart:pEnd]
-
-    #max value - else all space is taken up by the peaks
-    
     r_x = np.arange(0, seqLen, dtype="int")
     r_z = np.zeros_like(r_x)
 
     noLines = int(math.ceil(plotLen / float(ntPerLine)))
 
     l.info("going to plot %d lines" % noLines)
-#    l.info("y axis is between %d and %d" % (minY, maxY))
 
     mpl.rcParams['axes.labelsize'] = 'x-small'
     mpl.rcParams['xtick.labelsize'] = 'xx-small'
@@ -154,121 +202,69 @@ if __name__ == '__main__':
             line, nstart, nstop))
 
         ax = fig.add_subplot(noLines,1,line+1)
+        ax2 = ax.twinx()
+
         if line == 0:
             ax.set_title('Coverage plot for "%s" (%d to %d)' % (
                     seqId, pStart, pEnd))
 
-        if options.alayout:
-            if options.ymax:
-                maxY = int(options.ymax)
-                minY = -maxY
-            else:
-                maxY = int(quant(r_okh[pStart:pEnd], options.yfrac))
-                minY = -maxY
+        if options.ymax: maxY = int(options.ymax)
+        else: maxY = int(quant(r_ok[pStart:pEnd], options.yfrac))
 
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_okh[nstart:nstop],
-                r_okh[nstart:nstop] + r_high[nstart:nstop],
-                color="#aa0000")
+        minY = 0
 
-            ax.fill_between(
-                r_x[nstart:nstop],
-                -1 * r_okh[nstart:nstop],
-                r_okh[nstart:nstop],
-                color="green")
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop] ,
+            r_high[nstart:nstop],
+            color="#ff8888")
 
-            ax.fill_between(
-                r_x[nstart:nstop],
-                -r_okh[nstart:nstop],
-                -(r_okh[nstart:nstop] + r_low[nstart:nstop]),
-                color="#0000aa")
+        ax.plot(r_x[nstart:nstop], 
+                r_high[nstart:nstop],
+                color="#ff0000", linewidth=0.5)
 
-            ax.plot( r_x[nstart:nstop],
-                     r_okh[nstart:nstop],
-                     color='black')
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop],
+            -1*r_low[nstart:nstop],
+            color="#8888ff")
 
-            ax.plot( r_x[nstart:nstop],
-                     -r_okh[nstart:nstop],
-                     color='black')
-
-            ax.plot( r_x[nstart:nstop],
-                     r_okh[nstart:nstop] + r_high[nstart:nstop],
-                     color='black')
-
-            ax.plot( r_x[nstart:nstop],
-                     -(r_okh[nstart:nstop] + r_low[nstart:nstop]),
-                     color='black')
-
-            yAx = ax.get_yaxis()
-            yAx.set_ticks(range(minY, maxY, 200))
-            ax.set_ylim(minY,maxY)
-
-        else:
-            if options.ymax:
-                maxY = int(options.ymax)
-            else:
-                maxY1 = int(quant(r_all[pStart:pEnd], options.yfrac))
-                maxY2 = int(quant(r_ok[pStart:pEnd], options.yfrac))
-                maxY = min(maxY1, maxY2 * 2)
-            minY = 0
-
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_z[nstart:nstop],
-                r_low[nstart:nstop],
-                color="#0000aa")
-
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_low[nstart:nstop],
-                r_low[nstart:nstop] + r_ok[nstart:nstop],
-                color="#00aa00")
-
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_low[nstart:nstop] + r_ok[nstart:nstop],
-                r_low[nstart:nstop] + r_ok[nstart:nstop] + r_high[nstart:nstop],
-                color="#aa0000")
-
-            ax.plot( r_x[nstart:nstop],
-                     r_low[nstart:nstop],
-                     color='black')
-
-            ax.plot( r_x[nstart:nstop],
-                     r_low[nstart:nstop] + r_ok[nstart:nstop],
-                     color='black')
-
-            ax.plot( r_x[nstart:nstop],
-                     r_low[nstart:nstop] + r_ok[nstart:nstop] + r_high[nstart:nstop],
-                     color='black')
+        ax.plot(r_x[nstart:nstop], 
+                (-1*r_low[nstart:nstop]),
+                color="#0000ff", linewidth=0.5)
 
 
-            l.info("ok-median %f" % np.median(r_ok))
-            q = r_ok - (np.maximum(np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok, 0))
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_z[nstart:nstop] - maxY,
+            r_ok[nstart:nstop] - maxY,
+            color="#88ff88", alpha=0.8)
 
-
-            s = r_ok - (np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok)
-            
-            ax.plot(r_x[nstart:nstop],
-                    q[nstart:nstop],
-                    color='darkblue',
-                    linewidth=1)
-
-            ax.plot(r_x[nstart:nstop],
-                    s[nstart:nstop],
-                    color='blue',
-                    linewidth=1)
-
-            yAx = ax.get_yaxis()
-            yAx.set_ticks(range(100, maxY, 200))
-            ax.set_ylim(-maxY,3*maxY)
-
-
-
-
-        ax.set_xlim(nstart,nstop+1)
+        ax.plot(r_x[nstart:nstop], 
+                r_ok[nstart:nstop] - maxY,
+                color="#00ff00", linewidth=0.5)
         
+        l.info("ok-median %f" % np.median(r_ok))
+
+        #q = r_ok - (np.maximum(np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok, 0))
+        #s = r_ok - (np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok)
+        #medOk = np.median(r_ok)
+        #sa = (medOk * (1 - np.exp(-1 * (r_high + r_low))))
+        #print sa
+        #ax.plot(r_x[nstart:nstop], q[nstart:nstop], color='darkblue', linewidth=1)
+        #ax.plot(r_x[nstart:nstop], s[nstart:nstop], color='blue', linewidth=1)
+        #ax.plot(r_x[nstart:nstop], sa[nstart:nstop], color='purple', linewidth=0.5)
+
+
+        yAx = ax.get_yaxis()
+        yAx.set_ticks(range(100, maxY, 200))
+
+        ax.set_ylim(-maxY,maxY)
+        ax.set_xlim(nstart,nstop+1)
+        ax2.set_xlim(nstart,nstop+1)
+        ax2.set_ylim(-1, 1)
+        
+
 
     if options.outfile:            
         outFileName = options.outfile
@@ -279,6 +275,18 @@ if __name__ == '__main__':
         outFileName += "_%d_%d" % (pStart, pEnd)
 
     for f in options.format:
-        plt.savefig('%s.%s' % (outFileName, f))
+        plt.savefig('%s.ccc.%s' % (outFileName, f), dpi=200)
+
+    # ws = 1000
+    # step = 100
+    # for i in range(pStart, pEnd - step, step):
+    #     cv = np.corrcoef(d_ok[i:i+ws], d_high[i:i+ws])[0][1]
+
+    #     f2 = plt.figure(figsize=(10,2*noLines+2))
+    #     f2x = f2.add_subplot(1,1,1)
+    #     f2x.scatter(d_ok[i:i+ws], d_high[i:i+ws])
+    #     f2x.set_title("cvplot %d %f" % (i + int(ws/2), cv))
+    #     plt.savefig('cvplot_%d_%f.png' % (i + int(ws/2), cv))
+            
 
  

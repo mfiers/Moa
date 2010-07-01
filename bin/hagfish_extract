@@ -298,11 +298,25 @@ def normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats):
     """
     normalize and sort the readpairs 
     
-    normalize -> subtract the peak insert size so that
-       all hover around zero
+    normalize -> subtract the peak insert size so that they center
+       around zero
 
     sort into three groups: below zero, around zero and above zero
+    
+    approach 2 -> sort into multiple groups:
 
+       good -8k
+       good -4k
+       good -2k
+       good -1k
+       good
+       good + 1k
+       good + 2k
+       good + 4k
+       good + 8k
+       good + 16k
+       good + 32k
+    
     We will do this per bamBase and per sequence
     """    
 
@@ -330,17 +344,35 @@ def normalizeSortReadPairs(bamBase, seqInfo, readPairs, stats):
         r_low = np.zeros(seqLen, dtype=np.int)
         r_high = np.zeros(seqLen, dtype=np.int)
 
+        #approach_2
+        binLow = [1000, 2000, 4000, 8000, 16000, 32000]
+        binHigh = [1000, 2000,4000,8000,16000,32000]
+        r_low_bins = np.zeros((seqLen, len(binLow)), dtype=np.int)
+        r_high_bins = np.zeros((seqLen, len(binHigh)), dtype=np.int)
+        
         peakLow = stats['left']
         peakHigh = stats['right']
-
+                           
         def ff(a,b):
             dist = b-a
             if dist < peakLow:
+                tooLow = peakLow - dist
+                for x in range(len(binLow)):
+                    if tooLow < binLow[x]: break
+                binNo = x
+                l.info("LW: %s <-%s- (%s-%s) bin %d (%d)" % (dist,  tooLow, peakLow, peakHigh, binLow[x], x))
                 r_low[a:b] += 1
+                r_low_bins[a:b][binNo] += 1
             elif dist > peakHigh:
+                tooHigh = dist - peakHigh
+                for x in range(len(binHigh)):
+                    if tooHigh < binHigh[x]: break
+                l.info("HG: (%s-%s) ==%s==> %s bin %d (%d)" % (peakLow, peakHigh, tooHigh, dist, binHigh[x], x))
                 r_high[a:b] += 1
             else:
                 r_ok[a:b] += 1
+                binNo = len(binLow)
+                #l.debug("OK  %s goes in bin (%d) " % (dist, binNo))
 
         FF=np.vectorize(ff)
         l.debug("Start calculating coverage plots for %d readpairs" % len(rp['start1']))

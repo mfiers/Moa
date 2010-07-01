@@ -100,7 +100,9 @@ if __name__ == '__main__':
     if not os.path.exists('gff'):
         os.mkdir('gff')
 
-    FA = open(os.path.join('gff', 'coverage.ok.%d.gff' % binSize), 'w')
+    FG = open(os.path.join('gff', 'coverage.ok.%d.gff' % binSize), 'w')
+    FS = open(os.path.join('gff', 'coverage.short.%d.gff' % binSize), 'w')
+    FL = open(os.path.join('gff', 'coverage.long.%d.gff' % binSize), 'w')
 
     for seqId in seqIds:
         coverageFile = os.path.join('combined', '%s.combined.coverage.npz' % seqId)
@@ -115,7 +117,11 @@ if __name__ == '__main__':
         seqLen = len(r_ok)
         l.info("sequence length of %s is %d" % (seqId, seqLen))
         
-        generate_histogram(FA, seqId, 'ok', r_ok, binSize, options.source)
+        generate_histogram(FG, seqId, 'ok', r_ok, binSize, options.source)
+        generate_histogram(FS, seqId, 'short', r_low, binSize, options.source)
+        generate_histogram(FL, seqId, 'long', r_high, binSize, options.source)
 
-    FA.close()
+    FG.close()
+    FS.close()
+    FL.close()
 
