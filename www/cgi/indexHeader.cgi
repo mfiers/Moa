@@ -56,7 +56,7 @@ def getDescription(cwd):
         description = open(dfile).read()
         #convert from jinja-markdown to html!
         p = subprocess.Popen("pandoc -f markdown -t html".split(),
-                  stdin=subprocess.PIPE, stdout=subprocess.PIPE)    
+                  stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         p.stdin.write(description)
         html,err = p.communicate()
         return html

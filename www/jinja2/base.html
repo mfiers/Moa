@@ -93,11 +93,18 @@ Content-type: text/html
   
   <div id="tabs"> 
     {% block tabs %}
-<ul> 
-  <li><a href="#fileBrowser">File browser</a></li> 
-</ul> 
-
-<div id='fileBrowser' class='fileList'> 
+	<ul> 
+	  {% if jobDescription %}
+	  <li><a href="#jobDescription">Description</a></li> 
+	  {% endif %}
+	  <li><a href="#fileBrowser">File browser</a></li> 
+	</ul> 
+	{% if jobDescription %}
+	<div id='jobDescription'>    
+	  {{ jobDescription }}
+	</div>
+	{% endif %}
+	<div id='fileBrowser' class='fileList'> 
 </div>
     {% endblock %}
 </div>
