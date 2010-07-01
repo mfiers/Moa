@@ -111,7 +111,7 @@ bowtie_insertsize_max_type = float
 # Prerequisite testing
 moa_prereq_simple += samtools bowtie
 
-include $(shell echo $$MOABASE)/template/moa/core.mk
+include $(MOABASE)/template/moa/core.mk
 
 ##### Derived variables for this run
 

@@ -22,14 +22,12 @@ template_title = Gmap
 template_description = Run GMAP on an set of input files (query) \
   vs a database index.
 
+$(call moa_fileset_define,gmap_input,fasta,Sequences to map)
+
 #variables
 moa_must_define += gmap_db
 gmap_db_help = Gmap db
 gmap_db_type = file
-
-moa_must_define += gmap_input_file
-gmap_input_file_help = input file with the sequences to map
-gmap_input_file_type = file
 
 moa_may_define += gmap_extra_parameters
 gmap_extra_parameters_default = 
@@ -37,47 +35,58 @@ gmap_extra_parameters_help = extra parameters to feed to gmap
 gmap_extra_parameters_type = string
 
 moa_may_define += gmap_invert_gff
-gmap_invert_gff_default = F
+gmap_invert_gff_default = T
 gmap_invert_gff_help = Invert the GFF (T/*F*)
 gmap_invert_gff_type = set
-
 gmap_invert_gff_allowed = T F
+
 moa_may_define += gmap_gff_source
 gmap_gff_source_default = gmap
 gmap_gff_source_help = Source field to use in the output GFF
 gmap_gff_source_type = string
 
-ifndef dont_include_moabase
-	include $(shell echo $$MOABASE)/template/moa/core.mk
+include $(MOABASE)/template/moa/core.mk
+
+$(call moa_fileset_remap_nodir,gmap_input,gmap_raw,raw)
+$(call moa_fileset_remap_nodir,gmap_input,gmap_gff,gff)
+$(call moa_fileset_remap_nodir,gmap_input,gmap_genepred,genepred)
+ifeq ($(gmap_invert_gff),T)
+$(call moa_fileset_remap_nodir,gmap_input,gmap_gff_invert,invert.gff)
 endif
 
-.PHONY: gmap_prepare
-gmap_prepare:
-
-.PHONY: gmap_post
-gmap_post: 
+gmap_output_raw = $(call moa_fileset_remap,gmap_input,gmap_raw,raw)
 
 .PHONY: gmap
-gmap: output.gff output.genepred
+gmap: gmap_message $(gmap_raw_files) $(gmap_gff_files) $(gmap_gff_invert_files) $(gmap_genepred_files) gmap_report
 
-output.gff: gmap_dbname=$(shell basename $(gmap_db))
-output.gff: output.raw
-	cat output.raw \
+.PHONY: gmap_message
+gmap_message:
+	$e echo "input files" $(gmap_input_files)
+	$e echo "raw files" $(gmap_raw_files)
+
+gmap_report: $(gmap_gff_invert_files)
+	$e echo -n "No input sequences " > gmap_report
+	$e grep ">" $(gmap_input_files) | wc -l >> gmap_report
+	$e echo -n "No files with a hit " >> gmap_report
+	$e cat $(gmap_gff_invert_files) | cut -f 1 | grep -v '#' | sort | uniq | wc -l >> gmap_report
+
+$(gmap_gff_files): gmap_dbname=$(shell basename $(gmap_db))
+$(gmap_gff_files): %.gff: %.raw
+	cat $< \
 		| sed "s/$(gmap_dbname)/$(gmap_gff_source)/" \
 		| sed "s/cDNA_match/match/" \
 		| sed "s/^\([^\t]*\)\(.*\)ID=\([^;]*\).path\([0-9]\+\);Name=\([^;]*\)\(.*\)/\1\2ID=gmap__\1__\3__\4;Name=gmap__\1__\3__\4\6/" \
 		| sed "s/Target=/Target=Sequence:/" \
-		> output.gff
-	if [ "$(gmap_invert_gff)" == "T" ]; then \
-		invertGff output.gff > output.invert.gff ;\
-	fi
+		> $@
 
-output.genepred: output.raw
-	gmapgff2genepred output.raw > output.genepred
+$(gmap_gff_invert_files): %.invert.gff: %.gff
+	invertGff $< > $@
 
+$(gmap_genepred_files): %.genepred: %.raw
+	gmapgff2genepred $< > $@
 
-
-output.raw: $(gmap_input_file)
+#output.raw: $(gmap_input_file)
+$(gmap_raw_files): %.raw: $(gmap_input_dir)/%.$(gmap_input_extension)
 	gmap -D $(shell dirname $(gmap_db)) \
 		 -d $(shell basename $(gmap_db)) \
 		 $(gmap_extra_parameters) \

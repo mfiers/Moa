@@ -65,7 +65,6 @@ endif
 #echo Main target for vpcr
 .PHONY: vpcr
 vpcr: vpcr.bowtie.out
-	
 
 vpcr.bowtie.out:
 	bowtie --all -l `expr length "$(vpcr_primer_1)"`						\
