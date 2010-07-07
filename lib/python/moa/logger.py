@@ -42,23 +42,23 @@ class XTRFormatter(logging.Formatter):
         if record.levelno <= logging.DEBUG:
             record.colon = chr(27) + "[30m" + chr(27) + "[47m"
             record.visual = "#DBUG "
-            record.vis1 = "D"
+            record.vis1 = "DEBUG:"
         elif record.levelno <= logging.INFO:
             record.colon = chr(27) + "[30m" + chr(27) + "[42m"
             record.visual = "#INFO "
-            record.vis1 = "I"
+            record.vis1 = "INFO:"
         elif record.levelno <= logging.WARNING:
             record.visual = "#WARN "
             record.colon = chr(27) + "[30m" + chr(27) + "[46m"
-            record.vis1 = "W"
+            record.vis1 = "WARNING:"
         elif record.levelno <= logging.ERROR:
             record.visual = "#ERRR "
-            record.vis1 = "E"
+            record.vis1 = "ERROR:"
             record.colon = chr(27) + "[30m" + chr(27) + "[43m"
         else:
             record.colon = chr(27) + "[30m" + chr(27) + "[41m"
             record.visual = "#CRIT "
-            record.vis1 = "C"
+            record.vis1 = "CRITICAL:"
 
         record.msg = " ".join(record.msg.split(" "))
         #check if we're on a tty, if not, reset colon/coloff
@@ -94,23 +94,23 @@ class XTRFormatterD(logging.Formatter):
         if record.levelno <= logging.DEBUG:
             record.colon = chr(27) + "[30m" + chr(27) + "[47m"
             record.visual = "#DBUG "
-            record.vis1 = "D"
+            record.vis1 = "DEBUG:"
         elif record.levelno <= logging.INFO:
             record.colon = chr(27) + "[30m" + chr(27) + "[42m"
             record.visual = "#INFO "
-            record.vis1 = "I"
+            record.vis1 = "INFO"
         elif record.levelno <= logging.WARNING:
             record.visual = "#WARN "
             record.colon = chr(27) + "[30m" + chr(27) + "[46m"
-            record.vis1 = "W"
+            record.vis1 = "WARNING"
         elif record.levelno <= logging.ERROR:
             record.visual = "#ERRR "
-            record.vis1 = "E"
+            record.vis1 = "ERROR"
             record.colon = chr(27) + "[30m" + chr(27) + "[43m"
         else:
             record.colon = chr(27) + "[30m" + chr(27) + "[41m"
             record.visual = "#CRIT "
-            record.vis1 = "C"
+            record.vis1 = "CRITICAL"
 
         t = []
         stack = traceback.extract_stack()[:-9]

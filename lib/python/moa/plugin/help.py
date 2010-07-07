@@ -40,16 +40,12 @@ import moa.logger
 import moa.plugin
 l = moa.logger.l
 
-#class Help(moa.plugin.BasePlugin):
-#    pass
-
 MOABASE=os.environ['MOABASE']
 JENV = None
 
 chapters = ['introduction', 'installation',
             'commands', 'templates', 'extending',
             'reference']
-
     
 def defineCommands(data):
     data['commands']['help'] = {
@@ -57,12 +53,24 @@ def defineCommands(data):
         'call' : showHelp
         }
 
+    data['commands']['intro'] = {
+        'desc' : 'Show an introduction to Moa',
+        'call' : showIntro,
+        'private': True
+        }
     data['commands']['manual_html'] = {
         'desc' : 'Generate a HTML manual of Moa',
         'call' : createHtmlManual,
         'private' : True
         }
 
+def showIntro(data):
+    """
+    Show an introductory screen
+    """
+    data['newargs'] = ['introduction']
+    return showHelp(data)
+    
 def showHelp(data):
     wd = data['cwd']
     options = data['options']
@@ -79,7 +87,8 @@ def showHelp(data):
             printWelcome()
     else:
         if args[0] in chapters:
-            pager(JENV.get_template('markdown/%s.md' % args[0]), getRenderData(wd))
+            pager(JENV.get_template('markdown/%s.md' % args[0]),
+                  getRenderData(data))
         elif args[0] in moa.job.list():
             td = moa.job.newTestJob(template=args[0], title='help')
             pageTemplateHelp(td, options,args)
@@ -89,27 +98,34 @@ def showHelp(data):
 
 def printWelcome():
     """
-    print a chapter to screen
+    print a welcom message
     """
     print """Welcome to MOA
 --------------
 
-More help:
+more help:
 
-Moa introduction    : moa intro
-a list of templates : moa list
-help on a template  : moa help TEMPLATE
-website and manual  : http://mfiers.github.com/Moa/
+  Moa introduction    : moa intro
+  a list of templates : moa list
+  help on a template  : moa help TEMPLATE
+  website and manual  : http://mfiers.github.com/Moa/
 """
 
-def pageTemplateHelp(wd, options, args):
+def pageTemplateHelp(data):
     """
-    create the help document for a specific template / job 
+    create the help document for a specific template / job
+
+    @param data: the data object used by all plugings
+    @returns
+    
     """
 
-    jobData = moa.info.info(wd)
-    moaId = jobData['moa_id']
-    jobData['d'] = jobData
+    wd = data['cwd']
+    options = data['options']
+    args = data['args']
+    templateData = moa.info.info(wd)
+    moaId = templateData['moa_id']
+    templateData['d'] = templateData
     #see if there is a manual in $MOABASE/doc/markdown/templates
     templateDoc = os.path.join(MOABASE, 'doc', 'markdown',
                                'templates', '%s.md' % moaId)
@@ -119,15 +135,15 @@ def pageTemplateHelp(wd, options, args):
     else:
         templateDoc = ""
         
-    jobData['template_manual'] = templateDoc   
-    pager(JENV.get_template('jinja2/help/template.help.md'), jobData)
+    templateData['template_manual'] = templateDoc   
+    pager(JENV.get_template('jinja2/help/template.help.md'), templateData)
 
 
-def pager(template, jobData):
+def pager(template, templateData):
     """
     render the template & send it to the pager
     """
-    markdown = template.render(jobData)
+    markdown = template.render(templateData)
     
     #convert jinja2 to 
     p = Popen("pandoc -s -f markdown -t man".split(),
@@ -163,7 +179,7 @@ def getRenderData(data):
     commandOrder = data['commands'].keys()
     commandOrder.sort()
     
-    jobData = {
+    templateData = {
         'chapters' : chapters,
         'moa_version' : moa.info.getVersion(),
         'date_generated' : time.ctime(),
@@ -174,7 +190,7 @@ def getRenderData(data):
         'command_order' : commandOrder,
     }
 
-    return jobData
+    return templateData
     
 def createHtmlManual(data):
     """
@@ -206,7 +222,7 @@ def createHtmlManual(data):
         os.path.join(MOABASE, 'doc', 'jinja2', 'manual', 'html', 'moa.css'),
         os.path.join(target) )
 
-    jobData = getRenderData(data)
+    templateData = getRenderData(data)
 
     def render(outName, d={}, template=None):
         """
@@ -221,38 +237,38 @@ def createHtmlManual(data):
             F.write(t.render(d))
 
     #render the index
-    render('index.html', jobData)
+    render('index.html', templateData)
     
     for c in chapters:
         #get the markdown & convert it to html
         content = markdown2html(
-            JENV.get_template('markdown/%s.md' % c).render(jobData))
-        jobData['content'] = content
-        render('%s.html' % c, jobData)
+            JENV.get_template('markdown/%s.md' % c).render(templateData))
+        templateData['content'] = content
+        render('%s.html' % c, templateData)
         
     for c in commands:
         #see if there is a markdown manual for this command
         try:
             commandTemplate = JENV.get_template('markdown/commands/%s.md' % c)
-            content = markdown2html(commandTemplate.render(jobData))
+            content = markdown2html(commandTemplate.render(templateData))
         except jinja2.exceptions.TemplateNotFound:
             content = ""
             
         #render the command template 
-        jobData['content'] = content
-        jobData['command_name'] = c
-        jobData['command_desc'] = commands[c].get('desc', "")
-        render('command_%s.html' % c, jobData, template='command_template.html')
+        templateData['content'] = content
+        templateData['command_name'] = c
+        templateData['command_desc'] = commands[c].get('desc', "")
+        render('command_%s.html' % c, templateData, template='command_template.html')
 
-    for t in jobData['templates']:
+    for t in templateData['templates']:
         
         #get information on the template
         td = moa.job.newTestJob(template=t, title='help')
         inf = moa.info.info(td)
-        jobData.update(inf)
-        jobData['d'] = inf #don't know how else to dynamically access
+        templateData.update(inf)
+        templateData['d'] = inf #don't know how else to dynamically access
                         #variables
-        moaId = jobData['moa_id']
+        moaId = templateData['moa_id']
 
         #see if there is a manual in $MOABASE/doc/markdown/templates
         _td = os.path.join(MOABASE, 'doc', 'markdown',
@@ -260,9 +276,8 @@ def createHtmlManual(data):
         if os.path.exists(_td):
             templateManual = open(_td).read()
         else: templateManual = ""
-        jobData['template_manual'] = markdown2html(templateManual)
+        templateData['template_manual'] = markdown2html(templateManual)
 
         proper_name = t.replace('/', '__')
-        render("template_%s.html" % proper_name, jobData,
+        render("template_%s.html" % proper_name, templateData,
                template='template_template.html')
-        #render(JENV.get_template('jinja2/help/template.help.md'), jobData)

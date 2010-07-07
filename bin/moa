@@ -178,7 +178,12 @@ if __name__ == "__main__":
             l.error("Unknown command: 'moa %s'" % command)
             l.error("Maybe it should be executed in a Moa directory?")
         else:
-            l.error("'moa' must be executed within a Moa directory")
+            l.error("`moa` without arguments should be executed")
+            l.error("within a Moa directory")
+            
+            #see if the help plugin in installed, and if so, call it
+            if moaCommands.has_key('help'):
+                plugins.runCallback(moaCommands['help'])
         sys.exit(1)
                 
     ### Check & fix deprecated template styles
