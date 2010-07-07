@@ -255,8 +255,6 @@ def unpack(data):
         if not options.force: sys.exit(-1)
         else:
             l.error("continuing anyway (force)")
-        
-    os.unlink(packArgsFile)
 
     for a in range(len(providedArgs)):
         l.info("setting %s to %s" % (packArgs[a], args[a]))

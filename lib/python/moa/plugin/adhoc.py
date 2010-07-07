@@ -178,6 +178,8 @@ def createAdhoc(data):
         l.info(" - set command          : %s" % command)
         params.append('adhoc_process=%s' % command)
 
+    params.append('adhoc_mode=%s' % mode)
+    
     l.info(" - set mode             : %s" % mode)
 
     if mode == 'seq':
@@ -186,9 +188,8 @@ def createAdhoc(data):
         l.warn("consider setting adhoc to parallel operation:")
         l.warn("$ set adhoc_mode=par")
                
-
-
     l.debug('setting parameters %s' % params)
+    
     moa.job.newJob(template='adhoc',
                    wd = wd,
                    title = options.title,
