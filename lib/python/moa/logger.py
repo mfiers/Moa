@@ -160,15 +160,30 @@ def setInfo():
     handler.setFormatter(normalFormatter)
     LOGGER.setLevel(logging.INFO)
 
+def _callLogger(logFunc, args, kwargs):
+    if len(args) == 1:
+        logFunc(args[0])
+    elif args:
+        logFunc(", ".join(map(str, args)))
+    if kwargs:
+        for k in kwargs.keys():
+            logFunc(" - %s : %s" % (k, kwargs[k]))
+
+    
 def debug(*args, **kwargs):
-    LOGGER.debug(*args, **kwargs)
+    _callLogger(LOGGER.debug, args, kwargs)
+
 def info(*args, **kwargs):
-    LOGGER.info(*args, **kwargs)
+    _callLogger(LOGGER.info, args, kwargs)
+
 def warning(*args, **kwargs):
-    LOGGER.warning(*args, **kwargs)
+    _callLogger(LOGGER.warning, args, kwargs)
+
 def error(*args, **kwargs):
-    LOGGER.error(*args, **kwargs)
+    _callLogger(LOGGER.error, args, kwargs)
+
+
 def critical(*args, **kwargs):
-    LOGGER.critical(*args, **kwargs)
+    _callLogger(LOGGER.critical, args, kwargs)
 
     
