@@ -27,7 +27,7 @@ import sys
 import readline
 import moa.conf
 import moa.utils
-from moa.logger import l
+import moa.logger as l
 
 def defineCommands(data):
     data['commands']['set'] = {

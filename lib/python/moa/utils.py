@@ -32,7 +32,7 @@ import readline
 import contextlib
 
 import moa.job
-from moa.logger import l
+import moa.logger as l
 from moa.exceptions import *
 
 # Get a file lock, adapted from:

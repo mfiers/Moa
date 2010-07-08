@@ -38,7 +38,6 @@ MOABASE = os.environ["MOABASE"]
 
 #moa specific libs
 import moa.job
-import moa.archive
 from moa import runMake
 import moa.conf
 import moa.info
@@ -50,8 +49,7 @@ import moa.plugins
 import moa.moaCommands
 
 ## Initialize the logger
-import moa.logger
-l = moa.logger.l
+import moa.logger as l
 
 ## A hack to set verbosity before reading command line arguments
 if '-v' in sys.argv:

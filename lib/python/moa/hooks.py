@@ -24,8 +24,7 @@ Define moa hooks
 import os
 from moa.exceptions import *
 import moa.info
-import moa.logger
-l = moa.logger.l
+import moa.logger as l
 
 moaHooks = {}
 

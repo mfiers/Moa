@@ -26,8 +26,7 @@ import re
 import optparse
 
 import moa.project
-import moa.logger
-l = moa.logger.l
+import moa.logger as l
 
 
 class MOAJOB:

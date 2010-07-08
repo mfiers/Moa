@@ -30,8 +30,7 @@ import optparse
 import moa.conf
 import moa.info
 import moa.conf
-import moa.logger
-l = moa.logger.l
+import moa.logger as l
 
 def defineCommands(data):
     data['commands']['pack'] = { 

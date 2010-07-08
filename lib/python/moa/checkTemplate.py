@@ -26,7 +26,7 @@ import sys
 import shutil
 import subprocess
 
-from moa.logger import l
+import moa.logger as l
 import moa.job
 
 MOABASE = os.environ["MOABASE"]

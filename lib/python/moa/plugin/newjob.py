@@ -22,9 +22,8 @@ Git
 """
 import optparse
 import moa.job
-import moa.logger
+import moa.logger as l
 import moa.plugin
-l = moa.logger.l 
 
 #class Newjob(moa.plugin.BasePlugin):
 #    pass

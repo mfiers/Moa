@@ -36,9 +36,8 @@ import jinja2
 import moa.runMake
 import moa.info
 import moa.job
-import moa.logger
+import moa.logger as l
 import moa.plugin
-l = moa.logger.l
 
 MOABASE=os.environ['MOABASE']
 JENV = None

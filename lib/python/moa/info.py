@@ -26,7 +26,7 @@ import time
 import commands
 import subprocess
 
-from moa.logger import l
+import moa.logger as l
 from moa.exceptions import *
 import moa.utils
 import moa.runMake

@@ -27,11 +27,9 @@ import re
 import sys
 
 import moa.utils
-import moa.logger
+import moa.logger as l
 import moa.conf
 import moa.job
-
-l = moa.logger.l
 
 def _projectRoot(path):
     """

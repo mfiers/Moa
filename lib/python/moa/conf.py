@@ -26,13 +26,12 @@ import os
 import sys
 import shlex
 
-import moa.logger
+import moa.logger as l
 from moa.logger import exitError
 import moa.utils
 import moa.info
 from moa.exceptions import *
 
-l = moa.logger.l
 
 def parseClArgs(args):
     """

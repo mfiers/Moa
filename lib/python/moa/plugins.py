@@ -27,7 +27,7 @@ import os
 import sys
 import UserDict
 import moa.info
-from moa.logger import l
+import moa.logger as l
 
 ## Load & handle plugins
 class Plugins(UserDict.DictMixin):

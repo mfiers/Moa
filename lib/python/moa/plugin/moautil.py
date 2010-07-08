@@ -26,7 +26,7 @@ import re
 import sys
 import shutil
 import optparse
-from moa.logger import l
+import moa.logger as l
 import moa.info
 
 def defineCommands(data):

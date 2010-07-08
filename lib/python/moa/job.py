@@ -27,14 +27,12 @@ import sys
 import tempfile
 
 import moa.utils
-import moa.logger
+import moa.logger as l
 import moa.conf
 import moa.runMake
 
 from moa.exceptions import *
 
-l = moa.logger.l
-    
 MOABASE = os.environ["MOABASE"]
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 

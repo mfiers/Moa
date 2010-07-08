@@ -26,9 +26,8 @@ import re
 import optparse
 
 import moa.project
-import moa.logger
-import moa.moajob
-l = moa.logger.l
+import moa.logger as l
+import moa.moajob as l
 
 import moa.moajob
 

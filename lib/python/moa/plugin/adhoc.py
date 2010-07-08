@@ -27,9 +27,8 @@ import sys
 import optparse
 
 import moa.job
-import moa.logger
+import moa.logger as l
 import moa.plugin
-l = moa.logger.l
 
 def _sourceOrTarget(g):
     """
@@ -98,18 +97,19 @@ def createAdhoc(data):
     elif ('$^' in command) or ('$?' in command):
         mode = 'all'
         searchGlobs = False
-        l.warn("Observed '$^' or '$?', setting mode to 'all'")
-        l.warn("Processing all files in one go")
+        l.warning("Observed '$^' or '$?', setting mode to 'all'")
+        l.warning("Processing all files in one go")
 
     #see if we have to look for file globs
     if not searchGlobs:
         l.info("No recognizable globs found")
     else:
-        #it appears to make sens to see if there is a glob in the command
-        #reFindGlob = re.compile(r"^(.*)\s+([^ *?]+" +
-        #                        os.sep +
-        #                        r")([^ *]*\*[^ *]*?)((?:\.[^ .*]+)?)\s+(.*)$")
-        refindGlob = re.compile(r"([^ *]+" + os.sep + ")?([^ *]*\*[^ *]*?)((?:\.[^ .*]+)?)")
+        #it appears to make sense to see if there is a glob in the command
+        refindGlob = re.compile(
+            r"([^ *]+" \
+            + os.sep \
+            + ")?([^ *]*\*[^ *]*?)((?:\.[^ .*]+)?)")
+        
         globs = []
         for g in refindGlob.finditer(command):
             globs.append(g)
@@ -183,10 +183,10 @@ def createAdhoc(data):
     l.info(" - set mode             : %s" % mode)
 
     if mode == 'seq':
-        l.warn("Note: adhoc is running in sequential ('seq') mode. If ")
-        l.warn("you are confident that jobs do not interfere, you might ")
-        l.warn("consider setting adhoc to parallel operation:")
-        l.warn("$ set adhoc_mode=par")
+        l.warning("Note: adhoc is running in sequential ('seq') mode. If ")
+        l.warning("you are confident that the individual jobs do not interfere, you might ")
+        l.warning("consider setting adhoc to parallel operation:")
+        l.warning("$ set adhoc_mode=par")
                
     l.debug('setting parameters %s' % params)
     

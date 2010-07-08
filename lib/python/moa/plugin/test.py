@@ -27,8 +27,7 @@ import optparse
 
 import moa.unittests
 import moa.info
-import moa.logger
-l = moa.logger.l
+import moa.logger as l
 
 def defineCommands(data):
     data['commands']['test'] = {

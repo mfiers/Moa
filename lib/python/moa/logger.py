@@ -127,7 +127,8 @@ class XTRFormatterD(logging.Formatter):
             
         return logging.Formatter.format(self, record)
 
-l = logging.getLogger('moa')
+LOGGER  = logging.getLogger('moa')
+
 handler = logging.StreamHandler()
 logmark = chr(27) + '[0;44mU' + \
           chr(27) + '[0m ' 
@@ -138,24 +139,36 @@ debugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s: %(messa
 debugFormatterX = XTRFormatterD(
     '#' * 80 + '\n##%(colon)s%(vis1)s%(coloff)s %(asctime)s\n%(traceback)s\n #@ %(filepathname)s:%(lineno)d\n%(message)s')
 
-
 handler.setFormatter(normalFormatter)
-l.addHandler(handler)
+LOGGER.addHandler(handler)
 
-l.setLevel(logging.INFO)
+LOGGER.setLevel(logging.INFO)
 
 def exitError(message):
-    l.fatal(message)
+    LOGGER.fatal(message)
     sys.exit(-1)
 
 def setVerbose():
     handler.setFormatter(debugFormatter)
-    l.setLevel(logging.DEBUG)
+    LOGGER.setLevel(logging.DEBUG)
 
 def setSilent():
     handler.setFormatter(normalFormatter)
-    l.setLevel(logging.CRITICAL)
+    LOGGER.setLevel(logging.CRITICAL)
 
 def setInfo():
     handler.setFormatter(normalFormatter)
-    l.setLevel(logging.INFO)
+    LOGGER.setLevel(logging.INFO)
+
+def debug(*args, **kwargs):
+    LOGGER.debug(*args, **kwargs)
+def info(*args, **kwargs):
+    LOGGER.info(*args, **kwargs)
+def warning(*args, **kwargs):
+    LOGGER.warning(*args, **kwargs)
+def error(*args, **kwargs):
+    LOGGER.error(*args, **kwargs)
+def critical(*args, **kwargs):
+    LOGGER.critical(*args, **kwargs)
+
+    

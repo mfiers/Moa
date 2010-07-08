@@ -124,8 +124,12 @@ def readBAM(fileName):
         rl = len(l1[9])
         seqid = l1[2]
         start1 = int(l1[3])
-        stop1 = start1 + rl
         start2 = int(l2[3])
+
+        if start1 > start2:
+            start1, start2 = start2, start1
+            
+        stop1 = start1 + rl
         stop2 = start2 + rl
 
         yield seqid, start1, stop1, start2, stop2, 
@@ -156,8 +160,13 @@ def doStats(bamname, seqInfo, readPairs):
     stats['median'] = np.median(insertSizes)
     stats['average'] = np.average(insertSizes)
 
+
+    maxHist = 10 * stats['median']
+    
     # generate a histogram
-    hist, edges = np.histogram(insertSizes, bins=500, range=(0, 10 * stats['median']), new=True)
+    l.debug('stats %s' % stats)
+    l.debug('creating a histogram %s' % str((0, maxHist)))
+    hist, edges = np.histogram(insertSizes, bins=500, range=(0, maxHist))
     mids = 0.5 * (edges[1:] + edges[:-1])
 
     #smooth the histogram (using a moving average)
@@ -205,6 +214,7 @@ def doStats(bamname, seqInfo, readPairs):
               label='rigth border peak')
 
     ax.legend(prop={'size' :'x-small'})
+    ax.set_xlim(0, min(maxHist, (2 * np.max(insertSizes))))
     plt.savefig(os.path.join('stats', bamname + '.hist.png'))
 
     #write stats file for this library
@@ -260,7 +270,6 @@ def parseBam(seqInfo, inputFileName):
         i += 1
         if i > limit: break
         if i % int(1e7) == 0: l.info("%d reads processed" % i)
-
 
         readPairs[seqId]['start1'].append(start1)
         readPairs[seqId]['stop1'].append(stop1)
@@ -399,7 +408,7 @@ def readBamDataFromDisk(seqInfo, bamBase):
     readPairs = {}
     minSeqLen = int(float(options.minLen))
     for seqId in seqInfo.keys():
-
+        l.debug("reading bam data for seqId: %s" % seqId)
         if seqInfo[seqId]['length'] < minSeqLen: continue
         
         rp = {}

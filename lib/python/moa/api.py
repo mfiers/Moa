@@ -35,7 +35,7 @@ import moa.conf
 import moa.job
 import moa.utils
 from moa.exceptions import *
-from moa.logger import l
+import moa.logger as l
 
 MOABASE = os.environ['MOABASE']
 

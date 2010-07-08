@@ -15,13 +15,13 @@ import logging
 import optparse
 import tempfile
 import subprocess as sp
-import rpy2.robjects as robjects
-import rpy2.robjects.numpy2ri
+#import rpy2.robjects as robjects
+#import rpy2.robjects.numpy2ri
 
 ## INITIALIZE, VARIABLES, HELPER FUNCTIONS
 VERSION = 0.1
 random.seed()
-r = robjects.r
+#r = robjects.r
 
 colors = {
     'r' : '#E81717',

@@ -29,7 +29,7 @@ import moa.conf
 import moa.job
 import moa.info
 import moa.plugin
-from moa.logger import l
+import moa.logger as l
 import textwrap
 
 def defineCommands(data):

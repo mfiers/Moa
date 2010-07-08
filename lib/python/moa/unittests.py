@@ -26,7 +26,8 @@ import sys
 import doctest
 import tempfile
 
-from moa.logger import l, setSilent, setInfo, setVerbose
+import moa.logger as l
+from moa.logger import setSilent, setInfo, setVerbose
 
 import moa.lock
 import moa.api

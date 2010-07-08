@@ -27,7 +27,7 @@ import os
 import sys
 import textwrap
 import UserDict
-from moa.logger import l
+import moa.logger as l
 
 
 ## Command definitions
