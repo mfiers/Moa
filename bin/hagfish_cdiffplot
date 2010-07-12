@@ -139,15 +139,8 @@ def quant(x, w):
     
 if __name__ == '__main__':
 
-    # if options.seqId:
-    #     seqId = options.seqId
-    # else:
-    #     seqId = os.path.basename(inputFile)\
-    #             .replace('.coverage.npz', '')\
-    #             .replace('.combined', '')\
-    #             .replace('.npz', '')
-
-    l.info("and I'm calling this sequence: %s" % seqId)
+    l.info("This is sequence: %s" % seqId)
+    
     if options.inputFile:
         inputFile = options.inputFile
     else:
@@ -183,12 +176,6 @@ if __name__ == '__main__':
 
     r_all = r_low + r_high + r_ok
     r_okh = 0.5 * r_ok
-
-    #if pStart > 0 or pEnd < seqLen:
-    #    r_ok = r_ok[pStart:pEnd]
-    #    r_low = r_low[pStart:pEnd]
-    #    r_high = r_high[pStart:pEnd]
-    #    r_all = r_all[pStart:pEnd]
 
     #max value - else all space is taken up by the peaks
     
@@ -248,16 +235,16 @@ if __name__ == '__main__':
             color="#ff8888")
 
 
-        l.info("ok-median %f" % np.median(r_ok))
-        q = r_ok - (np.maximum(np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok, 0))
+        #l.info("ok-median %f" % np.median(r_ok))
+        #q = r_ok - (np.maximum(np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok, 0))
 
-        s = r_ok - (np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok)
+        #s = r_ok - (np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok)
         medOk = np.median(r_ok)
         sa = (medOk * (1 - np.exp(-1 * (r_high + r_low))))
         print sa
         #ax.plot(r_x[nstart:nstop], q[nstart:nstop], color='darkblue', linewidth=1)
-        ax.plot(r_x[nstart:nstop], s[nstart:nstop], color='blue', linewidth=1)
-        ax.plot(r_x[nstart:nstop], sa[nstart:nstop], color='purple', linewidth=0.5)
+        #ax.plot(r_x[nstart:nstop], s[nstart:nstop], color='blue', linewidth=1)
+        #ax.plot(r_x[nstart:nstop], sa[nstart:nstop], color='purple', linewidth=0.5)
 
         SM = True
         if SM:
@@ -266,10 +253,6 @@ if __name__ == '__main__':
             s_high = smooth(r_high, window=_w, window_len=_wl)
             s_ok = smooth(r_ok, window=_w, window_len=_wl)
             s_low = smooth(r_low, window=_w, window_len=_wl)
-
-#        ax.plot(r_x[nstart:nstop], s_high[nstart:nstop] + s_ok[nstart:nstop] + s_low[nstart:nstop], color='black', linewidth=1)
-#        ax.plot(r_x[nstart:nstop], s_ok[nstart:nstop] + s_low[nstart:nstop], color='black', linewidth=1)
-#        ax.plot(r_x[nstart:nstop], s_low[nstart:nstop], color='black', linewidth=1)
 
 
         if SM:

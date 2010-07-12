@@ -28,9 +28,6 @@ parser.add_option('-i', dest='inputFile',
 parser.add_option('-l', dest='log', action='store_true',
                   help='take the log10 of the coverage')
 
-parser.add_option('-A', dest='alayout', action='store_true',
-                  help='Alternative layout')
-
 parser.set_defaults(yfrac=0.95)
 
 parser.add_option('-Y', dest='yfrac', type='float', help='percentage of the "ok" '
@@ -44,6 +41,7 @@ parser.add_option('--ymax', dest='ymax',
                   help='Max value for the y axis')
 parser.add_option('-o', dest='outfile',
                   help='Output file name')
+parser.set_defaults(format=['png'])
 parser.add_option('-f', dest='format', action='append',
                   help='Output format (may be defined more than once)')
 
@@ -152,114 +150,50 @@ if __name__ == '__main__':
             ax.set_title('Coverage plot for "%s" (%d to %d)' % (
                     seqId, pStart, pEnd))
 
-        if options.alayout:
-            if options.ymax:
-                maxY = int(options.ymax)
-                minY = -maxY
-            else:
-                maxY = int(quant(r_okh[pStart:pEnd], options.yfrac))
-                minY = -maxY
-
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_okh[nstart:nstop],
-                r_okh[nstart:nstop] + r_high[nstart:nstop],
-                color="#aa0000")
-
-            ax.fill_between(
-                r_x[nstart:nstop],
-                -1 * r_okh[nstart:nstop],
-                r_okh[nstart:nstop],
-                color="green")
-
-            ax.fill_between(
-                r_x[nstart:nstop],
-                -r_okh[nstart:nstop],
-                -(r_okh[nstart:nstop] + r_low[nstart:nstop]),
-                color="#0000aa")
-
-            ax.plot( r_x[nstart:nstop],
-                     r_okh[nstart:nstop],
-                     color='black')
-
-            ax.plot( r_x[nstart:nstop],
-                     -r_okh[nstart:nstop],
-                     color='black')
-
-            ax.plot( r_x[nstart:nstop],
-                     r_okh[nstart:nstop] + r_high[nstart:nstop],
-                     color='black')
-
-            ax.plot( r_x[nstart:nstop],
-                     -(r_okh[nstart:nstop] + r_low[nstart:nstop]),
-                     color='black')
-
-            yAx = ax.get_yaxis()
-            yAx.set_ticks(range(minY, maxY, 200))
-            ax.set_ylim(minY,maxY)
-
+        if options.ymax:
+            maxY = int(options.ymax)
+            minY = -maxY
         else:
-            if options.ymax:
-                maxY = int(options.ymax)
-            else:
-                maxY1 = int(quant(r_all[pStart:pEnd], options.yfrac))
-                maxY2 = int(quant(r_ok[pStart:pEnd], options.yfrac))
-                maxY = min(maxY1, maxY2 * 2)
-            minY = 0
+            maxY = int(quant(r_okh[pStart:pEnd], options.yfrac))
+            minY = -maxY
 
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_z[nstart:nstop],
-                r_low[nstart:nstop],
-                color="#0000aa")
+        ax.fill_between(
+            r_x[nstart:nstop],
+            r_okh[nstart:nstop],
+            r_okh[nstart:nstop] + r_high[nstart:nstop],
+            color="#aa0000")
 
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_low[nstart:nstop],
-                r_low[nstart:nstop] + r_ok[nstart:nstop],
-                color="#00aa00")
+        ax.fill_between(
+            r_x[nstart:nstop],
+            -1 * r_okh[nstart:nstop],
+            r_okh[nstart:nstop],
+            color="green")
 
-            ax.fill_between(
-                r_x[nstart:nstop],
-                r_low[nstart:nstop] + r_ok[nstart:nstop],
-                r_low[nstart:nstop] + r_ok[nstart:nstop] + r_high[nstart:nstop],
-                color="#aa0000")
+        ax.fill_between(
+            r_x[nstart:nstop],
+            -r_okh[nstart:nstop],
+            -(r_okh[nstart:nstop] + r_low[nstart:nstop]),
+            color="#0000aa")
 
-            ax.plot( r_x[nstart:nstop],
-                     r_low[nstart:nstop],
-                     color='black')
+        ax.plot( r_x[nstart:nstop],
+                 r_okh[nstart:nstop],
+                 color='black')
 
-            ax.plot( r_x[nstart:nstop],
-                     r_low[nstart:nstop] + r_ok[nstart:nstop],
-                     color='black')
+        ax.plot( r_x[nstart:nstop],
+                 -r_okh[nstart:nstop],
+                 color='black')
 
-            ax.plot( r_x[nstart:nstop],
-                     r_low[nstart:nstop] + r_ok[nstart:nstop] + r_high[nstart:nstop],
-                     color='black')
+        ax.plot( r_x[nstart:nstop],
+                 r_okh[nstart:nstop] + r_high[nstart:nstop],
+                 color='black')
 
+        ax.plot( r_x[nstart:nstop],
+                 -(r_okh[nstart:nstop] + r_low[nstart:nstop]),
+                 color='black')
 
-            l.info("ok-median %f" % np.median(r_ok))
-            q = r_ok - (np.maximum(np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok, 0))
-
-
-            s = r_ok - (np.minimum(np.median(r_ok), (r_high + r_low)) - r_ok)
-            
-            ax.plot(r_x[nstart:nstop],
-                    q[nstart:nstop],
-                    color='darkblue',
-                    linewidth=1)
-
-            ax.plot(r_x[nstart:nstop],
-                    s[nstart:nstop],
-                    color='blue',
-                    linewidth=1)
-
-            yAx = ax.get_yaxis()
-            yAx.set_ticks(range(100, maxY, 200))
-            ax.set_ylim(-maxY,3*maxY)
-
-
-
+        yAx = ax.get_yaxis()
+        yAx.set_ticks(range(minY, maxY, 200))
+        ax.set_ylim(minY,maxY)
 
         ax.set_xlim(nstart,nstop+1)
         

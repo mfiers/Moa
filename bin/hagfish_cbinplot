@@ -45,6 +45,7 @@ parser.add_option('--ymax', dest='ymax',
                   help='Max value for the y axis')
 parser.add_option('-o', dest='outfile',
                   help='Output file name')
+parser.set_defaults(format=['png'])
 parser.add_option('-f', dest='format', action='append',
                   help='Output format (may be defined more than once)')
 
