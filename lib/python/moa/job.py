@@ -237,6 +237,8 @@ def newJob(template,
     l.debug("- in wd %s" % wd)
 
     #is this a valid template??
+
+    #TODO: do something with the results of this check
     check(template)
             
     if not wd: wd = os.getcwd()
@@ -265,6 +267,7 @@ def newJob(template,
         l.debug('creating a new moa makefile in %s' % ( wd))
 
     makefile = os.path.join(wd, 'Makefile')
+    t
     moamk = os.path.join(wd, 'moa.mk')
     moamklock = os.path.join(wd, 'moa.mk.lock')
     
