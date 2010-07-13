@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 import matplotlib as mpl
+#import matplotlib.transforms
 #import matplotlib.rc as rc
 import pylab as pl
 
@@ -32,109 +33,143 @@ plot = hagfishPlot(options, data)
 
 class plotter(hagfishPlotBand):
     
-    def plotBand(self, layer):
-        self.l.debug("plotting layer %d" % layer)
-
-        if layer == 0:
-            self.plotLayer0()
-        elif layer == 1:
-            self.plotLayer1()
-        elif layer == 2:
-            self.plotLayer2()
-
-
-    def plotLayer0(self):
+    def plotBand(self):
+        self.l.debug("Start plotting")
         yc = self.yCorrection
-        ly = 0
+
+        ## print lightly colored high/low/good
+        ## to server a background
+        self.l.debug("Plot background")
+
+        ## bg high
         self.ax.fill_between(
             self.locx,
             self.okh + yc,
             self.okh + self.high + yc,
             alpha = 0.6,
-            zorder = ly,
+            zorder = 0,
             color=COLOR2)
 
+        ### bg low
         self.ax.fill_between(
             self.locx,
             -self.okh + yc,
             (-self.okh - self.low) + yc,
             alpha=0.6,
             color=COLOR3,
-            zorder=ly)
-        
-        self.ax.plot(
+            zorder=0)
+
+        ### bg ok
+        self.ax.fill_between(
             self.locx,
+            -self.okh + yc,
+            self.okh + yc,
+            alpha=0.6,
+            color=COLOR1,
+            zorder=0)
+        
+        ## outlines
+        self.ax.plot( 
+            self.locx, 
             self.okh + self.high + yc,
             color = 'black', linewidth=0.5,
-            zorder=ly)
+            zorder=0)
 
         self.ax.plot(
             self.locx,
             -(self.okh + self.low) + yc,
             color = 'black',
             linewidth=0.5,
-            zorder=ly)
+            zorder=0)
 
+        ## Reprint High/ok/low - now with a cutof to stay
+        ## in the band
 
-    def plotLayer1(self):
-        yc = self.yCorrection
-        ly = 1
+        #high
         self.ax.fill_between(
             self.locx,
             np.minimum(self.bandTop, self.okh + yc),
             np.minimum(self.bandTop, self.okh + self.high + yc),
-            alpha = 0.8,
-            zorder = ly,
+            alpha = 0.8,\
+            zorder = 1,
             color=COLOR2)
         
+        #low
         self.ax.fill_between(
             self.locx,
             np.maximum(self.bandBottom, -self.okh + yc),
             np.maximum(self.bandBottom, (-self.okh - self.low) + yc),
             alpha=0.8,
             color=COLOR3,
-            zorder=0)
-
-        self.ax.plot(
-            self.locx,
-            np.minimum(self.bandTop, self.okh + self.high + yc),
-            color = 'black', linewidth=0.5,
-            zorder=ly)
-
-        self.ax.plot(
-            self.locx,
-            np.maximum(self.bandBottom, -(self.okh + self.low) + yc),
-            color = 'black',
-            linewidth=0.5,
-            zorder=ly)
+            zorder=1)
         
-
-    def plotLayer2(self):
-        yc = self.yCorrection
-        ly=2
+        #ok
         self.ax.fill_between(
             self.locx,
-            -self.okh + yc,
-            self.okh + yc,
-            alpha = 1,
+            np.minimum(self.bandTop, self.okh + yc),
+            np.maximum(self.bandBottom, -self.okh + yc),
+            alpha=0.8,
             color=COLOR1,
-            zorder=ly)
-        
+            zorder=1)
+
+        #plot new outlines
+        #filter them, so that we only have outlines where the
+        #plot remains inside the band                
+
+        self.ax.plot(
+            self.locx,
+            self.okh + self.high + yc,
+            color = 'black', linewidth = 0.5,
+            zorder =5,
+            clip_path=self.patch
+            )
+
         self.ax.plot(
             self.locx,
             self.okh + yc,
-            color = 'black',
-            linewidth=0.5,
-            zorder=ly)
+            color = 'black', linewidth = 0.5,
+            zorder =5,
+            clip_path=self.patch
+            )
 
         self.ax.plot(
-            self.locx,
-            -self.okh + yc,
-            color = 'black',
-            linewidth=0.5,
-            zorder=ly)
+             self.locx,
+             -(self.okh + self.low) + yc,
+             color = 'black',
+             linewidth=0.5,
+             clip_path=self.patch,
+             zorder=5)
+
+        self.ax.plot(
+             self.locx,
+             -self.okh + yc,
+             color = 'black',
+             linewidth=0.5,
+             clip_path=self.patch,
+             zorder=5)
 
 
+        # self.ax.fill_between(
+        #     self.locx,
+        #     -self.okh + yc,
+        #     self.okh + yc,
+        #     alpha = 1,
+        #     color=COLOR1,
+        #     zorder=2)
+        
+        # self.ax.plot(
+        #     self.locx,
+        #     self.okh + yc,
+        #     color = 'black',
+        #     linewidth=0.5,
+        #     zorder=2)
+
+        # self.ax.plot(
+        #     self.locx,
+        #     -self.okh + yc,
+        #     color = 'black',
+        #     linewidth=0.5,
+        #     zorder=2)
 
     def setYticks2(self):
         self.plot.yTicks2.append(self.yCorrection - self.data.medianH)

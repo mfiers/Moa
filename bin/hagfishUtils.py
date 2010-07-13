@@ -3,8 +3,11 @@ import math
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.path as mpath
+import matplotlib.patches as mpatches
 import matplotlib.mlab as mlab
 import matplotlib as mpl
+import matplotlib.transforms
 import logging
 import optparse
 
@@ -215,9 +218,7 @@ class hagfishPlot:
             if band == self.noBands -1:
                 self.tminY = yCorrect - self.maxY
 
-        for layer in range(layers):
-            for b in self.bands:
-                b.plotBand(layer)
+            b.plotBand()
             
         y = self.ax.get_yaxis()
         y.set_ticks(self.yTicks)
@@ -287,7 +288,30 @@ class hagfishPlotBand:
                        (0.5 * self.plot.YCorrPerBand)
         self.bandBottom = self.yCorrection - \
                        (0.5 * self.plot.YCorrPerBand)
-        
+        self.l.debug("defining band stats")
+        self.l.debug("   ycorrection %s" % self.yCorrection)
+        self.l.debug("   bandTop     %s" % self.bandTop)
+        self.l.debug("   bandBottom  %s" % self.bandBottom)
+        #TransformedBbox(rect[0].get_bbox(), ax.transData) 
+        #self.bbox = matplotlib.transforms.TransformedBbox(
+        #     matplotlib.transforms.Bbox(
+        #        np.array([[0,self.bandBottom],
+        #                  [self.plot.ntPerBand,self.bandTop]])),
+        #    self.ax.transData)
+        _pd = [
+            (mpath.Path.MOVETO, (0, self.bandTop)),
+            (mpath.Path.LINETO, (self.plot.ntPerBand, self.bandTop)),
+            (mpath.Path.LINETO, (self.plot.ntPerBand, self.bandBottom)),
+            (mpath.Path.LINETO, (0, self.bandBottom)),
+            (mpath.Path.CLOSEPOLY, (0, self.bandTop)),
+            ]
+        codes, verts = zip(*_pd)
+        self.bpath = mpath.Path(verts, codes)
+        self.transform = self.ax.get_transform()
+        self.patch = mpatches.PathPatch(self.bpath, facecolor='orange', alpha=0, lw=0)
+        self.ax.add_patch(self.patch)
+
+
 
 ################################################################################
 ## extra routines for dealing with numpy arrays
