@@ -267,7 +267,6 @@ def newJob(template,
         l.debug('creating a new moa makefile in %s' % ( wd))
 
     makefile = os.path.join(wd, 'Makefile')
-    t
     moamk = os.path.join(wd, 'moa.mk')
     moamklock = os.path.join(wd, 'moa.mk.lock')
     

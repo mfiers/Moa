@@ -58,15 +58,12 @@ def configSet(data):
 
     #see if we need to query the user for input somehwere
     for a in args:
-        rea = re.match(r'([a-zA-Z0-9_]+)(\+?=)\?', a)
-        if rea:
-            ky = rea.groups()[0]
-            op = rea.groups()[1]
+        if not '=' in a:
 
-            df = moa.conf.getVar(wd, ky)
-            vl = moa.utils.askUser("%s="%ky,df)
+            df = moa.conf.getVar(wd, a)
+            vl = moa.utils.askUser("%s="%a,df)
 
-            newArgs.append("%s%s%s" % (ky, op, vl))
+            newArgs.append("%s%s%s" % (a, '=', vl))
         else:
             newArgs.append(a)
 

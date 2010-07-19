@@ -186,7 +186,7 @@ def createAdhoc(data):
         l.warning("Note: adhoc is running in sequential ('seq') mode. If ")
         l.warning("you are confident that the individual jobs do not interfere, you might ")
         l.warning("consider setting adhoc to parallel operation:")
-        l.warning("$ set adhoc_mode=par")
+        l.warning("$ moa set adhoc_mode=par")
                
     l.debug('setting parameters %s' % params)
     
