@@ -33,7 +33,7 @@ $(foreach v,$(moa_must_define) $(moa_may_define), \
 	$(if $($v),, \
 		$(if $($v_default), \
 			$(eval $v=$($v_default))) ) \
-	$(if $($(v)_formatter),$(eval $(v)_f=$(call $(v)_formatter,$($v)))) \
+	$(if $($(v)_formatter),$(eval $(v)_f=$(if $($(v)),$(call $(v)_formatter,$($v))))) \
 )
 
 ##load the plugins: contains core - post definition
