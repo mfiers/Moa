@@ -148,7 +148,7 @@ def _checkRunlock(d):
 
     #does the file exist?
     if not os.path.exists(runlockfile):
-        return False
+        return False, None
     
     try:
         with open(runlockfile, 'r') as F:    
@@ -156,7 +156,7 @@ def _checkRunlock(d):
             pid = int(pid)
     except IOError, e:
         if e.errno == 2: #file does not exist (anymore?)
-            return False
+            return False, None
         #other error - raise
         raise
     except ValueError, e:
@@ -165,17 +165,22 @@ def _checkRunlock(d):
             #runlock should contain a PID, i.e. an integer
             l.warning("Erroneous lock file (or so it seems) - removing")
             os.unlink(runlockfile)
-            return False
+            return False, None
         raise
-
     
     if not pid:
         os.unlink(runlockfile)
-        return False
+        return False, None
 
     l.debug("Checking pid %d" % pid)
 
-    processName = commands.getoutput("ps -p %d -o comm=" % pid)
+    procInfo = commands.getoutput("ps -p %d -o 'state= comm='" % pid)
+    try:
+        state, processName = procInfo.strip().split(' ', 1)
+    except:
+        state, processName = "", ""
+    l.debug("pid: %d; state: %s; process: %s" % (
+            pid, state, processName))
     if processName != 'make':
         l.warning("Stale lock file (or so it seems) - removing")
         try:
@@ -183,10 +188,11 @@ def _checkRunlock(d):
         except OSError:
             #Probably do not have the rights to remove the runlock file
             #so, ignore it
+            l.warning("Failed attempt to remove the runlock file")
             pass
-        return False
+        return False, None
 
-    return True
+    return True, state
 
 
 
@@ -201,6 +207,8 @@ def status(d):
           was successfull
        - failed - A moa job, not doing anything, but the last (background) run
           failed
+       - running - this is a moa job & currently executing (runlock exists)       
+       - paused - this is an executing moa job, but currently paused (runlock exists) 
        - running - this is a moa job & currently executing (runlock exists)       
        - locked - this job is locked (i.e. a lock file exists)
 
@@ -220,14 +228,18 @@ def status(d):
     failedfile = os.path.join(d, 'moa.failed')
     lockfile = os.path.join(d, 'lock')
     runlockfile = os.path.join(d, 'moa.runlock')
-    if _checkRunlock(d):
+    isRunning, state = _checkRunlock(d)
+    if isRunning and state == 'T':
+        return 'paused'
+    elif isRunning:
         return "running"
-    if os.path.exists(lockfile):
+    elif os.path.exists(lockfile):
         return "locked"
-    if os.path.exists(successfile):
+    elif os.path.exists(successfile):
         return "success"
-    if os.path.exists(failedfile):
+    elif os.path.exists(failedfile):
         return "failed"
+
     return "waiting"
 
 def getTemplateFile(name):
