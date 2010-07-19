@@ -19,32 +19,38 @@
 
 include $(MOABASE)/template/moa/prepare.mk
 
-moa_id = bwa_index
-template_title = Bwa index builder
-template_description = Builds a bwa index from a reference sequence
+moa_id = bwa_aln
+template_title = BWA align
+template_description = Use bwa to aling a set of fastq reads against a	\
+  db
 
 #########################################################################
 # Prerequisite testing
 moa_prereq_simple += bwa
 
 #variables
-$(call moa_fileset_define,bwa_index_input,fasta,Sequence files used to build a bwa database)
+$(call moa_fileset_define,bwa_aln_input,fq,Fastq input files)
 
-moa_must_define += bwa_index_name
-bwa_index_name_help = Name of the bwa index to create
-bwa_index_name_type = string
+moa_must_define += $(moa_id)_db
+$(moa_id)_db_help = bwa database to align against
+$(moa_id)_db_type = file
+
+moa_may_define += $(moa_id)_seed_len
+$(moa_id)_seed_len_help = Seed length
+$(moa_id)_seed_len_type = integer
+$(moa_id)_seed_len_default =
+$(moa_id)_seed_len_formatter = -l $(1)
+
 
 include $(MOABASE)/template/moa/core.mk
 
-$(fastafile): 
-	cat $^ > $@
+$(call moa_fileset_remap_nodir,bwa_aln_input,bwa_aln_output,sai)
 
-$(bwa_index_name).amb: %.amb : $(bwa_index_input_files)
-	cat $^ | bwa index -p $* -a is -
-	touch $*
+$(bwa_aln_output_files): %.sai: $(bwa_aln_input_dir)/%.$(bwa_aln_input_extension)
+	bwa aln $($(moa_id)_db) $($(moa_id)_seed_len_f) $< -f $@
 
-bwa_index: $(bwa_index_name).amb
+bwa_aln: $(bwa_aln_output_files)
 
-bwa_index_clean:
-	-rm -f $(bwa_index_name).*
+bwa_aln_clean:
+	-rm -f *.sai
 
