@@ -73,7 +73,7 @@ def moakill(data):
 
     pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
     l.critical("killing job %d" % pid)
-    os.kill(pid)
+    os.kill(pid, 9)
 
 def moapause(data):
     """

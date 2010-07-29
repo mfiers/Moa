@@ -61,6 +61,9 @@ parser.add_option('-l', '--list', dest='list',
 parser.add_option('-f', '--fasta', dest='fasta',
     help = 'fasta file to extract from')
 
+parser.add_option('-o', '--order', dest='order', action='store_true',
+    help = 'keep the order of the list')
+
 parser.add_option('-R', '--regex', dest='regex',
                    help='regular expression to extract the identifier ' + \
                       'from the fasta headers')
@@ -76,12 +79,21 @@ def log(m):
     sys.stderr.write("fastaextractor: %s\n" % m)
 
 if options.list == '-':
-    ids = sys.stdin.read().split()
+    rawIds = sys.stdin.read().split()
 else:
-    ids = open(options.list).read().split()
+    rawIds = open(options.list).read().strip().split("\n")
+
+ids = [x.split()[0] for x in rawIds]
+idsInfo = dict([(x.split()[0],x) for x in rawIds])
 
 log("read %d ids" % len(ids))
         
+import string
+def rc(sequence):
+    return sequence.upper().translate(string.maketrans("ATCG", "TAGC"))[::-1]
+
+output = {}
+
 i = 0
 cre = None
 if options.regex:
@@ -91,14 +103,29 @@ for seqId, header, seq in fastareader(options.fasta):
 
     if cre: testId = cre.search("%s %s" % (seqId, header)).groups()[0]
     else: testId = seqId
-
     if not testId in ids: continue
 
-    i += 1
-    print ">%s %s" % (seqId, header)
-    while seq:       
-        print "%s" % seq[:80]
-        seq = seq[80:]
+    if 'antisense' in idsInfo[testId]:
+        seq = rc(seq)
+        header += " reverse complement"
+
+    if options.order:
+        output[seqId] = (header, seq)
+    else:
+        i += 1
+        print ">%s %s" % (seqId, header)
+        while seq:       
+            print "%s" % seq[:80]
+            seq = seq[80:]
+
+if options.order:
+    for seqId in ids:
+        header, seq = output[seqId]
+        i += 1
+        print ">%s %s" % (seqId, header)
+        while seq:       
+            print "%s" % seq[:80]
+            seq = seq[80:]
 
 log("written %d sequences" % i)
 
