@@ -39,9 +39,7 @@ ncbi_db_type = string
 ncbi_db_default = nuccore
 
 moa_may_define += ncbi_sequence_name
-ncbi_sequence_name_help = Sequence name to download. When this			\
-  parameter is set, the template assumes that only one sequence is to	\
-  be downloaded, the rest will be discarded.
+ncbi_sequence_name_help = Name of the file to write the downloaded sequences to.
 ncbi_sequence_name_type = string
 ncbi_sequence_name_default = 
 
@@ -80,9 +78,11 @@ ncbi_post:
 .PHONY: ncbi
 ncbi: fasta.tmp
 	$e if [[ -n "$(ncbi_sequence_name)" ]]; then \
-		cat fasta.tmp \
-			| sed "s/^>.*$$/>$(ncbi_sequence_name)/" \
-			| fastaSplitter -f - -n 1 -o fasta; \
+		[ `grep '>' fasta.tmp | wc -l` == 1 ] \
+			&& cat fasta.tmp \
+				| sed "s/^>.*$$/>$(ncbi_sequence_name)/" \
+				| fastaSplitter -f - -n 1 -o fasta \
+			|| ln -f fasta.tmp $(ncbi_sequence_name) -s; \
 	else \
 		if [[ "$(ncbi_skip_split)" == "T" ]]; then \
 			ln fasta.tmp out.fasta \

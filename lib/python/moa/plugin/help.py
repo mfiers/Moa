@@ -81,7 +81,7 @@ def showHelp(data):
 
     if not args:
         if moa.info.isMoaDir(wd):
-            pageTemplateHelp(wd, options, args)
+            pageTemplateHelp(data)
         else:
             printWelcome()
     else:
