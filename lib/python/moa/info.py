@@ -371,7 +371,11 @@ def info(wd):
             parname = None            
             pob = {}
             for v in ls[1:]:
-                k,v = v.split('=', 1)
+                try:
+                    k,v = v.split('=', 1)
+                except:
+                    l.critical("error parsing parameter %s" % v)
+                    raise
                 if k == 'mandatory':
                     if v == 'yes': pob[k] = True
                     else: pob[k] = False
