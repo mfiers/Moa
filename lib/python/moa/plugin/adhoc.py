@@ -78,7 +78,7 @@ def createAdhoc(data):
     command = " ".join(args).strip()
     
     if not command:
-        command=moa.utils.askUser('adhoc_command=', '')
+        command=moa.utils.askUser('adhoc_command:\n>', '')
 
     l.info('Parsing command: %s' % command)
     params = []

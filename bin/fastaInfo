@@ -35,7 +35,8 @@ if not os.environ.has_key('MOABASE'):
 #process the .pth file in the $MOABASE/bin folder !
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 import moa
-from moa.logger import l, setVerbose
+import moa.logger as l
+from moa.logger import setVerbose
 
 usage = \
 """%s [OPTIONS] [STATS]

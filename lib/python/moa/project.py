@@ -112,8 +112,8 @@ def findProjectRoot(path=None):
         res = _projectRoot(cwd)
         if res == 'project':
             return cwd
-        if res == 'out':
-            #not in a moa structure anymore -
-            return None        
 
         cwd = os.path.split(cwd)[0]
+        # assuming that we're not creating moa jobs in the system root
+        # if you do want to, I'm not going to cooperate.
+        if cwd == '/': return None

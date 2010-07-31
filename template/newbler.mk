@@ -22,8 +22,7 @@ include $(shell echo $$MOABASE)/template/moa/prepare.mk
 moa_id = newbler
 template_title = Newbler
 template_description = Run a simple, out of the box, newbler		\
-assembly.															\
-																	\
+assembly. \
 As an extra feature, this template automatically creates uniquely	\
 named links to the two main output fasta files (454AllContigs.fna,	\
 454LargeContigs.fna). This is convenient for subsequence 'gather'	\
@@ -77,22 +76,22 @@ newbler_post:
 	cat 454LargeContigs.fna | sed 's/>contig/>$(nln)_contig/' > $(nln).large.fasta 
 
 .PHONY: newbler
-newbler: 454AllContigs.fna 
-
+newbler: 454AllContigs.fna 454LargeContigs.all.png
 
 #454LargeContigs.all.png 
 
 newbler_cl = runAssembly -ace -o . -consed \
-		$(if $(newbler_mid_configuration),-mcf $(newbler_mid_configuration)) \
-		$(if $(newbler_min_identity), -mi $(newbler_min_identity)) \
-		$(if $(newbler_largecontig_cutoff), -l $(newbler_largecontig_cutoff)) \
-		$(if $(newbler_mids), \
-				$(addprefix $(newbler_mids)@, $(newbler_input_files)),\
-				$(newbler_input_files))
+		$(if $(newbler_mid_configuration),-mcf $(newbler_mid_configuration)) 	\
+		$(if $(newbler_min_identity), -mi $(newbler_min_identity)) 		\
+		$(if $(newbler_largecontig_cutoff), -l $(newbler_largecontig_cutoff)) 	\
+		$(if $(newbler_mids), 							\
+			$(addprefix $(newbler_mids)@, $(newbler_input_files)),		\
+			$(newbler_input_files))
 
 #454AllContigs.fna is one of the files generated
 454AllContigs.fna:
 	echo "Executing"
+	echo "Input files $(newbler_input_files)"
 	echo $(newbler_cl)
 	$(newbler_cl)
 

@@ -41,7 +41,6 @@ $(moa_id)_seed_len_type = integer
 $(moa_id)_seed_len_default =
 $(moa_id)_seed_len_formatter = -l $(1)
 
-
 include $(MOABASE)/template/moa/core.mk
 
 $(call moa_fileset_remap_nodir,bwa_aln_input,bwa_aln_output,sai)

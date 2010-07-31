@@ -57,6 +57,16 @@ if '-v' in sys.argv:
 
 ## Initialze the plugins
 plugins = moa.plugins.Plugins()
+cwd = os.getcwd()
+plugins.register(cwd = cwd)
+plugins.register(MOABASE = MOABASE)
+
+### Determine project root (if there is one)
+projectRoot = moa.project.findProjectRoot()
+if projectRoot:
+    l.debug('Project root is %s' % projectRoot)
+    os.putenv('MOAPROJECTROOT', projectRoot)
+    plugins.register(projectRoot = projectRoot)
 
 ## Command definitions
 moaCommands = moa.moaCommands.Commands()
@@ -121,12 +131,6 @@ os.putenv("MOAARGS", "%s" % " ".join(["'" + str(x) + "'" for x in args]))
 ### Start plugin initialization
 plugins.run('prepare')
 
-### Determine project root (if there is one)
-projectRoot = moa.project.findProjectRoot()
-if projectRoot:
-    l.debug('Project root is %s' % projectRoot)
-    os.putenv('MOAPROJECTROOT', projectRoot)
-
 ## make sure the MOA_THREADS env var is set - this is used from inside
 ## the Makefiles later threads need to be treated different from the
 ## other parameters. multi-threaded operation is only allowed in the
@@ -142,11 +146,6 @@ if options.makedebug:
 
 ## Command dispatcher
 if __name__ == "__main__":
-    cwd = os.getcwd()
-
-    plugins.register(cwd = cwd)
-    plugins.register(MOABASE = MOABASE)
-
     if options.threads > 1:
         l.debug("Running make with %d threads" % options.threads)
 
@@ -164,7 +163,9 @@ if __name__ == "__main__":
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
             l.debug("using a callback for moa %s" % command)
+            plugins.run("pre%s" % command.capitalize())
             plugins.runCallback(moaCommands[command])
+            plugins.run("post%s" % command.capitalize())
             sys.exit()
 
     #No callback, defer this to Make
@@ -186,7 +187,8 @@ if __name__ == "__main__":
                 
     ### Check & fix deprecated template styles
     moa.checkTemplate.checkTemplate(cwd)
-
+    
+    plugins.run("pre%s" % command.capitalize())
     l.debug("Calling make for command %s" % command)
     job = runMake.MOAMAKE(cwd,
                           target = command,
@@ -194,7 +196,8 @@ if __name__ == "__main__":
                           threads = options.threads,
                           makeArgs = makeArgs,
                           background = options.background)
-    returnCode = job.run()    
+    returnCode = job.run()
+    plugins.run("post%s" % command.capitalize())
     sys.exit(returnCode)
 
     # #utilities

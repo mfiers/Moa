@@ -24,6 +24,7 @@ Moa utilities
 import os
 import re
 import sys
+import glob
 import shutil
 import optparse
 import moa.logger as l
@@ -34,6 +35,10 @@ def defineCommands(data):
         'desc' : 'Copy a moa job (only the configuration, not the data), '+
         'use moa cp DIR_FROM DIR_TO',
         'call' : moacp }
+
+    data['commands']['mv'] = {
+        'desc' : 'Move a moa job, ',
+        'call' : moamv }
         
     data['commands']['kill'] = {
         'desc' : 'Kill a running moa job',
@@ -103,7 +108,42 @@ def moaresume(data):
     l.warning("Resming job %d" % pid)
     os.kill(pid, 18)
 
+
+def _noToDir(dir):
+    """
+    Try to resolve a directory name by it's number
+    """
+
+    
+def moamv(data):
+    
+    wd = data['cwd']
+    options = data['options']
+    args = data['newargs']
+
+    fr = args[0]
+    if fr[-1] == '/':
+        fr = fr[:-1]
         
+    if len(args) > 1: to = args[1]
+    else: to = '.'
+
+    #see if fr is a number
+    if re.match('\d+', fr):
+        newfr = glob.glob('%s*' % fr)
+        if len(newfr) != 1:
+            l.critical("Cannot resolve %s (%s)" % (fr, newfr))
+            sys.exit(1)
+        fr = newfr[0]
+        
+    if re.match('\d+', to):
+        if re.search('^\d+', fr):
+            to = re.sub('^\d+', to, fr)
+        else:
+            to = '%s.%s' % (to, fr)
+    shutil.move(fr, to)
+            
+    
 def moacp(data):
     """
     Copy a moa job - 

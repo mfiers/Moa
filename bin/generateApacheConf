@@ -24,7 +24,7 @@ d['fileRoot'] = sys.argv[1]
 d['webRoot'] = sys.argv[2]
 d['MOABASE'] = MOABASE
 
-target = os.path.join(MOABASE, etc, 'apache.%s.conf' % sys.argv[2])
+target = os.path.join(MOABASE, 'etc', 'apache.%s.conf' % sys.argv[2])
 if os.path.exists(target):
     l.critical("%s exists! quitting"  % target)
     sys.exit()

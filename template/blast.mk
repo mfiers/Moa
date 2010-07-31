@@ -130,16 +130,16 @@ blasttest:
 
 #echo Main target for blast
 .PHONY: blast
-blast: $(blast_gff_files)
+blast: blast_report
 
 #prepare for blast - i.e. create directories
 .PHONY: blast_prepare
 blast_prepare:	
-	-mkdir out 
-	-mkdir gff  	
+	-mkdir out 2>/dev/null
+	-mkdir gff 2>/dev/null
 
 .PHONY: blast_post
-blast_post: blast_report
+blast_post: 
 
 # Convert to GFF
 gff/%.gff: out/%.xml
@@ -159,7 +159,7 @@ out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(single_blast_db_file)
 
 # creating the blastreport can only be executed when 
 # all blasts are done
-blast_report: $(blast_output_files)
+blast_report: $(blast_gff_files)
 	$(call echo,Creating blast reprt);
 	blastReport out/ -o $@
 
