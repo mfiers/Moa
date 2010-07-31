@@ -56,13 +56,16 @@ info_parameters_required: $(addprefix info_par_,$(moa_must_define))
 info_parameters_optional: mandatory=no
 info_parameters_optional: $(addprefix info_par_,$(moa_may_define))
 
+_mpv=$(subst $(sq),$(sq)$(backslash)$(sq)$(sq),$(value $(1)))
 info_par_%:
 	@echo -en 'parameter'
 	@echo -en '\tname=$*'
 	@echo -en '\tmandatory=$(mandatory)'
 	@echo -en '\ttype=$*'
-	@echo -en '\tvalue=$(value $*)'
-	@echo -en '\tdefault=$($*_default)'
+	@echo -en '\tvalue='
+	@echo -n '$(call _mpv,$*)'
+	@echo -en '\tdefault='
+	@echo -n '$(call _mpv,$*_default)'
 	@echo -en '\tallowed=$($*_allowed)'
 	@echo -en '\ttype=$($*_type)'
 	@echo -en '\tcardinality=$(if $($*_cardinality),$($*_cardinality),one)'
