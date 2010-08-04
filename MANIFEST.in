@@ -1,0 +1,4 @@
+exclude .*
+recursive-include template *.mk
+recursive-include doc/images *.svg *.png *.jpg *gif
+recursive-include doc/jinja2/ *.md *.html *.css Makefile *.bib *.tex *.bst *.asc 
