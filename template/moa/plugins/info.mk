@@ -42,7 +42,7 @@ info_header:
 	@echo -e 'moa_files\t$(moa_files)'
 	@echo -e 'moa_targets\t$(moa_id) all clean $(moa_additional_targets)'
 
-info_targets: $(addprefix info_target_help_, all clean $(moa_additional_targets))
+info_targets: $(addprefix info_target_help_, $(moa_id) all clean $(moa_additional_targets))
 
 info_target_help_%:
 	@echo -e "$*_help\t$($*_help)"

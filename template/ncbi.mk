@@ -21,13 +21,13 @@ moa_targets += ncbi
 ncbi_help = Download some data from NCBI
 
 moa_id = ncbi
-template_title = "Download from NCBI"
-template_description = Download a set of sequences from NCBI based on a		\
-  query string (ncbi_query) and database (ncbi_db). This tempate will	\
-  run only once (!), after a succesful run it creates a 'lock' file		\
-  that you need to remove to rerun
+template_title = Download data from NCBI
+template_description = Download a set of sequences from NCBI based on	\
+  a query string *ncbi_query* and database *ncbi_db*. This tempate	\
+  will run only **once**, after a succesful run it creates a lock	\
+  file that you need to remove to rerun
 
-ncbi_help = Downloads from NCBI
+ncbi_help = Start downloading
 
 moa_must_define += ncbi_query
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])

@@ -2,26 +2,24 @@
 % {{ template_author }}
 % {{ template_modification_date}}
 {{ '#' }}NAME
-{{ moa_id }}
+{{ moa_id }} / {{ d.template_title }}
 
 {{ '#' }} DESCRIPTION 
-{{ d.template_title }}
-
-{{ template_title }}
-
+{{ template_description }}
 {% if template_manual %}
 {{ template_manual }}
 {% endif %}
 
 {{ '#' }} TARGETS
 (empty) / {{ moa_id }}
-:    {{ template_description }}
+:    {{ d[moa_id + '_help'] }}
 {% for target in moa_targets -%}
 {% if target != moa_id -%}
 {{ target }}
 :    {{ d[target + '_help'] }}
 {% endif %}
 {% endfor %}
+
 {{ '#' }} PARAMETERS
 (* denotes a mandatory parameter)
 {% for cat in parameter_category_order -%}
