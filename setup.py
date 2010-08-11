@@ -5,7 +5,8 @@ from distutils.core import setup
 from distutils.command.install import INSTALL_SCHEMES
 
 # see:
-# http://groups.google.com/group/comp.lang.python/browse_thread/thread/35ec7b2fed36eaec/2105ee4d9e8042cb
+# http://groups.google.com/group/comp.lang.python/browse_thread/\
+#      thread/35ec7b2fed36eaec/2105ee4d9e8042cb
 for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
@@ -13,7 +14,7 @@ with open('VERSION') as F:
     version = F.read().strip()
 
 scripts  = [os.path.join('bin', x) for x in """
-moa              moainit.sh     moa_bash_completion
+moa              moainit        moa_bash_completion
 fastaSplitter    fastaNfinder   fastaInfo        fastaExtract
 fasta2gff        blastReport    blastInfo        blast2gff
 """.split()]
@@ -24,8 +25,8 @@ for dirpath, dirnames, filenames in os.walk('.'):
     for i, dirname in enumerate(dirnames):
         if dirname.startswith('.'): del dirnames[i]
     if '__init__.py' in filenames: continue
-    print dirpath
-    data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
+    np = os.path.join('/usr/share/moa', dirpath)
+    data_files.append([np, [os.path.join(dirpath, f) for f in filenames]])
 
 setup(name='moa',
       version=version,
