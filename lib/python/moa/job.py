@@ -29,11 +29,12 @@ import tempfile
 import moa.utils
 import moa.logger as l
 import moa.conf
+import moa.utils
 import moa.runMake
 
 from moa.exceptions import *
 
-MOABASE = os.environ["MOABASE"]
+MOABASE = moa.utils.getMoaBase()
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
 NEW_MAKEFILE_HEADER = """#!/usr/bin/env make

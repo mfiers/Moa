@@ -33,11 +33,13 @@ import moa.info
 import moa.runMake
 import moa.conf
 import moa.job
-import moa.utils
+
 from moa.exceptions import *
 import moa.logger as l
 
-MOABASE = os.environ['MOABASE']
+import moa.utils
+MOABASE = moa.utils.getMoaBase()
+
 
 def getMoaBase():
     """
@@ -59,8 +61,10 @@ def getMoaBase():
 def isMoaDir(wd):
     """
     Is directory 'wd' a Moa directory?
-    
-    >>> isMoaDir(P_JOB)
+
+    >>> import moa.job
+    >>> jobdir = moa.job.newTestJob('traverse')
+    >>> isMoaDir(jobdir)
     True
     >>> isMoaDir(P_EMPTY)
     False
@@ -94,11 +98,15 @@ def status(wd):
                 
         - locked: this job is locked (i.e. a lock file exists)
 
-    >>> result = status(P_JOB)
+    >>> import moa.job
+    >>> jobdir = moa.job.newTestJob('traverse')
+    >>> result = status(jobdir)
     >>> result in ['waiting', 'locked', 'running']
     True
-    >>> moa.utils.removeMoaFiles(P_EMPTY)
-    >>> result = status(P_EMPTY)
+    >>> import tempfile
+    >>> emptyDir = tempfile.mkdtemp()
+    >>> moa.utils.removeMoaFiles(emptyDir)
+    >>> result = status(emptyDir)
     >>> result == 'notmoa'
     True
 
@@ -175,7 +183,10 @@ def getInfo(wd):
                   if of type set
 
 
-    >>> result = getInfo(P_JOB)
+
+    >>> import moa.job
+    >>> jobdir = moa.job.newTestJob('traverse')
+    >>> result = getInfo(jobdir)
     >>> type(result) == type({})
     True
     >>> result.has_key('moa_targets')
@@ -220,7 +231,10 @@ def getParameter(wd, key):
     empty string. This is the fastest solution. If you want to know if
     a parameter exists, use the `getInfo` function.
 
-    >>> title = getParameter(P_JOB, 'title')
+    >>> import moa.job
+    >>> jobdir = moa.job.newTestJob('traverse')
+    >>> setParameter(jobdir, 'title', 'test')
+    >>> title = getParameter(jobdir, 'title')
     >>> type(title) == type('string')
     True
     >>> len(title) > 0
@@ -228,7 +242,7 @@ def getParameter(wd, key):
     >>> try: getParameter('/', 'title')
     ... except NotAMoaDirectory: 'ok!'
     'ok!'
-    >>> result = getParameter(P_JOB, 'NotExisitingParameter')
+    >>> result = getParameter(jobdir, 'NotExisitingParameter')
     >>> type(result) == type("")
     True
     >>> len(result) == 0
@@ -249,8 +263,10 @@ def setParameter(wd, key, value):
     Set a parameter
 
     Set the parameter ``key`` in path ``wd`` to value ``value``.
-    
-    >>> setParameter(P_JOB, 'title', 'test setParameter')
+
+    >>> import moa.job
+    >>> jobdir = moa.job.newTestJob('traverse')
+    >>> setParameter(jobdir, 'title', 'test setParameter')
 
     @param wd: the Moa directory to use
     @type wd: String
@@ -268,10 +284,12 @@ def appendParameter(wd, key, value):
     """
     Append the value to parameter 'key' (in path x)
 
-    >>> setParameter(P_JOB, 'title', 'a')
+    >>> import moa.job
+    >>> jobdir = moa.job.newTestJob('traverse')
+    >>> setParameter(jobdir, 'title', 'a')
     >>> 
-    appendParameter(P_JOB, 'title', 'b')
-    >>> test = getParameter(P_JOB, 'title')
+    appendParameter(jobdir, 'title', 'b')
+    >>> test = getParameter(jobdir, 'title')
     >>>
     """    
     moa.conf.appendVar(wd, key, value)
@@ -292,15 +310,17 @@ def newJob(*args, **kwargs):
     """
     Creates a new job
 
-    >>> removeMoaFiles(P_EMPTY)
+    >>> import tempfile
+    >>> emptyDir = tempfile.mkdtemp()
+    >>> removeMoaFiles(emptyDir)
     >>> newJob(template = 'moatest',
     ...        title = 'test creating of jobs',
-    ...        wd=P_EMPTY)
-    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+    ...        wd=emptyDir)
+    >>> os.path.exists(os.path.join(emptyDir, 'Makefile'))
     True
-    >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
+    >>> os.path.exists(os.path.join(emptyDir, 'moa.mk'))
     True
-    >>> removeMoaFiles(P_EMPTY)
+    >>> removeMoaFiles(emptyDir)
         
     """
     moa.job.newJob(*args, **kwargs)
@@ -343,10 +363,12 @@ def getMoaOut(wd):
     This function reads the moa.out file in a MOA directory and
     returns its content.
 
-    >>> F = open(os.path.join(P_JOB, 'moa.out'),'w')
+    >>> import moa.job
+    >>> jobdir = moa.job.newTestJob('traverse')
+    >>> F = open(os.path.join(jobdir, 'moa.out'),'w')
     >>> F.write('tst')
     >>> F.close()
-    >>> moa.info.getOut(P_JOB) == 'tst'
+    >>> moa.info.getOut(jobdir) == 'tst'
     True
     
     @param wd: The pathname of the directory from which the Moa

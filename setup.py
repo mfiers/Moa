@@ -14,7 +14,7 @@ with open('VERSION') as F:
     version = F.read().strip()
 
 scripts  = [os.path.join('bin', x) for x in """
-moa              moainit        moa_bash_completion
+moa
 fastaSplitter    fastaNfinder   fastaInfo        fastaExtract
 fasta2gff        blastReport    blastInfo        blast2gff
 """.split()]
@@ -28,6 +28,8 @@ for dirpath, dirnames, filenames in os.walk('.'):
     np = os.path.join('/usr/share/moa', dirpath)
     data_files.append([np, [os.path.join(dirpath, f) for f in filenames]])
 
+data_files.append(['/etc/bash_completion.d/', ['etc/bash_completion.d/moa']])
+                   
 setup(name='moa',
       version=version,
       description='Moa - automating command line bioinformatics',

@@ -1,10 +1,15 @@
 exclude .*
 include VERSION
 include README.txt
+include etc/bash_completion.d/moa
 recursive-include template *.mk
 recursive-include doc/images *.svg *.png *.jpg *gif
 recursive-include doc/jinja2/ *.md *.html *.css Makefile *.bib *.tex *.bst *.asc 
 recursive-include etc *.mk *.conf *.jinja2
 recursive-include share/ *.txt
 recursive-include www/ *.html *.js *.css *.png *.gif *.jpg *.css *.cgi
+
+include template/util/gmsl
+include template/util/__gmsl
+
  

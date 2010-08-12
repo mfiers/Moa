@@ -36,10 +36,12 @@ import jinja2
 import moa.runMake
 import moa.info
 import moa.job
+import moa.utils
 import moa.logger as l
 import moa.plugin
 
-MOABASE=os.environ['MOABASE']
+MOABASE = moa.utils.getMoaBase()
+
 JENV = None
 
 chapters = ['introduction', 'installation',

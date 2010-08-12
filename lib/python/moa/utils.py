@@ -70,6 +70,15 @@ def exit(rc=0):
     sys.exit(rc)
 
 
+def getMoaBase():
+    if os.environ.has_key('MOABASE'):
+        MOABASE = os.environ["MOABASE"]
+    else:
+        MOABASE = '/usr/share/moa'
+        #for use by depending scripts
+        os.putenv('MOABASE', MOABASE)
+    return MOABASE
+
 ################################################################################
 ## Handle moa directories
 
@@ -100,22 +109,25 @@ def renumber(path, fr, to):
     """
     Renumber a moa job
 
-    >>> removeFiles(P_EMPTY, recursive=True)
-    >>> fromDir = os.path.join(P_EMPTY, '10.test')
-    >>> problemDir = os.path.join(P_EMPTY, '20.problem')
-    >>> toDir = os.path.join(P_EMPTY, '20.test')
-    >>> os.mkdir(os.path.join(P_EMPTY, '10.test'))
-    >>> os.path.exists(os.path.join(P_EMPTY, '10.test'))
+
+    >>> import tempfile
+    >>> emptyDir = tempfile.mkdtemp()
+    >>> removeFiles(emptyDir, recursive=True)
+    >>> fromDir = os.path.join(emptyDir, '10.test')
+    >>> problemDir = os.path.join(emptyDir, '20.problem')
+    >>> toDir = os.path.join(emptyDir, '20.test')
+    >>> os.mkdir(os.path.join(emptyDir, '10.test'))
+    >>> os.path.exists(os.path.join(emptyDir, '10.test'))
     True
     >>> os.path.exists(toDir)
     False
-    >>> renumber(P_EMPTY, '10', '20')
+    >>> renumber(emptyDir, '10', '20')
     >>> os.path.exists(fromDir)
     False
     >>> os.path.exists(toDir)
     True
     >>> os.mkdir(problemDir)
-    >>> renumber(P_EMPTY, '20', '30')
+    >>> renumber(emptyDir, '20', '30')
     Traceback (most recent call last):
       File '/opt/moa/lib/python/moa/utils.py', line 114, in renumber
         raise MoaFileError(fullDir)
@@ -189,23 +201,25 @@ def removeMoaFiles(path):
     Removes all moa related files from a directory
 
 
-        >>> touch(os.path.join(P_EMPTY, 'Makefile'))
-        >>> touch(os.path.join(P_EMPTY, 'moa.mk'))
-        >>> touch(os.path.join(P_EMPTY, 'lock'))
-        >>> touch(os.path.join(P_EMPTY, 'moa.runlock'))
-        >>> touch(os.path.join(P_EMPTY, 'test.file'))
-        >>> removeMoaFiles(P_EMPTY)
-        >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+        >>> import tempfile
+        >>> emptyDir = tempfile.mkdtemp()
+        >>> touch(os.path.join(emptyDir, 'Makefile'))
+        >>> touch(os.path.join(emptyDir, 'moa.mk'))
+        >>> touch(os.path.join(emptyDir, 'lock'))
+        >>> touch(os.path.join(emptyDir, 'moa.runlock'))
+        >>> touch(os.path.join(emptyDir, 'test.file'))
+        >>> removeMoaFiles(emptyDir)
+        >>> os.path.exists(os.path.join(emptyDir, 'Makefile'))
         False
-        >>> os.path.exists(os.path.join(P_EMPTY, 'moa.mk'))
+        >>> os.path.exists(os.path.join(emptyDir, 'moa.mk'))
         False
-        >>> os.path.exists(os.path.join(P_EMPTY, 'lock'))
+        >>> os.path.exists(os.path.join(emptyDir, 'lock'))
         False
-        >>> os.path.exists(os.path.join(P_EMPTY, 'moa.runlock'))
+        >>> os.path.exists(os.path.join(emptyDir, 'moa.runlock'))
         False
-        >>> os.path.exists(os.path.join(P_EMPTY, 'test.file'))
+        >>> os.path.exists(os.path.join(emptyDir, 'test.file'))
         True
-        >>> os.unlink(os.path.join(P_EMPTY, 'test.file'))
+        >>> os.unlink(os.path.join(emptyDir, 'test.file'))
         
     """
     for name in ['Makefile', 'moa.mk', 'lock', 'moa.runlock',
@@ -242,22 +256,24 @@ def removeFiles(path, recursive=False):
     Remove all files from a path, and all subdirectories if
     recursive==True
 
-    >>> removeFiles(P_EMPTY, recursive=True)
-    >>> touch(os.path.join(P_EMPTY, 'Makefile'))
-    >>> subdir = os.path.join(P_EMPTY, 'test')
+    >>> import tempfile
+    >>> emptyDir = tempfile.mkdtemp()
+    >>> removeFiles(emptyDir, recursive=True)
+    >>> touch(os.path.join(emptyDir, 'Makefile'))
+    >>> subdir = os.path.join(emptyDir, 'test')
     >>> os.mkdir(subdir)
     >>> touch(os.path.join(subdir, 'test'))
     >>> os.path.exists(os.path.join(subdir, 'test'))
     True
-    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+    >>> os.path.exists(os.path.join(emptyDir, 'Makefile'))
     True
-    >>> removeFiles(P_EMPTY)
-    >>> os.path.exists(os.path.join(P_EMPTY, 'Makefile'))
+    >>> removeFiles(emptyDir)
+    >>> os.path.exists(os.path.join(emptyDir, 'Makefile'))
     False
-    >>> os.path.exists(os.path.join(P_EMPTY, 'test'))
+    >>> os.path.exists(os.path.join(emptyDir, 'test'))
     True
-    >>> removeFiles(P_EMPTY, recursive=True)
-    >>> os.path.exists(os.path.join(P_EMPTY, 'test'))
+    >>> removeFiles(emptyDir, recursive=True)
+    >>> os.path.exists(os.path.join(emptyDir, 'test'))
     False
 
     @param recursive: Include all subdirectories

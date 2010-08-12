@@ -30,11 +30,13 @@ def lockJob(d):
     """
     Lock a moa directory
 
-        >>> lockJob(P_JOB)
-        >>> os.path.exists(os.path.join(P_JOB, 'lock'))
+        >>> import moa.job
+        >>> jobdir = moa.job.newTestJob('traverse')
+        >>> lockJob(jobdir)
+        >>> os.path.exists(os.path.join(jobdir, 'lock'))
         True
-        >>> unlockJob(P_JOB)
-        >>> os.path.exists(os.path.join(P_JOB, 'lock'))
+        >>> unlockJob(jobdir)
+        >>> os.path.exists(os.path.join(jobdir, 'lock'))
         False
     """
     if not moa.info.isMoaDir(d):
@@ -55,12 +57,16 @@ def unlockJob(d):
     """
     Unlock a moa directory
 
-        >>> lockJob(P_JOB)
-        >>> unlockJob(P_JOB)
-        >>> os.path.exists(os.path.join(P_JOB, 'lock'))
+        >>> import tempfile
+        >>> import moa.job
+        >>> emptyDir = tempfile.mkdtemp()
+        >>> jobdir = moa.job.newTestJob('traverse')
+        >>> lockJob(jobdir)
+        >>> unlockJob(jobdir)
+        >>> os.path.exists(os.path.join(jobdir, 'lock'))
         False
         >>> try:
-        ...     unlockJob(P_EMPTY)
+        ...     unlockJob(emptyDir)
         ...     False
         ... except NotAMoaDirectory: True
         ... except: False

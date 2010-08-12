@@ -28,25 +28,22 @@ import sys
 import optparse
 import textwrap
 
-if not os.environ.has_key('MOABASE'):
-    print "The environment variable MOABASE is not set"
-    print "please refer to the documentation or run"
-    print "source (PATH/TO/MOA/INSTALL/bin/moainit.sh)"
-    sys.exit(1)
-
-MOABASE = os.environ["MOABASE"]
-
 #moa specific libs
 import moa.job
 from moa import runMake
 import moa.conf
 import moa.info
 import moa.api
+import moa.utils
 import moa.project
 import moa.unittests
 import moa.checkTemplate
 import moa.plugins
 import moa.moaCommands
+
+MOABASE=moa.utils.getMoaBase()
+
+
 
 ## Initialize the logger
 import moa.logger as l

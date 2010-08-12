@@ -84,11 +84,13 @@ def setVar(wd, key, value, relPathCorrection = None):
 
         >>> import random
         >>> testTitle = 'title %d' % random.randint(0,10000)
-        >>> setVar(P_JOB, 'title', testTitle)
-        >>> title = getVar(P_JOB, 'title')
+        >>> import moa.job
+        >>> jobdir = moa.job.newTestJob('traverse')
+        >>> setVar(jobdir, 'title', testTitle)
+        >>> title = getVar(jobdir, 'title')
         >>> title == testTitle
         True
-        >>> try: setVar(P_EMPTY, 'title', 'test setvar in a non-moa dir')
+        >>> try: setVar('/tmp', 'title', 'test setvar in a non-moa dir')
         ... except NotAMoaDirectory:
         ...   'Fine'
         'Fine'
@@ -121,15 +123,20 @@ def appendVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
     
-        >>> setVar(P_JOB, 'title', 'one')
-        >>> getVar(P_JOB, 'title')
+
+        >>> import moa.job
+        >>> jobdir = moa.job.newTestJob('traverse')
+        >>> setVar(jobdir, 'title', 'one')
+        >>> getVar(jobdir, 'title')
         'one'
-        >>> appendVar(P_JOB, 'title', 'two')
-        >>> appendVar(P_JOB, 'title', 'three')
-        >>> getVar(P_JOB, 'title')
+        >>> appendVar(jobdir, 'title', 'two')
+        >>> appendVar(jobdir, 'title', 'three')
+        >>> getVar(jobdir, 'title')
         'one two three'
-        >>> moa.utils.removeMoaFiles(P_EMPTY)
-        >>> try: appendVar(P_EMPTY, 'title', 'test setvar in a non-moa dir')
+        >>> import tempfile
+        >>> emptyDir = tempfile.mkdtemp()
+        >>> moa.utils.removeMoaFiles(emptyDir)
+        >>> try: appendVar(emptyDir, 'title', 'test setvar in a non-moa dir')
         ... except NotAMoaDirectory:
         ...   'Fine'
         'Fine'
@@ -144,8 +151,10 @@ def getVar(wd, key):
     """
     Get a single parameter from a moa directory
 
-    >>> setVar(P_JOB, 'title', 'test getVar')
-    >>> getVar(P_JOB, 'title')
+     >>> import moa.job
+     >>> jobdir = moa.job.newTestJob('traverse')
+    >>> setVar(jobdir, 'title', 'test getVar')
+    >>> getVar(jobdir, 'title')
     'test getVar'
 
     :param wd: Directory to retrieve the variable from
