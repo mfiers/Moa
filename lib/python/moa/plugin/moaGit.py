@@ -23,6 +23,7 @@ Git
 import os
 import optparse
 import git 
+import time
 
 import moa.info
 import moa.logger as l
@@ -32,10 +33,16 @@ GITROOT = None
 GITREPO = None
 
 def defineCommands(data):
-    data['commands']['gitlog'] = {
-        'desc' : 'display a version control log'
+    data['commands']['history'] = {
+        'desc' : 'display a version control log',
+        'call': gitlog
+        }
+    data['commands']['tag'] = {
+        'desc' : 'Tag the current version',
+        'call': tag
         }
 
+    
 def defineOptions(data):
     parserG = optparse.OptionGroup(
         data['parser'], 'Version control (Git)')
@@ -45,10 +52,21 @@ def defineOptions(data):
                       help = 'Force initialization of a new git repository, this ' +
                       'deletes the old repository')
     parserG.add_option('--m', action='store',
-                       dest='gitMessage',
+                       dest='gitMessage', 
                       help = 'Commit message for git')
     
     data['parser'].add_option_group(parserG)
+
+def tag(data):
+    global GITREPO
+    if not GITREPO:
+        l.info("no repository is initialized")
+        return
+
+    tagname = data['args'][1]
+    message = data['options'].gitMessage
+    l.info('tagging with "%s"' % tagname)
+    GITREPO.create_tag(tagname, message=message)
 
 def prepare(data):
     #check if we're inside a git repository
@@ -80,6 +98,7 @@ def postSet(data):
         #no git repository - not registering any files
         return
 
+    l.debug("committing postset")
     index = GITREPO.index
     index.commit('Set %s ' % " ".join(data['newargs']))
     
@@ -108,6 +127,33 @@ def postNew(data):
     index = GITREPO.index
     index.add(info['moa_files'].split())
     index.commit('Inital commit of job "%s"' % info['title'])
+
+def gitlog(data):
+    """
+    Print a log to screen
+    """
+    global GITREPO
+    global GITROOT
+
+    if not GITREPO:
+        l.info("noting to report - no repo")
+        return
+
+    tags = {}
+    
+    for t in GITREPO.tags:
+        print t.commit
+        tags[t.commit] = t
+
+    for c in GITREPO.iter_commits():
+        #if str(c) in tags.keys()
+        t = time.strftime("%d %b %Y %H:%M", time.localtime(c.authored_date))
+
+        tag = None
+        if c in tags.keys():
+            print " tag| %s" % tags[c]
+        
+        print "%3s | %s | %s" % (c.count(), t, c.message)
     
 def _gitInit(data):
     """
@@ -123,16 +169,16 @@ def _gitInit(data):
     
     GITROOT = wd
     GITREPO =  git.Repo.init(GITROOT)
-    l.critical("created a git repository at %s" % GITROOT)
+    l.info("created a git repository at %s" % GITROOT)
     
     info = moa.info.info(wd)
     index = GITREPO.index
     index.add(info['moa_files'].split())
-    index.commit('Inital commit of project "%s"' % info['title'])
+    index.commit('Settin up project "%s"' % info['title'])
 
     #write some data to .gitignore
     with open(os.path.join(wd, '.gitignore'), 'w') as F:
-        F.write(".gitignore\n")
+        F.write(".*\n")
         F.write("moa.success\n")
         F.write("moa.out\n")
         F.write("moa.err\n")

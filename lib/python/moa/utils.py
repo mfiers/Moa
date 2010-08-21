@@ -31,7 +31,6 @@ import shutil
 import readline
 import contextlib
 
-import moa.job
 import moa.logger as l
 from moa.exceptions import *
 
@@ -235,6 +234,7 @@ def touch(path, times=None):
     Borrowed from:
     http://stackoverflow.com/questions/1158076/implement-touch-using-python
 
+    >>> import moa.job
     >>> wd = moa.job.newTestJob('traverse')
     >>> testFile = os.path.join(wd, 'test.file')
     >>> os.path.exists(testFile)

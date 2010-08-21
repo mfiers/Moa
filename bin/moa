@@ -152,7 +152,9 @@ if __name__ == "__main__":
     if len(args) > 0:
         command = args[0]
         newargs = args[1:]
-
+    else:
+        command = 'run'
+        
     l.debug("start moa %s" % command)
     l.debug("with args %s" % newargs)
     plugins.register(newargs = newargs)
@@ -195,6 +197,7 @@ if __name__ == "__main__":
                           background = options.background)
     returnCode = job.run()
     plugins.run("post%s" % command.capitalize())
+    plugins.run("finish")
     sys.exit(returnCode)
 
     # #utilities

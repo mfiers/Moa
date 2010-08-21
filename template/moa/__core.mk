@@ -77,6 +77,9 @@ moa_execute_targets = \
 .DEFAULT_GOAL := moa_default_target
 moa_default_target: $(moa_execute_targets)
 
+.PHONY: run
+run: $(moa_execute_targets)
+
 .PHONY: moa_run_precommand
 ifdef moa_precommand
 moa_run_precommand:
