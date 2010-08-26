@@ -209,7 +209,7 @@ moa set adhoctouch=F
 
 <li><b>all</b>: Recursively run through all subdirectories (use make all action=XXX to run make XXX recursively)</li>
 
-<li><b>clean</b>: Remove all job data (not the job itself). This does works only if the template has properly implemented the clean target.</li>
+<li><b>clean</b>: Remove all job data, not the Moa job itself, note that this must be implemented by the template.</li>
 
 
 </ul>
@@ -231,7 +231,10 @@ Data type: directory, Default: ".".
 Data type: set, T|<u>F</u>.
 </li>
 <li><b>adhoc_process</b>: Command to execute for each input file. The path to the input file is available as $< and the output file as $t. (it is not mandatory to use both parameters, for example "cat $< > output" would concatenate all files into one big file<br>
-Data type: string, Default: "echo "need a sensbile command"".
+Data type: string, Default: "echo "needs a sensbile command"".
+</li>
+<li><b>adhoc_r_mode</b>: R mode is a dedication mode to run R scripts<br>
+Data type: set, T|<u>F</u>.
 </li>
 <li><b>adhoc_touch</b>: use touch files to track if input files have changed.<br>
 Data type: set, <u>T</u>|F.
@@ -259,9 +262,6 @@ Data type: set, <u>u</u>|s|sr|t|tr.
 
 <li><b>*title</b>: A name for this job<br>
 Data type: string.
-</li>
-<li><b>description</b>: A longer description for this job<br>
-Data type: string.
 </li></ul>
 <h3>Advanced parameters</h3>
 <ul>
@@ -274,7 +274,7 @@ Data type: string.
 </li></ul>
 <h2>Miscellaneous </h2>
 <ul>
-<li>Template last modified on Fri May 21 15:14:55 2010</li>
+<li>Template last modified on Mon Jul 26 17:31:50 2010</li>
 <li>Template author Mark Fiers</li>
 <li>Moa_id: adhoc</li>
 <li>Template name: adhoc</li>
@@ -287,7 +287,7 @@ Data type: string.
           </div>          
           <p>&nbsp;</p>
           <div class="footer_text" id="footer">
-            <small>This page is generated on Tue Jun 15 09:37:34 2010</small><br>
+            <small>This page is generated on Thu Aug 26 12:22:26 2010</small><br>
             &copy 2009 PLANT &amp; FOOD RESEARCH | 
             <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a>
           </div>

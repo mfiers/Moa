@@ -86,7 +86,7 @@
 
 <li><b>all</b>: Recursively run through all subdirectories (use make all action=XXX to run make XXX recursively)</li>
 
-<li><b>clean</b>: Remove all job data (not the job itself). This does works only if the template has properly implemented the clean target.</li>
+<li><b>clean</b>: Remove all job data, not the Moa job itself, note that this must be implemented by the template.</li>
 
 
 </ul>
@@ -98,7 +98,7 @@
 <li><b>*bdb_name</b>: Database name to create.<br>
 Data type: string.
 </li>
-<li><b>bdb_fasta_file</b>: The file with all FASTA sequences for the blastdb concatenated. This can be used as an alternative to defining "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your sequences are already in a single file, then using this parameter prevents duplication of that file.<br>
+<li><b>bdb_fasta_file</b>: The file with all FASTA sequences for the blastdb concatenated. This can be used as an alternative to defining "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your sequences are already in a single file, then using this parameter prevents duplication.<br>
 Data type: file.
 </li>
 <li><b>bdb_input_dir</b>: Dir with the input fasta files, defaults to ./fasta<br>
@@ -115,9 +115,6 @@ Data type: set, T|<u>F</u>.
 
 <li><b>*title</b>: A name for this job<br>
 Data type: string.
-</li>
-<li><b>description</b>: A longer description for this job<br>
-Data type: string.
 </li></ul>
 <h3>Advanced parameters</h3>
 <ul>
@@ -130,7 +127,7 @@ Data type: string.
 </li></ul>
 <h2>Miscellaneous </h2>
 <ul>
-<li>Template last modified on Thu May  6 09:37:45 2010</li>
+<li>Template last modified on Fri Jul 30 13:48:07 2010</li>
 <li>Template author Mark Fiers</li>
 <li>Moa_id: blastdb</li>
 <li>Template name: blastdb</li>
@@ -143,7 +140,7 @@ Data type: string.
           </div>          
           <p>&nbsp;</p>
           <div class="footer_text" id="footer">
-            <small>This page is generated on Tue Jun 15 09:37:34 2010</small><br>
+            <small>This page is generated on Thu Aug 26 12:22:26 2010</small><br>
             &copy 2009 PLANT &amp; FOOD RESEARCH | 
             <a href="http://www.plantandfood.co.nz/disclaimer/">disclaimer</a>
           </div>
