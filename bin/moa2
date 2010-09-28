@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
+"""
+Moa frontend
+
+This script serves as a command dispatcher for all moa functionality
+"""
+
+import os
+import sys
+import optparse
+import textwrap
+
+if not os.environ.has_key('MOABASE'):
+    print "The environment variable MOABASE is not set"
+    print "please refer to the documentation or run"
+    print "source (PATH/TO/MOA/INSTALL/bin/moainit.sh)"
+    sys.exit(1)
+
+MOABASE = os.environ["MOABASE"]
+
+#moa specific libs
+
+import os
+import moa2
+
+l = moa2.getLogger('moa')
+
+job = moa2.Job(os.getcwd())
+plugins = moa2.PluginHandler(job)
+
+
+
+
+
