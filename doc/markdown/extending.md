@@ -1,5 +1,7 @@
 # extending Moa
 
+Note: this is a work in progress - and currently not finished
+
 This chapter describes how to create new templates for use with
 Moa. Creating a basic template is not difficult, once you have a basic
 understanding of how Makefiles work. Probably the hardest part is
