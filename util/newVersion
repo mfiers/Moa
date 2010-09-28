@@ -1,0 +1,6 @@
+VERSION=`cat VERSION`
+echo dch -v ${VERSION}-1~ppa1
+echo git commit -m \"version to $VERSION\" -a 
+echo git tag v${VERSION}
+echo git push --tags
+echo ./util/build
