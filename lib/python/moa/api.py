@@ -41,6 +41,7 @@ import moa.utils
 MOABASE = moa.utils.getMoaBase()
 
 
+@moa.utils.deprecated
 def getMoaBase():
     """
     Returns the value of the MOABASE environment variable. MOABASE
@@ -414,6 +415,7 @@ def runMoa(*args, **kwargs):
     return moa.runMake.go(*args, **kwargs)
 
 #Depreacted, these will be removed once William has changed his code
+@moa.utils.deprecated
 def is_directory_moa(wd):
     l.debug("is_directory_moa is deprecated!")
     return isMoaDir(wd)
