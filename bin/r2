@@ -95,6 +95,7 @@ parser.add_option('--rf', dest='mode', action='store_const', const='rf',
                   help = 'input r2, output = fasta')
 parser.add_option('--rr', dest='mode', action='store_const', const='rr',
                   help = 'input r2, output = r2')
+
 parser.add_option('-T', dest='idFromFile', action='store_true',
                   help='Take fasta Ids from the filename, when reading ' +
                   'a set of fasta sequences directly' )
@@ -145,7 +146,7 @@ if args:
         with open(inFile, 'r') as F:
             handleOne(F, thisId)
 else:
-    handleOne(sys.stdin)
+    handleOne(sys.stdin, False)
     
 
 
