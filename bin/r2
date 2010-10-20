@@ -32,7 +32,6 @@ import re
 import sys
 import optparse
 
-
 def fastaWriter(F, seqId, seq):
     """
     param F: File handle in 'w' mode
@@ -50,19 +49,30 @@ def r2Writer(F, seqId, seq):
     """
     F.write("%s %s\n" % (seqId, seq))
 
-def r2Reader(F):
+def r2Reader(firstLine, F):
     while True:
-        line = F.readline().strip()
-        yield line.split()
+        if firstLine: 
+            line = firstLine
+            firstLine = None
+        else: 
+            line = F.readline()
+        if not line: break        
+        res = line.strip().split()
+        if res: yield res
         
-def fastaReader(F):
+def fastaReader(firstLine, F):
     """
     param F: File handle
     """
     
     seqId, head, seq = "",  "", []
     while True:
-        l = F.readline()
+        if firstLine: 
+            l = firstLine
+            firstLine = None
+        else: 
+            l = F.readline()
+
         if not l: break
         
         l = l.strip()
@@ -83,50 +93,6 @@ def fastaReader(F):
         yield seqId, "".join(seq)
     F.close()
 
-
-
-parser = optparse.OptionParser()
-parser.set_defaults(mode='fr')
-parser.add_option('--ff', dest='mode', action='store_const', const='ff',
-                  help = 'input fasta, output fasta')
-parser.add_option('--fr', dest='mode', action='store_const', const='fr',
-                  help = 'input fasta, output = r2')
-parser.add_option('--rf', dest='mode', action='store_const', const='rf',
-                  help = 'input r2, output = fasta')
-parser.add_option('--rr', dest='mode', action='store_const', const='rr',
-                  help = 'input r2, output = r2')
-
-parser.add_option('-T', dest='idFromFile', action='store_true',
-                  help='Take fasta Ids from the filename, when reading ' +
-                  'a set of fasta sequences directly' )
-
-(options, args) = parser.parse_args()
-if options.mode == 'ff':
-    inputHandler = fastaReader
-    outputHandler = fastaWriter
-elif options.mode == 'fr':
-    inputHandler = fastaReader
-    outputHandler = r2Writer
-elif options.mode == 'fr':
-    inputHandler = r2Reader
-    outputHandler = fastaWriter
-elif options.mode == 'fr':
-    inputHandler = r2Reader
-    outputHandler = r2Writer
-
-
-def handleOne(I, forceId):
-    i = 0
-    thisForceId = forceId
-    for seqId, seq in inputHandler(I):
-        if forceId:
-            outputHandler(sys.stdout, thisForceId, seq)
-        else:
-            outputHandler(sys.stdout, seqId, seq)
-        i += 1
-        thisForceId = "%s%03d" % (forceId, i)
-
-
 def cleanId(s):
     s = re.sub('\.fasta$', '', s)
     s = re.sub('\.fa$', '', s)
@@ -135,18 +101,31 @@ def cleanId(s):
     s = re.sub(' ', '_', s)
     return s
 
-#see if there are filenames to be read
-if args:
-    for inFile in args:
-        if options.idFromFile:
-            thisId = cleanId(inFile)
-        else:
-            thisId = False
-            
-        with open(inFile, 'r') as F:
-            handleOne(F, thisId)
-else:
-    handleOne(sys.stdin, False)
-    
+
+while True:
+    line = sys.stdin.readline()
+    if not line: break
+    line = line.strip()
+    if not line: continue
+    sys.stderr.write("x111" + line + "\n")
+    if line[0] == ">":
+        sys.stderr.write("fasta in r2 out")
+        inputHandler = fastaReader
+        outputHandler = r2Writer
+    else:
+        sys.stderr.write("r2 in fasta out")
+        inputHandler = r2Reader
+        outputHandler = fastaWriter
+    for x in inputHandler(line, sys.stdin):
+        try:
+            seqId, seq = x
+        except:
+            print x
+            sys.stderr.write(str(x) + str(inputHandler))
+            raise
+        outputHandler(sys.stdout, seqId, seq)
+
+    break
+
 
 
