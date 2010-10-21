@@ -1,0 +1,37 @@
+## Change all references to {{ DATADIR }} to the place where you store
+## your moa pipelines.
+
+
+Alias /moa/data {{ DATADIR }}
+
+<Directory {{ DATADIR }}>
+
+   Options +Indexes +FollowSymLinks
+
+   Order allow,deny
+   Allow from all
+
+   SetEnv MOADATAROOT {{ DATADIR }}
+   SetEnv MOAWEBROOT /moa/data
+
+   IndexOptions FoldersFirst SuppressRules HTMLTable IconHeight=24 SuppressHTMLPreamble SuppressColumnSorting SuppressDescription
+
+   HeaderName /moa/cgi/indexHeader.cgi
+   ReadmeName /moa/html/indexFooter.html
+</Directory>
+
+ScriptAlias /moa/cgi/ /usr/share/moa/www/cgi/
+<Directory /usr/share/moa/www/cgi/>
+    AddType text/html .cgi
+    Order allow,deny
+    Allow from all
+    SetEnv MOABASE /usr/share/moa
+</Directory>
+
+Alias /moa/html/ /usr/share/moa/www/html/
+
+<Directory /usr/share/moa/www/html>
+    Order allow,deny
+    Allow from all
+    Options +Indexes
+</Directory>
