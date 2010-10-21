@@ -30,7 +30,6 @@ import moa.logger as l
 from moa.logger import setSilent, setInfo, setVerbose
 
 import moa.lock
-import moa.api
 import moa.info
 import moa.conf
 import moa.utils
@@ -130,11 +129,11 @@ def testTemplates(which=None, verbose=False):
                             makeArgs = [])
         if rc != 0:
             templateFailures += 1
-            err = moa.api.getMoaErr(wd)
+            err = moa.info.getErr(wd)
             l.error("Error running template test for template %s" % template)
             l.error(err)
                                      
-        result = moa.api.getMoaOut(wd).strip()
+        result = moa.info.getOut(wd).strip()
         if result:
             print result
 
@@ -157,8 +156,8 @@ def testTemplateExtensive(template, verbose=False):
         l.info('Extensive test of "%s" was successfull' % template)
         return True
         
-    err = moa.api.getMoaErr(wd=testDir)
-    out = moa.api.getMoaOut(wd=testDir)
+    err = moa.info.getErr(wd=testDir)
+    out = moa.info.getOut(wd=testDir)
 
     l.error("Error running extensive template test for template %s" % template)
     l.error(out)
@@ -178,7 +177,6 @@ def run(options, args):
         setSilent()        
         testModule(moa.utils)
         testModule(moa.lock)
-        testModule(moa.api)
         testModule(moa.info)
         testModule(moa.conf)
         testModule(moa.job)

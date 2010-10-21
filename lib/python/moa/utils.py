@@ -18,7 +18,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa script - utilities
+Moa script - random utilities
 """
 
 import os
@@ -29,6 +29,7 @@ import glob
 import errno
 import shutil
 import readline
+import traceback
 import contextlib
 
 import moa.logger as l
@@ -77,6 +78,16 @@ def getMoaBase():
         #for use by depending scripts
         os.putenv('MOABASE', MOABASE)
     return MOABASE
+
+def deprecated(func):
+    """
+    Decorator to flag a function as deprecated
+    """
+    def depfunc(*args, **kwargs):
+        l.critical('Calling deprecated function %s' % func.__name__)
+        l.critical("\n" + "\n".join(traceback.format_stack()))
+        func(*args, **kwargs)
+    return depfunc
 
 ################################################################################
 ## Handle moa directories
@@ -287,10 +298,10 @@ def removeFiles(path, recursive=False):
         elif os.path.isdir(this) and recursive:
             shutil.rmtree(this)
         
-        
+@deprecated        
 def removeDirectory(path):
     """
-    dangerous utility - it complete deletes a directory
+    Remove a directory with contents - no questions asked
 
        >>> import tempfile
        >>> tempdir = tempfile.mkdtemp()
@@ -334,6 +345,8 @@ def simple_decorator(decorator):
     new_decorator.__doc__ = decorator.__doc__
     new_decorator.__dict__.update(decorator.__dict__)
     return new_decorator
+
+
 
 @simple_decorator
 def flog(func):

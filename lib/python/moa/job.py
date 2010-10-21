@@ -32,8 +32,6 @@ import moa.conf
 import moa.utils
 import moa.runMake
 
-from moa.exceptions import *
-
 MOABASE = moa.utils.getMoaBase()
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
@@ -44,6 +42,53 @@ NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
 include $(MOABASE)/template/moa/prepare.mk
 
 """
+
+class Job:
+    """
+    New MoaJob class - should combine a lot of functionality
+    that is now spread around over multiple locations
+    """
+    def __init__(self, wd):
+        self.wd = wd
+
+
+    def isMoa(self):
+        """
+        Is the job directory a Moa directory
+
+        >>> job = Job('/')
+        >>> job.isMoa()
+        False
+        >>> import moa.job
+        >>> jobdir = moa.job.newTestJob('traverse')
+
+        """
+        makefile = os.path.join(self.wd, 'Makefile')
+        if not os.access(makefile, os.R_OK):
+            #ok, this might be a moa directory, but
+            #you do not have sufficient permissions
+            return False
+
+        l.debug('isMoaDir: checking %s' % makefile)
+        if not os.path.exists(makefile):
+            return False
+
+        #we could run make, but that is rather slow just to check if the
+        #Makefile is a proper Moa Makefile - so, we' quickly read the
+        #Makefile to get a quick indication
+        isMoa = False
+
+        F = open(makefile)
+        for line in F.readlines():
+            if 'MOABASE' in line:
+                isMoa = True
+                break
+            if '$(call moa_load' in line:
+                isMoa = True
+                break
+
+        F.close()        
+        return isMoa
 
         
 def check(what):

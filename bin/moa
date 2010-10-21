@@ -33,7 +33,6 @@ import moa.job
 from moa import runMake
 import moa.conf
 import moa.info
-import moa.api
 import moa.utils
 import moa.project
 import moa.unittests
