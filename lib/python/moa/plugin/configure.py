@@ -69,11 +69,13 @@ def configSet(data):
     parsedArgs = moa.conf.parseClArgs(newArgs)
     moa.conf.writeToConf(wd, parsedArgs)
 
-    #call the postset hooks
-    job = moa.runMake.MOAMAKE(wd = wd,
-                              target='moa_post_set',
-                              captureOut = False,
-                              captureErr = False,
-                              verbose=False)
-    job.run()
-    job.finish()
+    ## not using these either
+    #
+    ###call the postset hooks
+    ##job = moa.runMake.MOAMAKE(wd = wd,
+    ##                          target='moa_post_set',
+    ##                          captureOut = False,
+    ##                          captureErr = False,
+    ##                          verbose=False)
+    ##job.run()
+    ##job.finish()
