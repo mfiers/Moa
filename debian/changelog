@@ -1,0 +1,17 @@
+moa (0.9.3-1~ppa1) lucid; urgency=low
+
+  * Improved version control, created a demo twitter plugin
+
+ -- Mark Fiers <mark.fiers.42@gmail.com>  Sun, 22 Aug 2010 10:04:41 +1200
+
+moa (0.9.2-1~ppa1) lucid; urgency=low
+
+  * Cleaned up & first proper package
+
+ -- Mark Fiers <mark.fiers.42@gmail.com>  Fri, 13 Aug 2010 13:50:49 +1200
+
+moa (0.9.1-1~ppa1) lucid; urgency=low
+
+  * source package automatically created by stdeb 0.5.1
+
+ -- Mark Fiers <mark.fiers.42@gmail.com>  Wed, 11 Aug 2010 15:02:00 +1200

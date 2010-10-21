@@ -1,0 +1,33 @@
+Alias {{ webRoot }}/data {{ fileRoot }}
+
+<Directory {{ fileRoot }}>
+
+   Options +Indexes +FollowSymLinks
+
+   Order allow,deny
+   Allow from all
+
+   SetEnv MOADATAROOT {{ fileRoot }}
+   SetEnv MOAWEBROOT {{ webRoot }}/data
+
+   IndexOptions FoldersFirst SuppressRules HTMLTable IconHeight=24 SuppressHTMLPreamble SuppressColumnSorting SuppressDescription
+
+   HeaderName {{ webRoot }}/cgi/indexHeader.cgi
+   ReadmeName {{ webRoot }}/html/indexFooter.html
+</Directory>
+
+ScriptAlias {{webRoot}}/cgi/ {{ MOABASE }}/www/cgi/
+<Directory {{ MOABASE }}/www/cgi/>
+    AddType text/html .cgi
+    Order allow,deny
+    Allow from all
+    SetEnv MOABASE {{ MOABASE }}
+</Directory>
+
+Alias {{ webRoot }}/html/ {{ MOABASE }}/www/html/
+
+<Directory {{ MOABASE }}/www/html>
+    Order allow,deny
+    Allow from all
+    Options +Indexes
+</Directory>

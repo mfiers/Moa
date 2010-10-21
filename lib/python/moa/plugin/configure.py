@@ -61,7 +61,8 @@ def configSet(data):
         if not '=' in a:
 
             df = moa.conf.getVar(wd, a)
-            vl = moa.utils.askUser("%s="%a,df)
+            
+            vl = moa.utils.askUser("%s:\n> "%a,df)
 
             newArgs.append("%s%s%s" % (a, '=', vl))
         else:

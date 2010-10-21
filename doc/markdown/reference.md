@@ -1,5 +1,7 @@
 # Reference
 
+Note: this is a work in progress - and currently not finished
+
 ## Moa Makefile load order
 
 Makefiles are sensitive to the order in which definitions are made,

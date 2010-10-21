@@ -29,7 +29,8 @@ import subprocess
 import moa.logger as l
 import moa.job
 
-MOABASE = os.environ["MOABASE"]
+import moa.utils
+MOABASE = moa.utils.getMoaBase()
 
 def checkTemplate(path):
     """

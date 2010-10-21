@@ -32,17 +32,34 @@ Example:
 
 import os
 import sys
+import optparse
 
-filter = sys.argv[1:]
-print filter
+parser = optparse.OptionParser()
+parser.add_option('-l', dest='len', help = 'len filter: 200, 200-, -200, 200-300')
+
+(options, args) = parser.parse_args()
+
+def len_filter(fval, sid, seq):
+    x = fval.split(':')
+    if len(x) == 1:
+        mn = mx = int(x)
+    elif len(x) == 2:
+        if not x[0]: x[0] = 0
+        if not x[1]: x[1] = 1e78
+        mn, mx = map(int, x)
+    else:
+        raise Exception("Invalid filter")
+    if len(seq) < mn: return False
+    if len(seq) > mx: return False
+    return True
 
 while True:
     line = sys.stdin.readline()
     if not line: break
-    id,seq = line.split()
-    print id, cf(seq)
-
-
+    line = line.strip()
+    if not line: continue
+    sid,seq = line.split()
+    if not len_filter(options.len, sid, seq):
+        continue
+    print "%s %s" % (sid, seq)
     
-
-

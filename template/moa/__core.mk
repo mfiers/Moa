@@ -77,6 +77,9 @@ moa_execute_targets = \
 .DEFAULT_GOAL := moa_default_target
 moa_default_target: $(moa_execute_targets)
 
+.PHONY: run
+run: $(moa_execute_targets)
+
 .PHONY: moa_run_precommand
 ifdef moa_precommand
 moa_run_precommand:
@@ -177,8 +180,8 @@ moa_main_target:
 ## targets are called in reverse order.
 .PHONY: clean
 
-clean_help = Remove all job data (not the job itself). This does works	\
-  only if the template has properly implemented the clean target.
+clean_help = Remove all job data, not the Moa job itself, note that	\
+  this must be implemented by the template.
 clean: clean_start $(moa_id)_clean
 	-$e rm moa.out moa.err moa.success 2>/dev/null || true
 	-$e rm moa.failed moa.runlock lock 2>/dev/null || true

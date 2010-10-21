@@ -139,7 +139,7 @@ lftp: lftp_$(lftp_mode) lftp_dos2unix
 .PHONY: lftp_mirror
 lftp_mirror:
 	cd $(lftp_output_dir); 														\
-		lftp $(lftp_auth) $(lftp_url) -e "mirror -nrL -I $(lftp_pattern); exit" ;
+		lftp $(lftp_auth) $(lftp_url) -e "mirror -nrL -I $(lftp_url)/$(lftp_pattern); exit" ;
 	if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 
 .PHONY: lftp_get

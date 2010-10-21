@@ -1,9 +1,0 @@
-usr/share/moa/bin
-usr/share/moa/etc
-usr/share/moa/template
-usr/share/moa/template/moa
-usr/share/moa/template/moa/plugins
-usr/share/moa/template/util
-usr/share/moa/lib/python
-usr/share/moa/lib/python/moa
-usr/share/moa/lib/python/moa/plugin

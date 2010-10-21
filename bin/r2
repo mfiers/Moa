@@ -30,102 +30,31 @@ can be converted to multifasta or multiple fasta files
 import os
 import re
 import sys
-import optparse
-
-def fastaWriter(F, seqId, seq):
-    """
-    param F: File handle in 'w' mode
-    param seqId: seqId to save
-    param seq: sequence to save    
-    """
-    F.write(">%s\n%s\n" % (seqId, seq))
-    
-    
-def r2Writer(F, seqId, seq):
-    """
-    param F: File handle in 'w' mode
-    param seqId: seqId to save
-    param seq: sequence to save    
-    """
-    F.write("%s %s\n" % (seqId, seq))
-
-def r2Reader(firstLine, F):
-    while True:
-        if firstLine: 
-            line = firstLine
-            firstLine = None
-        else: 
-            line = F.readline()
-        if not line: break        
-        res = line.strip().split()
-        if res: yield res
-        
-def fastaReader(firstLine, F):
-    """
-    param F: File handle
-    """
-    
-    seqId, head, seq = "",  "", []
-    while True:
-        if firstLine: 
-            l = firstLine
-            firstLine = None
-        else: 
-            l = F.readline()
-
-        if not l: break
-        
-        l = l.strip()
-        if not l: continue
-
-        if l[0] == '>':
-            if seqId and seq:
-                yield seqId, "".join(seq)
-            seq = []
-            ls = l[1:].split(None, 1)
-            seqId = ls[0]
-            if seqId[:2] == 'gi':
-                seqId = "GI" + seqId.split("|",2)[1]
-        else:
-            seq.append("".join(l.split()).lower())
-
-    if seqId and seq:
-        yield seqId, "".join(seq)
-    F.close()
-
-def cleanId(s):
-    s = re.sub('\.fasta$', '', s)
-    s = re.sub('\.fa$', '', s)
-    s = re.sub('\.fna$', '', s)
-    s = re.sub('\.seq$', '', s)
-    s = re.sub(' ', '_', s)
-    return s
-
 
 while True:
-    line = sys.stdin.readline()
-    if not line: break
-    line = line.strip()
-    if not line: continue
-    sys.stderr.write("x111" + line + "\n")
-    if line[0] == ">":
-        sys.stderr.write("fasta in r2 out")
-        inputHandler = fastaReader
-        outputHandler = r2Writer
-    else:
-        sys.stderr.write("r2 in fasta out")
-        inputHandler = r2Reader
-        outputHandler = fastaWriter
-    for x in inputHandler(line, sys.stdin):
-        try:
-            seqId, seq = x
-        except:
-            print x
-            sys.stderr.write(str(x) + str(inputHandler))
-            raise
-        outputHandler(sys.stdout, seqId, seq)
-
+    c = sys.stdin.read(1)
+    if not c: sys.exit()
+    c = c.strip()
+    if not c.strip(): continue
+    if c == '>': readmode = 'fasta'
+    else: readmode = 'r2'
     break
 
+#restore the current line for parsing
+line = c + sys.stdin.readline()
+first_line = True
 
-
+while True:
+    if readmode == 'fasta':
+        if line[0] == '>':
+            if first_line == True:
+                sys.stdout.write("\n")
+                first_line = False
+            sys.stdout.write("\n%s " % line.strip().split()[0][1:])
+        else:
+            sys.stdout.write(line.strip())
+    else:
+        sid, seq = line.strip().split()
+        print ">%s\n%s" % (sid, seq)
+    line = sys.stdin.readline()
+    if not line: break

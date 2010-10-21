@@ -1,0 +1,129 @@
+#!/bin/bash
+
+# Moa bash completion!
+#
+#
+#
+
+__moa_is_moadir() {
+	if [[ -e "moa.mk" ]]; then
+		echo "yes";
+	elif [[ ! -e "Makefile" ]]; then
+		echo "no"
+	elif grep -qi moa Makefile; then
+		echo "yes"
+	else
+		echo "no"
+	fi
+}
+
+__moa_get_template() {
+	echo `grep '$(call moa_load,' Makefile  | sed "s/.*,\(.*\))/\1/"`
+}
+
+__moa_all_templates() {
+	#return a list of all known moa templates
+	if [[ ! ( -e ~/.moa/cache/list ) ]]; then
+		mkdir -p ~/.moa/cache
+		moa list > ~/.moa/cache/list
+	fi
+	echo `cat ~/.moa/cache/list`
+}	
+
+__moa_all_packs() {
+    #return a list of all known moa packs
+    echo `ls ~/.moa/packs | sed "s/\.tar\.bz2$//"`
+}
+
+__moa_all_vars() {
+	#return a list of all known moa templates
+	if [[ $(__moa_is_moadir) == "yes" ]]
+	then
+		template=$(__moa_get_template)
+		if [[ ! ( -e "~/.moa/cache/template/$template" ) ]]; then
+			mkdir -p ~/.moa/cache/template
+			moa showvars 2>/dev/null > ~/.moa/cache/template/$template
+		fi		
+		echo `cat ~/.moa/cache/template/$template`
+	fi
+}		
+
+_moa() 
+{
+    local cur prev opts shopts moacomms moacommand
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    		
+    opts="--help --force --verbose --bg --title --directory"
+    shopts="-h -f -v -j -t -d"
+    moacomms="set run new list test help show pack unpack kill listlong adhoc cp template "
+    moacommand=""
+       
+    if [[ ${cur} == --* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts} ${shopts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${prev} == moa ]]; then
+    	COMPREPLY=( $(compgen -W "${moacomms}" -- ${cur}) )
+        return 0
+    fi
+    
+    #Find the currently entered command (if there is one)
+        for x in $(seq 1 ${COMP_CWORD})
+	  do
+	  [[ ${COMP_WORDS[x]} == -* ]] && continue
+	  moacommand=${COMP_WORDS[x]}
+          for y in $(seq $((x+1)) ${COMP_CWORD})
+	  do
+	      [[ ${COMP_WORDS[y]} == -* ]] && continue
+	      moaSecCommand=${COMP_WORDS[y]}
+	      break
+	  done
+	  break
+	done
+
+    case "${moacommand}" in 
+	
+	new)
+       	   local templates=$(__moa_all_templates)
+       	   COMPREPLY=( $(compgen -W "${templates}" -- ${cur}) )   
+            ;;
+        set)
+	    local vars=$(__moa_all_vars)
+	    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+	    ;;
+	pack)
+	    case "${moaSecCommand}" in 
+		rm)
+		    vars=$(__moa_all_packs)
+		    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+		    ;;
+		unpack)
+		    vars=$(__moa_all_packs)
+		    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+		    ;;
+		list)
+		    ;;
+		*)
+		    vars="unpack list args rm"
+		    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+		    ;;	       
+	    esac
+	    ;;
+	unpack)
+	    local vars=$(__moa_all_packs)
+	    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+	    ;;
+        *)
+        	;;
+    esac
+               	
+}
+complete -o nospace -o default -o bashdefault -F _moa moa

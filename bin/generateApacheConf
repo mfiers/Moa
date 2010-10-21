@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import os
+import sys
+from jinja2 import Template
+
+import moa.logger as l
+
+l.info("starting")
+
+MOABASE = os.environ['MOABASE']
+l.info("Moabase: %s" % MOABASE)
+act = os.path.join(MOABASE, 'etc', 'apache.conf.jinja2')
+l.info("Template: %s" % act)
+if not os.path.exists(act):
+    l.critical("Cannot find the apache.conf jinja template")
+    sys.exit()
+
+with open(act) as F:
+    t = Template(F.read())
+d = {}
+
+d['fileRoot'] = sys.argv[1]
+d['webRoot'] = sys.argv[2]
+d['MOABASE'] = MOABASE
+
+target = os.path.join(MOABASE, 'etc', 'apache.%s.conf' % sys.argv[2])
+if os.path.exists(target):
+    l.critical("%s exists! quitting"  % target)
+    sys.exit()
+    
+with open(target, 'w') as F:
+    F.write(t.render(**d))
+

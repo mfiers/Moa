@@ -32,7 +32,7 @@ import moa.utils
 import moa.runMake
 import moa.lock
 
-MOABASE = os.environ["MOABASE"]
+MOABASE = moa.utils.getMoaBase()
 
 def getPlugins(wd = None):
     """
@@ -80,8 +80,9 @@ def isMoaDir(d):
 
         >>> isMoaDir('/')
         False
-        >>> demoPath = os.path.join(getMoaBase(), 'demo', 'test')
-        >>> isMoaDir(demoPath)
+        >>> import moa.job
+        >>> jobdir = moa.job.newTestJob('traverse')
+        >>> isMoaDir(jobdir)
         True
         
     """
@@ -212,13 +213,20 @@ def status(d):
        - running - this is a moa job & currently executing (runlock exists)       
        - locked - this job is locked (i.e. a lock file exists)
 
-           >>> status(P_JOB)
+           >>> import moa.job
+           >>> jobdir = moa.job.newTestJob('traverse')
+           >>> status(jobdir)
            'waiting'
-           >>> moa.utils.removeMoaFiles(P_EMPTY)
-           >>> status(P_EMPTY)
-           'notmoa'
-           >>> status(P_LOCKEDJOB)
+           >>> import moa.lock
+           >>> moa.lock.lockJob(jobdir)
+           >>> status(jobdir)
            'locked'
+           >>> import tempfile
+           >>> emptyDir = tempfile.mkdtemp()
+           >>> moa.utils.removeMoaFiles(emptyDir)
+           >>> status(emptyDir)
+           'notmoa'
+
        
     """
     if not isMoaDir(d):
@@ -371,7 +379,11 @@ def info(wd):
             parname = None            
             pob = {}
             for v in ls[1:]:
-                k,v = v.split('=', 1)
+                try:
+                    k,v = v.split('=', 1)
+                except:
+                    l.critical("error parsing parameter %s" % v)
+                    raise
                 if k == 'mandatory':
                     if v == 'yes': pob[k] = True
                     else: pob[k] = False

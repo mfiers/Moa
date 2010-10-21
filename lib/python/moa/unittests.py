@@ -38,7 +38,8 @@ import moa.job
 import moa.project
 import moa.runMake
 
-MOABASE = os.environ['MOABASE']
+MOABASE = moa.utils.getMoaBase()
+
 
 failures = 0
 tests = 0

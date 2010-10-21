@@ -134,6 +134,7 @@ ifeq ($($(moa_id)_mode),seq)
 
 $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
 
+
 touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
 touch/%: b=$(shell basename $< .$($(moa_id)_input_extension))
 touch/%: $($(moa_id)_input_dir)/%

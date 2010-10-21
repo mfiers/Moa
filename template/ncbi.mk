@@ -21,13 +21,13 @@ moa_targets += ncbi
 ncbi_help = Download some data from NCBI
 
 moa_id = ncbi
-template_title = "Download from NCBI"
-template_description = Download a set of sequences from NCBI based on a		\
-  query string (ncbi_query) and database (ncbi_db). This tempate will	\
-  run only once (!), after a succesful run it creates a 'lock' file		\
-  that you need to remove to rerun
+template_title = Download data from NCBI
+template_description = Download a set of sequences from NCBI based on	\
+  a query string *ncbi_query* and database *ncbi_db*. This tempate	\
+  will run only **once**, after a succesful run it creates a lock	\
+  file that you need to remove to rerun
 
-ncbi_help = Downloads from NCBI
+ncbi_help = Start downloading
 
 moa_must_define += ncbi_query
 ncbi_query_help = NCBI query (for example txid9397[Organism%3Aexp])
@@ -41,13 +41,7 @@ ncbi_db_default = nuccore
 moa_may_define += ncbi_sequence_name
 ncbi_sequence_name_help = Name of the file to write the downloaded sequences to.
 ncbi_sequence_name_type = string
-ncbi_sequence_name_default = 
-
-moa_may_define += ncbi_skip_split
-ncbi_skip_split_help = Skip splitting the incoming fasta into separate fasta files 
-ncbi_skip_split_type = set
-ncbi_skip_split_default = T
-ncbi_skip_split_allowed = T F
+ncbi_sequence_name_default = out.fasta
 
 prereqlist += prereq_xml_twig_tools prereq_wget
 
@@ -65,34 +59,10 @@ include $(shell echo $$MOABASE)/template/moa/core.mk
 #moa_register_fastadir = $(shell echo `pwd`)/fasta 
 
 ################################################################################
-.PHONY: ncbi_prepare
-ncbi_prepare:
-	-mkdir fasta
-	-rm tmp.xml 
-	-rm fasta.tmp 
-	-rm fasta/*.fasta
-
-.PHONY: ncbi_post
-ncbi_post:
-
 .PHONY: ncbi
 ncbi: fasta.tmp
-	$e if [[ -n "$(ncbi_sequence_name)" ]]; then \
-		[ `grep '>' fasta.tmp | wc -l` == 1 ] \
-			&& cat fasta.tmp \
-				| sed "s/^>.*$$/>$(ncbi_sequence_name)/" \
-				| fastaSplitter -f - -n 1 -o fasta \
-			|| ln -f fasta.tmp $(ncbi_sequence_name) -s; \
-	else \
-		if [[ "$(ncbi_skip_split)" == "T" ]]; then \
-			ln fasta.tmp out.fasta \
-				|| $(call warn,Cannot create out.fasta); \
-		else \
-			fastaSplitter -f fasta.tmp -o fasta; \
-		fi \
-	fi
+	seqret fasta.tmp $(ncbi_sequence_name).fasta
 	touch lock
-
 
 
 #the fasta file as downloaded from NCBI
@@ -108,4 +78,4 @@ tmp.xml:
 		-O tmp.xml
 
 ncbi_clean:
-	-$e rm -r fasta tmp.xml fasta.tmp lock 2>/dev/null
+	-$e rm  *.fasta tmp.xml fasta.tmp lock 2>/dev/null

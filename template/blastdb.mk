@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+include $(MOABASE)/template/moa/prepare.mk
+
 moa_id = blastdb
 template_title_blastdb = Create a BLAST database 
 blastdb_help = Takes either a set of fasta files or a single	\
@@ -37,7 +39,11 @@ bdb_input_extension_type = string
 
 moa_may_define += bdb_fasta_file
 bdb_fasta_file_default = 
-bdb_fasta_file_help = The file with all FASTA sequences for the blastdb concatenated. This can be used as an alternative to defining "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your sequences are already in a single file, then using this parameter prevents duplication of that file.
+bdb_fasta_file_help = The file with all FASTA sequences for the		\
+  blastdb concatenated. This can be used as an alternative to defining	\
+  "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your	\
+  sequences are already in a single file, then using this parameter	\
+  prevents duplication.
 bdb_fasta_file_type = file
 
 #Variable: protein
@@ -48,29 +54,19 @@ bdb_protein_type = set
 
 bdb_protein_allowed = T F
 
-prereqlist += prereq_blastdb
-
-prereq_glimmer3_installed:
-	@$(call checkPrereqPath,formatdb)
-
 #Include base moa code - does variable checks & generates help
 include $(MOABASE)/template/moa/core.mk
 
 # End of the generic part - from here on you're on your own :)
 
 bdb_doconcat = F
-ifndef $(bdb_fasta_file)
+ifndef bdb_fasta_file
   bdb_doconcat = T
-  bdb_fasta_file ?= $(bdb_name).fasta
+  bdb_fasta_file = $(bdb_name).fasta
   input_files ?= $(wildcard $(bdb_input_dir)/*.$(bdb_input_extension))
 else
   bdb_doconcat = F
 endif
-
-moa_register_extra += blastdb fastafile idlist
-moa_register_blastdb = $(shell echo `pwd`/$(bdb_name))
-moa_register_fastafile = $(bdb_fasta_file)
-moa_register_idlist = $(shell echo `pwd`/$(bdb_name).list)
 
 #the rest of the variable definitions 
 
@@ -80,13 +76,10 @@ else
 	one_blast_db_file = $(bdb_name).phr
 endif
 
-.PHONY: blastdb_prepare
 blastdb_prepare:
 
-.PHONY: blastdb_post
 blastdb_post: create_id_list
 
-.PHONY: blastdb
 blastdb: $(one_blast_db_file)
 
 $(one_blast_db_file): $(bdb_fasta_file)
@@ -95,11 +88,12 @@ $(one_blast_db_file): $(bdb_fasta_file)
 	touch $(bdb_name)
 
 $(bdb_fasta_file): $(input_files)
-	if [[ "$(bdb_doconcat)" == "T" ]]; then 			\
-		find $(bdb_input_dir) -type f 					\
-	 		-name "*.$(bdb_input_extension)" 			\
-			| xargs -n 100 cat 							\
-			> $(bdb_fasta_file);						\
+	if [[ "$(bdb_doconcat)" == "T" ]]; then 		\
+		$(call echo,Starting concat $(bdb_coconcat) -)	\
+		find $(bdb_input_dir) -type f 			\
+	 		-name "*.$(bdb_input_extension)" 	\
+			| xargs -n 100 cat 			\
+			> $(bdb_fasta_file); 			\
 		fi
 
 .PHONY: create_id_list
@@ -114,7 +108,6 @@ blastdb_clean:
 	else \
 		rm $(bdb_name).p?? ;\
 	fi
-	-rm $(fasta_file)
 	-rm $(bdb_name).list
 	-rm formatdb.log
 

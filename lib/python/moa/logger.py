@@ -60,7 +60,7 @@ class XTRFormatter(logging.Formatter):
             record.visual = "#CRIT "
             record.vis1 = "CRITICAL:"
 
-        record.msg = " ".join(record.msg.split(" "))
+        record.msg = " ".join(str(record.msg).split(" "))
         #check if we're on a tty, if not, reset colon/coloff
         if not sys.stdout.isatty():
             record.colon = ""

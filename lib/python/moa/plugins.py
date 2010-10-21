@@ -70,9 +70,8 @@ class Plugins(UserDict.DictMixin):
         for p in self.keys():
             if not command in dir(self[p]):
                 continue
-
-
-            eval("self[p].%s(self.data)" % command)
+            l.debug("plugin executing hook %s for %s" % (command, p))
+            getattr(self[p], command)(self.data)
             
     def runCallback(self, command):
         """
