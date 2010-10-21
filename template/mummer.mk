@@ -47,6 +47,11 @@ mum_plot_raw_type = set
 mum_plot_raw_allowed = T F
 mum_plot_raw_default = F
 
+moa_may_define += mum_self
+mum_self_help = mummer against self
+mum_self_type = set
+mum_self_default = T
+mum_self_allowed = T F
 
 moa_may_define += mum_matchmode
 mum_matchmode_help = use all matching fragments (max) or only unique matchers (mum)
@@ -77,7 +82,9 @@ bix = $(mum_input_b_extension)
 
 $(mum_a_set): a__%: $(mum_b_set)
 	$e for against in $?; do											\
-		if [ "$$against" == "$*" ]; then continue; fi;					\
+		if [ "$(mum_self)" == "F" ]; then 								\
+			if [ "$$against" == "$*" ]; then continue; fi;				\
+		fi;																\
 		prefix=`basename $* .$(aix)`__`basename $$against .$(bix)` ;	\
 		nucmer $(if $(call seq,$(mum_matchmode),max),--maxmatch,--mum)  \
 			-b $(mum_breaklen) --prefix=$$prefix						\

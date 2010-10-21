@@ -81,16 +81,17 @@ else
 moadebug := \033[0;41;30mDEBUG\033[0m
 moamark := \033[0;42;30mMOA\033[0m
 moaerrr := \033[0;1;37;41m!!!\033[0m
-moawarn := \033[0;43m>>\033[0m
+moawarn := \033[0;43mWARN\033[0m
 moatest := \033[0;42mTEST:\033[0m
 endif
 
-warn = (echo -e "$(moawarn)$(strip $(1))" 1>&2)
-tstm = (echo -e "$(moatest)$(strip $(1))" 1>&2)
-errr = (echo -e "$(moaerrr)$(strip $(1))" 1>&2)
-exer = (echo -e "$(moaerrr)$(strip $(1)) - exiting"  1>&2; exit -1)
+echo = (echo -en "$(moawarn)" >&2; echo '$(strip $(1))' >&2)
+warn = (echo -en "$(moamark)" >&2; echo '$(strip $(1))' >&2)
+tstm = (echo -en "$(moatest)" >&2; echo '$(strip $(1))' >&2)
+errr = (echo -en "$(moaerrr)" >&2; echo '$(strip $(1))' >&2)
+exer = (echo -en "$(moaerrr)" >&2; echo '$(strip $(1))'"- exiting" >&2; exit -1)
 exerUnlock = (( if [[ "$(strip $(1))" ]]; 				\
-	then echo -e "$(moaerrr)"'$(strip $(1))' 1>&2 ; 	\
+	then echo -en "$(moaerrr)" >&2; echo '$(strip $(1))' >&2 ; 	\
 	fi; 												\
 	rm -f moa.runlock || true ); 						\
 	exit -1 )
@@ -101,8 +102,8 @@ ifdef MOA_VERBOSE
 e=
 minv=-v
 mins=
-debug = echo -e "$(moadebug) $(strip $(1))"
-echo = echo -e "$(moamark) $(strip $(1))"
+echo = (echo -en "$(moawarn)" >2; echo '$(strip $(1))' >2)
+debug = (echo -en "$(moadebug)" >2; echo '$(strip $(1))' >2)
 else
 e=@
 minv=

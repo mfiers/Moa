@@ -1,0 +1,60 @@
+#!/usr/bin/env python
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
+"""
+converts a fasta file to and from r2
+
+The script checks if the input if fasta or r2 and subsequenctly converts
+the file(s) to the other format.
+
+Multiple fasta files get converted into a single r2 file. An r2 file
+can be converted to multifasta or multiple fasta files
+
+"""
+import os
+import re
+import sys
+
+while True:
+    c = sys.stdin.read(1)
+    if not c: sys.exit()
+    c = c.strip()
+    if not c.strip(): continue
+    if c == '>': readmode = 'fasta'
+    else: readmode = 'r2'
+    break
+
+#restore the current line for parsing
+line = c + sys.stdin.readline()
+first_line = True
+
+while True:
+    if readmode == 'fasta':
+        if line[0] == '>':
+            if first_line == True:
+                sys.stdout.write("\n")
+                first_line = False
+            sys.stdout.write("\n%s " % line.strip().split()[0][1:])
+        else:
+            sys.stdout.write(line.strip())
+    else:
+        sid, seq = line.strip().split()
+        print ">%s\n%s" % (sid, seq)
+    line = sys.stdin.readline()
+    if not line: break

@@ -112,7 +112,7 @@ $(moa_id)_link_noclean ?= Makefile moa.mk
 .PHONY: $(moa_id)_prepare
 $(moa_id)_prepare:
 	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
-		mkdir touch || true; \
+		mkdir touch || true 2>/dev/null; \
 	else \
 		rm -rf touch || true; \
 	fi
@@ -136,10 +136,11 @@ $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
 
 
 touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
+touch/%: b=$(shell basename $< .$($(moa_id)_input_extension))
 touch/%: $($(moa_id)_input_dir)/%
-	echo $(shell echo '$($(moa_id)_name_sed)')
-	$(call warn,considering $< -- $t)
-	$(call warn,running '$($(moa_id)_process)')
+	$(call echo,considering $< -- $t ($b) )
+	$(call warn,running $($(moa_id)_process))
+	echo
 	$($(moa_id)_process)
 	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
 		touch $@; \
@@ -154,13 +155,14 @@ ifeq ($($(moa_id)_mode),par)
 $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
+touch/%: b=$(shell basename $< .$($(moa_id)_input_extension))
 touch/%: $($(moa_id)_input_dir)/%
-	$(call echo,considering $<)
+	$(call echo,considering $< -- $t)
+	$(call warn,running '$($(moa_id)_process)')
 	$($(moa_id)_process)
 	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
 		touch $@; \
 	fi
-
 endif
 
 ################################################################################
