@@ -381,33 +381,3 @@ mustexist_%:
 		$(call exerUnlock,Error: $* is undefined) ;\
 	fi
 
-################################################################################
-## make show ###################################################################
-#
-#### Show the current variables from moa.mk
-#
-################################################################################
-
-sq='
-#"' <- to satifsy emacs :(
-backslash=\$(empty)
-.PHONY: show moa_showvar_%
-show:
-	$e echo -n
-	$e $(foreach var,$(moa_must_define) $(moa_may_define), \
-		echo -ne "$(var)\t"; \
-		echo '$(subst $(sq),$(sq)$(backslash)$(sq)$(sq),$(value $(var)))';)
-
-################################################################################
-## make showvars ###############################################################
-#
-#### print a list of all definable variables
-#
-################################################################################
-
-.PHONY: showvars
-showvars:
-	for x in $(moa_must_define) $(moa_may_define); do \
-		echo $$x; \
-	done
-
