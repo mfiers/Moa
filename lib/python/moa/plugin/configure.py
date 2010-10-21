@@ -44,32 +44,29 @@ def configSet(data):
     wd = data['cwd']
     args = data['newargs']
 
+    ## I don't think that we're using these anywhere...
     #call the preset hooks
-    job = moa.runMake.MOAMAKE(wd = wd,
-                              target='moa_pre_set',
-                              captureOut = False,
-                              captureErr = False,
-                              verbose=False)
+    ##job = moa.runMake.MOAMAKE(wd = wd,
+    ##                         target='moa_pre_set',
+    ##                          captureOut = False,
+    ##                          captureErr = False,
+    ##                          verbose=False)
     
-    job.run()
-    job.finish()
+    ##job.run()
+    ##job.finish()
 
     newArgs = []
 
     #see if we need to query the user for input somehwere
     for a in args:
         if not '=' in a:
-
-            df = moa.conf.getVar(wd, a)
-            
+            df = moa.conf.getVar(wd, a)            
             vl = moa.utils.askUser("%s:\n> "%a,df)
-
             newArgs.append("%s%s%s" % (a, '=', vl))
         else:
             newArgs.append(a)
 
     parsedArgs = moa.conf.parseClArgs(newArgs)
-
     moa.conf.writeToConf(wd, parsedArgs)
 
     #call the postset hooks

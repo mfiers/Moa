@@ -28,9 +28,8 @@ set_help = set a variable to moa.mk
 
 #the actual set routine is handled by the moa-python code
 
-moa_pre_set: $(moa_hooks_preset) 
-
-moa_post_set: $(moa_hooks_postset)
+#moa_pre_set: $(moa_hooks_preset) 
+#moa_post_set: $(moa_hooks_postset)
 
 #moa_set_2:#
 #	moa $(minv) __set $(value MOAARGS)
