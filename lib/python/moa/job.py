@@ -29,8 +29,10 @@ import tempfile
 import moa.utils
 import moa.logger as l
 import moa.conf
+import moa.template
 import moa.utils
 import moa.runMake
+
 
 MOABASE = moa.utils.getMoaBase()
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
@@ -43,6 +45,58 @@ include $(MOABASE)/template/moa/prepare.mk
 
 """
 
+def getJob(wd):
+    """
+    Utility function to instantiate the correct job class
+
+    Currently, 'there is only one' (that is a Gnu Makefile based
+    job
+    """
+    return Job(wd)
+    
+
+class ConfigItem:
+    reString = re.compile((r'(?P<key>[^\s=+]+)\s*'+
+                           r'(?P<operator>\+?=)\s*' +
+                           r'(?P<value>.*?)\s*$'))
+    def __init__(self, key = None,
+                 operator = None, value = None,
+                 fromString=None):
+        
+        self.key = key
+        self.operator = operator
+        self.value = value
+
+        if fromString:
+            self._parseString(fromString)
+
+    def update(self, item):
+        """
+        update this value with another value
+        if the operator of the new value == '=', this means an overwrite
+
+        if the operator == '+=' it's an append
+        """
+        if not item.key == self.key:
+            raise Exception("Invalid config item update")
+        
+        if item.operator == '+=':
+            self.value += ' ' + item.value
+        elif item.operator == '=':
+            self.value = item.value
+        else:
+            raise Exception("Invalid operator in item update")
+            
+    def _parseString(self, s):
+        x = self.reString.match(s)
+        self.key = x.groupdict()['key']
+        self.operator = x.groupdict()['operator']
+        self.value = x.groupdict()['value']
+
+    def __str__(self):
+        return "%s %s %s" % (
+            self.key, self.operator, self.value)
+        
 class Job:
     """
     New MoaJob class - should combine a lot of functionality
@@ -50,8 +104,86 @@ class Job:
     """
     def __init__(self, wd):
         self.wd = wd
+        self.makefile = os.path.join(self.wd, 'Makefile')
+        self.moamk = os.path.join(self.wd, 'moa.mk')
+        self.moamklock = os.path.join(self.wd, 'moa.mk.lock')
+        self.moamkold = os.path.join(self.wd, 'moa.mk.old')
+        self.conf = {}
+        if self.isMoa():
+            self.loadConfig()
+            self.getTemplateName()
 
+    def getTemplateName(self):
+        """
+        Return the template name
+        """
+        with open(self.makefile) as F:
+            for line in F.readlines():
+                if 'include' in line and 'MOABASE' in line \
+                    and '/template/' in line \
+                    and (not '/template/moa/' in line):
+                    self.template = line.strip().split('/')[-1].replace('.mk', '')
+                return
+            
+            if '$(call moa_load,' in line:
+                self.template = line.split(',')[1][:-2]
+                return
 
+    def saveConfig(self):
+        """
+        Save the configuration to moa.mk
+        """
+
+        #not saving an empty configuration
+        if not self.conf:
+            return False
+
+        with moa.utils.flock(self.moamklock):
+            l.debug("got a lock on moa.mk in %s" % self.wd)
+            if os.path.exists(self.moamkold):
+                l.debug("removing an older moa.mk.old")
+                os.unlink(self.moamkold)
+                l.debug("removing an older moa.mk.old")
+            if os.path.exists(self.moamk):
+                os.rename(self.moamk, self.moamkold)
+            with open(self.moamk, 'w') as F:
+                for i in self.conf.values():
+                    F.write("%s\n" % i)
+        
+    def loadConfig(self):
+        """
+        Load the configuration from moa.mk 
+        """
+        self.conf = {}
+        if not os.path.exists(self.moamk):            
+            return False
+        with open(self.moamk) as F:
+            for line in F.readlines():
+                line = line.strip()
+                if not line: continue
+                self.setConfFromString(line)
+
+    def setConf(self, item):
+        """
+        Set a configuration value from an ConfigItem object
+        """
+        #see if the key already exists,
+        if self.conf.has_key(item.key):
+            self.conf[item.key].update(item)
+        else:
+            self.conf[item.key] = item
+
+    def setConfKV(self, key, value, operator='='):
+        i = ConfigItem(key = key, value=value, operator=operator)
+        self.setConf(i)
+    
+    def setConfFromString(self, s):
+        """
+        Set a value for the local job config from a string        
+        """
+        i = ConfigItem(fromString = s)
+        self.setConf(i)
+        
     def isMoa(self):
         """
         Is the job directory a Moa directory
@@ -90,7 +222,84 @@ class Job:
         F.close()        
         return isMoa
 
+    def new(self,
+            template,
+            title = None,
+            parameters = [],
+            force = False,
+            titleCheck = True,
+            noInit = False):
         
+        """
+        Create a new template in the `wd`
+        """
+        l.debug("Creating a new job from template '%s'" % template)
+        l.debug("- in wd %s" % self.wd)
+
+        if not os.path.exists(self.wd):
+            l.info("creating folder for %s" % self.wd)
+            os.makedirs(self.wd)
+        #TODO: do something with the results of this check
+            
+        if not moa.template.check(template):
+            l.error("Invalid template")
+
+        if os.path.exists(self.makefile):
+            l.debug("Makefile exists!")
+            if not force:
+                l.error("makefile exists, use -f (--force) to overwrite")
+                sys.exit(-1)
+
+        l.debug("Start writing %s" % self.makefile)
+        with open(self.makefile, 'w') as F:
+            F.write(NEW_MAKEFILE_HEADER)
+            F.write("$(call moa_load,%s)\n" % template)
+
+        if title:
+            self.setConfKV('title', title)
+
+        params = []
+        for par in parameters:
+            if not '=' in par: continue
+            self.setConfFromString(par)
+
+        self.saveConfig()
+        if noInit: return
+
+        l.debug("Running moa initialization")
+        job = moa.runMake.MOAMAKE(wd = self.wd,
+                                  target='initialize',
+                                  captureOut = False,
+                                  captureErr = False,
+                                  stealth = True,
+                                  verbose=False)
+        job.run()
+        job.finish()
+        l.debug("Written %s, try: moa help" % self.makefile)
+
+        # check if a title is defined as 'title=something' on the
+        # commandline, as opposed to using the -t option
+        if not title:
+            for p in parameters:
+                if p.find('title=') == 0:
+                    title = p.split('=',1)[1].strip()
+                    parameters.remove(p)
+                    break
+
+        if (not title) and titleCheck and (not template == 'traverse'):
+            l.warning("You *must* specify a job title")
+            l.warning("You can still do so by running: ")
+            l.warning("   moa set title='something descriptive'")
+            title = ""
+        if title:
+            l.debug('creating a new moa makefile with title "%s" in %s' % (
+                title, self.wd))
+        else:
+            l.debug('creating a new moa makefile in %s' % ( self.wd))
+
+
+
+
 def check(what):
     """
     Check if a template exists
@@ -233,140 +442,141 @@ def newTestJob(*args, **kwargs):
     @rtype: string
     """
 
-    d = tempfile.mkdtemp()
-    kwargs['wd'] = d
-    newJob(*args, **kwargs)
-    return d
-    
-def newJob(template,
-           title = None,
-           wd = '.',
-           parameters = [],
-           force = False,
-           titleCheck = True,
-           noInit = False):
-    """
-    Create a new template based makefile in the current dir.
+    directory = tempfile.mkdtemp()
+    job = getJob(directory)
+    job.new(*args, **kwargs)
+    return directory
 
-        >>> d = tempfile.mkdtemp()
-        >>> newJob(template = 'adhoc',
-        ...        title = 'test job creation',
-        ...        wd=d, parameters=['moa_precommand="ls"'])
-        >>> os.path.exists(os.path.join(d, 'Makefile'))
-        True
-        >>> os.path.exists(os.path.join(d, 'moa.mk'))
-        True
-        >>> moa.conf.getVar(d, 'title')
-        'test job creation'
-        >>> moa.conf.getVar(d, 'moa_precommand')
-        '"ls"'
+# @moa.utils.deprecated
+# def newJob(template,
+#            title = None,
+#            wd = '.',
+#            parameters = [],
+#            force = False,
+#            titleCheck = True,
+#            noInit = False):
+#     """
+#     Create a new template based makefile in the current dir.
 
-    @param template: The template to use for the new job
-    @param wd: Where to create the new job
-    @param title: Title of the newly created job
-    @type title: String
-    @param wd: Directory to create the new job
-    @type wd: String
-    @param parameters: A list of parameters for initialization
-    @type parameters: List of strings. Each of the strings should
-       have the following form: 'key=some value'
-    @param force: Force job creation - this overwrites older jobs
-       in the same directory
-    @type force: boolean
-    @param noInit: Skip initialization. Normally moa calls
-       `make init`. If this flag is set, this step is skipped
-    @type noInit: boolean
-    @returns: Nothing
+#         >>> d = tempfile.mkdtemp()
+#         >>> newJob(template = 'adhoc',
+#         ...        title = 'test job creation',
+#         ...        wd=d, parameters=['moa_precommand="ls"'])
+#         >>> os.path.exists(os.path.join(d, 'Makefile'))
+#         True
+#         >>> os.path.exists(os.path.join(d, 'moa.mk'))
+#         True
+#         >>> moa.conf.getVar(d, 'title')
+#         'test job creation'
+#         >>> moa.conf.getVar(d, 'moa_precommand')
+#         '"ls"'
 
-    """
-    l.debug("Creating template '%s'" % template)
-    l.debug("- in wd %s" % wd)
+#     @param template: The template to use for the new job
+#     @param wd: Where to create the new job
+#     @param title: Title of the newly created job
+#     @type title: String
+#     @param wd: Directory to create the new job
+#     @type wd: String
+#     @param parameters: A list of parameters for initialization
+#     @type parameters: List of strings. Each of the strings should
+#        have the following form: 'key=some value'
+#     @param force: Force job creation - this overwrites older jobs
+#        in the same directory
+#     @type force: boolean
+#     @param noInit: Skip initialization. Normally moa calls
+#        `make init`. If this flag is set, this step is skipped
+#     @type noInit: boolean
+#     @returns: Nothing
 
-    #is this a valid template??
+#     """
+#     l.debug("Creating template '%s'" % template)
+#     l.debug("- in wd %s" % wd)
 
-    #TODO: do something with the results of this check
-    check(template)
+#     #is this a valid template??
+
+#     #TODO: do something with the results of this check
+#     check(template)
             
-    if not wd: wd = os.getcwd()
-    if not os.path.isdir(wd):
-        l.info("Creating wd %s" % wd)
-        os.makedirs(wd)
+#     if not wd: wd = os.getcwd()
+#     if not os.path.isdir(wd):
+#         l.info("Creating wd %s" % wd)
+#         os.makedirs(wd)
 
-    # check if a title is defined as 'title=something' on the
-    # commandline, as opposed to using the -t option
-    if not title:
-        for p in parameters:
-            if p.find('title=') == 0:
-                title = p.split('=',1)[1].strip()
-                parameters.remove(p)
-                break
+#     # check if a title is defined as 'title=something' on the
+#     # commandline, as opposed to using the -t option
+#     if not title:
+#         for p in parameters:
+#             if p.find('title=') == 0:
+#                 title = p.split('=',1)[1].strip()
+#                 parameters.remove(p)
+#                 break
         
-    if (not title) and titleCheck and (not template == 'traverse'):
-        l.warning("You *must* specify a job title")
-        l.warning("You can still do so by running: ")
-        l.warning("   moa set title='something descriptive'")
-        title = ""
-    if title:
-        l.debug('creating a new moa makefile with title "%s" in %s' % (
-            title, wd))
-    else:
-        l.debug('creating a new moa makefile in %s' % ( wd))
+#     if (not title) and titleCheck and (not template == 'traverse'):
+#         l.warning("You *must* specify a job title")
+#         l.warning("You can still do so by running: ")
+#         l.warning("   moa set title='something descriptive'")
+#         title = ""
+#     if title:
+#         l.debug('creating a new moa makefile with title "%s" in %s' % (
+#             title, wd))
+#     else:
+#         l.debug('creating a new moa makefile in %s' % ( wd))
 
-    makefile = os.path.join(wd, 'Makefile')
-    moamk = os.path.join(wd, 'moa.mk')
-    moamklock = os.path.join(wd, 'moa.mk.lock')
+#     makefile = os.path.join(wd, 'Makefile')
+#     moamk = os.path.join(wd, 'moa.mk')
+#     moamklock = os.path.join(wd, 'moa.mk.lock')
     
-    if os.path.exists(makefile):
-        l.debug("Makefile exists!")
-        if not force:
-            l.critical("makefile exists, use -f (--force) to overwrite")
-            sys.exit(1)
+#     if os.path.exists(makefile):
+#         l.debug("Makefile exists!")
+#         if not force:
+#             l.critical("makefile exists, use -f (--force) to overwrite")
+#             sys.exit(1)
 
-    l.debug("Start writing %s" % makefile)
-    F = open(makefile, 'w')
-    F.write(NEW_MAKEFILE_HEADER)
-    F.write("$(call moa_load,%s)\n" % template)
+#     l.debug("Start writing %s" % makefile)
+#     F = open(makefile, 'w')
+#     F.write(NEW_MAKEFILE_HEADER)
+#     F.write("$(call moa_load,%s)\n" % template)
 
-    #include moabase
-    F.close()
+#     #include moabase
+#     F.close()
 
-    if title:
-        with moa.utils.flock(moamklock):    
-            moamkdata = []
+#     if title:
+#         with moa.utils.flock(moamklock):    
+#             moamkdata = []
 
-            #open & rewrite an older moa.mk
-            if os.path.exists(moamk):
-                moamkdata = open(moamk).readlines()
+#             #open & rewrite an older moa.mk
+#             if os.path.exists(moamk):
+#                 moamkdata = open(moamk).readlines()
                     
-            F = open(moamk, 'w')
-            for line in moamkdata:
-                if re.match("^title *=", line) and title:
-                    continue
-                F.write(line)
+#             F = open(moamk, 'w')
+#             for line in moamkdata:
+#                 if re.match("^title *=", line) and title:
+#                     continue
+#                 F.write(line)
                 
-            if title:
-                F.write("title=%s\n" % title)
-                l.debug("writing title=%s to moa.mk" % title)
+#             if title:
+#                 F.write("title=%s\n" % title)
+#                 l.debug("writing title=%s to moa.mk" % title)
 
-            F.close()       
-            l.debug('Written moa.mk')
+#             F.close()       
+#             l.debug('Written moa.mk')
 
-    params = []
-    for p in parameters:
-        if not '=' in p: continue
-        params.append(p)
-        moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
+#     params = []
+#     for p in parameters:
+#         if not '=' in p: continue
+#         params.append(p)
+#         moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
         
-    if noInit: return
+#     if noInit: return
 
-    l.debug("Running moa initialization")
-    job = moa.runMake.MOAMAKE(wd = wd,
-                              target='initialize',
-                              captureOut = False,
-                              captureErr = False,
-                              stealth = True,
-                              verbose=False)
-    job.run()
-    job.finish()
-    l.debug("Written %s, try: moa help" % makefile)
+#     l.debug("Running moa initialization")
+#     job = moa.runMake.MOAMAKE(wd = wd,
+#                               target='initialize',
+#                               captureOut = False,
+#                               captureErr = False,
+#                               stealth = True,
+#                               verbose=False)
+#     job.run()
+#     job.finish()
+#     l.debug("Written %s, try: moa help" % makefile)
 

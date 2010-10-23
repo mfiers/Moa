@@ -79,6 +79,15 @@ def getMoaBase():
         os.putenv('MOABASE', MOABASE)
     return MOABASE
 
+def moaDirOrExit(job):
+    """
+    Check if the job resides in a moa directory, if not, exit
+    with an error message
+    """
+    if not job.isMoa():
+        l.error("This command must be executed in a Moa job directory")
+        sys.exit(-1)
+
 def deprecated(func):
     """
     Decorator to flag a function as deprecated

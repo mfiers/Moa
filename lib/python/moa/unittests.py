@@ -35,6 +35,7 @@ import moa.conf
 import moa.utils
 import moa.job
 import moa.project
+import moa.template
 import moa.runMake
 
 MOABASE = moa.utils.getMoaBase()
@@ -179,6 +180,8 @@ def run(options, args):
         testModule(moa.lock)
         testModule(moa.info)
         testModule(moa.conf)
+        testModule(moa.project)
+        testModule(moa.template)
         testModule(moa.job)
         testModule(moa.runMake)
         

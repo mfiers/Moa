@@ -171,11 +171,17 @@ blast_clean:
 	-rm blast_report
 
 blast_unittest:	
-	moa new -d 10.blastdb -t 'test blast db' blastdb \
-			bdb_fasta_file=$$MOADATA/dna/test01.fasta bdb_name=test
+	echo ">seq1" > test.fasta
+	echo "tcttacttctactactactctcttcttatcatcatctatcccct" >> test.fasta
+	echo ">seq2" >> test.fasta
+	echo "cgatactcttctctcgagacaggattcatcatcatctatcccgg" >> test.fasta
+	moa new -d 10.blastdb -t 'test blast db' blastdb
+	cd 10.blastdb; moa set bdb_fasta_file=../test.fasta
+	cd 10.blastdb; moa set bdb_name=test
 	cd 10.blastdb; moa 
-	moa new -d 20.blast -t 'test blast' blast \
-			blast_db=../10.blastdb/test blast_input_dir=$$MOADATA/dna
+	moa new -d 20.blast -t 'test blast' blast
+	cd 20.blast; moa set blast_db=../10.blastdb/test
+	cd 20.blast; moa set blast_input_dir=../
 	cd 20.blast; moa 
 	cd 20.blast; ls
 	[[ -f 20.blast/blast_report ]] || false

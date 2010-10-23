@@ -25,13 +25,10 @@ import moa.job
 import moa.logger as l
 import moa.plugin
 
-#class Newjob(moa.plugin.BasePlugin):
-#    pass
-
 def defineCommands(data):
     data['commands']['new'] = {
-        'desc' : 'Create a new Moa job in the current directory (unless -d ' + \
-            'is defined)',
+        'desc' : "Create a new Moa job in the current directory " +
+                 "(unless -d is defined)",
         'call' : newJob
         }
 
@@ -45,26 +42,12 @@ def defineOptions(data):
     try:
         parser.add_option("-d", dest="directory",
                       help="Create/unpack the job/pipeline in this directory")
+        
     except optparse.OptionConflictError:
         pass #could have been defined in plugin/pack.py
 
     data['parser'].add_option_group(parserN)
 
-def _parseArgs(args):
-    '''
-    Parse the arguments
-    '''
-    if len(args) == 0:
-        template = 'traverse'
-        params = []
-    elif '=' in args[0]:
-        template = 'traverse'
-        params = args
-    else:
-        template = args[0]
-        params = args[1:]
-    return template, params
-    
 def newJob(data):
     """
     Create a new job 
@@ -73,18 +56,23 @@ def newJob(data):
     options = data['options']
     args = data['newargs']
 
-    template, params = _parseArgs(args)
+    params = []
+    template = 'traverse'
+    
+    for a in args:
+        if '=' in a:
+            params.append(a)
+        else:
+            template = a
+
     l.debug("Creating a new '%s' job" % template)
 
     if options.directory:
         wd = options.directory
 
     title = options.title
-
-
-    moa.job.newJob( template = template,
-                    title = title,
-                    wd = wd,
-                    parameters = params,
-                    force = options.force,
-            )
+    job = moa.job.getJob(wd)
+    job.new( template = template,
+             title = title,
+             parameters = params,
+             force = options.force)

@@ -40,8 +40,8 @@ import moa.checkTemplate
 import moa.plugins
 import moa.moaCommands
 
-MOABASE=moa.utils.getMoaBase()
 
+MOABASE=moa.utils.getMoaBase()
 
 
 ## Initialize the logger

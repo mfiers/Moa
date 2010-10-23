@@ -36,24 +36,28 @@ def defineCommands(data):
         'call' : configSet,
         }
 
+    data['commands']['show'] = {
+        'desc' : 'Show the current configured variables',
+        'call' : configShow,
+        }
 
+def configShow(data):
+    """
+    Print the configuration (from moa.mk) to stdout
+    """
+    wd = data['cwd']
+    job = moa.job.getJob(wd)
+    moa.utils.moaDirOrExit(job)
+    for key in job.conf.keys():
+        print '%s\t%s' % (key, job.conf[key].value)
+        
 def configSet(data):
     """
     parse the command line and save the arguments into moa.mk
     """
     wd = data['cwd']
+    job = moa.job.getJob(wd)
     args = data['newargs']
-
-    ## I don't think that we're using these anywhere...
-    #call the preset hooks
-    ##job = moa.runMake.MOAMAKE(wd = wd,
-    ##                         target='moa_pre_set',
-    ##                          captureOut = False,
-    ##                          captureErr = False,
-    ##                          verbose=False)
-    
-    ##job.run()
-    ##job.finish()
 
     newArgs = []
 
@@ -68,14 +72,3 @@ def configSet(data):
 
     parsedArgs = moa.conf.parseClArgs(newArgs)
     moa.conf.writeToConf(wd, parsedArgs)
-
-    ## not using these either
-    #
-    ###call the postset hooks
-    ##job = moa.runMake.MOAMAKE(wd = wd,
-    ##                          target='moa_post_set',
-    ##                          captureOut = False,
-    ##                          captureErr = False,
-    ##                          verbose=False)
-    ##job.run()
-    ##job.finish()

@@ -30,6 +30,31 @@ import moa.job
 import moa.logger as l
 import moa.plugin
 
+
+def defineCommands(data):
+    data['commands']['adhoc'] = { 
+        'desc' : 'Quickly create an adhoc analysis',
+        'call' : createAdhoc
+        }
+    data['commands']['adstore'] = {
+        'desc' : 'Remeber this adhoc analysis for reuse',
+        'call' : addStore
+        }
+    
+def defineOptions(data):
+    parserN = optparse.OptionGroup(data['parser'], "Moa adhoc (a)")
+    try:
+        parserN.add_option("-t", "--title", dest="title", help="Job title")
+        
+    except optparse.OptionConflictError:
+        pass # these options are probably already defined in the newjob plugin
+    
+    parserN.add_option("-m", "--mode",
+                       dest="mode",
+                       help="Adhoc mode to run (omit for moa to guess)")
+    data['parser'].add_option_group(parserN)
+
+
 def _sourceOrTarget(g):
     """
     Determine if this glob is a likely source or
@@ -42,29 +67,6 @@ def _sourceOrTarget(g):
     if d[:2] == '..': return 'source'
     if d[0] == '/': return 'source'
     return 'target'
-
-def defineCommands(data):
-    data['commands']['adhoc'] = { 
-        'desc' : 'Quickly create an adhoc analysis',
-        'call' : createAdhoc
-        }
-
-def defineOptions(data):
-    parserN = optparse.OptionGroup(data['parser'], "Moa adhoc (a)")
-    data['parser'].set_defaults(directory=".")
-    try:
-        parserN.add_option("-t", "--title", dest="title", help="Job title")
-        parserN.add_option("-d", "--directory", 
-                           dest="directory",
-                           help="Directory to create the new template in (default: .)")
-    except optparse.OptionConflictError:
-        pass # these options are probably already defined in the newjob plugin
-    
-    parserN.add_option("-m", "--mode",
-                       dest="mode",
-                       help="Adhoc mode to run (omit for an educated guess)")
-    data['parser'].add_option_group(parserN)
-
 
 def createAdhoc(data):
     """
@@ -189,13 +191,18 @@ def createAdhoc(data):
         l.warning("$ moa set adhoc_mode=par")
                
     l.debug('setting parameters %s' % params)
+
+    job = moa.job.getJob(wd)
+    job.new(template='adhoc',
+            title = options.title,
+            force = options.force,
+            parameters=params)
+
+def addStore(data):
+    wd = data['wd']
+    job = moa.job.Job(wd)
+    if not job.isMoa():
+        l.warn("Needs to be executed in a moa adhoc job directory")
+        sys.exit(-1)
     
-    moa.job.newJob(template='adhoc',
-                   wd = wd,
-                   title = options.title,
-                   force = options.force,
-                   parameters=params)
-
-
-        
 

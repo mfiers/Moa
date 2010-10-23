@@ -35,20 +35,15 @@ def _projectRoot(path):
     """
     Is this specific path a project root?    
 
-    >>> moa.utils.removeFiles(P_EMPTY, recursive=True)
-    >>> _projectRoot(P_EMPTY)
-    False
-    >>> moa.job.newJob(template = 'project',
-    ...                title = 'test job creation',
-    ...                wd=P_EMPTY)
-    >>> _projectRoot(P_EMPTY)
-    True
-    >>> moa.utils.removeFiles(P_EMPTY, recursive=True)
-    >>> moa.job.newJob(template = 'traverse',
-    ...                title = 'test job creation',
-    ...                wd=P_EMPTY)
-    >>> _projectRoot(P_EMPTY)
-    False
+    >>> wd = moa.job.newTestJob(template='project',
+    ...                title = 'test job creation')
+    >>> _projectRoot(wd)
+    'project'
+    >>> wd = moa.job.newTestJob(template='traverse',
+    ...                title = 'traverse job creation')
+    >>> _projectRoot(wd)
+    'notproject'
+
     """
     if not moa.info.isMoaDir(path):
         return "out"
@@ -62,21 +57,16 @@ def findProjectRoot(path=None):
     """
     Find the project root of a certain moa job
 
-    >>> moa.utils.removeFiles(P_EMPTY, recursive=True)
-    >>> moa.job.newJob(template = 'project',
-    ...                title = 'test project',
-    ...                wd=P_EMPTY)
-    >>> moa.job.newJob(template = 'traverse',
-    ...                title = 'test job creation',
-    ...                wd=os.path.join(P_EMPTY, 'test'))
-    >>> os.path.exists(os.path.join(P_EMPTY, 'test', 'Makefile'))
+    >>> wd = moa.job.newTestJob(template='project',
+    ...                title = 'test job creation')
+    >>> subdir = os.path.join(wd, 'test')
+    >>> os.mkdir(subdir)
+    >>> job = moa.job.getJob(subdir)
+    >>> job.new(template='traverse', title='test')
+    >>> result = findProjectRoot(subdir)
+    >>> result == wd
     True
-    >>> result = findProjectRoot(os.path.join(P_EMPTY, 'test'))
-    >>> result[0]
-    True
-    >>> result[1] == P_EMPTY
-    True
-    >>> result[2] == 'test project'
+    >>> None == findProjectRoot('/usr')
     True
 
     @param path: The path for which we're looking for the project root, if
@@ -85,7 +75,7 @@ def findProjectRoot(path=None):
     @returns: a tuple, first value indicates if there is a parent project
       the second is the path to the project, the third value is the project
       title
-    @rtype: tuple of a boolean and two stringsg  
+    @rtype: tuple of a boolean and two strings
     """
     if not path:
         path=os.getcwd()
