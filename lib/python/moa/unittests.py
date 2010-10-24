@@ -25,6 +25,7 @@ import os
 import sys
 import doctest
 import tempfile
+import subprocess
 
 import moa.logger as l
 from moa.logger import setSilent, setInfo, setVerbose
@@ -34,6 +35,7 @@ import moa.info
 import moa.conf
 import moa.utils
 import moa.job
+import moa.plugins
 import moa.project
 import moa.template
 import moa.runMake
@@ -68,16 +70,50 @@ def testModule(m):
 def testPlugins(args=[]):
     global pluginFailures
     global pluginTests
+
+    #new style plugin tests
+    plugins = moa.plugins.Plugins()
+    for plugin, testCode in plugins.getAttr('TESTSCRIPT'):
         
+        if args and plugin not in args: continue
+        
+        l.info("Starting new style test of %s" % plugin)
+        testDir = tempfile.mkdtemp()
+        testScript = os.path.join(testDir, 'test.sh')
+        with open(testScript, 'w') as F:
+            F.write("set -e\n\n")
+            F.write(testCode)
+        l.info("executing test.sh in %s" % testScript)
+        p = subprocess.Popen('bash %s' % testScript,
+                             shell=True,
+                             cwd = testDir,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             close_fds=True)
+        out, err = p.communicate()
+        rc = p.returncode
+        if rc != 0:
+            l.critical("Errors in (new style) test of plugin %s (rc %d)" % (plugin, rc))
+            if out:
+                l.critical("Stdout:")
+                l.critical(out)
+            if err:
+                l.critical("Stderr:")
+                l.critical(err)
+
+
+    #old style plugin tests
     for plugin in moa.info.getPlugins():
         if args and not plugin in args:
             continue
         l.debug("Starting a new plugin test")
+        
         wd = moa.job.newTestJob(
             template = 'adhoc_one',
             title='Testing plugin %s' % plugin)
+
+        l.debug("start old style testing plugin %s" % plugin)
         
-        l.debug("start testing plugin %s" % plugin)
         rc = moa.runMake.go(wd=wd,
                             target='moa_plugin_%s_test' % plugin,
                             background=False,

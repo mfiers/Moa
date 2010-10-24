@@ -76,3 +76,9 @@ def newJob(data):
              title = title,
              parameters = params,
              force = options.force)
+
+TESTSCRIPT = """
+moa new adhoc
+moa new -d subdir adhoc
+
+"""

@@ -78,7 +78,16 @@ class Plugins(UserDict.DictMixin):
         Run a plugin callback 
         """
         command['call'](self.data)
-            
+
+    def getAttr(self, attribute):
+        """
+        A generator that returns all plugins and the
+        requested attribute
+        """
+        for p in self.keys():
+            a = getattr(self[p], attribute, None)
+            if a: yield p, a
+        
     # Implement the basic functions for a dict
     #
     def __getitem__(self, item):
