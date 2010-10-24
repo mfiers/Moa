@@ -80,5 +80,6 @@ def newJob(data):
 TESTSCRIPT = """
 moa new adhoc
 moa new -d subdir adhoc
+false
 
 """
