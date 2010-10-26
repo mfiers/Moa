@@ -33,9 +33,9 @@ import moa.template
 import moa.utils
 import moa.runMake
 
-import moa.job.base
-import moa.job.gnumake
-import moa.job.nojob
+#import moa.job.base
+#import moa.job.gnumake
+#import moa.job.nojob
 
 def getJob(wd):
     """
@@ -44,11 +44,12 @@ def getJob(wd):
     Currently, 'there is only one' (that is a Gnu Makefile based
     job
     """
-    makefile = os.path.join(wd, 'Makefile')
-    if os.path.exists(makefile):
-        return moa.job.gnumake.GnuMakeJob(wd)
-    else:
-        return moa.job.nojob.NoJob(wd)
+    return Job(wd)
+    #makefile = os.path.join(wd, 'Makefile')
+    #if os.path.exists(makefile):
+    #    return moa.job.gnumake.GnuMakeJob(wd)
+    #else:
+    #    return moa.job.nojob.NoJob(wd)
 
 def newJob(wd, **kwargs):
     """
@@ -57,9 +58,9 @@ def newJob(wd, **kwargs):
     template, and instantiate the proper job type
     """
 
-    job = moa.job.gnumake.GnuMakeJob(wd)
-    job.new(**kwargs)
-    return job                   
+    job = Job(wd)   #moa.job.gnumake.GnuMakeJob(wd)
+    job.init(**kwargs)
+    return job
     
 def newTestJob(*args, **kwargs):
     """
@@ -89,3 +90,47 @@ def newTestJob(*args, **kwargs):
     job = newJob(wd, **kwargs)
     return wd
 
+class Job(object):
+    """
+    Placeholder for a job
+    """
+    
+    def __init__(self, wd):
+        """        
+        """
+        self.wd = wd
+        self.conf = moa.conf.Config(self)        
+
+    def setBackend(self, backendName):
+        """
+        Change the backend
+        """
+        try:
+            moduleName = 'moa.backend.%s' % backendName
+            module =  __import__( moduleName, globals(), locals(), [moduleName], -1)            
+            l.debug("Successfully Loaded module %s" % moduleName)
+        except ImportError, e:
+            if str(e) == "No module named %s" % moduleName:
+                l.critical("Backend %s does not exists" % backendName)
+            l.critical("Error loading backend %s" % backendName)
+            sys.exit(-1)                
+            
+        self.backend = getattr(module, '%sBackend' % backendName.capitalize())(self)
+
+    def isMoa(self):
+        """
+        Check if this is a Moa directory - Currently, this needs to be overridden
+        """
+        self.backend.isMoa()      
+
+    def init(self, 
+             template=None, 
+             force=False, 
+             **kwargs):
+        """
+        Initialize a new job in the current wd
+        """
+        if self.isMoa() and not force:
+            l.error("A job does already exists in this directory")
+            
+            

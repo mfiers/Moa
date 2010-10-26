@@ -42,41 +42,7 @@ class BaseJob(object):
     def __init__(self, wd):
         self.wd = wd
         self.conf = moa.conf.Config(self)
-        
-
-    @moa.utils.deprecated
-    def saveConfig(self):
-        self.conf.save()
-
-    @moa.utils.deprecated
-    def loadConfig(self):
-        self.conf.load()
-        
-    @moa.utils.deprecated
-    def setConf(self, item):
-        self.conf.add(item)
-
-    @moa.utils.deprecated
-    def setConfKV(self, key, value, operator='='):
-        self.conf.add(key, operator, value)
-
-    @moa.utils.deprecated
-    def setConfFromString(self, s):
-        self.conf.add(s)
-        
-    def isMoa(self):
-        """
-        Check if this is a Moa directory - Currently, this needs to be overridden
-        """
-        pass
-    
-    def new(self, *args, **kwargs):
-        """
-        Create a new job
-
-        needs to be overridden for now
-        """
-        pass
+                
 
 def check(what):
     """

@@ -89,6 +89,7 @@ class Config(dict):
         self.moamk = os.path.join(self.job.wd, 'moa.mk')
         self.moamkold = os.path.join(self.job.wd, 'moa.mk.old')
         self.moamklock = os.path.join(self.job.wd, 'moa.mk.lock')
+        
         super(Config, self).__init__(*newargs, **kwargs)
 
     def load(self):

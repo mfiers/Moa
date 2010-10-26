@@ -38,14 +38,6 @@ from moa.job.base import BaseJob
 MOABASE = moa.utils.getMoaBase()
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
-NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
-## Moa Makefile
-## http://mfiers.github.com/Moa
-
-include $(MOABASE)/template/moa/prepare.mk
-
-"""
-
 class GnuMakeJob(BaseJob):
     """
     New MoaJob class - should combine a lot of functionality
@@ -105,12 +97,17 @@ class GnuMakeJob(BaseJob):
         """
         Is the job directory a Moa directory
 
+        currently we assume if there is a moa.mk file
+        
         >>> job = Job('/')
         >>> job.isMoa()
         False
         >>> import moa.job
         >>> jobdir = moa.job.newTestJob('traverse')
-
+        >>> job = Job(jobdir)
+        >>> job.isMoa()
+        True
+        
         """
         makefile = os.path.join(self.wd, 'Makefile')
         if not os.access(makefile, os.R_OK):
