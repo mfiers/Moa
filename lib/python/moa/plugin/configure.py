@@ -64,11 +64,19 @@ def configSet(data):
     #see if we need to query the user for input somehwere
     for a in args:
         if not '=' in a:
-            df = moa.conf.getVar(wd, a)            
+            df = job.conf[a]
             vl = moa.utils.askUser("%s:\n> "%a,df)
-            newArgs.append("%s%s%s" % (a, '=', vl))
+            job.conf.add(a, vl)
         else:
-            newArgs.append(a)
+            job.conf.add(a)
 
-    parsedArgs = moa.conf.parseClArgs(newArgs)
-    moa.conf.writeToConf(wd, parsedArgs)
+    job.conf.save()
+
+TESTSCRIPT = """
+moa new adhoc -t 'something'
+moa set title=else
+moa show || exer moa show does not seem to work
+moa show | grep -q 'title[[:space:]\+]else' || exer title is not set properly
+moa set title+=test
+moa show | grep -q 'title[[:space:]\+]else test' || exer title is not set properly
+"""

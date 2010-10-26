@@ -71,15 +71,18 @@ def newJob(data):
         wd = options.directory
 
     title = options.title
-    job = moa.job.getJob(wd)
-    job.new( template = template,
-             title = title,
-             parameters = params,
-             force = options.force)
+    job = moa.job.newJob(wd,
+                         template = template,
+                         title = title,
+                         parameters = params,
+                         force = options.force)
 
 TESTSCRIPT = """
-moa new adhoc
-moa new -d subdir adhoc
-false
-
+moa new adhoc -t 'testJob' adhoc_mode=par dummy=nonsense
+moa new -d subdir adhoc -t 'testJob'
+[[ -f ./Makefile ]] || exer 'No job in created'
+[[ -d subdir ]] || exer 'Can not find subdir'
+[[ -f ./subdir/Makefile ]] || exer 'No job in created in subdir'
+grep -q title moa.mk || exer 'title has not been defined'
+grep -q dummy moa.mk || exer 'title has not been defined'
 """

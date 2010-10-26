@@ -42,6 +42,16 @@ import moa.runMake
 
 MOABASE = moa.utils.getMoaBase()
 
+TESTSCRIPTHEADER = """
+set -e
+
+function exer {
+echo "PLUGIN TEST
+ERROR: $*" 1>&2
+exit -1
+}
+
+"""
 
 failures = 0
 tests = 0
@@ -74,16 +84,17 @@ def testPlugins(args=[]):
     #new style plugin tests
     plugins = moa.plugins.Plugins()
     for plugin, testCode in plugins.getAttr('TESTSCRIPT'):
-        
+
+        #if asking for a single plugin, test only that plugin
         if args and plugin not in args: continue
         
         l.info("Starting new style test of %s" % plugin)
         testDir = tempfile.mkdtemp()
         testScript = os.path.join(testDir, 'test.sh')
         with open(testScript, 'w') as F:
-            F.write("set -e\n\n")
+            F.write(TESTSCRIPTHEADER)
             F.write(testCode)
-        l.info("executing test.sh in %s" % testScript)
+        l.debug("executing test.sh in %s" % testScript)
         p = subprocess.Popen('bash %s' % testScript,
                              shell=True,
                              cwd = testDir,
@@ -93,63 +104,23 @@ def testPlugins(args=[]):
         out, err = p.communicate()
         rc = p.returncode
         if rc != 0:
-            l.critical("Errors in (new style) test of plugin %s (rc %d)" % (plugin, rc))
-            if out:
-                l.critical("Stdout:")
-                l.critical(out)
-            if err:
-                l.critical("Stderr:")
-                l.critical(err)
-
-
-    #old style plugin tests
-    for plugin in moa.info.getPlugins():
-        if args and not plugin in args:
-            continue
-        l.debug("Starting a new plugin test")
-        
-        wd = moa.job.newTestJob(
-            template = 'adhoc_one',
-            title='Testing plugin %s' % plugin)
-
-        l.debug("start old style testing plugin %s" % plugin)
-        
-        rc = moa.runMake.go(wd=wd,
-                            target='moa_plugin_%s_test' % plugin,
-                            background=False,
-                            verbose=False,
-                            captureOut=True,
-                            captureErr=True,
-                            makeArgs = [])
+            l.critical("Errors in plugin test %s (rc %d)" % (plugin, rc))
+            if out: l.critical("Stdout:\n" + out)
+            if err: l.critical("Stderr:\n" + err)
+            pluginFailures += 1
+        else: 
+            if out: l.debug("Stdout:\n" + out)
+            if err: l.info("Stderr:\n" + err)
+           
+        l.info("Success testing %s (%d lines)" % (
+            plugin, len(testCode.strip().split("\n"))))
         pluginTests += 1
-        
-        err = moa.info.getErr(wd).strip()
-        out = moa.info.getOut(wd).strip()
-        if rc != 0:
-            err = moa.info.getErr(wd)
-            if 'No rule to make target' in str(err):
-                l.warning("No tests defined for plugin %s" % plugin)
-            else:
-                pluginFailures += 1
-                l.error("Error running plugin test for %s (%s, %s)" %
-                        (plugin, rc, wd))
-                l.error("Error message:\n%s" % err)
             
-                if err:
-                    l.error("stderr:")
-                    l.error(err)
-                if out:
-                    l.error("stdout:")
-                    l.error(out)
-        else:
-            l.debug(err)
-            l.debug(out)
-            l.info("Success testing %s" % plugin)
                                      
 def testTemplates(which=None, verbose=False):
     global templateFailures
     global templateTests
-    for template in moa.job.list():
+    for template in moa.template.list():
         if which and template != which: continue
     
         l.debug("testing template %s" % template)

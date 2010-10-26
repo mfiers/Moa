@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# 
 # Copyright 2009 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
@@ -33,6 +31,132 @@ import moa.info
 from moa.exceptions import *
 
 
+class ConfigItem:
+    reString = re.compile((r'(?P<key>[^\s=+]+)\s*'+
+                           r'(?P<operator>\+?=)\s*' +
+                           r'(?P<value>.*?)\s*$'))
+    def __init__(self, key = None,
+                 operator = None, value = None,
+                 fromString=None):
+        
+        self.key = key
+        self.operator = operator
+        self.value = value
+
+        if fromString:
+            self._parseString(fromString)
+
+    def update(self, item):
+        """
+        update this value with another value
+        if the operator of the new value == '=', this means an overwrite
+
+        if the operator == '+=' it's an append
+        """
+        if not item.key == self.key:
+            raise Exception("Invalid config item update")
+        
+        if item.operator == '+=':
+            self.value += ' ' + item.value
+        elif item.operator == '=':
+            self.value = item.value
+        else:
+            raise Exception("Invalid operator in item update")
+            
+    def _parseString(self, s):
+        x = self.reString.match(s)
+        self.key = x.groupdict()['key']
+        self.operator = x.groupdict()['operator']
+        self.value = x.groupdict()['value']
+
+    def __str__(self):
+        return "%s %s %s" % (
+            self.key, self.operator, self.value)
+
+class Config(dict):
+    """
+    Configuration of a job - currently mostly boilerplate code - later
+    this will be a more universal configuration store
+    """
+    
+    def __init__(self, *args, **kwargs):
+        """
+        Do nothing, just initialize an empty configuration
+        """
+        job, newargs = args[0], args[1:]
+        self.job = job
+
+        self.moamk = os.path.join(self.job.wd, 'moa.mk')
+        self.moamkold = os.path.join(self.job.wd, 'moa.mk.old')
+        self.moamklock = os.path.join(self.job.wd, 'moa.mk.lock')
+        super(Config, self).__init__(*newargs, **kwargs)
+
+    def load(self):
+        """ Load configuration from disk """
+        if not os.path.exists(self.moamk):            
+            return
+        with open(self.moamk) as F:
+            for line in F.readlines():
+                line = line.strip()
+                if not line: continue
+                self.add(line)
+
+    def save(self):
+        #not saving an empty configuration
+        if len(self.keys()) == 0:
+            return False
+
+        with moa.utils.flock(self.moamklock):
+            l.debug("got a lock on moa.mk in %s" % self.job.wd)
+            if os.path.exists(self.moamkold):
+                l.debug("removing an older moa.mk.old")
+                os.unlink(self.moamkold)
+                l.debug("removing an older moa.mk.old")
+            if os.path.exists(self.moamk):
+                os.rename(self.moamk, self.moamkold)
+            with open(self.moamk, 'w') as F:
+                for i in self.values():
+                    F.write("%s\n" % i)
+
+    
+    def add(self, *args):
+        """
+        Add a configuration value from an ConfigItem
+        """
+        if len(args) == 1 \
+            and isinstance(args[0], ConfigItem):
+            item = args[0]
+            
+        elif len(args) == 1 \
+             and type(args[0]) == type("string") \
+             and '=' in args[0]:
+            item = ConfigItem(fromString = args[0])
+
+        elif len(args) == 2:
+            item = ConfigItem(key = args[0],
+                              value = args[1],
+                              operator='=')
+
+        elif len(args) == 3:
+            item = ConfigItem(key = args[0],
+                              operator = args[1],
+                              value = args[2])
+        else:
+            raise Exception("Invalid arguments for Config.add %s" % str(args))
+        
+        self[item.key] = item
+                      
+    def __setitem__(self, key, value):
+        """
+        Set an item
+        """
+        #see if the key already exists,
+        if self.has_key(key):
+            self[key].update(value)
+        else:
+            super(Config, self).__setitem__(key, value)
+
+@moa.utils.deprecated
 def parseClArgs(args):
     """
     Parse the arguments defined on a commandline.
@@ -77,7 +201,8 @@ def parseClArgs(args):
                     'operator' : o,
                     'value' : v })
     return rv
-    
+
+@moa.utils.deprecated    
 def setVar(wd, key, value, relPathCorrection = None):
     """
     Convenience function - set the variable 'key' to a value in directory wd
@@ -119,6 +244,7 @@ def setVar(wd, key, value, relPathCorrection = None):
                   'operator' : '=',
                   'value' : value}])
 
+@moa.utils.deprecated    
 def appendVar(wd, key, value):
     """
     Convenience function - set the variable 'key' to a value in directory wd
@@ -147,6 +273,7 @@ def appendVar(wd, key, value):
                       'value' : value}])
 
 
+@moa.utils.deprecated    
 def getVar(wd, key):
     """
     Get a single parameter from a moa directory
@@ -185,7 +312,8 @@ def getVar(wd, key):
                 rv.append(value)
     F.close()
     return " ".join(rv)    
-    
+
+@moa.utils.deprecated    
 def writeToConf(wd, data):
     """
     writeToConf - actually write something to moa.mk

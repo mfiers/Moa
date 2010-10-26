@@ -36,13 +36,22 @@ set_help = set a variable to moa.mk
 
 .PHONY: moa_plugin_configure_test
 moa_plugin_configure_test:
-	$e moa set title=test
-	moa show | grep -P "title\s+test" || \
-		($(call exer,set title=VALUE did not work))
-	$e moa set title+=two
-	$e moa show | grep -P "title\s+test two" || \
-		($(call exer,set title+=VALUE does not work))
-	$e moa set title=
-	$e moa show | grep -P "^title\s*$$" \
-		&& ($(call exer,unset title does not work)) \
-		|| true;
+
+#return variables as interpreted by Gnu Make
+################################################################################
+## make show ###################################################################
+#
+#### Show the current variables from moa.mk
+#
+################################################################################
+
+sq='
+#"' <- to satifsy emacs :(
+backslash=\$(empty)
+.PHONY: moa_show
+moa_show:
+	$e echo -n
+	$e $(foreach var,$(moa_must_define) $(moa_may_define), \
+		echo -ne "$(var)\t"; \
+		echo '$(subst $(sq),$(sq)$(backslash)$(sq)$(sq),$(value $(var)))';)
+

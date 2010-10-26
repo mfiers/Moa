@@ -53,8 +53,14 @@ if '-v' in sys.argv:
 
 ## Initialze the plugins
 plugins = moa.plugins.Plugins()
-cwd = os.getcwd()
-plugins.register(cwd = cwd)
+wd = os.getcwd()
+job = moa.job.getJob(wd)
+
+#use of cwd is deprecated
+plugins.register(cwd = wd)
+plugins.register(wd = wd)
+plugins.register(job=job)
+
 plugins.register(MOABASE = MOABASE)
 
 ### Determine project root (if there is one)
@@ -142,12 +148,14 @@ if options.makedebug:
 
 ## Command dispatcher
 if __name__ == "__main__":
+    
     if options.threads > 1:
         l.debug("Running make with %d threads" % options.threads)
 
     ## Determine what the command is.
     command = ""
     newargs = []
+    
     if len(args) > 0:
         command = args[0]
         newargs = args[1:]
@@ -157,6 +165,7 @@ if __name__ == "__main__":
     l.debug("start moa %s" % command)
     l.debug("with args %s" % newargs)
     plugins.register(newargs = newargs)
+
     #see if there is a callback to a plugin - If so call it
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
@@ -166,11 +175,11 @@ if __name__ == "__main__":
             plugins.run("post%s" % command.capitalize())
             sys.exit()
 
-    #No callback, defer this to Make
+    #No callback, defer this to the job
     
     #append the arguments to make (if there are any)
     makeArgs.extend(newargs)
-    if not moa.info.isMoaDir(cwd):
+    if not moa.info.isMoaDir(wd):
         if command:
             l.error("Unknown command: 'moa %s'" % command)
             l.error("Maybe it should be executed in a Moa directory?")
@@ -184,11 +193,11 @@ if __name__ == "__main__":
         sys.exit(1)
                 
     ### Check & fix deprecated template styles
-    moa.checkTemplate.checkTemplate(cwd)
+    moa.checkTemplate.checkTemplate(wd)
     
     plugins.run("pre%s" % command.capitalize())
     l.debug("Calling make for command %s" % command)
-    job = runMake.MOAMAKE(cwd,
+    job = runMake.MOAMAKE(wd,
                           target = command,
                           verbose = options.verbose,
                           threads = options.threads,
@@ -202,7 +211,7 @@ if __name__ == "__main__":
     # #utilities
     # elif command == 'ren':
     #     #renumber a moa job
-    #     moa.utils.renumber(os.getcwd(), args[1], args[2])
+    #     moa.utils.renumber(os.getwd(), args[1], args[2])
     # #pack & unpack trees
     # elif command == 'archive':
     #     moa.archive.handler(options, newargs)
