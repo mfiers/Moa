@@ -61,8 +61,7 @@ def findProjectRoot(path=None):
     ...                title = 'test job creation')
     >>> subdir = os.path.join(wd, 'test')
     >>> os.mkdir(subdir)
-    >>> job = moa.job.getJob(subdir)
-    >>> job.new(template='traverse', title='test')
+    >>> job = moa.job.newJob(subdir, template='traverse', title='test')
     >>> result = findProjectRoot(subdir)
     >>> result == wd
     True

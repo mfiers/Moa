@@ -22,12 +22,52 @@ Template
 """
 
 import os
+import yaml
 import moa.utils
 import moa.logger as l
 
 MOABASE = moa.utils.getMoaBase()
 TEMPLATEDIR = os.path.join(MOABASE, 'template')
 
+class Template(object):
+    
+    def __init__(self, templateName=None):
+        """
+
+        """
+        self.name = 'nojob'
+        self.backend = 'nojob'
+        if templateName:
+            self.name = templateName
+                    
+        #later we can do more magic here for now we assume it is a Makefile template
+        
+        self.templateFile = os.path.join(TEMPLATEDIR, '%s.mk' % templateName)
+        self.valid = True
+        
+        if os.path.exists(self.templateFile):
+            self.backend = 'gnumake'              
+        
+        l.debug("set template to %s, backend %s" % (self.name, self.backend))
+                    
+    def save(self, wd):
+        """
+        Save the template name to disk 
+        """
+        confDir = os.path.join(wd, '.moa')
+        if not os.path.exists(confDir):
+            os.mkdir(confDir)
+        templateFile = os.path.join(confDir, 'template')
+        with open(templateFile, 'w') as F:
+            F.write(self.name)
+        l.debug('wrote template name to disk')
+    
+    def __str__(self):
+        """
+        String repr. of this object
+        """
+        return self.name
+            
 def check(what):
     """
     Check if a template exists

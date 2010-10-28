@@ -53,21 +53,9 @@ if '-v' in sys.argv:
 
 ## Initialze the plugins
 plugins = moa.plugins.Plugins()
+
+# Initialize the job object
 wd = os.getcwd()
-
-#temporary hack to create a 'moa.template' file
-if os.path.exists(os.path.join(wd, 'Makefile')) and \
-        not os.path.exists(os.path.join(wd, '.moa')):
-    with open(os.path.join(wd, 'Makefile')) as F:
-        mf = F.read()
-    if 'MOABASE' in mf:
-        template = mf.split('moa_load,')[1].split(')')[0]
-        os.mkdir(os.path.join(wd, '.moa'))
-        with open(os.path.join(wd, '.moa', 'template'), 'w') as F:
-            F.write(yaml.dump(
-                {'type' : 'gnumake',
-                 'name' : template}))
-
 job = moa.job.getJob(wd)
 
 #use of cwd is deprecated

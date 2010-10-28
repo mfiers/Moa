@@ -45,11 +45,6 @@ def getJob(wd):
     job
     """
     return Job(wd)
-    #makefile = os.path.join(wd, 'Makefile')
-    #if os.path.exists(makefile):
-    #    return moa.job.gnumake.GnuMakeJob(wd)
-    #else:
-    #    return moa.job.nojob.NoJob(wd)
 
 def newJob(wd, **kwargs):
     """
@@ -58,8 +53,9 @@ def newJob(wd, **kwargs):
     template, and instantiate the proper job type
     """
 
-    job = Job(wd)   #moa.job.gnumake.GnuMakeJob(wd)
-    job.init(**kwargs)
+    job = Job(wd)
+    job.setTemplate(kwargs['template'])
+    job.initialize(**kwargs)
     return job
     
 def newTestJob(*args, **kwargs):
@@ -97,25 +93,78 @@ class Job(object):
     
     def __init__(self, wd):
         """        
-        """
+        """        
         self.wd = wd
-        self.conf = moa.conf.Config(self)        
+        self.confDir = os.path.join(self.wd, '.moa')
+        if not os.path.exists(self.confDir):
+            os.mkdir(self.confDir)
+        
+        self.conf = moa.conf.Config(self)
+            
+        self.loadTemplate()
+        self.loadBackend()
+        
+               
+    def setTemplate(self, name):
+        """
+        Set a new template for this job
+        """ 
+        self.template = moa.template.Template(name)
+        self.template.save(self.wd)
+        self.loadBackend()
+        
+    def loadTemplate(self):
+        """
+        Load the template for this job, based on what configuration 
+        can be found
+        """
+        templateFile = os.path.join(self.confDir, 'template')
+        if os.path.exists(templateFile):
+            templateName = open(templateFile).read()
+            self.template = moa.template.Template(templateName)
+            return
+        
+        #no proper config - check if this is an old-style gnumake job
+        rc = self._fixOldGnumakeJob()
+        if rc: 
+            return
+        
+        #no template found - maybe nothing is installed here
+        self.template = moa.template.Template()
+        
+    def _fixOldGnumakeJob(self):
+        """
+        'hack' to be able to handle old style gnumake jobs
+        """
+        makefile = os.path.join(self.wd, 'Makefile')
+        if os.path.exists(makefile):
+            with open(makefile) as F:
+                makedata = F.read()
+            if 'MOABASE' in makedata:
+                templateName = makedata.split('moa_load,')[1].split(')')[0]
+            with open(os.path.join(self.confDir, 'template'), 'w') as F:
+                F.write(templateName)
+            l.info("assuming old style gnumake template %s" % templateName)
+            self.template = moa.template.Template(templateName)
+            return True
+        return False
 
-    def setBackend(self, backendName):
+    def loadBackend(self):
         """
-        Change the backend
+        load the backend
         """
+        backendName = self.template.backend
         try:
-            moduleName = 'moa.backend.%s' % backendName
-            module =  __import__( moduleName, globals(), locals(), [moduleName], -1)            
-            l.debug("Successfully Loaded module %s" % moduleName)
+            _moduleName = 'moa.backend.%s' % backendName
+            _module =  __import__( _moduleName, globals(), locals(), [_moduleName], -1)            
+            l.debug("Successfully Loaded module %s" % _moduleName)
         except ImportError, e:
-            if str(e) == "No module named %s" % moduleName:
+            if str(e) == "No module named %s" % _moduleName:
                 l.critical("Backend %s does not exists" % backendName)
             l.critical("Error loading backend %s" % backendName)
             sys.exit(-1)                
             
-        self.backend = getattr(module, '%sBackend' % backendName.capitalize())(self)
+        self.backend = getattr(_module, '%sBackend' % backendName.capitalize())(self)
 
     def isMoa(self):
         """
@@ -123,14 +172,25 @@ class Job(object):
         """
         self.backend.isMoa()      
 
-    def init(self, 
-             template=None, 
+    def initialize(self, 
              force=False, 
              **kwargs):
         """
         Initialize a new job in the current wd
         """
+
         if self.isMoa() and not force:
             l.error("A job does already exists in this directory")
-            
-            
+            l.error("specify -f (--force) to override")
+            return False     
+
+        #check if a template is defined - if not, use the job template
+        if kwargs.has_key('template'):
+            if type(kwargs['template']) == type("string"):
+                self.setTemplate(kwargs['template'])
+                kwargs['template'] = self.template
+        else:
+            kwargs['template'] = self.template
+                    
+        self.backend.initialize(**kwargs)
+        

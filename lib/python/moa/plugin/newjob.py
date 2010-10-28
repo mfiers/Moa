@@ -79,10 +79,7 @@ def newJob(data):
 
 TESTSCRIPT = """
 moa new adhoc -t 'testJob' adhoc_mode=par dummy=nonsense
-moa new -d subdir adhoc -t 'testJob'
-[[ -f ./Makefile ]] || exer 'No job in created'
-[[ -d subdir ]] || exer 'Can not find subdir'
-[[ -f ./subdir/Makefile ]] || exer 'No job in created in subdir'
+[[ -f ./Makefile ]] || exer 'No job was created'
 grep -q title moa.mk || exer 'title has not been defined'
 grep -q dummy moa.mk || exer 'title has not been defined'
 """

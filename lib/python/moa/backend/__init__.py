@@ -7,6 +7,7 @@ class BaseBackend(object):
         Initialize this backend 
         """
         self.job = job
+        self.wd = job.wd
         
         
     def isMoa(self):
@@ -14,7 +15,13 @@ class BaseBackend(object):
         Check if the current job is valid according to the 
         backend type
         """
-        
+        pass
+
+    def init(self):
+        """
+        Initialize this job
+        """
+        pass
         
 
 

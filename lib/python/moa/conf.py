@@ -22,6 +22,7 @@ Moa script - get and set variables to the moa.mk file
 import re
 import os
 import sys
+import yaml
 import shlex
 
 import moa.logger as l
@@ -90,6 +91,8 @@ class Config(dict):
         self.moamkold = os.path.join(self.job.wd, 'moa.mk.old')
         self.moamklock = os.path.join(self.job.wd, 'moa.mk.lock')
         
+        self.configFile = os.path.join(self.job.confDir, 'config')
+        
         super(Config, self).__init__(*newargs, **kwargs)
 
     def load(self):
@@ -118,8 +121,12 @@ class Config(dict):
             with open(self.moamk, 'w') as F:
                 for i in self.values():
                     F.write("%s\n" % i)
-
-    
+                    
+        #save a shadow yaml configuration file
+        data = dict([(k, self[k].value) for k in self.keys()])
+        with open(self.configFile, 'w') as F:
+            F.write(yaml.dump(data))
+                                       
     def add(self, *args):
         """
         Add a configuration value from an ConfigItem
