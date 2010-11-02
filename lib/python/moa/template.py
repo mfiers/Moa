@@ -23,13 +23,15 @@ Template
 
 import os
 import yaml
+import UserDict
+
 import moa.utils
 import moa.logger as l
 
 MOABASE = moa.utils.getMoaBase()
-TEMPLATEDIR = os.path.join(MOABASE, 'template')
+TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 
-class Template(object):
+class Template(UserDict.DictMixin):
     
     def __init__(self, templateName=None):
         """
@@ -39,17 +41,24 @@ class Template(object):
         self.backend = 'nojob'
         if templateName:
             self.name = templateName
-                    
-        #later we can do more magic here for now we assume it is a Makefile template
-        
+            
         self.templateFile = os.path.join(TEMPLATEDIR, '%s.mk' % templateName)
+        self.templateDataFile = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
         self.valid = True
+
+        #Load the template data
+        self.data = {}
+        self.loadData()
         
         if os.path.exists(self.templateFile):
             self.backend = 'gnumake'              
         
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
-                    
+
+    def loadData(self):
+        with open(self.templateDataFile) as F:
+            self.data = yaml.load(F)
+        
     def save(self, wd):
         """
         Save the template name to disk 
@@ -67,6 +76,17 @@ class Template(object):
         String repr. of this object
         """
         return self.name
+    
+    # Implement the basic functions for a dict
+    #
+    def __getitem__(self, item):
+        return self.data[item]
+
+    def __setitem__(self, item, value):
+        self.data[item] = value
+
+    def keys(self):
+        return self.data.keys()
             
 def check(what):
     """

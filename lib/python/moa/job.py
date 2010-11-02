@@ -82,7 +82,8 @@ def newTestJob(*args, **kwargs):
 
     wd = tempfile.mkdtemp()
     if args:
-        kwargs['template'] = args[0]               
+        kwargs['template'] = args[0]
+    kwargs['title'] = kwargs.get('title', 'Test Job')
     job = newJob(wd, **kwargs)
     return wd
 
@@ -96,14 +97,53 @@ class Job(object):
         """        
         self.wd = wd
         self.confDir = os.path.join(self.wd, '.moa')
+
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
-        
-        self.conf = moa.conf.Config(self)
-            
+
         self.loadTemplate()
+
+        self.env = {}
+        self.args = []
+        self.options = {}
+
+        self.conf = moa.conf.Config(self)
+        self.conf.load()    
+
         self.loadBackend()
         
+    def execute(self, command):
+        """
+        """
+        l.info("executing %s" % command)
+        if self.backend:
+            self.backend.execute(command)
+        else:
+            l.error("No backend loaded - cannot execute %s" % command)
+                    
+    def prepare(self):
+        """
+        Prepare this job
+        """
+        if self.backend:
+            self.backend.prepare()
+        
+    def defineOptions(self, parser):
+        """
+        Set command line options
+        """
+        parser.add_option('-f', '--force', dest='force', action='store_true',
+                  help = 'Force an action, if applicable.')
+
+        parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true", help="verbose output")
+
+        parser.add_option("--bg", dest="background",
+                  action="store_true", help="Run moa in the background")
+        
+        if self.backend:
+            self.backend.defineOptions(parser)
+
                
     def setTemplate(self, name):
         """
@@ -170,7 +210,7 @@ class Job(object):
         """
         Check if this is a Moa directory - Currently, this needs to be overridden
         """
-        self.backend.isMoa()      
+        return self.backend.isMoa()      
 
     def initialize(self, 
              force=False, 

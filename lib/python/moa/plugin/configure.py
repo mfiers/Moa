@@ -45,11 +45,11 @@ def configShow(data):
     """
     Print the configuration (from moa.mk) to stdout
     """
-    wd = data['cwd']
+    wd = data['wd']
     job = moa.job.getJob(wd)
     moa.utils.moaDirOrExit(job)
     for key in job.conf.keys():
-        print '%s\t%s' % (key, job.conf[key].value)
+        print '%s\t%s' % (key, job.conf[key].getVal())
         
 def configSet(data):
     """

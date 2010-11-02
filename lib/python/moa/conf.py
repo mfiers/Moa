@@ -36,15 +36,28 @@ class ConfigItem:
     reString = re.compile((r'(?P<key>[^\s=+]+)\s*'+
                            r'(?P<operator>\+?=)\s*' +
                            r'(?P<value>.*?)\s*$'))
-    def __init__(self, key = None,
-                 operator = None, value = None,
-                 fromString=None):
+    
+    def __init__(self,
+                 key = None,
+                 operator = '=',
+                 value = None,
+                 fromString=None,
+                 fromParam=None):
         
         self.key = key
         self.operator = operator
         self.value = value
+        self.type = 'string'
+        self.allowed = []
+        self.category = ''
+        self.mandatory = False
+        self.help = ''
+        self.default = ''
+        self.cardinality = 'one'
 
-        if fromString:
+        if fromParam:
+            self._parseParam(key, fromParam)
+        elif fromString:
             self._parseString(fromString)
 
     def update(self, item):
@@ -63,16 +76,28 @@ class ConfigItem:
             self.value = item.value
         else:
             raise Exception("Invalid operator in item update")
-            
+
+    def _parseParam(self, key, par):
+        """
+        Initialize config item from a parameter entry
+        """
+        self.key = key
+        for k,v in par.items():
+            setattr(self, k, v)
+        
     def _parseString(self, s):
         x = self.reString.match(s)
         self.key = x.groupdict()['key']
         self.operator = x.groupdict()['operator']
         self.value = x.groupdict()['value']
 
+    def getVal(self):
+        if self.value: return self.value
+        return self.default
+    
     def __str__(self):
         return "%s %s %s" % (
-            self.key, self.operator, self.value)
+            self.key, self.operator, self.getVal())
 
 class Config(dict):
     """
@@ -85,8 +110,11 @@ class Config(dict):
         Do nothing, just initialize an empty configuration
         """
         job, newargs = args[0], args[1:]
-        self.job = job
 
+        self.job = job
+        self.template = job.template
+        self.readTemplate()
+        
         self.moamk = os.path.join(self.job.wd, 'moa.mk')
         self.moamkold = os.path.join(self.job.wd, 'moa.mk.old')
         self.moamklock = os.path.join(self.job.wd, 'moa.mk.lock')
@@ -95,6 +123,11 @@ class Config(dict):
         
         super(Config, self).__init__(*newargs, **kwargs)
 
+    def readTemplate(self):
+        for p in self.template['parameters']:
+            self[p] = ConfigItem(
+                key = p, fromParam = self.template['parameters'][p])
+            
     def load(self):
         """ Load configuration from disk """
         if not os.path.exists(self.moamk):            

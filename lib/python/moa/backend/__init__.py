@@ -24,4 +24,15 @@ class BaseBackend(object):
         pass
         
 
+    def defineOptions(self, parser):
+        """
+        Set command line options for this backend
+        """
+        pass
 
+    def prepare(self):
+        pass
+    
+    def execute(self, command):
+        pass
+    

@@ -8,7 +8,7 @@ import moa.conf
 import moa.template
 import moa.utils
 import moa.runMake
-
+import moa.actor
 import moa.backend
 
 NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
@@ -30,7 +30,8 @@ class GnumakeBackend(moa.backend.BaseBackend):
         
         self.makefile = os.path.join(self.job.wd, 'Makefile')
         self.moamk = os.path.join(self.job.wd, 'moa.mk')
-
+        self.makeArgs = []
+        
     def isMoa(self):
         """
         Is this job a proper moa (gnumake) job?
@@ -43,7 +44,43 @@ class GnumakeBackend(moa.backend.BaseBackend):
             return True
         return False
 
-    def setOptions(self, parser):
+    def prepare(self):
+        """
+        Prepare for later execution
+        """
+        
+        options = self.job.options
+        
+        ## make sure the MOA_THREADS env var is set - this is used from inside
+        ## the Makefiles later threads need to be treated different from the
+        ## other parameters. multi-threaded operation is only allowed in the
+        ## second phase of execution.
+        self.job.env['MOA_THREADS'] = "%s" % options.threads
+
+        ## Define extra parameters to use with Make
+        if options.remake:
+            self.makeArgs.append('-B')
+        if options.makedebug:
+            self.makeArgs.append('-d')
+        
+        self.makeArgs.extend(self.job.args)
+    
+    def execute(self, command):
+        l.debug("Calling make for command %s" % command)
+        actor = moa.actor.Actor(wd)
+        cl = ['make', command] + self.makeArgs
+        l.critical("executing %s" % " ".join(cl))
+        #job = runMake.MOAMAKE(wd,
+        #                      target = command,
+        #                      verbose = options.verbose,
+        #                      threads = options.threads,
+        #                      makeArgs = makeArgs,
+        #                      background = options.background)
+        returnCode = job.returnCode()
+        return returnCode
+
+        
+    def defineOptions(self, parser):
         g = parser.add_option_group('Gnu Make Backend')
         parser.set_defaults(threads=1)
         g.add_option("-j", dest="threads", type='int',
