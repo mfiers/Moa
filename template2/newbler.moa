@@ -1,0 +1,129 @@
+commands: [newbler, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/newbler.mk
+help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
+    implemented by the template.', newbler: ''}
+moa_id: newbler
+parameter_category_order: ['', input, system, advanced]
+parameters:
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  newbler_input_dir:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: input SFF files
+    mandatory: true
+    type: directory
+  newbler_input_extension:
+    allowed: []
+    cardinality: one
+    category: input
+    default: sff
+    help: file extension for the files in newbler_input_dir
+    mandatory: false
+    type: string
+  newbler_input_glob:
+    allowed: []
+    cardinality: one
+    category: input
+    default: '*'
+    help: glob to select a subset of files from newbler_input_dir
+    mandatory: false
+    type: string
+  newbler_input_limit:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: 'Number of files to use, if not defined: all files'
+    mandatory: false
+    type: integer
+  newbler_input_sort:
+    allowed: [u, s, sr, t, tr]
+    cardinality: one
+    category: input
+    default: u
+    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
+      time, tr - time reverse'
+    mandatory: false
+    type: set
+  newbler_largecontig_cutoff:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: min length of a contig in 454LargeContigs.fna
+    mandatory: false
+    type: integer
+  newbler_library_name:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: $(shell echo `basename $(CURDIR)` | sed "s/[ \///\/]//g" )
+    help: A library identifier for this assembly. This is used to create an extra
+      fasta file, named using this variable, that contain the generated contigs with
+      their ids prepended with the library id.
+    mandatory: false
+    type: string
+  newbler_mid_configuration:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: Mid configuration file to use
+    mandatory: false
+    type: file
+  newbler_mids:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: mids to use for this assembly
+    mandatory: false
+    type: string
+  newbler_min_identity:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: Minimal overalp identity used during assembly
+    mandatory: false
+    type: integer
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+template_author: Mark Fiers
+template_creation_date: Sun Aug 22 10:06:11 2010
+template_description: Run a simple, out of the box, newbler assembly. As an extra
+  feature, this template automatically creates uniquely named links to the two main
+  output fasta files (454AllContigs.fna, 454LargeContigs.fna). This is convenient
+  for subsequence gather steps. The links are named after the directory.
+template_modification_date: Tue Jul 13 13:53:26 2010
+template_name: newbler
+template_title: Newbler
+template_type: gnumake
+title: Test Job

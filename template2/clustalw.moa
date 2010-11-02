@@ -1,0 +1,68 @@
+commands: [clustalw, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/clustalw.mk
+help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
+    implemented by the template.', clustalw: run clustalw}
+moa_id: clustalw
+parameter_category_order: ['', system, advanced]
+parameters:
+  input_dir_a:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: This set is compared to the sequences in input_dir_b.
+    mandatory: true
+    type: directory
+  input_dir_b:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: The set to compare against. Only a forward comparison is made (a against
+      b, not the other way round)
+    mandatory: true
+    type: directory
+  input_extension:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: fasta
+    help: Extension of the input files
+    mandatory: false
+    type: string
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+template_author: Mark Fiers
+template_creation_date: Sun Aug 22 10:06:11 2010
+template_description: Run clustalw on two sets of sequences
+template_modification_date: Fri Jun 25 21:10:26 2010
+template_name: clustalw
+template_title: clustalw
+template_type: gnumake
+title: Test Job

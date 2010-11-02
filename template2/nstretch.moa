@@ -1,0 +1,67 @@
+commands: [nstretch, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/nstretch.mk
+help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
+    implemented by the template.', nstretch: ''}
+moa_id: nstretch
+parameter_category_order: ['', system, advanced]
+parameters:
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  nstretch_input_dir:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: input dir with the fasta files
+    mandatory: true
+    type: directory
+  nstretch_input_extension:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: fasta
+    help: extension of the input files
+    mandatory: false
+    type: string
+  nstretch_len:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '10'
+    help: minimal number of Ns before its reported (default 10)
+    mandatory: false
+    type: integer
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+template_author: Mark Fiers
+template_creation_date: Sun Aug 22 10:06:11 2010
+template_description: Run NSTRETCH on an set of input files
+template_modification_date: Fri Jun 25 21:10:26 2010
+template_name: nstretch
+template_title: Nstretch
+template_type: gnumake
+title: Test Job

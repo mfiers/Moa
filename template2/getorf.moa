@@ -1,0 +1,142 @@
+commands: [getorf, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/getorf.mk
+help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
+    implemented by the template.', getorf: ''}
+moa_id: getorf
+parameter_category_order: ['', input, system, advanced]
+parameters:
+  getorf_circular:
+    allowed: [Y, N]
+    cardinality: one
+    category: ''
+    default: N
+    help: Is the sequence linear?
+    mandatory: false
+    type: set
+  getorf_find:
+    allowed: ['0', '1', '2', '3']
+    cardinality: one
+    category: ''
+    default: '3'
+    help: 'What to output? 0: Translation between stop codons, 1: Translation between
+      start & stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide
+      sequence between start and stop codons. Default: 3'
+    mandatory: false
+    type: set
+  getorf_gff_source:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: getorf
+    help: source field to use in the gff.
+    mandatory: false
+    type: string
+  getorf_input_dir:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: Input files for getorf
+    mandatory: true
+    type: directory
+  getorf_input_extension:
+    allowed: []
+    cardinality: one
+    category: input
+    default: fasta
+    help: file extension for the files in getorf_input_dir
+    mandatory: false
+    type: string
+  getorf_input_glob:
+    allowed: []
+    cardinality: one
+    category: input
+    default: '*'
+    help: glob to select a subset of files from getorf_input_dir
+    mandatory: false
+    type: string
+  getorf_input_limit:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: 'Number of files to use, if not defined: all files'
+    mandatory: false
+    type: integer
+  getorf_input_sort:
+    allowed: [u, s, sr, t, tr]
+    cardinality: one
+    category: input
+    default: u
+    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
+      time, tr - time reverse'
+    mandatory: false
+    type: set
+  getorf_maxsize:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '1000000'
+    help: maximal nucleotide size of the predicted ORF.
+    mandatory: false
+    type: integer
+  getorf_minsize:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '30'
+    help: minimal nucleotide size of the predicted ORF.
+    mandatory: false
+    type: integer
+  getorf_table:
+    allowed: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
+      '13', '14', '15', '16', '21', '22', '23']
+    cardinality: one
+    category: ''
+    default: '11'
+    help: 'Genetic code to use: 0 Standard; 1 Standard with alternative initiation
+      codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan,
+      Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial;
+      6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid
+      Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial;
+      14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial;
+      21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.'
+    mandatory: false
+    type: set
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+template_author: Mark Fiers
+template_creation_date: Sun Aug 22 10:06:11 2010
+template_description: Predicts open reading frames using the EMBOSS [[emboss]] getorf
+  tool.
+template_modification_date: Fri Jun 25 21:10:26 2010
+template_name: getorf
+template_title: Getorf
+template_type: gnumake
+title: Test Job

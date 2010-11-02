@@ -1,0 +1,84 @@
+commands: [bdbb, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/bidibebla.mk
+help: {bdbb: generate a list of bidirectional best blast hits., clean: 'Remove all
+    job data, not the Moa job itself, note that this must be implemented by the template.'}
+moa_id: bdbb
+parameter_category_order: ['', system, advanced]
+parameters:
+  bdbb_eval:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: 1e-10
+    help: e value cutoff
+    mandatory: false
+    type: float
+  bdbb_input_file_a:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: First multifasta input file
+    mandatory: true
+    type: file
+  bdbb_input_file_b:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: First multifasta input file
+    mandatory: true
+    type: file
+  bdbb_nothreads:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '4'
+    help: threads to run bdbb with (note the overlap with the Make -j parameter)
+    mandatory: false
+    type: integer
+  bdbb_protein:
+    allowed: [T, F]
+    cardinality: one
+    category: ''
+    default: F
+    help: Are we looking at proteins?
+    mandatory: false
+    type: set
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+template_author: Mark Fiers
+template_creation_date: Sun Aug 22 10:06:11 2010
+template_description: Discover the bidirectional best blast hit between two sets of
+  sequences
+template_modification_date: Fri Jun 25 21:10:26 2010
+template_name: bidibebla
+template_title: Bidirectional best BLAST hit
+template_type: gnumake
+title: Test Job
