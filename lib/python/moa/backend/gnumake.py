@@ -67,7 +67,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
     
     def execute(self, command):
         l.debug("Calling make for command %s" % command)
-        actor = moa.actor.Actor(wd)
+        actor = moa.actor.Actor(self.job.wd)
         cl = ['make', command] + self.makeArgs
         l.critical("executing %s" % " ".join(cl))
         #job = runMake.MOAMAKE(wd,
@@ -143,7 +143,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
             F.write("$(call moa_load,%s)\n" % template)
 
         if title:
-            self.job.conf.add('title', title)
+            self.job.conf.set('title', title)
 
         params = []
         for par in parameters:

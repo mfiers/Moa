@@ -35,7 +35,7 @@ import moa.info
 import moa.conf
 import moa.utils
 import moa.job
-import moa.plugins
+import moa.plugin
 import moa.project
 import moa.template
 import moa.runMake

@@ -17,11 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = traverse
-template_title = Traverse
-template_description = Do nothing, except be a part in executing full	\
-directory structures
 
-traverse_help = Do nothing - no need to call this. 
 #Include base moa code - does '*:blastn.self' variable checks & generates help
 
 ifndef dont_include_moabase
@@ -30,7 +26,6 @@ endif
 
 #in this case we define a default title
 title ?= traverse node
-
 
 traverse_main:
 	@echo "Traversing through `pwd`"

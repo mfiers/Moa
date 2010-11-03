@@ -31,52 +31,46 @@ import moa.logger as l
 MOABASE = moa.utils.getMoaBase()
 TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 
+class InvalidTemplate(Exception):
+    """ Invalid Template """
+    pass
+
 class Template(UserDict.DictMixin):
-    
     def __init__(self, templateName=None):
         """
-
+        Initialze the template object, which means:
+        
+        * Check if the template exists, if not raise an Exception
+        * Load template info
         """
-        self.name = 'nojob'
-        self.backend = 'nojob'
         if templateName:
             self.name = templateName
+            self.templateInfo = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
+            if not os.path.exists(self.templateInfo):
+                raise InvalidTemplate()            
+            self.valid = True
+            self.loadData()
+            self.backend = self.data['template_type']
+        else:
+            self.name = 'nojob'
+            self.backend = 'nojob'
+            self.valid = False
+            self.data = {'parameters' : []}
             
-        self.templateFile = os.path.join(TEMPLATEDIR, '%s.mk' % templateName)
-        self.templateDataFile = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
-        self.valid = True
-
-        #Load the template data
-        self.data = {}
-        self.loadData()
-        
-        if os.path.exists(self.templateFile):
-            self.backend = 'gnumake'              
-        
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
 
     def loadData(self):
-        with open(self.templateDataFile) as F:
-            self.data = yaml.load(F)
+        if os.path.exists(self.templateInfo):
+            with open(self.templateInfo) as F:
+                self.data = yaml.load(F)
         
-    def save(self, wd):
-        """
-        Save the template name to disk 
-        """
-        confDir = os.path.join(wd, '.moa')
-        if not os.path.exists(confDir):
-            os.mkdir(confDir)
-        templateFile = os.path.join(confDir, 'template')
-        with open(templateFile, 'w') as F:
-            F.write(self.name)
-        l.debug('wrote template name to disk')
-    
+
     def __str__(self):
         """
         String repr. of this object
         """
         return self.name
-    
+
     # Implement the basic functions for a dict
     #
     def __getitem__(self, item):
@@ -92,20 +86,16 @@ def check(what):
     """
     Check if a template exists
 
-        >>> check('gather')
+        >>> check('adhoc')
         True
         >>> check('nonexistingtemplate')
         False
-        >>> check('emboss/revseq')
-        True
-        >>> check('moa/base')
-        False
-        
     """
-    templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
-    if not os.path.exists(templatefile):
+    try:
+        template = Template(what)
+        return True
+    except:
         return False
-    return True
 
 def list():
     """

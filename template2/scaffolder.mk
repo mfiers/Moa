@@ -18,29 +18,10 @@
 # 
 moa_id = scaf
 
-template_title = Scaffolder
-template_description = Scaffold a set of input files based on a	\
-  blast against a reference sequence. This software is written around	\
-  bambus
-
 #variables
-moa_must_define += scaf_reference_file
-scaf_reference_file_help = blast database of the reference set
-scaf_reference_file_type = file
 
-moa_must_define += scaf_input_file
-scaf_input_file_help = input file with the sequences to scaffold
-scaf_input_file_type = file
-
-moa_may_define += scaf_prefix
-scaf_prefix_default = scaffolds
-scaf_prefix_help = prefix for scaffolding output files
-scaf_prefix_type = string
-
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ##### Derived variables for this run
-
 
 .PHONY: scaf_prepare
 scaf_prepare:

@@ -16,38 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-include $(MOABASE)/template/moa/prepare.mk
-
-template_title = Create ACT crunch files for use with Artemis ACT
-template_description = Create a crunch file for use with the Artemis ACT \
-  comparison tool. 
+include $(MOABASE)/lib/gnumake/prepare.mk
 
 moa_id = crunch
-
-crunch_help = create crunch files
-
 
 #########################################################################
 # Prerequisite testing
 
-moa_prereq_simple += blastall formatdb
-
 $(call moa_fileset_define,crunch_input,fasta,Directory with input fasta files)
 
-moa_may_define += crunch_eval
-crunch_eval_default = 1e-10
-crunch_eval_help = e value cutoff
-crunch_eval_type = float
-
-moa_may_define += crunch_nothreads
-crunch_nothreads_default = 4
-crunch_nothreads_help = threads to run crunch with (note the overlap \
-	with the Make -j parameter)
-crunch_nothreads_type = integer
-
 #include moabasemoa	
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 #shortcut - need this quite  often
 ext = $(crunch_input_extension)
 
@@ -62,7 +41,6 @@ crunch_test:
 	echo $(crunch_input_files)
 	echo $(crunch_output_files)		
 crunch: $(crunch_output_files)
-
 
 crunch_%:
 	f1=`echo "$*" | sed "s/^.*___//"` ;\

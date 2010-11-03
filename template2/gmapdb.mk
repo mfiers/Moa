@@ -17,23 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = gmapdb
-template_title = gmapdb index builder
-template_description = Builds gmapdb index from a reference	\
-  sequence
 
 #variables
-moa_must_define += gmapdb_input_dir
-gmapdb_input_dir_help = The reference sequence to build a gmap database with.
-gmapdb_input_dir_type = directory
-
-moa_may_define += gmapdb_input_extension
-gmapdb_input_extension_default = fasta
-gmapdb_input_extension_help = Extension of the input files, defaults to 'fasta'
-gmapdb_input_extension_type = string
-
-moa_must_define += gmapdb_name
-gmapdb_name_help = Name of the gmap index to create
-gmapdb_name_type = string
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk

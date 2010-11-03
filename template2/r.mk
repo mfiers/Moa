@@ -15,7 +15,7 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 moa_id=r
 
@@ -23,23 +23,9 @@ $(call moa_fileset_define_opt,$(moa_id)_input,,Input files for $(moa_id))
 
 # Help
 
-template_title = Run R
-template_description = run the R script in moa.R, with the specified	\
-    input files
-
-moa_may_define += $(moa_id)_touch
-$(moa_id)_touch_help = use touch files to track if input files have	\
-    changed. If you set this to False, the touch files will still be \
-    generated, but will have no effect on whether or not an inputfile will \
-    be processed
-$(moa_id)_touch_type = set
-$(moa_id)_touch_default = T
-$(moa_id)_touch_allowed = T F
-
 #########################################################################
 #Include moa core
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 $(moa_id)_touch_files=$(addprefix touch/,$(notdir $($(moa_id)_input_files)))
 
 .PHONY: $(moa_id)_prepare
@@ -77,5 +63,4 @@ $(moa_id)_unittest:
 	echo -n '4' > 10.input/test.4.input
 	echo -n '5' > 10.input/what.5.input
 	moa
-
 

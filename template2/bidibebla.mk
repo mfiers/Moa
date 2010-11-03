@@ -16,52 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-include $(MOABASE)/template/moa/prepare.mk
-
-template_title = Bidirectional best BLAST hit
-template_description = Discover the bidirectional best blast hit between two \
-  sets of sequences
-moa_prerequisites += The [BLAST](http://www.ncib.nlm.nih.gov/blast)		\
-  [[Alt90]] suite of tools
+include $(MOABASE)/lib/gnumake/prepare.mk
 
 moa_id = bdbb
-
-bdbb_help = generate a list of bidirectional best blast hits.
-
 
 #########################################################################
 # Prerequisite testing
 
-moa_prereq_simple += blastall formatdb
-
-moa_must_define += bdbb_input_file_a
-bdbb_input_file_a_help = First multifasta input file
-bdbb_input_file_a_type = file
-
-moa_must_define += bdbb_input_file_b
-bdbb_input_file_b_help = First multifasta input file
-bdbb_input_file_b_type = file
-
-moa_may_define += bdbb_protein
-bdbb_protein_type = set
-bdbb_protein_help = Are we looking at proteins?
-bdbb_protein_default = F
-bdbb_protein_allowed= T F
-
-moa_may_define += bdbb_eval
-bdbb_eval_default = 1e-10
-bdbb_eval_help = e value cutoff
-bdbb_eval_type = float
-
-moa_may_define += bdbb_nothreads
-bdbb_nothreads_default = 4
-bdbb_nothreads_help = threads to run bdbb with (note the overlap \
-	with the Make -j parameter)
-bdbb_nothreads_type = integer
-
 #include moabasemoa	
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 #echo Main target for blast
 .PHONY: blast
 bdbb: bdbb_output

@@ -15,15 +15,9 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 moa_id=adhoc_one
-template_title = Run an ad-hoc onliner
-template_description = Run an adhoc oneliner - without moa defined input files
-
-moa_must_define += adhoc_one_process
-adhoc_one_process_help = The one-liner to execute
-adhoc_one_process_type = string
 
 #########################################################################
 #Include base moa code - does variable checks & generates help

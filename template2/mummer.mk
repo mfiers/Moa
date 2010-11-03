@@ -15,7 +15,7 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 ################################################################################
 # Variable checks & definition & help
@@ -23,52 +23,21 @@
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_id = mummer
-template_title = mummer
-template_description = Run mummer between two sequences
 
 #targets
-moa_targets += mummer clean 
-mummer2seq_help = run Mummer
+moa_targets += mummer clean
 
 #variables
 $(call moa_fileset_define,mum_input_a,fasta,Set 1 input fasta files)
 $(call moa_fileset_define,mum_input_b,fasta,Set 1 input fasta files)
 
-moa_may_define += mum_breaklen
-mum_breaklen_help = Set the distance an alignment extension will attempt \
-	to extend poor scoring regions before giving up (default 200)
-mum_breaklen_default = 200
-mum_breaklen_type = integer
-
-moa_may_define += mum_plot_raw
-mum_plot_raw_help = plot an alternative visualization where mummer	\
-does not attempt to put the sequences in the correct order
-mum_plot_raw_type = set
-mum_plot_raw_allowed = T F
-mum_plot_raw_default = F
-
-moa_may_define += mum_self
-mum_self_help = mummer against self
-mum_self_type = set
-mum_self_default = T
-mum_self_allowed = T F
-
-moa_may_define += mum_matchmode
-mum_matchmode_help = use all matching fragments (max) or only unique matchers (mum)
-mum_matchmode_type = set
-mum_matchmode_default = mum
-mum_matchmode_allowed = mum max
-
 include $(shell echo $$MOABASE)/template/moa/core.mk
-
-mum_a_set = $(addprefix a__, $(mum_input_a_files))
-mum_b_set = $(mum_input_b_files)
 
 .PHONY: mummer_prepare
 mummer_prepare:
 
 .PHONY: mummer_post
-mummer_post: 
+mummer_post:
 
 mummer_debug:
 	@echo $(mum_a_set)

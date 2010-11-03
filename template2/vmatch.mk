@@ -18,29 +18,7 @@
 # 
 moa_id = vmatch
 
-template_title = Vmatch
-template_description = Run VMATCH on an set of input files (query) \
-  vs a database index.
-
 #variables
-moa_must_define += vmatch_db
-vmatch_db_help = vmatch db to compare against
-vmatch_db_type = file
-
-moa_must_define += vmatch_input_file
-vmatch_input_file_help = input file with the sequences to map
-vmatch_input_file_type = file
-
-moa_may_define += vmatch_extra_parameters
-vmatch_extra_parameters_default = 
-vmatch_extra_parameters_help = extra parameters to feed to vmatch
-vmatch_extra_parameters_type = string
-
-#moa_may_define += vmatch_invert_gff
-#vmatch_invert_gff_default = F
-#vmatch_invert_gff_help = Invert the GFF
-#vmatch_invert_gff_type = set
-#vmatch_invert_gff_allowed = T F
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk
@@ -58,7 +36,7 @@ endif
 vmatch_prepare:
 
 .PHONY: vmatch_post
-vmatch_post: 
+vmatch_post:
 
 .PHONY: vmatch
 vmatch: output.gff

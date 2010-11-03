@@ -97,4 +97,4 @@ template_modification_date: Fri Jul 30 10:33:01 2010
 template_name: bwa_aln
 template_title: BWA align
 template_type: gnumake
-title: Test Job
+title: ''

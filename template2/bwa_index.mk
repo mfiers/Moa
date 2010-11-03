@@ -15,27 +15,18 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
-include $(MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = bwa_index
-template_title = Bwa index builder
-template_description = Builds a bwa index from a reference sequence
 
 #########################################################################
 # Prerequisite testing
-moa_prereq_simple += bwa
 
 #variables
 $(call moa_fileset_define,bwa_index_input,fasta,Sequence files used to build a bwa database)
 
-moa_must_define += bwa_index_name
-bwa_index_name_help = Name of the bwa index to create
-bwa_index_name_type = string
-
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 $(fastafile): 
 	cat $^ > $@
 

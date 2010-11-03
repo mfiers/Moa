@@ -15,51 +15,15 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
 moa_id = maqpair
-template_title = MAQ paired ends mapper
-template_description = Map paired ends to a reference	\
-sequence using MAQ
 
 #variables
-moa_must_define += maqpair_read_dir
-maqpair_read_dir_help = directory containing the forward reads
-maqpair_read_dir_type = string
-
-moa_must_define += maqpair_forward_suffix
-maqpair_forward_suffix_help = Suffix of each forward filename -	\
-  recognize forward files this way. Note this is not a regular \
-  extension, no '.' is assumed between the filename & suffix
-maqpair_forward_suffix_default = _f.bfq
-maqpair_forward_suffix_type = string
-
-moa_may_define += maqpair_reverse_suffix
-maqpair_reverse_suffix_help = suffix of reverse files
-maqpair_reverse_suffix_default=_r.bfq
-maqpair_reverse_suffix_type = string
-
-moa_must_define += maqpair_reference
-maqpair_reference_help = Reference bfa file to map the reads to 
-maqpair_reference_type = string
-
-moa_may_define += maqpair_RF_maxdist
-maqpair_RF_maxdist_help = max outer distance for an RF readpair	\
-(corresponds to the -A parameter). This applies to long insert illumina pairs
-maqpair_RF_maxdist_type = integer
-maqpair_RF_maxdist_default = 15000
-
-
-moa_may_define += maqpair_maxdist
-maqpair_maxdist_help = max outer distance for a (non RF)			\
-readpair. This applies to illumina matepairs - i.e. short inserts
-maqpair_maxdist_type = integer
-maqpair_maxdist_default = 250
-
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk
@@ -95,8 +59,4 @@ bfq/%.bfq: $(maqpair_input_dir)/%.$(maqpair_input_extension)
 
 maqpair_clean:
 	$e -rm -rf *.out
-
-
-
-
 

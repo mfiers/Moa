@@ -15,25 +15,12 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
-template_title = Create a project
-template_description = Create a new project, a placeholder for project	\
-settings, and used by several plugins.
-
 moa_id = project
-project_help = This template does not do anything - it is a project				\
-  placeholder.
-
-moa_may_define += project_description
-project_description_default = 
-project_description_help = A description of what this project is				\
-  supposed to achieve, how to use it, and what parameters are most				\
-  important to set
-project_description_type = string
 
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moa/core.mk

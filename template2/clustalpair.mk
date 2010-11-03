@@ -17,29 +17,12 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = clustalpair
-template_title = clustalw
-template_description = Run clustalw on two sets of sequences
 
 #targets
-clustalpair_help = run clustalw
 
 #variables
-moa_must_define += input_dir_a input_dir_b
 
-input_dir_a_help= This set is compared to the sequences in input_dir_b. \
-  only a forward comparison is made (a against b, not the other way \
-  round )
-input_dir_a_type = directory
-
-input_dir_b_help= The set to compare against
-input_dir_b_type = directory
-
-moa_may_define += input_extension
-input_extension_type = string
-input_extension_default = fasta
-
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ix = $(input_extension)
 input_files_a = $(addprefix a__,$(wildcard $(input_dir_a)/*.$(input_extension)))
 input_files_b = $(wildcard $(input_dir_b)/*.$(input_extension))
@@ -48,7 +31,7 @@ input_files_b = $(wildcard $(input_dir_b)/*.$(input_extension))
 clustalpair_prepare:
 
 .PHONY: clustalpair_post
-clustalpair_post: 
+clustalpair_post:
 
 .PHONY: clustalpair
 clustalpair: $(input_files_a)

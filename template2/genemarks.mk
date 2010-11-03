@@ -15,30 +15,9 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
-template_title = geneMarkS
-template_description = predict genes using geneMarkS 
 moa_id = genemarks
-moa_genemarks_help = Predict genes using geneMarkS
-
-moa_must_define += genemarks_input_dir
-genemarks_input_dir_help = directory containing the input sequences
-genemarks_input_dir_type = directory
-
-moa_must_define += genemarks_matrix
-genemarks_matrix_help = the matrix to use
-genemarks_matrix_type = file
-
-moa_may_define += genemarks_gff_source
-genemarks_gff_source_default = genemarks
-genemarks_gff_source_help = source field to use in the gff. Defaults to "geneMarkS"
-genemarks_gff_source_type = string
-
-moa_may_define += genemarks_input_extension
-genemarks_input_extension_default = fasta
-genemarks_input_extension_help = input file extension. Defaults to 'fasta'
-genemarks_input_extension_type = string
 
 #include moabase, if it isn't already done yet..
 include $(shell echo $$MOABASE)/template/moa/core.mk

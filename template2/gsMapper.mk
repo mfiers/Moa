@@ -15,49 +15,18 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_id = gsmap
-template_title = GSMapper
-template_description = Run the Roche GS Reference mapper
 
 #variables
-moa_must_define += gsmap_sfffile
-gsmap_sfffile_type = file
 gsmap_sfffile_cardinality = many
-gsmap_sfffile_help = SFF files with reads to map against the reference	\
-  sequences
-
-moa_must_define += gsmap_name
-gsmap_name_type = string
-gsmap_name_help = Name identifying this mapping in the output gff
-
-moa_must_define += gsmap_reference_fasta
-gsmap_reference_fasta_type = file
-gsmap_reference_fasta_help = A multifasta file with the reference	\
-sequence(s)with the library id.
-
-moa_may_define += gsmap_min_overlap_len
-gsmap_min_overlap_len_help = Minimum overlap length in the assembly step
-gsmap_min_overlap_len_default = 40
-gsmap_min_overlap_len_type = integer
-
-moa_may_define += gsmap_min_overlap_ident
-gsmap_min_overlap_ident_help = Minimum identity length in the assembly step
-gsmap_min_overlap_ident_default = 90
-gsmap_min_overlap_ident_type = integer
-
-moa_may_define += gsmap_annotation
-gsmap_annotation_help = Gene annotation file in the UCSC GenePred format
-gsmap_annotation_default = 
-gsmap_annotation_type = file
 
 ################################################################################
 ## Include MOABASE
-include $(MOABASE)/template/moa/core.mk
-################################################################################
+include $(MOABASE)/lib/gnumake/core.mk################################################################################
 
 .PHONY: gsmap_prepare
 gsmap_prepare:
@@ -71,8 +40,6 @@ gsmap: out.gff
 out.gff: out/454HCDiffs.txt 
 	$e awk '/>/ {print $$1"\tgsMapper\tPolymorphism\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsmap_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out.gff
 	$e awk '/>/ {print $$1"\tgsMapper\tSNP_$(gsmap_name)\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsmap_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out2.gff
-
-
 
 ################################################################################
 ## A python scriptlet that adapts the HCDIF FILE
@@ -108,8 +75,6 @@ F.close()
 endef
 ################################################################################
 
-
-
 improved.HCDiffs: reads.index
 	$(call exec_python, PYTHON_ADAPT_HCDIF)
 
@@ -117,7 +82,7 @@ reads.index: $(gsmap_sfffile)
 	$e for x in $(gsmap_sfffile); do				\
 		bn=`basename $$x .sff`;					\
 		sffinfo -a $$x | sed "s/$$/ $$bn/";		\
-	done > reads.index	
+	done > reads.index
 
 ifdef gsmap_annotation
 	$(warning HHIHIH)
@@ -134,13 +99,11 @@ out/454HCDiffs.txt: $(gsmap_reference_fasta) $(gsmap_sfffile)
 		$(gsmap_reference_fasta) \
 		$(gsmap_sfffile)
 
-
 gsmap_clean:
 	$e -rm -rf out
 	$e -rm -f reads.index
 	$e -rm -f improved.HCDiffs
 	$e -rm -f out.gff
-
 
 #      #   mid = "MID1", "ACGAGTGCGT", 2;
 #         mid = "MID2", "ACGCTCGACA", 2;

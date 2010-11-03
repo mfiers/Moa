@@ -15,39 +15,14 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
-template_title = GFF from FASTA
-template_description = Derive GFF from a FASTA file, usually to accompany the 		\
-	Sequence for upload to a generic genome browser database.
-moa_fasta2gff_help = Generate GFF from a fasta file
+#
 
 # Help
 moa_id = fasta2gff
 
 #varables that NEED to be defined
-moa_must_define += f2g_gffsource
-f2g_gffsource_help = Source to be used in the gff
-f2g_gffsource_type = string
 
 #varables that MAY  be defined
-moa_must_define += f2g_input_dir 
-f2g_input_dir_help = Directory with the input fasta files
-f2g_input_dir_type = directory
-
-moa_may_define += f2g_output_dir
-f2g_output_dir_default = ./gff
-f2g_output_dir_help = Directory with the output gff 
-f2g_output_dir_type = directory
-
-moa_may_define += f2g_input_extension
-f2g_input_extension_default = fasta
-f2g_input_extension_help = glob pattern of the fasta files (default: *.fasta)
-f2g_input_extension_type = string
-
-moa_may_define += f2g_options
-f2g_options_default = 
-f2g_options_help = options to be passed to the fasta2gff script
-f2g_options_type = string
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -88,7 +63,7 @@ $(f2g_output_files): $(f2g_output_dir)/%.gff : $(f2g_input_dir)/%.$(f2g_input_ex
 	fasta2gff $< -s $(f2g_gffsource) $(f2g_options) > $@
 
 .PHONY: fasta2gff_post
-fasta2gff_post: 
+fasta2gff_post:
 
 .PHONY: fasta2gff_clean
 fasta2gff_clean:

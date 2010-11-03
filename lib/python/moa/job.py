@@ -150,7 +150,9 @@ class Job(object):
         Set a new template for this job
         """ 
         self.template = moa.template.Template(name)
-        self.template.save(self.wd)
+        with open(os.path.join(self.confDir, 'template'), 'w') as F:
+            F.write(name)
+            l.debug('set job in %s to template %s' % (self.wd, name))
         self.loadBackend()
         
     def loadTemplate(self):

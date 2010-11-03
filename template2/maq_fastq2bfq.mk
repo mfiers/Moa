@@ -15,16 +15,13 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
 moa_id = fq2bq
-template_title = Convert FASTQ to BFQ
-template_description = Converts a FASTQ file to MAQ BFQ	\
-format.
 
 #variables
 $(call moa_fileset_define,fq2bq_input,fastq,input FASTA files)
@@ -58,8 +55,4 @@ bfq/%.bfq: $(fq2bq_input_dir)/%.$(fq2bq_input_extension)
 
 fq2bq_clean:
 	$e -rm -rf bfa
-
-
-
-
 

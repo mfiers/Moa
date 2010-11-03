@@ -17,21 +17,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = clustalgroup
-template_title = clustalw
-template_description = Run clustalw on two sets of sequences
 
 #targets
-clustalgroup_help = run clustalw
 
 #variables
-moa_must_define += cwg_input_dir
-cwg_input_dir_help = This set of sequences to run clustalw on
-cwg_input_dir_type = directory
-
-moa_may_define += cwg_input_extension
-cwg_input_extension_default = fasta
-cwg_input_extension_help = Input file extension
-cwg_input_extension_type = string
 
 include $(shell echo $$MOABASE)/template/moa/core.mk
 
@@ -41,7 +30,7 @@ cwg_input_files = $(wildcard $(cwg_input_dir)/*.$(cwg_input_extension))
 clustalgroup_prepare:
 
 .PHONY: clustalgroup_post
-clustalgroup_post: 
+clustalgroup_post:
 
 .PHONY: clustalgroup
 clustalgroup: $(cwg_input_files)

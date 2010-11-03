@@ -17,28 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = varscan
-template_title = Varscan
-template_description = Run VARSCAN to detect snps
 
 #variables
-moa_must_define += varscan_input_file
-varscan_input_file_help = Varscan input alignments file
-varscan_input_file_type = file
-
-moa_may_define += varscan_extra_params
-varscan_extra_params_default = 
-varscan_extra_params_help = location of varscan.pl, defaults to '/usr/lib/perl5/site_perl/5.8.8/varscan.pl'
-varscan_extra_params_type = string
-
-moa_may_define += varscan_output_name
-varscan_output_name_default = out
-varscan_output_name_help = Base name of the output files
-varscan_output_name_type = string
-
-moa_may_define += varscan_perl_file
-varscan_perl_file_default = 
-varscan_perl_file_help = the varscan (perl) executable
-varscan_perl_file_type = file
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk
@@ -53,7 +33,7 @@ endif
 varscan_prepare:
 
 .PHONY: varscan_post
-varscan_post: 
+varscan_post:
 
 .PHONY: varscan
 varscan: $(varscan_output_name)

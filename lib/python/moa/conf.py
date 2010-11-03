@@ -39,13 +39,11 @@ class ConfigItem:
     
     def __init__(self,
                  key = None,
-                 operator = '=',
                  value = None,
                  fromString=None,
-                 fromParam=None):
+                 fromTemplate=None):
         
         self.key = key
-        self.operator = operator
         self.value = value
         self.type = 'string'
         self.allowed = []
@@ -54,50 +52,42 @@ class ConfigItem:
         self.help = ''
         self.default = ''
         self.cardinality = 'one'
-
-        if fromParam:
-            self._parseParam(key, fromParam)
-        elif fromString:
-            self._parseString(fromString)
-
-    def update(self, item):
-        """
-        update this value with another value
-        if the operator of the new value == '=', this means an overwrite
-
-        if the operator == '+=' it's an append
-        """
-        if not item.key == self.key:
-            raise Exception("Invalid config item update")
+        self.fromTemplate = False
         
-        if item.operator == '+=':
-            self.value += ' ' + item.value
-        elif item.operator == '=':
-            self.value = item.value
-        else:
-            raise Exception("Invalid operator in item update")
+        if fromTemplate:
+            self._parseTemplateParam(key, fromTemplate)
 
-    def _parseParam(self, key, par):
+    def _parseTemplateParam(self, key, par):
         """
         Initialize config item from a parameter entry
         """
-        self.key = key
+        self.fromTemplate = True
         for k,v in par.items():
             setattr(self, k, v)
-        
-    def _parseString(self, s):
-        x = self.reString.match(s)
-        self.key = x.groupdict()['key']
-        self.operator = x.groupdict()['operator']
-        self.value = x.groupdict()['value']
 
+    def changed(self):
+        """
+        Is this parameter different from what is specified in
+        the template definition?
+        """
+        if not self.fromTemplate:
+            #if not specified in the template, make it talway, always True
+            return True
+        elif self.value == None:
+            #not set, not changed
+            return False        
+        elif self.value == self.default:
+            return False
+        else:
+            return True
+        
     def getVal(self):
         if self.value: return self.value
         return self.default
     
     def __str__(self):
-        return "%s %s %s" % (
-            self.key, self.operator, self.getVal())
+        return "%s %s" % (
+            self.key, self.getVal())
 
 class Config(dict):
     """
@@ -109,84 +99,62 @@ class Config(dict):
         """
         Do nothing, just initialize an empty configuration
         """
-        job, newargs = args[0], args[1:]
+        job = args[0]
 
         self.job = job
-        self.template = job.template
-        self.readTemplate()
+        self.processTemplate()
         
-        self.moamk = os.path.join(self.job.wd, 'moa.mk')
-        self.moamkold = os.path.join(self.job.wd, 'moa.mk.old')
-        self.moamklock = os.path.join(self.job.wd, 'moa.mk.lock')
-        
-        self.configFile = os.path.join(self.job.confDir, 'config')
-        
-        super(Config, self).__init__(*newargs, **kwargs)
+        self.jobConfigFile = os.path.join(self.job.confDir, 'config')
+        super(Config, self).__init__()
 
-    def readTemplate(self):
-        for p in self.template['parameters']:
+    def processTemplate(self):
+        for p in self.job.template['parameters']:
             self[p] = ConfigItem(
-                key = p, fromParam = self.template['parameters'][p])
-            
+                key = p, fromTemplate = self.job.template['parameters'][p])
+        
     def load(self):
         """ Load configuration from disk """
-        if not os.path.exists(self.moamk):            
-            return
-        with open(self.moamk) as F:
-            for line in F.readlines():
-                line = line.strip()
-                if not line: continue
-                self.add(line)
+        data = {}
+        if os.path.exists(self.jobConfigFile):
+            with open(self.jobConfigFile) as F:
+                data = yaml.load(F)
+        for k in data.keys():
+            if not self.has_key(k):
+                self[k] = ConfigItem(key = k)
+            self[k].value = data[k]
 
     def save(self):
-        #not saving an empty configuration
-        if len(self.keys()) == 0:
-            return False
-
-        with moa.utils.flock(self.moamklock):
-            l.debug("got a lock on moa.mk in %s" % self.job.wd)
-            if os.path.exists(self.moamkold):
-                l.debug("removing an older moa.mk.old")
-                os.unlink(self.moamkold)
-                l.debug("removing an older moa.mk.old")
-            if os.path.exists(self.moamk):
-                os.rename(self.moamk, self.moamkold)
-            with open(self.moamk, 'w') as F:
-                for i in self.values():
-                    F.write("%s\n" % i)
-                    
         #save a shadow yaml configuration file
-        data = dict([(k, self[k].value) for k in self.keys()])
-        with open(self.configFile, 'w') as F:
-            F.write(yaml.dump(data))
-                                       
-    def add(self, *args):
+        data = dict([(k, self[k].getVal()) for k in self.keys() if self[k].changed()])
+        with open(self.jobConfigFile, 'w') as F:
+            F.write(yaml.dump(data, default_flow_style=False))
+
+    def unset(self, key):
         """
-        Add a configuration value from an ConfigItem
+        remove a variable from the config -or, just set to to None
+        if the variable is defined by the template
         """
-        if len(args) == 1 \
-            and isinstance(args[0], ConfigItem):
-            item = args[0]
+        l.debug("unsetting %s %s" % (key, self.has_key(key)))
+        if self.has_key(key):
+            item = self[key]
+            if item.fromTemplate: item.value=None
+            else: del self[key]
             
-        elif len(args) == 1 \
-             and type(args[0]) == type("string") \
-             and '=' in args[0]:
-            item = ConfigItem(fromString = args[0])
+    def set(self, key, val):
+        """
+        Set a configuration value from an ConfigItem
+        """
+        if self.has_key(key):
+            self[key].value = val
+            return
 
-        elif len(args) == 2:
-            item = ConfigItem(key = args[0],
-                              value = args[1],
-                              operator='=')
-
-        elif len(args) == 3:
-            item = ConfigItem(key = args[0],
-                              operator = args[1],
-                              value = args[2])
-        else:
-            raise Exception("Invalid arguments for Config.add %s" % str(args))
-        
+        item = ConfigItem(key = key,
+                          value = val)
         self[item.key] = item
-                      
+        
+    def has_key(self, key):
+        return super(Config, self).has_key(key)
+        
     def __setitem__(self, key, value):
         """
         Set an item

@@ -35,6 +35,10 @@ def defineCommands(data):
         'configuration of a Moa job.',
         'call' : configSet,
         }
+    data['commands']['unset'] = {
+        'desc' : 'Remove (the value of) a variable',
+        'call' : configUnset,
+        }
 
     data['commands']['show'] = {
         'desc' : 'Show the current configured variables',
@@ -50,12 +54,25 @@ def configShow(data):
     moa.utils.moaDirOrExit(job)
     for key in job.conf.keys():
         print '%s\t%s' % (key, job.conf[key].getVal())
-        
+
+def configUnset(data):
+    """
+    remove variables from the configuration
+    """
+    job = moa.job.getJob(data['wd'])
+    for a in data['newargs']:
+        if '=' in a:
+            l.error("Invalid argument to unset %s" % a)
+        else:
+            l.debug("Unsetting %s" % a)
+            job.conf.unset(a)
+    job.conf.save()
+    
 def configSet(data):
     """
     parse the command line and save the arguments into moa.mk
     """
-    wd = data['cwd']
+    wd = data['wd']
     job = moa.job.getJob(wd)
     args = data['newargs']
 
@@ -68,13 +85,16 @@ def configSet(data):
             vl = moa.utils.askUser("%s:\n> "%a,df)
             job.conf.add(a, vl)
         else:
-            job.conf.add(a)
+            key,val = a.split('=',1)
+            job.conf.set(key, val)
 
     job.conf.save()
 
 TESTSCRIPT = """
 moa new adhoc -t 'something'
-moa set title=else
+moa set title='something else'
+moa set undefvar='somewhat'
+moa set adhoc_mode=par
 moa show || exer moa show does not seem to work
 moa show | grep -q 'title[[:space:]\+]else' || exer title is not set properly
 moa set title+=test

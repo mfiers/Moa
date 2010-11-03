@@ -15,27 +15,18 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
-include $(MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = bowtiedb
-template_title = Bowtie index builder
-template_description = Builds a bowtie index from a reference sequence
 
 #########################################################################
 # Prerequisite testing
-moa_prereq_simple += bowtie-build
 
 #variables
 $(call moa_fileset_define,bowtiedb_input,fasta,Sequence files used to build a bowtie database)
 
-moa_must_define += bowtiedb_name
-bowtiedb_name_help = Name of the bowtie index to create
-bowtiedb_name_type = string
-
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 bowtiedb: $(bowtiedb_name).1.ebwt
 
 #one of the database files

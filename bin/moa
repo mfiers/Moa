@@ -38,9 +38,8 @@ import moa.utils
 import moa.project
 import moa.unittests
 import moa.checkTemplate
-import moa.plugins
+import moa.plugin
 import moa.moaCommands
-
 
 MOABASE=moa.utils.getMoaBase()
 
@@ -52,7 +51,7 @@ if '-v' in sys.argv:
     moa.logger.setVerbose()
 
 ## Initialze the plugins
-plugins = moa.plugins.Plugins()
+plugins = moa.plugin.PluginHandler()
 
 # Initialize the job object
 wd = os.getcwd()

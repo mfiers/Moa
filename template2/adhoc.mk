@@ -15,7 +15,7 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 moa_id=adhoc
 
@@ -24,73 +24,14 @@ $(call moa_fileset_define_opt,$(moa_id)_input,,Input files for $(moa_id))
 endif
 # Help
 
-template_title = Execute an ad hoc analysis
-template_description = The ad hoc template aids in executing a one	\
-  line on a set of input files.
-
-moa_may_define += $(moa_id)_touch
-$(moa_id)_touch_help = use touch files to track if input files have	\
-	changed.
-$(moa_id)_touch_type = set
-$(moa_id)_touch_default = T
-$(moa_id)_touch_allowed = T F
-
-moa_may_define += $(moa_id)_name_sed
-$(moa_id)_name_sed_default = s/a/a/
-$(moa_id)_name_sed_help = A sed expression which can be used to derive the	\
-  output file name for each input file (excluding the path). The sed	\
-  expression is executed for each input file name, and the result is	\
-  available as $$t in the $$($(moa_id)_process) statement. Make sure that	\
-  you use single quotes when specifying this on the command line
-$(moa_id)_name_sed_type = string
-
-moa_may_define += $(moa_id)_r_mode
-$(moa_id)_r_mode_help = R mode is a dedication mode to run R scripts 
-$(moa_id)_r_mode_type = set
-$(moa_id)_r_mode_default = F
-$(moa_id)_r_mode_allowed = T F
-
-moa_may_define += $(moa_id)_output_dir
-$(moa_id)_output_dir_default = .
-$(moa_id)_output_dir_help = Output subdirectory
-$(moa_id)_output_dir_type = directory
-
-moa_may_define += $(moa_id)_mode
-$(moa_id)_mode_default = seq
-$(moa_id)_mode_help = $(Moa_Id) operation mode: *seq*, sequential: process the	\
-  input files one by one; *par*, parallel: process the input files in	\
-  parallel (use with `-j`); *all*: process all input files at once (use	\
-  `$$^` in `$(moa_id)_process`) and *simple*: Ignore input files, just		\
-  execute `$(moa_id)_process` once.
-$(moa_id)_mode_type = set
-$(moa_id)_mode_allowed = seq par all simple
-
-moa_may_define += $(moa_id)_process
-$(moa_id)_process_default = echo "needs a sensbile command"
-$(moa_id)_process_help = Command to execute for each input file. The path	\
-  to the input file is available as $$< and the output file as $$t.	\
-  (it is not mandatory to use both parameters, for example 				\
-"cat $$< > output" would concatenate all files into one big file
-$(moa_id)_process_type = string
-
-moa_may_define += $(moa_id)_powerclean
-$(moa_id)_powerclean_default = F
-$(moa_id)_powerclean_help = Do brute force cleaning (T/F). Remove all		\
-  files, except moa.mk & Makefile when calling make clean. Defaults to	\
-  F.
-$(moa_id)_powerclean_type = set
-$(moa_id)_powerclean_allowed = T F
-
 #########################################################################
 #Include moa core
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ifeq ($($(moa_id)_mode),simple)
 $(moa_id)_touch=F
 else
 $(moa_id)_touch_files=$(addprefix touch/,$(notdir $($(moa_id)_input_files)))
 endif
-
 
 ifeq ($($(moa_id)_r_mode),T)
 ifeq ($($(moa_id)_process),$($(moa_id)_process_default))
@@ -105,7 +46,6 @@ endif
 endif
 endif
 endif
-
 
 $(moa_id)_link_noclean ?= Makefile moa.mk
 
@@ -133,7 +73,6 @@ ifeq ($($(moa_id)_mode),seq)
 .NOTPARALLEL: $(moa_id)
 
 $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
-
 
 touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
 touch/%: b=$(shell basename $< .$($(moa_id)_input_extension))
@@ -180,7 +119,6 @@ touch/%: $($(moa_id)_input_dir)/%
 	touch $@;
 endif
 
-
 ################################################################################
 ## $(moa_id) mode: simple
 ifeq ($($(moa_id)_mode),simple)
@@ -199,7 +137,6 @@ $(moa_id)_clean:
 	-if [ "$($(moa_id)_powerclean)" == "T" ]; then \
 		find . -maxdepth 1 -type f $(find_exclude_args) | \
 			xargs -n 20 rm -f ; fi
-
 
 $(moa_id)_unittest:
 	-rm -rf 10.input test.*

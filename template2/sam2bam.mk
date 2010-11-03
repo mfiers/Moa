@@ -15,14 +15,11 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 include $(shell echo $$MOABASE)/template/moa/prepare.mk
 
 moa_id = sam2bam
-template_title = Convert SAM to BAM using samtools
-template_description = Converts a FASTQ file to MAQ BFQ	\
-format.
 
 #variables
 $(call moa_fileset_define,sam2bam_input,sam,input SAM files)
@@ -62,6 +59,4 @@ sam2bam: $(sam2bam_output_files)
 
 sam2bam_clean:
 	$e -rm *.bam
-
-
 

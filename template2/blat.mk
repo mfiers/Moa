@@ -17,56 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = blat
-template_title = Blat
-template_description = Run BLAT on an set of input files (query) vs a database.
 
 #variables
-moa_must_define += blat_db
-blat_db_help = type of the database (dna, prot or dnax)
-blat_db_type = set
-
-blat_db_allowed = ['dna', 'prot', 'dnax']
-
-moa_must_define += blat_input_file
-blat_input_file_help = input query file. If this variable is not defined, the combination of blat_input_dir and blat_input_extension is used to find a list of input files
-blat_input_file_type = file
-
-moa_must_define += blat_input_dir
-blat_input_dir_help = source field in the generated gff
-blat_input_dir_type = directory
-
-moa_must_define += blat_gff_source
-blat_gff_source_help = Source field for the generated GFF files
-blat_gff_source_type = string
-
-moa_may_define += blat_input_extension
-blat_input_extension_default = fasta
-blat_input_extension_help = extension of the input files
-blat_input_extension_type = string
-
-moa_may_define += blat_eval
-blat_eval_default = 1e-10
-blat_eval_help = evalue cutoff to select the reported hits on (defaults to 1e-15)
-blat_eval_type = float
-
-moa_may_define += blat_db_id_list
-blat_db_id_list_default = 
-blat_db_id_list_help = a sorted list of db ids and descriptions, enhances the report generated
-blat_db_id_list_type = file
-
-moa_may_define += blat_db_type
-blat_db_type_default = dna
-blat_db_type_help = type of the database (dna, prot or dnax)
-blat_db_type_type = set
-
-blat_db_type_allowed = ['dna', 'prot', 'dnax']
-
-moa_may_define += blat_query_type
-blat_query_type_default = dna
-blat_query_type_help = type of the query (dna, rna, prot, dnax or rnax)
-blat_query_type_type = set
-
-blat_query_type_allowed = ['dna', 'rna', 'prot', 'dnax', 'rnax']
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk

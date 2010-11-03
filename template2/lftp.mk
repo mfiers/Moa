@@ -15,97 +15,17 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
-
-template_title = lftp
-template_description = Use LFTP to download files. This template has two				\
-  modi, one is set 'lftp_mode' to 'mirror' data, in which case both				\
-  'lftp_url' and 'lftp_pattern' (default *) are used. The other modus			\
-  is 'lftp_mode=get', when one file defined by 'lftp_url' is					\
-  downloaded. In the mirror mode it is possible to download only those			\
-  files that are newer as the files already downloaded by using the				\
-  'lftp_timestamp' parameter
-lftp_help = Download using ftp
+#
 
 # Help
 moa_id = lftp
-lftp_help = execute the download
 
 #varables that NEED to be defined
-moa_must_define += lftp_url
-lftp_url_help = The base url to download from
-lftp_url_type = string
 
 #variables that may be defined
-moa_may_define += lftp_timestamp lftp_powerclean lftp_noclean lftp_pattern
-lftp_pattern_help = glob pattern to download
-lftp_pattern_default='*'
-lftp_pattern_type = string
 
-moa_may_define += lftp_lock
-lftp_lock_help = Lock this job after running. This means that you will			\
-have to manually unlock the job before lftp actually reruns. This is a			\
-good choice if your downloading large datasets or have a slow					\
-connection
-lftp_lock_type = set
-lftp_lock_default = T
-lftp_lock_allowed = T F
-
-lftp_timestamp_help = Depend on lftp to decide if a file needs updating, \
- else a touchfile is created that you need to delete or touch before updating \
- (T/*F*)
-lftp_timestamp_type = set
-lftp_timestamp_allowed = T F
-lftp_timestamp_default = F
-
-lftp_powerclean_help = Do brute force cleaning (T/F). Remove all files, \
-  except moa.mk & Makefile when calling make clean. Defaults to F.
-lftp_powerclean_type = set
-lftp_powerclean_default = F
-lftp_powerclean_allowed= T F
-
-lftp_noclean_help = set of files not to be deleted by the powerclean
 lftp_noclean_cardinality = many
-lftp_noclean_type = string
-lftp_noclean_default = moa.mk Makefile
 lftp_noclean_category = advanced
-
-moa_may_define += lftp_user lftp_pass
-lftp_user_help = username for the remote site
-lftp_user_type = string
-lftp_user_default = 
-
-lftp_pass_help = password for the remote site, note that this can be \
-  defined on the commandline using: 'make lftp_pass=PASSWORD'
-lftp_pass_type = password
-lftp_pass_default = 
-
-moa_may_define += lftp_output_dir lftp_dos2unix
-
-lftp_output_dir_help = subdir to create & write all output to. If not defined, \
-  data will be downloaded to directory containing the Makefile
-lftp_output_dir_type = directory
-lftp_output_dir_default = .
-
-lftp_dos2unix_help = Run dos2unix to prevent problems with possible dos \
-  text files
-lftp_dos2unix_type = set
-lftp_dos2unix_allowed = T F
-lftp_dos2unix_default =  F
-
-moa_may_define += lftp_mode lftp_get_name
-
-lftp_mode_help = Mode of operation - 'mirror' or 'get'. Mirror enables \
-  timestamping. Get just gets a single file. If using get, consider setting \
-  depend_lftp_timestamp to F. When using 'get', the full url should be in \
-  lftp_url. lftp_pattern is ignored. Defaults to mirror.
-lftp_mode_type = set
-lftp_mode_default = get
-lftp_mode_allowed = mirror get
-
-lftp_get_name_help = target name of the file to download
-lftp_get_name_type = string
-lftp_get_name_default = 
 
 prereqlist += prereq_lftp_installed
 prereq_lftp_installed:
@@ -172,7 +92,6 @@ lftp_clean:
 		find . -maxdepth 1 -type f $(find_exclude_args) \
 			| xargs -n 20 rm -f ;\
 	fi
-
 
 ################################################################################
 ## Test fixture

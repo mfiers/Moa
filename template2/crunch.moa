@@ -2,7 +2,8 @@ commands: [crunch, clean]
 description: ''
 gnumake_makefile: /home/mf/project/moa/template2/crunch.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
-    implemented by the template.', crunch: create crunch files}
+    implemented by the template.', crunch: Create crunch files. Crunch files are used
+    by Artemis ACT to generate comprative plots}
 moa_id: crunch
 parameter_category_order: ['', input, system, advanced]
 parameters:
@@ -91,11 +92,11 @@ parameters:
     mandatory: true
     type: string
 template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
+template_creation_date: Thu Nov  4 09:57:43 2010
 template_description: Create a crunch file for use with the Artemis ACT comparison
   tool.
-template_modification_date: Fri Jun 25 21:10:26 2010
+template_modification_date: Thu Nov  4 09:57:43 2010
 template_name: crunch
 template_title: Create ACT crunch files for use with Artemis ACT
 template_type: gnumake
-title: Test Job
+title: ''

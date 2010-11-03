@@ -15,57 +15,33 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 #Include base moa code - does variable checks & generates help
-include $(MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 ################################################################################
 # Definitions
 # targets that the enduser might want to use
 moa_targets += clean_fasta
-clean_fasta_help = Cleanup of a FASTA file (in place!)
 
 # Help
 moa_id = clean_fasta
-template_title = clean Fasta
-template_description = Convert files to unix format and convert all characters \
- that are not an A,C,G,T or N to N. 
 
 # Output definition
 moa_outputs += clean_fasta
 moa_output_clean_fasta = ./fasta/*.fasta
-moa_output_clean_fasta_help = Cleaned fasta files
 
 #varables that NEED to be defined
-moa_must_define += cf_input_dir 
-cf_input_dir_help = Directory with the sequences to run cleanfasta on
-cf_input_dir_type = directory
-
-input_dir_help = list of directories with the input files
-
-moa_may_define += cf_input_extension
-cf_input_extension_default = fasta
-cf_input_extension_help = input file extension
-cf_input_extension_type = string
-
-moa_may_define += sed_command
-sed_command_default = /^>/!s/[^ACGTNacgtn]/N/g
-sed_command_help = The sed command cleaning the code, defaults to '/^>/!s/[^ACGTNacgtn]/N/g'
-sed_command_type = string
-
-input_extension_help = extension to the fasta files (default .fasta)
 
 #Include base moa code - does variable checks & generates help
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ################################################################################
 
 cf_output_files = $(wildcard $(cf_input_dir)/*.$(cf_input_extension))
 
 .phony: clean_fasta_prepare
 clean_fasta_prepare:
-	-mkdir fasta		
+	-mkdir fasta
 
 .PHONY: clean_fasta
 clean_fasta: 

@@ -15,24 +15,15 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
-include $(MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = soapdb
-template_title = Bowtie index builder
-template_description = Builds a bowtie index from a reference sequence
 
 #########################################################################
 # Prerequisite testing
-moa_prereq_simple += bowtie-build
 
-moa_must_define += soapdb_input
-soapdb_input_help = Input fasta file to build a SOAP bwt database from
-soapdb_input_type = file
-
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 soapdb: 
 	2bwt-builder $(soapdb_input)
 

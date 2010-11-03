@@ -18,28 +18,38 @@
 # 
 include $(MOABASE)/lib/gnumake/prepare.mk
 
+moa_id = blast
+
+moa_additional_targets += blast_report
+
 #########################################################################
 # Prerequisite testing
 
 prereqlist += prereq_biopython_installed
-moa_prereq_simple += blastall blastReport
 
 prereq_biopython_installed:
-	@if ! python -c "import Bio.Blast"; then   		\
-		$(call errr, Biopython is not installed) ;	\
-		exit -1 ;					\
+	@if ! python -c "import Bio.Blast"; then \
+		$(call errr, Biopython is not installed) ;\
+		exit -1 ;\
 	fi
 
 $(call moa_fileset_define,blast_input,fasta,Directory with the BLAST input files)
 
+#moa_inputfile_vars += blast_input_files
+moa_state_outsets  +=  blast_gff_files
+
+#preparing for gbrowse upload:
+gup_gff_dir = ./gff
+gup_upload_gff = T
+gup_gffsource ?= $(blast_gff_source)
+
 #include the moa core libraries
-include $(shell echo $$MOABASE)/lib/gnumake/core.mk
+include $(shell echo $$MOABASE)/template/moa/core.mk
 
 real_blast_db = $(if $(blast_db), $(shell echo "$(blast_db)" | sed "s/\.[pn]..$$//"))
 
 #  blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
 #  $(warning XXX indir $(blast_input_dir) inext $(blast_input_extension)  inf $(blast_input_files))
-
 
 ifdef blast_main_phase  
   blast_output_files = $(addprefix out/, \
@@ -54,7 +64,7 @@ endif
 
 ifdef real_blast_db
 single_blast_db_file=$(shell ls $(real_blast_db)*.[pn]s[dq] 2>/dev/null || true)
-endif 
+endif
 
 blasttest:
 	$(e)echo $(blast_input_dir)
@@ -73,7 +83,7 @@ blast_prepare:
 	-mkdir gff 2>/dev/null
 
 .PHONY: blast_post
-blast_post: 
+blast_post:
 
 # Convert to GFF
 gff/%.gff: out/%.xml

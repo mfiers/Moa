@@ -21,33 +21,10 @@ maintarget: check mummer
 ################################################################################
 # Variable checks & definition & help
 moa_id = clustalw
-template_title = clustalw
-template_description = Run clustalw on two sets of sequences
 
 #targets
-clustalw_help = run clustalw
 
 #variables
-moa_must_define += input_dir_a
-input_dir_a_help = This set is compared to the sequences in input_dir_b.  
-input_dir_a_type = directory
-
-
-moa_must_define += input_dir_b
-input_dir_b_help = The set to compare against. Only a forward comparison is \
-  made (a against b, not the other way round)
-
-input_dir_b_type = directory
-
-
-
-
-moa_may_define += input_extension
-input_extension_default = fasta
-input_extension_help = File extension for input files
-input_extension_type = string
-
-
 
 include $(shell echo $$MOABASE)/template/moa/core.mk
 
@@ -59,7 +36,7 @@ input_files_b = $(wildcard $(input_dir_b)/*.$(input_extension))
 clustalw_prepare:
 
 .PHONY: clustalw_post
-clustalw_post: 
+clustalw_post:
 
 .PHONY: clustalw
 clustalw: $(input_files_a)

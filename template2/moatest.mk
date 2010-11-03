@@ -17,23 +17,12 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 
 moa_id = moatest
-template_title = Unittest template
-template_description = Not to be used - is used by unitmoatests
-
-moatest_help = Do nothing - no need to call this. 
 
 ## define a few test variables
 
 #an obligatory variable
-moa_must_define = txt
-txt_help = test variable
-txt_type = string
 
 #and an optional one
-moa_may_define = test_opt
-test_opt_help = test variable
-test_opt_type = string
-test_opt_default = konijntje
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk

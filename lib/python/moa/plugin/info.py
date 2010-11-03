@@ -20,7 +20,7 @@
 """
 Help
 """
-
+import re
 import os
 import sys
 import yaml
@@ -35,17 +35,19 @@ import moa.plugin
 import moa.logger as l
 import textwrap
 
+MAKEFILE_CONVERT_LINES = [
+    ('include $(MOABASE)/template/moa/prepare.mk',
+     'include $(MOABASE)/lib/gnumake/prepare.mk'),
+    ('include $(MOABASE)/template/moa/core.mk',
+     'include $(MOABASE)/lib/gnumake/core.mk'),
+    ]
+    
 MOABASE = moa.utils.getMoaBase()
 
 def defineCommands(data):
     data['commands']['rawinfo'] = {
         'private' : True,
         'call' : rawInfo
-        }
-
-    data['commands']['template_convert'] = {
-        'private' : True,
-        'call' : templateConvert
         }
  
     data['commands']['status'] = {
@@ -72,35 +74,6 @@ def defineCommands(data):
         'desc' : 'List all known templates, showing a short description',
         'call' : listTemplatesLong,
         }
-
-def templateConvert(data):
-    newTemplateDir = os.path.join(MOABASE, 'template2')
-    for job in moa.template.list():
-        
-        newTemplateConf = os.path.join(newTemplateDir, '%s.moa' % job)
-        newTemplateFile = os.path.join(newTemplateDir, '%s.mk' % job)
-        
-        l.info("start conversion of %s" % job)
-        
-        wd = moa.job.newTestJob(template=job)
-        inf = moa.info.info(wd)
-        inf['template_type'] = 'gnumake'
-        del inf['parameter_categories']
-        inf['commands'] = inf['moa_targets']
-        inf['commands'].remove('all')
-        del inf['moa_targets']
-        del inf['all_help']
-        del inf['moa_files']
-        inf['help'] = inf.get('help', {})
-        for c in inf['commands']:
-            inf['help'][c] = inf['%s_help' % c]
-            del inf['%s_help' % c]
-        inf['gnumake_makefile'] = newTemplateFile
-        del inf['template_file']
-        for p in inf.get('parameters', []):
-            del inf['parameters'][p]['value']
-        with open(newTemplateConf, 'w') as F:
-            print yaml.dump(inf, F)
         
 def listTemplates(data):
     for job in moa.template.list():

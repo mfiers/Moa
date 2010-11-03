@@ -15,16 +15,13 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
 moa_id = f2b
-template_title = Convert fasta to bfa
-template_description = Converts a FASTA file to MAQ format	\
-for use with a BFA a maq_fasta2bfa index from a reference sequence
 
 #variables
 $(call moa_fileset_define,f2b_input,fasta,input FASTA files)
@@ -63,8 +60,4 @@ $(f2b_name).1.ebwt: $(maq_fasta2bfa_input_files)
 
 f2b_clean:
 	$e -rm -rf bfa
-
-
-
-
 

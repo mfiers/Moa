@@ -17,29 +17,12 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_id = dotself
-template_title = Dottup self
-template_description = Run dottup with a sequence against itself
 
 #targets
-dotself_help = run clustalw
 
 #variables
-moa_must_define += dotself_input_dir
-dotself_input_dir_help = Set of sequences to use
-dotself_input_dir_type = directory
 
-moa_may_define += dotself_input_extension
-dotself_input_extension_default = fasta
-dotself_input_extension_help = Extension of input files
-dotself_input_extension_type = string
-
-moa_may_define += dotself_wordsize
-dotself_wordsize_default = 6
-dotself_wordsize_help = Wordsize used for recognizing similarity
-dotself_wordsize_type = integer
-
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ix = $(dotself_input_extension)
 
 dotself_input_files = $(addprefix a__,\
@@ -58,7 +41,7 @@ dotself_prepare:
 	-mkdir png
 
 .PHONY: dotself_post
-dotself_post: 
+dotself_post:
 
 .PHONY: dotself
 dotself: $(dotself_output_files)

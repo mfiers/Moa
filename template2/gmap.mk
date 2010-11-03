@@ -18,35 +18,11 @@
 # 
 moa_id = gmap
 
-template_title = Gmap
-template_description = Run GMAP on an set of input files (query) \
-  vs a database index.
-
 $(call moa_fileset_define,gmap_input,fasta,Sequences to map)
 
 #variables
-moa_must_define += gmap_db
-gmap_db_help = Gmap db
-gmap_db_type = file
 
-moa_may_define += gmap_extra_parameters
-gmap_extra_parameters_default = 
-gmap_extra_parameters_help = extra parameters to feed to gmap
-gmap_extra_parameters_type = string
-
-moa_may_define += gmap_invert_gff
-gmap_invert_gff_default = T
-gmap_invert_gff_help = Invert the GFF (T/*F*)
-gmap_invert_gff_type = set
-gmap_invert_gff_allowed = T F
-
-moa_may_define += gmap_gff_source
-gmap_gff_source_default = gmap
-gmap_gff_source_help = Source field to use in the output GFF
-gmap_gff_source_type = string
-
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 $(call moa_fileset_remap_nodir,gmap_input,gmap_raw,raw)
 $(call moa_fileset_remap_nodir,gmap_input,gmap_gff,gff)
 $(call moa_fileset_remap_nodir,gmap_input,gmap_genepred,genepred)

@@ -16,47 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-include $(MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = blastdb
-template_title_blastdb = Create a BLAST database 
-blastdb_help = Takes either a set of fasta files or a single	\
-  multi-fasta input file and creates a BLAST database.
-
-moa_must_define += bdb_name
-bdb_name_help = Database name to create.
-bdb_name_type = string
-
-moa_may_define += bdb_input_dir
-bdb_input_dir_default = 
-bdb_input_dir_help = Dir with the input fasta files, defaults to ./fasta
-bdb_input_dir_type = directory
-
-moa_may_define += bdb_input_extension
-bdb_input_extension_default = fasta
-bdb_input_extension_help = extension of the input sequence files, defaults to fasta
-bdb_input_extension_type = string
-
-moa_may_define += bdb_fasta_file
-bdb_fasta_file_default = 
-bdb_fasta_file_help = The file with all FASTA sequences for the		\
-  blastdb concatenated. This can be used as an alternative to defining	\
-  "bdb_input_dir" and "bdb_input_dir_extension". Morover. If all your	\
-  sequences are already in a single file, then using this parameter	\
-  prevents duplication.
-bdb_fasta_file_type = file
+template_title_blastdb = Create a BLAST database
 
 #Variable: protein
-moa_may_define += bdb_protein
-bdb_protein_default = F
-bdb_protein_help = Protein database? (T)rue) or not (F)alse (default: F)
-bdb_protein_type = set
-
-bdb_protein_allowed = T F
 
 #Include base moa code - does variable checks & generates help
-include $(MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 # End of the generic part - from here on you're on your own :)
 
 bdb_doconcat = F
@@ -68,7 +35,7 @@ else
   bdb_doconcat = F
 endif
 
-#the rest of the variable definitions 
+#the rest of the variable definitions
 
 ifeq ("$(bdb_protein)", "F")
 	one_blast_db_file = $(bdb_name).nhr

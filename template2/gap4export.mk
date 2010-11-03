@@ -17,22 +17,11 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 moa_targets += gap4export clean
-gap4export_help = Export data from an assembly using gap4
-clean_help = Clean up. 
 
 # Help
 moa_id = gap4export
-template_title = Assembly export using gap4
-template_description = Export data from an assembly using gap4
 
 #varables that NEED to be defined
-moa_must_define += ge_input_dir
-ge_input_dir_help = Directory with the input data
-ge_input_dir_type = directory
-
-moa_must_define += ge_input_pattern
-ge_input_pattern_help = file name pattern
-ge_input_pattern_type = string
 
 #Include base moa code - does variable checks & generates help
 ifndef dont_include_moabase
@@ -67,7 +56,7 @@ $(gap4export_phase): %.phase : $(ge_input_dir)/%
 			cp $$bacAphase $@ ;\
 		else \
 			echo "1" > $@ ;\
-		fi	
+		fi
 
 $(gap4export_cons): %.contig.fasta : $(ge_input_dir)/%
 	@echo creating cons $@ from $<
