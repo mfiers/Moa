@@ -1,5 +1,5 @@
-# 
-# Copyright 2009 Mark Fiers, Plant & Food Research
+#
+# Copyright 2009, 2010 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
 # 
@@ -82,8 +82,8 @@ def configSet(data):
     for a in args:
         if not '=' in a:
             df = job.conf[a]
-            vl = moa.utils.askUser("%s:\n> "%a,df)
-            job.conf.add(a, vl)
+            vl = moa.utils.askUser("%s:\n$ " % a, df)
+            job.conf.set(a, vl)
         else:
             key,val = a.split('=',1)
             job.conf.set(key, val)

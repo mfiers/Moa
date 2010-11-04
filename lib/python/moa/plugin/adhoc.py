@@ -192,11 +192,11 @@ def createAdhoc(data):
                
     l.debug('setting parameters %s' % params)
 
-    job = moa.job.getJob(wd)
-    job.new(template='adhoc',
-            title = options.title,
-            force = options.force,
-            parameters=params)
+    job = moa.job.newJob(wd,
+                         template='adhoc',
+                         title = options.title,
+                         force = options.force,
+                         parameters=params)
 
 def addStore(data):
     wd = data['wd']

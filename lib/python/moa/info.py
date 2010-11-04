@@ -481,11 +481,12 @@ def getOut(wd):
     """
     Return the job output
 
-        >>> d =  moa.job.newTestJob(template='adhoc_one',
-        ...          title='test job',
-        ...          parameters=['adhoc_one_process=echo konijn'])
-        >>> job = moa.runMake.MOAMAKE(wd=d, verbose=False,
-        ...       captureOut=True, captureErr=True)
+        >>> job =  moa.job.newTestJob(template='adhoc',
+        ...                         title='test job')
+        >>> job.conf.set('adhoc_process', 'simple')
+        >>> job.captureOut = True
+        >>> job.captureErr = True
+        >>> rc = job.execute()
         >>> rc = job.run()
         >>> rc ==  0
         True

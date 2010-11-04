@@ -86,8 +86,7 @@ class ConfigItem:
         return self.default
     
     def __str__(self):
-        return "%s %s" % (
-            self.key, self.getVal())
+        return self.getVal()
 
 class Config(dict):
     """

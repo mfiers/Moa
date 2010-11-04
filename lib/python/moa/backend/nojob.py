@@ -20,7 +20,7 @@ class NojobBackend(moa.backend.BaseBackend):
         """
         return False
     
-    def execute(self, command):
+    def execute(self, command, **kwargs):
         """
         Nojob - cannot execute
         """

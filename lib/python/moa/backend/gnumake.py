@@ -50,13 +50,13 @@ class GnumakeBackend(moa.backend.BaseBackend):
         """
         
         options = self.job.options
-        
-        ## make sure the MOA_THREADS env var is set - this is used from inside
-        ## the Makefiles later threads need to be treated different from the
-        ## other parameters. multi-threaded operation is only allowed in the
-        ## second phase of execution.
-        self.job.env['MOA_THREADS'] = "%s" % options.threads
 
+        #do not use builtin rules
+        self.makeArgs.append('-r')
+
+        if options.makedebug:
+            self.makeArgs.append('-d')
+            
         ## Define extra parameters to use with Make
         if options.remake:
             self.makeArgs.append('-B')
@@ -65,19 +65,35 @@ class GnumakeBackend(moa.backend.BaseBackend):
         
         self.makeArgs.extend(self.job.args)
     
-    def execute(self, command):
+    def execute(self, command, verbose=False, background=False):
+
+        ## make sure the MOA_THREADS env var is set - this is used from inside
+        ## the Makefiles later threads need to be treated different from the
+        ## other parameters. multi-threaded operation is only allowed in the
+        ## second phase of execution.
+        self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
+        
+        #if moa is not verbose, make should be silent
+        if not self.job.options.verbose:
+            self.makeArgs.append('-s')
+            
+        background = self.job.options.background
+
         l.debug("Calling make for command %s" % command)
-        actor = moa.actor.Actor(self.job.wd)
+        actor = self.job.getActor()
+
+        #dump the job env into the actor environment (sys env)
+        actor.setEnv(self.job.env)
+        #and the job configuration
+        actor.setEnv(self.job.conf)
+
         cl = ['make', command] + self.makeArgs
-        l.critical("executing %s" % " ".join(cl))
-        #job = runMake.MOAMAKE(wd,
-        #                      target = command,
-        #                      verbose = options.verbose,
-        #                      threads = options.threads,
-        #                      makeArgs = makeArgs,
-        #                      background = options.background)
-        returnCode = job.returnCode()
-        return returnCode
+        
+        l.debug("executing %s" % " ".join(cl))
+        actor.run(cl, background = background)
+        
+        #returnCode = job.returnCode()
+        #return returnCode
 
         
     def defineOptions(self, parser):
@@ -133,9 +149,8 @@ class GnumakeBackend(moa.backend.BaseBackend):
             return False
             
         if not template.backend == 'gnumake':
-            l.error("Template backend mismatch :(")
+            l.error("template backend mismatch")
             return False
-
 
         l.debug("Start writing %s" % self.makefile)
         with open(self.makefile, 'w') as F:
@@ -148,39 +163,17 @@ class GnumakeBackend(moa.backend.BaseBackend):
         params = []
         for par in parameters:
             if not '=' in par: continue
-            self.job.conf.add(par)
+            k,v = par.split('=', 1)
+            self.job.conf.set(k,v)
 
         self.job.conf.save()
-        if noInit: return
 
-        l.debug("Running moa initialization")
-        job = moa.runMake.MOAMAKE(wd = self.wd,
-                                  target='initialize',
-                                  captureOut = False,
-                                  captureErr = False,
-                                  stealth = True,
-                                  verbose=False)
-        job.run()
-        job.finish()
-        l.debug("Written %s, try: moa help" % self.makefile)
-
+        
         # check if a title is defined as 'title=something' on the
         # commandline, as opposed to using the -t option
-        if not title:
-            for p in parameters:
-                if p.find('title=') == 0:
-                    title = p.split('=',1)[1].strip()
-                    parameters.remove(p)
-                    break
-
-        if (not title) and titleCheck and (not template == 'traverse'):
+        if not self.job.conf['title'] and titleCheck:
             l.warning("You *must* specify a job title")
             l.warning("You can still do so by running: ")
             l.warning("   moa set title='something descriptive'")
             title = ""
-        if title:
-            l.debug('creating a new moa makefile with title "%s" in %s' % (
-                title, self.wd))
-        else:
-            l.debug('creating a new moa makefile in %s' % ( self.wd))
 

@@ -111,10 +111,6 @@ job.args = args
 if options.verbose:
     moa.logger.setVerbose()
 
-## Store all arguments in the environment - we might want to have a
-## look at them from the Makefiles
-os.putenv("MOAARGS", "%s" % " ".join(["'" + str(x) + "'" for x in args]))
-
 ### Start plugin initialization
 plugins.run('prepare')
 ### Start job initialization
@@ -138,6 +134,8 @@ if __name__ == "__main__":
     
     plugins.register(newargs = newargs)
     job.args = newargs
+
+    plugins.run("prerun")
     
     #see if there is a callback to a plugin - If so call it
     if command in moaCommands:
@@ -148,9 +146,10 @@ if __name__ == "__main__":
             plugins.run("post%s" % command.capitalize())
             sys.exit()
 
-    #No callback, defer this to the job    
+    #No callback, defer this to the job
     plugins.run("pre%s" % command.capitalize())
     rc = job.execute(command)
     plugins.run("post%s" % command.capitalize())
+
     plugins.run("finish")
     sys.exit(rc)

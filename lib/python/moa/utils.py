@@ -109,16 +109,21 @@ def fsCompleter(text, state):
     except IndexError:
         return None
     
-def askUser(prompt, default):
-        
-    def _rl_set_hook():
-        readline.insert_text(default)
+def askUser(prompt, d):
+
+    def startup_hook():
+        readline.insert_text('%s' % d)
+  
     readline.set_completer_delims("\n `~!@#$%^&*()-=+[{]}\|;:'\",<>?")
-    readline.set_startup_hook(_rl_set_hook)
+    #readline.set_pre_input_hook(_rl_set_hook)
+
+    readline.set_startup_hook(startup_hook)
+
     readline.set_completer(fsCompleter)
     readline.parse_and_bind("tab: complete")
     
     vl = raw_input(prompt)
+
     readline.set_startup_hook() 
     return vl    
 

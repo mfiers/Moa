@@ -92,10 +92,18 @@ class Job(object):
     Placeholder for a job
     """
     
-    def __init__(self, wd):
+    def __init__(self,
+                 wd,
+                 captureOut = False,
+                 captureErr = False):
         """        
-        """        
+
+        """
+        
         self.wd = wd
+        self.captureOut = captureOut
+        self.captureErr = captureErr
+
         self.confDir = os.path.join(self.wd, '.moa')
 
         if not os.path.exists(self.confDir):
@@ -108,16 +116,28 @@ class Job(object):
         self.options = {}
 
         self.conf = moa.conf.Config(self)
-        self.conf.load()    
+        self.conf.load()
+
 
         self.loadBackend()
-        
+
+    def getActor(self):
+        """
+        Get an actor for this job
+        """        
+        return moa.actor.Actor(wd = self.wd,
+                               captureOut = self.captureOut,
+                               captureErr = self.captureErr)
+
+    
     def execute(self, command):
         """
         """
-        l.info("executing %s" % command)
+        l.debug("executing %s" % command)
         if self.backend:
-            self.backend.execute(command)
+            self.backend.execute(command,
+                                 verbose = self.options.verbose,
+                                 background = self.options.background)
         else:
             l.error("No backend loaded - cannot execute %s" % command)
                     
