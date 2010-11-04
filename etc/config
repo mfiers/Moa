@@ -1,0 +1,3 @@
+moa_plugins: [fileset, configure, newjob, help, logo, test, info, moautil]
+moa_mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
+moa_pandocbin: pandoc
