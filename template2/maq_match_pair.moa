@@ -84,11 +84,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Map paired ends to a reference sequence using MAQ
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: maq_match_pair
-template_title: MAQ paired ends mapper
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Map paired ends to a reference sequence using MAQ
+modification_date: Fri Jun 25 21:10:26 2010
+name: maq_match_pair
+title: MAQ paired ends mapper
+type: gnumake
 title: ''

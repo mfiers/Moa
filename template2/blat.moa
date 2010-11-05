@@ -106,11 +106,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Run BLAT on an set of input files (query) vs a database.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: blat
-template_title: Blat
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Run BLAT on an set of input files (query) vs a database.
+modification_date: Fri Jun 25 21:10:26 2010
+name: blat
+title: Blat
+type: gnumake
 title: ''

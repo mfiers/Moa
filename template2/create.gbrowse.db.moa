@@ -99,14 +99,14 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: A library that aids in uploading FASTA and GFF to a Generic
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: A library that aids in uploading FASTA and GFF to a Generic
   Genome Browser database. This template is only to be used embedded in another template.
   This library expects that the following variables are preset; gup_fasta_dir, gup_gff_dir
   gup_upload_fasta, gup_upload_gff
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: create.gbrowse.db
-template_title: Library for uploading data to GBrowse
-template_type: gnumake
+modification_date: Fri Jun 25 21:10:26 2010
+name: create.gbrowse.db
+title: Library for uploading data to GBrowse
+type: gnumake
 title: ''

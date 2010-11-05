@@ -131,12 +131,12 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: This Moa template takes a set of input FASTA sequences and determines
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: This Moa template takes a set of input FASTA sequences and determines
   the reverse complement using the EMBOSS revseq utility.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: revseq
-template_title: Revseq
-template_type: gnumake
+modification_date: Fri Jun 25 21:10:26 2010
+name: revseq
+title: Revseq
+type: gnumake
 title: ''

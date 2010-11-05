@@ -139,12 +139,12 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Thu Oct 21 14:23:46 2010
-template_description: The ad hoc template aids in executing a one line on a set of
+author: Mark Fiers
+creation_date: Thu Oct 21 14:23:46 2010
+description: The ad hoc template aids in executing a one line on a set of
   input files.
-template_modification_date: Thu Oct 21 14:23:46 2010
-template_name: adhoc
-template_title: Execute an ad hoc analysis
-template_type: gnumake
+modification_date: Thu Oct 21 14:23:46 2010
+name: adhoc
+title: Execute an ad hoc analysis
+type: gnumake
 title: ''

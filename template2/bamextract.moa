@@ -73,11 +73,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Extract one sequence from a bam file
-template_modification_date: Thu Jul  1 16:36:30 2010
-template_name: bamextract
-template_title: Bamextract
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Extract one sequence from a bam file
+modification_date: Thu Jul  1 16:36:30 2010
+name: bamextract
+title: Bamextract
+type: gnumake
 title: ''

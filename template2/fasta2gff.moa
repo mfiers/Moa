@@ -73,12 +73,12 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Derive GFF from a FASTA file, usually to accompany the Sequence
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Derive GFF from a FASTA file, usually to accompany the Sequence
   for upload to a generic genome browser database.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: fasta2gff
-template_title: GFF from FASTA
-template_type: gnumake
+modification_date: Fri Jun 25 21:10:26 2010
+name: fasta2gff
+title: GFF from FASTA
+type: gnumake
 title: ''

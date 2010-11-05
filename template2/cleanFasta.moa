@@ -56,12 +56,12 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Convert files to unix format and convert all characters that
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Convert files to unix format and convert all characters that
   are not an A,C,G,T or N to N.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: cleanFasta
-template_title: clean Fasta
-template_type: gnumake
+modification_date: Fri Jun 25 21:10:26 2010
+name: cleanFasta
+title: clean Fasta
+type: gnumake
 title: ''

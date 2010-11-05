@@ -57,11 +57,11 @@ parameters:
     help: input file with the sequences to map
     mandatory: true
     type: file
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Run VMATCH on an set of input files (query) vs a database index.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: vmatch
-template_title: Vmatch
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Run VMATCH on an set of input files (query) vs a database index.
+modification_date: Fri Jun 25 21:10:26 2010
+name: vmatch
+title: Vmatch
+type: gnumake
 title: ''

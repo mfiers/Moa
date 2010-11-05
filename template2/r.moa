@@ -84,11 +84,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: run the R script in moa.R, with the specified input files
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: r
-template_title: Run R
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: run the R script in moa.R, with the specified input files
+modification_date: Fri Jun 25 21:10:26 2010
+name: r
+title: Run R
+type: gnumake
 title: ''

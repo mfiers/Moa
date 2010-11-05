@@ -82,11 +82,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Builds a bowtie index from a reference sequence
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: bowtiedb
-template_title: Bowtie index builder
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Builds a bowtie index from a reference sequence
+modification_date: Fri Jun 25 21:10:26 2010
+name: bowtiedb
+title: Bowtie index builder
+type: gnumake
 title: ''

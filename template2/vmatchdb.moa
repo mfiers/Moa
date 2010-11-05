@@ -90,11 +90,11 @@ parameters:
     help: Prefix length
     mandatory: false
     type: integer
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Builds a vmatchdb index from a sequence
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: vmatchdb
-template_title: vmatch database builder
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Builds a vmatchdb index from a sequence
+modification_date: Fri Jun 25 21:10:26 2010
+name: vmatchdb
+title: vmatch database builder
+type: gnumake
 title: ''

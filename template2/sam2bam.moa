@@ -74,11 +74,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Converts a FASTQ file to MAQ BFQ format.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: sam2bam
-template_title: Convert SAM to BAM using samtools
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Converts a FASTQ file to MAQ BFQ format.
+modification_date: Fri Jun 25 21:10:26 2010
+name: sam2bam
+title: Convert SAM to BAM using samtools
+type: gnumake
 title: ''

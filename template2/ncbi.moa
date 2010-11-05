@@ -38,13 +38,13 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Thu Oct 21 20:26:52 2010
-template_description: Download a set of sequences from NCBI based on a query string
+author: Mark Fiers
+creation_date: Thu Oct 21 20:26:52 2010
+description: Download a set of sequences from NCBI based on a query string
   *ncbi_query* and database *ncbi_db*. This tempate will run only **once**, after
   a succesful run it creates a lock file that you need to remove to rerun
-template_modification_date: Thu Oct 21 20:26:52 2010
-template_name: ncbi
-template_title: Download data from NCBI
-template_type: gnumake
+modification_date: Thu Oct 21 20:26:52 2010
+name: ncbi
+title: Download data from NCBI
+type: gnumake
 title: ''

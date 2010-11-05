@@ -65,11 +65,11 @@ parameters:
     help: the varscan (perl) executable
     mandatory: false
     type: file
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Run VARSCAN to detect snps
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: varscan
-template_title: Varscan
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Run VARSCAN to detect snps
+modification_date: Fri Jun 25 21:10:26 2010
+name: varscan
+title: Varscan
+type: gnumake
 title: ''

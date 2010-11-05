@@ -73,12 +73,12 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Discover the bidirectional best blast hit between two sets of
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Discover the bidirectional best blast hit between two sets of
   sequences
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: bidibebla
-template_title: Bidirectional best BLAST hit
-template_type: gnumake
+modification_date: Fri Jun 25 21:10:26 2010
+name: bidibebla
+title: Bidirectional best BLAST hit
+type: gnumake
 title: ''

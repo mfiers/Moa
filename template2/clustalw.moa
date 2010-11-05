@@ -58,11 +58,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Run clustalw on two sets of sequences
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: clustalw
-template_title: clustalw
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Run clustalw on two sets of sequences
+modification_date: Fri Jun 25 21:10:26 2010
+name: clustalw
+title: clustalw
+type: gnumake
 title: ''

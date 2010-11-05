@@ -183,11 +183,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Run BOWTIE on an set of input files (query) vs a database index.
-template_modification_date: Thu Jul  1 16:36:30 2010
-template_name: bowtie
-template_title: Bowtie
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Run BOWTIE on an set of input files (query) vs a database index.
+modification_date: Thu Jul  1 16:36:30 2010
+name: bowtie
+title: Bowtie
+type: gnumake
 title: ''

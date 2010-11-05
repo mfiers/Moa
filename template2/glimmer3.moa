@@ -85,11 +85,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Predicts (prokaryotic) using glimmer3.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: glimmer3
-template_title: Glimmer3
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Predicts (prokaryotic) using glimmer3.
+modification_date: Fri Jun 25 21:10:26 2010
+name: glimmer3
+title: Glimmer3
+type: gnumake
 title: ''

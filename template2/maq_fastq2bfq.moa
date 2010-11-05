@@ -74,11 +74,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Converts a FASTQ file to MAQ BFQ format.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: maq_fastq2bfq
-template_title: Convert FASTQ to BFQ
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Converts a FASTQ file to MAQ BFQ format.
+modification_date: Fri Jun 25 21:10:26 2010
+name: maq_fastq2bfq
+title: Convert FASTQ to BFQ
+type: gnumake
 title: ''

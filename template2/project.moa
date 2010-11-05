@@ -43,12 +43,12 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Create a new project, a placeholder for project settings, and
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Create a new project, a placeholder for project settings, and
   used by several plugins.
-template_modification_date: Fri Jun 25 21:10:26 2010
-template_name: project
-template_title: Create a project
-template_type: gnumake
+modification_date: Fri Jun 25 21:10:26 2010
+name: project
+title: Create a project
+type: gnumake
 title: ''

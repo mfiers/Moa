@@ -138,15 +138,15 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Thu Oct 21 14:23:46 2010
-template_description: Use LFTP to download files. This template has two modi, one
+author: Mark Fiers
+creation_date: Thu Oct 21 14:23:46 2010
+description: Use LFTP to download files. This template has two modi, one
   is set lftp_mode to mirror data, in which case both lftp_url and lftp_pattern (default
   *) are used. The other modus is lftp_mode=get, when one file defined by lftp_url
   is downloaded. In the mirror mode it is possible to download only those files that
   are newer as the files already downloaded by using the lftp_timestamp parameter
-template_modification_date: Thu Oct 21 14:23:46 2010
-template_name: lftp
-template_title: lftp
-template_type: gnumake
+modification_date: Thu Oct 21 14:23:46 2010
+name: lftp
+title: lftp
+type: gnumake
 title: ''

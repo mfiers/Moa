@@ -91,12 +91,12 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Thu Nov  4 09:57:43 2010
-template_description: Create a crunch file for use with the Artemis ACT comparison
+author: Mark Fiers
+creation_date: Thu Nov  4 09:57:43 2010
+description: Create a crunch file for use with the Artemis ACT comparison
   tool.
-template_modification_date: Thu Nov  4 09:57:43 2010
-template_name: crunch
-template_title: Create ACT crunch files for use with Artemis ACT
-template_type: gnumake
+modification_date: Thu Nov  4 09:57:43 2010
+name: crunch
+title: Create ACT crunch files for use with Artemis ACT
+type: gnumake
 title: ''

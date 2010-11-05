@@ -74,11 +74,11 @@ parameters:
     help: Second primer to use
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Virtual PCR, based on Bowtie
-template_modification_date: Thu Jul  1 16:36:30 2010
-template_name: vpcr
-template_title: VPCR
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Virtual PCR, based on Bowtie
+modification_date: Thu Jul  1 16:36:30 2010
+name: vpcr
+title: VPCR
+type: gnumake
 title: ''

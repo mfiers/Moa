@@ -116,14 +116,14 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Run a simple, out of the box, newbler assembly. As an extra
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Run a simple, out of the box, newbler assembly. As an extra
   feature, this template automatically creates uniquely named links to the two main
   output fasta files (454AllContigs.fna, 454LargeContigs.fna). This is convenient
   for subsequence gather steps. The links are named after the directory.
-template_modification_date: Tue Jul 13 13:53:26 2010
-template_name: newbler
-template_title: Newbler
-template_type: gnumake
+modification_date: Tue Jul 13 13:53:26 2010
+name: newbler
+title: Newbler
+type: gnumake
 title: ''

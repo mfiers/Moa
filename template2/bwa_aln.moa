@@ -90,11 +90,11 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: Use bwa to aling a set of fastq reads against a db
-template_modification_date: Fri Jul 30 10:33:01 2010
-template_name: bwa_aln
-template_title: BWA align
-template_type: gnumake
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Use bwa to aling a set of fastq reads against a db
+modification_date: Fri Jul 30 10:33:01 2010
+name: bwa_aln
+title: BWA align
+type: gnumake
 title: ''
