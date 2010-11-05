@@ -1,5 +1,5 @@
 # 
-# Copyright 2009 Mark Fiers, Plant & Food Research
+# Copyright 2009, 2010 Mark Fiers
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
 # 
@@ -29,7 +29,6 @@ import optparse
 
 import moa.conf
 import moa.job
-import moa.info
 import moa.utils
 import moa.plugin
 import moa.logger as l

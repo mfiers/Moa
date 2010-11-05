@@ -31,14 +31,12 @@ import moa.logger as l
 from moa.logger import setSilent, setInfo, setVerbose
 
 import moa.lock
-import moa.info
 import moa.conf
 import moa.utils
 import moa.job
 import moa.plugin
 import moa.project
 import moa.template
-import moa.runMake
 
 MOABASE = moa.utils.getMoaBase()
 
@@ -115,61 +113,6 @@ def testPlugins(args=[]):
         l.info("Success testing %s (%d lines)" % (
             plugin, len(testCode.strip().split("\n"))))
         pluginTests += 1
-            
-                                     
-def testTemplates(which=None, verbose=False):
-    global templateFailures
-    global templateTests
-    for template in moa.template.list():
-        if which and template != which: continue
-    
-        l.debug("testing template %s" % template)
-        templateTests  += 1
-        
-        wd = moa.job.newTestJob(
-            template = template,
-            title='Testing template %s' % template)
-        
-        rc = moa.runMake.go(wd=wd,
-                            target='template_test', 
-                            background=False,
-                            verbose = verbose,
-                            makeArgs = [])
-        if rc != 0:
-            templateFailures += 1
-            err = moa.info.getErr(wd)
-            l.error("Error running template test for template %s" % template)
-            l.error(err)
-                                     
-        result = moa.info.getOut(wd).strip()
-        if result:
-            print result
-
-def testTemplateExtensive(template, verbose=False):
-    testDir = moa.job.newTestJob(
-        template=template,
-        title='Testing template %s' % template)
-    job = moa.runMake.MOAMAKE(
-        wd=testDir,
-        target='%s_unittest' % template, 
-        background=False, verbose=verbose,
-        captureOut = not verbose,
-        captureErr = not verbose)
-    rc = job.run()
-    if verbose:
-        out = job.getOutput()
-        print out
-    
-    if rc == 0:
-        l.info('Extensive test of "%s" was successfull' % template)
-        return True
-        
-    err = moa.info.getErr(wd=testDir)
-    out = moa.info.getOut(wd=testDir)
-
-    l.error("Error running extensive template test for template %s" % template)
-    l.error(out)
-    l.error(err)
     
 def run(options, args):
 
@@ -185,12 +128,10 @@ def run(options, args):
         setSilent()        
         testModule(moa.utils)
         testModule(moa.lock)
-        testModule(moa.info)
         testModule(moa.conf)
         testModule(moa.project)
         testModule(moa.template)
         testModule(moa.job)
-        testModule(moa.runMake)
         
         if options.verbose: setVerbose()
         else: setInfo()

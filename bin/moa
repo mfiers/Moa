@@ -31,17 +31,14 @@ import textwrap
 
 #moa specific libs
 import moa.job
-from moa import runMake
 import moa.conf
-import moa.info
 import moa.utils
+import moa.version
 import moa.project
 import moa.unittests
 import moa.checkTemplate
 import moa.plugin
 import moa.moaCommands
-
-MOABASE=moa.utils.getMoaBase()
 
 ## Initialize the logger
 import moa.logger as l
@@ -50,26 +47,27 @@ import moa.logger as l
 if '-v' in sys.argv:
     moa.logger.setVerbose()
 
-## Initialze the plugins
-plugins = moa.plugin.PluginHandler()
-
 # Initialize the job object
 wd = os.getcwd()
+
+moa.version.fixOld(wd)
+
 job = moa.job.getJob(wd)
+
+## Initialze the plugins
+plugins = moa.plugin.PluginHandler(job)
 
 #use of cwd is deprecated
 plugins.register(cwd = wd)
 plugins.register(wd = wd)
 plugins.register(job=job)
 
-plugins.register(MOABASE = MOABASE)
-
 ### Determine project root (if there is one)
-projectRoot = moa.project.findProjectRoot()
-if projectRoot:
-    l.debug('Project root is %s' % projectRoot)
-    os.putenv('MOAPROJECTROOT', projectRoot)
-    plugins.register(projectRoot = projectRoot)
+#projectRoot = moa.project.findProjectRoot(job)
+#if projectRoot:
+#    l.debug('Project root is %s' % projectRoot)
+#    job.projectRoot = projectRoot
+#    plugins.register(projectRoot = projectRoot)
 
 ## Command definitions
 moaCommands = moa.moaCommands.Commands()
@@ -135,12 +133,12 @@ if __name__ == "__main__":
     plugins.register(newargs = newargs)
     job.args = newargs
 
-    plugins.run("prerun")
-    
     #see if there is a callback to a plugin - If so call it
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
+            
             l.debug("using a callback for moa %s" % command)
+            plugins.run("preCommand")
             plugins.run("pre%s" % command.capitalize())
             plugins.runCallback(moaCommands[command])
             plugins.run("post%s" % command.capitalize())

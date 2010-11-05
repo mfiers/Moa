@@ -7,17 +7,20 @@ commandline
 import os
 import sys
 import UserDict
-import moa.info
 import moa.logger as l
 
 ## Load & handle plugins
 class PluginHandler(UserDict.DictMixin):
 
-    def __init__(self):
+    def __init__(self, job):
+
+        self.job = job
+        
         ## Determine what plugins are loaded
         self.plugins = {}
         self.data = {}
-        self.allPlugins = moa.info.getPlugins()        
+        self.allPlugins = self.job.conf['moa_plugins'].value
+        
         l.debug("Plugins %s" % ", ".join(self.allPlugins))
         ## load the plugins as seperate modules. A plugin does not need to
         self.initialize()

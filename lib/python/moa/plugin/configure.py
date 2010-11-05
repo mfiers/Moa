@@ -49,17 +49,17 @@ def configShow(data):
     """
     Print the configuration (from moa.mk) to stdout
     """
-    wd = data['wd']
-    job = moa.job.getJob(wd)
+    job = data['job']
     moa.utils.moaDirOrExit(job)
     for key in job.conf.keys():
+        if key[:4] == 'moa_': continue
         print '%s\t%s' % (key, job.conf[key].getVal())
 
 def configUnset(data):
     """
     remove variables from the configuration
     """
-    job = moa.job.getJob(data['wd'])
+    job = data['job']
     for a in data['newargs']:
         if '=' in a:
             l.error("Invalid argument to unset %s" % a)
@@ -72,7 +72,7 @@ def configSet(data):
     """
     parse the command line and save the arguments into moa.mk
     """
-    wd = data['wd']
+    job = data['job']
     job = moa.job.getJob(wd)
     args = data['newargs']
 

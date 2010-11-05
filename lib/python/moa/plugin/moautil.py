@@ -28,7 +28,6 @@ import glob
 import shutil
 import optparse
 import moa.logger as l
-import moa.info
 
 def defineCommands(data):
     data['commands']['cp'] = {
@@ -57,14 +56,14 @@ def defineCommands(data):
         'call' : moaTree }
 
 
-def moaTree(data):
-    """
-    Print a tree with Moa info
-    """
-    cwd = data['cwd']
-    for root, dirs, files in os.walk(cwd):
-        state = moa.info.status(root)
-        print "%-10s %s" % (state, os.path.relpath(root, cwd))
+#def moaTree(data):
+#    """
+#    Print a tree with Moa info
+#    """
+#    cwd = data['cwd']
+#    for root, dirs, files in os.walk(cwd):
+#        state = moa.info.status(root)
+#        print "%-10s %s" % (state, os.path.relpath(root, cwd))
 
 def moakill(data):
     """

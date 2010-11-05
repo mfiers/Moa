@@ -31,7 +31,6 @@ import moa.logger as l
 import moa.conf
 import moa.template
 import moa.utils
-import moa.runMake
 
 #import moa.job.base
 #import moa.job.gnumake
@@ -52,10 +51,7 @@ def newJob(wd, **kwargs):
     currently only makefile jobs are supported - later we'll scan the
     template, and instantiate the proper job type
     """
-
-    job = Job(wd)
-    job.setTemplate(kwargs['template'])
-    job.initialize(**kwargs)
+    job = Job(wd, template = kwargs['template'])
     return job
     
 def newTestJob(*args, **kwargs):
@@ -94,12 +90,14 @@ class Job(object):
     
     def __init__(self,
                  wd,
+                 template = None,
                  captureOut = False,
                  captureErr = False):
         """        
 
         """
-        
+
+        if wd[-1] == '/': wd = wd[:-1]
         self.wd = wd
         self.captureOut = captureOut
         self.captureErr = captureErr
@@ -109,8 +107,6 @@ class Job(object):
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
 
-        self.loadTemplate()
-
         self.env = {}
         self.args = []
         self.options = {}
@@ -118,8 +114,14 @@ class Job(object):
         self.conf = moa.conf.Config(self)
         self.conf.load()
 
+        if template:
+            self.setTemplate(template)
+            self.loadBackend()
+            self.backend.initialize()
+        else:
+            self.loadTemplate()
+            self.loadBackend()
 
-        self.loadBackend()
 
     def getActor(self):
         """
@@ -173,7 +175,6 @@ class Job(object):
         with open(os.path.join(self.confDir, 'template'), 'w') as F:
             F.write(name)
             l.debug('set job in %s to template %s' % (self.wd, name))
-        self.loadBackend()
         
     def loadTemplate(self):
         """
@@ -186,47 +187,29 @@ class Job(object):
             self.template = moa.template.Template(templateName)
             return
         
-        #no proper config - check if this is an old-style gnumake job
-        rc = self._fixOldGnumakeJob()
-        if rc: 
-            return
-        
         #no template found - maybe nothing is installed here
         self.template = moa.template.Template()
         
-    def _fixOldGnumakeJob(self):
-        """
-        'hack' to be able to handle old style gnumake jobs
-        """
-        makefile = os.path.join(self.wd, 'Makefile')
-        if os.path.exists(makefile):
-            with open(makefile) as F:
-                makedata = F.read()
-            if 'MOABASE' in makedata:
-                templateName = makedata.split('moa_load,')[1].split(')')[0]
-            with open(os.path.join(self.confDir, 'template'), 'w') as F:
-                F.write(templateName)
-            l.info("assuming old style gnumake template %s" % templateName)
-            self.template = moa.template.Template(templateName)
-            return True
-        return False
-
     def loadBackend(self):
         """
         load the backend
         """
         backendName = self.template.backend
+        l.debug("attempt to load backend %s" % backendName)
         try:
             _moduleName = 'moa.backend.%s' % backendName
-            _module =  __import__( _moduleName, globals(), locals(), [_moduleName], -1)            
+            _module =  __import__( _moduleName, globals(),
+                                   locals(), [_moduleName], -1)            
             l.debug("Successfully Loaded module %s" % _moduleName)
         except ImportError, e:
             if str(e) == "No module named %s" % _moduleName:
                 l.critical("Backend %s does not exists" % backendName)
             l.critical("Error loading backend %s" % backendName)
+            raise
             sys.exit(-1)                
             
-        self.backend = getattr(_module, '%sBackend' % backendName.capitalize())(self)
+        self.backend = getattr(_module,
+                               '%sBackend' % backendName.capitalize())(self)
 
     def isMoa(self):
         """

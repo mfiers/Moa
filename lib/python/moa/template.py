@@ -35,8 +35,8 @@ class InvalidTemplate(Exception):
     """ Invalid Template """
     pass
 
-class Template(UserDict.DictMixin):
-    def __init__(self, templateName=None):
+class Template(dict):
+    def __init__(self, templateName = None):
         """
         Initialze the template object, which means:
         
@@ -63,7 +63,6 @@ class Template(UserDict.DictMixin):
         if os.path.exists(self.templateInfo):
             with open(self.templateInfo) as F:
                 self.data = yaml.load(F)
-        
 
     def __str__(self):
         """

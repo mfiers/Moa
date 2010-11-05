@@ -7,7 +7,6 @@ import moa.logger as l
 import moa.conf
 import moa.template
 import moa.utils
-import moa.runMake
 import moa.actor
 import moa.backend
 
@@ -15,22 +14,24 @@ NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
 ## Moa Makefile
 ## http://mfiers.github.com/Moa
 
-include $(MOABASE)/template/moa/prepare.mk
+include $(MOABASE)/lib/gnumake/prepare.mk
 """
 
 class GnumakeBackend(moa.backend.BaseBackend):
     """
     GnuMake backend
     """
-    
+
     def __init__(self, job):
         """
         """
         super(GnumakeBackend, self).__init__(job)
-        
+
         self.makefile = os.path.join(self.job.wd, 'Makefile')
+        
         self.moamk = os.path.join(self.job.wd, 'moa.mk')
         self.makeArgs = []
+
         
     def isMoa(self):
         """
@@ -126,12 +127,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
         return None
 
 
-    def initialize(self,
-            template = None,
-            title = None,
-            parameters = [],
-            titleCheck = True,
-            noInit = False):        
+    def initialize(self, template = None):
 
         """
         Create a new GnuMake job in the `wd`
@@ -141,8 +137,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
         l.debug("- in wd %s" % self.wd)
            
         if not template:
-            l.error("need to specify a template")
-            return False
+            template = self.job.template
         
         if not template.valid:
             l.error("Invalid template")
@@ -157,23 +152,4 @@ class GnumakeBackend(moa.backend.BaseBackend):
             F.write(NEW_MAKEFILE_HEADER)
             F.write("$(call moa_load,%s)\n" % template)
 
-        if title:
-            self.job.conf.set('title', title)
-
-        params = []
-        for par in parameters:
-            if not '=' in par: continue
-            k,v = par.split('=', 1)
-            self.job.conf.set(k,v)
-
-        self.job.conf.save()
-
-        
-        # check if a title is defined as 'title=something' on the
-        # commandline, as opposed to using the -t option
-        if not self.job.conf['title'] and titleCheck:
-            l.warning("You *must* specify a job title")
-            l.warning("You can still do so by running: ")
-            l.warning("   moa set title='something descriptive'")
-            title = ""
 

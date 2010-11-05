@@ -26,7 +26,6 @@ import sys
 import optparse
 
 import moa.unittests
-import moa.info
 import moa.logger as l
 
 def defineCommands(data):

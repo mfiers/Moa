@@ -31,30 +31,19 @@ MOA_INCLUDE_PREPARE = yes
 ## See: http://gmsl.sourceforge.net/
 include $(MOABASE)/lib/gnumake/util/gsml
 
-## Load moa system wide configuration
-MOA_INCLUDE_ETCMOACONF = yes
-include $(MOABASE)/etc/moa.conf.mk
+### Load moa system wide configuration
+### MOA_INCLUDE_ETCMOACONF = yes
+-include $(MOABASE)/etc/moa.conf.mk
 
-## Load user specific configuration
--include ~/.moa/moa.conf.mk
-
-## Load moa project wide configuration
-ifdef MOAPROJECTROOT
-	MOA_INCLUDE_PROJECTCONF = yes
-	-include $(MOAPROJECTROOT)/moa.mk
-endif
-
-## Load the local configuration
-MOA_INCLUDE_MOAMK = yes
--include moa.mk
+### Load user specific configuration
+-include ~/.config/moa/moa.conf.mk
 
 ## Load plugins early - load before template definitions are made
+$(warning $(moa_plugins))
 $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/lib/gnumake/plugins/$(p)_def.mk) \
 )
 
-## Files that are a part of the moa configuration
-moa_files = Makefile moa.mk
 
 ## some help variables
 warn_on := \033[0;41;37m
@@ -112,15 +101,6 @@ debug = true
 echo = true
 endif
 
-
-################################################################################
-## Some python tricks
-##
-
-exec_python = $(eval export $(1)) \
-echo "$$$(strip $(1))" | python
-
-
 ################################################################################
 ## Definition of pre & post targets that can be overridden in the
 ## local Makefile
@@ -133,39 +113,6 @@ moa_postprocess:
 
 #each analysis MUST have a name
 #Variable: set_name
-#moa_may_define += project
-moa_must_define += title
-title_type = string
-title_help = A name for this job
-title_category = system
-
-# moa_may_define += description
-# description_type = string
-# description_help = A longer description for this job
-# description_default = 
-# description_category = system
-
-## author of this template..
-template_author ?= Mark Fiers
-
-## aditional  pre/post process command - to be definable in moa.mk
-## this is only one single command.
-moa_may_define += moa_precommand
-moa_precommand_help = A single command to be executed before the main		\
-  operation starts. For more complicated processing, please override the	\
-  moa_preprocess target in the local Makefile.
-moa_precommand_default=
-moa_precommand_type = string
-moa_precommand_category = advanced
-
-moa_may_define += moa_postcommand
-moa_postcommand_help = A single shell command to be executed after the			\
-Moa is finished. For more complex processing please override the				\
-moa_postprocess target in the local Makefile.
-moa_postcommand_category = advanced
-moa_postcommand_type = string
-moa_postcommand_default=
-
 
 ################################################################################
 ##
@@ -174,12 +121,12 @@ moa_postcommand_default=
 moa_load=$(eval include \
 	$(if $(wildcard ./$(1).mk),\
 		./$(1).mk,\
-		$(if $(wildcard ~/.moa/template/$(1).mk),\
-			~/.moa/template/$(1).mk,\
+		$(if $(wildcard ~/.config/moa/gnumake/$(1).mk),\
+			~/.config/moa/gnumake/$(1).mk,\
 			$(if $(wildcard $(MOABASE)/template2/$(1).mk),\
 				$(MOABASE)/template2/$(1).mk,\
 				$(error Cannot find a template called $(1))\
 			)\
 		)\
 	)\
-	)
+)

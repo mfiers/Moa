@@ -16,9 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-###############################################################################
-# Variable definition - pre moa.mk include
-#
 ## define all variables here that are not depending on moa.mk
 ###############################################################################
 
@@ -26,21 +23,10 @@ __MOA_INCLUDE_CORE = yes
 #see if __prepare is already loaded, if not load:
 include $(MOABASE)/lib/gnumake/prepare.mk
 
-## Prepare - fill in the defaults of all variables
-## Fill in the default values of each variable
-
-$(foreach v,$(moa_must_define) $(moa_may_define), \
-	$(if $($v),, \
-		$(if $($v_default), \
-			$(eval $v=$($v_default))) ) \
-	$(if $($(v)_formatter),$(eval $(v)_f=$(if $($(v)),$(call $(v)_formatter,$($v))))) \
-)
-
 ##load the plugins: contains core - post definition
 $(foreach p,$(moa_plugins), \
 	$(eval -include $(MOABASE)/lib/gnumake/plugins/$(p).mk) \
 )
-
 
 ##moa_list_plugins - list all loaded plugins
 .PHONY: moa_list_plugins
@@ -78,7 +64,9 @@ moa_execute_targets = \
 moa_default_target: $(moa_execute_targets)
 
 .PHONY: run
-run: $(moa_execute_targets)
+run:  $(moa_execute_targets)
+
+moa_logo:
 
 .PHONY: moa_run_precommand
 ifdef moa_precommand

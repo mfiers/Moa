@@ -17,9 +17,11 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
-"""
-Git
-"""
+
+
+
+import os
+
 import optparse
 import moa.job
 import moa.logger as l
@@ -52,7 +54,7 @@ def newJob(data):
     """
     Create a new job 
     """
-    wd = data['cwd']
+    wd = data['wd']
     options = data['options']
     args = data['newargs']
 
@@ -70,12 +72,25 @@ def newJob(data):
     if options.directory:
         wd = options.directory
 
+    if os.path.exists(os.path.join(
+        wd, '.moa', 'template')) and \
+        not options.force:
+        l.error("Seems that there is already a Moa job in")
+        l.error(wd)
+        l.error("")
+        l.error("use -f to override")
+        
     title = options.title
-    job = moa.job.newJob(wd,
-                         template = template,
-                         title = title,
-                         parameters = params,
-                         force = options.force)
+    
+    job = moa.job.newJob(wd, template = template)
+
+    if title:
+        job.conf.set('title', title)
+        
+    for p in params:
+        k,v = p.split('=', 1)
+        job.conf.set(k,v)
+    job.conf.save()
 
 TESTSCRIPT = """
 moa new adhoc -t 'testJob' adhoc_mode=par dummy=nonsense

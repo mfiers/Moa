@@ -25,8 +25,7 @@ import time
 import tempfile
 import subprocess
 
-import  moa.logger as l
-import moa.info
+import moa.logger as l
 import moa.utils
 from moa.exceptions import *
 

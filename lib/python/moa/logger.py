@@ -60,16 +60,26 @@ class XTRFormatter(logging.Formatter):
             record.visual = "#CRIT "
             record.vis1 = "CRITICAL:"
 
+        record.blue = chr(27) + "[34m"
+        record.green = chr(27) + "[32m"
+        
         record.msg = " ".join(str(record.msg).split(" "))
         #check if we're on a tty, if not, reset colon/coloff
         if not sys.stdout.isatty():
             record.colon = ""
             record.coloff = ""
 
+        caller = traceback.extract_stack()[-11]
+        record.file = caller[0]
+        record.lineno = str(caller[1])
+        record.function = caller[2]
+        
         #check if there is an env variable that prevents ANSI
         #coloring
         if os.environ.has_key('MOAANSI') and \
            os.environ['MOAANSI'] == 'no':
+            record.blue = ""
+            record.green = ""
             record.colon = ""
             record.coloff = ""
             
@@ -83,7 +93,7 @@ logmark = chr(27) + '[0;44mU' + \
 
 
 normalFormatter = XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(message)s')
-debugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s: %(message)s')
+debugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s: %(message)s\n   %(green)s@%(blue)s%(file)s:%(lineno)s:%(function)s%(coloff)s')
 
 handler.setFormatter(normalFormatter)
 LOGGER.addHandler(handler)
