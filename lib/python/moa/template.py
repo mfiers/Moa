@@ -35,7 +35,17 @@ class InvalidTemplate(Exception):
     """ Invalid Template """
     pass
 
-class Template(dict):
+class TemplateParameter(object):
+    """
+    A single parameter
+    """
+    
+    
+class Template(object):
+    
+    template_keys = ['description', 'commands', 'help', 'moa_id', 
+                     'parameter_category_order', 'author']
+    
     def __init__(self, templateName = None):
         """
         Initialze the template object, which means:
@@ -43,10 +53,11 @@ class Template(dict):
         * Check if the template exists, if not raise an Exception
         * Load template info
         """
+        
         if templateName:
             self.name = templateName
-            self.templateInfo = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
-            if not os.path.exists(self.templateInfo):
+            self.templateDataFile = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
+            if not os.path.exists(self.templateDataFile):
                 raise InvalidTemplate()            
             self.valid = True
             self.loadData()
@@ -60,7 +71,7 @@ class Template(dict):
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
 
     def loadData(self):
-        if os.path.exists(self.templateInfo):
+        if os.path.exists(self.templateDataFile):
             with open(self.templateInfo) as F:
                 self.data = yaml.load(F)
 

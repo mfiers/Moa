@@ -29,32 +29,6 @@ MOA_INCLUDE_PREPARE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
-include $(MOABASE)/lib/gnumake/util/gsml
-
-### Load moa system wide configuration
-### MOA_INCLUDE_ETCMOACONF = yes
--include $(MOABASE)/etc/moa.conf.mk
-
-### Load user specific configuration
--include ~/.config/moa/moa.conf.mk
-
-## Load plugins early - load before template definitions are made
-$(warning $(moa_plugins))
-$(foreach p,$(moa_plugins), \
-	$(eval -include $(MOABASE)/lib/gnumake/plugins/$(p)_def.mk) \
-)
-
-
-## some help variables
-warn_on := \033[0;41;37m
-warn_off := \033[0m
-boldOn := \033[0;1;47;0;32;4m
-boldOff := \033[0m
-
-empty:=
-space:= $(empty) $(empty)
-comma:=,
-sep:=|
 parO:=(
 parC:=)
 

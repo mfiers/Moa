@@ -1,6 +1,7 @@
 commands: [blastdb, clean]
 description: ''
-gnumake_makefile: /home/mf/project/moa/template2/blastdb.mk
+backend:
+   makefile: /home/mf/project/moa/template2/blastdb.mk
 help: {blastdb: Takes either a set of fasta files or a single multi-fasta input file
     and creates a BLAST database., clean: 'Remove all job data, not the Moa job itself,
     note that this must be implemented by the template.'}
@@ -77,11 +78,9 @@ parameters:
     help: A name for this job
     mandatory: true
     type: string
-template_author: Mark Fiers
-template_creation_date: Sun Aug 22 10:06:11 2010
-template_description: ''
-template_modification_date: Fri Jul 30 13:48:07 2010
-template_name: blastdb
-template_title: ''
-template_type: gnumake
-title: ''
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: ''
+modification_date: Fri Jul 30 13:48:07 2010
+name: blastdb
+type: gnumake

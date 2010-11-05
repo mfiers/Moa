@@ -60,6 +60,7 @@ def templateConvert(data):
         l.info("start conversion of %s" % job)
         
         wd = moa.job.newTestJob(template=job)
+
         inf = moa.info.info(wd)
         inf['template_type'] = 'gnumake'
         del inf['parameter_categories']

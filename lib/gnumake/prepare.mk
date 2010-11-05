@@ -30,5 +30,5 @@
 ## variable to make sure that we don't inlcue moabase twice, accidentallly
 
 ifndef MOA_INCLUDE_PREPARE
- include $(MOABASE)/template/moa/__prepare.mk
+ include $(MOABASE)/lib/gnumake/__prepare.mk
 endif

@@ -30,5 +30,5 @@
 ## variable to make sure that we don't inlcue moabase twice, accidentallly
 
 ifndef MOA_INCLUDE_CORE
- include $(MOABASE)/template/moa/__core.mk
+ include $(MOABASE)/lib/gnumake/__core.mk
 endif
