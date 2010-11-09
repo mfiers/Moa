@@ -146,5 +146,5 @@ description: The ad hoc template aids in executing a one line on a set of
 modification_date: Thu Oct 21 14:23:46 2010
 name: adhoc
 title: Execute an ad hoc analysis
-type: gnumake
+backend: gnumake
 title: ''

@@ -138,5 +138,5 @@ description: This Moa template takes a set of input FASTA sequences and determin
 modification_date: Fri Jun 25 21:10:26 2010
 name: revseq
 title: Revseq
-type: gnumake
+backend: gnumake
 title: ''

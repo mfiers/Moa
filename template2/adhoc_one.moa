@@ -47,5 +47,5 @@ description: Run an adhoc oneliner - without moa defined input files
 modification_date: Fri Jun 25 21:10:26 2010
 name: adhoc_one
 title: Run an ad-hoc onliner
-type: gnumake
+backend: gnumake
 title: ''

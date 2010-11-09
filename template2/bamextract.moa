@@ -79,5 +79,5 @@ description: Extract one sequence from a bam file
 modification_date: Thu Jul  1 16:36:30 2010
 name: bamextract
 title: Bamextract
-type: gnumake
+backend: gnumake
 title: ''

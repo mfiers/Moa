@@ -148,5 +148,5 @@ description: Use LFTP to download files. This template has two modi, one
 modification_date: Thu Oct 21 14:23:46 2010
 name: lftp
 title: lftp
-type: gnumake
+backend: gnumake
 title: ''

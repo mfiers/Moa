@@ -46,5 +46,5 @@ description: Download a set of sequences from NCBI based on a query string
 modification_date: Thu Oct 21 20:26:52 2010
 name: ncbi
 title: Download data from NCBI
-type: gnumake
+backend: gnumake
 title: ''

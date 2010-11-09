@@ -112,5 +112,5 @@ description: Run BLAT on an set of input files (query) vs a database.
 modification_date: Fri Jun 25 21:10:26 2010
 name: blat
 title: Blat
-type: gnumake
+backend: gnumake
 title: ''

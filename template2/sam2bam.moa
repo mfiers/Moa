@@ -80,5 +80,5 @@ description: Converts a FASTQ file to MAQ BFQ format.
 modification_date: Fri Jun 25 21:10:26 2010
 name: sam2bam
 title: Convert SAM to BAM using samtools
-type: gnumake
+backend: gnumake
 title: ''

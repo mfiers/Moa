@@ -80,5 +80,5 @@ description: Converts a FASTQ file to MAQ BFQ format.
 modification_date: Fri Jun 25 21:10:26 2010
 name: maq_fastq2bfq
 title: Convert FASTQ to BFQ
-type: gnumake
+backend: gnumake
 title: ''

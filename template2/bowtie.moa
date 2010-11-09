@@ -189,5 +189,5 @@ description: Run BOWTIE on an set of input files (query) vs a database index.
 modification_date: Thu Jul  1 16:36:30 2010
 name: bowtie
 title: Bowtie
-type: gnumake
+backend: gnumake
 title: ''

@@ -88,5 +88,5 @@ description: Builds a bwa index from a reference sequence
 modification_date: Mon Jul 19 13:26:52 2010
 name: bwa_index
 title: Bwa index builder
-type: gnumake
+backend: gnumake
 title: ''

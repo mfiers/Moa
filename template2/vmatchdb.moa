@@ -96,5 +96,5 @@ description: Builds a vmatchdb index from a sequence
 modification_date: Fri Jun 25 21:10:26 2010
 name: vmatchdb
 title: vmatch database builder
-type: gnumake
+backend: gnumake
 title: ''

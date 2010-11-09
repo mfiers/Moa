@@ -96,5 +96,5 @@ description: Use bwa to aling a set of fastq reads against a db
 modification_date: Fri Jul 30 10:33:01 2010
 name: bwa_aln
 title: BWA align
-type: gnumake
+backend: gnumake
 title: ''

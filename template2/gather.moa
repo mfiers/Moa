@@ -109,5 +109,5 @@ description: gather a set of files and create hardlinks to. Hardlinks have
 modification_date: Fri Jun 25 21:10:26 2010
 name: gather
 title: gather files
-type: gnumake
+backend: gnumake
 title: ''

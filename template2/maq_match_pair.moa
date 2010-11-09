@@ -90,5 +90,5 @@ description: Map paired ends to a reference sequence using MAQ
 modification_date: Fri Jun 25 21:10:26 2010
 name: maq_match_pair
 title: MAQ paired ends mapper
-type: gnumake
+backend: gnumake
 title: ''

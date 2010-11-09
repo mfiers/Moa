@@ -50,5 +50,5 @@ description: Create a new project, a placeholder for project settings, and
 modification_date: Fri Jun 25 21:10:26 2010
 name: project
 title: Create a project
-type: gnumake
+backend: gnumake
 title: ''

@@ -80,5 +80,5 @@ description: Derive GFF from a FASTA file, usually to accompany the Sequence
 modification_date: Fri Jun 25 21:10:26 2010
 name: fasta2gff
 title: GFF from FASTA
-type: gnumake
+backend: gnumake
 title: ''

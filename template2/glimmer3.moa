@@ -91,5 +91,5 @@ description: Predicts (prokaryotic) using glimmer3.
 modification_date: Fri Jun 25 21:10:26 2010
 name: glimmer3
 title: Glimmer3
-type: gnumake
+backend: gnumake
 title: ''

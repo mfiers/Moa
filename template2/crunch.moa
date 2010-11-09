@@ -98,5 +98,5 @@ description: Create a crunch file for use with the Artemis ACT comparison
 modification_date: Thu Nov  4 09:57:43 2010
 name: crunch
 title: Create ACT crunch files for use with Artemis ACT
-type: gnumake
+backend: gnumake
 title: ''

@@ -138,5 +138,5 @@ description: Predicts open reading frames using the EMBOSS [[emboss]] getorf
 modification_date: Fri Jun 25 21:10:26 2010
 name: getorf
 title: Getorf
-type: gnumake
+backend: gnumake
 title: ''

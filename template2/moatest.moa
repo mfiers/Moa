@@ -28,5 +28,5 @@ description: Not to be used - is used by unitmoatests
 modification_date: Fri Jun 25 21:10:26 2010
 name: moatest
 title: Unittest template
-type: gnumake
+backend: gnumake
 title: ''

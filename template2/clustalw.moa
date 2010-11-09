@@ -64,5 +64,5 @@ description: Run clustalw on two sets of sequences
 modification_date: Fri Jun 25 21:10:26 2010
 name: clustalw
 title: clustalw
-type: gnumake
+backend: gnumake
 title: ''

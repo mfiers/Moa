@@ -63,5 +63,5 @@ description: Concatenate a set of fasta files into one.
 modification_date: Fri Jun 25 21:10:26 2010
 name: concatenate
 title: Concatenate
-type: gnumake
+backend: gnumake
 title: ''

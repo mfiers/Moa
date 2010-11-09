@@ -90,5 +90,5 @@ description: run the R script in moa.R, with the specified input files
 modification_date: Fri Jun 25 21:10:26 2010
 name: r
 title: Run R
-type: gnumake
+backend: gnumake
 title: ''

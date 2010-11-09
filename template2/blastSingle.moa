@@ -154,5 +154,5 @@ description: Wraps BLAST [[Alt90]], probably the most popular similarity
 modification_date: Fri Jun 25 21:10:26 2010
 name: blastSingle
 title: Basic Local Alignment Tool
-type: gnumake
+backend: gnumake
 title: ''

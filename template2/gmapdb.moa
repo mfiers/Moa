@@ -63,5 +63,5 @@ description: Builds gmapdb index from a reference sequence
 modification_date: Fri Jun 25 21:10:26 2010
 name: gmapdb
 title: gmapdb index builder
-type: gnumake
+backend: gnumake
 title: ''

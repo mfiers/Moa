@@ -63,5 +63,5 @@ description: Convert files to unix format and convert all characters that
 modification_date: Fri Jun 25 21:10:26 2010
 name: cleanFasta
 title: clean Fasta
-type: gnumake
+backend: gnumake
 title: ''

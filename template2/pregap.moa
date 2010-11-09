@@ -111,5 +111,5 @@ description: Run Pregap. Note that running phrap could be a part of this.
 modification_date: Fri Jun 25 21:10:26 2010
 name: pregap
 title: Pregap
-type: gnumake
+backend: gnumake
 title: ''

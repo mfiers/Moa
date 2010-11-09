@@ -71,5 +71,5 @@ description: predict genes using geneMarkS
 modification_date: Fri Jun 25 21:10:26 2010
 name: genemarks
 title: geneMarkS
-type: gnumake
+backend: gnumake
 title: ''

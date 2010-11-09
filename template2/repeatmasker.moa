@@ -113,5 +113,5 @@ description: Run a default repeatmask on the input sequences
 modification_date: Fri Jun 25 21:10:26 2010
 name: repeatmasker
 title: Repeatmasker
-type: gnumake
+backend: gnumake
 title: ''

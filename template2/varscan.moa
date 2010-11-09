@@ -71,5 +71,5 @@ description: Run VARSCAN to detect snps
 modification_date: Fri Jun 25 21:10:26 2010
 name: varscan
 title: Varscan
-type: gnumake
+backend: gnumake
 title: ''

@@ -155,5 +155,5 @@ description: Run mummer between two sequences
 modification_date: Thu Oct 21 14:23:46 2010
 name: mummer
 title: mummer
-type: gnumake
+backend: gnumake
 title: ''

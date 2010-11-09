@@ -39,5 +39,5 @@ description: ''
 modification_date: Fri Jun 25 21:10:26 2010
 name: empty
 title: ''
-type: gnumake
+backend: gnumake
 title: ''

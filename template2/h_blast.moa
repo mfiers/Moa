@@ -112,5 +112,5 @@ description: Runs BLAST on a hadoop cluster
 modification_date: Fri Jun 25 21:10:26 2010
 name: h_blast
 title: Hadoop Blast
-type: gnumake
+backend: gnumake
 title: ''

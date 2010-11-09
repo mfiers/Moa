@@ -83,4 +83,4 @@ creation_date: Sun Aug 22 10:06:11 2010
 description: ''
 modification_date: Fri Jul 30 13:48:07 2010
 name: blastdb
-type: gnumake
+backend: gnumake

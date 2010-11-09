@@ -63,5 +63,5 @@ description: Run VMATCH on an set of input files (query) vs a database index.
 modification_date: Fri Jun 25 21:10:26 2010
 name: vmatch
 title: Vmatch
-type: gnumake
+backend: gnumake
 title: ''

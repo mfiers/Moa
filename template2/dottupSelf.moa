@@ -63,5 +63,5 @@ description: Run dottup with a sequence against itself
 modification_date: Fri Jun 25 21:10:26 2010
 name: dottupSelf
 title: Dottup self
-type: gnumake
+backend: gnumake
 title: ''

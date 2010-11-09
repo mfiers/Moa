@@ -121,5 +121,5 @@ description: Roche sffinfor tool - extract information from sff files
 modification_date: Fri Jun 25 21:10:26 2010
 name: sffinfo
 title: sffinfo
-type: gnumake
+backend: gnumake
 title: ''

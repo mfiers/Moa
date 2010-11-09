@@ -111,5 +111,5 @@ description: BARTAB - a tool to process sff files
 modification_date: Fri Jun 25 21:10:26 2010
 name: bartab
 title: Bartab
-type: gnumake
+backend: gnumake
 title: ''

@@ -64,5 +64,5 @@ description: Scaffold a set of input files based on a blast against a reference
 modification_date: Fri Jun 25 21:10:26 2010
 name: scaffolder
 title: Scaffolder
-type: gnumake
+backend: gnumake
 title: ''

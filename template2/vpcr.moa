@@ -80,5 +80,5 @@ description: Virtual PCR, based on Bowtie
 modification_date: Thu Jul  1 16:36:30 2010
 name: vpcr
 title: VPCR
-type: gnumake
+backend: gnumake
 title: ''

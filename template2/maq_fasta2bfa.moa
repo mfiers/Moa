@@ -81,5 +81,5 @@ description: Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2
 modification_date: Fri Jun 25 21:10:26 2010
 name: maq_fasta2bfa
 title: Convert fasta to bfa
-type: gnumake
+backend: gnumake
 title: ''

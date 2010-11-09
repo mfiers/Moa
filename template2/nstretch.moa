@@ -63,5 +63,5 @@ description: Run NSTRETCH on an set of input files
 modification_date: Fri Jun 25 21:10:26 2010
 name: nstretch
 title: Nstretch
-type: gnumake
+backend: gnumake
 title: ''

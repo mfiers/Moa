@@ -87,5 +87,5 @@ description: Run the Roche GS Reference mapper
 modification_date: Fri Jun 25 21:10:26 2010
 name: gsMapper
 title: GSMapper
-type: gnumake
+backend: gnumake
 title: ''

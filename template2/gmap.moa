@@ -112,5 +112,5 @@ description: Run GMAP on an set of input files (query) vs a database index.
 modification_date: Thu Jul  1 16:36:30 2010
 name: gmap
 title: Gmap
-type: gnumake
+backend: gnumake
 title: ''

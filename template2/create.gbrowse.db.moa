@@ -108,5 +108,5 @@ description: A library that aids in uploading FASTA and GFF to a Generic
 modification_date: Fri Jun 25 21:10:26 2010
 name: create.gbrowse.db
 title: Library for uploading data to GBrowse
-type: gnumake
+backend: gnumake
 title: ''

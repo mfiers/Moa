@@ -125,5 +125,5 @@ description: Run a simple, out of the box, newbler assembly. As an extra
 modification_date: Tue Jul 13 13:53:26 2010
 name: newbler
 title: Newbler
-type: gnumake
+backend: gnumake
 title: ''

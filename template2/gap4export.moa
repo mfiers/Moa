@@ -56,5 +56,5 @@ description: Export data from an assembly using gap4
 modification_date: Fri Jun 25 21:10:26 2010
 name: gap4export
 title: Assembly export using gap4
-type: gnumake
+backend: gnumake
 title: ''

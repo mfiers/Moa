@@ -81,5 +81,5 @@ description: Discover the bidirectional best blast hit between two sets of
 modification_date: Fri Jun 25 21:10:26 2010
 name: act_crunch
 title: Bidirectional best BLAST hit
-type: gnumake
+backend: gnumake
 title: ''
