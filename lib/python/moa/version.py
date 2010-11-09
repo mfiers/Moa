@@ -18,6 +18,10 @@
 # 
 
 import os
+import sys
+
+import moa.logger as l
+import moa.job
 
 ## Quick fix - see if this is an old style moa job
 def fixOld(wd):

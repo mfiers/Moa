@@ -39,18 +39,13 @@ class YacoValue(object):
                  allowed = [],
                  category = None,
                  mandatory = False,
-                 cardinality = "one",
                  default = None,
                  set_name = None,            
                  ):
+  
+  
+        self._value = value
         
-        self.mandatory = mandatory
-        self.cardinality = cardinality
-        self.category = category
-        self.help = help
-        self.value = value
-        self.set_name = set_name
-
         if data_type:
             self.data_type = data_type
         else:
@@ -60,10 +55,38 @@ class YacoValue(object):
                 type(72) : "float",
                 type(True) : "boolean",
                 type([]) : "list",
+                type(set()) : "set",
                 type(None) : None,
-                }[type(self.value)]
+                }[type(value)]
+                      
+        if not value:
+            if self.data_type == 'set':
+                self.value = set()
+            elif self.data_type == 'list': 
+                self.value = []
+            else:
+                self.value = None
+                
+        self.mandatory = mandatory    
+        self.category = category
+        self.help = help        
+        self.default = default
+        self.set_name = set_name
+
+  
         self.allowed = allowed
     
+    def configure_from(self, data):
+        """
+        Get item configuration from this the dict data
+        """
+        self.allowed = data.get('allowed', [])        
+        self.category = data.get('category', None)
+        self.data_type = data.get('data_type', None)
+        self.default = data.get('default', None)
+        self.help = data.get('help', None)
+        self.mandatory = data.get('mandatory', False) 
+        
     def check(self):
         dt = self.data_type
         v = self.value
@@ -78,9 +101,22 @@ class YacoValue(object):
         return True
             
     def set_value(self, v):
+        if self.data_type == 'set':
+            not_addable = [x for x in v if x[0] not in ['+', '-']]
+            if len(not_addable) > 0:
+                self._value = v
+            else:
+                for val in v:
+                    if val[0] == '+':
+                        self._value.add(val[1:])
+                    else:
+                        self._value.remove(val[1:])
+                    
+            
+            
         self._value = v
         
-    def get_value(self):
+    def get_value(self):        
         if self._value == None and self.default != None:
             return self.default
         else: 

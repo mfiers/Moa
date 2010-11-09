@@ -34,12 +34,6 @@ import moa.plugin
 import moa.logger as l
 import textwrap
 
-MAKEFILE_CONVERT_LINES = [
-    ('include $(MOABASE)/template/moa/prepare.mk',
-     'include $(MOABASE)/lib/gnumake/prepare.mk'),
-    ('include $(MOABASE)/template/moa/core.mk',
-     'include $(MOABASE)/lib/gnumake/core.mk'),
-    ]
     
 MOABASE = moa.utils.getMoaBase()
 
