@@ -25,6 +25,8 @@ import os
 import yaml
 import UserDict
 
+import Yaco
+
 import moa.utils
 import moa.logger as l
 
@@ -35,16 +37,12 @@ class InvalidTemplate(Exception):
     """ Invalid Template """
     pass
 
-class TemplateParameter(object):
-    """
-    A single parameter
-    """
     
-    
-class Template(object):
+class Template(Yaco.Yaco):
     
     template_keys = ['description', 'commands', 'help', 'moa_id', 
-                     'parameter_category_order', 'author']
+                     'parameter_category_order', 'author', 'creation_date',
+                     'modification_date', 'name', 'type']
     
     def __init__(self, templateName = None):
         """
@@ -52,46 +50,46 @@ class Template(object):
         
         * Check if the template exists, if not raise an Exception
         * Load template info
-        """
+        """        
+
+        super(Template, self).__init__()
+        
+        self.name = 'nojob'
+        self.backend = 'nojob'
+
+        self.valid = False
+        self.parameters = {}        
         
         if templateName:
-            self.name = templateName
-            self.templateDataFile = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
-            if not os.path.exists(self.templateDataFile):
+            self.meta.name = templateName
+            self.meta.templateDataFile = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
+            if not os.path.exists(self.meta.templateDataFile):
                 raise InvalidTemplate()            
-            self.valid = True
-            self.loadData()
-            self.backend = self.data['template_type']
-        else:
-            self.name = 'nojob'
-            self.backend = 'nojob'
-            self.valid = False
-            self.data = {'parameters' : []}
+            self.meta.valid = True
+            self.load(self.meta.templateDataFile)
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
+        
+#    def loadData(self):
+#        if os.path.exists(self.templateDataFile):
+#            with open(self.templateDataFile) as F:
+#                self.data = yaml.load(F)
+#                for k in self.data.keys():
+#                    params = self.data['parameters']
+#                    for par in params.keys():
+#                        self.parameters[par] = TemplateParameter(params[par])
+#                    if k == 'parameters':
+#                        continue
+#                    else:
+#                        setattr(self, k, self.data[k])
 
-    def loadData(self):
-        if os.path.exists(self.templateDataFile):
-            with open(self.templateInfo) as F:
-                self.data = yaml.load(F)
+#    def __str__(self):
+#        """
+#        String repr. of this object
+#        """
+#        return self.name
+          
 
-    def __str__(self):
-        """
-        String repr. of this object
-        """
-        return self.name
-
-    # Implement the basic functions for a dict
-    #
-    def __getitem__(self, item):
-        return self.data[item]
-
-    def __setitem__(self, item, value):
-        self.data[item] = value
-
-    def keys(self):
-        return self.data.keys()
-            
 def check(what):
     """
     Check if a template exists

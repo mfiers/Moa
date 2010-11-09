@@ -104,15 +104,9 @@ class Job(object):
 
         self.confDir = os.path.join(self.wd, '.moa')
 
-        if not os.path.exists(self.confDir):
-            os.mkdir(self.confDir)
-
         self.env = {}
         self.args = []
         self.options = {}
-
-        self.conf = moa.conf.Config(self)
-        self.conf.load()
 
         if template:
             self.setTemplate(template)
@@ -121,6 +115,9 @@ class Job(object):
         else:
             self.loadTemplate()
             self.loadBackend()
+        
+        self.conf = moa.conf.Config(self)
+        self.conf.load()
 
 
     def getActor(self):
@@ -166,11 +163,20 @@ class Job(object):
         if self.backend:
             self.backend.defineOptions(parser)
 
-               
+
+    def checkConfDir(self):
+        """
+        Check if the configuration directory exists. If
+        not create it.
+        """
+        if not os.path.exists(self.confDir):
+            os.mkdir(self.confDir)
+
     def setTemplate(self, name):
         """
         Set a new template for this job
-        """ 
+        """
+        self.checkConfDir()
         self.template = moa.template.Template(name)
         with open(os.path.join(self.confDir, 'template'), 'w') as F:
             F.write(name)
@@ -194,7 +200,7 @@ class Job(object):
         """
         load the backend
         """
-        backendName = self.template.backend
+        backendName = self.template.backend.value
         l.debug("attempt to load backend %s" % backendName)
         try:
             _moduleName = 'moa.backend.%s' % backendName

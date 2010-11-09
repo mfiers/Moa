@@ -25,6 +25,8 @@ import sys
 import yaml
 import shlex
 
+import Yaco
+ 
 import moa.logger as l
 from moa.logger import exitError
 import moa.utils
@@ -64,8 +66,8 @@ class ConfigItem:
         Initialize config item from a parameter entry
         """
         self.fromTemplate = True
-        for k,v in par.items():
-            setattr(self, k, v)
+        for k in par.keylist:
+            setattr(self, k, getattr(par, k))
 
     def changed(self):
         """
@@ -90,7 +92,7 @@ class ConfigItem:
     def __str__(self):
         return str(self.getVal())
 
-class Config(dict):
+class Config(Yaco.Yaco):
     """
     Configuration of a job - currently mostly boilerplate code - later
     this will be a more universal configuration store
@@ -101,89 +103,53 @@ class Config(dict):
         Do nothing, just initialize an empty configuration
         """
         
-        self.job = job
-        self.processTemplate()
-
-        self.jobConfigFile = os.path.join(self.job.confDir, 'config')
-        self.configFiles = [
-            os.path.join(MOABASE, 'etc', 'config'),
-            os.path.join(
-                os.path.expanduser('~'), '.config', 'moa', 'config'),
-            self.jobConfigFile]
-        
         super(Config, self).__init__()
+        self.meta.job = job        
+        self.meta.jobConfigFile = os.path.join(
+            self.meta.job.confDir, 'config')        
+        self.meta.configFiles = {
+            "system" : os.path.join(MOABASE, 'etc', 'config'),
+            "user" : os.path.join(os.path.expanduser('~'),
+                                  '.config', 'moa', 'config'),
+            "job" : self.meta.jobConfigFile 
+                } 
+        self.moa_plugins = []
+        self.moa_plugins.data_type = 'set'
+        self.processTemplate()
 
     def processTemplate(self):
 
-        template = getattr(self.job, 'template', None)
+        template = getattr(self.meta.job, 'template', None)
+
         if not template:
             return
         
-        for p in self.job.template['parameters']:
-            self[p] = ConfigItem(
-                key = p, fromTemplate = self.job.template['parameters'][p])
-        
+        for parname in template.parameters.keys():
+            par = template.parameters[parname]
+            self[parname] = None
+            self[parname].configure_from(par)
+    
     def load(self):
-        """ Load configuration from disk """
-        for c in self.configFiles:
-            l.debug("loading %s" % c)
-            if os.path.exists(c):
-                with open(c) as F:
-                    data = yaml.load(F)
-                for k in data.keys():
-                    if not self.has_key(k):
-                        self[k] = ConfigItem(key = k,
-                                             value=data[k],
-                                             configFile = c)
-                    else:
-                        self[k].value = data[k]
-                        self[k].configFile = c
+        """ Load configuration from disk """        
+        for f in self.meta.configFiles.keys():
+            fileName = self.meta.configFiles[f]
+            l.debug("Considering config file %s / %s" % (f, fileName))                        
+            if os.path.exists(fileName):            
+                super(Config, self).load(fileName, set_name=f)
 
     def save(self):
-        #save a shadow yaml configuration file
-        data = dict([(k, self[k].getVal())
-                     for k in self.keys()
-                     if (self[k].changed() and
-                         (self[k].configFile == self.jobConfigFile or
-                          not self[k].configFile))
-                     ])
-        with open(self.jobConfigFile, 'w') as F:
-            F.write(yaml.dump(data, default_flow_style=False))
-
-    def unset(self, key):
         """
-        remove a variable from the config -or, just set to to None
-        if the variable is defined by the template
+        Save local configuration 
         """
-        l.debug("unsetting %s %s" % (key, self.has_key(key)))
-        if self.has_key(key):
-            item = self[key]
-            if item.fromTemplate: item.value=None
-            else: del self[key]
-            
-    def set(self, key, val):
-        """
-        Set a configuration value from an ConfigItem
-        """
-        if self.has_key(key):
-            self[key].value = val
-            return
-
-        item = ConfigItem(key = key,
-                          value = val,
-                          configFile = self.jobConfigFile)
-        self[item.key] = item
+        self.meta.job.checkConfDir()
+        super(Config, self).save(self.meta.jobConfigFile,
+                                 set_names=['job', None])
         
-    def has_key(self, key):
-        return super(Config, self).has_key(key)
-        
-    def __setitem__(self, key, value):
+    def getPlugins(self):
         """
-        Set an item
+        Return a list of all plugins
         """
-        #see if the key already exists,
-        if self.has_key(key):
-            self[key].update(value)
-        else:
-            super(Config, self).__setitem__(key, value)
-
+        rv = set(self.moa_plugins.value)
+        for x in self.get('moa_plugins_local', []):
+            rv.add(x)
+        return list(rv)        

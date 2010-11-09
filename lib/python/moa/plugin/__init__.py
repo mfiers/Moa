@@ -19,7 +19,7 @@ class PluginHandler(UserDict.DictMixin):
         ## Determine what plugins are loaded
         self.plugins = {}
         self.data = {}
-        self.allPlugins = self.job.conf['moa_plugins'].value
+        self.allPlugins = self.job.conf.getPlugins()
         
         l.debug("Plugins %s" % ", ".join(self.allPlugins))
         ## load the plugins as seperate modules. A plugin does not need to
