@@ -1,0 +1,117 @@
+commands: [repmask, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/repeatmasker.mk
+help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
+    implemented by the template.', repmask: ''}
+moa_id: repmask
+parameter_category_order: ['', input, system, advanced]
+parameters:
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  repmask_input_dir:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: Input files for repmask
+    mandatory: true
+    type: directory
+  repmask_input_extension:
+    allowed: []
+    cardinality: one
+    category: input
+    default: fasta
+    help: file extension for the files in repmask_input_dir
+    mandatory: false
+    type: string
+  repmask_input_glob:
+    allowed: []
+    cardinality: one
+    category: input
+    default: '*'
+    help: glob to select a subset of files from repmask_input_dir
+    mandatory: false
+    type: string
+  repmask_input_limit:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: 'Number of files to use, if not defined: all files'
+    mandatory: false
+    type: integer
+  repmask_input_sort:
+    allowed: [u, s, sr, t, tr]
+    cardinality: one
+    category: input
+    default: u
+    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
+      time, tr - time reverse'
+    mandatory: false
+    type: set
+  repmask_parallel:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '4'
+    help: No of threads to run in parallel
+    mandatory: false
+    type: integer
+  repmask_quick:
+    allowed: [T, F]
+    cardinality: one
+    category: ''
+    default: F
+    help: Quick job
+    mandatory: false
+    type: set
+  repmask_simple:
+    allowed: [T, F]
+    cardinality: one
+    category: ''
+    default: F
+    help: Mask *only* low complex/simple repeats, not interspersed repeats (Repeatmasker
+      -(no)int parameter)
+    mandatory: false
+    type: set
+  repmask_species:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: Repeatmasker species
+    mandatory: false
+    type: string
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Run a default repeatmask on the input sequences
+modification_date: Fri Jun 25 21:10:26 2010
+name: repeatmasker
+title: Repeatmasker
+backend: gnumake
+title: ''

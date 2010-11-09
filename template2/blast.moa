@@ -1,0 +1,150 @@
+commands: [blast, clean, blast_report]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/blast.mk
+help: {blast: 'Running BLAST takes an input directory (*blast_input_dir*), determines
+    what sequence files are present (with the parameter *blast_input_extension*) and
+    executes BLAST on each of these. Moa BLAST is configured to create XML output
+    (as opposed to the standard text based output) in the *./out* directory. The output
+    XML is subsequently converted to GFF3 by the custom *blast2gff* script (using
+    BioPython). Additionally, a simple text report is created.', blast_report: Generate
+    a text BLAST report., clean: 'Remove all job data, not the Moa job itself, note
+    that this must be implemented by the template.'}
+moa_id: blast
+parameter_category_order: ['', input, system, advanced]
+parameters:
+  blast_db:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: Location of the blast database. You can either define the blast db parameter
+      as used by blast, or any of the blast database files, in which case the extension
+      will be removed before use
+    mandatory: true
+    type: file
+  blast_eval:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: 1e-10
+    help: e value cutoff
+    mandatory: false
+    type: float
+  blast_gff_blasthit:
+    allowed: [T, F]
+    cardinality: one
+    category: ''
+    default: F
+    help: (T,**F**) - export an extra blasthit feature to the created gff, grouping
+      all hsp (match) features.
+    mandatory: false
+    type: set
+  blast_gff_source:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: BLAST
+    help: source field to use in the gff
+    mandatory: false
+    type: string
+  blast_input_dir:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: Directory with the BLAST input files
+    mandatory: true
+    type: directory
+  blast_input_extension:
+    allowed: []
+    cardinality: one
+    category: input
+    default: fasta
+    help: file extension for the files in blast_input_dir
+    mandatory: false
+    type: string
+  blast_input_glob:
+    allowed: []
+    cardinality: one
+    category: input
+    default: '*'
+    help: glob to select a subset of files from blast_input_dir
+    mandatory: false
+    type: string
+  blast_input_limit:
+    allowed: []
+    cardinality: one
+    category: input
+    default: ''
+    help: 'Number of files to use, if not defined: all files'
+    mandatory: false
+    type: integer
+  blast_input_sort:
+    allowed: [u, s, sr, t, tr]
+    cardinality: one
+    category: input
+    default: u
+    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
+      time, tr - time reverse'
+    mandatory: false
+    type: set
+  blast_nohits:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '50'
+    help: number of hits to report
+    mandatory: false
+    type: integer
+  blast_nothreads:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '2'
+    help: threads to run blast with (note the overlap with the Make -j parameter)
+    mandatory: false
+    type: integer
+  blast_program:
+    allowed: [blastx, blastn, blastp, tblastn, tblastx]
+    cardinality: one
+    category: ''
+    default: blastn
+    help: 'blast program to use (default: blastn)'
+    mandatory: false
+    type: set
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+author: Mark Fiers
+creation_date: Fri Oct 22 19:22:08 2010
+description: Wraps BLAST [[Alt90]], probably the most popular similarity
+  search tool in bioinformatics.
+modification_date: Fri Oct 22 19:22:08 2010
+name: blast
+title: Basic Local Alignment Tool
+backend: gnumake
+title: ''

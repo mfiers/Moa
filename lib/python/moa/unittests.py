@@ -25,20 +25,31 @@ import os
 import sys
 import doctest
 import tempfile
+import subprocess
 
 import moa.logger as l
 from moa.logger import setSilent, setInfo, setVerbose
 
 import moa.lock
-import moa.info
 import moa.conf
 import moa.utils
 import moa.job
+import moa.plugin
 import moa.project
-import moa.runMake
+import moa.template
 
 MOABASE = moa.utils.getMoaBase()
 
+TESTSCRIPTHEADER = """
+set -e
+
+function exer {
+echo "PLUGIN TEST
+ERROR: $*" 1>&2
+exit -1
+}
+
+"""
 
 failures = 0
 tests = 0
@@ -67,101 +78,41 @@ def testModule(m):
 def testPlugins(args=[]):
     global pluginFailures
     global pluginTests
+
+    #new style plugin tests
+    plugins = moa.plugins.Plugins()
+    for plugin, testCode in plugins.getAttr('TESTSCRIPT'):
+
+        #if asking for a single plugin, test only that plugin
+        if args and plugin not in args: continue
         
-    for plugin in moa.info.getPlugins():
-        if args and not plugin in args:
-            continue
-        l.debug("Starting a new plugin test")
-        wd = moa.job.newTestJob(
-            template = 'adhoc_one',
-            title='Testing plugin %s' % plugin)
-        
-        l.debug("start testing plugin %s" % plugin)
-        rc = moa.runMake.go(wd=wd,
-                            target='moa_plugin_%s_test' % plugin,
-                            background=False,
-                            verbose=False,
-                            captureOut=True,
-                            captureErr=True,
-                            makeArgs = [])
+        l.info("Starting new style test of %s" % plugin)
+        testDir = tempfile.mkdtemp()
+        testScript = os.path.join(testDir, 'test.sh')
+        with open(testScript, 'w') as F:
+            F.write(TESTSCRIPTHEADER)
+            F.write(testCode)
+        l.debug("executing test.sh in %s" % testScript)
+        p = subprocess.Popen('bash %s' % testScript,
+                             shell=True,
+                             cwd = testDir,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             close_fds=True)
+        out, err = p.communicate()
+        rc = p.returncode
+        if rc != 0:
+            l.critical("Errors in plugin test %s (rc %d)" % (plugin, rc))
+            if out: l.critical("Stdout:\n" + out)
+            if err: l.critical("Stderr:\n" + err)
+            pluginFailures += 1
+        else: 
+            if out: l.debug("Stdout:\n" + out)
+            if err: l.info("Stderr:\n" + err)
+           
+        l.info("Success testing %s (%d lines)" % (
+            plugin, len(testCode.strip().split("\n"))))
         pluginTests += 1
-        
-        err = moa.info.getErr(wd).strip()
-        out = moa.info.getOut(wd).strip()
-        if rc != 0:
-            err = moa.info.getErr(wd)
-            if 'No rule to make target' in str(err):
-                l.warning("No tests defined for plugin %s" % plugin)
-            else:
-                pluginFailures += 1
-                l.error("Error running plugin test for %s (%s, %s)" %
-                        (plugin, rc, wd))
-                l.error("Error message:\n%s" % err)
-            
-                if err:
-                    l.error("stderr:")
-                    l.error(err)
-                if out:
-                    l.error("stdout:")
-                    l.error(out)
-        else:
-            l.debug(err)
-            l.debug(out)
-            l.info("Success testing %s" % plugin)
-                                     
-def testTemplates(which=None, verbose=False):
-    global templateFailures
-    global templateTests
-    for template in moa.job.list():
-        if which and template != which: continue
-    
-        l.debug("testing template %s" % template)
-        templateTests  += 1
-        
-        wd = moa.job.newTestJob(
-            template = template,
-            title='Testing template %s' % template)
-        
-        rc = moa.runMake.go(wd=wd,
-                            target='template_test', 
-                            background=False,
-                            verbose = verbose,
-                            makeArgs = [])
-        if rc != 0:
-            templateFailures += 1
-            err = moa.info.getErr(wd)
-            l.error("Error running template test for template %s" % template)
-            l.error(err)
-                                     
-        result = moa.info.getOut(wd).strip()
-        if result:
-            print result
-
-def testTemplateExtensive(template, verbose=False):
-    testDir = moa.job.newTestJob(
-        template=template,
-        title='Testing template %s' % template)
-    job = moa.runMake.MOAMAKE(
-        wd=testDir,
-        target='%s_unittest' % template, 
-        background=False, verbose=verbose,
-        captureOut = not verbose,
-        captureErr = not verbose)
-    rc = job.run()
-    if verbose:
-        out = job.getOutput()
-        print out
-    
-    if rc == 0:
-        l.info('Extensive test of "%s" was successfull' % template)
-        return True
-        
-    err = moa.info.getErr(wd=testDir)
-    out = moa.info.getOut(wd=testDir)
-
-    l.error("Error running extensive template test for template %s" % template)
-    l.error(out)
-    l.error(err)
     
 def run(options, args):
 
@@ -177,10 +128,10 @@ def run(options, args):
         setSilent()        
         testModule(moa.utils)
         testModule(moa.lock)
-        testModule(moa.info)
         testModule(moa.conf)
+        testModule(moa.project)
+        testModule(moa.template)
         testModule(moa.job)
-        testModule(moa.runMake)
         
         if options.verbose: setVerbose()
         else: setInfo()

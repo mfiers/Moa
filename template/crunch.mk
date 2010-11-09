@@ -24,7 +24,8 @@ template_description = Create a crunch file for use with the Artemis ACT \
 
 moa_id = crunch
 
-crunch_help = create crunch files
+crunch_help = Create crunch files. Crunch files are used by Artemis ACT \
+  to generate comprative plots
 
 
 #########################################################################

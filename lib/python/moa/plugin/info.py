@@ -1,5 +1,5 @@
 # 
-# Copyright 2009 Mark Fiers, Plant & Food Research
+# Copyright 2009, 2010 Mark Fiers
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
 # 
@@ -20,24 +20,35 @@
 """
 Help
 """
-
+import re
 import os
 import sys
+import yaml
 import pprint
 import optparse
+
 import moa.conf
 import moa.job
-import moa.info
+import moa.utils
 import moa.plugin
 import moa.logger as l
 import textwrap
+
+MAKEFILE_CONVERT_LINES = [
+    ('include $(MOABASE)/template/moa/prepare.mk',
+     'include $(MOABASE)/lib/gnumake/prepare.mk'),
+    ('include $(MOABASE)/template/moa/core.mk',
+     'include $(MOABASE)/lib/gnumake/core.mk'),
+    ]
+    
+MOABASE = moa.utils.getMoaBase()
 
 def defineCommands(data):
     data['commands']['rawinfo'] = {
         'private' : True,
         'call' : rawInfo
         }
-
+ 
     data['commands']['status'] = {
         'private' : True,
         'call' : status
@@ -62,9 +73,9 @@ def defineCommands(data):
         'desc' : 'List all known templates, showing a short description',
         'call' : listTemplatesLong,
         }
-
+        
 def listTemplates(data):
-    for job in moa.job.list():
+    for job in moa.template.list():
         print job
 
 def listTemplatesLong(data):

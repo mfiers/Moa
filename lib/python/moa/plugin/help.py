@@ -33,8 +33,6 @@ from subprocess import Popen, PIPE
 #from jinja2 import Environment, FileSystemLoader
 import jinja2
 
-import moa.runMake
-import moa.info
 import moa.job
 import moa.utils
 import moa.logger as l

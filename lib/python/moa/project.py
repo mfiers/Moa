@@ -31,52 +31,44 @@ import moa.logger as l
 import moa.conf
 import moa.job
 
-def _projectRoot(path):
+def _projectRoot(job):
     """
     Is this specific path a project root?    
 
-    >>> moa.utils.removeFiles(P_EMPTY, recursive=True)
-    >>> _projectRoot(P_EMPTY)
-    False
-    >>> moa.job.newJob(template = 'project',
-    ...                title = 'test job creation',
-    ...                wd=P_EMPTY)
-    >>> _projectRoot(P_EMPTY)
-    True
-    >>> moa.utils.removeFiles(P_EMPTY, recursive=True)
-    >>> moa.job.newJob(template = 'traverse',
-    ...                title = 'test job creation',
-    ...                wd=P_EMPTY)
-    >>> _projectRoot(P_EMPTY)
-    False
+    >>> wd = moa.job.newTestJob(template='project',
+    ...                title = 'test job creation')
+    >>> _projectRoot(wd)
+    'project'
+    >>> wd = moa.job.newTestJob(template='traverse',
+    ...                title = 'traverse job creation')
+    >>> _projectRoot(wd)
+    'notproject'
+
     """
-    if not moa.info.isMoaDir(path):
+
+    if not job.isMoa():
         return "out"
-    template = moa.info.template(path)
-    if template != 'project':
+
+    template = job.template
+    if template.name != 'project':
         return "notproject"
+    
     return "project"
 
     
-def findProjectRoot(path=None):
+def findProjectRoot(job):
     """
     Find the project root of a certain moa job
 
-    >>> moa.utils.removeFiles(P_EMPTY, recursive=True)
-    >>> moa.job.newJob(template = 'project',
-    ...                title = 'test project',
-    ...                wd=P_EMPTY)
-    >>> moa.job.newJob(template = 'traverse',
-    ...                title = 'test job creation',
-    ...                wd=os.path.join(P_EMPTY, 'test'))
-    >>> os.path.exists(os.path.join(P_EMPTY, 'test', 'Makefile'))
+    >>> wd = moa.job.newTestJob(template='project',
+    ...                title = 'test job creation')
+    >>> subdir = os.path.join(wd, 'test')
+    >>> os.mkdir(subdir)
+    >>> job = moa.job.newJob(subdir, template='traverse', title='test')
+    >>> result = findProjectRoot(subdir)
+    >>> result == wd
     True
-    >>> result = findProjectRoot(os.path.join(P_EMPTY, 'test'))
-    >>> result[0]
-    True
-    >>> result[1] == P_EMPTY
-    True
-    >>> result[2] == 'test project'
+    >>> None == findProjectRoot('/usr')
     True
 
     @param path: The path for which we're looking for the project root, if
@@ -85,35 +77,27 @@ def findProjectRoot(path=None):
     @returns: a tuple, first value indicates if there is a parent project
       the second is the path to the project, the third value is the project
       title
-    @rtype: tuple of a boolean and two stringsg  
+    @rtype: tuple of a boolean and two strings
     """
-    if not path:
-        path=os.getcwd()
         
-    l.debug("Finding project root for %s" % path)
+    l.debug("Finding project root for job in %s" % job.wd)
     
-    #are we looking at a directory?
-    if not os.path.isdir(path):
-        l.critical("findProjectRoot must be executed with a directory as ")
-        l.critical(" argument, not with:")
-        l.critical("  %s" % path)
-        sys.exit(-1)
-
     # start walking up through the tree until we discover
 
-    # remove trailing slash - to make sure that os.path.split
-    # works properly
-    if path[-1] == '/':
-        path = path[:-1]
-
     #start walking through the parent tree
-    cwd = path
+    lookAt = job
     while True:
-        res = _projectRoot(cwd)
+        res = _projectRoot(lookAt)
         if res == 'project':
-            return cwd
+            return lookAt
 
-        cwd = os.path.split(cwd)[0]
+        newPath = os.path.split(lookAt.wd)[0]
+        
+        if newPath == '/':
+            return None
+        
+        lookAt = moa.job.getJob(newPath)
+        
         # assuming that we're not creating moa jobs in the system root
         # if you do want to, I'm not going to cooperate.
         if cwd == '/': return None
