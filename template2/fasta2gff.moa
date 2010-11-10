@@ -1,14 +1,19 @@
+author: Mark Fiers
+backend: gnumake
 commands: [fasta2gff, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Derive GFF from a FASTA file, usually to accompany the Sequence for upload
+  to a generic genome browser database.
 gnumake_makefile: /home/mf/project/moa/template2/fasta2gff.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', fasta2gff: ''}
 moa_id: fasta2gff
+modification_date: Wed Nov 10 07:56:48 2010
+name: fasta2gff
 parameter_category_order: ['', system, advanced]
 parameters:
   f2g_gffsource:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: Source to be used in the gff
@@ -16,7 +21,6 @@ parameters:
     type: string
   f2g_input_dir:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: Directory with the input fasta files
@@ -24,7 +28,6 @@ parameters:
     type: directory
   f2g_input_extension:
     allowed: []
-    cardinality: one
     category: ''
     default: fasta
     help: 'glob pattern of the fasta files (default: *.fasta)'
@@ -32,7 +35,6 @@ parameters:
     type: string
   f2g_options:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: options to be passed to the fasta2gff script
@@ -40,7 +42,6 @@ parameters:
     type: string
   f2g_output_dir:
     allowed: []
-    cardinality: one
     category: ''
     default: ./gff
     help: Directory with the output gff
@@ -48,7 +49,6 @@ parameters:
     type: directory
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -57,7 +57,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -67,18 +66,9 @@ parameters:
     type: string
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: Derive GFF from a FASTA file, usually to accompany the Sequence
-  for upload to a generic genome browser database.
-modification_date: Fri Jun 25 21:10:26 2010
-name: fasta2gff
 title: GFF from FASTA
-backend: gnumake
-title: ''

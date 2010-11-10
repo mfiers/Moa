@@ -1,14 +1,21 @@
+author: Mark Fiers
+backend: gnumake
 commands: [upload2gbrowse, clean, initGbrowse, gupgo]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: A library that aids in uploading FASTA and GFF to a Generic Genome Browser
+  database. This template is only to be used embedded in another template. This library
+  expects that the following variables are preset; gup_fasta_dir, gup_gff_dir gup_upload_fasta,
+  gup_upload_gff
 gnumake_makefile: /home/mf/project/moa/template2/create.gbrowse.db.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', gupgo: '', initGbrowse: '', upload2gbrowse: ''}
 moa_id: upload2gbrowse
+modification_date: Wed Nov 10 07:56:48 2010
+name: create.gbrowse.db
 parameter_category_order: ['', system, advanced]
 parameters:
   gup_db:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: gbrowse database. If not defined, this defaults to moa.
@@ -16,7 +23,6 @@ parameters:
     type: string
   gup_fasta_extension:
     allowed: []
-    cardinality: one
     category: ''
     default: fasta
     help: extension of the FASTA files to upload (.fasta)
@@ -24,7 +30,6 @@ parameters:
     type: string
   gup_force_upload:
     allowed: [T, F]
-    cardinality: one
     category: ''
     default: F
     help: upload to gbrowse, ignore gup_lock and upload all, not only files newer
@@ -33,7 +38,6 @@ parameters:
     type: set
   gup_gff_extension:
     allowed: []
-    cardinality: one
     category: ''
     default: gff
     help: extension of the GFF files to upload (.gff)
@@ -41,7 +45,6 @@ parameters:
     type: string
   gup_upload_fasta:
     allowed: [T, F]
-    cardinality: one
     category: ''
     default: F
     help: upload fasta to gbrowse (T/F)
@@ -49,7 +52,6 @@ parameters:
     type: set
   gup_upload_gff:
     allowed: [T, F]
-    cardinality: one
     category: ''
     default: F
     help: upload gff to gbrowse (T/F)
@@ -57,7 +59,6 @@ parameters:
     type: set
   gup_user:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: gbrowse db user. If not defined, this defaults to moa.
@@ -65,7 +66,6 @@ parameters:
     type: string
   marks_extensions:
     allowed: [T, F]
-    cardinality: one
     category: ''
     default: F
     help: Add some extensions to the Gbrowse database to be initalized, for use by
@@ -74,7 +74,6 @@ parameters:
     type: set
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -83,7 +82,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -93,20 +91,9 @@ parameters:
     type: string
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: A library that aids in uploading FASTA and GFF to a Generic
-  Genome Browser database. This template is only to be used embedded in another template.
-  This library expects that the following variables are preset; gup_fasta_dir, gup_gff_dir
-  gup_upload_fasta, gup_upload_gff
-modification_date: Fri Jun 25 21:10:26 2010
-name: create.gbrowse.db
 title: Library for uploading data to GBrowse
-backend: gnumake
-title: ''

@@ -22,7 +22,7 @@ moa_id = dottup
 
 #variables
 
-include $(shell echo $$MOABASE)/template/moa/core.mk
+include $(MOABASE)/lib/gnumake/core.mk
 
 ix = $(dottup_input_extension)
 dottup_input_files_a = $(addprefix a__,\

@@ -29,8 +29,7 @@ moa_id = sffinfo
 $(call moa_fileset_define,sffinfo_input,sff,Sff input files)
 
 #include the moa core libraries
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ifeq ($(sffinfo_accessions),T)
 $(call moa_fileset_remap_nodir,sffinfo_input,sffinfo_accession,acc)
 endif

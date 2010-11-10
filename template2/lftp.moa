@@ -1,54 +1,32 @@
+author: Mark Fiers
+backend: gnumake
 commands: [lftp, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Use LFTP to download files. This template has two modi, one is set lftp_mode
+  to mirror data, in which case both lftp_url and lftp_pattern (default *) are used.
+  The other modus is lftp_mode=get, when one file defined by lftp_url is downloaded.
+  In the mirror mode it is possible to download only those files that are newer as
+  the files already downloaded by using the lftp_timestamp parameter
 gnumake_makefile: /home/mf/project/moa/template2/lftp.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', lftp: execute the download}
 moa_id: lftp
+modification_date: Wed Nov 10 07:56:48 2010
+name: lftp
 parameter_category_order: ['', system, advanced]
 parameters:
-  lftp_dos2unix:
+  dos2unix:
     allowed: [T, F]
-    cardinality: one
     category: ''
     default: F
     help: Run dos2unix to prevent problems with possible dos text files
     mandatory: false
     type: set
-  lftp_get_name:
+  get_name:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: target name of the file to download
-    mandatory: false
-    type: string
-  lftp_lock:
-    allowed: [T, F]
-    cardinality: one
-    category: ''
-    default: T
-    help: Lock this job after running. This means that you will have to manually unlock
-      the job before lftp actually reruns. This is a good choice if your downloading
-      large datasets or have a slow connection
-    mandatory: false
-    type: set
-  lftp_mode:
-    allowed: [mirror, get]
-    cardinality: one
-    category: ''
-    default: get
-    help: Mode of operation - mirror or get. Mirror enables timestamping. Get just
-      gets a single file. If using get, consider setting depend_lftp_timestamp to
-      F. When using get, the full url should be in lftp_url. lftp_pattern is ignored.
-      Defaults to mirror.
-    mandatory: false
-    type: set
-  lftp_noclean:
-    allowed: []
-    cardinality: many
-    category: advanced
-    default: moa.mk Makefile
-    help: set of files not to be deleted by the powerclean
     mandatory: false
     type: string
   lftp_output_dir:
@@ -60,60 +38,18 @@ parameters:
       to directory containing the Makefile
     mandatory: false
     type: directory
-  lftp_pass:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: 'password for the remote site, note that this can be defined on the commandline
-      using: make lftp_pass=PASSWORD'
-    mandatory: false
-    type: password
-  lftp_pattern:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: '''*'''
-    help: glob pattern to download
-    mandatory: false
-    type: string
-  lftp_powerclean:
+    value: .
+  lock:
     allowed: [T, F]
-    cardinality: one
     category: ''
-    default: F
-    help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
-      when calling make clean. Defaults to F.
+    default: T
+    help: Lock this job after running. This means that you will have to manually unlock
+      the job before lftp actually reruns. This is a good choice if your downloading
+      large datasets or have a slow connection
     mandatory: false
     type: set
-  lftp_timestamp:
-    allowed: [T, F]
-    cardinality: one
-    category: ''
-    default: F
-    help: Depend on lftp to decide if a file needs updating, else a touchfile is created
-      that you need to delete or touch before updating (T/*F*)
-    mandatory: false
-    type: set
-  lftp_url:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: The base url to download from
-    mandatory: true
-    type: string
-  lftp_user:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: username for the remote site
-    mandatory: false
-    type: string
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -122,7 +58,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -130,23 +65,73 @@ parameters:
       Makefile.
     mandatory: false
     type: string
+  mode:
+    allowed: [mirror, get]
+    category: ''
+    default: get
+    help: Mode of operation - mirror or get. Mirror enables timestamping. Get just
+      gets a single file. If using get, consider setting depend_lftp_timestamp to
+      F. When using get, the full url should be in lftp_url. lftp_pattern is ignored.
+      Defaults to mirror.
+    mandatory: false
+    type: set
+  noclean:
+    allowed: []
+    category: advanced
+    default: moa.mk Makefile
+    help: set of files not to be deleted by the powerclean
+    mandatory: false
+    type: string
+  pass:
+    allowed: []
+    category: ''
+    default: ''
+    help: 'password for the remote site, note that this can be defined on the commandline
+      using: make lftp_pass=PASSWORD'
+    mandatory: false
+    type: password
+  pattern:
+    allowed: []
+    category: ''
+    default: '''*'''
+    help: glob pattern to download
+    mandatory: false
+    type: string
+  powerclean:
+    allowed: [T, F]
+    category: ''
+    default: F
+    help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
+      when calling make clean. Defaults to F.
+    mandatory: false
+    type: set
+  timestamp:
+    allowed: [T, F]
+    category: ''
+    default: F
+    help: Depend on lftp to decide if a file needs updating, else a touchfile is created
+      that you need to delete or touch before updating (T/*F*)
+    mandatory: false
+    type: set
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Thu Oct 21 14:23:46 2010
-description: Use LFTP to download files. This template has two modi, one
-  is set lftp_mode to mirror data, in which case both lftp_url and lftp_pattern (default
-  *) are used. The other modus is lftp_mode=get, when one file defined by lftp_url
-  is downloaded. In the mirror mode it is possible to download only those files that
-  are newer as the files already downloaded by using the lftp_timestamp parameter
-modification_date: Thu Oct 21 14:23:46 2010
-name: lftp
+  url:
+    allowed: []
+    category: ''
+    default: ''
+    help: The base url to download from
+    mandatory: true
+    type: string
+  user:
+    allowed: []
+    category: ''
+    default: ''
+    help: username for the remote site
+    mandatory: false
+    type: string
 title: lftp
-backend: gnumake
-title: ''

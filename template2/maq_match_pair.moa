@@ -1,65 +1,42 @@
+author: Mark Fiers
+backend: gnumake
 commands: [maqpair, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Map paired ends to a reference sequence using MAQ
 gnumake_makefile: /home/mf/project/moa/template2/maq_match_pair.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', maqpair: ''}
 moa_id: maqpair
+modification_date: Wed Nov 10 07:56:48 2010
+name: maq_match_pair
 parameter_category_order: ['', system, advanced]
 parameters:
-  maqpair_RF_maxdist:
+  RF_maxdist:
     allowed: []
-    cardinality: one
     category: ''
     default: '15000'
     help: max outer distance for an RF readpair (corresponds to the -A parameter).
       This applies to long insert illumina pairs
     mandatory: false
     type: integer
-  maqpair_forward_suffix:
+  forward_suffix:
     allowed: []
-    cardinality: one
     category: ''
     default: _f.bfq
     help: Suffix of each forward filename - recognize forward files this way. Note
       this is not a regular extension, no . is assumed between the filename & suffix
     mandatory: true
     type: string
-  maqpair_maxdist:
+  maxdist:
     allowed: []
-    cardinality: one
     category: ''
     default: '250'
     help: max outer distance for a (non RF) readpair. This applies to illumina matepairs
       - i.e. short inserts
     mandatory: false
     type: integer
-  maqpair_read_dir:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: directory containing the forward reads
-    mandatory: true
-    type: string
-  maqpair_reference:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: Reference bfa file to map the reads to
-    mandatory: true
-    type: string
-  maqpair_reverse_suffix:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: _r.bfq
-    help: suffix of reverse files
-    mandatory: false
-    type: string
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -68,7 +45,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -76,19 +52,32 @@ parameters:
       Makefile.
     mandatory: false
     type: string
+  read_dir:
+    allowed: []
+    category: ''
+    default: ''
+    help: directory containing the forward reads
+    mandatory: true
+    type: string
+  reference:
+    allowed: []
+    category: ''
+    default: ''
+    help: Reference bfa file to map the reads to
+    mandatory: true
+    type: string
+  reverse_suffix:
+    allowed: []
+    category: ''
+    default: _r.bfq
+    help: suffix of reverse files
+    mandatory: false
+    type: string
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: Map paired ends to a reference sequence using MAQ
-modification_date: Fri Jun 25 21:10:26 2010
-name: maq_match_pair
 title: MAQ paired ends mapper
-backend: gnumake
-title: ''

@@ -21,8 +21,7 @@ moa_id=adhoc_one
 
 #########################################################################
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 .PHONY: adhoc_one
 adhoc_one:
 	$e $(adhoc_one_process)

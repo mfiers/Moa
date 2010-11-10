@@ -1,71 +1,33 @@
+author: Mark Fiers
+backend: gnumake
 commands: [h_blast, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Runs BLAST on a hadoop cluster
 gnumake_makefile: /home/mf/project/moa/template2/h_blast.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', h_blast: 'Similar to a normal blast, but now running
     on an hadoop cluster'}
 moa_id: h_blast
+modification_date: Wed Nov 10 07:56:48 2010
+name: h_blast
 parameter_category_order: ['', system, advanced]
 parameters:
-  h_blast_db:
+  db:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: Location of the blast database
     mandatory: true
     type: file
-  h_blast_eval:
+  eval:
     allowed: []
-    cardinality: one
     category: ''
     default: 1e-10
     help: e value cutoff
     mandatory: false
     type: float
-  h_blast_input_dir:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: location of the hadoop installation
-    mandatory: true
-    type: directory
-  h_blast_input_extension:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: fasta
-    help: input file extension
-    mandatory: false
-    type: string
-  h_blast_nohits:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: '50'
-    help: number of hits to report
-    mandatory: false
-    type: integer
-  h_blast_nothreads:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: '1'
-    help: threads to run blast with (note the overlap with the Make -j parameter)
-    mandatory: false
-    type: integer
-  h_blast_program:
-    allowed: [blastn, blastp, blastx, tblastn, tblastx]
-    cardinality: one
-    category: ''
-    default: blastn
-    help: 'blast program to use (default: blastn)'
-    mandatory: false
-    type: set
   hadoop_base:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: location of the hadoop installation
@@ -73,15 +35,27 @@ parameters:
     type: directory
   hdfs_base:
     allowed: []
-    cardinality: one
     category: ''
     default: hdfs://localhost:9000
     help: htfs://SERVER:PORT for the hdfs filesystem, defaults to "hdfs://localhost:9000"
     mandatory: false
     type: string
+  input_dir:
+    allowed: []
+    category: ''
+    default: ''
+    help: location of the hadoop installation
+    mandatory: true
+    type: directory
+  input_extension:
+    allowed: []
+    category: ''
+    default: fasta
+    help: input file extension
+    mandatory: false
+    type: string
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -90,7 +64,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -98,19 +71,32 @@ parameters:
       Makefile.
     mandatory: false
     type: string
+  nohits:
+    allowed: []
+    category: ''
+    default: '50'
+    help: number of hits to report
+    mandatory: false
+    type: integer
+  nothreads:
+    allowed: []
+    category: ''
+    default: '1'
+    help: threads to run blast with (note the overlap with the Make -j parameter)
+    mandatory: false
+    type: integer
+  program:
+    allowed: [blastn, blastp, blastx, tblastn, tblastx]
+    category: ''
+    default: blastn
+    help: 'blast program to use (default: blastn)'
+    mandatory: false
+    type: set
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: Runs BLAST on a hadoop cluster
-modification_date: Fri Jun 25 21:10:26 2010
-name: h_blast
 title: Hadoop Blast
-backend: gnumake
-title: ''

@@ -17,8 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include $(shell echo $$MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = newbler
 
 #variables

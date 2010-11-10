@@ -25,8 +25,7 @@ moa_id = bamextract
 #########################################################################
 # Prerequisite testing
 
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 input_basename=$(shell basename $(bamextract_bam_input) .bam)
 
 bam_output_files=$(addprefix ./$(input_basename).,\

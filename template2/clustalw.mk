@@ -26,8 +26,7 @@ moa_id = clustalw
 
 #variables
 
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ix = $(input_extension)
 input_files_a = $(addprefix a__,$(wildcard $(input_dir_a)/*.$(input_extension)))
 input_files_b = $(wildcard $(input_dir_b)/*.$(input_extension))

@@ -20,8 +20,7 @@
 ################################################################################
 # Variable checks & definition & help
 
-include $(shell echo $$MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = mummer
 
 #targets
@@ -31,7 +30,7 @@ moa_targets += mummer clean
 $(call moa_fileset_define,mum_input_a,fasta,Set 1 input fasta files)
 $(call moa_fileset_define,mum_input_b,fasta,Set 1 input fasta files)
 
-include $(shell echo $$MOABASE)/template/moa/core.mk
+include $(MOABASE)/lib/gnumake/core.mk
 
 .PHONY: mummer_prepare
 mummer_prepare:

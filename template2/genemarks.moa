@@ -1,38 +1,39 @@
+author: Mark Fiers
+backend: gnumake
 commands: [genemarks, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: predict genes using geneMarkS
 gnumake_makefile: /home/mf/project/moa/template2/genemarks.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', genemarks: ''}
 moa_id: genemarks
+modification_date: Wed Nov 10 07:56:48 2010
+name: genemarks
 parameter_category_order: ['', system, advanced]
 parameters:
-  genemarks_gff_source:
+  gff_source:
     allowed: []
-    cardinality: one
     category: ''
     default: genemarks
     help: source field to use in the gff. Defaults to "geneMarkS"
     mandatory: false
     type: string
-  genemarks_input_dir:
+  input_dir:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: directory containing the input sequences
     mandatory: true
     type: directory
-  genemarks_input_extension:
+  input_extension:
     allowed: []
-    cardinality: one
     category: ''
     default: fasta
     help: input file extension. Defaults to fasta
     mandatory: false
     type: string
-  genemarks_matrix:
+  matrix:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: the matrix to use
@@ -40,7 +41,6 @@ parameters:
     type: file
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -49,7 +49,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -59,17 +58,9 @@ parameters:
     type: string
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: predict genes using geneMarkS
-modification_date: Fri Jun 25 21:10:26 2010
-name: genemarks
 title: geneMarkS
-backend: gnumake
-title: ''

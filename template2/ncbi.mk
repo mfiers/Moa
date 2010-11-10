@@ -30,8 +30,7 @@ prereq_wget:
 	@$(call checkPrereqPath,wget,Please install wget)
 
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 #define extra variables to register in couchdb
 #moa_register_extra += fastadir
 #moa_register_fastadir = $(shell echo `pwd`)/fasta
@@ -46,13 +45,10 @@ ncbi: fasta.tmp
 fasta.tmp: webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
 fasta.tmp: queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
 fasta.tmp: tmp.xml
-	$e $(call warn,Query key $(queryKey))
-	$e $(call warn,Web env $(webEnv))
 	wget 
 #tmp.xml contains the IDs of the sequences to download
-tmp.xml:      
-	#wget 'http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&term=elephant%20polymerase&retmax=100&usehistory=y' -O xxx
-	wget 'http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y' \
+tmp.xml: 
+	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
 		-O tmp.xml
 
 ncbi_clean:

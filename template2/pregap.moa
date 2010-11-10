@@ -1,14 +1,18 @@
+author: Mark Fiers
+backend: gnumake
 commands: [pregap, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Run Pregap. Note that running phrap could be a part of this.
 gnumake_makefile: /home/mf/project/moa/template2/pregap.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', pregap: ''}
 moa_id: pregap
+modification_date: Wed Nov 10 07:56:48 2010
+name: pregap
 parameter_category_order: ['', system, advanced]
 parameters:
   cloning_vector:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: File containing the cloning vector
@@ -16,7 +20,6 @@ parameters:
     type: file
   ecoli_screenseq:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: File containing ecoli screen sequences
@@ -24,7 +27,6 @@ parameters:
     type: file
   input_dir:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: Directory with the input data
@@ -32,7 +34,6 @@ parameters:
     type: string
   input_pattern:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: file name pattern
@@ -40,7 +41,6 @@ parameters:
     type: string
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -49,7 +49,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -57,17 +56,8 @@ parameters:
       Makefile.
     mandatory: false
     type: string
-  pregap_template:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ./files/pregap.config.
-    help: the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.
-    mandatory: false
-    type: file
   quality_value_clip:
     allowed: []
-    cardinality: one
     category: ''
     default: '10'
     help: quality cutoff
@@ -75,7 +65,6 @@ parameters:
     type: integer
   repeat_masker_lib:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: File with a repeatmasker library
@@ -83,15 +72,20 @@ parameters:
     type: file
   sequencing_vector:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: File containing the sequencing vector
     mandatory: true
     type: file
+  template:
+    allowed: []
+    category: ''
+    default: ./files/pregap.config.
+    help: the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.
+    mandatory: false
+    type: file
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
@@ -99,17 +93,9 @@ parameters:
     type: string
   vector_primerfile:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: File with the vector primers
     mandatory: true
     type: file
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: Run Pregap. Note that running phrap could be a part of this.
-modification_date: Fri Jun 25 21:10:26 2010
-name: pregap
 title: Pregap
-backend: gnumake
-title: ''

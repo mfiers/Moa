@@ -44,8 +44,7 @@ gup_upload_gff = T
 gup_gffsource ?= $(blast_gff_source)
 
 #include the moa core libraries
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 real_blast_db = $(if $(blast_db), $(shell echo "$(blast_db)" | sed "s/\.[pn]..$$//"))
 
 #  blast_input_files ?= $(wildcard $(blast_input_dir)/*.$(blast_input_extension))
@@ -114,17 +113,11 @@ blast_clean:
 	-rm blast_report
 
 blast_unittest:	
-	echo ">seq1" > test.fasta
-	echo "tcttacttctactactactctcttcttatcatcatctatcccct" >> test.fasta
-	echo ">seq2" >> test.fasta
-	echo "cgatactcttctctcgagacaggattcatcatcatctatcccgg" >> test.fasta
-	moa new -d 10.blastdb -t 'test blast db' blastdb
-	cd 10.blastdb; moa set bdb_fasta_file=../test.fasta
-	cd 10.blastdb; moa set bdb_name=test
+	moa new -d 10.blastdb -t 'test blast db' blastdb \
+			bdb_fasta_file=$$MOADATA/dna/test01.fasta bdb_name=test
 	cd 10.blastdb; moa 
-	moa new -d 20.blast -t 'test blast' blast
-	cd 20.blast; moa set blast_db=../10.blastdb/test
-	cd 20.blast; moa set blast_input_dir=../
+	moa new -d 20.blast -t 'test blast' blast \
+			blast_db=../10.blastdb/test blast_input_dir=$$MOADATA/dna
 	cd 20.blast; moa 
 	cd 20.blast; ls
 	[[ -f 20.blast/blast_report ]] || false

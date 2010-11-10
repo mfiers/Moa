@@ -1,14 +1,18 @@
+author: Mark Fiers
+backend: gnumake
 commands: [mummer, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Run mummer between two sequences
 gnumake_makefile: /home/mf/project/moa/template2/mummer.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', mummer: ''}
 moa_id: mummer
+modification_date: Wed Nov 10 07:56:48 2010
+name: mummer
 parameter_category_order: ['', input, system, advanced]
 parameters:
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -17,7 +21,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -27,7 +30,6 @@ parameters:
     type: string
   mum_breaklen:
     allowed: []
-    cardinality: one
     category: ''
     default: '200'
     help: Set the distance an alignment extension will attempt to extend poor scoring
@@ -36,7 +38,6 @@ parameters:
     type: integer
   mum_input_a_dir:
     allowed: []
-    cardinality: one
     category: input
     default: ''
     help: Set 1 input fasta files
@@ -44,7 +45,6 @@ parameters:
     type: directory
   mum_input_a_extension:
     allowed: []
-    cardinality: one
     category: input
     default: fasta
     help: file extension for the files in mum_input_a_dir
@@ -52,7 +52,6 @@ parameters:
     type: string
   mum_input_a_glob:
     allowed: []
-    cardinality: one
     category: input
     default: '*'
     help: glob to select a subset of files from mum_input_a_dir
@@ -60,7 +59,6 @@ parameters:
     type: string
   mum_input_a_limit:
     allowed: []
-    cardinality: one
     category: input
     default: ''
     help: 'Number of files to use, if not defined: all files'
@@ -68,7 +66,6 @@ parameters:
     type: integer
   mum_input_a_sort:
     allowed: [u, s, sr, t, tr]
-    cardinality: one
     category: input
     default: u
     help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
@@ -77,7 +74,6 @@ parameters:
     type: set
   mum_input_b_dir:
     allowed: []
-    cardinality: one
     category: input
     default: ''
     help: Set 1 input fasta files
@@ -85,7 +81,6 @@ parameters:
     type: directory
   mum_input_b_extension:
     allowed: []
-    cardinality: one
     category: input
     default: fasta
     help: file extension for the files in mum_input_b_dir
@@ -93,7 +88,6 @@ parameters:
     type: string
   mum_input_b_glob:
     allowed: []
-    cardinality: one
     category: input
     default: '*'
     help: glob to select a subset of files from mum_input_b_dir
@@ -101,7 +95,6 @@ parameters:
     type: string
   mum_input_b_limit:
     allowed: []
-    cardinality: one
     category: input
     default: ''
     help: 'Number of files to use, if not defined: all files'
@@ -109,7 +102,6 @@ parameters:
     type: integer
   mum_input_b_sort:
     allowed: [u, s, sr, t, tr]
-    cardinality: one
     category: input
     default: u
     help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
@@ -118,7 +110,6 @@ parameters:
     type: set
   mum_matchmode:
     allowed: [mum, max]
-    cardinality: one
     category: ''
     default: mum
     help: use all matching fragments (max) or only unique matchers (mum)
@@ -126,7 +117,6 @@ parameters:
     type: set
   mum_plot_raw:
     allowed: [T, F]
-    cardinality: one
     category: ''
     default: F
     help: plot an alternative visualization where mummer does not attempt to put the
@@ -135,7 +125,6 @@ parameters:
     type: set
   mum_self:
     allowed: [T, F]
-    cardinality: one
     category: ''
     default: T
     help: mummer against self
@@ -143,17 +132,9 @@ parameters:
     type: set
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Thu Oct 21 14:23:46 2010
-description: Run mummer between two sequences
-modification_date: Thu Oct 21 14:23:46 2010
-name: mummer
 title: mummer
-backend: gnumake
-title: ''

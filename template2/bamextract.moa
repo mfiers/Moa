@@ -1,54 +1,46 @@
+author: Mark Fiers
+backend: gnumake
 commands: [bamextract, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Extract one sequence from a bam file
 gnumake_makefile: /home/mf/project/moa/template2/bamextract.mk
 help: {bamextract: '', clean: 'Remove all job data, not the Moa job itself, note that
     this must be implemented by the template.'}
 moa_id: bamextract
+modification_date: Wed Nov 10 07:56:48 2010
+name: bamextract
 parameter_category_order: ['', system, advanced]
 parameters:
-  bamextract_bam_input:
+  bam_input:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: BAM input file
     mandatory: true
     type: file
-  bamextract_fasta_file:
+  fasta_file:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: Fasta file with the reference sequence data
     mandatory: true
     type: file
-  bamextract_gff_file:
+  gff_file:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: GFF annotation file to extract data from
     mandatory: false
     type: file
-  bamextract_haplotypes:
+  haplotypes:
     allowed: []
-    cardinality: one
     category: ''
     default: '2'
     help: No of haplotypes in the sample
     mandatory: false
     type: integer
-  bamextract_seq_id:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: List of sequence ids to extract
-    mandatory: true
-    type: string
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -57,7 +49,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -65,19 +56,18 @@ parameters:
       Makefile.
     mandatory: false
     type: string
+  seq_id:
+    allowed: []
+    category: ''
+    default: ''
+    help: List of sequence ids to extract
+    mandatory: true
+    type: string
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: Extract one sequence from a bam file
-modification_date: Thu Jul  1 16:36:30 2010
-name: bamextract
 title: Bamextract
-backend: gnumake
-title: ''

@@ -20,8 +20,7 @@
 moa_id = genemarks
 
 #include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 #define resultfilesets
 genemarks_input_files = $(wildcard $(genemarks_input_dir)/*.$(genemarks_input_extension))
 

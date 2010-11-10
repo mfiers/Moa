@@ -52,8 +52,7 @@ prereq_awkscripts_installed:
 			Check the AWK shebang!)
 
 #include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 glimmer3_input_files ?= $(wildcard $(glimmer3_input_dir)/*.$(glimmer3_input_extension))
 
 glimmer3_output_files = $(addprefix out/, $(notdir $(patsubst		\

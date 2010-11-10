@@ -17,8 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include $(shell echo $$MOABASE)/template/moa/prepare.mk
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = sam2bam
 
 #variables
@@ -34,8 +33,7 @@ prereq_samtools:
 
 ################################################################################
 ## include moabase
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 ##### Derived variables for this run
 $(call moa_fileset_remap_nodir,sam2bam_input,sam2bam_output,bam)
 

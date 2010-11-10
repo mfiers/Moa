@@ -33,8 +33,7 @@ prereq_lftp_installed:
 
 ################################################################################
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moa/core.mk
-################################################################################
+include $(MOABASE)/lib/gnumake/core.mk################################################################################
 
 ifdef lftp_user
 ifdef lftp_pass

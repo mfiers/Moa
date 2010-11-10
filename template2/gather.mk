@@ -24,8 +24,7 @@ moa_id += gather
 g_input_dir_cardinality = many
 
 #Include base moa code - does variable checks & generates help
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 #########################################################################
 
 #this is a dummy command, replaces every a with an a - hence nothing happens

@@ -1,63 +1,54 @@
+author: Mark Fiers
+backend: gnumake
 commands: [bwa_index, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Builds a bwa index from a reference sequence
 gnumake_makefile: /home/mf/project/moa/template2/bwa_index.mk
 help: {bwa_index: '', clean: 'Remove all job data, not the Moa job itself, note that
     this must be implemented by the template.'}
 moa_id: bwa_index
+modification_date: Wed Nov 10 07:56:48 2010
+name: bwa_index
 parameter_category_order: ['', input, system, advanced]
 parameters:
-  bwa_index_input_dir:
+  input_dir:
     allowed: []
-    cardinality: one
     category: input
     default: ''
     help: Sequence files used to build a bwa database
     mandatory: true
     type: directory
-  bwa_index_input_extension:
+  input_extension:
     allowed: []
-    cardinality: one
     category: input
     default: fasta
     help: file extension for the files in bwa_index_input_dir
     mandatory: false
     type: string
-  bwa_index_input_glob:
+  input_glob:
     allowed: []
-    cardinality: one
     category: input
     default: '*'
     help: glob to select a subset of files from bwa_index_input_dir
     mandatory: false
     type: string
-  bwa_index_input_limit:
+  input_limit:
     allowed: []
-    cardinality: one
     category: input
     default: ''
     help: 'Number of files to use, if not defined: all files'
     mandatory: false
     type: integer
-  bwa_index_input_sort:
+  input_sort:
     allowed: [u, s, sr, t, tr]
-    cardinality: one
     category: input
     default: u
     help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
       time, tr - time reverse'
     mandatory: false
     type: set
-  bwa_index_name:
-    allowed: []
-    cardinality: one
-    category: ''
-    default: ''
-    help: Name of the bwa index to create
-    mandatory: true
-    type: string
   moa_postcommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
@@ -66,7 +57,6 @@ parameters:
     type: string
   moa_precommand:
     allowed: []
-    cardinality: one
     category: advanced
     default: ''
     help: A single command to be executed before the main operation starts. For more
@@ -74,19 +64,18 @@ parameters:
       Makefile.
     mandatory: false
     type: string
+  name:
+    allowed: []
+    category: ''
+    default: ''
+    help: Name of the bwa index to create
+    mandatory: true
+    type: string
   title:
     allowed: []
-    cardinality: one
     category: system
     default: ''
     help: A name for this job
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: Builds a bwa index from a reference sequence
-modification_date: Mon Jul 19 13:26:52 2010
-name: bwa_index
 title: Bwa index builder
-backend: gnumake
-title: ''

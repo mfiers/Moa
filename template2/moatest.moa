@@ -1,14 +1,18 @@
+author: Mark Fiers
+backend: gnumake
 commands: [moatest, clean]
-description: ''
+creation_date: Wed Nov 10 07:56:48 2010
+description: Not to be used - is used by unitmoatests
 gnumake_makefile: /home/mf/project/moa/template2/moatest.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', moatest: Do nothing - no need to call this.}
 moa_id: moatest
+modification_date: Wed Nov 10 07:56:48 2010
+name: moatest
 parameter_category_order: ['']
 parameters:
   test_opt:
     allowed: []
-    cardinality: one
     category: ''
     default: konijntje
     help: test variable
@@ -16,17 +20,9 @@ parameters:
     type: string
   txt:
     allowed: []
-    cardinality: one
     category: ''
     default: ''
     help: test variable
     mandatory: true
     type: string
-author: Mark Fiers
-creation_date: Sun Aug 22 10:06:11 2010
-description: Not to be used - is used by unitmoatests
-modification_date: Fri Jun 25 21:10:26 2010
-name: moatest
 title: Unittest template
-backend: gnumake
-title: ''

@@ -18,13 +18,12 @@
 #
 
 #include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moa/prepare.mk
+include $(MOABASE)/lib/gnumake/prepare.mk
 
 moa_id = project
 
 #include moabase, if it isn't already done yet..
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 .PHONY: project_clean
 project_clean:
 

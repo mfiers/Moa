@@ -22,8 +22,7 @@ moa_id = clustalgroup
 
 #variables
 
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 cwg_input_files = $(wildcard $(cwg_input_dir)/*.$(cwg_input_extension))
 
 .PHONY: clustalgroup_prepare

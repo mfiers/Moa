@@ -27,8 +27,7 @@ moa_id = bartab
 ## variable definition
 
 #include the moa core libraries
-include $(shell echo $$MOABASE)/template/moa/core.mk
-
+include $(MOABASE)/lib/gnumake/core.mk
 .PHONY: bartab_prepare
 bartab_prepare:
 
