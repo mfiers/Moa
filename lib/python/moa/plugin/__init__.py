@@ -20,7 +20,6 @@ class PluginHandler(UserDict.DictMixin):
         self.plugins = {}
         self.data = {}
         self.allPlugins = self.job.conf.getPlugins()
-        
         l.debug("Plugins %s" % ", ".join(self.allPlugins))
         ## load the plugins as seperate modules. A plugin does not need to
         self.initialize()

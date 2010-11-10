@@ -53,7 +53,7 @@ def configShow(data):
     moa.utils.moaDirOrExit(job)
     for key in job.conf.keys():
         if key[:4] == 'moa_': continue
-        print '%s\t%s' % (key, job.conf[key].getVal())
+        print '%s\t%s' % (key, job.conf[key].value)
 
 def configUnset(data):
     """

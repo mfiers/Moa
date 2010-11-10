@@ -4,6 +4,8 @@
 import os
 import yaml
 
+import moa.utils
+
 class YacoMeta(dict):
     """A dictionary with attribute-style access. It maps attribute access to
     the real dictionary.  """
@@ -28,10 +30,9 @@ class YacoMeta(dict):
     
 class YacoValue(object):
     """
-    A single value
-    
-    
+    A single value    
     """
+
     def __init__(self, 
                  value = None,
                  help = None,
@@ -42,14 +43,11 @@ class YacoValue(object):
                  default = None,
                  set_name = None,            
                  ):
-  
-  
-        self._value = value
-        
+
         if data_type:
-            self.data_type = data_type
+            self._data_type = data_type
         else:
-            self.data_type = {
+            self._data_type = {
                 type("string") : "string",
                 type(72.18) : "int",
                 type(72) : "float",
@@ -58,39 +56,46 @@ class YacoValue(object):
                 type(set()) : "set",
                 type(None) : None,
                 }[type(value)]
-                      
+
         if not value:
-            if self.data_type == 'set':
+            if self._data_type == 'set':
                 self.value = set()
-            elif self.data_type == 'list': 
+            elif self._data_type == 'list': 
                 self.value = []
             else:
                 self.value = None
-                
-        self.mandatory = mandatory    
-        self.category = category
-        self.help = help        
-        self.default = default
-        self.set_name = set_name
+        else:
+            self.value = value
 
-  
-        self.allowed = allowed
-    
+        self._mandatory = mandatory    
+        self._category = category
+        self._help = help        
+        self._default = default
+        self._set_name = set_name  
+        self._allowed = allowed
+
+    def update(self, data, set_name=None):
+        for k in data.keys():
+            if k == 'add':
+                self.set_add(data[k])
+            if k == 'remove':
+                self.set_remove(data[k])
+                
     def configure_from(self, data):
         """
         Get item configuration from this the dict data
         """
-        self.allowed = data.get('allowed', [])        
-        self.category = data.get('category', None)
-        self.data_type = data.get('data_type', None)
-        self.default = data.get('default', None)
-        self.help = data.get('help', None)
-        self.mandatory = data.get('mandatory', False) 
+        self._allowed = data.get('allowed', [])        
+        self._category = data.get('category', None)
+        self._data_type = data.get('data_type', None)
+        self._default = data.get('default', None)
+        self._help = data.get('help', None)
+        self._mandatory = data.get('mandatory', False) 
         
     def check(self):
-        dt = self.data_type
+        dt = self._data_type
         v = self.value
-        if dt == 'set' and not v in self.allowed:
+        if self._allowed and not v in self._allowed:
             return False
         elif dt == 'string' and type(v) != type("string"):
             return False
@@ -101,24 +106,26 @@ class YacoValue(object):
         return True
             
     def set_value(self, v):
-        if self.data_type == 'set':
-            not_addable = [x for x in v if x[0] not in ['+', '-']]
-            if len(not_addable) > 0:
+        if self._data_type == 'set':
+            if isinstance(v, set):
+                self._value = v
+            elif isinstance(v, list):
+                self._value = set(v)
+            else:
+                self._value = set([v])
+        elif self._data_type == 'list':
+            if isinstance(v, set):
+                self._value = list(v)
+            elif isinstance(v, list):
                 self._value = v
             else:
-                for val in v:
-                    if val[0] == '+':
-                        self._value.add(val[1:])
-                    else:
-                        self._value.remove(val[1:])
-                    
-            
-            
-        self._value = v
+                self._value = [v]
+        else:
+            self._value = v
         
     def get_value(self):        
-        if self._value == None and self.default != None:
-            return self.default
+        if self._value == None and self._default != None:
+            return self._default
         else: 
             return self._value
         
@@ -126,8 +133,34 @@ class YacoValue(object):
         del self._value
         
     value = property(get_value,set_value,del_value,"Value")
-    
-    
+
+    def get_add(self):
+        raise Exception("cannot call get_add")
+    def set_add(self, value):
+        if self._data_type == 'set' and isinstance(value, list):
+            for i in value:
+                self._value.add(i)
+    def del_add(self, value):
+        raise Exception("cannot call del_add")
+    add = property(get_add, set_add, del_add)
+
+    def get_remove(self):
+        raise Exception("cannot call get_remove")
+    def set_remove(self, value):
+        if self._data_type == 'set':
+            try:
+                self._value.remove(value)
+            except KeyError:
+                pass           
+    def del_remove(self, value):
+        raise Exception("cannot call del_remove")
+    remove = property(get_remove, set_remove, del_remove)
+
+    def __str__(self):
+        return "%s (%s)" % (self._value, self._set_name)
+
+    def __repr__(self):
+        return "<Yaco.YacoValue '%s'>" % self._value
         
 class Yaco(dict):
     """
@@ -135,38 +168,55 @@ class Yaco(dict):
 
     """
     
-    meta = YacoMeta()
-    
     def __init__(self, data={}, set_name=None):
-        
-        for k in data.keys():
-            if type(data[k]) == type({}):
-                data[k] = Yaco(data[k], set_name = set_name)
-            else:
-                data[k] = YacoValue(data[k], set_name = set_name)
-                
-        dict.__init__(self, data)
+        dict.__init__(self)
+        self.update(data, set_name=set_name)
+        super(Yaco, self).__setitem__('meta', YacoMeta())        
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, dict.__repr__(self))
 
+    def __str__(self):
+        return str(self.get_data())
+
     def __setitem__(self, key, value):
-        if type(value) == type({}): value = Yaco(value)
-        else: value = YacoValue(value)            
-        return super(Yaco, self).__setitem__(key, value)
+        
+        if isinstance(value, dict):
+            #setting a dict
+            if isinstance(self.get(key), Yaco):
+                self[key].update(value)
+            else:
+                super(Yaco, self).__setitem__(key, Yaco(value))
+        else:
+            if isinstance(self.get(key), YacoValue):
+                self[key].value = value
+                self[key]._set_name = None
+            else:
+                super(Yaco, self).__setitem__(key, YacoValue(value))
+        
 
     def __getitem__(self, name):
         return super(Yaco, self).__getitem__(name)
         
     def __delitem__(self, name):
         return super(Yaco, self).__delitem__(name)
-       
+
     def update(self, data, set_name=None):
-        
-        for k in data.keys():
-            if type(data[k]) == type({}): data[k] = Yaco(data[k], set_name=set_name)
-            else: data[k] = YacoValue(data[k], set_name=set_name)  
-        return super(Yaco, self).update(data)
+        for key, val in data.items():
+            if isinstance(val, YacoValue):
+                raise Exception("Wow - updating with a YacoValue - should not happen!")
+            if isinstance(val, dict):
+                if self.has_key(key):
+                    self[key].update(val, set_name=set_name)
+                else:
+                    super(Yaco, self).__setitem__(
+                        key, Yaco(val, set_name=set_name))
+            else:
+                if self.has_key(key):
+                    self[key].value = val
+                else:
+                    yv = YacoValue(val, set_name = set_name)
+                    super(Yaco, self).__setitem__(key, yv)
 
     __getattr__ = __getitem__
     __setattr__ = __setitem__
@@ -181,24 +231,30 @@ class Yaco(dict):
         """
         with open(from_file) as F:
             data = yaml.load(F)
-                        
         self.update(data, set_name=set_name)
-            
-    def _get_data(self, set_names=[]):
+
+    def keys(self):
+        rv = [x for x in super(Yaco, self).keys() if
+              (not x[0] == '_') and
+              (not x == 'meta')]
+        return rv
+    
+    def get_data(self, set_names=[]):
         """
         Prepare & parse data for export
         """
         data = {}
         for k in self.keys():
+            if k == 'meta': continue
             if k[0] == '_': continue
             v = self[k]
                         
             if set_names and \
                 isinstance(v, YacoValue) and \
-                not v.set_name in set_names:
+                not v._set_name in set_names:
                 continue            
             if isinstance(v, Yaco):
-                v = v._get_data(set_names = set_names)
+                v = v.get_data(set_names = set_names)
             elif isinstance(v, YacoValue):
                 v = v.value
             data[k] = v
@@ -209,11 +265,12 @@ class Yaco(dict):
         
         """        
         with open(to_file, 'w') as F:
-            F.write(yaml.dump(self._get_data(set_names = set_names), 
+            F.write(yaml.dump(self.get_data(set_names = set_names), 
                               default_flow_style=False))
 
 if __name__ == "__main__":
-    
+
+    import sys
     import logging as l
     import tempfile
     
@@ -222,6 +279,19 @@ if __name__ == "__main__":
     tmpdir = tempfile.mkdtemp(prefix='Yaco.')
     
     l.info("Start Yaco tests in %s" % tmpdir)
+
+
+    
+    l.info("Start slowly")
+    y = Yaco()
+    y.a = 1
+    y.a._set_name = "set1"
+    y.b = 2
+    y.b._set_name = "set2"
+    y.b = 3
+    
+    assert( y.get_data(set_names=['set2']) == {})
+    assert( y.get_data(set_names=['set2', None]) == {'b' : 3})
     
     #write test yaml
     test_data = { 'type_int' : 72,
@@ -278,22 +348,37 @@ if __name__ == "__main__":
     l.info("type checking")
     y = Yaco()
     y.a = 1
-    y.a.data_type = "int"
-    y.a.default = 4
+    y.a._data_type = "int"
+    y.a._default = 4
     assert(y.a.check())
+
+    y.a = "string"
+    assert(y.a.check() == False)
+
+    y.a = 4
+    assert(y.a.check())
+
+    l.info("sets")
+    y = Yaco()
+    y.a = set()
+    y.a = [1,2,3]
+    y.a.add = 4
+    assert(y.a.value == set([1,2,3,4]))
+    y.a.remove = 3
+    assert(y.a.value == set([1,2,4]))
     
     l.info("Multiple config files")
     y = Yaco()
     y.load(test_file, set_name='set1')
     y.load(other_test_file, set_name='set2')
     y.rabbit = "Oryctolagus cuniculus"
-    
+
     l.info(" testing save set2")
     y.save(test_out_file, set_names=['set2'])
     #load yaml
     with open(test_out_file) as F:
         z = yaml.load(F)
-    
+        
     assert(z.has_key("rabbit") == False)
     assert(z.has_key("type_int") == False)
     assert(z['type_str'] == "other string")

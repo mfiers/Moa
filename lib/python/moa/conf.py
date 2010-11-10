@@ -102,7 +102,7 @@ class Config(Yaco.Yaco):
         """
         Do nothing, just initialize an empty configuration
         """
-        
+
         super(Config, self).__init__()
         self.meta.job = job        
         self.meta.jobConfigFile = os.path.join(
@@ -113,8 +113,7 @@ class Config(Yaco.Yaco):
                                   '.config', 'moa', 'config'),
             "job" : self.meta.jobConfigFile 
                 } 
-        self.moa_plugins = []
-        self.moa_plugins.data_type = 'set'
+        self.moa_plugins = set()
         self.processTemplate()
 
     def processTemplate(self):
@@ -123,19 +122,20 @@ class Config(Yaco.Yaco):
 
         if not template:
             return
-        
+
         for parname in template.parameters.keys():
             par = template.parameters[parname]
             self[parname] = None
+            
             self[parname].configure_from(par)
     
     def load(self):
         """ Load configuration from disk """        
-        for f in self.meta.configFiles.keys():
-            fileName = self.meta.configFiles[f]
-            l.debug("Considering config file %s / %s" % (f, fileName))                        
+        for setName in ['system', 'user', 'job']:
+            fileName = self.meta.configFiles[setName]
+            l.debug("Considering config file %s / %s" % (setName, fileName))                        
             if os.path.exists(fileName):            
-                super(Config, self).load(fileName, set_name=f)
+                super(Config, self).load(fileName, set_name=setName)
 
     def save(self):
         """
