@@ -51,9 +51,11 @@ def configShow(data):
     """
     job = data['job']
     moa.utils.moaDirOrExit(job)
-    for key in job.conf.keys():
-        if key[:4] == 'moa_': continue
-        print '%s\t%s' % (key, job.conf[key].value)
+    data =  job.conf.get_data(set_names = ['job', None])
+    keys = data.keys()
+    keys.sort()        
+    for key in keys:
+        print '%s\t%s' % (key, job.conf[key])
 
 def configUnset(data):
     """
@@ -73,7 +75,6 @@ def configSet(data):
     parse the command line and save the arguments into moa.mk
     """
     job = data['job']
-    job = moa.job.getJob(wd)
     args = data['newargs']
 
     newArgs = []
@@ -86,7 +87,7 @@ def configSet(data):
             job.conf.set(a, vl)
         else:
             key,val = a.split('=',1)
-            job.conf.set(key, val)
+            job.conf[key] = val
 
     job.conf.save()
 

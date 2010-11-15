@@ -38,7 +38,7 @@ class InvalidTemplate(Exception):
     pass
 
     
-class Template(Yaco.Yaco):
+class Template():
     
     template_keys = ['description', 'commands', 'help', 'moa_id', 
                      'parameter_category_order', 'author', 'creation_date',
@@ -52,7 +52,7 @@ class Template(Yaco.Yaco):
         * Load template info
         """        
 
-        super(Template, self).__init__()
+        self.data = Yaco.Yaco()
         
         self.name = 'nojob'
         self.backend = 'nojob'
@@ -61,34 +61,18 @@ class Template(Yaco.Yaco):
         self.parameters = {}        
         
         if templateName:
-            self.meta.name = templateName
-            self.meta.templateDataFile = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
-            if not os.path.exists(self.meta.templateDataFile):
+            self.name = templateName
+            self.templateDataFile = os.path.join(TEMPLATEDIR, '%s.moa' % templateName)
+            if not os.path.exists(self.templateDataFile):
                 raise InvalidTemplate()            
-            self.meta.valid = True
-            self.load(self.meta.templateDataFile)
+            self.data.load(self.templateDataFile)
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
-        
-#    def loadData(self):
-#        if os.path.exists(self.templateDataFile):
-#            with open(self.templateDataFile) as F:
-#                self.data = yaml.load(F)
-#                for k in self.data.keys():
-#                    params = self.data['parameters']
-#                    for par in params.keys():
-#                        self.parameters[par] = TemplateParameter(params[par])
-#                    if k == 'parameters':
-#                        continue
-#                    else:
-#                        setattr(self, k, self.data[k])
 
-#    def __str__(self):
-#        """
-#        String repr. of this object
-#        """
-#        return self.name
-          
+    def backend(self):
+        return self.data.backend.value
+        
+
 
 def check(what):
     """

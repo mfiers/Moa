@@ -33,6 +33,7 @@ import textwrap
 import moa.job
 import moa.conf
 import moa.utils
+import moa.sysConf
 import moa.version
 import moa.project
 import moa.unittests
@@ -47,18 +48,20 @@ import moa.logger as l
 if '-v' in sys.argv:
     moa.logger.setVerbose()
 
-# Initialize the job object
-wd = os.getcwd()
-
-moa.version.fixOld(wd)
-
-job = moa.job.getJob(wd)
+## Get the system wide moa configuration
+sysConf = moa.sysConf.sysConf
 
 ## Initialze the plugins
-plugins = moa.plugin.PluginHandler(job)
+plugins = moa.plugin.PluginHandler(moa.sysConf.getPlugins())
+
+# Initialize the job object
+wd = os.getcwd()
+moa.version.fixOld(wd)
+job = moa.job.getJob(wd)
 
 #use of cwd is deprecated
 plugins.register(cwd = wd)
+plugins.register(sysConf = sysConf)
 plugins.register(wd = wd)
 plugins.register(job=job)
 

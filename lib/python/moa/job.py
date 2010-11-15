@@ -32,9 +32,7 @@ import moa.conf
 import moa.template
 import moa.utils
 
-#import moa.job.base
-#import moa.job.gnumake
-#import moa.job.nojob
+import Yaco
 
 def getJob(wd):
     """
@@ -103,6 +101,7 @@ class Job(object):
         self.captureErr = captureErr
 
         self.confDir = os.path.join(self.wd, '.moa')
+        self.confFile = os.path.join(self.confDir, 'config')
 
         self.env = {}
         self.args = []
@@ -116,9 +115,8 @@ class Job(object):
             self.loadTemplate()
             self.loadBackend()
         
-        self.conf = moa.conf.Config(self)
-        self.conf.load()
-
+        self.conf = Yaco.Yaco()
+        self.conf.load(self.confFile)
 
     def getActor(self):
         """
@@ -200,7 +198,7 @@ class Job(object):
         """
         load the backend
         """
-        backendName = self.template.backend.value
+        backendName = self.template.backend
         l.debug("attempt to load backend %s" % backendName)
         try:
             _moduleName = 'moa.backend.%s' % backendName
