@@ -34,68 +34,10 @@ from moa.exceptions import *
 
 MOABASE = moa.utils.getMoaBase()
 
-class ConfigItem:
-    reString = re.compile((r'(?P<key>[^\s=+]+)\s*'+
-                           r'(?P<operator>\+?=)\s*' +
-                           r'(?P<value>.*?)\s*$'))
-    
-    def __init__(self,
-                 key = None,
-                 value = None,
-                 fromString=None,
-                 configFile = None,
-                 fromTemplate=None):
-        
-        self.key = key
-        self.value = value
-        self.type = 'string'
-        self.allowed = []
-        self.category = ''
-        self.mandatory = False
-        self.help = ''
-        self.configFile = configFile
-        self.default = ''
-        self.cardinality = 'one'
-        self.fromTemplate = False
-        
-        if fromTemplate:
-            self._parseTemplateParam(key, fromTemplate)
-
-    def _parseTemplateParam(self, key, par):
-        """
-        Initialize config item from a parameter entry
-        """
-        self.fromTemplate = True
-        for k in par.keylist:
-            setattr(self, k, getattr(par, k))
-
-    def changed(self):
-        """
-        Is this parameter different from what is specified in
-        the template definition?
-        """
-        if not self.fromTemplate:
-            #if not specified in the template, make it talway, always True
-            return True
-        elif self.value == None:
-            #not set, not changed
-            return False        
-        elif self.value == self.default:
-            return False
-        else:
-            return True
-        
-    def getVal(self):
-        if self.value: return self.value
-        return self.default
-    
-    def __str__(self):
-        return str(self.getVal())
-
-class Config(Yaco.Yaco):
+class JobConfig(Yaco.Yaco):
     """
     Configuration of a job - currently mostly boilerplate code - later
-    this will be a more universal configuration store
+    this will be a more universal configuration store    
     """
     
     def __init__(self, job):
@@ -104,10 +46,10 @@ class Config(Yaco.Yaco):
         """
 
         super(Config, self).__init__()
-        self.meta.job = job        
-        self.meta.jobConfigFile = os.path.join(
+        self._job = job
+        self._jobConfigFile = os.path.join(
             self.meta.job.confDir, 'config')        
-        self.meta.configFiles = {
+        self._configFiles = {
             "system" : os.path.join(MOABASE, 'etc', 'config'),
             "user" : os.path.join(os.path.expanduser('~'),
                                   '.config', 'moa', 'config'),
