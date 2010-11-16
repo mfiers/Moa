@@ -30,12 +30,12 @@ import subprocess
 import moa.logger as l
 from moa.logger import setSilent, setInfo, setVerbose
 
-import moa.lock
+#import moa.lock
 import moa.conf
 import moa.utils
 import moa.job
 import moa.plugin
-import moa.project
+#import moa.project
 import moa.template
 
 MOABASE = moa.utils.getMoaBase()
@@ -60,18 +60,10 @@ templateTests = 0
 pluginFailures = 0
 pluginTests = 0
 
-TESTGLOB = {
-    'MOABASE' : MOABASE,
-    'P_TEST' : os.path.join(MOABASE, 'test', '00.base', '99.test'),
-    'P_EMPTY' : os.path.join(MOABASE, 'test', '00.base', '00.empty'),
-    'P_JOB' : os.path.join(MOABASE, 'test', '00.base', '10.moa.job'),
-    'P_LOCKEDJOB' : os.path.join(MOABASE, 'test', '00.base', '20.moa.locked'),
-    }
-
 def testModule(m):
     global failures
     global tests
-    f, t = doctest.testmod(m, extraglobs = TESTGLOB)
+    f, t = doctest.testmod(m)
     failures += f
     tests += t
     
@@ -127,9 +119,9 @@ def run(options, args):
         l.info("Start running python doctests")
         setSilent()        
         testModule(moa.utils)
-        testModule(moa.lock)
+        #testModule(moa.lock)
         testModule(moa.conf)
-        testModule(moa.project)
+        #testModule(moa.project)
         testModule(moa.template)
         testModule(moa.job)
         

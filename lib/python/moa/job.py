@@ -31,6 +31,7 @@ import moa.logger as l
 import moa.conf
 import moa.template
 import moa.utils
+import moa.jobConf
 
 import Yaco
 
@@ -101,12 +102,11 @@ class Job(object):
         self.captureErr = captureErr
 
         self.confDir = os.path.join(self.wd, '.moa')
-        self.confFile = os.path.join(self.confDir, 'config')
 
-        self.env = {}
         self.args = []
         self.options = {}
 
+        #first load the template
         if template:
             self.setTemplate(template)
             self.loadBackend()
@@ -114,9 +114,19 @@ class Job(object):
         else:
             self.loadTemplate()
             self.loadBackend()
-        
-        self.conf = Yaco.Yaco()
-        self.conf.load(self.confFile)
+
+        # then load the job configuration
+        self.conf = moa.jobConf.JobConf(self)
+
+
+    def checkConfDir(self):
+        """
+        Check if the configuration directory exists. If
+        not create it.
+        """
+        if not os.path.exists(self.confDir):
+            os.mkdir(self.confDir)
+
 
     def getActor(self):
         """
@@ -161,15 +171,6 @@ class Job(object):
         if self.backend:
             self.backend.defineOptions(parser)
 
-
-    def checkConfDir(self):
-        """
-        Check if the configuration directory exists. If
-        not create it.
-        """
-        if not os.path.exists(self.confDir):
-            os.mkdir(self.confDir)
-
     def setTemplate(self, name):
         """
         Set a new template for this job
@@ -188,6 +189,7 @@ class Job(object):
         templateFile = os.path.join(self.confDir, 'template')
         if os.path.exists(templateFile):
             templateName = open(templateFile).read()
+            l.debug("Loading template %s" % templateName)
             self.template = moa.template.Template(templateName)
             return
         
@@ -198,7 +200,7 @@ class Job(object):
         """
         load the backend
         """
-        backendName = self.template.backend
+        backendName = self.template.backend.value
         l.debug("attempt to load backend %s" % backendName)
         try:
             _moduleName = 'moa.backend.%s' % backendName
@@ -212,9 +214,10 @@ class Job(object):
             raise
             sys.exit(-1)                
             
-        self.backend = getattr(_module,
-                               '%sBackend' % backendName.capitalize())(self)
+        self.backend = getattr(
+            _module, '%sBackend' % backendName.capitalize())(self)
 
+        
     def isMoa(self):
         """
         Check if this is a Moa directory - Currently, this needs to be overridden

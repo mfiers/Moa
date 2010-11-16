@@ -35,24 +35,48 @@ SYSCONFIGFILE = os.path.join(MOABASE, 'etc', 'config')
 USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
                           '.config', 'moa', 'config')
 
-class SysConf(Yaco.Yaco):
+class JobConf(object):
     
-    def __init__(self):
-        super(SysConf, self).__init__()
-        l.debug("Loading system config: %s" % SYSCONFIGFILE)
-        self.load(SYSCONFIGFILE)
-        l.debug("Loading system config: %s" % USERCONFIGFILE)
-        self.load(USERCONFIGFILE)
-
-    def getPlugins(self):
+    def __init__(self, job):
+        """
+        Initialize the conf from the parent job
+        """
         
-        rv = set(sysConf.get('moa_plugins', []).value)
-        
-        for p in sysConf.get('moa_plugins_extra', []):
-            rv.add(p)
-        return list(rv)
+        self.job = job
+        self.template = self.job.template
+        self.jobConfFile = os.path.join(self.job.confDir, 'config')
+        self.jobConf = Yaco.Yaco()
+        if os.path.exists(self.jobConfFile):
+            self.jobConf.load(self.jobConfFile)
 
-def getPlugins():
-    return sysConf.getPlugins()
+    def save(self):
+        self.job.checkConfDir()
+        self.jobConf.save(self.jobConfFile)
 
-sysConf = SysConf()
+    def setInJobConf(self, key):
+        if self.jobConf.has_key(key):
+            return True
+        else:
+            return False
+
+    def keys(self):
+        """
+        return a dict with all known parameters and values, either
+        defined in the job configuration of the template
+        """
+        rvt = set(self.template.parameters.keys())
+        rvj = set(self.jobConf.keys())
+        return list(rvt.union(rvj))
+
+    def __getitem__(self, key):
+        if self.jobConf.has_key(key):
+            return self.jobConf[key].value
+        elif key in self.template.parameters.keys():
+            return self.template.parameters[key].default.value
+
+    def __delitem__(self, key):
+        del(self.jobConf[key])
+
+    def __setitem__(self, key,value):
+        self.jobConf[key] = value
+

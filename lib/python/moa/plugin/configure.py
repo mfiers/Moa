@@ -25,6 +25,7 @@ import re
 import os
 import sys
 import readline
+import moa.ui
 import moa.conf
 import moa.utils
 import moa.logger as l
@@ -51,23 +52,31 @@ def configShow(data):
     """
     job = data['job']
     moa.utils.moaDirOrExit(job)
-    data =  job.conf.get_data(set_names = ['job', None])
-    keys = data.keys()
-    keys.sort()        
-    for key in keys:
-        print '%s\t%s' % (key, job.conf[key])
+    
+    keys = job.conf.keys()
+    keys.sort()
+    
+    for p in keys:
+        if job.conf.setInJobConf(p):
+            moa.ui.fprint("%%(bold)s%s\t%s%%(reset)s" % (
+                p, job.conf[p]))
+        else:
+            moa.ui.fprint("%%(blue)s%s\t%s%%(reset)s" % (
+                p, job.conf[p]))
+
 
 def configUnset(data):
     """
     remove variables from the configuration
     """
+
     job = data['job']
     for a in data['newargs']:
         if '=' in a:
             l.error("Invalid argument to unset %s" % a)
         else:
             l.debug("Unsetting %s" % a)
-            job.conf.unset(a)
+            del job.conf[a]
     job.conf.save()
     
 def configSet(data):
@@ -82,13 +91,13 @@ def configSet(data):
     #see if we need to query the user for input somehwere
     for a in args:
         if not '=' in a:
-            df = job.conf[a]
-            vl = moa.utils.askUser("%s:\n$ " % a, df)
-            job.conf.set(a, vl)
+            old = job.conf[a]
+            val = moa.utils.askUser("%s:\n$ " % a, old)
+            job.conf[a] = val
         else:
             key,val = a.split('=',1)
             job.conf[key] = val
-
+            
     job.conf.save()
 
 TESTSCRIPT = """

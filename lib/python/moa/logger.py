@@ -64,6 +64,7 @@ class XTRFormatter(logging.Formatter):
         record.green = chr(27) + "[32m"
         
         record.msg = " ".join(str(record.msg).split(" "))
+
         #check if we're on a tty, if not, reset colon/coloff
         if not sys.stdout.isatty():
             record.colon = ""

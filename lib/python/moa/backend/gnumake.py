@@ -31,7 +31,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
         
         self.moamk = os.path.join(self.job.wd, 'moa.mk')
         self.makeArgs = []
-
+        self.env = {}
         
     def isMoa(self):
         """
@@ -72,9 +72,9 @@ class GnumakeBackend(moa.backend.BaseBackend):
         ## the Makefiles later threads need to be treated different from the
         ## other parameters. multi-threaded operation is only allowed in the
         ## second phase of execution.
-        self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
+        self.env['MOA_THREADS'] = "%s" % self.job.options.threads
         
-        #if moa is not verbose, make should be silent
+        #if moa is silent, make should be silent
         if not self.job.options.verbose:
             self.makeArgs.append('-s')
             
@@ -84,9 +84,14 @@ class GnumakeBackend(moa.backend.BaseBackend):
         actor = self.job.getActor()
 
         #dump the job env into the actor environment (sys env)
-        actor.setEnv(self.job.env)
+        actor.setEnv(self.env)
+        
         #and the job configuration
-        actor.setEnv(self.job.conf)
+        confDict = {}
+        moaId = self.job.template.name
+        for k in self.job.conf.keys():
+            confDict['%s_%s' % (moaId, k)] = self.job.conf[k]
+        actor.setEnv(confDict)
 
         cl = ['make', command] + self.makeArgs
         
@@ -137,12 +142,8 @@ class GnumakeBackend(moa.backend.BaseBackend):
         l.debug("- in wd %s" % self.wd)
            
         if not template:
-            template = self.job.template
+            template = self.job.template.name
         
-        if not template.valid:
-            l.error("Invalid template")
-            return False
-            
         if not template.backend == 'gnumake':
             l.error("template backend mismatch")
             return False

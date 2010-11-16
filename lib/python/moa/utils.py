@@ -99,8 +99,33 @@ def deprecated(func):
     return depfunc
 
 ################################################################################
-## Handle moa directories
+##
+## user interface
+##
+################################################################################
 
+FORMAT_CODES_ANSI = {
+    'reset' : chr(27) + "[0m",
+    'bold' : chr(27) + "[1m",
+    'underline' : chr(27) + "[4m"
+    }
+
+FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
+    
+def fprint(message):
+    sysConf = moa.sysConf.sysConf
+    print sys.stdout.isatty()
+    print sysConf
+    print message
+
+
+################################################################################
+##
+## readline enabled user prompt
+##
+################################################################################
+
+## Handle moa directories
 def fsCompleter(text, state):
     if os.path.isdir(text) and not text[-1] == '/': text += '/'
     pos = glob.glob(text + '*')
@@ -110,7 +135,7 @@ def fsCompleter(text, state):
         return None
     
 def askUser(prompt, d):
-
+    
     def startup_hook():
         readline.insert_text('%s' % d)
   
@@ -125,9 +150,7 @@ def askUser(prompt, d):
     vl = raw_input(prompt)
 
     readline.set_startup_hook() 
-    return vl    
-
-
+    return vl 
     
 def renumber(path, fr, to):
     """

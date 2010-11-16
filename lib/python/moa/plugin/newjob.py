@@ -67,17 +67,13 @@ def newJob(data):
         else:
             template = a
 
-    l.debug("Creating a new '%s' job" % template)
-
-    if options.directory:
-        wd = options.directory
+    l.info("Creating a new '%s' job" % template)
 
     if os.path.exists(os.path.join(
         wd, '.moa', 'template')) and \
         not options.force:
         l.error("Seems that there is already a Moa job in")
         l.error(wd)
-        l.error("")
         l.error("use -f to override")
         
     title = options.title
@@ -85,7 +81,7 @@ def newJob(data):
     job = moa.job.newJob(wd, template = template)
 
     if title:
-        job.conf.set('title', title)
+        job.conf['title'] = title
         
     for p in params:
         k,v = p.split('=', 1)

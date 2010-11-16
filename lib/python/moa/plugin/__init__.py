@@ -37,7 +37,7 @@ class PluginHandler(UserDict.DictMixin):
             except ImportError, e:
                 if not str(e) == "No module named %s" % plugin:
                     raise
-                l.debug("No python plugin module found for %s" % plugin)
+                #l.debug("No python plugin module found for %s" % plugin)
 
     def register(self, **kwargs):
         """

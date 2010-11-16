@@ -1,3 +1,4 @@
-moa_plugins: [fileset, configure, newjob, logo, test, info]
-moa_mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
-moa_pandocbin: pandoc
+plugins: [fileset, configure, newjob, logo, test, info]
+mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
+pandocbin: pandoc
+use_ansi: True

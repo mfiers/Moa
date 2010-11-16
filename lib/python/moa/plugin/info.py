@@ -38,15 +38,10 @@ import textwrap
 MOABASE = moa.utils.getMoaBase()
 
 def defineCommands(data):
-    data['commands']['rawinfo'] = {
-        'private' : True,
-        'call' : rawInfo
-        }
- 
-    data['commands']['status'] = {
-        'private' : True,
-        'call' : status
-        }
+    #data['commands']['status'] = {
+    #    'private' : True,
+    #    'call' : status
+    #    }
 
     data['commands']['template'] = {
         'private' : False,
@@ -69,16 +64,16 @@ def defineCommands(data):
         }
         
 def listTemplates(data):
-    for job in moa.template.list():
-        print job
+    for tFile, tName  in moa.template.listAll():
+        print tName
 
 def listTemplatesLong(data):
-    for job, info in moa.job.listLong():
+    for job, info in moa.template.listAllLong():
         for line in textwrap.wrap(
-            '%s: %s' % (job, info),
+            '%%(bold)s%s%%(reset)s:%%(blue)s %s%%(reset)s' % (job, info),
             initial_indent=' - ',
             subsequent_indent = '     '):
-            print line
+            moa.ui.fprint(line)
 
 def rawInfo(data):
     pprint.pprint(moa.info.info(data['cwd']))

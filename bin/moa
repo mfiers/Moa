@@ -48,9 +48,6 @@ import moa.logger as l
 if '-v' in sys.argv:
     moa.logger.setVerbose()
 
-## Get the system wide moa configuration
-sysConf = moa.sysConf.sysConf
-
 ## Initialze the plugins
 plugins = moa.plugin.PluginHandler(moa.sysConf.getPlugins())
 
@@ -61,7 +58,7 @@ job = moa.job.getJob(wd)
 
 #use of cwd is deprecated
 plugins.register(cwd = wd)
-plugins.register(sysConf = sysConf)
+plugins.register(sysConf = moa.sysConf.sysConf)
 plugins.register(wd = wd)
 plugins.register(job=job)
 

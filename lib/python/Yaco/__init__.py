@@ -75,7 +75,7 @@ class YacoValue(object):
 
 class Yaco(dict):
     """
-    Based on http://code.activestate.com/recipes/473786/ (r1)
+    Loosely based on http://code.activestate.com/recipes/473786/ (r1)
     
     """
     
@@ -164,6 +164,7 @@ class Yaco(dict):
         """
         
         """
+        if not data: return 
         for key, val in data.items():
             if isinstance(val, YacoValue) or isinstance(val, Yaco):
                 raise Exception("Wow - updating with a Yaco(Value) - should not happen!")

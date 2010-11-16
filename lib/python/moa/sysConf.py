@@ -34,18 +34,25 @@ sysConf = None
 SYSCONFIGFILE = os.path.join(MOABASE, 'etc', 'config')
 USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
                           '.config', 'moa', 'config')
-def getSysConf():
-    global sysConf
-    sysConf = Yaco.Yaco()
-    l.debug("Loading system config: %s" % SYSCONFIGFILE)
-    sysConf.load(SYSCONFIGFILE)
-    l.debug("Loading system config: %s" % USERCONFIGFILE)
-    sysConf.load(USERCONFIGFILE)
+
+class SysConf(Yaco.Yaco):
+    
+    def __init__(self):
+        super(SysConf, self).__init__()
+        l.debug("Loading system config: %s" % SYSCONFIGFILE)
+        self.load(SYSCONFIGFILE)
+        l.debug("Loading system config: %s" % USERCONFIGFILE)
+        self.load(USERCONFIGFILE)
+
+    def getPlugins(self):
+        
+        rv = set(sysConf.get('plugins', []).value)
+        
+        for p in sysConf.get('plugins_extra', []):
+            rv.add(p)
+        return list(rv)
 
 def getPlugins():
-    rv = set(sysConf.get('moa_plugins', []).value)
-    for p in sysConf.get('moa_plugins_extra', []):
-        rv.add(p)
-    return list(rv)
+    return sysConf.getPlugins()
 
-getSysConf()
+sysConf = SysConf()
