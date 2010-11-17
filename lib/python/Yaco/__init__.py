@@ -4,74 +4,7 @@
 import os
 import yaml
 
-import moa.utils  
-
-class YacoInvalidSet(Exception):
-    pass
-
-class YacoValue(object):
-    """
-    A single value
-
-    >>> v = YacoValue(value = 1)
-    >>> assert(v.value == 1)    
-    >>> v = YacoValue(value = 'string')
-    >>> assert(v.value == 'string')
-    
-    """
-    def __init__(self, value = None):
-        """
-
-        >>> v = YacoValue(value=1)
-        >>> assert(v.value == 1)
-        >>> v = YacoValue()
-        >>> assert(v.value == None)
-        """
-        self._value = value
-
-    def __setattr__(self, key, value):
-        if key == 'value':            
-            return super(YacoValue, self).__setattr__('_value', value)
-        if key[0] == '_':
-            return super(YacoValue, self).__setattr__(key, value)
-        else:
-            raise YacoInvalidSet()
-
-    def set_value(self, v):
-        """
-        >>> v = YacoValue()
-        >>> assert(v.value == None)
-        >>> v.value = 1
-        >>> assert(v.value == 1)        
-        """
-        self._value = v
-        
-    def get_value(self):
-        """
-        >>> v = YacoValue(value = 1)
-        >>> assert(v.value == 1)
-        """
-        return self._value
-        
-    def del_value(self):
-        """
-        >>> v = YacoValue(value = 1)
-        >>> assert(v.value == 1)        
-        >>> del(v.value)
-        >>> assert(v.value == None)
-        """
-        self._value = None
-        
-    value = property(get_value,set_value,del_value,"Value")
-
-    def __str__(self):
-        """
-        >>> v = YacoValue(value = 1)
-        >>> assert(str(v) ==  '1')        
-        """
-        return str(self._value)
-
-        
+import moa.utils          
 
 class Yaco(dict):
     """
@@ -83,12 +16,12 @@ class Yaco(dict):
         """
         >>> v= Yaco()
         >>> v.a = 1
-        >>> assert(v.a.value == 1)
-        >>> assert(v['a'].value == 1)
+        >>> assert(v.a == 1)
+        >>> assert(v['a'] == 1)
 
         >>> v= Yaco({'a':1})
-        >>> assert(v.a.value == 1)
-        >>> assert(v['a'].value == 1)
+        >>> assert(v.a == 1)
+        >>> assert(v['a'] == 1)
 
         """        
         dict.__init__(self)
@@ -103,34 +36,33 @@ class Yaco(dict):
 
     def __setitem__(self, key, value):
         """
-
         >>> v= Yaco()
         >>> v.a = 18
-        >>> assert(v.a.value == 18)
+        >>> assert(v.a == 18)
 
         >>> v.a = 72
-        >>> assert(v.a.value == 72)
+        >>> assert(v.a == 72)
 
         >>> v.a = {'b' : 5}
-        >>> assert(v.a.b.value == 5)        
+        >>> assert(v.a.b == 5)        
 
         >>> v.a = {'c' : {'d' : 19}}
-        >>> assert(v.a.b.value == 5)
-        >>> assert(v.a.c.d.value == 19)
-        >>> assert(v.a['c'].d.value == 19)
+        >>> assert(v.a.b == 5)
+        >>> assert(v.a.c.d == 19)
+        >>> assert(v.a['c'].d == 19)
 
         >>> #create new instances on the fly
         >>> v.e = 1
 
         >>> v.f.g = 14
-        >>> assert(v.f.g.value == 14)
+        >>> assert(v.f.g == 14)
 
         >>> v.f.h.i.j.k.l = 14
-        >>> assert(v.f.h.i.j.k.l.value == 14)
+        >>> assert(v.f.h.i.j.k.l == 14)
 
         """
         
-        old_value = super(Yaco, self).get(key, None)        
+        old_value = super(Yaco, self).get(key, None)
         if isinstance(value, dict):
             #setting a dict
             if isinstance(old_value, Yaco):
@@ -138,17 +70,14 @@ class Yaco(dict):
             else:
                 super(Yaco, self).__setitem__(key, Yaco(value))
         else:
-            if isinstance(old_value, YacoValue):
-                old_value.value = value
-            else:
-                super(Yaco, self).__setitem__(key, YacoValue(value))
+            super(Yaco, self).__setitem__(key, value)
      
     def __getitem__(self, key):
         """
         >>> v= Yaco()
         >>> v.a = 18       
-        >>> assert(v.a.value == 18)
-        >>> assert(isinstance(v.a, YacoValue))
+        >>> assert(v.a == 18)
+        >>> assert(isinstance(v.a, int))
         """
         try:
             return super(Yaco, self).__getitem__(key)
@@ -166,8 +95,8 @@ class Yaco(dict):
         """
         if not data: return 
         for key, val in data.items():
-            if isinstance(val, YacoValue) or isinstance(val, Yaco):
-                raise Exception("Wow - updating with a Yaco(Value) - should not happen!")
+            if isinstance(val, Yaco):
+                raise Exception("Wow - updating with a Yaco - should not happen!")
 
             old_value = super(Yaco, self).get(key, None)
             if isinstance(val, dict):
@@ -176,10 +105,7 @@ class Yaco(dict):
                 else:
                     super(Yaco, self).__setitem__(key, Yaco(val))
             else:
-                if old_value and isinstance(old_value, YacoValue):
-                    old_value.value = val
-                else:
-                    super(Yaco, self).__setitem__(key, YacoValue(val))
+                super(Yaco, self).__setitem__(key, val)
 
     __getattr__ = __getitem__
     __setattr__ = __setitem__
@@ -212,11 +138,6 @@ class Yaco(dict):
             val = self[k]
             if isinstance(val, Yaco):
                 val = val.get_data()
-            elif isinstance(val, YacoValue):                
-                val = val._value
-                if val == None: continue
-            else:
-                raise Exception('Should not have naked values in a Yaco structure')
             data[k] = val
         return data
                  

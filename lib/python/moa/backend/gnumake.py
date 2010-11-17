@@ -132,25 +132,25 @@ class GnumakeBackend(moa.backend.BaseBackend):
         return None
 
 
-    def initialize(self, template = None):
+    def initialize(self):
 
         """
         Create a new GnuMake job in the `wd`
         """
         
-        l.debug("Creating a new job from template '%s'" % template)
+        l.debug("Creating a new job from template '%s'" % self.job.template.name)
         l.debug("- in wd %s" % self.wd)
-           
-        if not template:
-            template = self.job.template.name
+          
+        template = self.job.template
         
         if not template.backend == 'gnumake':
             l.error("template backend mismatch")
             return False
 
+
         l.debug("Start writing %s" % self.makefile)
         with open(self.makefile, 'w') as F:
             F.write(NEW_MAKEFILE_HEADER)
-            F.write("$(call moa_load,%s)\n" % template)
+            F.write("$(call moa_load,%s)\n" % template.name)
 
 

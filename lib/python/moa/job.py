@@ -44,14 +44,13 @@ def getJob(wd):
     """
     return Job(wd)
 
-def newJob(wd, **kwargs):
+def newJob(wd, template, options={}):
     """
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
     template, and instantiate the proper job type
     """
-    job = Job(wd, template = kwargs['template'])
-    return job
+    return Job(wd, template = template, options = options)
     
 def newTestJob(*args, **kwargs):
     """
@@ -90,6 +89,7 @@ class Job(object):
     def __init__(self,
                  wd,
                  template = None,
+                 options = {},
                  captureOut = False,
                  captureErr = False):
         """        
@@ -98,6 +98,8 @@ class Job(object):
 
         if wd[-1] == '/': wd = wd[:-1]
         self.wd = wd
+        self.options = options
+        
         self.captureOut = captureOut
         self.captureErr = captureErr
 
@@ -110,7 +112,7 @@ class Job(object):
         if template:
             self.setTemplate(template)
             self.loadBackend()
-            self.backend.initialize()
+            self.initialize()
         else:
             self.loadTemplate()
             self.loadBackend()
@@ -143,7 +145,7 @@ class Job(object):
         l.debug("executing %s" % command)
         if self.backend:
             self.backend.execute(command,
-                                 verbose = self.options.verbose,
+                                 verbose = self.options,
                                  background = self.options.background)
         else:
             l.error("No backend loaded - cannot execute %s" % command)
@@ -176,6 +178,7 @@ class Job(object):
         Set a new template for this job
         """
         self.checkConfDir()
+        l.info("Setting job template to %s" % name)
         self.template = moa.template.Template(name)
         with open(os.path.join(self.confDir, 'template'), 'w') as F:
             F.write(name)
@@ -191,6 +194,7 @@ class Job(object):
             templateName = open(templateFile).read()
             l.debug("Loading template %s" % templateName)
             self.template = moa.template.Template(templateName)
+            l.debug("Loaded template %s" % self.template.name)
             return
         
         #no template found - maybe nothing is installed here
@@ -200,7 +204,7 @@ class Job(object):
         """
         load the backend
         """
-        backendName = self.template.backend.value
+        backendName = self.template.backend
         l.debug("attempt to load backend %s" % backendName)
         try:
             _moduleName = 'moa.backend.%s' % backendName
@@ -224,25 +228,10 @@ class Job(object):
         """
         return self.backend.isMoa()      
 
-    def initialize(self, 
-             force=False, 
-             **kwargs):
+    def initialize(self):
         """
         Initialize a new job in the current wd
         """
-
-        if self.isMoa() and not force:
-            l.error("A job does already exists in this directory")
-            l.error("specify -f (--force) to override")
-            return False     
-
-        #check if a template is defined - if not, use the job template
-        if kwargs.has_key('template'):
-            if type(kwargs['template']) == type("string"):
-                self.setTemplate(kwargs['template'])
-                kwargs['template'] = self.template
-        else:
-            kwargs['template'] = self.template
-                    
-        self.backend.initialize(**kwargs)
+        l.debug("calling backend to initialize template %s" % self.template.name)
+        self.backend.initialize()
         

@@ -46,7 +46,7 @@ class SysConf(Yaco.Yaco):
 
     def getPlugins(self):
         
-        rv = set(sysConf.get('plugins', []).value)
+        rv = set(sysConf.get('plugins', []))
         
         for p in sysConf.get('plugins_extra', []):
             rv.add(p)

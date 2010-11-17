@@ -43,7 +43,7 @@ class Template(Yaco.Yaco):
     #                 'parameter_category_order', 'author', 'creation_date',
     #                 'modification_date', 'name', 'type']
     
-    def __init__(self, templateName = None):
+    def __init__(self, name = None):
         """
         Initialze the template object, which means:
         
@@ -51,17 +51,18 @@ class Template(Yaco.Yaco):
         * Load template info
         """        
 
-        self.name = 'nojob'
-        self.backend = 'nojob'
-        self.parameters = {}        
         
-        if templateName:
+        if name:
             self._templateDataFile = os.path.join(
-                TEMPLATEDIR, '%s.moa' % templateName)
-            if not os.path.exists(self._templateDataFile.value):
+                TEMPLATEDIR, '%s.moa' % name)
+            if not os.path.exists(self._templateDataFile):
                 raise InvalidTemplate()
-            l.debug("loading template from %s" % self._templateDataFile.value)
-            self.load(self._templateDataFile.value)
+            l.debug("loading template from %s" % self._templateDataFile)
+            self.load(self._templateDataFile)
+        else:
+            self.name = 'nojob'
+            self.backend = 'nojob'
+            self.parameters = {}
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         
@@ -134,4 +135,4 @@ def listAllLong():
     """
     for tFile, tName in listAll():
         t = Template(tName)
-        yield tName, t.description.value
+        yield tName, t.description

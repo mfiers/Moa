@@ -20,6 +20,7 @@
 #
 import os
 import sys
+import time
 import logging
 import traceback
 
@@ -28,6 +29,10 @@ class XTRFormatter(logging.Formatter):
     A somewhat more advanced formatter
     """
 
+
+    def formatTime(self, record, datefmt):
+        return time.strftime("%d%m%y:%H%M%S")
+    
     def format(self, record):
         """
         Defines two extra fields in the record class, upon formatting:
@@ -42,23 +47,23 @@ class XTRFormatter(logging.Formatter):
         if record.levelno <= logging.DEBUG:
             record.colon = chr(27) + "[30m" + chr(27) + "[47m"
             record.visual = "#DBUG "
-            record.vis1 = "DEBUG:"
+            record.vis1 = "DBG"
         elif record.levelno <= logging.INFO:
             record.colon = chr(27) + "[30m" + chr(27) + "[42m"
             record.visual = "#INFO "
-            record.vis1 = "INFO:"
+            record.vis1 = "INF"
         elif record.levelno <= logging.WARNING:
             record.visual = "#WARN "
             record.colon = chr(27) + "[30m" + chr(27) + "[46m"
-            record.vis1 = "WARNING:"
+            record.vis1 = "WRN"
         elif record.levelno <= logging.ERROR:
             record.visual = "#ERRR "
-            record.vis1 = "ERROR:"
+            record.vis1 = "ERR"
             record.colon = chr(27) + "[30m" + chr(27) + "[43m"
         else:
             record.colon = chr(27) + "[30m" + chr(27) + "[41m"
             record.visual = "#CRIT "
-            record.vis1 = "CRITICAL:"
+            record.vis1 = "CRT"
 
         record.blue = chr(27) + "[34m"
         record.green = chr(27) + "[32m"
@@ -72,6 +77,10 @@ class XTRFormatter(logging.Formatter):
 
         caller = traceback.extract_stack()[-11]
         record.file = caller[0]
+        module = os.path.basename(record.file).replace('.py','')
+        if module == '__init__':
+            module = os.path.basename(record.file.replace('/__init__.py', '')) + '.m'
+        record.module = module
         record.lineno = str(caller[1])
         record.function = caller[2]
         
@@ -94,7 +103,8 @@ logmark = chr(27) + '[0;44mU' + \
 
 
 normalFormatter = XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(message)s')
-debugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s: %(message)s\n   %(green)s@%(blue)s%(file)s:%(lineno)s:%(function)s%(coloff)s')
+debugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s:%(module)s %(message)s')
+veryDebugFormatter =  XTRFormatter('%(colon)s%(vis1)s%(coloff)s %(asctime)s: %(message)s\n   %(green)s@%(blue)s%(file)s:%(lineno)s:%(function)s%(coloff)s')
 
 handler.setFormatter(normalFormatter)
 LOGGER.addHandler(handler)

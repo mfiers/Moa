@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # 
-# Copyright 2009 Mark Fiers, Plant & Food Research
+# Copyright 2009, 2010 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
 # 
@@ -109,11 +109,6 @@ job.args = args
 if options.verbose:
     moa.logger.setVerbose()
 
-### Start plugin initialization
-plugins.run('prepare')
-### Start job initialization
-job.prepare()
-
 ## Command dispatcher
 if __name__ == "__main__":
 
@@ -129,25 +124,29 @@ if __name__ == "__main__":
         
     l.debug("start moa %s" % command)
     l.debug("with args %s" % newargs)
-    
+
     plugins.register(newargs = newargs)
     job.args = newargs
+    
+    ### Start job initialization
+    job.prepare()
+
+    ### Start plugin initialization
+    plugins.run('prepare')
 
     #see if there is a callback to a plugin - If so call it
+
+    plugins.run("pre%s" % command.capitalize())
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
-            
             l.debug("using a callback for moa %s" % command)
-            plugins.run("preCommand")
-            plugins.run("pre%s" % command.capitalize())
             plugins.runCallback(moaCommands[command])
-            plugins.run("post%s" % command.capitalize())
             sys.exit()
-
-    #No callback, defer this to the job
-    plugins.run("pre%s" % command.capitalize())
-    rc = job.execute(command)
+    else:
+        #No callback, defer this to the job
+        rc = job.execute(command)
+        
     plugins.run("post%s" % command.capitalize())
-
     plugins.run("finish")
+    
     sys.exit(rc)

@@ -75,10 +75,14 @@ def newJob(data):
         l.error("Seems that there is already a Moa job in")
         l.error(wd)
         l.error("use -f to override")
-        
+
     title = options.title
     
-    job = moa.job.newJob(wd, template = template)
+    job = moa.job.newJob(wd,
+                         template = template,
+                         options = options)
+
+    l.debug("Successfully created a %s job" % template)
 
     if title:
         job.conf['title'] = title

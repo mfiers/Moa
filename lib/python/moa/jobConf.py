@@ -70,9 +70,9 @@ class JobConf(object):
 
     def __getitem__(self, key):
         if self.jobConf.has_key(key):
-            return self.jobConf[key].value
+            return self.jobConf[key]
         elif key in self.template.parameters.keys():
-            return self.template.parameters[key].default.value
+            return self.template.parameters[key].default
 
     def __delitem__(self, key):
         del(self.jobConf[key])
