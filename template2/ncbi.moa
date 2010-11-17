@@ -18,27 +18,27 @@ parameters:
     category: ''
     default: nuccore
     help: NCBI database
-    mandatory: false
+    optional: true
     type: string
   query:
     allowed: []
     category: ''
     default: ''
     help: NCBI query (for example txid9397[Organism%3Aexp])
-    mandatory: true
+    optional: true
     type: string
   sequence_name:
     allowed: []
     category: ''
     default: out.fasta
     help: Name of the file to write the downloaded sequences to.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Download data from NCBI

@@ -16,13 +16,13 @@ parameters:
     category: ''
     default: konijntje
     help: test variable
-    mandatory: false
+    optional: true
     type: string
   txt:
     allowed: []
     category: ''
     default: ''
     help: test variable
-    mandatory: true
+    optional: false
     type: string
 title: Unittest template

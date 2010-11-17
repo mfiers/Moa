@@ -16,21 +16,21 @@ parameters:
     category: ''
     default: ''
     help: Gene annotation file in the UCSC GenePred format
-    mandatory: false
+    optional: true
     type: file
   min_overlap_ident:
     allowed: []
     category: ''
     default: '90'
     help: Minimum identity length in the assembly step
-    mandatory: false
+    optional: true
     type: integer
   min_overlap_len:
     allowed: []
     category: ''
     default: '40'
     help: Minimum overlap length in the assembly step
-    mandatory: false
+    optional: true
     type: integer
   moa_postcommand:
     allowed: []
@@ -38,7 +38,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -47,34 +47,34 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   name:
     allowed: []
     category: ''
     default: ''
     help: Name identifying this mapping in the output gff
-    mandatory: true
+    optional: false
     type: string
   reference_fasta:
     allowed: []
     category: ''
     default: ''
     help: A multifasta file with the reference sequence(s)with the library id.
-    mandatory: true
+    optional: true
     type: file
   sfffile:
     allowed: []
     category: ''
     default: ''
     help: SFF files with reads to map against the reference sequences
-    mandatory: true
+    optional: true
     type: file
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: GSMapper

@@ -16,35 +16,35 @@ parameters:
     category: ''
     default: ''
     help: extra parameters to feed bartab
-    mandatory: false
+    optional: true
     type: string
   forward_primer:
     allowed: []
     category: ''
     default: ''
     help: remove forward primer
-    mandatory: false
+    optional: true
     type: string
   in:
     allowed: []
     category: ''
     default: ''
     help: input file for bartab
-    mandatory: true
+    optional: false
     type: file
   map:
     allowed: []
     category: ''
     default: ''
     help: A file mapping barcodes to metadata
-    mandatory: false
+    optional: true
     type: file
   min_length:
     allowed: []
     category: ''
     default: '50'
     help: minimun acceptable sequence length
-    mandatory: false
+    optional: true
     type: integer
   moa_postcommand:
     allowed: []
@@ -52,7 +52,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -61,41 +61,41 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   out:
     allowed: []
     category: ''
     default: bartab
     help: base output name
-    mandatory: false
+    optional: true
     type: integer
   qin:
     allowed: []
     category: ''
     default: ''
     help: Quality scores for the input fasta file
-    mandatory: false
+    optional: true
     type: file
   reverse_primer:
     allowed: []
     category: ''
     default: ''
     help: remove reverse primer
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
   trim:
     allowed: [T, F]
     category: ''
     default: T
     help: Trim barcode
-    mandatory: false
+    optional: true
     type: set
 title: Bartab

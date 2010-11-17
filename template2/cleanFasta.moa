@@ -17,14 +17,14 @@ parameters:
     category: ''
     default: ''
     help: Directory with the sequences to run cleanfasta on
-    mandatory: true
+    optional: false
     type: directory
   cf_input_extension:
     allowed: []
     category: ''
     default: fasta
     help: input file extension
-    mandatory: false
+    optional: true
     type: string
   moa_postcommand:
     allowed: []
@@ -32,7 +32,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -41,19 +41,19 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   sed_command:
     allowed: []
     category: ''
     default: /^>/!s/[^ACGTNacgtn]/N/g
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: clean Fasta

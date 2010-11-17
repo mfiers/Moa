@@ -6,7 +6,7 @@ description: This Moa template takes a set of input FASTA sequences and determin
   the reverse complement using the EMBOSS revseq utility.
 filesets:
   gff: {dir: ./gff, extension: gff, source: input, type: map}
-  input: {description: Input files for getorf, optional: false, type: input}
+  input: {extension: fasta, help: Input files for getorf, optional: false, type: input}
   output: {dir: ./out, extension: out, source: input, type: map}
 gnumake_makefile: /tmp/x/revseq.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
@@ -21,7 +21,7 @@ parameters:
     category: ''
     default: N
     help: Is the sequence linear?
-    mandatory: false
+    optional: true
     type: set
   find:
     allowed: ['0', '1', '2', '3']
@@ -30,64 +30,28 @@ parameters:
     help: 'What to output? 0: Translation between stop codons, 1: Translation between
       start & stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide
       sequence between start and stop codons. Default: 3'
-    mandatory: false
+    optional: true
     type: set
   gff_source:
     allowed: []
     category: ''
     default: getorf
     help: source field to use in the gff.
-    mandatory: false
+    optional: true
     type: string
-  input_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Input files for getorf
-    mandatory: true
-    type: directory
-  input_extension:
-    allowed: []
-    category: input
-    default: fasta
-    help: file extension for the files in getorf_input_dir
-    mandatory: false
-    type: string
-  input_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from getorf_input_dir
-    mandatory: false
-    type: string
-  input_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  input_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
-    type: set
   maxsize:
     allowed: []
     category: ''
     default: '1000000'
     help: maximal nucleotide size of the predicted ORF.
-    mandatory: false
+    optional: true
     type: integer
   minsize:
     allowed: []
     category: ''
     default: '30'
     help: minimal nucleotide size of the predicted ORF.
-    mandatory: false
+    optional: true
     type: integer
   moa_postcommand:
     allowed: []
@@ -95,7 +59,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -104,7 +68,7 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   table:
     allowed: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
@@ -118,13 +82,13 @@ parameters:
       Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial;
       14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial;
       21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.'
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: true
     type: string
 title: Revseq

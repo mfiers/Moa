@@ -35,56 +35,56 @@ parameters:
     help: Location of the blast database. You can either define the blast db parameter
       as used by blast, or any of the blast database files, in which case the extension
       will be removed before use
-    mandatory: true
+    optional: true
     type: file
   eval:
     allowed: []
     category: ''
     default: 1e-10
     help: e value cutoff
-    mandatory: false
+    optional: true
     type: float
   gff_source:
     allowed: []
     category: ''
     default: BLAST
     help: source field to use in the gff
-    mandatory: false
+    optional: true
     type: string
   input_dir:
     allowed: []
     category: input
     default: ''
     help: Directory with the BLAST input files
-    mandatory: true
+    optional: true
     type: directory
   input_extension:
     allowed: []
     category: input
     default: fasta
     help: file extension for the files in blast_input_dir
-    mandatory: false
+    optional: true
     type: string
   input_file:
     allowed: []
     category: ''
     default: ''
     help: Input fasta file to BLAST
-    mandatory: true
+    optional: true
     type: file
   input_glob:
     allowed: []
     category: input
     default: '*'
     help: glob to select a subset of files from blast_input_dir
-    mandatory: false
+    optional: true
     type: string
   input_limit:
     allowed: []
     category: input
     default: ''
     help: 'Number of files to use, if not defined: all files'
-    mandatory: false
+    optional: true
     type: integer
   input_sort:
     allowed: [u, s, sr, t, tr]
@@ -92,7 +92,7 @@ parameters:
     default: u
     help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
       time, tr - time reverse'
-    mandatory: false
+    optional: true
     type: set
   moa_postcommand:
     allowed: []
@@ -100,7 +100,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -109,34 +109,34 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   nohits:
     allowed: []
     category: ''
     default: '50'
     help: number of hits to report
-    mandatory: false
+    optional: true
     type: integer
   nothreads:
     allowed: []
     category: ''
     default: '2'
     help: threads to run blast with (note the overlap with the Make -j parameter)
-    mandatory: false
+    optional: true
     type: integer
   program:
     allowed: [blastx, blastn, blastp, tblastn, tblastx]
     category: ''
     default: blastn
     help: 'blast program to use (default: blastn)'
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: true
     type: string
 title: Basic Local Alignment Tool

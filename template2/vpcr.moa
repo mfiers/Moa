@@ -17,21 +17,21 @@ parameters:
     category: ''
     default: ''
     help: Location of the bowtie database used for the vpcr
-    mandatory: true
+    optional: true
     type: file
   insert_max:
     allowed: []
     category: ''
     default: '10000'
     help: maximum insert size for a vpcr fragment
-    mandatory: false
+    optional: true
     type: integer
   insert_min:
     allowed: []
     category: ''
     default: '10'
     help: minimal insert size for a fragment
-    mandatory: false
+    optional: true
     type: integer
   moa_postcommand:
     allowed: []
@@ -39,7 +39,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -48,27 +48,27 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   primer_1:
     allowed: []
     category: ''
     default: ''
     help: First primer to use
-    mandatory: true
+    optional: false
     type: string
   primer_2:
     allowed: []
     category: ''
     default: ''
     help: Second primer to use
-    mandatory: true
+    optional: false
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: VPCR

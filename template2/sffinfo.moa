@@ -6,7 +6,7 @@ description: Roche sffinfor tool - extract information from sff files
 filesets:
   accession: {dir: ., extension: acc, source: input, type: map}
   flowgram: {dir: ., extension: flow, source: input, type: map}
-  input: {description: Sff input files, optional: false, type: input}
+  input: {extension: sff, help: Sff input files, optional: false, type: input}
   quality: {dir: ., extension: qual, source: input, type: map}
   sequence: {dir: ., extension: reads, source: input, type: map}
 gnumake_makefile: /tmp/x/sffinfo.mk
@@ -23,50 +23,14 @@ parameters:
     category: ''
     default: T
     help: Output the accessions
-    mandatory: false
+    optional: true
     type: set
   flowgrams:
     allowed: [T, F]
     category: ''
     default: F
     help: output the flowgrams
-    mandatory: false
-    type: set
-  input_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Sff input files
-    mandatory: true
-    type: directory
-  input_extension:
-    allowed: []
-    category: input
-    default: sff
-    help: file extension for the files in sffinfo_input_dir
-    mandatory: false
-    type: string
-  input_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from sffinfo_input_dir
-    mandatory: false
-    type: string
-  input_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  input_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
+    optional: true
     type: set
   moa_postcommand:
     allowed: []
@@ -74,7 +38,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -83,34 +47,34 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   quality:
     allowed: [T, F]
     category: ''
     default: T
     help: Output quality scores
-    mandatory: false
+    optional: true
     type: set
   sequences:
     allowed: [T, F]
     category: ''
     default: T
     help: Output the sequences
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
   untrimmed:
     allowed: [T, F]
     category: ''
     default: F
     help: output untrimmed sequences & qualities
-    mandatory: false
+    optional: true
     type: set
 title: sffinfo

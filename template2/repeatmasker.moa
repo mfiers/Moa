@@ -6,7 +6,7 @@ description: Run a default repeatmask on the input sequences
 filesets:
   OUTPUT_FILESET_ID: {dir: ./OUTPUT_FILETYPE, extension: OUTPUT_FILETYPE, source: INPUT_FILESET_ID,
     type: map}
-  input: {description: Input files for repmask, optional: false, type: input}
+  input: {extension: fasta, help: Input files for repmask, optional: false, type: input}
   output: {dir: ., extension: masked, source: input, type: map}
 gnumake_makefile: /tmp/x/repeatmasker.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
@@ -16,49 +16,13 @@ modification_date: Wed Nov 10 07:56:48 2010
 name: repeatmasker
 parameter_category_order: ['', input, system, advanced]
 parameters:
-  input_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Input files for repmask
-    mandatory: true
-    type: directory
-  input_extension:
-    allowed: []
-    category: input
-    default: fasta
-    help: file extension for the files in repmask_input_dir
-    mandatory: false
-    type: string
-  input_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from repmask_input_dir
-    mandatory: false
-    type: string
-  input_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  input_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
-    type: set
   moa_postcommand:
     allowed: []
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -67,21 +31,21 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   parallel:
     allowed: []
     category: ''
     default: '4'
     help: No of threads to run in parallel
-    mandatory: false
+    optional: true
     type: integer
   quick:
     allowed: [T, F]
     category: ''
     default: F
     help: Quick job
-    mandatory: false
+    optional: true
     type: set
   simple:
     allowed: [T, F]
@@ -89,20 +53,20 @@ parameters:
     default: F
     help: Mask *only* low complex/simple repeats, not interspersed repeats (Repeatmasker
       -(no)int parameter)
-    mandatory: false
+    optional: true
     type: set
   species:
     allowed: []
     category: ''
     default: ''
     help: Repeatmasker species
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Repeatmasker

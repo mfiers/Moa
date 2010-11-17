@@ -17,42 +17,42 @@ parameters:
     category: ''
     default: ''
     help: Location of the blast database
-    mandatory: true
+    optional: false
     type: file
   eval:
     allowed: []
     category: ''
     default: 1e-10
     help: e value cutoff
-    mandatory: false
+    optional: true
     type: float
   hadoop_base:
     allowed: []
     category: ''
     default: ''
     help: location of the hadoop installation
-    mandatory: true
+    optional: false
     type: directory
   hdfs_base:
     allowed: []
     category: ''
     default: hdfs://localhost:9000
     help: htfs://SERVER:PORT for the hdfs filesystem, defaults to "hdfs://localhost:9000"
-    mandatory: false
+    optional: true
     type: string
   input_dir:
     allowed: []
     category: ''
     default: ''
     help: location of the hadoop installation
-    mandatory: true
+    optional: false
     type: directory
   input_extension:
     allowed: []
     category: ''
     default: fasta
     help: input file extension
-    mandatory: false
+    optional: true
     type: string
   moa_postcommand:
     allowed: []
@@ -60,7 +60,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -69,34 +69,34 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   nohits:
     allowed: []
     category: ''
     default: '50'
     help: number of hits to report
-    mandatory: false
+    optional: true
     type: integer
   nothreads:
     allowed: []
     category: ''
     default: '1'
     help: threads to run blast with (note the overlap with the Make -j parameter)
-    mandatory: false
+    optional: true
     type: integer
   program:
     allowed: [blastn, blastp, blastx, tblastn, tblastx]
     category: ''
     default: blastn
     help: 'blast program to use (default: blastn)'
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Hadoop Blast

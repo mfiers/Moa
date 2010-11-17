@@ -16,28 +16,28 @@ parameters:
     category: ''
     default: ''
     help: File containing the cloning vector
-    mandatory: true
+    optional: false
     type: file
   ecoli_screenseq:
     allowed: []
     category: ''
     default: ''
     help: File containing ecoli screen sequences
-    mandatory: true
+    optional: false
     type: file
   input_dir:
     allowed: []
     category: ''
     default: ''
     help: Directory with the input data
-    mandatory: true
+    optional: false
     type: string
   input_pattern:
     allowed: []
     category: ''
     default: ''
     help: file name pattern
-    mandatory: true
+    optional: false
     type: string
   moa_postcommand:
     allowed: []
@@ -45,7 +45,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -54,48 +54,48 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   quality_value_clip:
     allowed: []
     category: ''
     default: '10'
     help: quality cutoff
-    mandatory: false
+    optional: true
     type: integer
   repeat_masker_lib:
     allowed: []
     category: ''
     default: ''
     help: File with a repeatmasker library
-    mandatory: true
+    optional: false
     type: file
   sequencing_vector:
     allowed: []
     category: ''
     default: ''
     help: File containing the sequencing vector
-    mandatory: true
+    optional: false
     type: file
   template:
     allowed: []
     category: ''
     default: ./files/pregap.config.
     help: the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.
-    mandatory: false
+    optional: true
     type: file
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
   vector_primerfile:
     allowed: []
     category: ''
     default: ''
     help: File with the vector primers
-    mandatory: true
+    optional: false
     type: file
 title: Pregap

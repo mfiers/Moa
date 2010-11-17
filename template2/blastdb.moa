@@ -20,35 +20,35 @@ parameters:
       be used as an alternative to defining "bdb_input_dir" and "bdb_input_dir_extension".
       Morover. If all your sequences are already in a single file, then using this
       parameter prevents duplication.
-    mandatory: false
+    optional: true
     type: file
   bdb_input_dir:
     allowed: []
     category: ''
     default: ''
     help: Dir with the input fasta files, defaults to ./fasta
-    mandatory: false
+    optional: true
     type: directory
   bdb_input_extension:
     allowed: []
     category: ''
     default: fasta
     help: extension of the input sequence files, defaults to fasta
-    mandatory: false
+    optional: true
     type: string
   bdb_name:
     allowed: []
     category: ''
     default: ''
     help: Database name to create.
-    mandatory: true
+    optional: false
     type: string
   bdb_protein:
     allowed: [T, F]
     category: ''
     default: F
     help: 'Protein database? (T)rue) or not (F)alse (default: F)'
-    mandatory: false
+    optional: true
     type: set
   moa_postcommand:
     allowed: []
@@ -56,7 +56,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -65,13 +65,13 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: ''

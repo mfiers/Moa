@@ -4,7 +4,7 @@ commands: [r, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: run the R script in moa.R, with the specified input files
 filesets:
-  input: {description: Input files for r, optional: true, type: input}
+  input: {extension: '', help: Input files for r, optional: true, type: input}
 gnumake_makefile: /tmp/x/r.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', r: ''}
@@ -13,49 +13,13 @@ modification_date: Wed Nov 10 07:56:48 2010
 name: r
 parameter_category_order: ['', input, system, advanced]
 parameters:
-  input_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Input files for r
-    mandatory: false
-    type: directory
-  input_extension:
-    allowed: []
-    category: input
-    default: ''
-    help: file extension for the files in r_input_dir
-    mandatory: false
-    type: string
-  input_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from r_input_dir
-    mandatory: false
-    type: string
-  input_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  input_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
-    type: set
   moa_postcommand:
     allowed: []
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -64,14 +28,14 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
   touch:
     allowed: [T, F]
@@ -80,6 +44,6 @@ parameters:
     help: use touch files to track if input files have changed. If you set this to
       False, the touch files will still be generated, but will have no effect on whether
       or not an inputfile will be processed
-    mandatory: false
+    optional: true
     type: set
 title: Run R

@@ -17,35 +17,35 @@ parameters:
     category: ''
     default: ''
     help: Source to be used in the gff
-    mandatory: true
+    optional: false
     type: string
   f2g_input_dir:
     allowed: []
     category: ''
     default: ''
     help: Directory with the input fasta files
-    mandatory: true
+    optional: false
     type: directory
   f2g_input_extension:
     allowed: []
     category: ''
     default: fasta
     help: 'glob pattern of the fasta files (default: *.fasta)'
-    mandatory: false
+    optional: true
     type: string
   f2g_options:
     allowed: []
     category: ''
     default: ''
     help: options to be passed to the fasta2gff script
-    mandatory: false
+    optional: true
     type: string
   f2g_output_dir:
     allowed: []
     category: ''
     default: ./gff
     help: Directory with the output gff
-    mandatory: false
+    optional: true
     type: directory
   moa_postcommand:
     allowed: []
@@ -53,7 +53,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -62,13 +62,13 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: GFF from FASTA

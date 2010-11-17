@@ -4,7 +4,7 @@ commands: [bwa_aln, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Use bwa to aling a set of fastq reads against a db
 filesets:
-  input: {description: Fastq input files, optional: false, type: input}
+  input: {extension: fq, help: Fastq input files, optional: false, type: input}
   output: {dir: ., extension: sai, source: input, type: map}
 gnumake_makefile: /tmp/x/bwa_aln.mk
 help: {bwa_aln: '', clean: 'Remove all job data, not the Moa job itself, note that
@@ -19,51 +19,15 @@ parameters:
     category: ''
     default: ''
     help: bwa database to align against
-    mandatory: true
+    optional: false
     type: file
-  input_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Fastq input files
-    mandatory: true
-    type: directory
-  input_extension:
-    allowed: []
-    category: input
-    default: fq
-    help: file extension for the files in bwa_aln_input_dir
-    mandatory: false
-    type: string
-  input_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from bwa_aln_input_dir
-    mandatory: false
-    type: string
-  input_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  input_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
-    type: set
   moa_postcommand:
     allowed: []
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -72,20 +36,20 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   seed_len:
     allowed: []
     category: ''
     default: ''
     help: Seed length
-    mandatory: false
+    optional: true
     type: integer
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: BWA align

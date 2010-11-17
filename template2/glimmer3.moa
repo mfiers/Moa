@@ -19,28 +19,28 @@ parameters:
     category: ''
     default: '110'
     help: Minimum gene length (glimmer3 -g/--gene_len)
-    mandatory: false
+    optional: true
     type: integer
   gff_source:
     allowed: []
     category: ''
     default: glimmer3
     help: source field to use in the gff. Defaults to "glimmer3"
-    mandatory: false
+    optional: true
     type: string
   input_dir:
     allowed: []
     category: ''
     default: ''
     help: Input directory with the sequences to run glimmer3 on
-    mandatory: true
+    optional: true
     type: directory
   input_extension:
     allowed: []
     category: ''
     default: fasta
     help: input file extension. Defaults to fasta
-    mandatory: false
+    optional: true
     type: string
   max_overlap:
     allowed: []
@@ -48,7 +48,7 @@ parameters:
     default: '50'
     help: Maximum overlap, see the glimmer documentation for the -o or --max_olap
       parameter
-    mandatory: false
+    optional: true
     type: integer
   moa_postcommand:
     allowed: []
@@ -56,7 +56,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -65,20 +65,20 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
   treshold:
     allowed: []
     category: ''
     default: '30'
     help: treshold for calling a gene a gene (glimmer3 -t)
-    mandatory: false
+    optional: true
     type: integer
 title: Glimmer3

@@ -4,8 +4,10 @@ commands: [mummer, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run mummer between two sequences
 filesets:
-  mum_input_a: {description: Set 1 input fasta files, optional: false, type: input}
-  mum_input_b: {description: Set 1 input fasta files, optional: false, type: input}
+  mum_input_a: {extension: fasta, help: Set 1 input fasta files, optional: false,
+    type: input}
+  mum_input_b: {extension: fasta, help: Set 1 input fasta files, optional: false,
+    type: input}
 gnumake_makefile: /tmp/x/mummer.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', mummer: ''}
@@ -20,7 +22,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -29,7 +31,7 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   mum_breaklen:
     allowed: []
@@ -37,86 +39,14 @@ parameters:
     default: '200'
     help: Set the distance an alignment extension will attempt to extend poor scoring
       regions before giving up (default 200)
-    mandatory: false
+    optional: true
     type: integer
-  mum_input_a_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Set 1 input fasta files
-    mandatory: true
-    type: directory
-  mum_input_a_extension:
-    allowed: []
-    category: input
-    default: fasta
-    help: file extension for the files in mum_input_a_dir
-    mandatory: false
-    type: string
-  mum_input_a_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from mum_input_a_dir
-    mandatory: false
-    type: string
-  mum_input_a_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  mum_input_a_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
-    type: set
-  mum_input_b_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Set 1 input fasta files
-    mandatory: true
-    type: directory
-  mum_input_b_extension:
-    allowed: []
-    category: input
-    default: fasta
-    help: file extension for the files in mum_input_b_dir
-    mandatory: false
-    type: string
-  mum_input_b_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from mum_input_b_dir
-    mandatory: false
-    type: string
-  mum_input_b_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  mum_input_b_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
-    type: set
   mum_matchmode:
     allowed: [mum, max]
     category: ''
     default: mum
     help: use all matching fragments (max) or only unique matchers (mum)
-    mandatory: false
+    optional: true
     type: set
   mum_plot_raw:
     allowed: [T, F]
@@ -124,20 +54,20 @@ parameters:
     default: F
     help: plot an alternative visualization where mummer does not attempt to put the
       sequences in the correct order
-    mandatory: false
+    optional: true
     type: set
   mum_self:
     allowed: [T, F]
     category: ''
     default: T
     help: mummer against self
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: mummer

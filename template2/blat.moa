@@ -16,49 +16,49 @@ parameters:
     category: ''
     default: ''
     help: type of the database (dna, prot or dnax)
-    mandatory: true
+    optional: false
     type: set
   db_id_list:
     allowed: []
     category: ''
     default: ''
     help: a sorted list of db ids and descriptions, enhances the report generated
-    mandatory: false
+    optional: true
     type: file
   db_type:
     allowed: ['[dna,', 'prot,', 'dnax]']
     category: ''
     default: dna
     help: type of the database (dna, prot or dnax)
-    mandatory: false
+    optional: true
     type: set
   eval:
     allowed: []
     category: ''
     default: 1e-10
     help: evalue cutoff to select the reported hits on (defaults to 1e-15)
-    mandatory: false
+    optional: true
     type: float
   gff_source:
     allowed: []
     category: ''
     default: ''
     help: Source field for the generated GFF files
-    mandatory: true
+    optional: false
     type: string
   input_dir:
     allowed: []
     category: ''
     default: ''
     help: source field in the generated gff
-    mandatory: true
+    optional: false
     type: directory
   input_extension:
     allowed: []
     category: ''
     default: fasta
     help: extension of the input files
-    mandatory: false
+    optional: true
     type: string
   input_file:
     allowed: []
@@ -66,7 +66,7 @@ parameters:
     default: ''
     help: input query file. If this variable is not defined, the combination of blat_input_dir
       and blat_input_extension is used to find a list of input files
-    mandatory: true
+    optional: false
     type: file
   moa_postcommand:
     allowed: []
@@ -74,7 +74,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -83,20 +83,20 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   query_type:
     allowed: ['[dna,', 'rna,', 'prot,', 'dnax,', 'rnax]']
     category: ''
     default: dna
     help: type of the query (dna, rna, prot, dnax or rnax)
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Blat

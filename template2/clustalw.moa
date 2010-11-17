@@ -16,7 +16,7 @@ parameters:
     category: ''
     default: ''
     help: This set is compared to the sequences in input_dir_b.
-    mandatory: true
+    optional: false
     type: directory
   input_dir_b:
     allowed: []
@@ -24,14 +24,14 @@ parameters:
     default: ''
     help: The set to compare against. Only a forward comparison is made (a against
       b, not the other way round)
-    mandatory: true
+    optional: false
     type: directory
   input_extension:
     allowed: []
     category: ''
     default: fasta
     help: Extension of the input files
-    mandatory: false
+    optional: true
     type: string
   moa_postcommand:
     allowed: []
@@ -39,7 +39,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -48,13 +48,13 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: clustalw

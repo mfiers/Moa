@@ -16,28 +16,28 @@ parameters:
     category: ''
     default: ''
     help: BAM input file
-    mandatory: true
+    optional: false
     type: file
   fasta_file:
     allowed: []
     category: ''
     default: ''
     help: Fasta file with the reference sequence data
-    mandatory: true
+    optional: false
     type: file
   gff_file:
     allowed: []
     category: ''
     default: ''
     help: GFF annotation file to extract data from
-    mandatory: false
+    optional: true
     type: file
   haplotypes:
     allowed: []
     category: ''
     default: '2'
     help: No of haplotypes in the sample
-    mandatory: false
+    optional: true
     type: integer
   moa_postcommand:
     allowed: []
@@ -45,7 +45,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -54,20 +54,20 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   seq_id:
     allowed: []
     category: ''
     default: ''
     help: List of sequence ids to extract
-    mandatory: true
+    optional: false
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Bamextract

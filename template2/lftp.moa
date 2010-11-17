@@ -20,14 +20,14 @@ parameters:
     category: ''
     default: F
     help: Run dos2unix to prevent problems with possible dos text files
-    mandatory: false
+    optional: true
     type: set
   get_name:
     allowed: []
     category: ''
     default: ''
     help: target name of the file to download
-    mandatory: false
+    optional: true
     type: string
   lftp_output_dir:
     allowed: []
@@ -46,7 +46,7 @@ parameters:
     help: Lock this job after running. This means that you will have to manually unlock
       the job before lftp actually reruns. This is a good choice if your downloading
       large datasets or have a slow connection
-    mandatory: false
+    optional: true
     type: set
   moa_postcommand:
     allowed: []
@@ -54,7 +54,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -63,7 +63,7 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   mode:
     allowed: [mirror, get]
@@ -73,14 +73,14 @@ parameters:
       gets a single file. If using get, consider setting depend_lftp_timestamp to
       F. When using get, the full url should be in lftp_url. lftp_pattern is ignored.
       Defaults to mirror.
-    mandatory: false
+    optional: true
     type: set
   noclean:
     allowed: []
     category: advanced
     default: moa.mk Makefile
     help: set of files not to be deleted by the powerclean
-    mandatory: false
+    optional: true
     type: string
   pass:
     allowed: []
@@ -88,14 +88,14 @@ parameters:
     default: ''
     help: 'password for the remote site, note that this can be defined on the commandline
       using: make lftp_pass=PASSWORD'
-    mandatory: false
+    optional: true
     type: password
   pattern:
     allowed: []
     category: ''
     default: '''*'''
     help: glob pattern to download
-    mandatory: false
+    optional: true
     type: string
   powerclean:
     allowed: [T, F]
@@ -103,7 +103,7 @@ parameters:
     default: F
     help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
       when calling make clean. Defaults to F.
-    mandatory: false
+    optional: true
     type: set
   timestamp:
     allowed: [T, F]
@@ -111,27 +111,27 @@ parameters:
     default: F
     help: Depend on lftp to decide if a file needs updating, else a touchfile is created
       that you need to delete or touch before updating (T/*F*)
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: true
     type: string
   url:
     allowed: []
     category: ''
     default: ''
     help: The base url to download from
-    mandatory: true
+    optional: true
     type: string
   user:
     allowed: []
     category: ''
     default: ''
     help: username for the remote site
-    mandatory: false
+    optional: true
     type: string
 title: lftp

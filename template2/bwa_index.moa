@@ -4,7 +4,7 @@ commands: [bwa_index, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bwa index from a reference sequence
 filesets:
-  input: {description: Sequence files used to build a bwa database, optional: false,
+  input: {extension: fasta, help: Sequence files used to build a bwa database, optional: false,
     type: input}
 gnumake_makefile: /tmp/x/bwa_index.mk
 help: {bwa_index: '', clean: 'Remove all job data, not the Moa job itself, note that
@@ -14,49 +14,13 @@ modification_date: Wed Nov 10 07:56:48 2010
 name: bwa_index
 parameter_category_order: ['', input, system, advanced]
 parameters:
-  input_dir:
-    allowed: []
-    category: input
-    default: ''
-    help: Sequence files used to build a bwa database
-    mandatory: true
-    type: directory
-  input_extension:
-    allowed: []
-    category: input
-    default: fasta
-    help: file extension for the files in bwa_index_input_dir
-    mandatory: false
-    type: string
-  input_glob:
-    allowed: []
-    category: input
-    default: '*'
-    help: glob to select a subset of files from bwa_index_input_dir
-    mandatory: false
-    type: string
-  input_limit:
-    allowed: []
-    category: input
-    default: ''
-    help: 'Number of files to use, if not defined: all files'
-    mandatory: false
-    type: integer
-  input_sort:
-    allowed: [u, s, sr, t, tr]
-    category: input
-    default: u
-    help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
-      time, tr - time reverse'
-    mandatory: false
-    type: set
   moa_postcommand:
     allowed: []
     category: advanced
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -65,20 +29,20 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   name:
     allowed: []
     category: ''
     default: ''
     help: Name of the bwa index to create
-    mandatory: true
+    optional: false
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Bwa index builder

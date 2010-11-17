@@ -16,14 +16,14 @@ parameters:
     category: ''
     default: ''
     help: Directory with the input data
-    mandatory: true
+    optional: false
     type: directory
   input_extension:
     allowed: []
     category: ''
     default: fasta
     help: Extension of the input files
-    mandatory: false
+    optional: true
     type: string
   moa_postcommand:
     allowed: []
@@ -31,7 +31,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -40,20 +40,20 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   name:
     allowed: []
     category: ''
     default: ''
     help: name of the file, the outputfile will become ./name.fasta
-    mandatory: true
+    optional: false
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Concatenate

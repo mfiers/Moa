@@ -17,14 +17,14 @@ parameters:
     category: ''
     default: ''
     help: list of directories with the input files
-    mandatory: true
+    optional: false
     type: directory
   g_input_pattern:
     allowed: []
     category: ''
     default: '*'
     help: glob pattern to download
-    mandatory: false
+    optional: true
     type: string
   g_limit:
     allowed: []
@@ -32,7 +32,7 @@ parameters:
     default: '1000000'
     help: limit the number of files gathered (with the most recent files first, defaults
       to 1mln)
-    mandatory: false
+    optional: true
     type: integer
   g_name_sed:
     allowed: []
@@ -40,14 +40,14 @@ parameters:
     default: s/a/a/
     help: SED expression to be executed on each file name - allows you to change file
       names
-    mandatory: false
+    optional: true
     type: string
   g_output_dir:
     allowed: []
     category: ''
     default: .
     help: Output subdirectory, defaults to .
-    mandatory: false
+    optional: true
     type: directory
   g_parallel:
     allowed: [T, F]
@@ -55,7 +55,7 @@ parameters:
     default: F
     help: allow parallel execution (T) or not (**F**). If for example concatenating
       to one single file, you should not have multiple threads.
-    mandatory: false
+    optional: true
     type: set
   g_powerclean:
     allowed: [T, F]
@@ -63,14 +63,14 @@ parameters:
     default: F
     help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
       when calling make clean. Defaults to F.
-    mandatory: false
+    optional: true
     type: set
   g_process:
     allowed: []
     category: ''
     default: ln -f $$< $$(g_target)
     help: Command to process the files. If undefined, hardlink the files.
-    mandatory: false
+    optional: true
     type: string
   moa_postcommand:
     allowed: []
@@ -78,7 +78,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -87,13 +87,13 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: gather files

@@ -16,14 +16,14 @@ parameters:
     category: ''
     default: ''
     help: location of varscan.pl, defaults to /usr/lib/perl5/site_perl/5.8.8/varscan.pl
-    mandatory: false
+    optional: true
     type: string
   input_file:
     allowed: []
     category: ''
     default: ''
     help: Varscan input alignments file
-    mandatory: true
+    optional: true
     type: file
   moa_postcommand:
     allowed: []
@@ -31,7 +31,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -40,27 +40,27 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   output_name:
     allowed: []
     category: ''
     default: out
     help: Base name of the output files
-    mandatory: false
+    optional: true
     type: string
   perl_file:
     allowed: []
     category: ''
     default: ''
     help: the varscan (perl) executable
-    mandatory: false
+    optional: true
     type: file
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Varscan

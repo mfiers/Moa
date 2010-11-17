@@ -19,14 +19,14 @@ parameters:
     category: ''
     default: ''
     help: gbrowse database. If not defined, this defaults to moa.
-    mandatory: true
+    optional: false
     type: string
   gup_fasta_extension:
     allowed: []
     category: ''
     default: fasta
     help: extension of the FASTA files to upload (.fasta)
-    mandatory: false
+    optional: true
     type: string
   gup_force_upload:
     allowed: [T, F]
@@ -34,35 +34,35 @@ parameters:
     default: F
     help: upload to gbrowse, ignore gup_lock and upload all, not only files newer
       that upload_gff or upload_fasta
-    mandatory: false
+    optional: true
     type: set
   gup_gff_extension:
     allowed: []
     category: ''
     default: gff
     help: extension of the GFF files to upload (.gff)
-    mandatory: false
+    optional: true
     type: string
   gup_upload_fasta:
     allowed: [T, F]
     category: ''
     default: F
     help: upload fasta to gbrowse (T/F)
-    mandatory: false
+    optional: true
     type: set
   gup_upload_gff:
     allowed: [T, F]
     category: ''
     default: F
     help: upload gff to gbrowse (T/F)
-    mandatory: false
+    optional: true
     type: set
   gup_user:
     allowed: []
     category: ''
     default: ''
     help: gbrowse db user. If not defined, this defaults to moa.
-    mandatory: true
+    optional: false
     type: string
   marks_extensions:
     allowed: [T, F]
@@ -70,7 +70,7 @@ parameters:
     default: F
     help: Add some extensions to the Gbrowse database to be initalized, for use by
       Mark.
-    mandatory: false
+    optional: true
     type: set
   moa_postcommand:
     allowed: []
@@ -78,7 +78,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -87,13 +87,13 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Library for uploading data to GBrowse

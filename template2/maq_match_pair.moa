@@ -17,7 +17,7 @@ parameters:
     default: '15000'
     help: max outer distance for an RF readpair (corresponds to the -A parameter).
       This applies to long insert illumina pairs
-    mandatory: false
+    optional: true
     type: integer
   forward_suffix:
     allowed: []
@@ -25,7 +25,7 @@ parameters:
     default: _f.bfq
     help: Suffix of each forward filename - recognize forward files this way. Note
       this is not a regular extension, no . is assumed between the filename & suffix
-    mandatory: true
+    optional: true
     type: string
   maxdist:
     allowed: []
@@ -33,7 +33,7 @@ parameters:
     default: '250'
     help: max outer distance for a (non RF) readpair. This applies to illumina matepairs
       - i.e. short inserts
-    mandatory: false
+    optional: true
     type: integer
   moa_postcommand:
     allowed: []
@@ -41,7 +41,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -50,34 +50,34 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   read_dir:
     allowed: []
     category: ''
     default: ''
     help: directory containing the forward reads
-    mandatory: true
+    optional: false
     type: string
   reference:
     allowed: []
     category: ''
     default: ''
     help: Reference bfa file to map the reads to
-    mandatory: true
+    optional: false
     type: string
   reverse_suffix:
     allowed: []
     category: ''
     default: _r.bfq
     help: suffix of reverse files
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: MAQ paired ends mapper

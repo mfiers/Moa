@@ -16,7 +16,7 @@ parameters:
     category: ''
     default: ''
     help: Input fasta file to build a SOAP bwt database from
-    mandatory: true
+    optional: false
     type: file
   moa_postcommand:
     allowed: []
@@ -24,7 +24,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -33,13 +33,13 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Bowtie index builder

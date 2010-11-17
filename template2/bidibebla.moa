@@ -16,21 +16,21 @@ parameters:
     category: ''
     default: 1e-10
     help: e value cutoff
-    mandatory: false
+    optional: true
     type: float
   input_file_a:
     allowed: []
     category: ''
     default: ''
     help: First multifasta input file
-    mandatory: true
+    optional: false
     type: file
   input_file_b:
     allowed: []
     category: ''
     default: ''
     help: First multifasta input file
-    mandatory: true
+    optional: false
     type: file
   moa_postcommand:
     allowed: []
@@ -38,7 +38,7 @@ parameters:
     default: ''
     help: A single shell command to be executed after the Moa is finished. For more
       complex processing please override the moa_postprocess target in the local Makefile.
-    mandatory: false
+    optional: true
     type: string
   moa_precommand:
     allowed: []
@@ -47,27 +47,27 @@ parameters:
     help: A single command to be executed before the main operation starts. For more
       complicated processing, please override the moa_preprocess target in the local
       Makefile.
-    mandatory: false
+    optional: true
     type: string
   nothreads:
     allowed: []
     category: ''
     default: '4'
     help: threads to run bdbb with (note the overlap with the Make -j parameter)
-    mandatory: false
+    optional: true
     type: integer
   protein:
     allowed: [T, F]
     category: ''
     default: F
     help: Are we looking at proteins?
-    mandatory: false
+    optional: true
     type: set
   title:
     allowed: []
     category: system
     default: ''
     help: A name for this job
-    mandatory: true
+    optional: false
     type: string
 title: Bidirectional best BLAST hit
