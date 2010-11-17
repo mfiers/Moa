@@ -151,7 +151,7 @@ def templateConvert(data):
             inf['filesets'][fsid] = fs
 
             #and now remove all related parameters from the configuration
-            for x in ['_extension', '_glob', '_limit', '_sort']:
+            for x in ['_extension', '_glob', '_limit', '_sort', '_dir']:
                 ky = fsid + x
                 if inf['parameters'].has_key(ky):
                     del inf['parameters'][ky]
