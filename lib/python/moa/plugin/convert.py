@@ -150,6 +150,12 @@ def templateConvert(data):
                 inf['filesets'] = {}
             inf['filesets'][fsid] = fs
 
+            #and now remove all related parameters from the configuration
+            for x in ['_extension', '_glob', '_limit', '_sort']:
+                ky = fsid + x
+                if inf['parameters'].has_key(ky):
+                    del inf['parameters'][ky]
+
         text = rere.sub('', text)
 
         # see if there are 'remap' filesets
