@@ -3,7 +3,7 @@ backend: gnumake
 commands: [bamextract, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Extract one sequence from a bam file
-gnumake_makefile: /home/mf/project/moa/template2/bamextract.mk
+gnumake_makefile: /tmp/x/bamextract.mk
 help: {bamextract: '', clean: 'Remove all job data, not the Moa job itself, note that
     this must be implemented by the template.'}
 moa_id: bamextract

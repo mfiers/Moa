@@ -3,7 +3,9 @@ backend: gnumake
 commands: [crunch, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Create a crunch file for use with the Artemis ACT comparison tool.
-gnumake_makefile: /home/mf/project/moa/template2/crunch.mk
+filesets:
+  input: {description: Directory with input fasta files, optional: false, type: input}
+gnumake_makefile: /tmp/x/crunch.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', crunch: create crunch files}
 moa_id: crunch

@@ -3,7 +3,10 @@ backend: gnumake
 commands: [mummer, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run mummer between two sequences
-gnumake_makefile: /home/mf/project/moa/template2/mummer.mk
+filesets:
+  mum_input_a: {description: Set 1 input fasta files, optional: false, type: input}
+  mum_input_b: {description: Set 1 input fasta files, optional: false, type: input}
+gnumake_makefile: /tmp/x/mummer.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', mummer: ''}
 moa_id: mummer

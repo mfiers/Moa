@@ -24,12 +24,10 @@ moa_id = bwa_aln
 # Prerequisite testing
 
 #variables
-$(call moa_fileset_define,bwa_aln_input,fq,Fastq input files)
 
 $(moa_id)_seed_len_formatter = -l $(1)
 
 include $(MOABASE)/lib/gnumake/core.mk
-$(call moa_fileset_remap_nodir,bwa_aln_input,bwa_aln_output,sai)
 
 $(bwa_aln_output_files): %.sai: $(bwa_aln_input_dir)/%.$(bwa_aln_input_extension)
 	bwa aln $($(moa_id)_db) $($(moa_id)_seed_len_f) $< -f $@

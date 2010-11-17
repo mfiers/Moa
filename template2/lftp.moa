@@ -7,7 +7,7 @@ description: Use LFTP to download files. This template has two modi, one is set 
   The other modus is lftp_mode=get, when one file defined by lftp_url is downloaded.
   In the mirror mode it is possible to download only those files that are newer as
   the files already downloaded by using the lftp_timestamp parameter
-gnumake_makefile: /home/mf/project/moa/template2/lftp.mk
+gnumake_makefile: /tmp/x/lftp.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', lftp: execute the download}
 moa_id: lftp

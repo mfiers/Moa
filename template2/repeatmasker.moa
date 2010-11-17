@@ -3,7 +3,12 @@ backend: gnumake
 commands: [repmask, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run a default repeatmask on the input sequences
-gnumake_makefile: /home/mf/project/moa/template2/repeatmasker.mk
+filesets:
+  OUTPUT_FILESET_ID: {dir: ./OUTPUT_FILETYPE, extension: OUTPUT_FILETYPE, source: INPUT_FILESET_ID,
+    type: map}
+  input: {description: Input files for repmask, optional: false, type: input}
+  output: {dir: ., extension: masked, source: input, type: map}
+gnumake_makefile: /tmp/x/repeatmasker.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', repmask: ''}
 moa_id: repmask

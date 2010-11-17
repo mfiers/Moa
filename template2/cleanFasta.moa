@@ -4,7 +4,7 @@ commands: [clean_fasta, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Convert files to unix format and convert all characters that are not
   an A,C,G,T or N to N.
-gnumake_makefile: /home/mf/project/moa/template2/cleanFasta.mk
+gnumake_makefile: /tmp/x/cleanFasta.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', clean_fasta: Cleanup of a FASTA file (in place!)}
 moa_id: clean_fasta

@@ -24,8 +24,6 @@ moa_id = bowtie
 
 #variables
 
-$(call moa_fileset_define,bowtie_input,fastq,Input files for bowtie)
-
 #########################################################################
 # Prerequisite testing
 

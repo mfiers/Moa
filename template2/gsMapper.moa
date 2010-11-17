@@ -3,7 +3,7 @@ backend: gnumake
 commands: [gsmap, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run the Roche GS Reference mapper
-gnumake_makefile: /home/mf/project/moa/template2/gsMapper.mk
+gnumake_makefile: /tmp/x/gsMapper.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', gsmap: ''}
 moa_id: gsmap

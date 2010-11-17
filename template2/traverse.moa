@@ -3,7 +3,7 @@ backend: gnumake
 commands: [traverse, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Do nothing, except be a part in executing full directory structures
-gnumake_makefile: /home/mf/project/moa/template2/traverse.mk
+gnumake_makefile: /tmp/x/traverse.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', traverse: Do nothing - no need to call this.}
 moa_id: traverse

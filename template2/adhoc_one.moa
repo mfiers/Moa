@@ -3,7 +3,7 @@ backend: gnumake
 commands: [adhoc_one, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run an adhoc oneliner - without moa defined input files
-gnumake_makefile: /home/mf/project/moa/template2/adhoc_one.mk
+gnumake_makefile: /tmp/x/adhoc_one.mk
 help: {adhoc_one: '', clean: 'Remove all job data, not the Moa job itself, note that
     this must be implemented by the template.'}
 moa_id: adhoc_one

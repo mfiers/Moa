@@ -27,8 +27,6 @@ moa_id = mummer
 moa_targets += mummer clean
 
 #variables
-$(call moa_fileset_define,mum_input_a,fasta,Set 1 input fasta files)
-$(call moa_fileset_define,mum_input_b,fasta,Set 1 input fasta files)
 
 include $(MOABASE)/lib/gnumake/core.mk
 

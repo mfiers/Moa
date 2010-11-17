@@ -26,12 +26,10 @@ moa_id = sffinfo
 #########################################################################
 # Variable definition
 
-$(call moa_fileset_define,sffinfo_input,sff,Sff input files)
-
 #include the moa core libraries
 include $(MOABASE)/lib/gnumake/core.mk
 ifeq ($(sffinfo_accessions),T)
-$(call moa_fileset_remap_nodir,sffinfo_input,sffinfo_accession,acc)
+
 endif
 
 ifeq ($(sffinfo_untrimmed),T)
@@ -41,15 +39,15 @@ untrimmed_parameter =
 endif
 
 ifeq ($(sffinfo_sequences),T)
-$(call moa_fileset_remap_nodir,sffinfo_input,sffinfo_sequence,reads)
+
 endif
 
 ifeq ($(sffinfo_quality),T)
-$(call moa_fileset_remap_nodir,sffinfo_input,sffinfo_quality,qual)
+
 endif
 
 ifeq ($(sffinfo_flowgrams),T)
-$(call moa_fileset_remap_nodir,sffinfo_input,sffinfo_flowgram,flow)
+
 endif
 
 .PHONY: sffinfo_prepare

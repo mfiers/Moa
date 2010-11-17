@@ -3,7 +3,11 @@ backend: gnumake
 commands: [getorf, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Predicts open reading frames using the EMBOSS [[emboss]] getorf tool.
-gnumake_makefile: /home/mf/project/moa/template2/getorf.mk
+filesets:
+  gff: {dir: ./gff, extension: gff, source: input, type: map}
+  input: {description: Input files for getorf, optional: false, type: input}
+  output: {dir: ./out, extension: out, source: input, type: map}
+gnumake_makefile: /tmp/x/getorf.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', getorf: ''}
 moa_id: getorf

@@ -6,7 +6,9 @@ description: Run a simple, out of the box, newbler assembly. As an extra feature
   this template automatically creates uniquely named links to the two main output
   fasta files (454AllContigs.fna, 454LargeContigs.fna). This is convenient for subsequence
   gather steps. The links are named after the directory.
-gnumake_makefile: /home/mf/project/moa/template2/newbler.mk
+filesets:
+  input: {description: input SFF files, optional: false, type: input}
+gnumake_makefile: /tmp/x/newbler.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', newbler: ''}
 moa_id: newbler

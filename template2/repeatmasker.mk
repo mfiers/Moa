@@ -18,8 +18,6 @@
 # 
 moa_id = repmask
 
-$(call moa_fileset_define,$(moa_id)_input,fasta,Input files for $(moa_id))
-
 #variables
 
 repmask_species_formatter = $(if $(1),-spe $(1))
@@ -30,8 +28,7 @@ $(moa_id)_quick_formatter = $(if $(call seq,$(1),T),-qq)
 
 $(moa_id)_parallel_formatter = -pa $(1)
 
-include $(MOABASE)/lib/gnumake/core.mk## usage: $(call moa_fileset_remap,INPUT_FILESET_ID,OUTPUT_FILESET_ID,OUTPUT_FILETYPE)
-$(call moa_fileset_remap_nodir,$(moa_id)_input,$(moa_id)_output,masked)
+include $(MOABASE)/lib/gnumake/core.mk## usage:
 
 .PHONY: repmask_prepare
 repmask_prepare:

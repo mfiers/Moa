@@ -3,7 +3,10 @@ backend: gnumake
 commands: [fq2bq, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Converts a FASTQ file to MAQ BFQ format.
-gnumake_makefile: /home/mf/project/moa/template2/maq_fastq2bfq.mk
+filesets:
+  bfq: {dir: ./bfq, extension: bfq, source: input, type: map}
+  input: {description: input FASTA files, optional: false, type: input}
+gnumake_makefile: /tmp/x/maq_fastq2bfq.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', fq2bq: ''}
 moa_id: fq2bq

@@ -24,7 +24,6 @@ moa_id = bowtiedb
 # Prerequisite testing
 
 #variables
-$(call moa_fileset_define,bowtiedb_input,fasta,Sequence files used to build a bowtie database)
 
 include $(MOABASE)/lib/gnumake/core.mk
 bowtiedb: $(bowtiedb_name).1.ebwt

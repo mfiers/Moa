@@ -20,7 +20,7 @@
 moa_id=adhoc
 
 ifneq ($(moa_id)_mode,'simple')
-$(call moa_fileset_define_opt,$(moa_id)_input,,Input files for $(moa_id))
+
 endif
 # Help
 

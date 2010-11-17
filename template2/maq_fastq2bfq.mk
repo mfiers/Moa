@@ -24,7 +24,6 @@ endif
 moa_id = fq2bq
 
 #variables
-$(call moa_fileset_define,fq2bq_input,fastq,input FASTA files)
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk
@@ -33,7 +32,6 @@ endif
 ##### Derived variables for this run
 
 #$(call moa_fileset_init,fq2bq_input)
-$(call moa_fileset_remap,fq2bq_input,fq2bq_bfq,bfq)
 
 test:
 	@echo $(fq2bq_input_files)

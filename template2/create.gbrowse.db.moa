@@ -6,7 +6,7 @@ description: A library that aids in uploading FASTA and GFF to a Generic Genome 
   database. This template is only to be used embedded in another template. This library
   expects that the following variables are preset; gup_fasta_dir, gup_gff_dir gup_upload_fasta,
   gup_upload_gff
-gnumake_makefile: /home/mf/project/moa/template2/create.gbrowse.db.mk
+gnumake_makefile: /tmp/x/create.gbrowse.db.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', gupgo: '', initGbrowse: '', upload2gbrowse: ''}
 moa_id: upload2gbrowse

@@ -21,7 +21,6 @@ include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = sam2bam
 
 #variables
-$(call moa_fileset_define,sam2bam_input,sam,input SAM files)
 
 #########################################################################
 # Prerequisite testing
@@ -35,7 +34,6 @@ prereq_samtools:
 ## include moabase
 include $(MOABASE)/lib/gnumake/core.mk
 ##### Derived variables for this run
-$(call moa_fileset_remap_nodir,sam2bam_input,sam2bam_output,bam)
 
 test:
 	@echo 'xx $(HAVE_INCLUDED_MOABASE)'

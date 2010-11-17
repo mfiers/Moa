@@ -33,8 +33,6 @@ prereq_biopython_installed:
 		exit -1 ;\
 	fi
 
-$(call moa_fileset_define,blast_input,fasta,Directory with the BLAST input files)
-
 #moa_inputfile_vars += blast_input_files
 moa_state_outsets  +=  blast_gff_files
 

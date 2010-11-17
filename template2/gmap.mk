@@ -18,19 +18,15 @@
 # 
 moa_id = gmap
 
-$(call moa_fileset_define,gmap_input,fasta,Sequences to map)
-
 #variables
 
 include $(MOABASE)/lib/gnumake/core.mk
-$(call moa_fileset_remap_nodir,gmap_input,gmap_raw,raw)
-$(call moa_fileset_remap_nodir,gmap_input,gmap_gff,gff)
-$(call moa_fileset_remap_nodir,gmap_input,gmap_genepred,genepred)
+
 ifeq ($(gmap_invert_gff),T)
-$(call moa_fileset_remap_nodir,gmap_input,gmap_gff_invert,invert.gff)
+
 endif
 
-gmap_output_raw = $(call moa_fileset_remap,gmap_input,gmap_raw,raw)
+gmap_output_raw =
 
 .PHONY: gmap
 gmap: gmap_message $(gmap_raw_files) $(gmap_gff_files) $(gmap_gff_invert_files) $(gmap_genepred_files) gmap_report

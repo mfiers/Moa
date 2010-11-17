@@ -29,8 +29,6 @@ moa_id = getorf
 #########################################################################
 # Variable definition
 
-$(call moa_fileset_define,getorf_input,fasta,Input files for getorf)
-
 ################################################################################
 #include moabase
 include $(MOABASE)/lib/gnumake/core.mk
@@ -39,8 +37,6 @@ getorf_input_extension ?= fasta
 getorf_find ?= 0
 
 #prepare lists of out & gff files
-$(call moa_fileset_remap,getorf_input,getorf_output,out)
-$(call moa_fileset_remap,getorf_input,getorf_gff,gff)
 
 #echo Main target for getorf
 .PHONY: getorf

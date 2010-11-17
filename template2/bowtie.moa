@@ -3,7 +3,9 @@ backend: gnumake
 commands: [bowtie, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run BOWTIE on an set of input files (query) vs a database index.
-gnumake_makefile: /home/mf/project/moa/template2/bowtie.mk
+filesets:
+  input: {description: Input files for bowtie, optional: false, type: input}
+gnumake_makefile: /tmp/x/bowtie.mk
 help: {bowtie: '', clean: 'Remove all job data, not the Moa job itself, note that
     this must be implemented by the template.'}
 moa_id: bowtie

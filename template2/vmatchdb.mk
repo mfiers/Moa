@@ -24,8 +24,6 @@ moa_id = vmatchdb
 
 #variables
 
-$(call moa_fileset_define,vmatchdb_input,fasta,Input files for vmatch)
-
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif

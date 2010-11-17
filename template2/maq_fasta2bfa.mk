@@ -24,15 +24,12 @@ endif
 moa_id = f2b
 
 #variables
-$(call moa_fileset_define,f2b_input,fasta,input FASTA files)
 
 ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/core.mk
 endif
 
 ##### Derived variables for this run
-
-$(call moa_fileset_remap,f2b_input,f2b_bfa,bfa)
 
 test:
 	@echo $(f2b_input_files)

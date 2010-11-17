@@ -21,7 +21,6 @@ include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = newbler
 
 #variables
-$(call moa_fileset_define,newbler_input,sff,input SFF files)
 
 ################################################################################
 ## Include MOABASE

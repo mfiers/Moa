@@ -4,7 +4,7 @@ commands: [scaf, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Scaffold a set of input files based on a blast against a reference sequence.
   This software is written around bambus
-gnumake_makefile: /home/mf/project/moa/template2/scaffolder.mk
+gnumake_makefile: /tmp/x/scaffolder.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', scaf: ''}
 moa_id: scaf

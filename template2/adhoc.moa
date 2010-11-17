@@ -3,7 +3,9 @@ backend: gnumake
 commands: [adhoc, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: The ad hoc template aids in executing a one line on a set of input files.
-gnumake_makefile: /home/mf/project/moa/template2/adhoc.mk
+filesets:
+  input: {description: Input files for adhoc, optional: true, type: input}
+gnumake_makefile: /tmp/x/adhoc.mk
 help: {adhoc: '', clean: 'Remove all job data, not the Moa job itself, note that this
     must be implemented by the template.'}
 moa_id: adhoc

@@ -24,7 +24,6 @@ moa_id = bwa_index
 # Prerequisite testing
 
 #variables
-$(call moa_fileset_define,bwa_index_input,fasta,Sequence files used to build a bwa database)
 
 include $(MOABASE)/lib/gnumake/core.mk
 $(fastafile): 

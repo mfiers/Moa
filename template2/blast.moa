@@ -4,7 +4,9 @@ commands: [blast, clean, blast_report]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Wraps BLAST [[Alt90]], probably the most popular similarity search tool
   in bioinformatics.
-gnumake_makefile: /home/mf/project/moa/template2/blast.mk
+filesets:
+  input: {description: Directory with the BLAST input files, optional: false, type: input}
+gnumake_makefile: /tmp/x/blast.mk
 help: {blast: 'Running BLAST takes an input directory (*blast_input_dir*), determines
     what sequence files are present (with the parameter *blast_input_extension*) and
     executes BLAST on each of these. Moa BLAST is configured to create XML output

@@ -3,7 +3,10 @@ backend: gnumake
 commands: [bwa_aln, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Use bwa to aling a set of fastq reads against a db
-gnumake_makefile: /home/mf/project/moa/template2/bwa_aln.mk
+filesets:
+  input: {description: Fastq input files, optional: false, type: input}
+  output: {dir: ., extension: sai, source: input, type: map}
+gnumake_makefile: /tmp/x/bwa_aln.mk
 help: {bwa_aln: '', clean: 'Remove all job data, not the Moa job itself, note that
     this must be implemented by the template.'}
 moa_id: bwa_aln

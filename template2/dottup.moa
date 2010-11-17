@@ -3,7 +3,7 @@ backend: gnumake
 commands: [dottup, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Use dottup (from EMBOSS) to compare two sets of sequences
-gnumake_makefile: /home/mf/project/moa/template2/dottup.mk
+gnumake_makefile: /tmp/x/dottup.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', dottup: Run dottup}
 moa_id: dottup

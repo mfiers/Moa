@@ -23,8 +23,6 @@ moa_id = crunch
 #########################################################################
 # Prerequisite testing
 
-$(call moa_fileset_define,crunch_input,fasta,Directory with input fasta files)
-
 #include moabasemoa	
 include $(MOABASE)/lib/gnumake/core.mk
 #shortcut - need this quite  often
