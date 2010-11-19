@@ -68,10 +68,10 @@ endif
 #catch undefine prepare steps - 
 %_prepare:
 	@echo -n
-	
+
 %_post:
 	@echo -n
-	
+
 .PHONY: moa_finished
 moa_finished:
 	@$(call echo,Moa finished - Succes!)
@@ -81,9 +81,8 @@ moa_finished:
 ## files are created inbetween steps
 moa_main_target: minj=$(if $(MOA_THREADS),-j $(MOA_THREADS))
 moa_main_target:
-	$(call echo,calling $(moa_id)) ;							\
-	$(MAKE) $(mins) $(minj) $(moa_id) 							\
-				$(moa_id)_main_phase=T ;
+	$(call echo,calling $(moa_id)) ;		\
+	$(MAKE) $(mins) $(minj) $(moa_id) $(moa_id)_main_phase=T ;
 
 ## each moa makefile should include a ID_clean target cleaning up
 ## after it..  this one calls all cleans. Note that the x_clean

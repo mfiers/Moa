@@ -57,12 +57,17 @@ def configShow(data):
     keys.sort()
     
     for p in keys:
+        if p[:4] == 'moa_': continue
         if job.conf.setInJobConf(p):
             moa.ui.fprint("%%(bold)s%s\t%s%%(reset)s" % (
                 p, job.conf[p]))
         else:
-            moa.ui.fprint("%%(blue)s%s\t%s%%(reset)s" % (
-                p, job.conf[p]))
+            if job.template.parameters[p].optional:
+                moa.ui.fprint("%%(blue)s%s\t%s%%(reset)s" % (
+                    p, job.conf[p]))
+            else:
+                moa.ui.fprint("%%(red)s%s\t%s%%(reset)s" % (
+                    p, job.conf[p]))
 
 
 def configUnset(data):

@@ -27,27 +27,12 @@ endif
 #########################################################################
 #Include moa core
 include $(MOABASE)/lib/gnumake/core.mk
+
 ifeq ($($(moa_id)_mode),simple)
 $(moa_id)_touch=F
 else
 $(moa_id)_touch_files=$(addprefix touch/,$(notdir $($(moa_id)_input_files)))
 endif
-
-ifeq ($($(moa_id)_r_mode),T)
-ifeq ($($(moa_id)_process),$($(moa_id)_process_default))
-ifeq ($($(moa_id)_mode),all)
-$(moa_id)_process=Rscript --vanilla moa.R --args $^ 
-else
-ifeq ($($(moa_id)_mode),simple)
-$(moa_id)_process=Rscript --vanilla moa.R
-else
-$(moa_id)_process=Rscript --vanilla moa.R --args $< > $t
-endif
-endif
-endif
-endif
-
-$(moa_id)_link_noclean ?= Makefile moa.mk
 
 .PHONY: $(moa_id)_prepare
 $(moa_id)_prepare:
@@ -66,20 +51,20 @@ $(moa_id)_check:
 	$(if $($(moa_id)_input_dir),,\
 		$(call exerUnlock, Need to define $(moa_id)_input_dir))
 
+
 ################################################################################
 ## $(moa_id) mode: seq
+
 ifeq ($($(moa_id)_mode),seq)
 
 .NOTPARALLEL: $(moa_id)
 
 $(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
-
 touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
 touch/%: b=$(shell basename $< .$($(moa_id)_input_extension))
 touch/%: $($(moa_id)_input_dir)/%
 	$(call echo,considering $< -- $t ($b) )
-	$(call warn,running $($(moa_id)_process))
-	echo
+	$(call echo,running $($(moa_id)_process))
 	$($(moa_id)_process)
 	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
 		touch $@; \

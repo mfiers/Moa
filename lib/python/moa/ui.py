@@ -48,6 +48,7 @@ FORMAT_CODES_ANSI = {
     'underline' : chr(27) + "[4m",
     'black' : chr(27) + "[30m",
     'blue' : chr(27) + "[34m",
+    'red' : chr(27) + "[31m",
     }
 
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])

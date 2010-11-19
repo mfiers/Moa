@@ -5,6 +5,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: The ad hoc template aids in executing a one line on a set of input files.
 filesets:
   input: {extension: '', help: Input files for adhoc, optional: true, type: input}
+  touch: {dir: touch, extension: '', source: input, type: map}
 gnumake_makefile: /tmp/x/adhoc.mk
 help: {adhoc: '', clean: 'Remove all job data, not the Moa job itself, note that this
     must be implemented by the template.'}

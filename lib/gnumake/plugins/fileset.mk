@@ -24,31 +24,6 @@
 #
 ################################################################################
 
-
 ## Evaluate & load the filesets
-ifdef $(moa_id)_main_phase
-
-$(foreach v,$(_moa_filesets), \
-	$(eval $(v)_srtst=cat) \
-	$(eval $(v)_realext=$(if $($(v)_extension),.$($(v)_extension))) \
-	$(if $(call seq,$($(v)_sort),u), \
-		$(eval $(v)_prtst=%A@)) \
-	$(if $(call seq,$($(v)_sort),t), \
-		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%A@)) \
-	$(if $(call seq,$($(v)_sort),tr), \
-		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%A@)) \
-	$(if $(call seq,$($(v)_sort),s), \
-		$(eval $(v)_srtst=sort -n)$(eval $(v)_prtst=%s)) \
-	$(if $(call seq,$($(v)_sort),sr), \
-		$(eval $(v)_srtst=sort -nr)$(eval $(v)_prtst=%s)) \
-	$(if $($(v)_limit),$(eval $(v)_lmtst=|head -n $($(v)_limit))) \
-	$(eval $(v)_files=$(shell \
-				find $($(v)_dir)/ -maxdepth 1 \
-					-name '$($(v)_glob)$($(v)_realext)' \
-					-printf '$($(v)_prtst)\t%p\n' \
-			| ( $($(v)_srtst) 2>/dev/null ) \
-			$($(v)_lmtst) \
-			| cut -f 2 )))
-endif
-
-moa_fileset_init = $(warning use of moa_fileset_init is deprecated)
+$(foreach v,$(moa_filesets), \
+	$(eval $(moa_id)_$(v)_files=$(shell cat .moa/$(v).fof)))

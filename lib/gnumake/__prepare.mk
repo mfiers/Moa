@@ -65,8 +65,6 @@ ifdef MOA_VERBOSE
 e=
 minv=-v
 mins=
-echo = (echo -en "$(moawarn)" >2; echo '$(strip $(1))' >2)
-debug = (echo -en "$(moadebug)" >2; echo '$(strip $(1))' >2)
 else
 e=@
 minv=
@@ -93,8 +91,8 @@ moa_postprocess:
 ## Template loader
 
 moa_load=$(eval include \
-	$(if $(wildcard ./$(1).mk),\
-		./$(1).mk,\
+	$(if $(wildcard ./.moa/$(1).mk),\
+		./.moa/$(1).mk,\
 		$(if $(wildcard ~/.config/moa/gnumake/$(1).mk),\
 			~/.config/moa/gnumake/$(1).mk,\
 			$(if $(wildcard $(MOABASE)/template2/$(1).mk),\

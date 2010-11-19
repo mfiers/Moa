@@ -9,6 +9,7 @@ import moa.template
 import moa.utils
 import moa.actor
 import moa.backend
+import moa.sysConf
 
 NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
 ## Moa Makefile
@@ -57,7 +58,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
 
         if options.makedebug:
             self.makeArgs.append('-d')
-            
+
         ## Define extra parameters to use with Make
         if options.remake:
             self.makeArgs.append('-B')
@@ -73,6 +74,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
         ## other parameters. multi-threaded operation is only allowed in the
         ## second phase of execution.
         self.env['MOA_THREADS'] = "%s" % self.job.options.threads
+        self.env['moa_plugins'] = "%s" % " ".join(moa.sysConf.getPlugins())
         
         #if moa is silent, make should be silent
         if not self.job.options.verbose:
@@ -90,7 +92,15 @@ class GnumakeBackend(moa.backend.BaseBackend):
         confDict = {}
         moaId = self.job.template.name
         for k in self.job.conf.keys():
-            confDict['%s_%s' % (moaId, k)] = self.job.conf[k]
+            v = self.job.conf[k]
+            if isinstance(v, dict): continue
+            if isinstance(v, list): v = " ".join(map(str,v))
+            if isinstance(v, set): v = " ".join(map(str,v))
+            if k[:3] == 'moa':
+                confDict[k] = v
+            else:
+                confDict['%s_%s' % (moaId, k)] = v
+
         actor.setEnv(confDict)
 
         cl = ['make', command] + self.makeArgs

@@ -68,11 +68,21 @@ class JobConf(object):
         rvj = set(self.jobConf.keys())
         return list(rvt.union(rvj))
 
+    def has_key(self, key):
+        if self.jobConf.has_key(key):
+            return True
+        if self.template.parameters.has_key(key):
+            return True
+        return False
+        
     def __getitem__(self, key):
         if self.jobConf.has_key(key):
             return self.jobConf[key]
         elif key in self.template.parameters.keys():
-            return self.template.parameters[key].default
+            if self.template.parameters[key].has_key('default'):
+                return self.template.parameters[key].default
+            else:
+                return ''
 
     def __delitem__(self, key):
         del(self.jobConf[key])
