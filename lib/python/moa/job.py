@@ -52,7 +52,7 @@ def newJob(wd, template, options={}):
     """
     return Job(wd, template = template, options = options)
     
-def newTestJob(*args, **kwargs):
+def newTestJob(template, **options):
     """
     Test function - creates a temp directory and uses that to
     instantiate the job in. This function returns the directory where
@@ -75,11 +75,8 @@ def newTestJob(*args, **kwargs):
     """
 
     wd = tempfile.mkdtemp()
-    if args:
-        kwargs['template'] = args[0]
-    kwargs['title'] = kwargs.get('title', 'Test Job')
-    job = newJob(wd, **kwargs)
-    return wd
+    job = Job(wd, template=template, options=options)
+    return job
 
 class Job(object):
     """

@@ -107,13 +107,6 @@ def moaresume(data):
     l.warning("Resming job %d" % pid)
     os.kill(pid, 18)
 
-
-def _noToDir(dir):
-    """
-    Try to resolve a directory name by it's number
-    """
-
-    
 def moamv(data):
     
     wd = data['cwd']

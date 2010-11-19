@@ -38,15 +38,11 @@ import textwrap
 MOABASE = moa.utils.getMoaBase()
 
 def defineCommands(data):
-    #data['commands']['status'] = {
-    #    'private' : True,
-    #    'call' : status
-    #    }
 
     data['commands']['template'] = {
         'private' : False,
         'call' : template,
-        'desc' : 'Show the template of this moa job'
+        'desc' : 'Print out the template name of this job'
         }
 
     data['commands']['show'] = {
@@ -75,11 +71,6 @@ def listTemplatesLong(data):
             subsequent_indent = '     '):
             moa.ui.fprint(line)
 
-def rawInfo(data):
-    pprint.pprint(moa.info.info(data['cwd']))
-
-def status(data):
-    print moa.info.status(data['cwd'])
-
 def template(data):
-    print moa.info.getTemplateName(data['cwd'])
+    job = data['job']
+    print job.template.name

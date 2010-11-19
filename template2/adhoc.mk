@@ -134,7 +134,6 @@ $(moa_id)_unittest:
 	moa set $(moa_id)_mode=simple
 	moa set $(moa_id)_process='cat 10.input/* > test.1'
 	moa
-	#cat test.1
 	[[ "`cat test.1`" == "12345" ]]
 	rm test.1
 	moa set $(moa_id)_mode=seq
