@@ -3,13 +3,11 @@ import os
 import sys
 
 import moa.utils
-import moa.logger as l
-import moa.conf
 import moa.template
-import moa.utils
 import moa.actor
 import moa.backend
 import moa.sysConf
+import moa.logger as l
 
 NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
 ## Moa Makefile
@@ -67,8 +65,13 @@ class GnumakeBackend(moa.backend.BaseBackend):
         
         self.makeArgs.extend(self.job.args)
     
-    def execute(self, command, verbose=False, background=False):
-
+    def execute(self, command, **options):
+        """
+        Execute!
+        """
+        verbose = options.get('verbose', False)
+        background = options.get('background', False)
+        
         ## make sure the MOA_THREADS env var is set - this is used from inside
         ## the Makefiles later threads need to be treated different from the
         ## other parameters. multi-threaded operation is only allowed in the
@@ -93,9 +96,11 @@ class GnumakeBackend(moa.backend.BaseBackend):
         moaId = self.job.template.name
         for k in self.job.conf.keys():
             v = self.job.conf[k]
-            if isinstance(v, dict): continue
-            if isinstance(v, list): v = " ".join(map(str,v))
-            if isinstance(v, set): v = " ".join(map(str,v))
+            if isinstance(v, dict):
+                continue
+            if isinstance(v, list) or \
+                   isinstance(v, set):
+                v = " ".join(map(str,v))
             if k[:3] == 'moa':
                 confDict[k] = v
             else:
@@ -148,7 +153,8 @@ class GnumakeBackend(moa.backend.BaseBackend):
         Create a new GnuMake job in the `wd`
         """
         
-        l.debug("Creating a new job from template '%s'" % self.job.template.name)
+        l.debug("Creating a new job from template '%s'" %
+                self.job.template.name)
         l.debug("- in wd %s" % self.wd)
           
         template = self.job.template

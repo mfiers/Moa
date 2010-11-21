@@ -28,7 +28,6 @@ import sys
 
 import moa.utils
 import moa.logger as l
-import moa.conf
 import moa.job
 
 def _projectRoot(job):
@@ -100,4 +99,4 @@ def findProjectRoot(job):
         
         # assuming that we're not creating moa jobs in the system root
         # if you do want to, I'm not going to cooperate.
-        if cwd == '/': return None
+        if lookAt.wd == '/': return None

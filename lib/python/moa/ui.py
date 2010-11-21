@@ -48,6 +48,7 @@ FORMAT_CODES_ANSI = {
     'underline' : chr(27) + "[4m",
     'black' : chr(27) + "[30m",
     'blue' : chr(27) + "[34m",
+    'green' : chr(27) + "[32m",
     'red' : chr(27) + "[31m",
     }
 

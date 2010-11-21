@@ -31,9 +31,9 @@ import moa.logger as l
 from moa.logger import setSilent, setInfo, setVerbose
 
 #import moa.lock
-import moa.conf
 import moa.utils
 import moa.job
+import moa.sysConf
 import moa.plugin
 #import moa.project
 import moa.template
@@ -72,7 +72,7 @@ def testPlugins(args=[]):
     global pluginTests
 
     #new style plugin tests
-    plugins = moa.plugins.Plugins()
+    plugins = moa.plugin.PluginHandler(moa.sysConf.getPlugins())
     for plugin, testCode in plugins.getAttr('TESTSCRIPT'):
 
         #if asking for a single plugin, test only that plugin
@@ -120,7 +120,7 @@ def run(options, args):
         setSilent()        
         testModule(moa.utils)
         #testModule(moa.lock)
-        testModule(moa.conf)
+        #testModule(moa.conf)
         #testModule(moa.project)
         testModule(moa.template)
         testModule(moa.job)
@@ -131,11 +131,6 @@ def run(options, args):
         l.info("Finished running of python unittests")
         l.info("Ran %d test, %d failed" % (tests, failures))
         
-        l.info("Start running basic template tests")
-        testTemplates()
-        l.info("Ran %d template test, %d failed" % (
-                templateTests, templateFailures))
-
         l.info("Start running plugin tests")
         testPlugins()
         l.info("Ran %d plugin test, %d failed" % (
@@ -152,12 +147,6 @@ def run(options, args):
     elif args[0] == 'plugin':
         l.info("Start running plugin tests")
         testPlugins(args[1:])
-    elif args[0] == 'templates':
-        l.info("Start running basic template tests")
-        testTemplates()
-        l.info("Ran %d template test, %d failed" % (
-            templateTests, templateFailures))
-        l.info("Finished running basic template tests")
     elif args[0][:4] == 'moa.':            
         l.info("testing moa python module %s" % args[0])
         setSilent()
@@ -167,9 +156,7 @@ def run(options, args):
         l.info("Finished running unittests for %s" % args[0])
         l.info("Ran %d test, %d failed" % (tests, failures))
     else:
-        #Assume it is a templat
-        testTemplates(args[0], verbose=options.verbose)
-        testTemplateExtensive(args[0], verbose=options.verbose)
+        l.error("sorry - no clue what you might have meant")
 
         
     

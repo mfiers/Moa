@@ -22,18 +22,12 @@ Job
 """
 
 import os
-import re
-import sys
 import tempfile
 
 import moa.utils
 import moa.logger as l
-import moa.conf
 import moa.template
-import moa.utils
 import moa.jobConf
-
-import Yaco
 
 def getJob(wd):
     """
@@ -44,12 +38,15 @@ def getJob(wd):
     """
     return Job(wd)
 
-def newJob(wd, template, options={}):
+def newJob(wd, template, options=None):
     """
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
     template, and instantiate the proper job type
     """
+    if not options:
+        options = {}
+        
     return Job(wd, template = template, options = options)
     
 def newTestJob(template, **options):
@@ -58,17 +55,14 @@ def newTestJob(template, **options):
     instantiate the job in. This function returns the directory where
     the job is created. All parameters are passed on to L{newJob}
 
-        >>> d = newTestJob('traverse')
-        >>> type(d) == type('hi')
+        >>> job = newTestJob(template = 'adhoc')
+        >>> isinstance(job, Job)
         True
-        >>> os.path.exists(d)
+        >>> os.path.exists(job.wd)
         True
-        >>> os.path.exists(os.path.join(d, 'Makefile'))
+        >>> os.path.exists(os.path.join(job.wd, '.moa', 'template'))
         True
-        >>> job = moa.runMake.MOAMAKE(wd = d, captureErr=True)
-        >>> rc = job.run()
-        >>> type(rc) == type(1)
-        True
+
     
     @returns: The directory where the job was created
     @rtype: string
@@ -86,22 +80,23 @@ class Job(object):
     def __init__(self,
                  wd,
                  template = None,
-                 options = {},
-                 captureOut = False,
-                 captureErr = False):
+                 options = None):
         """        
 
         """
 
-        if wd[-1] == '/': wd = wd[:-1]
+        if wd[-1] == '/':
+            wd = wd[:-1]
         self.wd = wd
-        self.options = options
+        if options:
+            self.options = options
+        else:
+            self.options = {}
         
-        self.captureOut = captureOut
-        self.captureErr = captureErr
-
         self.confDir = os.path.join(self.wd, '.moa')
 
+        self.template = None
+        self.backend = None
         self.args = []
         self.options = {}
 
@@ -131,13 +126,12 @@ class Job(object):
         """
         Get an actor for this job
         """        
-        return moa.actor.Actor(wd = self.wd,
-                               captureOut = self.captureOut,
-                               captureErr = self.captureErr)
+        return moa.actor.Actor(wd = self.wd)
 
     
     def execute(self, command):
         """
+        Execute the job
         """
         l.debug("executing %s" % command)
         if self.backend:
@@ -175,7 +169,7 @@ class Job(object):
         Set a new template for this job
         """
         self.checkConfDir()
-        l.info("Setting job template to %s" % name)
+        l.debug("Setting job template to %s" % name)
         self.template = moa.template.Template(name)
         with open(os.path.join(self.confDir, 'template'), 'w') as F:
             F.write(name)
@@ -204,19 +198,18 @@ class Job(object):
         backendName = self.template.backend
         l.debug("attempt to load backend %s" % backendName)
         try:
-            _moduleName = 'moa.backend.%s' % backendName
-            _module =  __import__( _moduleName, globals(),
-                                   locals(), [_moduleName], -1)            
-            l.debug("Successfully Loaded module %s" % _moduleName)
+            moduleName = 'moa.backend.%s' % backendName
+            module =  __import__( moduleName, globals(),
+                                   locals(), [moduleName], -1)            
+            l.debug("Successfully Loaded module %s" % moduleName)
         except ImportError, e:
-            if str(e) == "No module named %s" % _moduleName:
+            if str(e) == "No module named %s" % moduleName:
                 l.critical("Backend %s does not exists" % backendName)
             l.critical("Error loading backend %s" % backendName)
             raise
-            sys.exit(-1)                
             
         self.backend = getattr(
-            _module, '%sBackend' % backendName.capitalize())(self)
+            module, '%sBackend' % backendName.capitalize())(self)
 
         
     def isMoa(self):
@@ -229,6 +222,7 @@ class Job(object):
         """
         Initialize a new job in the current wd
         """
-        l.debug("calling backend to initialize template %s" % self.template.name)
+        l.debug("calling backend to initialize template %s" %
+                self.template.name)
         self.backend.initialize()
         

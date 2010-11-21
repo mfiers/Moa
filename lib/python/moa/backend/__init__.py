@@ -33,6 +33,6 @@ class BaseBackend(object):
     def prepare(self):
         pass
     
-    def execute(self, command):
+    def execute(self, command, **options):
         pass
     

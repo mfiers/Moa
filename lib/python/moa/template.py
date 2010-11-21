@@ -22,8 +22,6 @@ Template
 """
 
 import os
-import yaml
-import UserDict
 
 import Yaco
 
@@ -51,7 +49,7 @@ class Template(Yaco.Yaco):
         * Load template info
         """        
 
-        
+        super(Template, self).__init__(self)
         if name:
             self._templateDataFile = os.path.join(
                 TEMPLATEDIR, '%s.moa' % name)
@@ -87,12 +85,10 @@ def listAll():
     List all known templates, returns a tuple of:
     (templatename, templatefile)
 
-        >>> result = list()
+        >>> result = listAll()
         >>> len(result) > 0
         True
         >>> type(result) == type([])
-        True
-        >>> 'adhoc' in result
         True
 
     @returns: a list with all known templates
@@ -108,20 +104,22 @@ def listAll():
             relPath += '/'
         files.sort()
         for f in files:
-            if f[0] == '.': continue
-            if f[0] == '_': continue
-            if f[0] == '#': continue
-            if f[-1] == '~': continue
-            if not '.moa' in f: continue
+            if f[0] == '.' or \
+               f[0] == '_' or \
+               f[0] == '#' or \
+               f[-1] == '~'or \
+               (not '.moa' in f):
+                continue
             name = f.replace(".moa", "")
-            yield(os.path.join(path, f), name)
+            r.append((os.path.join(path, f), name))
+    return r
 
 def listAllLong():
     """
     Returns a generator yielding tuples of all templates and a
     corresponding description.
 
-        >>> ll = listLong()
+        >>> ll = listAllLong()
         >>> fi = ll.next()
         >>> type(fi) == type((1,2))
         True

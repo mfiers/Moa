@@ -25,19 +25,16 @@ This script serves as a command dispatcher for all moa functionality
 
 import os
 import sys
-import yaml
 import optparse
 import textwrap
 
 #moa specific libs
 import moa.job
-import moa.conf
 import moa.utils
 import moa.sysConf
 import moa.version
 import moa.project
 import moa.unittests
-import moa.checkTemplate
 import moa.plugin
 import moa.moaCommands
 
