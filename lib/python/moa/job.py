@@ -18,7 +18,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Job
+moa.job
+-------
+
 """
 
 import os
@@ -74,16 +76,21 @@ def newTestJob(template, **options):
 
 class Job(object):
     """
-    Placeholder for a job
+    Class defining a single job
+
+    
+    :param wd: The directory containing the job
+    
+    :param template: The template a job should have. If undefined,
+        read the template from `./.moa/template`
+
+    :param options: Additional options to feed to this job
     """
     
     def __init__(self,
                  wd,
                  template = None,
                  options = None):
-        """        
-
-        """
 
         if wd[-1] == '/':
             wd = wd[:-1]
@@ -115,8 +122,7 @@ class Job(object):
 
     def checkConfDir(self):
         """
-        Check if the configuration directory exists. If
-        not create it.
+        Check if the configuration directory exists. If not create it.
         """
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
@@ -124,14 +130,21 @@ class Job(object):
 
     def getActor(self):
         """
-        Get an actor for this job
+        Get an instance of :class:`moa.actor.Actor` for this job.
+
+        :rtype: instance of :class:`moa.actor.Actor`
         """        
         return moa.actor.Actor(wd = self.wd)
 
     
     def execute(self, command):
         """
-        Execute the job
+        Execute `command` in the context of this job. Execution is
+        alwasy deferred to the backend
+
+        :param command: the command to execute
+        :type command: string
+        
         """
         l.debug("executing %s" % command)
         if self.backend:

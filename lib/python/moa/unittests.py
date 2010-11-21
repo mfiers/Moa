@@ -18,7 +18,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Unit tests
+moa.unittests
+-------------
+
+Run Moa wide tests
 """
 
 import os

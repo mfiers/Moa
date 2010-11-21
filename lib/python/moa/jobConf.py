@@ -16,7 +16,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-moa system config
+moa.jobConf
+-----------
+
+moa job configuration
 """
 
 import os

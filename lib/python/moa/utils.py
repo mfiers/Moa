@@ -18,70 +18,78 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa script - random utilities
+moa.utils
+---------
+
+A set of random utilities used by Moa
 """
 
 import os
-import re
 import sys
 import time
 import glob
 import errno
-import shutil
 import readline
 import traceback
 import contextlib
 
 import moa.logger as l
-from moa.exceptions import *
 
-# Get a file lock, adapted from:
-#  http://code.activestate.com/recipes/576572/
 @contextlib.contextmanager
-def flock(path, wait_delay=.1, max_wait=100):
+def flock(path, waitDelay=.1, maxWait=100):
+    """
+    Create a file lock
+
+    Adapted from: http://code.activestate.com/recipes/576572/
+
+    
+
+    """
     waited = 0
-    waited_too_long = False
+    waitedTooLong = False
     while True:
         try:
             fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
         except OSError, e:
             if e.errno != errno.EEXIST:
                 raise
-            waited += wait_delay
-            time.sleep(wait_delay)
-            if waited > max_wait:
-                waited_too_long = True
+            waited += waitDelay
+            time.sleep(waitDelay)
+            if waited > maxWait:
+                waitedTooLong = True
                 break
             else:
                 continue
         else:
             break
-    if waited_too_long:
-        raise CannotGetAFileLock(path)
+    if waitedTooLong:
+        raise Exception('CannotGetAFileLock for %s' % path)
     try:
         yield fd
     finally:
         os.unlink(path)
 
-def exit(rc=0):
-    for h in l.handlers:
-        h.flush()
-    sys.exit(rc)
-
-
 def getMoaBase():
+    """
+    Return MOABASE - the directory where Moa is installed. This
+    function also sets an environment variable `MOABASE`
+
+    :rtype: string (path) 
+    """
     if os.environ.has_key('MOABASE'):
         MOABASE = os.environ["MOABASE"]
     else:
         MOABASE = '/usr/share/moa'
-        #for use by depending scripts
+        #for depending scripts
         os.putenv('MOABASE', MOABASE)
     return MOABASE
 
 def moaDirOrExit(job):
     """
-    Check if the job resides in a moa directory, if not, exit
-    with an error message
+    Check if the job contains a proper Moa job, if not, exit with an
+    error message and a non-zero exit code.
+
+    :param job: An instance of :class:`moa.job.Job`
     """
     if not job.isMoa():
         l.error("This command must be executed in a Moa job directory")
@@ -89,7 +97,9 @@ def moaDirOrExit(job):
 
 def deprecated(func):
     """
-    Decorator to flag a function as deprecated
+    Decorator function to flag a function as deprecated
+
+    :param func: any function
     """
     def depfunc(*args, **kwargs):
         l.critical('Calling deprecated function %s' % func.__name__)
@@ -97,52 +107,23 @@ def deprecated(func):
         func(*args, **kwargs)
     return depfunc
 
-################################################################################
-##
-## readline enabled user prompt
-##
-################################################################################
-
-## Handle moa directories
-def fsCompleter(text, state):
-    if os.path.isdir(text) and not text[-1] == '/': text += '/'
-    pos = glob.glob(text + '*')
-    try:
-        return pos[state]
-    except IndexError:
-        return None
-    
-def askUser(prompt, d):
-    
-    def startup_hook():
-        readline.insert_text('%s' % d)
-  
-    readline.set_completer_delims("\n `~!@#$%^&*()-=+[{]}\|;:'\",<>?")
-    #readline.set_pre_input_hook(_rl_set_hook)
-
-    readline.set_startup_hook(startup_hook)
-
-    readline.set_completer(fsCompleter)
-    readline.parse_and_bind("tab: complete")
-    
-    vl = raw_input(prompt)
-
-    readline.set_startup_hook() 
-    return vl 
-    
     
 def simple_decorator(decorator):
 
     """
-
     This decorator can be used to turn simple functions into
     well-behaved decorators, so long as the decorators are fairly
     simple. If a decorator expects a function and returns a function
     (no descriptors), and if it doesn't modify function attributes or
     docstring, then it is eligible to use this. Simply apply
-    E{@}simple_decorator to your decorator and it will automatically
+    @simple_decorator to your decorator and it will automatically
     preserve the docstring and function attributes of functions to
     which it is applied.
+
+    Note; I got this code from somehwere, but forgot where
+    exactly. This seems the most likely source;
+    
+    http://svn.navi.cx/misc/trunk/djblets/djblets/util/decorators.py
 
     """
     def new_decorator(f):
@@ -162,6 +143,16 @@ def simple_decorator(decorator):
 
 @simple_decorator
 def flog(func):
+    """
+    A simple logger - uses the :mod:`moa.logger` code to log the
+    calling function. Use as a decorator::
+
+        @moa.utils.flog
+        def any_function(*args);
+            ...
+
+    :param func: Any python function
+    """
     def flogger(*args, **kwargs):
         l.critical("Executing %s" % func.__name__)
         for a in args:

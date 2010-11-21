@@ -16,7 +16,11 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-moa system config
+moa.sysConf
+-----------
+
+Store Moa wide configuration
+
 """
 
 import os

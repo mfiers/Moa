@@ -1,3 +1,2 @@
-moa.job
--------
 .. automodule:: moa.job
+   :members:

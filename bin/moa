@@ -36,7 +36,7 @@ import moa.version
 import moa.project
 import moa.unittests
 import moa.plugin
-import moa.moaCommands
+import moa.commands
 
 ## Initialize the logger
 import moa.logger as l
@@ -67,7 +67,7 @@ plugins.register(job=job)
 #    plugins.register(projectRoot = projectRoot)
 
 ## Command definitions
-moaCommands = moa.moaCommands.Commands()
+moaCommands = moa.commands.Commands()
 plugins.register(commands = moaCommands)
 plugins.run('defineCommands')
 

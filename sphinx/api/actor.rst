@@ -1,0 +1,2 @@
+.. automodule:: moa.actor
+   :members:

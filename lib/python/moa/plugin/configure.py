@@ -18,7 +18,8 @@
 # 
 """
 Configure jobs
-~~~~~~~~~
+--------------
+
 Control job configuration
 """
 

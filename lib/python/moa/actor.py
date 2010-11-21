@@ -16,6 +16,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
+moa.actor
+---------
+
 'Simple' wrapper around subprocess to execute code
 """
 
@@ -30,28 +33,25 @@ import moa.utils
 from moa.exceptions import *
 
 class Actor:
+    """
+    A class that standardizes a number of operations around execution
+    in the Moa context.
     
+    :param wd: Working directory
+    :type wd: String
+    :param captureOut: Capture the output in log files
+    :type captureOut: Boolean
+    :param captureErr: Capture the output in log files
+    :type captureErr: Boolean
+    :param captureName: Basename for the log files that will
+        capture the output
+    :type captureName: String
+    """
     def __init__(self, wd, 
                  captureOut = False,
                  captureErr = False,
                  captureName = None
                  ):
-        """
-        @param wd: Working directory
-        @type wd: String
-        @param cl: command line
-        @type cl: List of strings
-        @param env: Environment - to be saved to the environment before 
-           execution
-        @type env: Dict
-        @param captureOut: Capture the output in log files
-        @type captureOut: Boolean
-        @param captureErr: Capture the output in log files
-        @type captureErr: Boolean
-        @param captureName: Basename for the log files that will
-            capture the output
-        @type captureName: String
-        """        
         self.wd = wd
         
         self.captureName = captureName
@@ -77,13 +77,25 @@ class Actor:
     def setEnv(self, d):
         """
         Setup the environment
+
+        :param d: The data to transfer to the environment
+        :type d: dict
         """
         for k in d.keys():
             os.putenv(k, str(d[k]))
             
     def run(self, cl, background = False):
         """
-        Start a run
+        Actually run
+
+        :param cl: The command to execute, for example: `['ls', '/tmp']`
+            
+        :type cl: list of strings
+
+        :param background: Run this job in the background? If `True`, fork and have the parent return immediately. The child finishes. If `False`, wait for the job to finish
+        :type background: Boolean
+
+        :rtype: the process id if `background == True`, else the return code
         """        
         if background:
             # try to fork
@@ -102,7 +114,7 @@ class Actor:
         
     def run2(self, cl):
         """
-        Really run 
+        Really run, this function is called by :func:`run`.
         """
         self.runStartTime = time.time()
         

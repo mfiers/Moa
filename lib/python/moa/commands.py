@@ -19,8 +19,12 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 #
 """
+moa.commands
+============
+
 Handle Moa commands (i.e. anything that you can run as `moa COMMAND` on the
 commandline
+
 """
 
 import os

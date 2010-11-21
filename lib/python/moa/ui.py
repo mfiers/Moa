@@ -18,7 +18,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa script - random utilities
+moa.ui
+------
+
+communicate information to the user
 """
 
 import os

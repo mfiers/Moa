@@ -16,9 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-
 """
-Template
+moa.template
+------------
 """
 
 import os
