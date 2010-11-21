@@ -16,9 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-
-
-
+"""
+Instantiate new jobs
+~~~~~~~~~~~~~~~~~~~~~~~~
+"""
 
 import os
 
@@ -26,6 +27,7 @@ import optparse
 import moa.job
 import moa.logger as l
 import moa.plugin
+import moa.ui
 
 def defineCommands(data):
     data['commands']['new'] = {
@@ -33,26 +35,82 @@ def defineCommands(data):
                  "(unless -d is defined)",
         'call' : newJob
         }
+    
+    data['commands']['template'] = {
+        'private' : False,
+        'call' : template,
+        'desc' : 'Print out the template name of this job'
+        }
+
+    data['commands']['list'] = {
+        'desc' : 'Print a list of all known templates',
+        'call' : listTemplates,
+        }
+
 
 def defineOptions(data):
     parser = data['parser']
-    parserN = optparse.OptionGroup(data['parser'], "Moa new")
-    data['parser'].set_defaults(title="", directory=".")
-
+    
+    parserN = optparse.OptionGroup(data['parser'], "moa new")
+    data['parser'].set_defaults(title="")
     parserN.add_option("-t", "--title", dest="title", help="Job title")
-
-    try:
-        parser.add_option("-d", dest="directory",
-                      help="Create/unpack the job/pipeline in this directory")
-        
-    except optparse.OptionConflictError:
-        pass #could have been defined in plugin/pack.py
-
     data['parser'].add_option_group(parserN)
+
+
+    parserN = optparse.OptionGroup(data['parser'], "moa list")
+    parserN.add_option("-l", "--long", dest="listlong", action='store_true',
+                       help="Show a description for moa list")
+    data['parser'].add_option_group(parserN)
+
+
+
+def listTemplates(data):
+    """
+    **moa list** - Print a list of all known templates
+
+    Usage::
+
+        moa list
+        moa list -l
+
+    Print a list of all templates known to this moa installation. If
+    the option '-l' is used, a short description for each tempalte is
+    printed as well.
+    """
+    options = data['options']
+    if options.listlong:
+        for job, info in moa.template.listAllLong():
+            for line in textwrap.wrap(
+                '%%(bold)s%s%%(reset)s:%%(blue)s %s%%(reset)s' % (job, info),
+                initial_indent=' - ',
+                subsequent_indent = '     '):
+                moa.ui.fprint(line)
+    else:
+        for tFile, tName  in moa.template.listAll():
+            print tName
+
+
+def template(data):
+    """
+    **moa template** - Print the template name of the current job
+
+    Usage::
+
+        moa template
+
+        
+    """
+    job = data['job']
+    print job.template.name
 
 def newJob(data):
     """
-    Create a new job 
+    **moa new**
+
+    Usage::
+
+        moa new TEMPLATE_NAME -t 'a descriptive title'
+        
     """
     wd = data['wd']
     options = data['options']
@@ -67,7 +125,7 @@ def newJob(data):
         else:
             template = a
 
-    l.info("Creating a new '%s' job" % template)
+    moa.ui.fprint("Created a new Moa %%(green)s%%(bold)s%s%%(reset)s job" % template)
 
     if os.path.exists(os.path.join(
         wd, '.moa', 'template')) and \
@@ -89,12 +147,10 @@ def newJob(data):
         
     for p in params:
         k,v = p.split('=', 1)
-        job.conf.set(k,v)
+        job.conf[k] = v
     job.conf.save()
 
 TESTSCRIPT = """
 moa new adhoc -t 'testJob' adhoc_mode=par dummy=nonsense
 [[ -f ./Makefile ]] || exer 'No job was created'
-grep -q title moa.mk || exer 'title has not been defined'
-grep -q dummy moa.mk || exer 'title has not been defined'
 """

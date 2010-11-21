@@ -27,7 +27,6 @@ import os
 import sys
 import readline
 import moa.ui
-import moa.conf
 import glob
 import moa.utils
 import moa.logger as l
@@ -156,11 +155,4 @@ def preRun(data):
     
 TESTSCRIPT = """
 moa new adhoc -t 'something'
-moa set title='something else'
-moa set undefvar='somewhat'
-moa set adhoc_mode=par
-moa show || exer moa show does not seem to work
-moa show | grep -q 'title[[:space:]\+]else' || exer title is not set properly
-moa set title+=test
-moa show | grep -q 'title[[:space:]\+]else test' || exer title is not set properly
 """
