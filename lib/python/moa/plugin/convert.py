@@ -109,6 +109,11 @@ def templateConvert(data):
             newParName = p.replace('%s_' % moaId, '')
             if par.has_key('value'): del par['value']
             if par.has_key('cardinality'): del par['cardinality']
+            par['optional'] = True
+            if par.has_key('mandatory'):
+                par['optional'] = not par['mandatory']
+                del par['mandatory']
+
             #print p, newParName
             #for k in par:
             #    print ' -', k, par[k]
@@ -135,6 +140,7 @@ def templateConvert(data):
         rere = re.compile(r'\$\(call moa_fileset_define(.*),(.+),(.*),(.*)\)')
         for x in rere.finditer(text):
             fsid = x.groups()[1]
+            fsext = x.groups()[2]
             fsid = fsid.replace('$(moa_id)', moaId).replace(moaId + '_','')
             fsdesc = x.groups()[3].replace('$(moa_id)', moaId)
             l.info("found fileset for %s" % fsid)
@@ -143,7 +149,9 @@ def templateConvert(data):
             else:
                 fsopt = False
             fs = { 'type' : 'input',
-                   'description' : fsdesc,
+                   'category' : 'input',
+                   'help' : fsdesc,
+                   'extension' : fsext,
                    'optional' : fsopt
                   }
             if not inf.has_key('filesets'):
@@ -170,6 +178,7 @@ def templateConvert(data):
             else:
                 fs_target_dir = os.path.join('.', fs_target_extension)
             fs = {'type' : 'map',
+                  'category' : 'output',
                   'source' : fssrc,
                   'dir' : fs_target_dir,
                   'extension' : fs_target_extension
