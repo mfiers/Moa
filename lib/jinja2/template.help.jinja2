@@ -1,0 +1,51 @@
+.TH {{ moa_id }} 7 "moa {{ moa_id }}" "" "moa {{ moa_id }}"
+.SH NAME
+{{ moa_id }} - {{ title }}
+.SH DESCRIPTION 
+{{ description }}
+.SH COMMANDS
+.IP (undefined) / {{ moa_id }}
+{{ help.get(moa_id) }}
+{% for command in commands -%}
+{% if command != moa_id -%}
+.IP {{ command }}
+{{ help[command] }}
+{% endif %}
+{% endfor %}
+
+.SH PARAMETERS
+(* denotes a mandatory parameter)
+{% for cat in parameter_category_order -%}
+{% if cat -%}
+.SS {{ cat|capitalize }} parameters
+{% endif -%}
+{% for pn in _categories[cat] -%}
+{% set par = parameters[pn] %}
+.IP {{ pn }}{% if not par.optional %}*{%- endif %}
+{{ par.help }}. 
+type: {{ par.type }},
+{%- if par.type == 'set' %}
+allowed: 
+({% for a in par.allowed -%}
+{% if a == par.default %}
+.B {{ a }}{% if not loop.last %}, {% endif -%}
+{% else %}
+{{ a }}{% if not loop.last %}, {% endif -%}
+{% endif %}
+{%- endfor -%})
+{%- else -%}
+{%- if par.default %}
+Default value: "{{ par.default }}"
+{%- endif -%}
+{%- endif -%}
+{% endfor -%}
+{% endfor %}
+.SH SEE ALSO 
+.IP http://mfiers.github.com/Moa/ for a online manual
+.IP http://github.com/mfiers/Moa for the github page
+.SH NOTE 
+This page is specific for the {{ moa_id }} template. To get more Moa
+specific help, please run:
+    moa --help
+.SH AUTHOR(S)
+{{ author }}, {{ modification_date }}
