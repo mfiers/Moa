@@ -3,7 +3,7 @@ backend: gnumake
 commands: [soapdb, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bowtie index from a reference sequence
-gnumake_makefile: /tmp/x/soapdb.mk
+gnumake_makefile: /tmp/xx/soapdb.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', soapdb: ''}
 moa_id: soapdb

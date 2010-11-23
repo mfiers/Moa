@@ -3,7 +3,7 @@ backend: gnumake
 commands: [pregap, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run Pregap. Note that running phrap could be a part of this.
-gnumake_makefile: /tmp/x/pregap.mk
+gnumake_makefile: /tmp/xx/pregap.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', pregap: ''}
 moa_id: pregap

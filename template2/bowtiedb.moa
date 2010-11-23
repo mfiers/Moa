@@ -4,9 +4,9 @@ commands: [bowtiedb, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bowtie index from a reference sequence
 filesets:
-  input: {extension: fasta, help: Sequence files used to build a bowtie database,
-    optional: false, type: input}
-gnumake_makefile: /tmp/x/bowtiedb.mk
+  input: {category: input, extension: fasta, help: Sequence files used to build a
+      bowtie database, optional: false, type: input}
+gnumake_makefile: /tmp/xx/bowtiedb.mk
 help: {bowtiedb: '', clean: 'Remove all job data, not the Moa job itself, note that
     this must be implemented by the template.'}
 moa_id: bowtiedb

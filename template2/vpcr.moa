@@ -3,7 +3,7 @@ backend: gnumake
 commands: [vpcr, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Virtual PCR, based on Bowtie
-gnumake_makefile: /tmp/x/vpcr.mk
+gnumake_makefile: /tmp/xx/vpcr.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', vpcr: Predict the fragments that woulc be generated
     by a PCR}

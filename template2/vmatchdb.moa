@@ -4,8 +4,9 @@ commands: [vmatchdb, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a vmatchdb index from a sequence
 filesets:
-  input: {extension: fasta, help: Input files for vmatch, optional: false, type: input}
-gnumake_makefile: /tmp/x/vmatchdb.mk
+  input: {category: input, extension: fasta, help: Input files for vmatch, optional: false,
+    type: input}
+gnumake_makefile: /tmp/xx/vmatchdb.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', vmatchdb: ''}
 moa_id: vmatchdb

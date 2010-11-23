@@ -4,7 +4,7 @@ commands: [gather, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: gather a set of files and create hardlinks to. Hardlinks have as advantage
   that updates are noticed via the timestamp. Hence, make recognizes them.
-gnumake_makefile: /tmp/x/gather.mk
+gnumake_makefile: /tmp/xx/gather.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', gather: gather files}
 moa_id: gather

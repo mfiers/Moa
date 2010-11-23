@@ -3,7 +3,7 @@ backend: gnumake
 commands: [clustalgroup, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run clustalw on two sets of sequences
-gnumake_makefile: /tmp/x/clustalgroup.mk
+gnumake_makefile: /tmp/xx/clustalgroup.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', clustalgroup: run clustalw}
 moa_id: clustalgroup

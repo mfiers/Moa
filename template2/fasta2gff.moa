@@ -4,7 +4,7 @@ commands: [fasta2gff, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Derive GFF from a FASTA file, usually to accompany the Sequence for upload
   to a generic genome browser database.
-gnumake_makefile: /tmp/x/fasta2gff.mk
+gnumake_makefile: /tmp/xx/fasta2gff.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', fasta2gff: ''}
 moa_id: fasta2gff

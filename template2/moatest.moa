@@ -3,7 +3,7 @@ backend: gnumake
 commands: [moatest, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Not to be used - is used by unitmoatests
-gnumake_makefile: /tmp/x/moatest.mk
+gnumake_makefile: /tmp/xx/moatest.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', moatest: Do nothing - no need to call this.}
 moa_id: moatest

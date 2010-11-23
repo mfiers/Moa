@@ -7,8 +7,9 @@ description: Run a simple, out of the box, newbler assembly. As an extra feature
   fasta files (454AllContigs.fna, 454LargeContigs.fna). This is convenient for subsequence
   gather steps. The links are named after the directory.
 filesets:
-  input: {extension: sff, help: input SFF files, optional: false, type: input}
-gnumake_makefile: /tmp/x/newbler.mk
+  input: {category: input, extension: sff, help: input SFF files, optional: false,
+    type: input}
+gnumake_makefile: /tmp/xx/newbler.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', newbler: ''}
 moa_id: newbler

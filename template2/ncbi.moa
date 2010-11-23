@@ -5,7 +5,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Download a set of sequences from NCBI based on a query string *ncbi_query*
   and database *ncbi_db*. This tempate will run only **once**, after a succesful run
   it creates a lock file that you need to remove to rerun
-gnumake_makefile: /tmp/x/ncbi.mk
+gnumake_makefile: /tmp/xx/ncbi.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', ncbi: Start downloading}
 moa_id: ncbi

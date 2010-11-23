@@ -3,7 +3,7 @@ backend: gnumake
 commands: [vmatch, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run VMATCH on an set of input files (query) vs a database index.
-gnumake_makefile: /tmp/x/vmatch.mk
+gnumake_makefile: /tmp/xx/vmatch.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', vmatch: ''}
 moa_id: vmatch

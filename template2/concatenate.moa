@@ -3,7 +3,7 @@ backend: gnumake
 commands: [concatenate, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Concatenate a set of fasta files into one.
-gnumake_makefile: /tmp/x/concatenate.mk
+gnumake_makefile: /tmp/xx/concatenate.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', concatenate: ''}
 moa_id: concatenate

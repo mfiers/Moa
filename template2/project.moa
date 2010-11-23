@@ -4,7 +4,7 @@ commands: [project, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Create a new project, a placeholder for project settings, and used by
   several plugins.
-gnumake_makefile: /tmp/x/project.mk
+gnumake_makefile: /tmp/xx/project.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', project: This template does not do anything - it
     is a project placeholder.}

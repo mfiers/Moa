@@ -3,7 +3,7 @@ backend: gnumake
 commands: [nstretch, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run NSTRETCH on an set of input files
-gnumake_makefile: /tmp/x/nstretch.mk
+gnumake_makefile: /tmp/xx/nstretch.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', nstretch: ''}
 moa_id: nstretch

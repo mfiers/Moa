@@ -3,7 +3,7 @@ backend: gnumake
 commands: [h_blast, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Runs BLAST on a hadoop cluster
-gnumake_makefile: /tmp/x/h_blast.mk
+gnumake_makefile: /tmp/xx/h_blast.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', h_blast: 'Similar to a normal blast, but now running
     on an hadoop cluster'}

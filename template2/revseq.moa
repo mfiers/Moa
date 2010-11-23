@@ -5,10 +5,11 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: This Moa template takes a set of input FASTA sequences and determines
   the reverse complement using the EMBOSS revseq utility.
 filesets:
-  gff: {dir: ./gff, extension: gff, source: input, type: map}
-  input: {extension: fasta, help: Input files for getorf, optional: false, type: input}
-  output: {dir: ./out, extension: out, source: input, type: map}
-gnumake_makefile: /tmp/x/revseq.mk
+  gff: {category: output, dir: ./gff, extension: gff, source: input, type: map}
+  input: {category: input, extension: fasta, help: Input files for getorf, optional: false,
+    type: input}
+  output: {category: output, dir: ./out, extension: out, source: input, type: map}
+gnumake_makefile: /tmp/xx/revseq.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', getorf: ''}
 moa_id: getorf

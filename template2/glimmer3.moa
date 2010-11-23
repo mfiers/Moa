@@ -3,7 +3,7 @@ backend: gnumake
 commands: [glimmer3, clean]
 creation_date: Wed Nov 10 07:56:48 2010
 description: Predicts (prokaryotic) using glimmer3.
-gnumake_makefile: /tmp/x/glimmer3.mk
+gnumake_makefile: /tmp/xx/glimmer3.mk
 help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
     implemented by the template.', glimmer3: 'Glimmer3 is a open reading frame discovery
     program from the EMBOSS [[emboss]] package. It takes a set of input sequences
