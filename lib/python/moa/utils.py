@@ -79,6 +79,15 @@ def getMoaBase():
         os.putenv('MOABASE', MOABASE)
     return MOABASE
 
+def moaDirOrExit(job):
+    """
+    Check if the job resides in a moa directory, if not, exit
+    with an error message
+    """
+    if not job.isMoa():
+        l.error("This command must be executed in a Moa job directory")
+        sys.exit(-1)
+
 def deprecated(func):
     """
     Decorator to flag a function as deprecated
@@ -100,16 +109,21 @@ def fsCompleter(text, state):
     except IndexError:
         return None
     
-def askUser(prompt, default):
-        
-    def _rl_set_hook():
-        readline.insert_text(default)
+def askUser(prompt, d):
+
+    def startup_hook():
+        readline.insert_text('%s' % d)
+  
     readline.set_completer_delims("\n `~!@#$%^&*()-=+[{]}\|;:'\",<>?")
-    readline.set_startup_hook(_rl_set_hook)
+    #readline.set_pre_input_hook(_rl_set_hook)
+
+    readline.set_startup_hook(startup_hook)
+
     readline.set_completer(fsCompleter)
     readline.parse_and_bind("tab: complete")
     
     vl = raw_input(prompt)
+
     readline.set_startup_hook() 
     return vl    
 
@@ -381,13 +395,15 @@ def logCaller(func):
     import traceback
     def _func(*args, **kargs):
         ch = []
-        for c in traceback.extract_stack()[-4:-1]:
-            ch.append("%s:%s:%s" % (
-                c[0].split('/')[-1],
-                c[2], c[1]))
-        l.error("%s called by %s" % (
-            func.__name__,
-            ", ".join(ch)))
+        for c in traceback.extract_stack()[:-1]:
+            blue = chr(27) + "[37m" + chr(27) + '[46m'
+            red = chr(27) + "[37m" + chr(27) + '[41m'
+            green = chr(27) + "[37m" + chr(27) + '[42m'
+            coloff = chr(27) + "[0m"
+            sys.stderr.write(' --- %s%s%s@%s%s%s:%s%05d%s\n' % (
+                blue, c[2], coloff,
+                green, c[0], coloff,
+                red, c[1], coloff))
         res = func(*args, **kargs)
         return res
     return _func

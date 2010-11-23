@@ -1,5 +1,5 @@
-# 
-# Copyright 2009 Mark Fiers, Plant & Food Research
+#
+# Copyright 2009, 2010 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
 # 
@@ -35,48 +35,68 @@ def defineCommands(data):
         'configuration of a Moa job.',
         'call' : configSet,
         }
+    data['commands']['unset'] = {
+        'desc' : 'Remove (the value of) a variable',
+        'call' : configUnset,
+        }
 
+    data['commands']['show'] = {
+        'desc' : 'Show the current configured variables',
+        'call' : configShow,
+        }
 
+def configShow(data):
+    """
+    Print the configuration (from moa.mk) to stdout
+    """
+    job = data['job']
+    moa.utils.moaDirOrExit(job)
+    for key in job.conf.keys():
+        if key[:4] == 'moa_': continue
+        print '%s\t%s' % (key, job.conf[key].getVal())
+
+def configUnset(data):
+    """
+    remove variables from the configuration
+    """
+    job = data['job']
+    for a in data['newargs']:
+        if '=' in a:
+            l.error("Invalid argument to unset %s" % a)
+        else:
+            l.debug("Unsetting %s" % a)
+            job.conf.unset(a)
+    job.conf.save()
+    
 def configSet(data):
     """
     parse the command line and save the arguments into moa.mk
     """
-    wd = data['cwd']
+    job = data['job']
+    job = moa.job.getJob(wd)
     args = data['newargs']
-
-    #call the preset hooks
-    job = moa.runMake.MOAMAKE(wd = wd,
-                              target='moa_pre_set',
-                              captureOut = False,
-                              captureErr = False,
-                              verbose=False)
-    
-    job.run()
-    job.finish()
 
     newArgs = []
 
     #see if we need to query the user for input somehwere
     for a in args:
         if not '=' in a:
-
-            df = moa.conf.getVar(wd, a)
-            
-            vl = moa.utils.askUser("%s:\n> "%a,df)
-
-            newArgs.append("%s%s%s" % (a, '=', vl))
+            df = job.conf[a]
+            vl = moa.utils.askUser("%s:\n$ " % a, df)
+            job.conf.set(a, vl)
         else:
-            newArgs.append(a)
+            key,val = a.split('=',1)
+            job.conf.set(key, val)
 
-    parsedArgs = moa.conf.parseClArgs(newArgs)
+    job.conf.save()
 
-    moa.conf.writeToConf(wd, parsedArgs)
-
-    #call the postset hooks
-    job = moa.runMake.MOAMAKE(wd = wd,
-                              target='moa_post_set',
-                              captureOut = False,
-                              captureErr = False,
-                              verbose=False)
-    job.run()
-    job.finish()
+TESTSCRIPT = """
+moa new adhoc -t 'something'
+moa set title='something else'
+moa set undefvar='somewhat'
+moa set adhoc_mode=par
+moa show || exer moa show does not seem to work
+moa show | grep -q 'title[[:space:]\+]else' || exer title is not set properly
+moa set title+=test
+moa show | grep -q 'title[[:space:]\+]else test' || exer title is not set properly
+"""

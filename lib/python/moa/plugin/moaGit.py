@@ -110,12 +110,18 @@ def postNew(data):
     wd = data['cwd']
     global GITROOT
     global GITREPO
+
     l.debug("running git post new hook")
     l.debug('GITROOT %s' % GITROOT)
-    job = data['newargs'][0]
 
-    if job == 'project':
-        #creating  new job - see if we are to create a new repository
+    template = 'traverse'
+    for a in data['newargs']:
+        if '=' in a: continue
+        template = a
+        
+    if template == 'project':
+        # creating new project - see if we need to create a
+        # new repository
         return _gitInit(data)
 
     #try to commit this project

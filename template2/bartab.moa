@@ -1,0 +1,115 @@
+commands: [bartab, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/bartab.mk
+help: {bartab: .. to be written .., clean: 'Remove all job data, not the Moa job itself,
+    note that this must be implemented by the template.'}
+moa_id: bartab
+parameter_category_order: ['', system, advanced]
+parameters:
+  bartab_extra_parameters:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: extra parameters to feed bartab
+    mandatory: false
+    type: string
+  bartab_forward_primer:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: remove forward primer
+    mandatory: false
+    type: string
+  bartab_in:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: input file for bartab
+    mandatory: true
+    type: file
+  bartab_map:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: A file mapping barcodes to metadata
+    mandatory: false
+    type: file
+  bartab_min_length:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '50'
+    help: minimun acceptable sequence length
+    mandatory: false
+    type: integer
+  bartab_out:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: bartab
+    help: base output name
+    mandatory: false
+    type: integer
+  bartab_qin:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: Quality scores for the input fasta file
+    mandatory: false
+    type: file
+  bartab_reverse_primer:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: remove reverse primer
+    mandatory: false
+    type: string
+  bartab_trim:
+    allowed: [T, F]
+    cardinality: one
+    category: ''
+    default: T
+    help: Trim barcode
+    mandatory: false
+    type: set
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: BARTAB - a tool to process sff files
+modification_date: Fri Jun 25 21:10:26 2010
+name: bartab
+title: Bartab
+backend: gnumake
+title: ''

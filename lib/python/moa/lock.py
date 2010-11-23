@@ -23,8 +23,6 @@ Job locking utilities
 
 import os
 from moa.exceptions import *
-import moa.info
-
 
 def lockJob(d):
     """

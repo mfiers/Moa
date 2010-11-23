@@ -25,24 +25,20 @@ This script serves as a command dispatcher for all moa functionality
 
 import os
 import sys
+import yaml
 import optparse
 import textwrap
 
 #moa specific libs
 import moa.job
-from moa import runMake
 import moa.conf
-import moa.info
 import moa.utils
+import moa.version
 import moa.project
 import moa.unittests
 import moa.checkTemplate
-import moa.plugins
+import moa.plugin
 import moa.moaCommands
-
-MOABASE=moa.utils.getMoaBase()
-
-
 
 ## Initialize the logger
 import moa.logger as l
@@ -51,18 +47,27 @@ import moa.logger as l
 if '-v' in sys.argv:
     moa.logger.setVerbose()
 
+# Initialize the job object
+wd = os.getcwd()
+
+moa.version.fixOld(wd)
+
+job = moa.job.getJob(wd)
+
 ## Initialze the plugins
-plugins = moa.plugins.Plugins()
-cwd = os.getcwd()
-plugins.register(cwd = cwd)
-plugins.register(MOABASE = MOABASE)
+plugins = moa.plugin.PluginHandler(job)
+
+#use of cwd is deprecated
+plugins.register(cwd = wd)
+plugins.register(wd = wd)
+plugins.register(job=job)
 
 ### Determine project root (if there is one)
-projectRoot = moa.project.findProjectRoot()
-if projectRoot:
-    l.debug('Project root is %s' % projectRoot)
-    os.putenv('MOAPROJECTROOT', projectRoot)
-    plugins.register(projectRoot = projectRoot)
+#projectRoot = moa.project.findProjectRoot(job)
+#if projectRoot:
+#    l.debug('Project root is %s' % projectRoot)
+#    job.projectRoot = projectRoot
+#    plugins.register(projectRoot = projectRoot)
 
 ## Command definitions
 moaCommands = moa.moaCommands.Commands()
@@ -85,26 +90,8 @@ for _c in moaCommandNames:
 ## define & parse command line options  
 parser = optparse.OptionParser(usage=USAGE)
 
-parser.add_option('-f', '--force', dest='force', action='store_true',
-                  help = 'Force an action, if applicable.')
-
-parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true", help="verbose output")
-
-parser.add_option("--bg", dest="background",
-                  action="store_true", help="Run moa in the background")
-
-parser.set_defaults(threads=1)
-parser.add_option("-j", dest="threads", type='int',
-                  help="threads to use when running Make (corresponds " +
-                  "to the make -j parameter)")
-
-parser.add_option("-B", dest="remake", action='store_true',
-                  help="Reexecute all targets (corresponds to make -B) ")
-
-parser.add_option("--md", dest="makedebug", action='store_true',
-                  help="Run Make with -d : lots of extra debugging "+
-                  "information")
+## Aks the job & backend if they want to add to the options
+job.defineOptions(parser)
 
 ## See if the plugins have anything to add to the optparse instance:
 plugins.register(parser=parser)
@@ -115,39 +102,25 @@ plugins.run('defineOptions')
 
 ## make sure that the options are accessible to the plugins
 plugins.register(options = options, args = args)
+job.options = options
+job.args = args
 
 ## Proper setting of verbosity - after parsing of the command line
 if options.verbose:
     moa.logger.setVerbose()
 
-## Store all arguments in the environment - we might want to have a
-## look at them from the Makefiles
-os.putenv("MOAARGS", "%s" % " ".join(["'" + str(x) + "'" for x in args]))
-
 ### Start plugin initialization
 plugins.run('prepare')
-
-## make sure the MOA_THREADS env var is set - this is used from inside
-## the Makefiles later threads need to be treated different from the
-## other parameters. multi-threaded operation is only allowed in the
-## second phase of execution.
-os.putenv('MOA_THREADS', "%s" % options.threads)
-
-## Define extra parameters to use with Make
-makeArgs = []
-if options.remake:
-    makeArgs.append('-B')
-if options.makedebug:
-    makeArgs.append('-d')
+### Start job initialization
+job.prepare()
 
 ## Command dispatcher
 if __name__ == "__main__":
-    if options.threads > 1:
-        l.debug("Running make with %d threads" % options.threads)
 
-    ## Determine what the command is.
+    ## Determine command to run:
     command = ""
     newargs = []
+    
     if len(args) > 0:
         command = args[0]
         newargs = args[1:]
@@ -156,56 +129,25 @@ if __name__ == "__main__":
         
     l.debug("start moa %s" % command)
     l.debug("with args %s" % newargs)
+    
     plugins.register(newargs = newargs)
+    job.args = newargs
+
     #see if there is a callback to a plugin - If so call it
     if command in moaCommands:
         if moaCommands[command].has_key('call'):
+            
             l.debug("using a callback for moa %s" % command)
+            plugins.run("preCommand")
             plugins.run("pre%s" % command.capitalize())
             plugins.runCallback(moaCommands[command])
             plugins.run("post%s" % command.capitalize())
             sys.exit()
 
-    #No callback, defer this to Make
-    
-    #append the arguments to make (if there are any)
-    makeArgs.extend(newargs)
-    if not moa.info.isMoaDir(cwd):
-        if command:
-            l.error("Unknown command: 'moa %s'" % command)
-            l.error("Maybe it should be executed in a Moa directory?")
-        else:
-            l.error("`moa` without arguments should be executed")
-            l.error("within a Moa directory")
-            
-            #see if the help plugin in installed, and if so, call it
-            if moaCommands.has_key('help'):
-                plugins.runCallback(moaCommands['help'])
-        sys.exit(1)
-                
-    ### Check & fix deprecated template styles
-    moa.checkTemplate.checkTemplate(cwd)
-    
+    #No callback, defer this to the job
     plugins.run("pre%s" % command.capitalize())
-    l.debug("Calling make for command %s" % command)
-    job = runMake.MOAMAKE(cwd,
-                          target = command,
-                          verbose = options.verbose,
-                          threads = options.threads,
-                          makeArgs = makeArgs,
-                          background = options.background)
-    returnCode = job.run()
+    rc = job.execute(command)
     plugins.run("post%s" % command.capitalize())
+
     plugins.run("finish")
-    sys.exit(returnCode)
-
-    # #utilities
-    # elif command == 'ren':
-    #     #renumber a moa job
-    #     moa.utils.renumber(os.getcwd(), args[1], args[2])
-    # #pack & unpack trees
-    # elif command == 'archive':
-    #     moa.archive.handler(options, newargs)
-
-
-    
+    sys.exit(rc)

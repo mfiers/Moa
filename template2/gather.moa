@@ -1,0 +1,113 @@
+commands: [gather, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/gather.mk
+help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
+    implemented by the template.', gather: gather files}
+moa_id: gather
+parameter_category_order: ['', system, advanced]
+parameters:
+  g_input_dir:
+    allowed: []
+    cardinality: many
+    category: ''
+    default: ''
+    help: list of directories with the input files
+    mandatory: true
+    type: directory
+  g_input_pattern:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '*'
+    help: glob pattern to download
+    mandatory: false
+    type: string
+  g_limit:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: '1000000'
+    help: limit the number of files gathered (with the most recent files first, defaults
+      to 1mln)
+    mandatory: false
+    type: integer
+  g_name_sed:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: s/a/a/
+    help: SED expression to be executed on each file name - allows you to change file
+      names
+    mandatory: false
+    type: string
+  g_output_dir:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: .
+    help: Output subdirectory, defaults to .
+    mandatory: false
+    type: directory
+  g_parallel:
+    allowed: [T, F]
+    cardinality: one
+    category: ''
+    default: F
+    help: allow parallel execution (T) or not (**F**). If for example concatenating
+      to one single file, you should not have multiple threads.
+    mandatory: false
+    type: set
+  g_powerclean:
+    allowed: [T, F]
+    cardinality: one
+    category: ''
+    default: F
+    help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
+      when calling make clean. Defaults to F.
+    mandatory: false
+    type: set
+  g_process:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ln -f $$< $$(g_target)
+    help: Command to process the files. If undefined, hardlink the files.
+    mandatory: false
+    type: string
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: gather a set of files and create hardlinks to. Hardlinks have
+  as advantage that updates are noticed via the timestamp. Hence, make recognizes
+  them.
+modification_date: Fri Jun 25 21:10:26 2010
+name: gather
+title: gather files
+backend: gnumake
+title: ''

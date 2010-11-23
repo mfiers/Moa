@@ -69,12 +69,15 @@ ncbi: fasta.tmp
 fasta.tmp: webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
 fasta.tmp: queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
 fasta.tmp: tmp.xml
+	$e $(call warn,Query key $(queryKey))
+	$e $(call warn,Web env $(webEnv))
 	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&rettype=fasta&retmode=text&usehistory=y" \
 		-O fasta.tmp
 
 #tmp.xml contains the IDs of the sequences to download
-tmp.xml: 
-	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
+tmp.xml:      
+	#wget 'http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=nucleotide&term=elephant%20polymerase&retmax=100&usehistory=y' -O xxx
+	wget 'http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y' \
 		-O tmp.xml
 
 ncbi_clean:

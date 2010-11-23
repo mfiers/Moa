@@ -1,0 +1,68 @@
+commands: [scaf, clean]
+description: ''
+gnumake_makefile: /home/mf/project/moa/template2/scaffolder.mk
+help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
+    implemented by the template.', scaf: ''}
+moa_id: scaf
+parameter_category_order: ['', system, advanced]
+parameters:
+  moa_postcommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single shell command to be executed after the Moa is finished. For more
+      complex processing please override the moa_postprocess target in the local Makefile.
+    mandatory: false
+    type: string
+  moa_precommand:
+    allowed: []
+    cardinality: one
+    category: advanced
+    default: ''
+    help: A single command to be executed before the main operation starts. For more
+      complicated processing, please override the moa_preprocess target in the local
+      Makefile.
+    mandatory: false
+    type: string
+  scaf_input_file:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: input file with the sequences to scaffold
+    mandatory: true
+    type: file
+  scaf_prefix:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: scaffolds
+    help: prefix for scaffolding output files
+    mandatory: false
+    type: string
+  scaf_reference_file:
+    allowed: []
+    cardinality: one
+    category: ''
+    default: ''
+    help: blast database of the reference set
+    mandatory: true
+    type: file
+  title:
+    allowed: []
+    cardinality: one
+    category: system
+    default: ''
+    help: A name for this job
+    mandatory: true
+    type: string
+author: Mark Fiers
+creation_date: Sun Aug 22 10:06:11 2010
+description: Scaffold a set of input files based on a blast against a reference
+  sequence. This software is written around bambus
+modification_date: Fri Jun 25 21:10:26 2010
+name: scaffolder
+title: Scaffolder
+backend: gnumake
+title: ''

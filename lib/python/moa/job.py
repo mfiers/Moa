@@ -18,7 +18,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Create new jobs.
+Job
 """
 
 import os
@@ -29,188 +29,31 @@ import tempfile
 import moa.utils
 import moa.logger as l
 import moa.conf
+import moa.template
 import moa.utils
-import moa.runMake
 
-MOABASE = moa.utils.getMoaBase()
-TEMPLATEDIR = os.path.join(MOABASE, 'template')
+#import moa.job.base
+#import moa.job.gnumake
+#import moa.job.nojob
 
-NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
-## Moa Makefile
-## http://mfiers.github.com/Moa
-
-include $(MOABASE)/template/moa/prepare.mk
-
-"""
-
-class Job:
+def getJob(wd):
     """
-    New MoaJob class - should combine a lot of functionality
-    that is now spread around over multiple locations
+    Utility funtion to instantiate the correct job class
+
+    Currently, 'there is only one' (that is a Gnu Makefile based
+    job
     """
-    def __init__(self, wd):
-        self.wd = wd
+    return Job(wd)
 
-
-    def isMoa(self):
-        """
-        Is the job directory a Moa directory
-
-        >>> job = Job('/')
-        >>> job.isMoa()
-        False
-        >>> import moa.job
-        >>> jobdir = moa.job.newTestJob('traverse')
-
-        """
-        makefile = os.path.join(self.wd, 'Makefile')
-        if not os.access(makefile, os.R_OK):
-            #ok, this might be a moa directory, but
-            #you do not have sufficient permissions
-            return False
-
-        l.debug('isMoaDir: checking %s' % makefile)
-        if not os.path.exists(makefile):
-            return False
-
-        #we could run make, but that is rather slow just to check if the
-        #Makefile is a proper Moa Makefile - so, we' quickly read the
-        #Makefile to get a quick indication
-        isMoa = False
-
-        F = open(makefile)
-        for line in F.readlines():
-            if 'MOABASE' in line:
-                isMoa = True
-                break
-            if '$(call moa_load' in line:
-                isMoa = True
-                break
-
-        F.close()        
-        return isMoa
-
-        
-def check(what):
+def newJob(wd, **kwargs):
     """
-    Check if a template exists
-
-        >>> check('gather')
-        True
-        >>> check('nonexistingtemplate')
-        False
-        >>> check('emboss/revseq')
-        True
-        >>> check('moa/base')
-        False
-        
+    Create a new job in the wd and return the proper job object
+    currently only makefile jobs are supported - later we'll scan the
+    template, and instantiate the proper job type
     """
-    templatefile = os.path.join(TEMPLATEDIR, what + '.mk')
-    if not os.path.exists(templatefile):
-        return False
-    return True
-
-def list():
-    """
-    List all known templates
-
-        >>> result = list()
-        >>> len(result) > 0
-        True
-        >>> type(result) == type([])
-        True
-        >>> 'adhoc' in result
-        True
-        >>> '__moaBase' in result
-        False
-        >>> 'moa/base' in result
-        False
-        >>> 'emboss/revseq' in result
-        True
-
-    @returns: a list with all known templates
-    @rtype: a list of strings
+    job = Job(wd, template = kwargs['template'])
+    return job
     
-    """
-    r = []
-    for path, dirs, files in os.walk(TEMPLATEDIR):
-        relPath = path.replace(TEMPLATEDIR, '')
-        if relPath and relPath[0] == '/':
-            relPath = relPath[1:]
-        if relPath[:3] == 'moa' :
-            continue
-        if relPath[:4] == 'util' :
-            continue
-        if relPath and relPath[-1] != '/':
-            relPath += '/'
-        files.sort()
-        for f in files:
-            if f[0] == '.': continue
-            if f[0] == '_': continue
-            if f[0] == '#': continue
-            if f[-1] == '~': continue
-            if not '.mk' in f: continue
-            r.append(relPath  + f.replace('.mk', ''))
-    return r
-
-def _getDescription(template):
-    """
-    Parse a template and extract the template_description
-
-        >>> desc = _getDescription('adhoc')
-        >>> type(desc) == type('hi')
-        True
-        >>> len(desc) > 0
-        True
-        >>> 'The' in desc
-        True
-        
-    @param template: the name of the template to get the
-      description from
-    @type template: string
-    @returns: template_description
-    @rtype: string
-    """
-    desc = ''
-    with open(os.path.join(TEMPLATEDIR, '%s.mk' % template), 'r') as F:
-        inDesc = False
-        while True:
-            line = F.readline()
-            if not line: break
-            line = line.strip()
-
-            if inDesc:
-                desc += " " + line
-            elif line.find('template_description') == 0:
-                inDesc = True                
-                desc = line.split('=', 1)[1].strip()
-            if inDesc :
-                if desc and desc[-1] == '\\':
-                    desc = desc[:-1]
-                else:
-                    break
-    return " ".join(desc.split())
-
-def listLong():
-    """
-    Returns a generator yielding tuples of all templates and a
-    corresponding description.
-
-        >>> ll = listLong()
-        >>> fi = ll.next()
-        >>> type(fi) == type((1,2))
-        True
-        >>> type(fi[0]) == type('hi')
-        True
-        >>> type(fi[1]) == type('hi')
-        True
-
-    @returns: a generator yielding (name, description) tupels
-    @rtype: generator
-    """
-    for template in list():
-        yield template, _getDescription(template)
-
 def newTestJob(*args, **kwargs):
     """
     Test function - creates a temp directory and uses that to
@@ -233,140 +76,172 @@ def newTestJob(*args, **kwargs):
     @rtype: string
     """
 
-    d = tempfile.mkdtemp()
-    kwargs['wd'] = d
-    newJob(*args, **kwargs)
-    return d
+    wd = tempfile.mkdtemp()
+    if args:
+        kwargs['template'] = args[0]
+    kwargs['title'] = kwargs.get('title', 'Test Job')
+    job = newJob(wd, **kwargs)
+    return wd
+
+class Job(object):
+    """
+    Placeholder for a job
+    """
     
-def newJob(template,
-           title = None,
-           wd = '.',
-           parameters = [],
-           force = False,
-           titleCheck = True,
-           noInit = False):
-    """
-    Create a new template based makefile in the current dir.
+    def __init__(self,
+                 wd,
+                 template = None,
+                 captureOut = False,
+                 captureErr = False):
+        """        
 
-        >>> d = tempfile.mkdtemp()
-        >>> newJob(template = 'adhoc',
-        ...        title = 'test job creation',
-        ...        wd=d, parameters=['moa_precommand="ls"'])
-        >>> os.path.exists(os.path.join(d, 'Makefile'))
-        True
-        >>> os.path.exists(os.path.join(d, 'moa.mk'))
-        True
-        >>> moa.conf.getVar(d, 'title')
-        'test job creation'
-        >>> moa.conf.getVar(d, 'moa_precommand')
-        '"ls"'
+        """
 
-    @param template: The template to use for the new job
-    @param wd: Where to create the new job
-    @param title: Title of the newly created job
-    @type title: String
-    @param wd: Directory to create the new job
-    @type wd: String
-    @param parameters: A list of parameters for initialization
-    @type parameters: List of strings. Each of the strings should
-       have the following form: 'key=some value'
-    @param force: Force job creation - this overwrites older jobs
-       in the same directory
-    @type force: boolean
-    @param noInit: Skip initialization. Normally moa calls
-       `make init`. If this flag is set, this step is skipped
-    @type noInit: boolean
-    @returns: Nothing
+        if wd[-1] == '/': wd = wd[:-1]
+        self.wd = wd
+        self.captureOut = captureOut
+        self.captureErr = captureErr
 
-    """
-    l.debug("Creating template '%s'" % template)
-    l.debug("- in wd %s" % wd)
+        self.confDir = os.path.join(self.wd, '.moa')
 
-    #is this a valid template??
+        self.env = {}
+        self.args = []
+        self.options = {}
 
-    #TODO: do something with the results of this check
-    check(template)
-            
-    if not wd: wd = os.getcwd()
-    if not os.path.isdir(wd):
-        l.info("Creating wd %s" % wd)
-        os.makedirs(wd)
-
-    # check if a title is defined as 'title=something' on the
-    # commandline, as opposed to using the -t option
-    if not title:
-        for p in parameters:
-            if p.find('title=') == 0:
-                title = p.split('=',1)[1].strip()
-                parameters.remove(p)
-                break
+        if template:
+            self.setTemplate(template)
+            self.loadBackend()
+            self.backend.initialize()
+        else:
+            self.loadTemplate()
+            self.loadBackend()
         
-    if (not title) and titleCheck and (not template == 'traverse'):
-        l.warning("You *must* specify a job title")
-        l.warning("You can still do so by running: ")
-        l.warning("   moa set title='something descriptive'")
-        title = ""
-    if title:
-        l.debug('creating a new moa makefile with title "%s" in %s' % (
-            title, wd))
-    else:
-        l.debug('creating a new moa makefile in %s' % ( wd))
+        self.conf = moa.conf.Config(self)
+        self.conf.load()
 
-    makefile = os.path.join(wd, 'Makefile')
-    moamk = os.path.join(wd, 'moa.mk')
-    moamklock = os.path.join(wd, 'moa.mk.lock')
+
+    def getActor(self):
+        """
+        Get an actor for this job
+        """        
+        return moa.actor.Actor(wd = self.wd,
+                               captureOut = self.captureOut,
+                               captureErr = self.captureErr)
+
     
-    if os.path.exists(makefile):
-        l.debug("Makefile exists!")
-        if not force:
-            l.critical("makefile exists, use -f (--force) to overwrite")
-            sys.exit(1)
-
-    l.debug("Start writing %s" % makefile)
-    F = open(makefile, 'w')
-    F.write(NEW_MAKEFILE_HEADER)
-    F.write("$(call moa_load,%s)\n" % template)
-
-    #include moabase
-    F.close()
-
-    if title:
-        with moa.utils.flock(moamklock):    
-            moamkdata = []
-
-            #open & rewrite an older moa.mk
-            if os.path.exists(moamk):
-                moamkdata = open(moamk).readlines()
+    def execute(self, command):
+        """
+        """
+        l.debug("executing %s" % command)
+        if self.backend:
+            self.backend.execute(command,
+                                 verbose = self.options.verbose,
+                                 background = self.options.background)
+        else:
+            l.error("No backend loaded - cannot execute %s" % command)
                     
-            F = open(moamk, 'w')
-            for line in moamkdata:
-                if re.match("^title *=", line) and title:
-                    continue
-                F.write(line)
-                
-            if title:
-                F.write("title=%s\n" % title)
-                l.debug("writing title=%s to moa.mk" % title)
-
-            F.close()       
-            l.debug('Written moa.mk')
-
-    params = []
-    for p in parameters:
-        if not '=' in p: continue
-        params.append(p)
-        moa.conf.writeToConf(wd, moa.conf.parseClArgs(params))
+    def prepare(self):
+        """
+        Prepare this job
+        """
+        if self.backend:
+            self.backend.prepare()
         
-    if noInit: return
+    def defineOptions(self, parser):
+        """
+        Set command line options
+        """
+        parser.add_option('-f', '--force', dest='force', action='store_true',
+                  help = 'Force an action, if applicable.')
 
-    l.debug("Running moa initialization")
-    job = moa.runMake.MOAMAKE(wd = wd,
-                              target='initialize',
-                              captureOut = False,
-                              captureErr = False,
-                              stealth = True,
-                              verbose=False)
-    job.run()
-    job.finish()
-    l.debug("Written %s, try: moa help" % makefile)
+        parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true", help="verbose output")
 
+        parser.add_option("--bg", dest="background",
+                  action="store_true", help="Run moa in the background")
+        
+        if self.backend:
+            self.backend.defineOptions(parser)
+
+
+    def checkConfDir(self):
+        """
+        Check if the configuration directory exists. If
+        not create it.
+        """
+        if not os.path.exists(self.confDir):
+            os.mkdir(self.confDir)
+
+    def setTemplate(self, name):
+        """
+        Set a new template for this job
+        """
+        self.checkConfDir()
+        self.template = moa.template.Template(name)
+        with open(os.path.join(self.confDir, 'template'), 'w') as F:
+            F.write(name)
+            l.debug('set job in %s to template %s' % (self.wd, name))
+        
+    def loadTemplate(self):
+        """
+        Load the template for this job, based on what configuration 
+        can be found
+        """
+        templateFile = os.path.join(self.confDir, 'template')
+        if os.path.exists(templateFile):
+            templateName = open(templateFile).read()
+            self.template = moa.template.Template(templateName)
+            return
+        
+        #no template found - maybe nothing is installed here
+        self.template = moa.template.Template()
+        
+    def loadBackend(self):
+        """
+        load the backend
+        """
+        backendName = self.template.backend.value
+        l.debug("attempt to load backend %s" % backendName)
+        try:
+            _moduleName = 'moa.backend.%s' % backendName
+            _module =  __import__( _moduleName, globals(),
+                                   locals(), [_moduleName], -1)            
+            l.debug("Successfully Loaded module %s" % _moduleName)
+        except ImportError, e:
+            if str(e) == "No module named %s" % _moduleName:
+                l.critical("Backend %s does not exists" % backendName)
+            l.critical("Error loading backend %s" % backendName)
+            raise
+            sys.exit(-1)                
+            
+        self.backend = getattr(_module,
+                               '%sBackend' % backendName.capitalize())(self)
+
+    def isMoa(self):
+        """
+        Check if this is a Moa directory - Currently, this needs to be overridden
+        """
+        return self.backend.isMoa()      
+
+    def initialize(self, 
+             force=False, 
+             **kwargs):
+        """
+        Initialize a new job in the current wd
+        """
+
+        if self.isMoa() and not force:
+            l.error("A job does already exists in this directory")
+            l.error("specify -f (--force) to override")
+            return False     
+
+        #check if a template is defined - if not, use the job template
+        if kwargs.has_key('template'):
+            if type(kwargs['template']) == type("string"):
+                self.setTemplate(kwargs['template'])
+                kwargs['template'] = self.template
+        else:
+            kwargs['template'] = self.template
+                    
+        self.backend.initialize(**kwargs)
+        
