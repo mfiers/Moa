@@ -29,7 +29,7 @@ import moa.logger as l
 import moa.template
 import moa.jobConf
 
-def newJob(wd, template, title):
+def newJob(wd, template, title, parameters=[]):
     """
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
@@ -45,11 +45,18 @@ def newJob(wd, template, title):
        directory must already exists
     :param template: Template name for this job
     :type template: String
+    :type force: Boolean
+    :param parameters: A list of parameters to set for this job
+    :type parameters: list of (key, value) tuples
     :rtype: instance of :class:`moa.job.Job`
     
     """
+    
     job = Job(wd, template = template)
     job.conf.title = title
+    for pk, pv in parameters:
+        job.conf[pk] = pv
+    job.conf.save()
     return job
 
 def newTestJob(template, title="Test job"):

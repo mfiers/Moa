@@ -63,9 +63,20 @@ class Template(Yaco.Yaco):
             self.parameters = {}
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
-        
+
 def check(what):
-    """
+    """    def _getParameterCategories(self):
+        order = self.parameter_category_order
+        for pn in self.parameters,keys():
+            p = self.parameters[pn]
+            if not p.category in order:
+                order.append(p.category)
+        l.critical("%s" % order)
+        return order
+    
+    parameterCategories = property(_getParameterCategories)
+    
+
     Check if a template exists
 
         >>> check('adhoc')

@@ -18,13 +18,20 @@
 # 
 
 """
-Help
+**logo** - Print a chick
+------------------------
 """
 import os
 
 import moa.utils    
 def preRun(data):
+    TERMHEIGHT, TERMWIDTH = map(int, os.popen('stty size', 'r').read().split())
     MOABASE = moa.utils.getMoaBase()
+    version = data['sysConf'].getVersion()
     logoFile = os.path.join(MOABASE, 'share', 'logo', 'moa.logo.txt')
-    print open(logoFile).read()
+    logo = open(logoFile).read()
+    logo = logo.replace('###', 't' * (TERMWIDTH - 64))
+    logo = logo.replace('##', 't' * (TERMWIDTH - 58 - len(version)))
+    logo = logo.replace('VERSION', version)
+    print logo
     

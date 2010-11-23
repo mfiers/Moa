@@ -92,6 +92,7 @@ job.defineOptions(parser)
 
 ## See if the plugins have anything to add to the optparse instance:
 plugins.register(parser=parser)
+plugins.register(commands=moaCommands)
 plugins.run('defineOptions')
 
 ## Parse the options

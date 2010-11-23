@@ -17,8 +17,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-
 Filesets
+--------
+
+Define sets of files for Moa
 
 """
 

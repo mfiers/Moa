@@ -19,111 +19,107 @@
 
 moa_id=adhoc
 
-ifneq ($(moa_id)_mode,'simple')
-
-endif
-# Help
 
 #########################################################################
 #Include moa core
 include $(MOABASE)/lib/gnumake/core.mk
 
-ifeq ($($(moa_id)_mode),simple)
-$(moa_id)_touch=F
+ifeq ($(adhoc_mode),simple)
+adhoc_touch=F
 else
-$(moa_id)_touch_files=$(addprefix touch/,$(notdir $($(moa_id)_input_files)))
+adhoc_touch_files=$(addprefix touch/,$(notdir $(adhoc_input_files)))
 endif
 
-.PHONY: $(moa_id)_prepare
-$(moa_id)_prepare:
-	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
+.PHONY: adhoc_prepare
+adhoc_prepare:
+	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
 		mkdir touch || true 2>/dev/null; \
 	else \
 		rm -rf touch || true; \
 	fi
-	-$e [[ "$($(moa_id)_output_dir)" == "." ]] || mkdir $($(moa_id)_output_dir)
+	-$e [[ "$(adhoc_output_dir)" == "." ]] || mkdir $(adhoc_output_dir)
 
-.PHONY: $(moa_id)_post
-$(moa_id)_post:
+.PHONY: adhoc_post
+adhoc_post:
 
 ## Check if the input_dir is defined
-$(moa_id)_check:
-	$(if $($(moa_id)_input_dir),,\
-		$(call exerUnlock, Need to define $(moa_id)_input_dir))
+adhoc_check:
+	$(if $(adhoc_input_dir),,\
+		$(call exerUnlock, Need to define adhoc_input_dir))
 
 
 ################################################################################
-## $(moa_id) mode: seq
+## adhoc mode: seq
 
-ifeq ($($(moa_id)_mode),seq)
+ifeq ($(adhoc_mode),seq)
 
-.NOTPARALLEL: $(moa_id)
+.NOTPARALLEL: adhoc
 
-$(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
-touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
-touch/%: b=$(shell basename $< .$($(moa_id)_input_extension))
-touch/%: $($(moa_id)_input_dir)/%
+adhoc: adhoc_check $(adhoc_touch_files)
+touch/%: t=$(shell echo '$*' | sed -e '$(adhoc_name_sed)')
+touch/%: b=$(shell basename $< .$(adhoc_input_extension))
+touch/%: $(adhoc_input_dir)/%
 	$(call echo,considering $< -- $t ($b) )
-	$(call echo,running $($(moa_id)_process))
-	$($(moa_id)_process)
-	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
+	$(call echo,running $(adhoc_process))
+	$(adhoc_process)
+	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
 		touch $@; \
 	fi
 
 endif
 
 ################################################################################
-## $(moa_id) mode: par
-ifeq ($($(moa_id)_mode),par)
+## adhoc mode: par
+ifeq ($(adhoc_mode),par)
 
-$(moa_id): $(moa_id)_check $($(moa_id)_touch_files)
+adhoc: adhoc_check $(adhoc_touch_files)
 
-touch/%: t=$(shell echo '$*' | sed -e '$($(moa_id)_name_sed)')
-touch/%: b=$(shell basename $< .$($(moa_id)_input_extension))
-touch/%: $($(moa_id)_input_dir)/%
+touch/%: t=$(shell echo '$*' | sed -e '$(adhoc_name_sed)')
+touch/%: b=$(shell basename $< .$(adhoc_input_extension))
+touch/%: $(adhoc_input_dir)/%
 	$(call echo,considering $< -- $t)
-	$(call warn,running '$($(moa_id)_process)')
-	$($(moa_id)_process)
-	$e if [[ "$($(moa_id)_touch)" == "T" ]]; then \
+	$(call warn,running '$(adhoc_process)')
+	$(adhoc_process)
+	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
 		touch $@; \
 	fi
 endif
 
 ################################################################################
-## $(moa_id) mode: all
-ifeq ($($(moa_id)_mode),all)
+## adhoc mode: all
+ifeq ($(adhoc_mode),all)
 
-$(moa_id):  $(moa_id)_check $(moa_id)_all
+adhoc:  adhoc_check adhoc_all
 
-$(moa_id)_all: $($(moa_id)_input_files)
+adhoc_all: $(adhoc_input_files)
 	$(call echo,considering $(words $<) files)
-	$(call warn,Running $($(moa_id)_process))
-	$($(moa_id)_process)
+	$(call warn,Running $(adhoc_process))
+	$(adhoc_process)
 
-touch/%: $($(moa_id)_input_dir)/%
+touch/%: $(adhoc_input_dir)/%
 	touch $@;
 endif
 
 ################################################################################
-## $(moa_id) mode: simple
-ifeq ($($(moa_id)_mode),simple)
+## adhoc mode: simple
+ifeq ($(adhoc_mode),simple)
 
-$(moa_id):
-	$(call echo,Running $(moa_id) without input files)
-	$($(moa_id)_process)
+adhoc:
+	$(call echo,Running adhoc without input files)
+	$(adhoc_process)
 endif
 
-$(moa_id)_clean: find_exclude_args = \
-	$(foreach v, $($(moa_id)_link_noclean), -not -name $(v))
+adhoc_clean: find_exclude_args = \
+	$(foreach v, $(adhoc_link_noclean), -not -name $(v))
 
-$(moa_id)_clean: 
-	-if [ ! "$($(moa_id)_output_dir)" == "." ]; then rm -rf $($(moa_id)_output_dir); fi
+adhoc_clean: 
+	-if [ ! "$(adhoc_output_dir)" == "." ]; then rm -rf $(adhoc_output_dir); fi
 	-rm -rf touch
-	-if [ "$($(moa_id)_powerclean)" == "T" ]; then \
+	-if [ "$(adhoc_powerclean)" == "T" ]; then \
 		find . -maxdepth 1 -type f $(find_exclude_args) | \
 			xargs -n 20 rm -f ; fi
 
-$(moa_id)_unittest:
+adhoc_unittest:
 	-rm -rf 10.input test.*
 	mkdir 10.input
 	echo -n '1' > 10.input/test.1.input
@@ -131,22 +127,22 @@ $(moa_id)_unittest:
 	echo -n '3' > 10.input/test.3.input
 	echo -n '4' > 10.input/test.4.input
 	echo -n '5' > 10.input/what.5.input
-	moa set $(moa_id)_mode=simple
-	moa set $(moa_id)_process='cat 10.input/* > test.1'
+	moa set adhoc_mode=simple
+	moa set adhoc_process='cat 10.input/* > test.1'
 	moa
 	[[ "`cat test.1`" == "12345" ]]
 	rm test.1
-	moa set $(moa_id)_mode=seq
-	moa set $(moa_id)_input_dir=10.input
-	moa set $(moa_id)_input_extensions=input
-	moa set $(moa_id)_input_glob=test.*
-	moa set $(moa_id)_process='cat $$< >> test.2'
+	moa set adhoc_mode=seq
+	moa set adhoc_input_dir=10.input
+	moa set adhoc_input_extensions=input
+	moa set adhoc_input_glob=test.*
+	moa set adhoc_process='cat $$< >> test.2'
 	moa
 	#cat test.2
 	[[ "`cat test.2`" == "2341" ]]
 	rm test.2
-	moa set $(moa_id)_name_sed='s/input/output/'
-	moa set $(moa_id)_process='cat $$< > $$t'
+	moa set adhoc_name_sed='s/input/output/'
+	moa set adhoc_process='cat $$< > $$t'
 	moa
 	ls
 	[[ ! ( -e test.1.output ) ]]
@@ -161,9 +157,9 @@ $(moa_id)_unittest:
 	moa
 	[[ -e test.2.output ]]
 	[[ ! (-e test.1.output) ]]
-	moa set $(moa_id)_touch=F
+	moa set adhoc_touch=F
 	rm test.?.output
 	moa -v
 	ls
 	[[  (-e test.1.output) ]]
-	moa set $(moa_id)_touch=T
+	moa set adhoc_touch=T

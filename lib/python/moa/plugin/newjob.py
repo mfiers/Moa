@@ -22,6 +22,7 @@ Instantiate new jobs
 """
 
 import os
+import sys
 
 import optparse
 import moa.job
@@ -36,17 +37,6 @@ def defineCommands(data):
         'call' : newJob
         }
     
-    data['commands']['template'] = {
-        'private' : False,
-        'call' : template,
-        'desc' : 'Print out the template name of this job'
-        }
-
-    data['commands']['list'] = {
-        'desc' : 'Print a list of all known templates',
-        'call' : listTemplates,
-        }
-
 
 def defineOptions(data):
     parser = data['parser']
@@ -56,52 +46,6 @@ def defineOptions(data):
     parserN.add_option("-t", "--title", dest="title", help="Job title")
     data['parser'].add_option_group(parserN)
 
-
-    parserN = optparse.OptionGroup(data['parser'], "moa list")
-    parserN.add_option("-l", "--long", dest="listlong", action='store_true',
-                       help="Show a description for moa list")
-    data['parser'].add_option_group(parserN)
-
-
-
-def listTemplates(data):
-    """
-    **moa list** - Print a list of all known templates
-
-    Usage::
-
-        moa list
-        moa list -l
-
-    Print a list of all templates known to this moa installation. If
-    the option '-l' is used, a short description for each tempalte is
-    printed as well.
-    """
-    options = data['options']
-    if options.listlong:
-        for job, info in moa.template.listAllLong():
-            for line in textwrap.wrap(
-                '%%(bold)s%s%%(reset)s:%%(blue)s %s%%(reset)s' % (job, info),
-                initial_indent=' - ',
-                subsequent_indent = '     '):
-                moa.ui.fprint(line)
-    else:
-        for tFile, tName  in moa.template.listAll():
-            print tName
-
-
-def template(data):
-    """
-    **moa template** - Print the template name of the current job
-
-    Usage::
-
-        moa template
-
-        
-    """
-    job = data['job']
-    print job.template.name
 
 def newJob(data):
     """
@@ -125,7 +69,7 @@ def newJob(data):
         else:
             template = a
 
-    moa.ui.fprint("Created a new Moa %%(green)s%%(bold)s%s%%(reset)s job" % template)
+    moa.ui.fprint("Created a Moa %%(green)s%%(bold)s%s%%(reset)s job" % template)
 
     if os.path.exists(os.path.join(
         wd, '.moa', 'template')) and \
@@ -142,7 +86,6 @@ def newJob(data):
                          template = template,
                          title = options.title)
 
-    print job.conf
     l.debug("Successfully created a %s job" % template)
 
     for p in params:

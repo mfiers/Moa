@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Configure jobs
---------------
+**configure** - Configure jobs
+------------------------------
 
 Control job configuration
 """
@@ -107,6 +107,7 @@ def configUnset(data):
             l.debug("Unsetting %s" % a)
             del job.conf[a]
     job.conf.save()
+
     
 def configSet(data):
     """
@@ -134,7 +135,7 @@ def configSet(data):
     for a in args:
         if not '=' in a:
             old = job.conf[a]
-            val = moa.utils.askUser("%s:\n$ " % a, old)
+            val = moa.ui.askUser("%s:\n$ " % a, old)
             job.conf[a] = val
         else:
             key,val = a.split('=',1)

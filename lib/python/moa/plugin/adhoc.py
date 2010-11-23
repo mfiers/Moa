@@ -18,7 +18,10 @@
 # 
 
 """
-Adhoc - Utility to create an adhoc job
+**adhoc** - create Jobs on the fly
+----------------------------------
+
+Generate jobs on the fly with one or a few lines of bash code
 """
 
 import os
@@ -36,10 +39,10 @@ def defineCommands(data):
         'desc' : 'Quickly create an adhoc analysis',
         'call' : createAdhoc
         }
-    data['commands']['adstore'] = {
-        'desc' : 'Remeber this adhoc analysis for reuse',
-        'call' : addStore
-        }
+    #data['commands']['adstore'] = {
+    #    'desc' : 'Remeber this adhoc analysis for reuse',
+    #    'call' : addStore
+    #    }
     
 def defineOptions(data):
     parserN = optparse.OptionGroup(data['parser'], "Moa adhoc (a)")
@@ -48,7 +51,7 @@ def defineOptions(data):
         
     except optparse.OptionConflictError:
         pass # these options are probably already defined in the newjob plugin
-    
+
     parserN.add_option("-m", "--mode",
                        dest="mode",
                        help="Adhoc mode to run (omit for moa to guess)")
@@ -70,20 +73,28 @@ def _sourceOrTarget(g):
 
 def createAdhoc(data):
     """
+     **moa adhoc** - Create an adhoc job
+
+    Usage::
+
+       moa adhoc -t 'job title'
+       moa adhoc -t 'job title' -f
+
+
     Create an adhoc job
     """
-
-    print sys.argv
-    x = os.system('env | grep moa')
-    sys.exit()
     wd = data['cwd']
     options = data['options']
     args = data['newargs']
 
+    if not options.force and \
+           os.path.exists(os.path.join(wd, '.moa', 'template')):
+        moa.ui.exitError("Job already exists, use -f to override")
+        
     command = " ".join(args).strip()
     
     if not command:
-        command=moa.utils.askUser('adhoc_command:\n>', '')
+        command=moa.ui.askUser('command:\n>', '')
 
     l.info('Parsing command: %s' % command)
     params = []
@@ -148,9 +159,9 @@ def createAdhoc(data):
             l.info(" - set input glob       : %s" % inG)
             l.info(" - set input extension  : %s" % inE[1:])
 
-            params += ['adhoc_input_dir=%s' % inD]
-            params += ['adhoc_input_glob=%s' % inG]
-            params += ['adhoc_input_extension=%s' % inE[1:]]
+            params.append(('input_dir', inD))
+            params.append(('input_glob', inG))
+            params.append(('input_extension', inE[1:]))
 
             if outGlob:
                 ouD, ouG, ouE = outGlob.groups()
@@ -168,8 +179,8 @@ def createAdhoc(data):
                     )
                 l.info(" - set name_sed         : %s " % sed)
                 l.info(" - set output dir       : %s " % ouD)
-                params += ['adhoc_output_dir=%s' % ouD]
-                params += ['adhoc_name_sed=%s' % sed]
+                params.append(('output_dir', ouD))
+                params.append(('name_sed', sed))
 
             #hack the commandline
             for i in range(len(globs)-1, -1, -1):
@@ -181,9 +192,9 @@ def createAdhoc(data):
 
     if command:
         l.info(" - set command          : %s" % command)
-        params.append('adhoc_process=%s' % command)
+        params.append(('process', command))
 
-    params.append('adhoc_mode=%s' % mode)
+    params.append(('mode', mode))
     
     l.info(" - set mode             : %s" % mode)
 
@@ -191,14 +202,14 @@ def createAdhoc(data):
         l.warning("Note: adhoc is running in sequential ('seq') mode. If ")
         l.warning("you are confident that the individual jobs do not interfere, you might ")
         l.warning("consider setting adhoc to parallel operation:")
-        l.warning("$ moa set adhoc_mode=par")
-               
-    l.debug('setting parameters %s' % params)
+        l.warning("$ moa set mode=par")
 
-    job = moa.job.newJob(wd,
-                         template='adhoc',
+    for pk, pv in params:
+        l.debug('setting parameters %s to %s' % (pk, pv))
+
+    
+    job = moa.job.newJob(wd, template='adhoc',
                          title = options.title,
-                         force = options.force,
                          parameters=params)
 
 def addStore(data):
