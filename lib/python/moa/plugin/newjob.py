@@ -134,20 +134,21 @@ def newJob(data):
         l.error(wd)
         l.error("use -f to override")
 
-    title = options.title
-    
+    if not options.title:
+        l.error("Must define a title for this job")
+        sys.exit(-1)
+        
     job = moa.job.newJob(wd,
                          template = template,
-                         options = options)
+                         title = options.title)
 
+    print job.conf
     l.debug("Successfully created a %s job" % template)
 
-    if title:
-        job.conf['title'] = title
-        
     for p in params:
         k,v = p.split('=', 1)
         job.conf[k] = v
+
     job.conf.save()
 
 TESTSCRIPT = """

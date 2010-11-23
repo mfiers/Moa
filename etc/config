@@ -1,4 +1,4 @@
-plugins: [fileset, configure, newjob, logo, test, info]
+plugins: [fileset, configure, newjob, logo, test, adhoc]
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True

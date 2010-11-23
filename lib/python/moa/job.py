@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# 
 # Copyright 2009 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
@@ -31,81 +29,80 @@ import moa.logger as l
 import moa.template
 import moa.jobConf
 
-def getJob(wd):
-    """
-    Utility funtion to instantiate the correct job class
-
-    Currently, 'there is only one' (that is a Gnu Makefile based
-    job
-    """
-    return Job(wd)
-
-def newJob(wd, template, options=None):
+def newJob(wd, template, title):
     """
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
     template, and instantiate the proper job type
-    """
-    if not options:
-        options = {}
-        
-    return Job(wd, template = template, options = options)
+
+    >>> wd = tempfile.mkdtemp()
+    >>> job = newJob(wd, template='blast', title='test')
+    >>> assert(isinstance(job, Job))
+    >>> assert(job.template.name == 'blast')
+    >>> assert(job.conf.title == 'test')
     
-def newTestJob(template, **options):
+    :param wd: Directory to create this job in, note that this
+       directory must already exists
+    :param template: Template name for this job
+    :type template: String
+    :rtype: instance of :class:`moa.job.Job`
+    
+    """
+    job = Job(wd, template = template)
+    job.conf.title = title
+    return job
+
+def newTestJob(template, title="Test job"):
     """
     Test function - creates a temp directory and uses that to
     instantiate the job in. This function returns the directory where
     the job is created. All parameters are passed on to L{newJob}
 
-        >>> job = newTestJob(template = 'adhoc')
-        >>> isinstance(job, Job)
-        True
-        >>> os.path.exists(job.wd)
-        True
-        >>> os.path.exists(os.path.join(job.wd, '.moa', 'template'))
-        True
+    >>> job = newTestJob(template = 'adhoc')
+    >>> isinstance(job, Job)
+    True
+    >>> os.path.exists(job.wd)
+    True
+    >>> os.path.exists(os.path.join(job.wd, '.moa', 'template'))
+    True
 
     
     @returns: The directory where the job was created
     @rtype: string
     """
-
-    wd = tempfile.mkdtemp()
-    job = Job(wd, template=template, options=options)
+    wd = tempfile.mkdtemp()    
+    job = Job(wd, template=template)
+    job.conf.title = title
     return job
 
 class Job(object):
     """
     Class defining a single job
 
+    >>> wd = tempfile.mkdtemp()
+    >>> job = Job(wd)
+    >>> assert(isinstance(job, Job))
+    >>> assert(job.template.name == 'nojob')
     
     :param wd: The directory containing the job
-    
     :param template: The template a job should have. If undefined,
         read the template from `./.moa/template`
-
     :param options: Additional options to feed to this job
     """
     
     def __init__(self,
                  wd,
-                 template = None,
-                 options = None):
+                 template = None):
 
         if wd[-1] == '/':
             wd = wd[:-1]
         self.wd = wd
-        if options:
-            self.options = options
-        else:
-            self.options = {}
         
         self.confDir = os.path.join(self.wd, '.moa')
 
         self.template = None
         self.backend = None
         self.args = []
-        self.options = {}
 
         #first load the template
         if template:
@@ -118,8 +115,7 @@ class Job(object):
 
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
-
-
+        
     def checkConfDir(self):
         """
         Check if the configuration directory exists. If not create it.
@@ -137,7 +133,7 @@ class Job(object):
         return moa.actor.Actor(wd = self.wd)
 
     
-    def execute(self, command):
+    def execute(self, command, verbose=False, background=False):
         """
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
@@ -149,8 +145,8 @@ class Job(object):
         l.debug("executing %s" % command)
         if self.backend:
             self.backend.execute(command,
-                                 verbose = self.options,
-                                 background = self.options.background)
+                                 verbose = verbose,
+                                 background = background)
         else:
             l.error("No backend loaded - cannot execute %s" % command)
                     

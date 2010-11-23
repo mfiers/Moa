@@ -77,6 +77,9 @@ class JobConf(object):
         if self.template.parameters.has_key(key):
             return True
         return False
+
+    def update(self, data):
+        self.jobConf.update(data)
         
     def __getitem__(self, key):
         if self.jobConf.has_key(key):

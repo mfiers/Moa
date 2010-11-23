@@ -18,7 +18,7 @@
 # 
 
 """
-Adhoc - some utilities to quickly create adhoc jobs
+Adhoc - Utility to create an adhoc job
 """
 
 import os
@@ -73,6 +73,9 @@ def createAdhoc(data):
     Create an adhoc job
     """
 
+    print sys.argv
+    x = os.system('env | grep moa')
+    sys.exit()
     wd = data['cwd']
     options = data['options']
     args = data['newargs']
