@@ -6,45 +6,28 @@
 #
 
 __moa_is_moadir() {
-	if [[ -e "moa.mk" ]]; then
+	if [[ -e ".moa/template" ]]; then
 		echo "yes";
-	elif [[ ! -e "Makefile" ]]; then
-		echo "no"
-	elif grep -qi moa Makefile; then
-		echo "yes"
 	else
 		echo "no"
 	fi
 }
 
 __moa_get_template() {
-	echo `grep '$(call moa_load,' Makefile  | sed "s/.*,\(.*\))/\1/"`
+	echo `moa template`
 }
 
 __moa_all_templates() {
 	#return a list of all known moa templates
-	if [[ ! ( -e ~/.moa/cache/list ) ]]; then
-		mkdir -p ~/.moa/cache
-		moa list > ~/.moa/cache/list
-	fi
-	echo `cat ~/.moa/cache/list`
+    echo `moa list`
 }	
 
-__moa_all_packs() {
-    #return a list of all known moa packs
-    echo `ls ~/.moa/packs | sed "s/\.tar\.bz2$//"`
-}
 
 __moa_all_vars() {
 	#return a list of all known moa templates
 	if [[ $(__moa_is_moadir) == "yes" ]]
 	then
-		template=$(__moa_get_template)
-		if [[ ! ( -e "~/.moa/cache/template/$template" ) ]]; then
-			mkdir -p ~/.moa/cache/template
-			moa showvars 2>/dev/null > ~/.moa/cache/template/$template
-		fi		
-		echo `cat ~/.moa/cache/template/$template`
+	    echo `moa raw_parameters`
 	fi
 }		
 
@@ -55,9 +38,8 @@ _moa()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
     		
-    opts="--help --force --verbose --bg --title --directory"
-    shopts="-h -f -v -j -t -d"
-    moacomms="set run new list test help show pack unpack kill listlong adhoc cp template "
+    opts="--help --force --verbose --bg --title"
+    shopts="-h -f -v -j -t"
     moacommand=""
        
     if [[ ${cur} == --* ]] ; then
@@ -71,7 +53,8 @@ _moa()
     fi
 
     if [[ ${prev} == moa ]]; then
-    	COMPREPLY=( $(compgen -W "${moacomms}" -- ${cur}) )
+	local commands=`moa raw_commands`;
+    	COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
         return 0
     fi
     
