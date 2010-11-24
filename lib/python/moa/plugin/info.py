@@ -61,8 +61,9 @@ def status(data):
         moa.ui.fprint("%(bold)s%(red)sNot a Moa job%(reset)s")
         return
     moa.ui.fprint("%(bold)s%(green)sThis is a Moa job%(reset)s")
-    moa.ui.fprint("%%(blue)s%%(bold)sTemplate name: %%(reset)s%s" % job.template.name)
-    
+    moa.ui.fprint("%%(blue)s%%(bold)sTemplate name: %%(reset)s%s" %
+                  job.template.name)
+   
 def rawCommands(data):
     """
     *(private)* **moa raw_commands** - Print a list of all known commands
@@ -81,6 +82,7 @@ def rawCommands(data):
     if job.template.name != 'nojob':
         c.extend(job.template.commands)
     print ' '.join(c)
+
 
 def rawParameters(data):
     """
