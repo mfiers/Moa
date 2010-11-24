@@ -39,6 +39,13 @@ class PluginHandler(UserDict.DictMixin):
                     raise
                 #l.debug("No python plugin module found for %s" % plugin)
 
+        newOrder = []
+        for plugin in self.keys():
+            newOrder.append((getattr(self[plugin], 'order', 100), plugin))
+        newOrder.sort()
+        self.allPlugins = [x[1] for x in newOrder]
+            
+
     def register(self, **kwargs):
         """
         Keep track of a dictionary of data that might be used
@@ -48,7 +55,7 @@ class PluginHandler(UserDict.DictMixin):
         self.data.update(kwargs)
             
     def run(self, command):
-        for p in self.keys():
+        for p in self.allPlugins:
             if not command in dir(self[p]):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
@@ -65,7 +72,7 @@ class PluginHandler(UserDict.DictMixin):
         A generator that returns all plugins and the
         requested attribute
         """
-        for p in self.keys():
+        for p in self.allPlugins:
             a = getattr(self[p], attribute, None)
             if a: yield p, a
         
