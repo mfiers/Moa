@@ -64,6 +64,9 @@ class Template(Yaco.Yaco):
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
 
+    def save(self):
+        raise Exception("direct saving of template files is disabled")
+        
 def check(what):
     """    def _getParameterCategories(self):
         order = self.parameter_category_order
