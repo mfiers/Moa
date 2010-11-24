@@ -118,7 +118,7 @@ if __name__ == "__main__":
         command = args[0]
         newargs = args[1:]
     else:
-        command = 'run'
+        command = 'status'
         
     l.debug("start moa %s" % command)
     l.debug("with args %s" % newargs)
