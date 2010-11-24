@@ -40,12 +40,14 @@ def defineCommands(data):
 
 def defineOptions(data):
     parser = data['parser']
-    
-    parserN = optparse.OptionGroup(data['parser'], "moa new")
-    data['parser'].set_defaults(title="")
-    parserN.add_option("-t", "--title", dest="title", help="Job title")
-    data['parser'].add_option_group(parserN)
 
+    try:
+        parserN = optparse.OptionGroup(data['parser'], "moa new")
+        data['parser'].set_defaults(title="")
+        parserN.add_option("-t", "--title", dest="title", help="Job title")
+        data['parser'].add_option_group(parserN)
+    except optparse.OptionConflictError:
+        pass
 
 def newJob(data):
     """
