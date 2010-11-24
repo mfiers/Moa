@@ -50,7 +50,11 @@ class Commands(UserDict.DictMixin):
         self.commands[item] = value
 
     def keys(self):
-        return self.commands.keys()
+        rv = []
+        for k in self.commands.keys():
+            if not self.commands[k].get('private', False):
+                rv.append(k)
+        return rv
 
     def hasCallback(self, command):
         if self[command].has_key('call') and \
