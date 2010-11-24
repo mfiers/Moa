@@ -18,13 +18,26 @@
 # 
 
 """
-**logo** - Print a chick
-------------------------
+**logo** - Print the moa logo
+-----------------------------
 """
 import os
 
 import moa.utils    
+
+order = 10
+
 def preRun(data):
+    """
+    Print the logo just before a moa run
+    """
+    
+    job = data['job']
+    #don't print a logo during a no-job run
+    if job.template.name == 'nojob':
+        return
+
+    #adjust the logo for term width
     TERMHEIGHT, TERMWIDTH = map(int, os.popen('stty size', 'r').read().split())
     MOABASE = moa.utils.getMoaBase()
     version = data['sysConf'].getVersion()
@@ -33,5 +46,4 @@ def preRun(data):
     logo = logo.replace('###', 't' * (TERMWIDTH - 64))
     logo = logo.replace('##', 't' * (TERMWIDTH - 58 - len(version)))
     logo = logo.replace('VERSION', version)
-    print logo
-    
+    print logo    
