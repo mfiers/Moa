@@ -1,6 +1,7 @@
 
 import moa.logger as l
 import moa.backend
+import moa.ui
 
 class NojobBackend(moa.backend.BaseBackend):
     """
@@ -24,5 +25,6 @@ class NojobBackend(moa.backend.BaseBackend):
         """
         Nojob - cannot execute
         """
-        l.error("cannot execute 'moa %s'" % command)
-        l.error("Maybe try this in a directory containing a moa job?")
+        moa.ui.fprint("%(red)s%(bold)sNot a moa job%(reset)s")
+        moa.ui.fprint("%%(bold)sCannot execute 'moa %s'%%(reset)s" % command)
+        moa.ui.fprint("maybe try: 'moa help'")
