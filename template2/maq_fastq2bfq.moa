@@ -1,37 +1,36 @@
 author: Mark Fiers
 backend: gnumake
-commands: [fq2bq, clean]
+commands:
+- fq2bq
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: Converts a FASTQ file to MAQ BFQ format.
 filesets:
-  bfq: {category: output, dir: ./bfq, extension: bfq, source: input, type: map}
-  input: {category: input, extension: fastq, help: input FASTA files, optional: false,
-    type: input}
+  bfq:
+    category: output
+    dir: ./bfq
+    extension: bfq
+    source: input
+    type: map
+  input:
+    category: input
+    extension: fastq
+    help: input FASTA files
+    optional: false
+    type: input
 gnumake_makefile: /tmp/xx/maq_fastq2bfq.mk
-help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
-    implemented by the template.', fq2bq: ''}
+help:
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
+  fq2bq: ''
 moa_id: fq2bq
 modification_date: Wed Nov 10 07:56:48 2010
 name: maq_fastq2bfq
-parameter_category_order: [input, system, advanced]
+parameter_category_order:
+- input
+- system
+- advanced
 parameters:
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
-    type: string
   title:
     allowed: []
     category: system

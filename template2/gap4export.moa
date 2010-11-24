@@ -1,16 +1,22 @@
 author: Mark Fiers
 backend: gnumake
-commands: [gap4export, clean]
+commands:
+- gap4export
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: Export data from an assembly using gap4
 gnumake_makefile: /tmp/xx/gap4export.mk
-help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
-    implemented by the template.', gap4export: Export data from an assembly using
-    gap4}
+help:
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
+  gap4export: Export data from an assembly using gap4
 moa_id: gap4export
 modification_date: Wed Nov 10 07:56:48 2010
 name: gap4export
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   ge_input_dir:
     allowed: []
@@ -25,23 +31,6 @@ parameters:
     default: ''
     help: file name pattern
     optional: false
-    type: string
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
     type: string
   title:
     allowed: []

@@ -1,15 +1,22 @@
 author: Mark Fiers
 backend: gnumake
-commands: [bartab, clean]
+commands:
+- bartab
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: BARTAB - a tool to process sff files
 gnumake_makefile: /tmp/xx/bartab.mk
-help: {bartab: .. to be written .., clean: 'Remove all job data, not the Moa job itself,
-    note that this must be implemented by the template.'}
+help:
+  bartab: .. to be written ..
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
 moa_id: bartab
 modification_date: Wed Nov 10 07:56:48 2010
 name: bartab
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   extra_parameters:
     allowed: []
@@ -46,23 +53,6 @@ parameters:
     help: minimun acceptable sequence length
     optional: true
     type: integer
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
-    type: string
   out:
     allowed: []
     category: ''
@@ -92,7 +82,9 @@ parameters:
     optional: false
     type: string
   trim:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: T
     help: Trim barcode

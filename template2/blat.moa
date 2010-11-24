@@ -1,18 +1,28 @@
 author: Mark Fiers
 backend: gnumake
-commands: [blat, clean]
+commands:
+- blat
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run BLAT on an set of input files (query) vs a database.
 gnumake_makefile: /tmp/xx/blat.mk
-help: {blat: '', clean: 'Remove all job data, not the Moa job itself, note that this
-    must be implemented by the template.'}
+help:
+  blat: ''
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
 moa_id: blat
 modification_date: Wed Nov 10 07:56:48 2010
 name: blat
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   db:
-    allowed: ['[dna,', 'prot,', 'dnax]']
+    allowed:
+    - '[dna,'
+    - prot,
+    - dnax]
     category: ''
     default: ''
     help: type of the database (dna, prot or dnax)
@@ -26,7 +36,10 @@ parameters:
     optional: true
     type: file
   db_type:
-    allowed: ['[dna,', 'prot,', 'dnax]']
+    allowed:
+    - '[dna,'
+    - prot,
+    - dnax]
     category: ''
     default: dna
     help: type of the database (dna, prot or dnax)
@@ -68,25 +81,13 @@ parameters:
       and blat_input_extension is used to find a list of input files
     optional: false
     type: file
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
-    type: string
   query_type:
-    allowed: ['[dna,', 'rna,', 'prot,', 'dnax,', 'rnax]']
+    allowed:
+    - '[dna,'
+    - rna,
+    - prot,
+    - dnax,
+    - rnax]
     category: ''
     default: dna
     help: type of the query (dna, rna, prot, dnax or rnax)

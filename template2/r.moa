@@ -1,36 +1,31 @@
 author: Mark Fiers
 backend: gnumake
-commands: [r, clean]
+commands:
+- r
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: run the R script in moa.R, with the specified input files
 filesets:
-  input: {category: input, extension: '', help: Input files for r, optional: true,
-    type: input}
+  input:
+    category: input
+    extension: ''
+    help: Input files for r
+    optional: true
+    type: input
 gnumake_makefile: /tmp/xx/r.mk
-help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
-    implemented by the template.', r: ''}
+help:
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
+  r: ''
 moa_id: r
 modification_date: Wed Nov 10 07:56:48 2010
 name: r
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
-    type: string
   title:
     allowed: []
     category: system
@@ -39,7 +34,9 @@ parameters:
     optional: false
     type: string
   touch:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: T
     help: use touch files to track if input files have changed. If you set this to

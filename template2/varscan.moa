@@ -1,15 +1,22 @@
 author: Mark Fiers
 backend: gnumake
-commands: [varscan, clean]
+commands:
+- varscan
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run VARSCAN to detect snps
 gnumake_makefile: /tmp/xx/varscan.mk
-help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
-    implemented by the template.', varscan: ''}
+help:
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
+  varscan: ''
 moa_id: varscan
 modification_date: Wed Nov 10 07:56:48 2010
 name: varscan
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   extra_params:
     allowed: []
@@ -25,23 +32,6 @@ parameters:
     help: Varscan input alignments file
     optional: true
     type: file
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
-    type: string
   output_name:
     allowed: []
     category: ''

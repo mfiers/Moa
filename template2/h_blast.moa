@@ -1,16 +1,22 @@
 author: Mark Fiers
 backend: gnumake
-commands: [h_blast, clean]
+commands:
+- h_blast
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: Runs BLAST on a hadoop cluster
 gnumake_makefile: /tmp/xx/h_blast.mk
-help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
-    implemented by the template.', h_blast: 'Similar to a normal blast, but now running
-    on an hadoop cluster'}
+help:
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
+  h_blast: Similar to a normal blast, but now running on an hadoop cluster
 moa_id: h_blast
 modification_date: Wed Nov 10 07:56:48 2010
 name: h_blast
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   db:
     allowed: []
@@ -54,23 +60,6 @@ parameters:
     help: input file extension
     optional: true
     type: string
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
-    type: string
   nohits:
     allowed: []
     category: ''
@@ -86,7 +75,12 @@ parameters:
     optional: true
     type: integer
   program:
-    allowed: [blastn, blastp, blastx, tblastn, tblastx]
+    allowed:
+    - blastn
+    - blastp
+    - blastx
+    - tblastn
+    - tblastx
     category: ''
     default: blastn
     help: 'blast program to use (default: blastn)'

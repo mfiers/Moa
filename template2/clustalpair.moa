@@ -1,15 +1,22 @@
 author: Mark Fiers
 backend: gnumake
-commands: [clustalpair, clean]
+commands:
+- clustalpair
+- clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run clustalw on two sets of sequences
 gnumake_makefile: /tmp/xx/clustalpair.mk
-help: {clean: 'Remove all job data, not the Moa job itself, note that this must be
-    implemented by the template.', clustalpair: run clustalw}
+help:
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
+  clustalpair: run clustalw
 moa_id: clustalpair
 modification_date: Wed Nov 10 07:56:48 2010
 name: clustalpair
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   input_dir_a:
     allowed: []
@@ -31,23 +38,6 @@ parameters:
     category: ''
     default: fasta
     help: Extension of the input files
-    optional: true
-    type: string
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
     optional: true
     type: string
   title:

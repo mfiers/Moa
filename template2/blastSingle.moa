@@ -1,25 +1,36 @@
 author: Mark Fiers
 backend: gnumake
-commands: [blast, clean, blast_report]
+commands:
+- blast
+- clean
+- blast_report
 creation_date: Wed Nov 10 07:56:48 2010
 description: Wraps BLAST [[Alt90]], probably the most popular similarity search tool
   in bioinformatics.
 gnumake_makefile: /tmp/xx/blastSingle.mk
-help: {blast: 'Running BLAST takes an input directory (*blast_input_dir*), determines
-    what sequence files are present (with the parameter *blast_input_extension*) and
-    executes BLAST on each of these. Moa BLAST is configured to create XML output
-    (as opposed to the standard text based output) in the *./out* directory. The output
-    XML is subsequently converted to GFF3 by the custom *blast2gff* script (using
-    BioPython). Additionally, a simple text report is created.', blast_report: Generate
-    a text BLAST report., clean: 'Remove all job data, not the Moa job itself, note
-    that this must be implemented by the template.'}
+help:
+  blast: Running BLAST takes an input directory (*blast_input_dir*), determines what
+    sequence files are present (with the parameter *blast_input_extension*) and executes
+    BLAST on each of these. Moa BLAST is configured to create XML output (as opposed
+    to the standard text based output) in the *./out* directory. The output XML is
+    subsequently converted to GFF3 by the custom *blast2gff* script (using BioPython).
+    Additionally, a simple text report is created.
+  blast_report: Generate a text BLAST report.
+  clean: Remove all job data, not the Moa job itself, note that this must be implemented
+    by the template.
 moa_id: blast
 modification_date: Wed Nov 10 07:56:48 2010
 name: blastSingle
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
   blast_gff_blasthit:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     cardinality: one
     category: ''
     default: F
@@ -87,30 +98,18 @@ parameters:
     optional: true
     type: integer
   input_sort:
-    allowed: [u, s, sr, t, tr]
+    allowed:
+    - u
+    - s
+    - sr
+    - t
+    - tr
     category: input
     default: u
     help: 'Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t -
       time, tr - time reverse'
     optional: true
     type: set
-  moa_postcommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single shell command to be executed after the Moa is finished. For more
-      complex processing please override the moa_postprocess target in the local Makefile.
-    optional: true
-    type: string
-  moa_precommand:
-    allowed: []
-    category: advanced
-    default: ''
-    help: A single command to be executed before the main operation starts. For more
-      complicated processing, please override the moa_preprocess target in the local
-      Makefile.
-    optional: true
-    type: string
   nohits:
     allowed: []
     category: ''
@@ -126,7 +125,12 @@ parameters:
     optional: true
     type: integer
   program:
-    allowed: [blastx, blastn, blastp, tblastn, tblastx]
+    allowed:
+    - blastx
+    - blastn
+    - blastp
+    - tblastn
+    - tblastx
     category: ''
     default: blastn
     help: 'blast program to use (default: blastn)'
