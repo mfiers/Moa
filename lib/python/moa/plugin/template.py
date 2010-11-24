@@ -1,4 +1,3 @@
-#
 # Copyright 2009, 2010 Mark Fiers, Plant & Food Research
 # 
 # This file is part of Moa - http://github.com/mfiers/Moa
@@ -14,15 +13,14 @@
 # License for more details.
 # 
 # You should have received a copy of the GNU General Public License
-# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+# along with Moa. If not, see <http://www.gnu.org/licenses/>.
 """
 Manipulate templates
 --------------------
 
 View and edit template definitions
 """
-
+import time
 import optparse
 
 import moa.ui
@@ -50,6 +48,11 @@ def defineCommands(data):
         'call' : listTemplates,
         }
 
+    data['commands']['template_set'] = {
+        'desc' : 'Set a template parameters',
+        'call' : templateSet,
+        }
+    
 def defineOptions(data):
     parser = data['parser']
     
@@ -59,7 +62,45 @@ def defineOptions(data):
     data['parser'].add_option_group(parserN)
 
 
+def _getTemplateFromData(data):
+    """
+    Return a relevant template, either the one specified, or the template
+    that the current directory refers to
 
+    :param data: global data structure, containing all relevant information
+    :type data: dict
+    
+    """
+    job = data['job']
+    args = data['newargs']
+    if len(args) > 0 and not '=' in args[0]:
+        template = moa.template.Template(args[0])
+    else:
+        template = job.template
+
+    if template.name == 'nojob':
+        moa.ui.exitError("No template found")
+
+    return template
+
+def templateSet(data):
+    """
+    **moa template_set** - set a template parameter.
+
+    This only works for top level template parameters
+    """
+    template = _getTemplateFromData(data)
+    args = data['args']
+    for i, a in enumerate(data['args']):
+        print i,a
+        if i == 0 and not '=' in a: continue
+        elif not '=' in a:
+            moa.ui.exitError("Do not know how to set '%s'" % a)
+        k, v = a.split('=', 1)
+        template[k] = v
+        template.modification_data = time.asctime()
+        template.save()
+    
 def listTemplates(data):
     """
     **moa list** - Print a list of all known templates
@@ -96,7 +137,7 @@ def template(data):
         
     """
     job = data['job']
-    print job.template.name
+    moa.ui.fprint(job.template.name)
 
 
 def dumpTemplate(data):
@@ -110,16 +151,6 @@ def dumpTemplate(data):
     Show the raw template data.
     """
     import yaml
-    job = data['job']
-    args = data['newargs']
-    if len(args) > 0:
-        print 'get', args
-        template = moa.template.Template(args[0])
-    else:
-        template = job.template
-
-    if template.name == 'nojob':
-        moa.ui.exitError("No template found")
-
+    template = _getTemplateFromData(data)
     print yaml.dump(template.get_data())
 
