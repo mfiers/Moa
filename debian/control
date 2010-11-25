@@ -3,7 +3,7 @@ Maintainer: Mark Fiers <mark.fiers@plantandfood.co.nz>
 Section: python
 Priority: optional
 Build-Depends: debhelper (>= 7), python-support (>= 0.8.4)
-Standards-Version: 3.8.4
+Standards-Version: 3.9.1
 XS-Python-Version: current
 
 Package: moa
