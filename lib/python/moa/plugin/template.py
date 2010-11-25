@@ -34,6 +34,7 @@ def defineCommands(data):
     """
     data['commands']['template_dump'] = {
         'desc' : 'Display the raw template description',
+        'private': True,
         'call' : dumpTemplate,
         }
     
@@ -50,6 +51,7 @@ def defineCommands(data):
 
     data['commands']['template_set'] = {
         'desc' : 'Set a template parameters',
+        'private': True,
         'call' : templateSet,
         }
     

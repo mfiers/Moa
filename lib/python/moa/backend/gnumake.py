@@ -93,7 +93,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
         
         #and the job configuration
         confDict = {}
-        moaId = self.job.template.name
+        moaId = self.job.template.moa_id
         for k in self.job.conf.keys():
             v = self.job.conf[k]
             if isinstance(v, dict):
@@ -101,6 +101,7 @@ class GnumakeBackend(moa.backend.BaseBackend):
             if isinstance(v, list) or \
                    isinstance(v, set):
                 v = " ".join(map(str,v))
+#            print 'setting %s to %s' % (k,v)
             if k[:3] == 'moa':
                 confDict[k] = v
             else:
@@ -167,6 +168,4 @@ class GnumakeBackend(moa.backend.BaseBackend):
         l.debug("Start writing %s" % self.makefile)
         with open(self.makefile, 'w') as F:
             F.write(NEW_MAKEFILE_HEADER)
-            F.write("$(call moa_load,%s)\n" % template.name)
-
-
+            F.write("$(call moa_load,%s)\n" % template.moa_id)

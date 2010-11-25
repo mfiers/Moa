@@ -17,23 +17,25 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include $(MOABASE)/lib/gnumake/prepare.mk
 moa_id = bwa_aln
-
-#########################################################################
-# Prerequisite testing
-
-#variables
-
-$(moa_id)_seed_len_formatter = -l $(1)
-
+include $(MOABASE)/lib/gnumake/prepare.mk
 include $(MOABASE)/lib/gnumake/core.mk
 
-$(bwa_aln_output_files): %.sai: $(bwa_aln_input_dir)/%.$(bwa_aln_input_extension)
-	bwa aln $($(moa_id)_db) $($(moa_id)_seed_len_f) $< -f $@
+test_2:
+	echo $(bwa_aln_output_files)
+	echo $(bwa_aln_input_files)
 
+#Main target
+.PHONY: bwa_aln
 bwa_aln: $(bwa_aln_output_files)
 
+$(bwa_aln_output_files): %.sai: $(bwa_aln_input_dir)/%.$(bwa_aln_input_extension)
+	bwa aln $(bwa_aln_db) 				\
+			-l $(bwa_aln_seed_len) 		\
+			-k $(bwa_aln_seed_max_diff) \
+			$< -f $@
+
+.PHONY: bwa_aln_clean
 bwa_aln_clean:
 	-rm -f *.sai
 

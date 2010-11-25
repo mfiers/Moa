@@ -46,6 +46,16 @@ def defineCommands(data):
         'private' : True,
         'call' : rawParameters,
         }
+    data['commands']['version'] = {
+        'desc' : 'Print the moa version',
+        'call' : version }
+
+
+def version(data):
+    """
+    **moa version** - Print the moa version number
+    """
+    print data['sysConf'].getVersion()
 
 def status(data):
     """

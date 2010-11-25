@@ -103,11 +103,13 @@ def welcome(data):
     """
     print a welcome message
     """
-    moa.ui.fprint("""%%(bold)s%%(blue)sWelcome to MOA!%%(reset)s
+    moa.ui.fprint("""%%(bold)s%%(blue)sWelcome to MOA!%%(reset)s (v %(version)s)
 Managing command line workflows
 
-%%(bold)sAvailable commands%%(reset)s: %s
+%%(bold)sAvailable commands%%(reset)s: %(commands)s
 
-You can try: `%%(bold)smoa --help%%(reset)s` for a list of commands,
+Try: `%%(bold)smoa --help%%(reset)s` for more help,
 or read the manual at: %%(green)shttp://mfiers.github.com/Moa/%%(reset)s
-"""  % (", ".join(data['commands'].keys())))
+"""  % {'commands' : ", ".join(data['commands'].keys()),
+        'version' : data['sysConf'].getVersion()
+})

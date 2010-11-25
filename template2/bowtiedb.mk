@@ -25,12 +25,18 @@ moa_id = bowtiedb
 
 #variables
 
+test2:
+	@echo $(bowtiedb_input_files)
+	@echo $(call merge,b, a a a )
+
 include $(MOABASE)/lib/gnumake/core.mk
 bowtiedb: $(bowtiedb_name).1.ebwt
 
 #one of the database files
+comma=,
 $(bowtiedb_name).1.ebwt: $(bowtiedb_input_files)
 	-$e rm -f $(bowtiedb_name).*.ebwt
+	echo bowtie-build $(call merge,$(comma),$^) $(bowtiedb_name)
 	$e bowtie-build $(call merge,$(comma),$^) $(bowtiedb_name)
 	touch $(bowtiedb_name)
 

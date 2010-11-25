@@ -1,4 +1,5 @@
-author: Mark Fiers
+author: Yogini Idnani, Mark Fiers
+version: 1
 backend: gnumake
 commands:
 - bwa_aln
@@ -24,7 +25,6 @@ help:
     by the template.
 moa_id: bwa_aln
 modification_data: Wed Nov 24 22:00:01 2010
-modification_date: Wed Nov 10 07:56:48 2010
 name: Bwa Align
 parameter_category_order:
 - ''
@@ -42,8 +42,14 @@ parameters:
   seed_len:
     allowed: []
     category: ''
-    default: ''
+    default: 30
     help: Seed length
+    optional: true
+    type: integer
+  seed_max_diff:
+    category: ''
+    default: 2
+    help: Maximum differences in the seed
     optional: true
     type: integer
   title:

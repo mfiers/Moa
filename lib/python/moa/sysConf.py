@@ -44,16 +44,18 @@ class SysConf(Yaco.Yaco):
     def __init__(self):
         super(SysConf, self).__init__()
         l.debug("Loading system config: %s" % SYSCONFIGFILE)
-        self.load(SYSCONFIGFILE)
+        if os.path.exists(SYSCONFIGFILE):
+            self.load(SYSCONFIGFILE)
         l.debug("Loading system config: %s" % USERCONFIGFILE)
-        self.load(USERCONFIGFILE)
+        if os.path.exists(USERCONFIGFILE):
+            self.load(USERCONFIGFILE)
 
     def getVersion(self):
         """
         Return the version number of this Moa instance
         """
         versionFile = os.path.join(MOABASE, "VERSION")
-        return open(versionFile).read()
+        return open(versionFile).read().strip()
     
     def getPlugins(self):
         

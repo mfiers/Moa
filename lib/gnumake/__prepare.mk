@@ -29,6 +29,8 @@ MOA_INCLUDE_PREPARE = yes
 
 ## We use the Gnu Make Standard Library
 ## See: http://gmsl.sourceforge.net/
+include $(MOABASE)/lib/gnumake/util/gmsl
+
 parO:=(
 parC:=)
 

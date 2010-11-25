@@ -71,7 +71,6 @@ def newJob(data):
         else:
             template = a
 
-    moa.ui.fprint("Created a Moa %%(green)s%%(bold)s%s%%(reset)s job" % template)
 
     if os.path.exists(os.path.join(
         wd, '.moa', 'template')) and \
@@ -81,20 +80,21 @@ def newJob(data):
         l.error("use -f to override")
 
     if not options.title:
-        l.error("Must define a title for this job")
-        sys.exit(-1)
+        moa.ui.exitError("Must define a title for this job")
         
-    job = moa.job.newJob(wd,
-                         template = template,
-                         title = options.title)
-
-    l.debug("Successfully created a %s job" % template)
-
+    job = moa.job.newJob(wd, template = template, title = options.title)
+    job.conf['title'] = options.title
+    
     for p in params:
         k,v = p.split('=', 1)
         job.conf[k] = v
 
     job.conf.save()
+
+    moa.ui.fprint("Created a Moa %%(green)s%%(bold)s%s%%(reset)s job" % template)
+    #moa.ui.fprint('With title "%%(bold)s%s%%(reset)s"' % job.conf.title)
+
+
 
 TESTSCRIPT = """
 moa new adhoc -t 'testJob' adhoc_mode=par dummy=nonsense
