@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>moa.job &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Moa API" href="index.html" />
+    <link rel="next" title="moa.jobConf" href="jobConf.html" />
+    <link rel="prev" title="moa.commands" href="commands.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="jobConf.html" title="moa.jobConf"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="commands.html" title="moa.commands"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="moa-job">
+<span id="module-moa.job"></span><h1>moa.job<a class="headerlink" href="#moa-job" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="moa.job.Job">
+<em class="property">class </em><tt class="descclassname">moa.job.</tt><tt class="descname">Job</tt><big>(</big><em>wd</em>, <em>template=None</em><big>)</big><a class="headerlink" href="#moa.job.Job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class defining a single job</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;nojob&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>wd</em> &#8211; The directory containing the job</li>
+<li><em>template</em> &#8211; The template a job should have. If undefined,
+read the template from <cite>./.moa/template</cite></li>
+<li><em>options</em> &#8211; Additional options to feed to this job</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="moa.job.Job.checkConfDir">
+<tt class="descname">checkConfDir</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.checkConfDir" title="Permalink to this definition">¶</a></dt>
+<dd>Check if the configuration directory exists. If not create it.</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.defineOptions">
+<tt class="descname">defineOptions</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#moa.job.Job.defineOptions" title="Permalink to this definition">¶</a></dt>
+<dd>Set command line options</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.execute">
+<tt class="descname">execute</tt><big>(</big><em>command</em>, <em>verbose=False</em>, <em>background=False</em><big>)</big><a class="headerlink" href="#moa.job.Job.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute <cite>command</cite> in the context of this job. Execution is
+alwasy deferred to the backend</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>command</em> (string) &#8211; the command to execute</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.getActor">
+<tt class="descname">getActor</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.getActor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an instance of <a title="moa.actor.Actor" class="reference external" href="actor.html#moa.actor.Actor"><tt class="xref docutils literal"><span class="pre">moa.actor.Actor</span></tt></a> for this job.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">instance of <a title="moa.actor.Actor" class="reference external" href="actor.html#moa.actor.Actor"><tt class="xref docutils literal"><span class="pre">moa.actor.Actor</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.initialize" title="Permalink to this definition">¶</a></dt>
+<dd>Initialize a new job in the current wd</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.isMoa">
+<tt class="descname">isMoa</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.isMoa" title="Permalink to this definition">¶</a></dt>
+<dd>Check if this is a Moa directory - Currently, this needs to be overridden</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.loadBackend">
+<tt class="descname">loadBackend</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.loadBackend" title="Permalink to this definition">¶</a></dt>
+<dd>load the backend</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.loadTemplate">
+<tt class="descname">loadTemplate</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.loadTemplate" title="Permalink to this definition">¶</a></dt>
+<dd>Load the template for this job, based on what configuration 
+can be found</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.prepare">
+<tt class="descname">prepare</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.prepare" title="Permalink to this definition">¶</a></dt>
+<dd>Prepare this job</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.setTemplate">
+<tt class="descname">setTemplate</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#moa.job.Job.setTemplate" title="Permalink to this definition">¶</a></dt>
+<dd>Set a new template for this job</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.job.newJob">
+<tt class="descclassname">moa.job.</tt><tt class="descname">newJob</tt><big>(</big><em>wd</em>, <em>template</em>, <em>title</em>, <em>parameters=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#moa.job.newJob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new job in the wd and return the proper job object
+currently only makefile jobs are supported - later we&#8217;ll scan the
+template, and instantiate the proper job type</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newJob</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="s">&#39;blast&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;blast&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>wd</em> &#8211; Directory to create this job in, note that this
+directory must already exists</li>
+<li><em>template</em> (String) &#8211; Template name for this job</li>
+<li><em>parameters</em> (list of (key, value) tuples) &#8211; A list of parameters to set for this job</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">instance of <a title="moa.job.Job" class="reference internal" href="#moa.job.Job"><tt class="xref docutils literal"><span class="pre">moa.job.Job</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.job.newTestJob">
+<tt class="descclassname">moa.job.</tt><tt class="descname">newTestJob</tt><big>(</big><em>template</em>, <em>title='Test job'</em><big>)</big><a class="headerlink" href="#moa.job.newTestJob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test function - creates a temp directory and uses that to
+instantiate the job in. This function returns the directory where
+the job is created. All parameters are passed on to L{newJob}</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="n">template</span> <span class="o">=</span> <span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template&#39;</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>&#64;returns: The directory where the job was created
+&#64;rtype: string</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="commands.html"
+                                  title="previous chapter">moa.commands</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="jobConf.html"
+                                  title="next chapter">moa.jobConf</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/api/job.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="jobConf.html" title="moa.jobConf"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="commands.html" title="moa.commands"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Moa API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

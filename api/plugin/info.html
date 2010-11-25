@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Job information &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../../index.html" />
+    <link rel="up" title="Moa API" href="../index.html" />
+    <link rel="prev" title="twit - Tweet results" href="twit.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="twit.html" title="twit - Tweet results"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Moa API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="job-information">
+<span id="module-moa.plugin.info"></span><h1>Job information<a class="headerlink" href="#job-information" title="Permalink to this headline">¶</a></h1>
+<p>Print info on Moa jobs and Moa</p>
+<dl class="function">
+<dt id="moa.plugin.info.defineCommands">
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">defineCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.defineCommands" title="Permalink to this definition">¶</a></dt>
+<dd>Set the moa commands for this plugin</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.info.rawCommands">
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">rawCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.rawCommands" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>(private)</em> <strong>moa raw_commands</strong> - Print a list of all known commands</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa raw_commands</pre>
+</div>
+<p>Print a list of known Moa commands, both global, plugin defined
+commands as template specified ones. This command is mainly used
+by software interacting with Moa.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.info.rawParameters">
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">rawParameters</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.rawParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>(private)</em> <strong>moa raw_parameters</strong> - Print out a list of all known parameters</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa raw_parameters</pre>
+</div>
+<p>print a list of all defined or known parameters</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.info.status">
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">status</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.status" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa status</strong> - print out a short status status message</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa status</pre>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.info.version">
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">version</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.version" title="Permalink to this definition">¶</a></dt>
+<dd><strong>moa version</strong> - Print the moa version number</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="twit.html"
+                                  title="previous chapter"><strong>twit</strong> - Tweet results</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../../_sources/api/plugin/info.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="twit.html" title="twit - Tweet results"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

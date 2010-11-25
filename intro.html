@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="index.html" />
+    <link rel="next" title="Installation" href="install.html" />
+    <link rel="prev" title="Welcome to the Moa documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to the Moa documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Moa v0.10.0alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p><strong>NOTE: both the software and the manual are under development. Expect things to change.</strong></p>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>A bioinformatics project is often consists of many separate,
+interdependent, steps. Once a project gets bigger it becomes vital to
+apply some organization and automation.</p>
+<p>There are many different ways to automate a bioinformatics project
+. Many bioinformaticians, however, continue using the command-line or
+tailor-made scripts to organize and automate their work. This has
+obvious advantages, most importantly flexibility. Potential downsides
+to scripting are that a project easily becomes disorganized and
+untrackable unless explicit measures are taken.</p>
+<p>Moa aims to assist in organizing, automating and maintaining a command
+line bioinformatics project without losing flexibility. The best way
+to understand how Moa aims to achieve this is by an example:</p>
+<div class="highlight-python"><pre>moa new blast -t "run a demo"
+moa set blast_db=/data/blast/db/nt
+moa set blast_input_dir=../sequences/
+moa set moa_postprocess='grep polymerase gff/*gff &gt; pol.gff'
+moa run</pre>
+</div>
+<p>In the first line, a new BLAST job (titled &#8220;run a demo&#8221;) is created in
+the current directory. What really happens is that Moa creates a
+script (Makefile) that imports a BLAST specific template. The next two
+lines set a few parameters for BLAST. In the last line Moa is executed
+and &#8216;blasts&#8217; the input sequences (in <tt class="docutils literal"><span class="pre">../sequences</span></tt>) against the
+database in <tt class="docutils literal"><span class="pre">/data/blast/db/nt</span></tt>. BLAST output files (XML) are
+generated and converted to GFF (GFF conversion is an extra, not part
+of the BLAST suite). The one to last statement is probably most
+remarkable; it is a single (shell) commmand that will be executed
+after BLAST is executed (there is a corresponding
+<tt class="docutils literal"><span class="pre">moa_preprocess</span></tt>). This shell comamand filters all BLAST hits that
+have the word &#8220;polymerase&#8221; in their description into a separater GFF
+file.</p>
+<p>Moa employs <a class="reference external" href="http://www.gnu.org/software/make">GNU make</a> to describe
+its building blocks. GNU Make is originally developed for software
+compilation. Compilation usually involves the execution of many
+interdependent compilation and linker steps. GNU make is able to
+compile large software projects with tens of thousands of source files
+based on a Makefile that describes how a target file is to be
+created. GNU Make is flexible enough to be used with practically any
+programming language. Moreover, GNU Make can be used to automate any
+series of commands as long as they can be executed from the command
+line. It is therefore not only possible, but an excellent idea (not
+mine), to use Gnu Make in bioinformatics projects (see <a class="reference external" href="http://biowiki.org/MakefileManifesto">biowiki</a>, <a class="reference external" href="http://archive.nodalpoint.org/2007/03/18/a_pipeline_is_a_makefile">nodalpoint</a>
+or <a class="reference external" href="http://skam.sourceforge.net/">biomake</a>)</p>
+<p>Moa aims to do the following things:</p>
+<ul>
+<li><p class="first"><em>Organize a project</em>: Each Moa job must be located in its own
+directory. It is possible to automatically execute a directory tree
+of Moa jobs. Proper use of these features will result in a logical
+project structure.</p>
+</li>
+<li><dl class="first docutils">
+<dt><em>Create reusable building blocks</em>: Moa templates are GNU Makefiles</dt>
+<dd><p class="first last">that follow a set of conventions. It is easy to implement new
+building blocks. (see chapter X).</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>Document</em>: It is possible to add meta-data such as a title and
+description to each Moa job, making it easy to</p>
+</li>
+<li><p class="first"><em>Provide a uniform interface</em>: Moa allows you to operate your
+project almost exclusively using a single command (conveniently
+called <tt class="docutils literal"><span class="pre">moa</span></tt>).</p>
+</li>
+</ul>
+<div class="section" id="example-session">
+<h2>Example session<a class="headerlink" href="#example-session" title="Permalink to this headline">¶</a></h2>
+<p>The best way to understand how to use Moa is a sample session.</p>
+<p>We&#8217;ll start by creating directories to hold the data and analysis
+structure:</p>
+<div class="highlight-python"><pre>mkdir introduction
+cd introduction</pre>
+</div>
+<p>We&#8217;ve created a directory <tt class="docutils literal"><span class="pre">introduction</span></tt> for the tutorial. Within
+this directory we&#8217;ll organize the components of our analysis. We
+want to initialize this directory so that it becomes a part of this
+Moa pipeline. This is useful later, if we want to run all analysis
+at once. To do this, run:</p>
+<div class="highlight-python"><pre>moa new project -t 'Introduction'</pre>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">new</span></tt> command is used to create new moa jobs. In this
+case we create a job with the template &#8220;project&#8221;. In itself this
+template does not do anything but serves to group new projects. The
+<tt class="docutils literal"><span class="pre">-t</span></tt> parameters assigns a title to this Moa job. We will now
+create a new directory to hold the first step of the pipeline:</p>
+<div class="highlight-python"><pre>mkdir 10.download
+cd 10.download
+moa new</pre>
+</div>
+<p>Moa does not dictate a directory structure for your analysis
+pipeline, but to make full usage of Moa it is advisable to create a
+logical organization. Two important features of Moa that relate to
+this are:</p>
+<ul class="simple">
+<li>Each moa job is contained in one directory. Output files of a
+job are typically stored in that directory. It is not possible to
+have more than one Moa jobs in a directory.</li>
+<li>Moa is able to automatically execute all jobs in a directory and
+the underlying sub-directories (using <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">all</span></tt>).</li>
+</ul>
+<p>If properly used, these two features force a logical, modular,
+project structure. To assign an order to the steps inside a
+directory it is possible to prepend a number to the directory name
+(i.e. &#8220;10.&#8221;). Note that Moa sorts directories alphabetically and
+not numerically</p>
+<p>We will now created a new folder to hold a genome sequence we are
+about to download and set up the Moa job to actually do the
+download.</p>
+<div class="highlight-python"><pre>mkdir 10.genome
+cd 10.genome
+moa new -t 'download a potato BAC' ncbi</pre>
+</div>
+<p>Here we create a Moa job to download a sequence from
+<a class="reference external" href="http://www.ncbi.nlm.nih.gov">NCBI</a> by using the &#8220;ncbi&#8221; template.
+Once a Moa job is instantiated you can run <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">help</span></tt> to get some
+information on how to use this template</p>
+<p><img alt="moa help" src="_images/screenshot_moa_help.png" /> Note that if you want help on how to use the moa itself,
+you should use <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">--help</span></tt></p>
+<p>Before you can get the data from NCBI, you will have to tell Moa
+what you want to download. This is easy if you know the Genbank
+accession numbers. In this case we&#8217;ll download the nucleotide
+sequence (from the database &#8220;nuccore&#8221;) with the accession id
+AC237669.1</p>
+<div class="highlight-python"><pre>moa set ncbi_db=nuccore
+moa set ncbi_query=AC237669.1</pre>
+</div>
+<p>You can check if the parameters are set correctly by running
+<tt class="docutils literal"><span class="pre">moa</span> <span class="pre">show</span></tt>. This should come back with the following text: title
+download a potato BAC ncbi_query AC237669.1 ncbi_db nuccore
+ncbi_sequence_name</p>
+<p>If everything seems fine, you can run this job:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">moa</span>
+</pre></div>
+</div>
+<p>Or, you could also have used <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">run</span></tt>. It is possible that you
+get an error message notifying that &#8220;wget&#8221; or &#8220;xml_grep&#8221; cannot be
+found. Most, properly written, Moa templates do prerequisite
+checking if necessary. If either of these tools is missing, you
+will need to install them first (possibly by running
+<tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">get</span> <span class="pre">install</span> <span class="pre">wget</span></tt> or
+<tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">xml-twig-tools</span></tt>, or ask your system
+administrator)</p>
+<p>If Moa runs, quite a lot of output is generated. If things go
+wrong, there is probably a clue to why it did not work in this
+output. If the Moa job is successful, the last line should be &#8220;Moa
+finished - Succes!&#8221;. If you do an <tt class="docutils literal"><span class="pre">ls</span></tt> you now see a <tt class="docutils literal"><span class="pre">fasta</span></tt>
+directory with one fasta file. This fasta file contains the
+downloaded genome.</p>
+<p>Now we can start doing things with the downloaded sequence. To see
+what other templates are available, try <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">list</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">Introduction</a><ul>
+<li><a class="reference external" href="#example-session">Example session</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">Welcome to the Moa documentation!</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="install.html"
+                                  title="next chapter">Installation</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/intro.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to the Moa documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Moa v0.10.0alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

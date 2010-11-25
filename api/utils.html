@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>moa.utils &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Moa API" href="index.html" />
+    <link rel="next" title="plugin" href="plugin/index.html" />
+    <link rel="prev" title="moa.unittests" href="unittests.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="plugin/index.html" title="plugin"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="unittests.html" title="moa.unittests"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="moa-utils">
+<span id="module-moa.utils"></span><h1>moa.utils<a class="headerlink" href="#moa-utils" title="Permalink to this headline">¶</a></h1>
+<p>A set of random utilities used by Moa</p>
+<dl class="function">
+<dt id="moa.utils.deprecated">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">deprecated</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#moa.utils.deprecated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator function to flag a function as deprecated</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>func</em> &#8211; any function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.flock">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">flock</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#moa.utils.flock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a file lock</p>
+<p>Adapted from: <a class="reference external" href="http://code.activestate.com/recipes/576572/">http://code.activestate.com/recipes/576572/</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.flog">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">flog</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#moa.utils.flog" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple logger - uses the <tt class="xref docutils literal"><span class="pre">moa.logger</span></tt> code to log the
+calling function. Use as a decorator:</p>
+<div class="highlight-python"><pre>@moa.utils.flog
+def any_function(*args);
+    ...</pre>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>func</em> &#8211; Any python function</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.getMoaBase">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">getMoaBase</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.utils.getMoaBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return MOABASE - the directory where Moa is installed. This
+function also sets an environment variable <cite>MOABASE</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">string (path)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.logCaller">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">logCaller</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#moa.utils.logCaller" title="Permalink to this definition">¶</a></dt>
+<dd>Profiler decorator</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.logCallerVerbose">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">logCallerVerbose</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#moa.utils.logCallerVerbose" title="Permalink to this definition">¶</a></dt>
+<dd>Profiler decorator</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.moaDirOrExit">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">moaDirOrExit</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.utils.moaDirOrExit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the job contains a proper Moa job, if not, exit with an
+error message and a non-zero exit code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>job</em> &#8211; An instance of <a title="moa.job.Job" class="reference external" href="job.html#moa.job.Job"><tt class="xref docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.profiler2">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">profiler2</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#moa.utils.profiler2" title="Permalink to this definition">¶</a></dt>
+<dd>Profiler decorator</dd></dl>
+
+<dl class="function">
+<dt id="moa.utils.simple_decorator">
+<tt class="descclassname">moa.utils.</tt><tt class="descname">simple_decorator</tt><big>(</big><em>decorator</em><big>)</big><a class="headerlink" href="#moa.utils.simple_decorator" title="Permalink to this definition">¶</a></dt>
+<dd><p>This decorator can be used to turn simple functions into
+well-behaved decorators, so long as the decorators are fairly
+simple. If a decorator expects a function and returns a function
+(no descriptors), and if it doesn&#8217;t modify function attributes or
+docstring, then it is eligible to use this. Simply apply
+&#64;simple_decorator to your decorator and it will automatically
+preserve the docstring and function attributes of functions to
+which it is applied.</p>
+<p>Note; I got this code from somehwere, but forgot where
+exactly. This seems the most likely source;</p>
+<p><a class="reference external" href="http://svn.navi.cx/misc/trunk/djblets/djblets/util/decorators.py">http://svn.navi.cx/misc/trunk/djblets/djblets/util/decorators.py</a></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="unittests.html"
+                                  title="previous chapter">moa.unittests</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="plugin/index.html"
+                                  title="next chapter">plugin</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/api/utils.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plugin/index.html" title="plugin"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="unittests.html" title="moa.unittests"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Moa API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

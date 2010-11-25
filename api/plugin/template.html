@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Manipulate templates &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../../index.html" />
+    <link rel="up" title="plugin" href="index.html" />
+    <link rel="next" title="twit - Tweet results" href="twit.html" />
+    <link rel="prev" title="Instantiate new jobs" href="newjob.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="twit.html" title="twit - Tweet results"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="newjob.html" title="Instantiate new jobs"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">plugin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="manipulate-templates">
+<span id="module-moa.plugin.template"></span><h1>Manipulate templates<a class="headerlink" href="#manipulate-templates" title="Permalink to this headline">¶</a></h1>
+<p>View and edit template definitions</p>
+<dl class="function">
+<dt id="moa.plugin.template.defineCommands">
+<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">defineCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.template.defineCommands" title="Permalink to this definition">¶</a></dt>
+<dd>Set the moa commands for this plugin</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.template.dumpTemplate">
+<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">dumpTemplate</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.template.dumpTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa template_dump</strong> - Show raw template information</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa template_dump [TEMPLATE_NAME]</pre>
+</div>
+<p>Show the raw template data.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.template.listTemplates">
+<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">listTemplates</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.template.listTemplates" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa list</strong> - Print a list of all known templates</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa list
+moa list -l</pre>
+</div>
+<p>Print a list of all templates known to this moa installation. If
+the option &#8216;-l&#8217; is used, a short description for each tempalte is
+printed as well.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.template.template">
+<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">template</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.template.template" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa template</strong> - Print the template name of the current job</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa template</pre>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.template.templateSet">
+<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">templateSet</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.template.templateSet" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa template_set</strong> - set a template parameter.</p>
+<p>This only works for top level template parameters</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="newjob.html"
+                                  title="previous chapter">Instantiate new jobs</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="twit.html"
+                                  title="next chapter"><strong>twit</strong> - Tweet results</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../../_sources/api/plugin/template.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="twit.html" title="twit - Tweet results"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="newjob.html" title="Instantiate new jobs"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >plugin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

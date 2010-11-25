@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>moa.template &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Moa API" href="index.html" />
+    <link rel="next" title="moa.ui" href="ui.html" />
+    <link rel="prev" title="moa.sysConf" href="sysConf.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="ui.html" title="moa.ui"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sysConf.html" title="moa.sysConf"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="moa-template">
+<span id="module-moa.template"></span><h1>moa.template<a class="headerlink" href="#moa-template" title="Permalink to this headline">¶</a></h1>
+<dl class="exception">
+<dt id="moa.template.InvalidTemplate">
+<em class="property">exception </em><tt class="descclassname">moa.template.</tt><tt class="descname">InvalidTemplate</tt><a class="headerlink" href="#moa.template.InvalidTemplate" title="Permalink to this definition">¶</a></dt>
+<dd>Invalid Template</dd></dl>
+
+<dl class="function">
+<dt id="moa.template.check">
+<tt class="descclassname">moa.template.</tt><tt class="descname">check</tt><big>(</big><em>what</em><big>)</big><a class="headerlink" href="#moa.template.check" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>def _getParameterCategories(self):</dt>
+<dd><p class="first">order = self.parameter_category_order
+for pn in self.parameters,keys():</p>
+<blockquote>
+<p>p = self.parameters[pn]
+if not p.category in order:</p>
+<blockquote>
+order.append(p.category)</blockquote>
+</blockquote>
+<p class="last">l.critical(&#8220;%s&#8221; % order)
+return order</p>
+</dd>
+</dl>
+<p>parameterCategories = property(_getParameterCategories)</p>
+<p>Check if a template exists</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">check</span><span class="p">(</span><span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">check</span><span class="p">(</span><span class="s">&#39;nonexistingtemplate&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.template.listAll">
+<tt class="descclassname">moa.template.</tt><tt class="descname">listAll</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.template.listAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all known templates, returns a tuple of:
+(templatename, templatefile)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">listAll</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">([])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>&#64;returns: a list with all known templates
+&#64;rtype: a list of strings</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.template.listAllLong">
+<tt class="descclassname">moa.template.</tt><tt class="descname">listAllLong</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.template.listAllLong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a generator yielding tuples of all templates and a
+corresponding description.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ll</span> <span class="o">=</span> <span class="n">listAllLong</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fi</span> <span class="o">=</span> <span class="n">ll</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">fi</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">fi</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="s">&#39;hi&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">fi</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="s">&#39;hi&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>&#64;returns: a generator yielding (name, description) tupels
+&#64;rtype: generator</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="sysConf.html"
+                                  title="previous chapter">moa.sysConf</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="ui.html"
+                                  title="next chapter">moa.ui</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/api/template.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ui.html" title="moa.ui"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sysConf.html" title="moa.sysConf"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Moa API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

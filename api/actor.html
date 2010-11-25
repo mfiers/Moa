@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>moa.actor &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Moa API" href="index.html" />
+    <link rel="next" title="moa.commands" href="commands.html" />
+    <link rel="prev" title="Moa API" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="commands.html" title="moa.commands"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Moa API"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="moa-actor">
+<span id="module-moa.actor"></span><h1>moa.actor<a class="headerlink" href="#moa-actor" title="Permalink to this headline">¶</a></h1>
+<p>&#8216;Simple&#8217; wrapper around subprocess to execute code</p>
+<dl class="class">
+<dt id="moa.actor.Actor">
+<em class="property">class </em><tt class="descclassname">moa.actor.</tt><tt class="descname">Actor</tt><big>(</big><em>wd</em>, <em>captureOut=False</em>, <em>captureErr=False</em>, <em>captureName=None</em><big>)</big><a class="headerlink" href="#moa.actor.Actor" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that standardizes a number of operations around execution
+in the Moa context.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>wd</em> (String) &#8211; Working directory</li>
+<li><em>captureOut</em> (Boolean) &#8211; Capture the output in log files</li>
+<li><em>captureErr</em> (Boolean) &#8211; Capture the output in log files</li>
+<li><em>captureName</em> (String) &#8211; Basename for the log files that will
+capture the output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="moa.actor.Actor.getError">
+<tt class="descname">getError</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.actor.Actor.getError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the stderr of a moa run</p>
+<p>&#64;returns: stderr output of this job (if captured)
+&#64;rtype: string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.actor.Actor.getOutput">
+<tt class="descname">getOutput</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.actor.Actor.getOutput" title="Permalink to this definition">¶</a></dt>
+<dd>Get the output from a moa run</dd></dl>
+
+<dl class="method">
+<dt id="moa.actor.Actor.run">
+<tt class="descname">run</tt><big>(</big><em>cl</em>, <em>background=False</em><big>)</big><a class="headerlink" href="#moa.actor.Actor.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actually run</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><em>cl</em> (list of strings) &#8211; The command to execute, for example: <cite>[&#8216;ls&#8217;, &#8216;/tmp&#8217;]</cite></li>
+<li><em>background</em> (Boolean) &#8211; Run this job in the background? If <cite>True</cite>, fork and have the parent return immediately. The child finishes. If <cite>False</cite>, wait for the job to finish</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">the process id if <cite>background == True</cite>, else the return code</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.actor.Actor.run2">
+<tt class="descname">run2</tt><big>(</big><em>cl</em><big>)</big><a class="headerlink" href="#moa.actor.Actor.run2" title="Permalink to this definition">¶</a></dt>
+<dd>Really run, this function is called by <a title="moa.actor.Actor.run" class="reference internal" href="#moa.actor.Actor.run"><tt class="xref docutils literal"><span class="pre">run()</span></tt></a>.</dd></dl>
+
+<dl class="method">
+<dt id="moa.actor.Actor.setEnv">
+<tt class="descname">setEnv</tt><big>(</big><em>d</em><big>)</big><a class="headerlink" href="#moa.actor.Actor.setEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup the environment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>d</em> (dict) &#8211; The data to transfer to the environment</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="index.html"
+                                  title="previous chapter">Moa API</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="commands.html"
+                                  title="next chapter">moa.commands</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/api/actor.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="commands.html" title="moa.commands"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Moa API"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Moa API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

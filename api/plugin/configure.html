@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>configure - Configure jobs &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../../index.html" />
+    <link rel="up" title="plugin" href="index.html" />
+    <link rel="next" title="Filesets" href="fileset.html" />
+    <link rel="prev" title="adhoc - create Jobs on the fly" href="adhoc.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="fileset.html" title="Filesets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="adhoc.html" title="adhoc - create Jobs on the fly"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">plugin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="configure-configure-jobs">
+<span id="module-moa.plugin.configure"></span><h1><strong>configure</strong> - Configure jobs<a class="headerlink" href="#configure-configure-jobs" title="Permalink to this headline">¶</a></h1>
+<p>Control job configuration</p>
+<dl class="function">
+<dt id="moa.plugin.configure.configSet">
+<tt class="descclassname">moa.plugin.configure.</tt><tt class="descname">configSet</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.configure.configSet" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa set</strong> - set the value of one or more parameters</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa set PARAMETER_NAME=PARAMETER_VALUE
+moa set PARAMETER_NAME='PARAMETER VALUE WITH SPACES'
+moa set PARAMETER_NAME</pre>
+</div>
+<p>In the first two forms, moa set set the parameter &#8216;PARAMETER_NAME&#8217;
+to the described value. In the latter form, Moa will present the
+user with a prompt to enter the value. Note that these command
+lines will first be processed by bash, and care needs to be taken
+that bash does not expand or interpret special characters. To
+prevent this, the third form can be used.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.configure.configShow">
+<tt class="descclassname">moa.plugin.configure.</tt><tt class="descname">configShow</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.configure.configShow" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa show</strong> - show the value of all parameters</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa show</pre>
+</div>
+<p>Show all parameters know to this job. Parameters in <strong>bold</strong> are
+specifically configured for this job (as opposed to those
+parameters that are set to their default value). Parameters in red
+are not configured, but need to be for the template to
+operate. Parameters in blue are not configured either, but are
+optional.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.configure.configUnset">
+<tt class="descclassname">moa.plugin.configure.</tt><tt class="descname">configUnset</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.configure.configUnset" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa unset</strong> - remove variables from the configuration</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa unset PARAMETER_NAME</pre>
+</div>
+<p>Remove a configured parameter from this job. In the parameter was
+defined by the job template, it reverts back to the default
+value. If it was an ad-hoc parameter, it is lost from the
+configuration.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.configure.defineCommands">
+<tt class="descclassname">moa.plugin.configure.</tt><tt class="descname">defineCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.configure.defineCommands" title="Permalink to this definition">¶</a></dt>
+<dd>Set the moa commands for this plugin</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="adhoc.html"
+                                  title="previous chapter"><strong>adhoc</strong> - create Jobs on the fly</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="fileset.html"
+                                  title="next chapter">Filesets</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../../_sources/api/plugin/configure.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fileset.html" title="Filesets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="adhoc.html" title="adhoc - create Jobs on the fly"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >plugin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>
