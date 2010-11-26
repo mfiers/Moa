@@ -96,7 +96,7 @@ class Yaco(dict):
         if not data: return 
         for key, val in data.items():
             if isinstance(val, Yaco):
-                raise Exception("Wow - updating with a Yaco - should not happen!")
+                raise Exception("Wow - updating with a Yaco - should not happen (%s)!" % val)
 
             old_value = super(Yaco, self).get(key, None)
             if isinstance(val, dict):
