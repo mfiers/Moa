@@ -50,28 +50,42 @@ def prepare(data):
 
         fs = job.template.filesets[fsid]
         
-        if not fs.type == 'input': continue
-        
-        job.template.parameters['%s_dir' % fsid] = {
-            'category' : 'input',
-            'optional' : fs.optional,
-            'help' : fs.help,
-            'type' : 'directory'
-            }
-        job.template.parameters['%s_extension' % fsid] = {
-            'category' : 'input',
-            'optional' : True,
-            'default' : fs.extension,
-            'help' : 'Extension for the file set "%s"' % fsid,
-            'type' : 'string',
-            }
-        job.template.parameters['%s_glob' % fsid] = {
-            'category' : 'input',
-            'optional' : True,
-            'default' : '*',
-            'help' : 'File glob for the file set "%s"' % fsid,
-            'type' : 'string',
-            }
+        if fs.type == 'map': 
+            job.template.parameters['%s_dir' % fsid] = {
+                'category' : 'input',
+                'optional' : fs.get('optional', True),
+                'help' : 'directory for the %s file set',
+                'default' : fs.dir,
+                'type' : 'directory'
+                }
+            job.template.parameters['%s_extension' % fsid] = {
+                'category' : 'input',
+                'optional' : fs.get('optional', True),
+                'help' : 'extension for the %s file set',
+                'default' : fs.extension,
+                'type' : 'string'
+                }
+        else:
+            job.template.parameters['%s_dir' % fsid] = {
+                'category' : 'input',
+                'optional' : fs.optional,
+                'help' : fs.help,
+                'type' : 'directory'
+                }
+            job.template.parameters['%s_extension' % fsid] = {
+                'category' : 'input',
+                'optional' : True,
+                'default' : fs.extension,
+                'help' : 'Extension for the file set "%s"' % fsid,
+                'type' : 'string',
+                }
+            job.template.parameters['%s_glob' % fsid] = {
+                'category' : 'input',
+                'optional' : True,
+                'default' : '*',
+                'help' : 'File glob for the file set "%s"' % fsid,
+                'type' : 'string',
+                }
 
         # job.template.parameters['%s_limit' % fsid] = {
         #     'category' : 'input',
@@ -105,6 +119,8 @@ def _map_files(fr, frext, dir, ext):
     """
     Map files from one set to another
     """
+    #XFl.critical("mapping files from %s %s to %s %s" % (fr, frext, dir, ext))
+
     with open(os.path.join('.moa', '%s.fof' % fr)) as F:
         frof = map(os.path.basename, F.read().split())
     if dir:
@@ -146,10 +162,9 @@ def preRun(data):
         files = _map_files(
             fr = fs.source,
             frext = job.conf['%s_extension' % fs.source],
-            dir = fs.dir,
-            
-            ext = fs.extension)
-        
+            dir = job.conf['%s_dir' % fsid],
+            ext = job.conf['%s_extension' % fsid])
+
         with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
             for f in files:
                 F.write('%s\n'% f)
