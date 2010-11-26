@@ -1,11 +1,11 @@
-author: Yogini Idnani, Mark Fiers
+author: Mark Fiers, Yogini Idnani
 version: 1
 backend: gnumake
 commands:
 - bwa_aln
 - clean
 creation_date: Wed Nov 10 07:56:48 2010
-description: Use BWA to aling a set of fastq reads against a db
+description: Use BWA to align a set of fastq reads against a db 
 filesets:
   input:
     category: input
@@ -39,6 +39,36 @@ parameters:
     help: bwa database to align against
     optional: false
     type: file
+  edit_dist_missing_prob:
+    category: ''
+    default: 0.04
+    help: max #diff (int) or missing prob under 0.02 err rate (float)
+    optional: true
+    type: integer
+  gap_opens_max:
+    category: ''
+    default: 1
+    help: maximum number or fraction of gap opens
+    optional: true
+    type: integer
+  gap_ext_max:
+    category: ''
+    default: -1
+    help: maximum number of gap extensions, -1 for disabling long gaps
+    optional: true
+    type: integer
+  no_indel_from_ends:
+    category: ''
+    default: 5
+    help: do not put an indel within INT bp towards the ends 
+    optional: true
+    type: integer
+  max_ext_long_del:
+    category: ''
+    default: 10
+    help: maximum occurrences for extending a long deletion
+    optional: true
+    type: integer
   seed_len:
     allowed: []
     category: ''
@@ -52,6 +82,66 @@ parameters:
     help: Maximum differences in the seed
     optional: true
     type: integer
+  max_queue_entry:
+    category: ''
+    default: 2000000
+    help: maximum entries in the queue
+    optional: true
+    type: integer
+  thread_num:
+    category: ''
+    default: 1
+    help: number of threads
+    optional: true
+    type: integer  
+  mismatch_penalty:
+    category: ''
+    default: 3
+    help: mismatch penalty
+    optional: true
+    type: integer
+  gap_open_penalty:
+    category: ''
+    default: 11
+    help: gap open penalty
+    optional: true
+    type: integer
+  gap_ext_penalty:
+    category: ''
+    default: 4
+    help: gap extension penalty
+    optional: true
+    type: integer  
+  best_hits_stop:
+    category: ''
+    default: 30
+    help: stop searching when there are >INT equally best hits 
+    optional: true
+    type: integer
+  quality_step:
+    category: ''
+    default: 0
+    help: quality threshold for read trimming down to 35bp
+    optional: true
+    type: integer 
+  color_space:
+    category: ''
+    default: false
+    help: input sequences are in the color space
+    optional: true
+    type: boolean
+  log_gap_penalty_del:
+    category: ''
+    default: false
+    help: log-scaled gap penalty for long deletions
+    optional: true
+    type: boolean 
+  non_iterative:
+    category: ''
+    default: false
+    help:  non-iterative mode search for all n-difference hits (slow)
+    optional: true
+    type: boolean
   title:
     allowed: []
     category: system
