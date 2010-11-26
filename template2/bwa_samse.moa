@@ -1,0 +1,60 @@
+author: Yogini Idnani, Mark Fiers
+version: 1
+backend: gnumake
+commands:
+- bwa_samse
+- clean
+creation_date: Wed Nov 25 17:06:48 2010
+description: Generate alignments in SAM format given single end reads
+filesets:
+  input:
+    category: input
+    extension: fq
+    help: fastq input file
+    optional: false
+    type: input
+  output:
+    category: output
+    dir: .
+    extension: sam
+    source: input
+    type: map
+help:
+  bwa_samse: run bwa samse
+  clean: Remove all job data, not the Moa job itself
+moa_id: bwa_samse
+modification_data: Wed Nov 26 14:06:48 2010
+name: Bwa samse
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  db:
+    allowed: []
+    category: ''
+    default: ''
+    help: bwa database to align against
+    optional: false
+    type: file
+  input_sai_dir:
+    category: ''
+    extension: sai
+    help: sai input files generated from the bwa aln command
+    optional: false
+    type: input
+  max_aln_out:
+    allowed: []
+    category: ''
+    default: 3
+    help: Maximum number of alignments to output in the XA tag for reads paired properly
+    optional: true
+    type: integer
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
+    type: string
