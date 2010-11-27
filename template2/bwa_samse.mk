@@ -21,17 +21,25 @@ include $(MOABASE)/lib/gnumake/prepare.mk
 include $(MOABASE)/lib/gnumake/core.mk
 
 #main target, called when moa run is executed
-$(moa_id): $($(moa_id)_output_files
+$(moa_id): $($(moa_id)_output_files)
+
+
+test_2:
+	echo 'xxx' $(sai_file) yyy #$($(moa_id)_output_files) .$($(moa_id)_output_extension) $($(moa_id)_input_dir) .$($(moa_id)_input_extension) yyy \
+		
+	#$($(moa_id)_output_files) yyy
 
 #process each of the output files, based on the input files
-$($(moa_id)_output_files): sai_file=$(input_sai_dir)/$*.sai
-$($(moa_id)_output_files): 							\
-			%.$($(moa_id)_input_extension): 			\
-			$($(moa_id)_input_dir)/%.$($(moa_id)_input_extension)
 
+
+$($(moa_id)_output_files): sai_file=$($(moa_id)_input_sai_dir)/$*.sai
+$($(moa_id)_output_files): 							\
+			%.$($(moa_id)_output_extension): 			\
+			$($(moa_id)_input_dir)/%.$($(moa_id)_input_extension)
+	echo $(sai_file) $< -f $@
 	echo bwa samse -n $(bwa_samse_max_aln_out) \
 				$($(moa_id)_db) \		
-				$(sai_file) $< -f $@
+				$(sai_file) $< -f $@ 
 
 $(moa_id)_clean:
 	-rm -f *.$($(moa_id)_output_extension)
