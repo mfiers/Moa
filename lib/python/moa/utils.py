@@ -33,6 +33,7 @@ import readline
 import traceback
 import contextlib
 
+import moa.utils
 import moa.logger as l
 
 @contextlib.contextmanager
@@ -92,7 +93,7 @@ def moaDirOrExit(job):
     :param job: An instance of :class:`moa.job.Job`
     """
     if not job.isMoa():
-        l.error("This command must be executed in a Moa job directory")
+        moa.ui.exitError("This command must be executed in a Moa job directory")
         sys.exit(-1)
 
 def deprecated(func):

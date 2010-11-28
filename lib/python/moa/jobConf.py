@@ -49,12 +49,16 @@ class JobConf(object):
         self.template = self.job.template
         self.jobConfFile = os.path.join(self.job.confDir, 'config')
         self.jobConf = Yaco.Yaco()
+
+        #these fields are not to be saved
+        self.doNotSave = []
+        
         if os.path.exists(self.jobConfFile):
             self.jobConf.load(self.jobConfFile)
 
     def save(self):
         self.job.checkConfDir()
-        self.jobConf.save(self.jobConfFile)
+        self.jobConf.save(self.jobConfFile, self.doNotSave)
 
     def setInJobConf(self, key):
         if self.jobConf.has_key(key):
@@ -94,5 +98,23 @@ class JobConf(object):
         del(self.jobConf[key])
 
     def __setitem__(self, key,value):
+        if key in self.template.parameters.keys():
+            pd = self.template.parameters[key]
+            if pd.type == 'boolean':
+                if value.lower() in ["yes", "true", "1", 'y', 't']:
+                    value = True
+                else: value = False
+            elif pd.type == 'integer':
+                try:
+                    value = int(value)
+                except ValueError:
+                    pass
+            elif pd.type == 'float':
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass
+                
+                    
         self.jobConf[key] = value
 

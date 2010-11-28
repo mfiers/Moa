@@ -40,12 +40,12 @@ def prepare(data):
     if not job.template.has_key('filesets'):
         return
     
-    l.debug("running fileset prepare for template %s" % moaId)
-
+    if len(job.template.filesets.keys()) > 0:
+        job.conf['moa_filesets'] = []
+        job.conf.doNotSave.append('moa_filesets')
+        
     for fsid in job.template.filesets.keys():
         
-        if not job.conf.has_key('moa_filesets'):
-            job.conf['moa_filesets'] = []
         job.conf['moa_filesets'].append(fsid)
 
         fs = job.template.filesets[fsid]

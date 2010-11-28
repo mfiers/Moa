@@ -56,7 +56,7 @@ FORMAT_CODES_ANSI = {
     }
 
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
-
+ 
 def exitError(message):
     fprint("%%(red)s%%(bold)sError:%%(reset)s %s" % message)
     sys.exit(-1)

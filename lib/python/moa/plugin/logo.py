@@ -44,6 +44,6 @@ def preRun(data):
     logoFile = os.path.join(MOABASE, 'share', 'logo', 'moa.logo.txt')
     logo = open(logoFile).read()
     logo = logo.replace('###', 't' * (TERMWIDTH - 64))
-    logo = logo.replace('##', 't' * (TERMWIDTH - 58 - len(version)))
+    logo = logo.replace('##', 't' * (TERMWIDTH - 59 - len(version)))
     logo = logo.replace('VERSION', version)
     print logo    
