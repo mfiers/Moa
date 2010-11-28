@@ -139,7 +139,7 @@ if __name__ == "__main__":
         if moaCommands[command].has_key('call'):
             l.debug("using a callback for moa %s" % command)
             plugins.runCallback(moaCommands[command])
-            sys.exit()
+            rc = 0
     else:
         #No callback, defer this to the job
         rc = job.execute(command)
