@@ -101,11 +101,12 @@ class GnumakeBackend(moa.backend.BaseBackend):
             if isinstance(v, list) or \
                    isinstance(v, set):
                 v = " ".join(map(str,v))
-#            print 'setting %s to %s' % (k,v)
+            if isinstance(v, bool):
+                if not v: v = ""
             if k[:3] == 'moa':
                 confDict[k] = v
             else:
-                confDict['%s_%s' % (moaId, k)] = v
+                confDict['%s_%s' % (moaId, k)] = str(v)
 
         actor.setEnv(confDict)
 
