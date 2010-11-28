@@ -141,12 +141,16 @@ class Yaco(dict):
             data[k] = val
         return data
                  
-    def save(self, to_file):
+    def save(self, to_file, doNotSave=[]):
         """
         
         """        
         with open(to_file, 'w') as F:
             data = self.get_data()
+            for k in data.keys():
+                if k in doNotSave:
+                    del data[k]
+            
             F.write(yaml.dump(data, default_flow_style=False))
 
 if __name__ == "__main__":
