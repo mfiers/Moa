@@ -5,7 +5,6 @@ commands:
 - clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: ''
-gnumake_makefile: /tmp/xx/blastdb.mk
 help:
   blastdb: Takes either a set of fasta files or a single multi-fasta input file and
     creates a BLAST database.
@@ -19,48 +18,26 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  bdb_fasta_file:
-    allowed: []
-    category: ''
-    default: ''
-    help: The file with all FASTA sequences for the blastdb concatenated. This can
-      be used as an alternative to defining "bdb_input_dir" and "bdb_input_dir_extension".
-      Morover. If all your sequences are already in a single file, then using this
-      parameter prevents duplication.
-    optional: true
-    type: file
-  bdb_input_dir:
-    allowed: []
-    category: ''
-    default: ''
-    help: Dir with the input fasta files, defaults to ./fasta
-    optional: true
-    type: directory
-  bdb_input_extension:
-    allowed: []
-    category: ''
-    default: fasta
-    help: extension of the input sequence files, defaults to fasta
-    optional: true
-    type: string
-  bdb_name:
-    allowed: []
-    category: ''
-    default: ''
-    help: Database name to create.
+  fasta_file:
+    help: The file with all input FASTA sequences for the blastdb. 
     optional: false
+    type: file
+  name:
+    allowed: []
+    category: ''
+    default: blastdb
+    help: Name of the BLAST database to create.
+    optional: true
     type: string
-  bdb_protein:
+  protein:
     allowed:
     - T
     - F
-    category: ''
     default: F
     help: 'Protein database? (T)rue) or not (F)alse (default: F)'
     optional: true
     type: set
   title:
-    allowed: []
     category: system
     default: ''
     help: A name for this job

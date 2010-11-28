@@ -38,7 +38,7 @@ parameters:
     default: ''
     help: bwa database to align against
     optional: false
-    type: file
+    type: string
   edit_dist_missing_prob:
     category: ''
     default: 0.04

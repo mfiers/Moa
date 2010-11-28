@@ -16,24 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+moa_id=bwa_index
 include $(MOABASE)/lib/gnumake/prepare.mk
-moa_id = bwa_index
-
-#########################################################################
-# Prerequisite testing
-
-#variables
-
 include $(MOABASE)/lib/gnumake/core.mk
-$(fastafile): 
-	cat $^ > $@
 
-$(bwa_index_name).amb: %.amb : $(bwa_index_input_files)
-	cat $^ | bwa index -p $* -a is -
-	touch $*
+$(bwa_index_name).ann: %.ann : $(bwa_index_input_fasta)
+	ln $< $(bwa_index_name).fasta
+	bwa index $(bwa_index_name).fasta
 
-bwa_index: $(bwa_index_name).amb
+bwa_index: $(bwa_index_name).ann
 
 bwa_index_clean:
 	-rm -f $(bwa_index_name).*

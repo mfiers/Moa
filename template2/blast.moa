@@ -11,10 +11,9 @@ filesets:
   input:
     category: input
     extension: fasta
-    help: Directory with the BLAST input files
+    help: Directory with the input files for BLAST, in Fasta format
     optional: false
     type: input
-gnumake_makefile: /tmp/xx/blast.mk
 help:
   blast: Running BLAST takes an input directory (*blast_input_dir*), determines what
     sequence files are present (with the parameter *blast_input_extension*) and executes

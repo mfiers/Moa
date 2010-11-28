@@ -36,7 +36,7 @@ parameters:
   sequence_name:
     allowed: []
     category: ''
-    default: out.fasta
+    default: out
     help: Name of the file to write the downloaded sequences to.
     optional: true
     type: string

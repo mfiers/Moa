@@ -42,14 +42,15 @@ ncbi: fasta.tmp
 	touch lock
 
 #the fasta file as downloaded from NCBI
-fasta.tmp: webEnv=$(shell xml_grep --cond "WebEnv" tmp.xml --text_only)
-fasta.tmp: queryKey=$(shell xml_grep --cond "QueryKey" tmp.xml --text_only)
-fasta.tmp: tmp.xml
-	wget 
-#tmp.xml contains the IDs of the sequences to download
-tmp.xml: 
+fasta.tmp: webEnv=$(shell xml_grep --cond "WebEnv" query.xml --text_only)
+fasta.tmp: queryKey=$(shell xml_grep --cond "QueryKey" query.xml --text_only)
+fasta.tmp: query.xml
+	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&report=fasta" -O fasta.tmp
+
+#query.xml contains the IDs of the sequences to download
+query.xml: 
 	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?term=$(ncbi_query)&db=$(ncbi_db)&retmax=1000000&usehistory=y" \
-		-O tmp.xml
+		-O query.xml
 
 ncbi_clean:
-	-$e rm  *.fasta tmp.xml fasta.tmp lock 2>/dev/null
+	-$e rm  *.fasta query.xml fasta.tmp lock 2>/dev/null

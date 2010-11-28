@@ -5,13 +5,6 @@ commands:
 - clean
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bwa index from a reference sequence
-filesets:
-  input:
-    category: input
-    extension: fasta
-    help: Sequence files used to build a bwa database
-    optional: false
-    type: input
 help:
   bwa_index: Create the index
   clean: Remove all job data
@@ -24,12 +17,14 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  name:
-    allowed: []
-    category: ''
-    default: ''
-    help: Name of the bwa index to create
+  input_fasta:
     optional: false
+    type: file
+    help: input fasta file for the database  
+  name:
+    default: 'bwa_index'
+    help: Name of the bwa index to create
+    optional: true
     type: string
   title:
     allowed: []
