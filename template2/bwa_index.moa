@@ -21,11 +21,23 @@ parameters:
     optional: false
     type: file
     help: input fasta file for the database  
-  name:
+  prefix:
     default: 'bwa_index'
     help: Name of the bwa index to create
     optional: true
     type: string
+  algorithm:
+    category: ''
+    default: is
+    help: Algorithm for constructing BWT index. Available options are 'is' and  'bwtsw'
+    optional: true
+    type: string
+  color_space:
+    category: ''
+    default: false
+    help: input sequences are in the color space
+    optional: true
+    type: boolean
   title:
     allowed: []
     category: system
