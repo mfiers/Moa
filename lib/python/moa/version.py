@@ -58,7 +58,7 @@ def fixOld(wd):
     if not os.path.exists(moamk): return
     
     #create a regular job
-    job = moa.job.getJob(wd)
+    job = moa.job.Job(wd)
     #convert moamk
     with open(moamk) as F:
         for line in F.readlines():
@@ -66,7 +66,9 @@ def fixOld(wd):
             if '+=' in line:
                 l.critical("Cannot autoconvert: %s" % line)
             k,v = line.split('=',1)
-            job.conf.set(k,v)
+            if job.template.moa_id in k:
+                k = k.replace(job.template.moa_id, '')
+            job.conf[k] = v
     job.conf.save()
     l.warning("converted moa.mk - please check %s/config" % cdir)
                 
