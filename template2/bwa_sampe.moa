@@ -7,7 +7,7 @@ commands:
     help: run bwa sampe
   clean:
     mode: simple
-    clean: Remove all job data, not the Moa job itself
+    help: Remove all job data, not the Moa job itself
 creation_date: Wed Nov 25 17:06:48 2010
 description: Generate alignments in SAM format given paired end reads
 filesets:
