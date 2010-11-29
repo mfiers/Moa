@@ -1,27 +1,53 @@
 author: Yogini Idnani, Mark Fiers
 version: 1
-backend: gnumake
+backend: ruff
 commands:
-- bwa_sampe
-- clean
+  run:
+    mode: map
+    help: run bwa sampe
+  clean:
+    mode: simple
+    clean: Remove all job data, not the Moa job itself
 creation_date: Wed Nov 25 17:06:48 2010
 description: Generate alignments in SAM format given paired end reads
 filesets:
-  input:
+  fq_forward_input:
     category: input
     extension: fq
-    help: fastq input files directory
+    glob: '*.1'    
+    help: fastq input files directory - forward files
     optional: false
     type: input
+  fq_reverse_input:
+    category: input
+    extension: fq
+    glob: '*.2'    
+    help: fastq input files directory - reverse files
+    dir: '{{ fq_forward_input_dir }}'
+    source: fq_forward_input
+    type: map
+  sai_forward_input:
+    category: input
+    extension: sai
+    glob: '{{ fq_forward_input_glob }}'
+    help: sai input files - forward files
+    dir: .
+    source: fq_forward_input
+    type: map
+  sai_reverse_input:
+    category: input
+    extension: sai
+    glob:  '{{ fq_reverse_input_glob }}'
+    help: sai input files - reverse files
+    dir: '{{ sai_forward_input_dir }}'
+    source: fq_forward_input
+    type: map
   output:
     category: output
     dir: .
     extension: sam
-    source: input
+    source: fq_forward_input
     type: map
-help:
-  bwa_sampe: run bwa sampe
-  clean: Remove all job data, not the Moa job itself
 moa_id: bwa_sampe
 modification_data: Wed Nov 25 17:06:48 2010
 name: Bwa sampe
@@ -38,18 +64,6 @@ parameters:
     help: bwa database to align against
     optional: false
     type: string
-  input_sai1_dir:
-    category: input
-    extension: sai
-    help: sai input file 1 generated from the bwa aln command
-    optional: false
-    type: input
-  input_sai2_dir:
-    category: input
-    extension: sai
-    help: sai input file 2 generated from the bwa aln command
-    optional: false
-    type: input
   max_insert_size:
     category: ''
     default: 500

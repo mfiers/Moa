@@ -1,27 +1,35 @@
 author: Yogini Idnani, Mark Fiers
 version: 1
-backend: gnumake
+backend: ruff
 commands:
-- bwa_samse
-- clean
+  run:
+    mode: map
+    help: run bwa samse
+  clean:
+    mode: simple
+    help: Remove all job data, not the Moa job itself
 creation_date: Wed Nov 25 17:06:48 2010
 description: Generate alignments in SAM format given single end reads, using both 'bwa samse'.
 filesets:
-  input:
+  fq_input:
     category: input
     extension: fq
     help: fastq input file
     optional: false
     type: input
+  sai_input:
+    category: input
+    dir: .
+    help: sai input directory - filenames must correspond to the fastq input files
+    extension: sai
+    source: fq_input
+    type: map
   output:
     category: output
     dir: .
     extension: sam
-    source: input
+    source: fq_input
     type: map
-help:
-  bwa_samse: run bwa samse
-  clean: Remove all job data, not the Moa job itself
 moa_id: bwa_samse
 modification_data: Wed Nov 26 14:06:48 2010
 name: Bwa samse
@@ -38,12 +46,6 @@ parameters:
     help: bwa database to align against
     optional: false
     type: string
-  input_sai_dir:
-    category: ''
-    extension: sai
-    help: sai input files generated from the bwa aln command
-    optional: false
-    type: input
   max_aln_out:
     allowed: []
     category: ''
