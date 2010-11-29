@@ -1,0 +1,26 @@
+### run
+
+bwa aln {{db}} 				 					\
+	-n {{edit_dist_missing_prob}}     			\
+	-o {{gap_opens_max}}              			\
+	-e {{gap_ext_max}}      		 			\
+	-i {{no_indel_from_ends}}         			\
+	-d {{max_ext_long_del}} 		     		\
+	-l {{seed_len}} 		             		\
+	-k {{seed_max_diff}}              			\
+	-m {{max_queue_entry}} 		     			\
+	-t {{thread_num}}                 			\
+	-M {{mismatch_penalty}} 		     		\
+	-O {{gap_open_penalty}}           			\
+	-E {{gap_ext_penalty}} 		     			\
+	-R {{best_hits_stop}}             			\
+	-q {{quality_step}} 						\
+	{% if color_space %} -c {% endif %}			\
+	{% if log_gap_penalty_del %} -L {% endif %}	\
+	{% if non_iterative %} -N {% endif %}		\
+	{{ input }}									\
+	-f {{ output}}
+
+### clean
+
+rm *.sai
