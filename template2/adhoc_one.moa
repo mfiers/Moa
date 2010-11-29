@@ -1,22 +1,15 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- adhoc_one
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: '', mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run an adhoc oneliner - without moa defined input files
-gnumake_makefile: /tmp/xx/adhoc_one.mk
-help:
-  adhoc_one: ''
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
 moa_id: adhoc_one
 modification_date: Wed Nov 10 07:56:48 2010
 name: adhoc_one
-parameter_category_order:
-- ''
-- system
-- advanced
+parameter_category_order: ['', system, advanced]
 parameters:
   process:
     allowed: []

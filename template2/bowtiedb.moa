@@ -1,30 +1,18 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- bowtiedb
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: '', mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bowtie index from a reference sequence
 filesets:
-  input:
-    category: input
-    extension: fasta
-    help: Sequence files used to build a bowtie database
-    optional: false
-    type: input
-gnumake_makefile: /tmp/xx/bowtiedb.mk
-help:
-  bowtiedb: ''
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
+  input: {category: input, extension: fasta, help: Sequence files used to build a
+      bowtie database, optional: false, type: input}
 moa_id: bowtiedb
 modification_date: Wed Nov 10 07:56:48 2010
 name: bowtiedb
-parameter_category_order:
-- ''
-- input
-- system
-- advanced
+parameter_category_order: ['', input, system, advanced]
 parameters:
   name:
     allowed: []

@@ -1,31 +1,18 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- bwa_index
-- clean
+  clean: {help: Remove all job data, mode: simple}
+  run: {help: Create the index, mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bwa index from a reference sequence
-help:
-  bwa_index: Create the index
-  clean: Remove all job data
 moa_id: bwa_index
 modification_date: Wed Nov 10 07:56:48 2010
 name: bwa_index
-parameter_category_order:
-- ''
-- input
-- system
-- advanced
+parameter_category_order: ['', input, system, advanced]
 parameters:
-  input_fasta:
-    optional: false
-    type: file
-    help: input fasta file for the database  
-  name:
-    default: 'bwa_index'
-    help: Name of the bwa index to create
-    optional: true
-    type: string
+  input_fasta: {help: input fasta file for the database, optional: false, type: file}
+  name: {default: bwa_index, help: Name of the bwa index to create, optional: true,
+    type: string}
   title:
     allowed: []
     category: system

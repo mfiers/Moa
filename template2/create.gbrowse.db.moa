@@ -1,29 +1,20 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- upload2gbrowse
-- clean
-- initGbrowse
-- gupgo
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  gupgo: {help: '', mode: simple}
+  initGbrowse: {help: '', mode: simple}
+  run: {help: '', mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: A library that aids in uploading FASTA and GFF to a Generic Genome Browser
   database. This template is only to be used embedded in another template. This library
   expects that the following variables are preset; gup_fasta_dir, gup_gff_dir gup_upload_fasta,
   gup_upload_gff
-gnumake_makefile: /tmp/xx/create.gbrowse.db.mk
-help:
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
-  gupgo: ''
-  initGbrowse: ''
-  upload2gbrowse: ''
 moa_id: upload2gbrowse
 modification_date: Wed Nov 10 07:56:48 2010
 name: create.gbrowse.db
-parameter_category_order:
-- ''
-- system
-- advanced
+parameter_category_order: ['', system, advanced]
 parameters:
   gup_db:
     allowed: []
@@ -40,9 +31,7 @@ parameters:
     optional: true
     type: string
   gup_force_upload:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: upload to gbrowse, ignore gup_lock and upload all, not only files newer
@@ -57,18 +46,14 @@ parameters:
     optional: true
     type: string
   gup_upload_fasta:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: upload fasta to gbrowse (T/F)
     optional: true
     type: set
   gup_upload_gff:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: upload gff to gbrowse (T/F)
@@ -82,9 +67,7 @@ parameters:
     optional: false
     type: string
   marks_extensions:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: Add some extensions to the Gbrowse database to be initalized, for use by

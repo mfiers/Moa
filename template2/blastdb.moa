@@ -1,27 +1,19 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- blastdb
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: Takes either a set of fasta files or a single multi-fasta input file
+      and creates a BLAST database., mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: ''
-help:
-  blastdb: Takes either a set of fasta files or a single multi-fasta input file and
-    creates a BLAST database.
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
 moa_id: blastdb
 modification_date: Wed Nov 10 07:56:48 2010
 name: blastdb
-parameter_category_order:
-- ''
-- system
-- advanced
+parameter_category_order: ['', system, advanced]
 parameters:
-  fasta_file:
-    help: The file with all input FASTA sequences for the blastdb. 
-    optional: false
-    type: file
+  fasta_file: {help: The file with all input FASTA sequences for the blastdb., optional: false,
+    type: file}
   name:
     allowed: []
     category: ''
@@ -30,17 +22,11 @@ parameters:
     optional: true
     type: string
   protein:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     default: F
     help: 'Protein database? (T)rue) or not (F)alse (default: F)'
     optional: true
     type: set
-  title:
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+  title: {category: system, default: '', help: A name for this job, optional: false,
+    type: string}
 title: ''

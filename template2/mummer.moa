@@ -1,36 +1,20 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- mummer
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: '', mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run mummer between two sequences
 filesets:
-  mum_input_a:
-    category: input
-    extension: fasta
-    help: Set 1 input fasta files
-    optional: false
-    type: input
-  mum_input_b:
-    category: input
-    extension: fasta
-    help: Set 1 input fasta files
-    optional: false
-    type: input
-gnumake_makefile: /tmp/xx/mummer.mk
-help:
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
-  mummer: ''
+  mum_input_a: {category: input, extension: fasta, help: Set 1 input fasta files,
+    optional: false, type: input}
+  mum_input_b: {category: input, extension: fasta, help: Set 1 input fasta files,
+    optional: false, type: input}
 moa_id: mummer
 modification_date: Wed Nov 10 07:56:48 2010
 name: mummer
-parameter_category_order:
-- ''
-- input
-- system
-- advanced
+parameter_category_order: ['', input, system, advanced]
 parameters:
   mum_breaklen:
     allowed: []
@@ -41,18 +25,14 @@ parameters:
     optional: true
     type: integer
   mum_matchmode:
-    allowed:
-    - mum
-    - max
+    allowed: [mum, max]
     category: ''
     default: mum
     help: use all matching fragments (max) or only unique matchers (mum)
     optional: true
     type: set
   mum_plot_raw:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: plot an alternative visualization where mummer does not attempt to put the
@@ -60,9 +40,7 @@ parameters:
     optional: true
     type: set
   mum_self:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: T
     help: mummer against self

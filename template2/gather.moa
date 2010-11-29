@@ -1,23 +1,16 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- gather
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: gather files, mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: gather a set of files and create hardlinks to. Hardlinks have as advantage
   that updates are noticed via the timestamp. Hence, make recognizes them.
-gnumake_makefile: /tmp/xx/gather.mk
-help:
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
-  gather: gather files
 moa_id: gather
 modification_date: Wed Nov 10 07:56:48 2010
 name: gather
-parameter_category_order:
-- ''
-- system
-- advanced
+parameter_category_order: ['', system, advanced]
 parameters:
   g_input_dir:
     allowed: []
@@ -57,9 +50,7 @@ parameters:
     optional: true
     type: directory
   g_parallel:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: allow parallel execution (T) or not (**F**). If for example concatenating
@@ -67,9 +58,7 @@ parameters:
     optional: true
     type: set
   g_powerclean:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
