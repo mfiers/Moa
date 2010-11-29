@@ -1,0 +1,107 @@
+author: Yogini Idnani, Mark Fiers
+version: 1
+backend: gnumake
+commands:
+- bwa_sampe
+- clean
+creation_date: Wed Nov 25 17:06:48 2010
+description: Generate alignments in SAM format given paired end reads
+filesets:
+  input:
+    category: input
+    extension: fq
+    help: fastq input files directory
+    optional: false
+    type: input
+  output:
+    category: output
+    dir: .
+    extension: sam
+    source: input
+    type: map
+help:
+  bwa_sampe: run bwa sampe
+  clean: Remove all job data, not the Moa job itself
+moa_id: bwa_sampe
+modification_data: Wed Nov 25 17:06:48 2010
+name: Bwa sampe
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  db:
+    allowed: []
+    category: ''
+    default: ''
+    help: bwa database to align against
+    optional: false
+    type: string
+  input_sai1_dir:
+    category: input
+    extension: sai
+    help: sai input file 1 generated from the bwa aln command
+    optional: false
+    type: input
+  input_sai2_dir:
+    category: input
+    extension: sai
+    help: sai input file 2 generated from the bwa aln command
+    optional: false
+    type: input
+  max_insert_size:
+    category: ''
+    default: 500
+    help: maximum insert size
+    optional: true
+    type: integer
+  max_occ_read:
+    category: ''
+    default: 100000
+    help: maximum occurrences for one end
+    optional: true
+    type: integer
+  max_aln_out:
+    category: ''
+    default: 3
+    help:  maximum hits to output for paired reads
+    optional: true
+    type: integer
+  max_out_discordant_pairs:
+    category: ''
+    default: 10
+    help: maximum hits to output for discordant pairs
+    optional: true
+    type: integer
+  prior_chimeric_rate:
+    category: ''
+    default: 1.0e-05
+    help: prior of chimeric rate (lower bound) 
+    optional: true
+    type: integer
+  preload_index:
+    category: ''
+    default: false
+    help: preload index into memory (for base-space reads only)
+    optional: true
+    type: boolean
+  disable_SW:
+    category: ''
+    default: false
+    help: disable Smith-Waterman for the unmapped mate
+    optional: true
+    type: boolean 
+  disable_insert_size:
+    category: ''
+    default: false
+    help:  disable insert size estimate (force -s)
+    optional: true
+    type: boolean
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
+    type: string
