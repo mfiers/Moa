@@ -13,5 +13,7 @@ Moa API
    ui
    unittests
    utils
+   backend/index
    plugin/index    
-   plugin/info    
+   
+   
