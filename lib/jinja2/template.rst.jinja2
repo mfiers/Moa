@@ -5,7 +5,10 @@
 
 Commands
 ~~~~~~~~
-{{ commands }}
+{% for cname, cdata in commands|dictsort %}
+**{{ cname }}**
+  {% if cdata.help %}{{ cdata.help }}{% else %}*no help defined*{% endif %}
+{% endfor %}
 
 
 Backend 
