@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+
+import os
+import yaml
+import moa.utils
+import moa.template
+
+from jinja2 import Template as jTemplate
+
+jTemplateFile = os.path.join(moa.utils.getMoaBase(), 'lib', 'jinja2', 'template.rst.jinja2')
+jT = jTemplate(open(jTemplateFile).read())
+
+os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'templates'))
+         
+for tfile, tname in moa.template.listAll():
+    template = moa.template.Template(tname)
+
+    if not isinstance(template.commands, dict):
+        raw = yaml.load(open(tfile).read())
+        raw['commands'] = {}
+        for c in template.commands:
+            cname = c
+            cmode = 'simple'
+            chelp = template.help[c]
+            if c == template.moa_id:
+                cname = 'run'
+                cmode = 'map'
+            raw['commands'][cname] = {
+                'mode' : cmode,
+                'help' : chelp }
+            try:
+                del raw['help']
+            except KeyError:
+                pass
+            try:
+                del raw['gnumake_makefile']
+            except KeyError:
+                pass
+            
+    print template.name
+    with open('%s.rst' % tname, 'w') as F:
+        F.write(jT.render(template))
+        
+        
+        

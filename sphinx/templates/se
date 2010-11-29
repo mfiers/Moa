@@ -1,0 +1,1215 @@
+Help on module os:
+
+NNAAMMEE
+    os - OS routines for Mac, NT, or Posix depending on what system we're on.
+
+FFIILLEE
+    /usr/lib/python2.6/os.py
+
+MMOODDUULLEE  DDOOCCSS
+    http://docs.python.org/library/os
+
+DDEESSCCRRIIPPTTIIOONN
+    This exports:
+      - all functions from posix, nt, os2, or ce, e.g. unlink, stat, etc.
+      - os.path is one of the modules posixpath, or ntpath
+      - os.name is 'posix', 'nt', 'os2', 'ce' or 'riscos'
+      - os.curdir is a string representing the current directory ('.' or ':')
+      - os.pardir is a string representing the parent directory ('..' or '::')
+      - os.sep is the (or a most common) pathname separator ('/' or ':' or '\\')
+      - os.extsep is the extension separator ('.' or '/')
+      - os.altsep is the alternate pathname separator (None or '/')
+      - os.pathsep is the component separator used in $PATH etc
+      - os.linesep is the line separator in text files ('\r' or '\n' or '\r\n')
+      - os.defpath is the default search path for executables
+      - os.devnull is the file path of the null device ('/dev/null', etc.)
+    
+    Programs that import and use 'os' stand a better chance of being
+    portable between different platforms.  Of course, they must then
+    only use functions that are defined by all platforms (e.g., unlink
+    and opendir), and leave all pathname manipulation to os.path
+    (e.g., split and join).
+
+CCLLAASSSSEESS
+    __builtin__.object
+        posix.stat_result
+        posix.statvfs_result
+    exceptions.EnvironmentError(exceptions.StandardError)
+        exceptions.OSError
+    
+    eerrrroorr = class OSError(EnvironmentError)
+     |  OS system call failed.
+     |  
+     |  Method resolution order:
+     |      OSError
+     |      EnvironmentError
+     |      StandardError
+     |      Exception
+     |      BaseException
+     |      __builtin__.object
+     |  
+     |  Methods defined here:
+     |  
+     |  ____iinniitt____(...)
+     |      x.__init__(...) initializes x; see x.__class__.__doc__ for signature
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  ____nneeww____ = <built-in method __new__ of type object>
+     |      T.__new__(S, ...) -> a new object with type S, a subtype of T
+     |  
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from EnvironmentError:
+     |  
+     |  ____rreedduuccee____(...)
+     |  
+     |  ____ssttrr____(...)
+     |      x.__str__() <==> str(x)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors inherited from EnvironmentError:
+     |  
+     |  eerrrrnnoo
+     |      exception errno
+     |  
+     |  ffiilleennaammee
+     |      exception filename
+     |  
+     |  ssttrreerrrroorr
+     |      exception strerror
+     |  
+     |  ----------------------------------------------------------------------
+     |  Methods inherited from BaseException:
+     |  
+     |  ____ddeellaattttrr____(...)
+     |      x.__delattr__('name') <==> del x.name
+     |  
+     |  ____ggeettaattttrriibbuuttee____(...)
+     |      x.__getattribute__('name') <==> x.name
+     |  
+     |  ____ggeettiitteemm____(...)
+     |      x.__getitem__(y) <==> x[y]
+     |  
+     |  ____ggeettsslliiccee____(...)
+     |      x.__getslice__(i, j) <==> x[i:j]
+     |      
+     |      Use of negative indices is not supported.
+     |  
+     |  ____rreepprr____(...)
+     |      x.__repr__() <==> repr(x)
+     |  
+     |  ____sseettaattttrr____(...)
+     |      x.__setattr__('name', value) <==> x.name = value
+     |  
+     |  ____sseettssttaattee____(...)
+     |  
+     |  ____uunniiccooddee____(...)
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors inherited from BaseException:
+     |  
+     |  ____ddiicctt____
+     |  
+     |  aarrggss
+     |  
+     |  mmeessssaaggee
+    
+    class ssttaatt__rreessuulltt(__builtin__.object)
+     |  stat_result: Result from stat or lstat.
+     |  
+     |  This object may be accessed either as a tuple of
+     |    (mode, ino, dev, nlink, uid, gid, size, atime, mtime, ctime)
+     |  or via the attributes st_mode, st_ino, st_dev, st_nlink, st_uid, and so on.
+     |  
+     |  Posix/windows: If your platform supports st_blksize, st_blocks, st_rdev,
+     |  or st_flags, they are available as attributes only.
+     |  
+     |  See os.stat for more information.
+     |  
+     |  Methods defined here:
+     |  
+     |  ____aadddd____(...)
+     |      x.__add__(y) <==> x+y
+     |  
+     |  ____ccoonnttaaiinnss____(...)
+     |      x.__contains__(y) <==> y in x
+     |  
+     |  ____eeqq____(...)
+     |      x.__eq__(y) <==> x==y
+     |  
+     |  ____ggee____(...)
+     |      x.__ge__(y) <==> x>=y
+     |  
+     |  ____ggeettiitteemm____(...)
+     |      x.__getitem__(y) <==> x[y]
+     |  
+     |  ____ggeettsslliiccee____(...)
+     |      x.__getslice__(i, j) <==> x[i:j]
+     |      
+     |      Use of negative indices is not supported.
+     |  
+     |  ____ggtt____(...)
+     |      x.__gt__(y) <==> x>y
+     |  
+     |  ____hhaasshh____(...)
+     |      x.__hash__() <==> hash(x)
+     |  
+     |  ____llee____(...)
+     |      x.__le__(y) <==> x<=y
+     |  
+     |  ____lleenn____(...)
+     |      x.__len__() <==> len(x)
+     |  
+     |  ____lltt____(...)
+     |      x.__lt__(y) <==> x<y
+     |  
+     |  ____mmuull____(...)
+     |      x.__mul__(n) <==> x*n
+     |  
+     |  ____nnee____(...)
+     |      x.__ne__(y) <==> x!=y
+     |  
+     |  ____rreedduuccee____(...)
+     |  
+     |  ____rreepprr____(...)
+     |      x.__repr__() <==> repr(x)
+     |  
+     |  ____rrmmuull____(...)
+     |      x.__rmul__(n) <==> n*x
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  sstt__aattiimmee
+     |      time of last access
+     |  
+     |  sstt__bbllkkssiizzee
+     |      blocksize for filesystem I/O
+     |  
+     |  sstt__bblloocckkss
+     |      number of blocks allocated
+     |  
+     |  sstt__ccttiimmee
+     |      time of last change
+     |  
+     |  sstt__ddeevv
+     |      device
+     |  
+     |  sstt__ggiidd
+     |      group ID of owner
+     |  
+     |  sstt__iinnoo
+     |      inode
+     |  
+     |  sstt__mmooddee
+     |      protection bits
+     |  
+     |  sstt__mmttiimmee
+     |      time of last modification
+     |  
+     |  sstt__nnlliinnkk
+     |      number of hard links
+     |  
+     |  sstt__rrddeevv
+     |      device type (if inode device)
+     |  
+     |  sstt__ssiizzee
+     |      total size, in bytes
+     |  
+     |  sstt__uuiidd
+     |      user ID of owner
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  ____nneeww____ = <built-in method __new__ of type object>
+     |      T.__new__(S, ...) -> a new object with type S, a subtype of T
+     |  
+     |  nn__ffiieellddss = 16
+     |  
+     |  nn__sseeqquueennccee__ffiieellddss = 10
+     |  
+     |  nn__uunnnnaammeedd__ffiieellddss = 3
+    
+    class ssttaattvvffss__rreessuulltt(__builtin__.object)
+     |  statvfs_result: Result from statvfs or fstatvfs.
+     |  
+     |  This object may be accessed either as a tuple of
+     |    (bsize, frsize, blocks, bfree, bavail, files, ffree, favail, flag, namemax),
+     |  or via the attributes f_bsize, f_frsize, f_blocks, f_bfree, and so on.
+     |  
+     |  See os.statvfs for more information.
+     |  
+     |  Methods defined here:
+     |  
+     |  ____aadddd____(...)
+     |      x.__add__(y) <==> x+y
+     |  
+     |  ____ccoonnttaaiinnss____(...)
+     |      x.__contains__(y) <==> y in x
+     |  
+     |  ____eeqq____(...)
+     |      x.__eq__(y) <==> x==y
+     |  
+     |  ____ggee____(...)
+     |      x.__ge__(y) <==> x>=y
+     |  
+     |  ____ggeettiitteemm____(...)
+     |      x.__getitem__(y) <==> x[y]
+     |  
+     |  ____ggeettsslliiccee____(...)
+     |      x.__getslice__(i, j) <==> x[i:j]
+     |      
+     |      Use of negative indices is not supported.
+     |  
+     |  ____ggtt____(...)
+     |      x.__gt__(y) <==> x>y
+     |  
+     |  ____hhaasshh____(...)
+     |      x.__hash__() <==> hash(x)
+     |  
+     |  ____llee____(...)
+     |      x.__le__(y) <==> x<=y
+     |  
+     |  ____lleenn____(...)
+     |      x.__len__() <==> len(x)
+     |  
+     |  ____lltt____(...)
+     |      x.__lt__(y) <==> x<y
+     |  
+     |  ____mmuull____(...)
+     |      x.__mul__(n) <==> x*n
+     |  
+     |  ____nnee____(...)
+     |      x.__ne__(y) <==> x!=y
+     |  
+     |  ____rreedduuccee____(...)
+     |  
+     |  ____rreepprr____(...)
+     |      x.__repr__() <==> repr(x)
+     |  
+     |  ____rrmmuull____(...)
+     |      x.__rmul__(n) <==> n*x
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data descriptors defined here:
+     |  
+     |  ff__bbaavvaaiill
+     |  
+     |  ff__bbffrreeee
+     |  
+     |  ff__bblloocckkss
+     |  
+     |  ff__bbssiizzee
+     |  
+     |  ff__ffaavvaaiill
+     |  
+     |  ff__ffffrreeee
+     |  
+     |  ff__ffiilleess
+     |  
+     |  ff__ffllaagg
+     |  
+     |  ff__ffrrssiizzee
+     |  
+     |  ff__nnaammeemmaaxx
+     |  
+     |  ----------------------------------------------------------------------
+     |  Data and other attributes defined here:
+     |  
+     |  ____nneeww____ = <built-in method __new__ of type object>
+     |      T.__new__(S, ...) -> a new object with type S, a subtype of T
+     |  
+     |  nn__ffiieellddss = 10
+     |  
+     |  nn__sseeqquueennccee__ffiieellddss = 10
+     |  
+     |  nn__uunnnnaammeedd__ffiieellddss = 0
+
+FFUUNNCCTTIIOONNSS
+    WWCCOORREEDDUUMMPP(...)
+        WCOREDUMP(status) -> bool
+        
+        Return True if the process returning 'status' was dumped to a core file.
+    
+    WWEEXXIITTSSTTAATTUUSS(...)
+        WEXITSTATUS(status) -> integer
+        
+        Return the process return code from 'status'.
+    
+    WWIIFFCCOONNTTIINNUUEEDD(...)
+        WIFCONTINUED(status) -> bool
+        
+        Return True if the process returning 'status' was continued from a
+        job control stop.
+    
+    WWIIFFEEXXIITTEEDD(...)
+        WIFEXITED(status) -> bool
+        
+        Return true if the process returning 'status' exited using the exit()
+        system call.
+    
+    WWIIFFSSIIGGNNAALLEEDD(...)
+        WIFSIGNALED(status) -> bool
+        
+        Return True if the process returning 'status' was terminated by a signal.
+    
+    WWIIFFSSTTOOPPPPEEDD(...)
+        WIFSTOPPED(status) -> bool
+        
+        Return True if the process returning 'status' was stopped.
+    
+    WWSSTTOOPPSSIIGG(...)
+        WSTOPSIG(status) -> integer
+        
+        Return the signal that stopped the process that provided
+        the 'status' value.
+    
+    WWTTEERRMMSSIIGG(...)
+        WTERMSIG(status) -> integer
+        
+        Return the signal that terminated the process that provided the 'status'
+        value.
+    
+    aabboorrtt(...)
+        abort() -> does not return!
+        
+        Abort the interpreter immediately.  This 'dumps core' or otherwise fails
+        in the hardest way possible on the hosting operating system.
+    
+    aacccceessss(...)
+        access(path, mode) -> True if granted, False otherwise
+        
+        Use the real uid/gid to test for access to a path.  Note that most
+        operations will use the effective uid/gid, therefore this routine can
+        be used in a suid/sgid environment to test if the invoking user has the
+        specified access to the path.  The mode argument can be F_OK to test
+        existence, or the inclusive-OR of R_OK, W_OK, and X_OK.
+    
+    cchhddiirr(...)
+        chdir(path)
+        
+        Change the current working directory to the specified path.
+    
+    cchhmmoodd(...)
+        chmod(path, mode)
+        
+        Change the access permissions of a file.
+    
+    cchhoowwnn(...)
+        chown(path, uid, gid)
+        
+        Change the owner and group id of path to the numeric uid and gid.
+    
+    cchhrroooott(...)
+        chroot(path)
+        
+        Change root directory to path.
+    
+    cclloossee(...)
+        close(fd)
+        
+        Close a file descriptor (for low level IO).
+    
+    cclloosseerraannggee(...)
+        closerange(fd_low, fd_high)
+        
+        Closes all file descriptors in [fd_low, fd_high), ignoring errors.
+    
+    ccoonnffssttrr(...)
+        confstr(name) -> string
+        
+        Return a string-valued system configuration variable.
+    
+    cctteerrmmiidd(...)
+        ctermid() -> string
+        
+        Return the name of the controlling terminal for this process.
+    
+    dduupp(...)
+        dup(fd) -> fd2
+        
+        Return a duplicate of a file descriptor.
+    
+    dduupp22(...)
+        dup2(old_fd, new_fd)
+        
+        Duplicate file descriptor.
+    
+    eexxeeccll(file, *args)
+        execl(file, *args)
+        
+        Execute the executable file with argument list args, replacing the
+        current process.
+    
+    eexxeeccllee(file, *args)
+        execle(file, *args, env)
+        
+        Execute the executable file with argument list args and
+        environment env, replacing the current process.
+    
+    eexxeeccllpp(file, *args)
+        execlp(file, *args)
+        
+        Execute the executable file (which is searched for along $PATH)
+        with argument list args, replacing the current process.
+    
+    eexxeeccllppee(file, *args)
+        execlpe(file, *args, env)
+        
+        Execute the executable file (which is searched for along $PATH)
+        with argument list args and environment env, replacing the current
+        process.
+    
+    eexxeeccvv(...)
+        execv(path, args)
+        
+        Execute an executable path with arguments, replacing current process.
+        
+            path: path of executable file
+            args: tuple or list of strings
+    
+    eexxeeccvvee(...)
+        execve(path, args, env)
+        
+        Execute a path with arguments and environment, replacing current process.
+        
+            path: path of executable file
+            args: tuple or list of arguments
+            env: dictionary of strings mapping to strings
+    
+    eexxeeccvvpp(file, args)
+        execvp(file, args)
+        
+        Execute the executable file (which is searched for along $PATH)
+        with argument list args, replacing the current process.
+        args may be a list or tuple of strings.
+    
+    eexxeeccvvppee(file, args, env)
+        execvpe(file, args, env)
+        
+        Execute the executable file (which is searched for along $PATH)
+        with argument list args and environment env , replacing the
+        current process.
+        args may be a list or tuple of strings.
+    
+    ffcchhddiirr(...)
+        fchdir(fildes)
+        
+        Change to the directory of the given file descriptor.  fildes must be
+        opened on a directory, not a file.
+    
+    ffcchhmmoodd(...)
+        fchmod(fd, mode)
+        
+        Change the access permissions of the file given by file
+        descriptor fd.
+    
+    ffcchhoowwnn(...)
+        fchown(fd, uid, gid)
+        
+        Change the owner and group id of the file given by file descriptor
+        fd to the numeric uid and gid.
+    
+    ffddaattaassyynncc(...)
+        fdatasync(fildes)
+        
+        force write of file with filedescriptor to disk.
+         does not force update of metadata.
+    
+    ffddooppeenn(...)
+        fdopen(fd [, mode='r' [, bufsize]]) -> file_object
+        
+        Return an open file object connected to a file descriptor.
+    
+    ffoorrkk(...)
+        fork() -> pid
+        
+        Fork a child process.
+        Return 0 to child process and PID of child to parent process.
+    
+    ffoorrkkppttyy(...)
+        forkpty() -> (pid, master_fd)
+        
+        Fork a new process with a new pseudo-terminal as controlling tty.
+        
+        Like fork(), return 0 as pid to child process, and PID of child to parent.
+        To both, return fd of newly opened pseudo-terminal.
+    
+    ffppaatthhccoonnff(...)
+        fpathconf(fd, name) -> integer
+        
+        Return the configuration limit name for the file descriptor fd.
+        If there is no limit, return -1.
+    
+    ffssttaatt(...)
+        fstat(fd) -> stat result
+        
+        Like stat(), but for an open file descriptor.
+    
+    ffssttaattvvffss(...)
+        fstatvfs(fd) -> statvfs result
+        
+        Perform an fstatvfs system call on the given fd.
+    
+    ffssyynncc(...)
+        fsync(fildes)
+        
+        force write of file with filedescriptor to disk.
+    
+    ffttrruunnccaattee(...)
+        ftruncate(fd, length)
+        
+        Truncate a file to a specified length.
+    
+    ggeettccwwdd(...)
+        getcwd() -> path
+        
+        Return a string representing the current working directory.
+    
+    ggeettccwwdduu(...)
+        getcwdu() -> path
+        
+        Return a unicode string representing the current working directory.
+    
+    ggeetteeggiidd(...)
+        getegid() -> egid
+        
+        Return the current process's effective group id.
+    
+    ggeetteennvv(key, default=None)
+        Get an environment variable, return None if it doesn't exist.
+        The optional second argument can specify an alternate default.
+    
+    ggeetteeuuiidd(...)
+        geteuid() -> euid
+        
+        Return the current process's effective user id.
+    
+    ggeettggiidd(...)
+        getgid() -> gid
+        
+        Return the current process's group id.
+    
+    ggeettggrroouuppss(...)
+        getgroups() -> list of group IDs
+        
+        Return list of supplemental group IDs for the process.
+    
+    ggeettllooaaddaavvgg(...)
+        getloadavg() -> (float, float, float)
+        
+        Return the number of processes in the system run queue averaged over
+        the last 1, 5, and 15 minutes or raises OSError if the load average
+        was unobtainable
+    
+    ggeettllooggiinn(...)
+        getlogin() -> string
+        
+        Return the actual login name.
+    
+    ggeettppggiidd(...)
+        getpgid(pid) -> pgid
+        
+        Call the system call getpgid().
+    
+    ggeettppggrrpp(...)
+        getpgrp() -> pgrp
+        
+        Return the current process group id.
+    
+    ggeettppiidd(...)
+        getpid() -> pid
+        
+        Return the current process id
+    
+    ggeettppppiidd(...)
+        getppid() -> ppid
+        
+        Return the parent's process id.
+    
+    ggeettssiidd(...)
+        getsid(pid) -> sid
+        
+        Call the system call getsid().
+    
+    ggeettuuiidd(...)
+        getuid() -> uid
+        
+        Return the current process's user id.
+    
+    iissaattttyy(...)
+        isatty(fd) -> bool
+        
+        Return True if the file descriptor 'fd' is an open file descriptor
+        connected to the slave end of a terminal.
+    
+    kkiillll(...)
+        kill(pid, sig)
+        
+        Kill a process with a signal.
+    
+    kkiillllppgg(...)
+        killpg(pgid, sig)
+        
+        Kill a process group with a signal.
+    
+    llcchhoowwnn(...)
+        lchown(path, uid, gid)
+        
+        Change the owner and group id of path to the numeric uid and gid.
+        This function will not follow symbolic links.
+    
+    lliinnkk(...)
+        link(src, dst)
+        
+        Create a hard link to a file.
+    
+    lliissttddiirr(...)
+        listdir(path) -> list_of_strings
+        
+        Return a list containing the names of the entries in the directory.
+        
+            path: path of directory to list
+        
+        The list is in arbitrary order.  It does not include the special
+        entries '.' and '..' even if they are present in the directory.
+    
+    llsseeeekk(...)
+        lseek(fd, pos, how) -> newpos
+        
+        Set the current position of a file descriptor.
+    
+    llssttaatt(...)
+        lstat(path) -> stat result
+        
+        Like stat(path), but do not follow symbolic links.
+    
+    mmaajjoorr(...)
+        major(device) -> major number
+        Extracts a device major number from a raw device number.
+    
+    mmaakkeeddeevv(...)
+        makedev(major, minor) -> device number
+        Composes a raw device number from the major and minor device numbers.
+    
+    mmaakkeeddiirrss(name, mode=511)
+        makedirs(path [, mode=0777])
+        
+        Super-mkdir; create a leaf directory and all intermediate ones.
+        Works like mkdir, except that any intermediate path segment (not
+        just the rightmost) will be created if it does not exist.  This is
+        recursive.
+    
+    mmiinnoorr(...)
+        minor(device) -> minor number
+        Extracts a device minor number from a raw device number.
+    
+    mmkkddiirr(...)
+        mkdir(path [, mode=0777])
+        
+        Create a directory.
+    
+    mmkkffiiffoo(...)
+        mkfifo(filename [, mode=0666])
+        
+        Create a FIFO (a POSIX named pipe).
+    
+    mmkknnoodd(...)
+        mknod(filename [, mode=0600, device])
+        
+        Create a filesystem node (file, device special file or named pipe)
+        named filename. mode specifies both the permissions to use and the
+        type of node to be created, being combined (bitwise OR) with one of
+        S_IFREG, S_IFCHR, S_IFBLK, and S_IFIFO. For S_IFCHR and S_IFBLK,
+        device defines the newly created device special file (probably using
+        os.makedev()), otherwise it is ignored.
+    
+    nniiccee(...)
+        nice(inc) -> new_priority
+        
+        Decrease the priority of process by inc and return the new priority.
+    
+    ooppeenn(...)
+        open(filename, flag [, mode=0777]) -> fd
+        
+        Open a file (for low level IO).
+    
+    ooppeennppttyy(...)
+        openpty() -> (master_fd, slave_fd)
+        
+        Open a pseudo-terminal, returning open fd's for both master and slave end.
+    
+    ppaatthhccoonnff(...)
+        pathconf(path, name) -> integer
+        
+        Return the configuration limit name for the file or directory path.
+        If there is no limit, return -1.
+    
+    ppiippee(...)
+        pipe() -> (read_end, write_end)
+        
+        Create a pipe.
+    
+    ppooppeenn(...)
+        popen(command [, mode='r' [, bufsize]]) -> pipe
+        
+        Open a pipe to/from a command returning a file object.
+    
+    ppooppeenn22(cmd, mode='t', bufsize=-1)
+        Execute the shell command 'cmd' in a sub-process.  On UNIX, 'cmd'
+        may be a sequence, in which case arguments will be passed directly to
+        the program without shell intervention (as with os.spawnv()).  If 'cmd'
+        is a string it will be passed to the shell (as with os.system()). If
+        'bufsize' is specified, it sets the buffer size for the I/O pipes.  The
+        file objects (child_stdin, child_stdout) are returned.
+    
+    ppooppeenn33(cmd, mode='t', bufsize=-1)
+        Execute the shell command 'cmd' in a sub-process.  On UNIX, 'cmd'
+        may be a sequence, in which case arguments will be passed directly to
+        the program without shell intervention (as with os.spawnv()).  If 'cmd'
+        is a string it will be passed to the shell (as with os.system()). If
+        'bufsize' is specified, it sets the buffer size for the I/O pipes.  The
+        file objects (child_stdin, child_stdout, child_stderr) are returned.
+    
+    ppooppeenn44(cmd, mode='t', bufsize=-1)
+        Execute the shell command 'cmd' in a sub-process.  On UNIX, 'cmd'
+        may be a sequence, in which case arguments will be passed directly to
+        the program without shell intervention (as with os.spawnv()).  If 'cmd'
+        is a string it will be passed to the shell (as with os.system()). If
+        'bufsize' is specified, it sets the buffer size for the I/O pipes.  The
+        file objects (child_stdin, child_stdout_stderr) are returned.
+    
+    ppuutteennvv(...)
+        putenv(key, value)
+        
+        Change or add an environment variable.
+    
+    rreeaadd(...)
+        read(fd, buffersize) -> string
+        
+        Read a file descriptor.
+    
+    rreeaaddlliinnkk(...)
+        readlink(path) -> path
+        
+        Return a string representing the path to which the symbolic link points.
+    
+    rreemmoovvee(...)
+        remove(path)
+        
+        Remove a file (same as unlink(path)).
+    
+    rreemmoovveeddiirrss(name)
+        removedirs(path)
+        
+        Super-rmdir; remove a leaf directory and all empty intermediate
+        ones.  Works like rmdir except that, if the leaf directory is
+        successfully removed, directories corresponding to rightmost path
+        segments will be pruned away until either the whole path is
+        consumed or an error occurs.  Errors during this latter phase are
+        ignored -- they generally mean that a directory was not empty.
+    
+    rreennaammee(...)
+        rename(old, new)
+        
+        Rename a file or directory.
+    
+    rreennaammeess(old, new)
+        renames(old, new)
+        
+        Super-rename; create directories as necessary and delete any left
+        empty.  Works like rename, except creation of any intermediate
+        directories needed to make the new pathname good is attempted
+        first.  After the rename, directories corresponding to rightmost
+        path segments of the old name will be pruned way until either the
+        whole path is consumed or a nonempty directory is found.
+        
+        Note: this function can fail with the new directory structure made
+        if you lack permissions needed to unlink the leaf directory or
+        file.
+    
+    rrmmddiirr(...)
+        rmdir(path)
+        
+        Remove a directory.
+    
+    sseetteeggiidd(...)
+        setegid(gid)
+        
+        Set the current process's effective group id.
+    
+    sseetteeuuiidd(...)
+        seteuid(uid)
+        
+        Set the current process's effective user id.
+    
+    sseettggiidd(...)
+        setgid(gid)
+        
+        Set the current process's group id.
+    
+    sseettggrroouuppss(...)
+        setgroups(list)
+        
+        Set the groups of the current process to list.
+    
+    sseettppggiidd(...)
+        setpgid(pid, pgrp)
+        
+        Call the system call setpgid().
+    
+    sseettppggrrpp(...)
+        setpgrp()
+        
+        Make this process the process group leader.
+    
+    sseettrreeggiidd(...)
+        setregid(rgid, egid)
+        
+        Set the current process's real and effective group ids.
+    
+    sseettrreeuuiidd(...)
+        setreuid(ruid, euid)
+        
+        Set the current process's real and effective user ids.
+    
+    sseettssiidd(...)
+        setsid()
+        
+        Call the system call setsid().
+    
+    sseettuuiidd(...)
+        setuid(uid)
+        
+        Set the current process's user id.
+    
+    ssppaawwnnll(mode, file, *args)
+        spawnl(mode, file, *args) -> integer
+        
+        Execute file with arguments from args in a subprocess.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssppaawwnnllee(mode, file, *args)
+        spawnle(mode, file, *args, env) -> integer
+        
+        Execute file with arguments from args in a subprocess with the
+        supplied environment.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssppaawwnnllpp(mode, file, *args)
+        spawnlp(mode, file, *args) -> integer
+        
+        Execute file (which is looked for along $PATH) with arguments from
+        args in a subprocess with the supplied environment.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssppaawwnnllppee(mode, file, *args)
+        spawnlpe(mode, file, *args, env) -> integer
+        
+        Execute file (which is looked for along $PATH) with arguments from
+        args in a subprocess with the supplied environment.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssppaawwnnvv(mode, file, args)
+        spawnv(mode, file, args) -> integer
+        
+        Execute file with arguments from args in a subprocess.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssppaawwnnvvee(mode, file, args, env)
+        spawnve(mode, file, args, env) -> integer
+        
+        Execute file with arguments from args in a subprocess with the
+        specified environment.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssppaawwnnvvpp(mode, file, args)
+        spawnvp(mode, file, args) -> integer
+        
+        Execute file (which is looked for along $PATH) with arguments from
+        args in a subprocess.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssppaawwnnvvppee(mode, file, args, env)
+        spawnvpe(mode, file, args, env) -> integer
+        
+        Execute file (which is looked for along $PATH) with arguments from
+        args in a subprocess with the supplied environment.
+        If mode == P_NOWAIT return the pid of the process.
+        If mode == P_WAIT return the process's exit code if it exits normally;
+        otherwise return -SIG, where SIG is the signal that killed it.
+    
+    ssttaatt(...)
+        stat(path) -> stat result
+        
+        Perform a stat system call on the given path.
+    
+    ssttaatt__ffllooaatt__ttiimmeess(...)
+        stat_float_times([newval]) -> oldval
+        
+        Determine whether os.[lf]stat represents time stamps as float objects.
+        If newval is True, future calls to stat() return floats, if it is False,
+        future calls return ints. 
+        If newval is omitted, return the current setting.
+    
+    ssttaattvvffss(...)
+        statvfs(path) -> statvfs result
+        
+        Perform a statvfs system call on the given path.
+    
+    ssttrreerrrroorr(...)
+        strerror(code) -> string
+        
+        Translate an error code to a message string.
+    
+    ssyymmlliinnkk(...)
+        symlink(src, dst)
+        
+        Create a symbolic link pointing to src named dst.
+    
+    ssyyssccoonnff(...)
+        sysconf(name) -> integer
+        
+        Return an integer-valued system configuration variable.
+    
+    ssyysstteemm(...)
+        system(command) -> exit_status
+        
+        Execute the command (a string) in a subshell.
+    
+    ttccggeettppggrrpp(...)
+        tcgetpgrp(fd) -> pgid
+        
+        Return the process group associated with the terminal given by a fd.
+    
+    ttccsseettppggrrpp(...)
+        tcsetpgrp(fd, pgid)
+        
+        Set the process group associated with the terminal given by a fd.
+    
+    tteemmppnnaamm(...)
+        tempnam([dir[, prefix]]) -> string
+        
+        Return a unique name for a temporary file.
+        The directory and a prefix may be specified as strings; they may be omitted
+        or None if not needed.
+    
+    ttiimmeess(...)
+        times() -> (utime, stime, cutime, cstime, elapsed_time)
+        
+        Return a tuple of floating point numbers indicating process times.
+    
+    ttmmppffiillee(...)
+        tmpfile() -> file object
+        
+        Create a temporary file with no directory entries.
+    
+    ttmmppnnaamm(...)
+        tmpnam() -> string
+        
+        Return a unique name for a temporary file.
+    
+    ttttyynnaammee(...)
+        ttyname(fd) -> string
+        
+        Return the name of the terminal device connected to 'fd'.
+    
+    uummaasskk(...)
+        umask(new_mask) -> old_mask
+        
+        Set the current numeric umask and return the previous umask.
+    
+    uunnaammee(...)
+        uname() -> (sysname, nodename, release, version, machine)
+        
+        Return a tuple identifying the current operating system.
+    
+    uunnlliinnkk(...)
+        unlink(path)
+        
+        Remove a file (same as remove(path)).
+    
+    uunnsseetteennvv(...)
+        unsetenv(key)
+        
+        Delete an environment variable.
+    
+    uuttiimmee(...)
+        utime(path, (atime, mtime))
+        utime(path, None)
+        
+        Set the access and modified time of the file to the given values.  If the
+        second form is used, set the access and modified times to the current time.
+    
+    wwaaiitt(...)
+        wait() -> (pid, status)
+        
+        Wait for completion of a child process.
+    
+    wwaaiitt33(...)
+        wait3(options) -> (pid, status, rusage)
+        
+        Wait for completion of a child process.
+    
+    wwaaiitt44(...)
+        wait4(pid, options) -> (pid, status, rusage)
+        
+        Wait for completion of a given child process.
+    
+    wwaaiittppiidd(...)
+        waitpid(pid, options) -> (pid, status)
+        
+        Wait for completion of a given child process.
+    
+    wwaallkk(top, topdown=True, onerror=None, followlinks=False)
+        Directory tree generator.
+        
+        For each directory in the directory tree rooted at top (including top
+        itself, but excluding '.' and '..'), yields a 3-tuple
+        
+            dirpath, dirnames, filenames
+        
+        dirpath is a string, the path to the directory.  dirnames is a list of
+        the names of the subdirectories in dirpath (excluding '.' and '..').
+        filenames is a list of the names of the non-directory files in dirpath.
+        Note that the names in the lists are just names, with no path components.
+        To get a full path (which begins with top) to a file or directory in
+        dirpath, do os.path.join(dirpath, name).
+        
+        If optional arg 'topdown' is true or not specified, the triple for a
+        directory is generated before the triples for any of its subdirectories
+        (directories are generated top down).  If topdown is false, the triple
+        for a directory is generated after the triples for all of its
+        subdirectories (directories are generated bottom up).
+        
+        When topdown is true, the caller can modify the dirnames list in-place
+        (e.g., via del or slice assignment), and walk will only recurse into the
+        subdirectories whose names remain in dirnames; this can be used to prune
+        the search, or to impose a specific order of visiting.  Modifying
+        dirnames when topdown is false is ineffective, since the directories in
+        dirnames have already been generated by the time dirnames itself is
+        generated.
+        
+        By default errors from the os.listdir() call are ignored.  If
+        optional arg 'onerror' is specified, it should be a function; it
+        will be called with one argument, an os.error instance.  It can
+        report the error to continue with the walk, or raise the exception
+        to abort the walk.  Note that the filename is available as the
+        filename attribute of the exception object.
+        
+        By default, os.walk does not follow symbolic links to subdirectories on
+        systems that support them.  In order to get this functionality, set the
+        optional argument 'followlinks' to true.
+        
+        Caution:  if you pass a relative pathname for top, don't change the
+        current working directory between resumptions of walk.  walk never
+        changes the current directory, and assumes that the client doesn't
+        either.
+        
+        Example:
+        
+        import os
+        from os.path import join, getsize
+        for root, dirs, files in os.walk('python/Lib/email'):
+            print root, "consumes",
+            print sum([getsize(join(root, name)) for name in files]),
+            print "bytes in", len(files), "non-directory files"
+            if 'CVS' in dirs:
+                dirs.remove('CVS')  # don't visit CVS directories
+    
+    wwrriittee(...)
+        write(fd, string) -> byteswritten
+        
+        Write a string to a file descriptor.
+
+DDAATTAA
+    EEXX__CCAANNTTCCRREEAATT = 73
+    EEXX__CCOONNFFIIGG = 78
+    EEXX__DDAATTAAEERRRR = 65
+    EEXX__IIOOEERRRR = 74
+    EEXX__NNOOHHOOSSTT = 68
+    EEXX__NNOOIINNPPUUTT = 66
+    EEXX__NNOOPPEERRMM = 77
+    EEXX__NNOOUUSSEERR = 67
+    EEXX__OOKK = 0
+    EEXX__OOSSEERRRR = 71
+    EEXX__OOSSFFIILLEE = 72
+    EEXX__PPRROOTTOOCCOOLL = 76
+    EEXX__SSOOFFTTWWAARREE = 70
+    EEXX__TTEEMMPPFFAAIILL = 75
+    EEXX__UUNNAAVVAAIILLAABBLLEE = 69
+    EEXX__UUSSAAGGEE = 64
+    FF__OOKK = 0
+    NNGGRROOUUPPSS__MMAAXX = 65536
+    OO__AAPPPPEENNDD = 1024
+    OO__AASSYYNNCC = 8192
+    OO__CCRREEAATT = 64
+    OO__DDIIRREECCTT = 16384
+    OO__DDIIRREECCTTOORRYY = 65536
+    OO__DDSSYYNNCC = 4096
+    OO__EEXXCCLL = 128
+    OO__LLAARRGGEEFFIILLEE = 0
+    OO__NNDDEELLAAYY = 2048
+    OO__NNOOAATTIIMMEE = 262144
+    OO__NNOOCCTTTTYY = 256
+    OO__NNOOFFOOLLLLOOWW = 131072
+    OO__NNOONNBBLLOOCCKK = 2048
+    OO__RRDDOONNLLYY = 0
+    OO__RRDDWWRR = 2
+    OO__RRSSYYNNCC = 1052672
+    OO__SSYYNNCC = 1052672
+    OO__TTRRUUNNCC = 512
+    OO__WWRROONNLLYY = 1
+    RR__OOKK = 4
+    SSEEEEKK__CCUURR = 1
+    SSEEEEKK__EENNDD = 2
+    SSEEEEKK__SSEETT = 0
+    SSTT__AAPPPPEENNDD = 256
+    SSTT__MMAANNDDLLOOCCKK = 64
+    SSTT__NNOOAATTIIMMEE = 1024
+    SSTT__NNOODDEEVV = 4
+    SSTT__NNOODDIIRRAATTIIMMEE = 2048
+    SSTT__NNOOEEXXEECC = 8
+    SSTT__NNOOSSUUIIDD = 2
+    SSTT__RRDDOONNLLYY = 1
+    SSTT__RREELLAATTIIMMEE = 4096
+    SSTT__SSYYNNCCHHRROONNOOUUSS = 16
+    SSTT__WWRRIITTEE = 128
+    TTMMPP__MMAAXX = 238328
+    WWCCOONNTTIINNUUEEDD = 8
+    WWNNOOHHAANNGG = 1
+    WWUUNNTTRRAACCEEDD = 2
+    WW__OOKK = 2
+    XX__OOKK = 1
+    ____aallll____ = ['altsep', 'curdir', 'pardir', 'sep', 'extsep', 'pathsep', '...
+    aallttsseepp = None
+    ccoonnffssttrr__nnaammeess = {'CS_LFS64_CFLAGS': 1004, 'CS_LFS64_LDFLAGS': 1005, 'C...
+    ccuurrddiirr = '.'
+    ddeeffppaatthh = ':/bin:/usr/bin'
+    ddeevvnnuullll = '/dev/null'
+    eennvviirroonn = {'GDM_KEYBOARD_LAYOUT': 'us', 'HOME': '/home/mf'...axa=00;36...
+    eexxttsseepp = '.'
+    lliinneesseepp = '\n'
+    nnaammee = 'posix'
+    ppaarrddiirr = '..'
+    ppaatthhccoonnff__nnaammeess = {'PC_ASYNC_IO': 10, 'PC_CHOWN_RESTRICTED': 6, 'PC_FIL...
+    ppaatthhsseepp = ':'
+    sseepp = '/'
+    ssyyssccoonnff__nnaammeess = {'SC_2_CHAR_TERM': 95, 'SC_2_C_BIND': 47, 'SC_2_C_DEV'...
+
