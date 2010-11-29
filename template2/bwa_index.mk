@@ -21,8 +21,14 @@ include $(MOABASE)/lib/gnumake/prepare.mk
 include $(MOABASE)/lib/gnumake/core.mk
 
 $(bwa_index_name).ann: %.ann : $(bwa_index_input_fasta)
-	ln $< $(bwa_index_name).fasta
-	bwa index $(bwa_index_name).fasta
+
+	echo bwa index -p $(bwa_index_prefix) 			\
+			  -a $(bwa_index_algorithm)     		\
+			  $(if $(bwa_aln_color_space), -c) 		\
+			  $(bwa_index_input_fasta)
+	
+	# ln $< $(bwa_index_name).fasta
+	#bwa index $(bwa_index_name).fasta
 
 bwa_index: $(bwa_index_name).ann
 

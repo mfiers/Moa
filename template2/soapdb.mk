@@ -15,23 +15,18 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-#
+# 
 
+moa_id=soapdb
 include $(MOABASE)/lib/gnumake/prepare.mk
-moa_id = soapdb
-
-#########################################################################
-# Prerequisite testing
-
 include $(MOABASE)/lib/gnumake/core.mk
-soapdb: 
-	2bwt-builder $(soapdb_input)
 
-#one of the database files
-$(soapdb_name).1.ebwt: $(soapdb_input_files)
-	-$e rm -f $(soapdb_name).*.ebwt
-	$e bowtie-build $(call merge,$(comma),$^) $(soapdb_name)
-	touch $(soapdb_name)
+#Main target
+.PHONY: soapdb
+soapdb: $(soapdb_input_fasta).ann
+	
+$(soapdb_input_fasta).ann: %.ann : $(soapdb_input_fasta)
+	2bwt-builder $<
 
 soapdb_clean:
 	-rm -f $(soapdb_name).*.ebwt

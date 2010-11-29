@@ -26,7 +26,7 @@ $(moa_id): $($(moa_id)_output_files)
 $($(moa_id)_output_files): sai_file=$($(moa_id)_input_sai_dir)/$*.sai
 $($(moa_id)_output_files): %.$($(moa_id)_output_extension): \
 			$($(moa_id)_input_dir)/%.$($(moa_id)_input_extension)
-	bwa samse -n $(bwa_samse_max_aln_out) \
+	bwa samse  -n $(bwa_samse_max_aln_out) \
 				$($(moa_id)_db) \
 				$(sai_file) $< > $@
 #		| samtools view -bhS - > $@
