@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bwa_sampe &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="bwa_samse" href="bwa_samse.html" />
+    <link rel="prev" title="bwa_index" href="bwa_index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="bwa_samse.html" title="bwa_samse"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bwa_index.html" title="bwa_index"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bwa-sampe">
+<h1>bwa_sampe<a class="headerlink" href="#bwa-sampe" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<ul class="simple">
+<li>Generate alignments in SAM format given paired end reads</li>
+</ul>
+</blockquote>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself</dd>
+<dt><strong>run</strong></dt>
+<dd>run bwa sampe</dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<p><strong>fq_forward_input</strong> - fastq input files directory - forward files</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>fq</cite></div>
+<div class="line"><em>glob</em>: <cite>*.1</cite></div>
+</div>
+</blockquote>
+<p><strong>fq_reverse_input</strong> - fastq input files directory - reverse files</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>fq</cite></div>
+<div class="line"><em>glob</em>: <cite>*.2</cite></div>
+<div class="line"><em>dir</em>: <cite>{{ fq_forward_input_dir }}</cite></div>
+</div>
+</blockquote>
+<p><strong>output</strong> - {}</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>sam</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>.</cite></div>
+</div>
+</blockquote>
+<p><strong>sai_forward_input</strong> - sai input files - forward files</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>sai</cite></div>
+<div class="line"><em>glob</em>: <cite>{{ fq_forward_input_glob }}</cite></div>
+<div class="line"><em>dir</em>: <cite>.</cite></div>
+</div>
+</blockquote>
+<p><strong>sai_reverse_input</strong> - sai input files - reverse files</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>sai</cite></div>
+<div class="line"><em>glob</em>: <cite>{{ fq_reverse_input_glob }}</cite></div>
+<div class="line"><em>dir</em>: <cite>{{ sai_forward_input_dir }}</cite></div>
+</div>
+</blockquote>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>db</strong> - bwa database to align against</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+<dt><strong>disable_insert_size</strong> - disable insert size estimate (force -s)</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>disable_SW</strong> - disable Smith-Waterman for the unmapped mate</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>max_aln_out</strong> - maximum hits to output for paired reads</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>3</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>max_insert_size</strong> - maximum insert size</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>500</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>max_occ_read</strong> - maximum occurrences for one end</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>100000</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>max_out_discordant_pairs</strong> - maximum hits to output for discordant pairs</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>10</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>preload_index</strong> - preload index into memory (for base-space reads only)</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>prior_chimeric_rate</strong> - prior of chimeric rate (lower bound)</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>1e-05</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>title</strong> - A name for this job</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>ruff</dd>
+<dt><strong>Author</strong></dt>
+<dd>Yogini Idnani, Mark Fiers</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Nov 25 17:06:48 2010</dd>
+</dl>
+<p><strong>Modification date</strong></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">bwa_sampe</a><ul>
+<li><a class="reference external" href="#commands">Commands</a></li>
+<li><a class="reference external" href="#filesets">Filesets</a></li>
+<li><a class="reference external" href="#parameters">Parameters</a></li>
+<li><a class="reference external" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="bwa_index.html"
+                                  title="previous chapter">bwa_index</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="bwa_samse.html"
+                                  title="next chapter">bwa_samse</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/bwa_sampe.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bwa_samse.html" title="bwa_samse"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="bwa_index.html" title="bwa_index"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Nov 30, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

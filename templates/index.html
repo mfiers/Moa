@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Templates &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="next" title="crunch" href="act_crunch.html" />
+    <link rel="prev" title="Creating a pipeline" href="../using.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="act_crunch.html" title="crunch"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../using.html" title="Creating a pipeline"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="templates">
+<h1>Templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="act_crunch.html">crunch</a></li>
+<li class="toctree-l1"><a class="reference external" href="adhoc.html">adhoc</a></li>
+<li class="toctree-l1"><a class="reference external" href="adhoc_one.html">adhoc_one</a></li>
+<li class="toctree-l1"><a class="reference external" href="bamextract.html">bamextract</a></li>
+<li class="toctree-l1"><a class="reference external" href="bartab.html">bartab</a></li>
+<li class="toctree-l1"><a class="reference external" href="bidibebla.html">bdbb</a></li>
+<li class="toctree-l1"><a class="reference external" href="blast.html">blast</a></li>
+<li class="toctree-l1"><a class="reference external" href="blastSingle.html">blast</a></li>
+<li class="toctree-l1"><a class="reference external" href="blastdb.html">blastdb</a></li>
+<li class="toctree-l1"><a class="reference external" href="blat.html">blat</a></li>
+<li class="toctree-l1"><a class="reference external" href="bowtie.html">bowtie</a></li>
+<li class="toctree-l1"><a class="reference external" href="bowtiedb.html">bowtiedb</a></li>
+<li class="toctree-l1"><a class="reference external" href="bwa_aln.html">bwa_aln</a></li>
+<li class="toctree-l1"><a class="reference external" href="bwa_index.html">bwa_index</a></li>
+<li class="toctree-l1"><a class="reference external" href="bwa_sampe.html">bwa_sampe</a></li>
+<li class="toctree-l1"><a class="reference external" href="bwa_samse.html">bwa_samse</a></li>
+<li class="toctree-l1"><a class="reference external" href="cleanFasta.html">clean_fasta</a></li>
+<li class="toctree-l1"><a class="reference external" href="clustalgroup.html">clustalgroup</a></li>
+<li class="toctree-l1"><a class="reference external" href="clustalpair.html">clustalpair</a></li>
+<li class="toctree-l1"><a class="reference external" href="clustalw.html">clustalw</a></li>
+<li class="toctree-l1"><a class="reference external" href="concatenate.html">concatenate</a></li>
+<li class="toctree-l1"><a class="reference external" href="create.gbrowse.db.html">upload2gbrowse</a></li>
+<li class="toctree-l1"><a class="reference external" href="crunch.html">crunch</a></li>
+<li class="toctree-l1"><a class="reference external" href="dottup.html">dottup</a></li>
+<li class="toctree-l1"><a class="reference external" href="dottupSelf.html">dotself</a></li>
+<li class="toctree-l1"><a class="reference external" href="empty.html">empty</a></li>
+<li class="toctree-l1"><a class="reference external" href="fasta2gff.html">fasta2gff</a></li>
+<li class="toctree-l1"><a class="reference external" href="gap4export.html">gap4export</a></li>
+<li class="toctree-l1"><a class="reference external" href="gather.html">gather</a></li>
+<li class="toctree-l1"><a class="reference external" href="genemarks.html">genemarks</a></li>
+<li class="toctree-l1"><a class="reference external" href="getorf.html">getorf</a></li>
+<li class="toctree-l1"><a class="reference external" href="glimmer3.html">glimmer3</a></li>
+<li class="toctree-l1"><a class="reference external" href="gmap.html">gmap</a></li>
+<li class="toctree-l1"><a class="reference external" href="gmapdb.html">gmapdb</a></li>
+<li class="toctree-l1"><a class="reference external" href="gsMapper.html">gsmap</a></li>
+<li class="toctree-l1"><a class="reference external" href="h_blast.html">h_blast</a></li>
+<li class="toctree-l1"><a class="reference external" href="lftp.html">lftp</a></li>
+<li class="toctree-l1"><a class="reference external" href="maq_fasta2bfa.html">f2b</a></li>
+<li class="toctree-l1"><a class="reference external" href="maq_fastq2bfq.html">fq2bq</a></li>
+<li class="toctree-l1"><a class="reference external" href="maq_match_pair.html">maqpair</a></li>
+<li class="toctree-l1"><a class="reference external" href="moatest.html">moatest</a></li>
+<li class="toctree-l1"><a class="reference external" href="mummer.html">mummer</a></li>
+<li class="toctree-l1"><a class="reference external" href="ncbi.html">ncbi</a></li>
+<li class="toctree-l1"><a class="reference external" href="newbler.html">newbler</a></li>
+<li class="toctree-l1"><a class="reference external" href="nstretch.html">nstretch</a></li>
+<li class="toctree-l1"><a class="reference external" href="pregap.html">pregap</a></li>
+<li class="toctree-l1"><a class="reference external" href="project.html">project</a></li>
+<li class="toctree-l1"><a class="reference external" href="r.html">r</a></li>
+<li class="toctree-l1"><a class="reference external" href="repeatmasker.html">repmask</a></li>
+<li class="toctree-l1"><a class="reference external" href="revseq.html">getorf</a></li>
+<li class="toctree-l1"><a class="reference external" href="sam2bam.html">sam2bam</a></li>
+<li class="toctree-l1"><a class="reference external" href="scaffolder.html">scaf</a></li>
+<li class="toctree-l1"><a class="reference external" href="sffinfo.html">sffinfo</a></li>
+<li class="toctree-l1"><a class="reference external" href="soapdb.html">soapdb</a></li>
+<li class="toctree-l1"><a class="reference external" href="traverse.html">traverse</a></li>
+<li class="toctree-l1"><a class="reference external" href="varscan.html">varscan</a></li>
+<li class="toctree-l1"><a class="reference external" href="vmatch.html">vmatch</a></li>
+<li class="toctree-l1"><a class="reference external" href="vmatchdb.html">vmatchdb</a></li>
+<li class="toctree-l1"><a class="reference external" href="vpcr.html">vpcr</a></li>
+<li class="toctree-l1"><a class="reference external" href="vpcr_list.html">vpcr_list</a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="../using.html"
+                                  title="previous chapter">Creating a pipeline</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="act_crunch.html"
+                                  title="next chapter">crunch</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/index.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="act_crunch.html" title="crunch"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../using.html" title="Creating a pipeline"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Nov 30, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+bwa_index
+------------------------------------------------
+
+**Bwa index builder** - Builds a bwa index from a reference sequence
+
+Commands
+~~~~~~~~
+
+**clean**
+  Remove all job data
+
+
+**run**
+  Create the index
+
+
+
+
+
+Parameters
+~~~~~~~~~~
+
+
+
+**input_fasta** - input fasta file for the database
+  | *type*: `file`
+  | *default*: `{}`
+  | *optional*: `False`
+
+
+
+**name** - Name of the bwa index to create
+  | *type*: `string`
+  | *default*: `bwa_index`
+  | *optional*: `True`
+
+
+
+**title** - A name for this job
+  | *type*: `string`
+  | *default*: ``
+  | *optional*: `False`
+
+
+
+Other
+~~~~~
+
+**Backend**
+  gnumake
+**Author**
+  Mark Fiers
+**Creation date**
+  Wed Nov 10 07:56:48 2010
+**Modification date**
+  Wed Nov 10 07:56:48 2010
+
+
+

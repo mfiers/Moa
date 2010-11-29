@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>concatenate &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="upload2gbrowse" href="create.gbrowse.db.html" />
+    <link rel="prev" title="clustalw" href="clustalw.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="create.gbrowse.db.html" title="upload2gbrowse"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="clustalw.html" title="clustalw"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="concatenate">
+<h1>concatenate<a class="headerlink" href="#concatenate" title="Permalink to this headline">¶</a></h1>
+<p><strong>Concatenate</strong> - Concatenate a set of fasta files into one.</p>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template.</dd>
+<dt><strong>run</strong></dt>
+<dd><em>no help defined</em></dd>
+</dl>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>input_dir</strong> - Directory with the input data</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>directory</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+<dt><strong>input_extension</strong> - Extension of the input files</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: <cite>fasta</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>name</strong> - name of the file, the outputfile will become ./name.fasta</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+<dt><strong>title</strong> - A name for this job</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>gnumake</dd>
+<dt><strong>Author</strong></dt>
+<dd>Mark Fiers</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">concatenate</a><ul>
+<li><a class="reference external" href="#commands">Commands</a></li>
+<li><a class="reference external" href="#parameters">Parameters</a></li>
+<li><a class="reference external" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="clustalw.html"
+                                  title="previous chapter">clustalw</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="create.gbrowse.db.html"
+                                  title="next chapter">upload2gbrowse</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/concatenate.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="create.gbrowse.db.html" title="upload2gbrowse"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="clustalw.html" title="clustalw"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Nov 30, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

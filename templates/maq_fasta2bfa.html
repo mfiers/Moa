@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>f2b &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="fq2bq" href="maq_fastq2bfq.html" />
+    <link rel="prev" title="lftp" href="lftp.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="maq_fastq2bfq.html" title="fq2bq"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lftp.html" title="lftp"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="f2b">
+<h1>f2b<a class="headerlink" href="#f2b" title="Permalink to this headline">¶</a></h1>
+<p><strong>Convert fasta to bfa</strong> - Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2bfa index from a reference sequence</p>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template.</dd>
+<dt><strong>run</strong></dt>
+<dd><em>no help defined</em></dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<p><strong>bfa</strong> - {}</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>bfa</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>./bfa</cite></div>
+</div>
+</blockquote>
+<p><strong>input</strong> - input FASTA files</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>fasta</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+</div>
+</blockquote>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>title</strong> - A name for this job</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>gnumake</dd>
+<dt><strong>Author</strong></dt>
+<dd>Mark Fiers</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">f2b</a><ul>
+<li><a class="reference external" href="#commands">Commands</a></li>
+<li><a class="reference external" href="#filesets">Filesets</a></li>
+<li><a class="reference external" href="#parameters">Parameters</a></li>
+<li><a class="reference external" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="lftp.html"
+                                  title="previous chapter">lftp</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="maq_fastq2bfq.html"
+                                  title="next chapter">fq2bq</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/maq_fasta2bfa.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="maq_fastq2bfq.html" title="fq2bq"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lftp.html" title="lftp"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Nov 30, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

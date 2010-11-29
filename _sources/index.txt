@@ -9,12 +9,13 @@ Welcome to the Moa documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :glob:
 
    intro
    install
    using
+   templates/index
    commands/index
    api/index
 

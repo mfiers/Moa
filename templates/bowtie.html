@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bowtie &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="bowtiedb" href="bowtiedb.html" />
+    <link rel="prev" title="blat" href="blat.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="bowtiedb.html" title="bowtiedb"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="blat.html" title="blat"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bowtie">
+<h1>bowtie<a class="headerlink" href="#bowtie" title="Permalink to this headline">¶</a></h1>
+<p><strong>Bowtie</strong> - Run BOWTIE on an set of input files (query) vs a database index.</p>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template.</dd>
+<dt><strong>run</strong></dt>
+<dd><em>no help defined</em></dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<p><strong>input</strong> - Input files for bowtie</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>fastq</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+</div>
+</blockquote>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>basename</strong> - basename for generating the merged, sorted and indexed files</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: <cite>all</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>db</strong> - The bowtie database to use. It is allowed to define one of the bowtie database files (.[0-9].ebwt).</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>file</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>extra_params</strong> - extra parameters to feed bowtie</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>forward_suffix</strong> - Last part of the sequence name identifying a file with forward reads</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: <cite>_1</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>input_format</strong> - Format of the input files</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>set</cite></div>
+<div class="line"><em>default</em>: <cite>fastq</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>insertsize</strong> - Expected insertsize</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>float</cite></div>
+<div class="line"><em>default</em>: <cite>5000</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>insertsize_max</strong> - Max insertsize for a paired alignment</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>float</cite></div>
+<div class="line"><em>default</em>: <cite>10</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>insertsize_min</strong> - multiplier determining the minimal acceptable value for two paired reads to be apart. If the bowtie_insertsize is 10000 and this parameter is set at 0.8, than reads that are closer together than 8000 nt are rejecte</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>float</cite></div>
+<div class="line"><em>default</em>: <cite>0.1</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>insertsize_sed</strong> - SED expression to filter the expected insertsize from the input file name</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>msi</strong> - Merge, sort and index? If <em>T</em> use samtools to merge all bamfiles into one, sort them and create an index</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>set</cite></div>
+<div class="line"><em>default</em>: <cite>F</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>output_format</strong> - Format of the output file</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>set</cite></div>
+<div class="line"><em>default</em>: <cite>bam</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>paired_ends</strong> - perform a paired end analysis. If so, the input files are expected to be of the form <a href="#id1"><span class="problematic" id="id2">*</span></a>_1.fastq and  <a href="#id3"><span class="problematic" id="id4">*</span></a>_2.fastq</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>set</cite></div>
+<div class="line"><em>default</em>: <cite>F</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>reverse_suffix</strong> - Last part of the sequence name identifying a file with reverse reads</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: <cite>_2</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>title</strong> - A name for this job</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>gnumake</dd>
+<dt><strong>Author</strong></dt>
+<dd>Mark Fiers</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">bowtie</a><ul>
+<li><a class="reference external" href="#commands">Commands</a></li>
+<li><a class="reference external" href="#filesets">Filesets</a></li>
+<li><a class="reference external" href="#parameters">Parameters</a></li>
+<li><a class="reference external" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="blat.html"
+                                  title="previous chapter">blat</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="bowtiedb.html"
+                                  title="next chapter">bowtiedb</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/bowtie.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bowtiedb.html" title="bowtiedb"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="blat.html" title="blat"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Nov 30, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

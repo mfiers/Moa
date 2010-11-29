@@ -1,0 +1,319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>bwa_aln &mdash; Moa v0.10.0alpha documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.0alpha',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="bwa_index" href="bwa_index.html" />
+    <link rel="prev" title="bowtiedb" href="bowtiedb.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="bwa_index.html" title="bwa_index"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="bowtiedb.html" title="bowtiedb"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bwa-aln">
+<h1>bwa_aln<a class="headerlink" href="#bwa-aln" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<ul class="simple">
+<li>Use BWA to align a set of fastq reads against a db</li>
+</ul>
+</blockquote>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template.</dd>
+<dt><strong>run</strong></dt>
+<dd>run bwa aln</dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<p><strong>input</strong> - Fastq input files</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>fq</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+</div>
+</blockquote>
+<p><strong>output</strong> - {}</p>
+<blockquote>
+<div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>sai</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>.</cite></div>
+</div>
+</blockquote>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>best_hits_stop</strong> - stop searching when there are &gt;INT equally best hits</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>30</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>color_space</strong> - input sequences are in the color space</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>db</strong> - bwa database to align against</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+<dt><strong>edit_dist_missing_prob</strong> - max</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>0.04</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>gap_ext_max</strong> - maximum number of gap extensions, -1 for disabling long gaps</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>-1</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>gap_ext_penalty</strong> - gap extension penalty</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>4</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>gap_open_penalty</strong> - gap open penalty</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>11</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>gap_opens_max</strong> - maximum number or fraction of gap opens</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>1</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>log_gap_penalty_del</strong> - log-scaled gap penalty for long deletions</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>max_ext_long_del</strong> - maximum occurrences for extending a long deletion</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>10</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>max_queue_entry</strong> - maximum entries in the queue</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>2000000</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>mismatch_penalty</strong> - mismatch penalty</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>3</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>no_indel_from_ends</strong> - do not put an indel within INT bp towards the ends</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>5</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>non_iterative</strong> - non-iterative mode search for all n-difference hits (slow)</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>quality_step</strong> - quality threshold for read trimming down to 35bp</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>0</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>seed_len</strong> - Seed length</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>30</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>seed_max_diff</strong> - Maximum differences in the seed</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>2</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>thread_num</strong> - number of threads</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>1</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>title</strong> - A name for this job</dt>
+<dd><div class="first last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>ruff</dd>
+<dt><strong>Author</strong></dt>
+<dd>Mark Fiers, Yogini Idnani</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+</dl>
+<p><strong>Modification date</strong></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">bwa_aln</a><ul>
+<li><a class="reference external" href="#commands">Commands</a></li>
+<li><a class="reference external" href="#filesets">Filesets</a></li>
+<li><a class="reference external" href="#parameters">Parameters</a></li>
+<li><a class="reference external" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="bowtiedb.html"
+                                  title="previous chapter">bowtiedb</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="bwa_index.html"
+                                  title="next chapter">bwa_index</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/bwa_aln.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="bwa_index.html" title="bwa_index"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="bowtiedb.html" title="bowtiedb"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Nov 30, 2010.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>
