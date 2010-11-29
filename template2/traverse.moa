@@ -1,21 +1,15 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- traverse
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: Do nothing - no need to call this., mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: Do nothing, except be a part in executing full directory structures
-gnumake_makefile: /tmp/xx/traverse.mk
-help:
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
-  traverse: Do nothing - no need to call this.
 moa_id: traverse
 modification_date: Wed Nov 10 07:56:48 2010
 name: traverse
-parameter_category_order:
-- system
-- advanced
+parameter_category_order: [system, advanced]
 parameters:
   title:
     allowed: []

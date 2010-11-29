@@ -24,6 +24,8 @@ moa.job
 import os
 import tempfile
 
+import Yaco
+
 import moa.utils
 import moa.logger as l
 import moa.template
@@ -57,6 +59,7 @@ def newJob(wd, template, title, parameters=[]):
     for pk, pv in parameters:
         job.conf[pk] = pv
     job.conf.save()
+
     return job
 
 def newTestJob(template, title="Test job"):
@@ -111,6 +114,9 @@ class Job(object):
         self.backend = None
         self.args = []
 
+        #used by the backends to store specific data
+        self.data = Yaco.Yaco()
+        
         #first load the template
         if template:
             self.setTemplate(template)
@@ -151,7 +157,8 @@ class Job(object):
         """
         l.debug("executing %s" % command)
         if self.backend:
-            self.backend.execute(command,
+            self.backend.execute(self,
+                                 command,
                                  verbose = verbose,
                                  background = background)
         else:
@@ -161,8 +168,8 @@ class Job(object):
         """
         Prepare this job
         """
-        if self.backend:
-            self.backend.prepare()
+        if self.backend and getattr(self.backend, 'prepare', None):
+            self.backend.prepare(self)
         
     def defineOptions(self, parser):
         """
@@ -177,8 +184,8 @@ class Job(object):
         parser.add_option("--bg", dest="background",
                   action="store_true", help="Run moa in the background")
         
-        if self.backend:
-            self.backend.defineOptions(parser)
+        if self.backend and getattr(self.backend, 'defineOptions', None):
+            self.backend.defineOptions(self, parser)
 
     def setTemplate(self, name):
         """
@@ -224,21 +231,21 @@ class Job(object):
             l.critical("Error loading backend %s" % backendName)
             raise
             
-        self.backend = getattr(
-            module, '%sBackend' % backendName.capitalize())(self)
-
+        self.backend = module
         
     def isMoa(self):
         """
         Check if this is a Moa directory - Currently, this needs to be overridden
         """
-        return self.backend.isMoa()      
+        if os.path.exists('.moa'):
+            return True
 
     def initialize(self):
         """
         Initialize a new job in the current wd
         """
-        l.debug("calling backend to initialize template %s" %
-                self.template.name)
-        self.backend.initialize()
+        if getattr(self.backend, 'initialize', None):
+            l.debug("calling backend to initialize template %s" %
+                    self.template.name)
+            self.backend.initialize(self)
         

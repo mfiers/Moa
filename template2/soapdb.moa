@@ -2,22 +2,15 @@ author: Mark Fiers, Yogini Idnani
 version: 1
 backend: gnumake
 commands:
-- soapdb
-- clean
-creation_date: Wed Nov 29 07:56:48 2010
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: '', mode: map}
+creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bowtie index from a reference sequence
-help:
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
-  soapdb: build index files for the reference genome
 moa_id: soapdb
-modification_date: Wed Nov 29 07:56:48 2010
-name: SOAP index
-parameter_category_order:
-- ''
-- input
-- system
-- advanced
+modification_date: Wed Nov 10 07:56:48 2010
+name: soapdb
+parameter_category_order: ['', system, advanced]
 parameters:
   input_fasta:
     optional: false

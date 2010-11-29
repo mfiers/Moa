@@ -1,31 +1,22 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- lftp
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: execute the download, mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: Use LFTP to download files. This template has two modi, one is set lftp_mode
   to mirror data, in which case both lftp_url and lftp_pattern (default *) are used.
   The other modus is lftp_mode=get, when one file defined by lftp_url is downloaded.
   In the mirror mode it is possible to download only those files that are newer as
   the files already downloaded by using the lftp_timestamp parameter
-gnumake_makefile: /tmp/xx/lftp.mk
-help:
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
-  lftp: execute the download
 moa_id: lftp
 modification_date: Wed Nov 10 07:56:48 2010
 name: lftp
-parameter_category_order:
-- ''
-- system
-- advanced
+parameter_category_order: ['', system, advanced]
 parameters:
   dos2unix:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: Run dos2unix to prevent problems with possible dos text files
@@ -49,9 +40,7 @@ parameters:
     type: directory
     value: .
   lock:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: T
     help: Lock this job after running. This means that you will have to manually unlock
@@ -60,9 +49,7 @@ parameters:
     optional: true
     type: set
   mode:
-    allowed:
-    - mirror
-    - get
+    allowed: [mirror, get]
     category: ''
     default: get
     help: Mode of operation - mirror or get. Mirror enables timestamping. Get just
@@ -94,9 +81,7 @@ parameters:
     optional: true
     type: string
   powerclean:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
@@ -104,9 +89,7 @@ parameters:
     optional: true
     type: set
   timestamp:
-    allowed:
-    - T
-    - F
+    allowed: [T, F]
     category: ''
     default: F
     help: Depend on lftp to decide if a file needs updating, else a touchfile is created

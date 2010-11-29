@@ -1,22 +1,15 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-- nstretch
-- clean
+  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.', mode: simple}
+  run: {help: '', mode: map}
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run NSTRETCH on an set of input files
-gnumake_makefile: /tmp/xx/nstretch.mk
-help:
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
-  nstretch: ''
 moa_id: nstretch
 modification_date: Wed Nov 10 07:56:48 2010
 name: nstretch
-parameter_category_order:
-- ''
-- system
-- advanced
+parameter_category_order: ['', system, advanced]
 parameters:
   input_dir:
     allowed: []

@@ -22,6 +22,7 @@ moa.jobConf
 moa job configuration
 """
 
+import re
 import os
 import sys
 
@@ -86,14 +87,22 @@ class JobConf(object):
         self.jobConf.update(data)
         
     def __getitem__(self, key):
+        v = ''
         if self.jobConf.has_key(key):
-            return self.jobConf[key]
-        elif key in self.template.parameters.keys():
-            if self.template.parameters[key].has_key('default'):
-                return self.template.parameters[key].default
-            else:
-                return ''
+            v = self.jobConf[key]
+        elif key in self.template.parameters.keys() and \
+                 self.template.parameters[key].has_key('default'):
+            v = self.template.parameters[key].default
 
+        if isinstance(v, str) and '{{' in v:
+            rere = re.compile('\{\{ *([^ \}]*) *\}\}')
+            v = rere.sub(lambda x: self.__getitem__(x.groups()[0]), v)
+
+        if key in self.template.parameters.keys() and \
+               self.template.parameters[key].has_key('callback'):
+            v = self.template.parameters[key].callback(v)
+        return v
+    
     def __delitem__(self, key):
         del(self.jobConf[key])
 

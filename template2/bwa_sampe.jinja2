@@ -1,0 +1,19 @@
+### run
+
+bwa sampe -a {{max_insert_size}}                        \
+    -o {{max_occ_read}}                                 \
+    -n {{max_aln_out}}                                  \
+    -N {{max_out_discordant_pairs}}                     \
+    -c {{prior_chimeric_rate}}                          \
+    {% if preload_index %} -P {% endif %}				\
+    {% if disable_SW %} -s {% endif %}				    \
+    {% if disable_insert_size %}, -A {% endif %} 		\
+    {{ db }}                                            \
+    {{ sai_forward_input }} {{ sai_reverse_input }}     \
+    {{ fq_forward_input }} {{ fq_reverse_input }}	    \
+    -f {{ output }}
+
+### clean
+
+rm *.sam
+

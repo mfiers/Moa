@@ -1,9 +1,13 @@
 author: Mark Fiers, Yogini Idnani
 version: 1
-backend: gnumake
+backend: ruff
 commands:
-- bwa_aln
-- clean
+  run:
+    mode: map
+    help:  run bwa aln
+  clean:
+    mode: simple
+    help: Remove all job data, not the Moa job itself, note that this must be implemented by the template.
 creation_date: Wed Nov 10 07:56:48 2010
 description: Use BWA to align a set of fastq reads against a db 
 filesets:
@@ -19,10 +23,6 @@ filesets:
     extension: sai
     source: input
     type: map
-help:
-  bwa_aln: run bwa aln
-  clean: Remove all job data, not the Moa job itself, note that this must be implemented
-    by the template.
 moa_id: bwa_aln
 modification_data: Wed Nov 24 22:00:01 2010
 name: Bwa Align
