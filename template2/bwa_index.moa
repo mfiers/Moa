@@ -1,8 +1,12 @@
-author: Mark Fiers
-backend: gnumake
+author: Mark Fiers, Yogini Idnani
+backend: ruff
 commands:
-  clean: {help: Remove all job data, mode: simple}
-  run: {help: Create the index, mode: map}
+  clean:
+    help: Remove all job data
+    mode: simple
+  run: 
+    help: Create the index
+    mode: simple
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bwa index from a reference sequence
 moa_id: bwa_index

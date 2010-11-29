@@ -1,0 +1,26 @@
+### run
+
+echo running
+soap -a {{ fq_input }} 					\
+	-D {{ db_index_files }} 			\
+	-o {{ soap_output }} 				\
+	-u {{ out_unmapped_reads_file }} 	\
+	-n {{ rm_low_qual_reads }} 			\
+	{% if out_read_id %} -t {% endif %} \
+	-r {{ how_report_hits }} 			\
+	-l {{ long_read_seed_len }} 		\
+	-v {{ mismatches_per_read }} 		\
+	-M {{ match_mode }} 				\
+	-g {{ gap_size }}					\
+	-e {{ edge_bp_no_gaps }}			\
+	-p {{ thread_num }}
+	
+/opt/samtools/soap2sam.pl {{ soap_output }}  > {{ sam_output }}
+	
+### clean
+
+rm *.sam | rm *.soap | rm *.txt
+
+### clean_sam
+
+rm *.sam

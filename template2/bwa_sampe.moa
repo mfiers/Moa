@@ -14,14 +14,14 @@ filesets:
   fq_forward_input:
     category: input
     extension: fq
-    glob: '*.1'    
+    glob: '*_1'
     help: fastq input files directory - forward files
     optional: false
     type: input
   fq_reverse_input:
     category: input
     extension: fq
-    glob: '*.2'    
+    glob: '*_2'    
     help: fastq input files directory - reverse files
     dir: '{{ fq_forward_input_dir }}'
     source: fq_forward_input
