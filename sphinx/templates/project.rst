@@ -5,7 +5,13 @@ project
 
 Commands
 ~~~~~~~~
-['project', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  This template does not do anything - it is a project placeholder.
+
 
 
 Backend 

@@ -5,7 +5,13 @@ gap4export
 
 Commands
 ~~~~~~~~
-['gap4export', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  Export data from an assembly using gap4
+
 
 
 Backend 

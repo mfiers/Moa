@@ -5,7 +5,13 @@ h_blast
 
 Commands
 ~~~~~~~~
-['h_blast', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  Similar to a normal blast, but now running on an hadoop cluster
+
 
 
 Backend 

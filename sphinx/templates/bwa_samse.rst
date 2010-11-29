@@ -5,7 +5,13 @@ bwa_samse
 
 Commands
 ~~~~~~~~
-{'run': {'mode': 'map', 'help': 'run bwa samse'}, 'clean': {'mode': 'simple', 'help': 'Remove all job data, not the Moa job itself'}}
+
+**clean**
+  Remove all job data, not the Moa job itself
+
+**run**
+  run bwa samse
+
 
 
 Backend 

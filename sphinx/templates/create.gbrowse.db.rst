@@ -5,7 +5,19 @@ upload2gbrowse
 
 Commands
 ~~~~~~~~
-['upload2gbrowse', 'clean', 'initGbrowse', 'gupgo']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**gupgo**
+  *no help defined*
+
+**initGbrowse**
+  *no help defined*
+
+**run**
+  *no help defined*
+
 
 
 Backend 

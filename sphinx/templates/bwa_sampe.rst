@@ -5,7 +5,13 @@ bwa_sampe
 
 Commands
 ~~~~~~~~
-{'run': {'mode': 'map', 'help': 'run bwa sampe'}, 'clean': {'mode': 'simple', 'clean': 'Remove all job data, not the Moa job itself'}}
+
+**clean**
+  *no help defined*
+
+**run**
+  run bwa sampe
+
 
 
 Backend 

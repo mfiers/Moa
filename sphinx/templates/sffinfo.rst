@@ -5,7 +5,13 @@ sffinfo
 
 Commands
 ~~~~~~~~
-['sffinfo', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  Use the Roche sffinfo tool to extract reads, quality scores, flowgrams and accession ids from one or more sff files
+
 
 
 Backend 

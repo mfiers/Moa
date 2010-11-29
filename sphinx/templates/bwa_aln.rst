@@ -5,7 +5,13 @@ bwa_aln
 
 Commands
 ~~~~~~~~
-{'run': {'mode': 'map', 'help': 'run bwa aln'}, 'clean': {'mode': 'simple', 'help': 'Remove all job data, not the Moa job itself, note that this must be implemented by the template.'}}
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  run bwa aln
+
 
 
 Backend 

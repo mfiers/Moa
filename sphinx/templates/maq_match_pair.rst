@@ -5,7 +5,13 @@ maqpair
 
 Commands
 ~~~~~~~~
-['maqpair', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  *no help defined*
+
 
 
 Backend 

@@ -5,7 +5,13 @@ bwa_index
 
 Commands
 ~~~~~~~~
-['bwa_index', 'clean']
+
+**clean**
+  Remove all job data
+
+**run**
+  Create the index
+
 
 
 Backend 

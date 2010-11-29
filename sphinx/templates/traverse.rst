@@ -5,7 +5,13 @@ traverse
 
 Commands
 ~~~~~~~~
-['traverse', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  Do nothing - no need to call this.
+
 
 
 Backend 

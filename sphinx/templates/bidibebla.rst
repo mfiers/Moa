@@ -5,7 +5,13 @@ bdbb
 
 Commands
 ~~~~~~~~
-['bdbb', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  generate a list of bidirectional best blast hits.
+
 
 
 Backend 

@@ -5,7 +5,13 @@ blastdb
 
 Commands
 ~~~~~~~~
-['blastdb', 'clean']
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+
+**run**
+  Takes either a set of fasta files or a single multi-fasta input file and creates a BLAST database.
+
 
 
 Backend 
