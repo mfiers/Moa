@@ -43,31 +43,40 @@ def prepare(data):
     if len(job.template.filesets.keys()) > 0:
         job.conf['moa_filesets'] = []
         job.conf.doNotSave.append('moa_filesets')
-        
+
     for fsid in job.template.filesets.keys():
         
         job.conf['moa_filesets'].append(fsid)
 
         fs = job.template.filesets[fsid]
-        
-        if fs.type == 'map': 
+
+        if fs.type == 'map':
+
             job.template.parameters['%s_dir' % fsid] = {
-                'category' : 'input',
+                'category' : fs.get('category', 'input'),
                 'optional' : fs.get('optional', True),
                 'help' : 'directory for the %s file set',
                 'default' : fs.dir,
-                'type' : 'directory'
+                'type' : 'directory',
                 }
+            
             job.template.parameters['%s_extension' % fsid] = {
-                'category' : 'input',
-                'optional' : fs.get('optional', True),
+                'category' : fs.get('category', 'input'),
+                'optional' : True,
                 'help' : 'extension for the %s file set',
                 'default' : fs.extension,
                 'type' : 'string'
                 }
+            job.template.parameters['%s_glob' % fsid] = {
+                'category' : fs.get('category', 'input'),
+                'optional' : True,
+                'default' : fs.get('glob', '*'),
+                'help' : 'Output glob for the mapped file set "%s"' % fsid,
+                'type' : 'string',
+                }
         else:
             job.template.parameters['%s_dir' % fsid] = {
-                'category' : 'input',
+                'category' : fs.get('category', 'input'),
                 'optional' : fs.optional,
                 'help' : fs.help,
                 'type' : 'directory'
@@ -82,27 +91,10 @@ def prepare(data):
             job.template.parameters['%s_glob' % fsid] = {
                 'category' : 'input',
                 'optional' : True,
-                'default' : '*',
+                'default' : fs.get('glob', '*'),
                 'help' : 'File glob for the file set "%s"' % fsid,
                 'type' : 'string',
                 }
-
-        # job.template.parameters['%s_limit' % fsid] = {
-        #     'category' : 'input',
-        #     'optional' : True,
-        #     'help' : 'Mac number of files to use for file set "%s"' % fsid,
-        #     'type' : 'integer',
-        #     }
-        # job.template.parameters['%s_sort' % fsid] = {
-        #     'category' : 'input',
-        #     'optional' : True,
-        #     'default' : '*',
-        #     'help' : 'File glob for the file set "%s"' % fsid,
-        #     'type' : 'integer',
-        #     }
-
-        #add some info to the configuration - so that the template
-        #knows that there are filesets
 
 
 def _files_from_glob(dir, pat, ext):
@@ -115,21 +107,42 @@ def _files_from_glob(dir, pat, ext):
     else:
         return glob.glob(os.path.join(dir, pat))
 
-def _map_files(fr, frext, dir, ext):
+def _map_files(allSets, conf, fromId, toId):
     """
     Map files from one set to another
     """
-    #XFl.critical("mapping files from %s %s to %s %s" % (fr, frext, dir, ext))
+    fos = allSets[fromId]
+    tos = allSets[toId]
+    
+    frext = conf['%s_extension' % fromId]
+    todir = conf['%s_dir' % toId]
+    toext = conf['%s_extension' % toId]
 
-    with open(os.path.join('.moa', '%s.fof' % fr)) as F:
+    frglob = conf['%s_glob' % fromId]
+    toglob = conf['%s_glob' % toId]
+    
+    with open(os.path.join('.moa', '%s.fof' % fromId)) as F:
         frof = map(os.path.basename, F.read().split())
-    if dir:
-        frof = [os.path.join(dir, x) for x in frof]
-    if frext and ext:
+
+    #map directory
+    if todir:
+        frof = [os.path.join(todir, x) for x in frof]
+
+    #map extensions
+    if frext and toext:
         rere = re.compile('%s$' % frext)
-        frof = [rere.sub(ext, x) for x in frof]
-    elif ext:
-        frof = ['%s.%s' (x, ext) for x in frof]
+        frof = [rere.sub(toext, x) for x in frof]
+    elif toext:
+        frof = ['%s.%s' % (x, toext) for x in frof]    
+
+    #map glob
+    if not toglob == '*' and \
+       toglob.count('*') == 1 and \
+       frglob.count('*') == 1:
+        frof = [re.sub('^' + frglob.replace('*', '(.*)'),
+                          toglob.replace('*', r'\1'),
+                          x) for x in frof]
+        
     return frof
 
 def preRun(data):
@@ -149,7 +162,6 @@ def preRun(data):
             job.conf['%s_dir' % fsid],
             job.conf['%s_glob' % fsid],
             job.conf['%s_extension' % fsid])
-        
         with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
             for f in files:
                 F.write('%s\n'% f)
@@ -159,11 +171,12 @@ def preRun(data):
         fs = job.template.filesets[fsid]
         if not fs.type == 'map':
             continue
+        frfs = job.template.filesets[fs.source]
         files = _map_files(
-            fr = fs.source,
-            frext = job.conf['%s_extension' % fs.source],
-            dir = job.conf['%s_dir' % fsid],
-            ext = job.conf['%s_extension' % fsid])
+            job.template.filesets,
+            job.conf,
+            fromId = fs.source,
+            toId = fsid)
 
         with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
             for f in files:
