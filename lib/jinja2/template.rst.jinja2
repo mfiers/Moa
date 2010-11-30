@@ -8,16 +8,64 @@ Commands
 {% for cname, cdata in commands|dictsort %}
 **{{ cname }}**
   {% if cdata.help %}{{ cdata.help }}{% else %}*no help defined*{% endif %}
+
 {% endfor %}
 
+{% if filesets %}
 
-Backend 
+Filesets
+~~~~~~~~
+{% for fsid, fs in filesets|dictsort %}
+
+{% if fs.type == 'input' %}
+
+**{{ fsid }}** - {{ fs.help }}
+
+  | *type*: `input`
+  | *category*: `{{ fs.category }}`
+  | *optional*: `{{ fs.optional }}`
+  | *extension*: `{{ fs.extension }}`
+  | *glob*: `{{ fs.glob }}`
+
+{% else %}
+
+**{{ fsid }}** - {{ fs.help }}
+
+  | *type*: `map`
+  | *source*: `{{ fs.source }}`
+  | *category*: `{{ fs.category }}`
+  | *optional*: `{{ fs.optional }}`
+  | *extension*: `{{ fs.extension }}`
+  | *glob*: `{{ fs.glob }}`
+  | *dir*: `{{ fs.dir }}`
+
+{% endif %}
+
+{% endfor %}
+{% endif %}
+
+Parameters
+~~~~~~~~~~
+
+{% for pid, p in parameters|dictsort %}
+
+**{{ pid }}** - {{ p.help }}
+  | *type*: `{{ p.type }}`
+  | *default*: `{{ p.default }}`
+  | *optional*: `{{ p.optional }}`
+
+{% endfor %}
+
+Other
+~~~~~
+
+**Backend**
   {{ backend }}
-Author
+**Author**
   {{ author }}
-Creation date
+**Creation date**
   {{ creation_date }}
-Modification date
+**Modification date**
   {{ modification_date }}
 
 
