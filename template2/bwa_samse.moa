@@ -12,12 +12,14 @@ creation_date: Wed Nov 25 17:06:48 2010
 description: Generate alignments in SAM format given single end reads, using both 'bwa samse'.
 filesets:
   fq_input:
+    optional: false
     category: input
     extension: fq
     help: fastq input file
     optional: false
     type: input
   sai_input:
+    optional: false
     category: input
     dir: .
     help: sai input directory - filenames must correspond to the fastq input files
@@ -40,6 +42,7 @@ parameter_category_order:
 - advanced
 parameters:
   db:
+    optional: false
     allowed: []
     category: ''
     default: ''

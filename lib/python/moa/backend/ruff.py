@@ -36,19 +36,6 @@ def jinjaTemplateLoader(moa_id, command):
                      for i in range(1, len(rawc), 2)])
     return jTemplate(commands[command])
     
-def prepare(job):
-    job.data.fileSets = {}
-    job.data.inputs = []
-    job.data.outputs = []
-    for fsid in job.template.filesets.keys():
-        fs = job.template.filesets[fsid]
-        job.data.fileSets[fsid] = fs
-        job.data.fileSets[fsid]['files'] = readFileSet(job, fsid)
-        if fs.category == 'input':
-            job.data.inputs.append(fsid)
-        if fs.category == 'output':
-            job.data.outputs.append(fsid)
-        
 def defineOptions(job, parser):
     g = parser.add_option_group('Ruffus backend')
     parser.set_defaults(threads=1)
@@ -58,16 +45,8 @@ def defineOptions(job, parser):
     g.add_option("-B", dest="remake", action='store_true',
                  help="Reexecute all targets (corresponds to make -B) ")
 
-
-def readFileSet(job, fsid):
-    fof = os.path.join('.moa', '%s.fof' % fsid)
-    if os.path.exists(fof):
-        with open(fof) as F:
-            return F.read().split()
-    else:
-        return []
-
 def execute(job, command, verbose=False, background=False):
+
 
     l.debug("executing %s" % command)
 

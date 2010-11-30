@@ -161,6 +161,16 @@ def _map_files(allSets, conf, fromId, toId):
                 
     return frof
 
+
+
+def readFileSet(job, fsid):
+    fof = os.path.join('.moa', '%s.fof' % fsid)
+    if os.path.exists(fof):
+        with open(fof) as F:
+            return F.read().split()
+    else:
+        return []
+
 def preRun(data):
     
     job = data['job']
@@ -197,6 +207,25 @@ def preRun(data):
         with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
             for f in files:
                 F.write('%s\n'% f)
+
+
+    #rearrange the files for use by the job
+    job.data.fileSets = {}
+    job.data.inputs = []
+    job.data.outputs = []
+
+    for fsid in job.template.filesets.keys():
+        fs = job.template.filesets[fsid]
+        job.data.fileSets[fsid] = fs
+        job.data.fileSets[fsid]['files'] = readFileSet(job, fsid)
+        if fs.category == 'input':
+            job.data.inputs.append(fsid)
+        if fs.category == 'output':
+            job.data.outputs.append(fsid)
+        
+
+
+
 
     
 TESTSCRIPT = """
