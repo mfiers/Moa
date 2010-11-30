@@ -139,9 +139,13 @@ def _map_files(allSets, conf, fromId, toId):
     if toglob.count('*') > 1:
         l.critical("Cannot handle more than one '*' in the %s_glob" % toId)
         sys.exit(-1)
+    elif toglob == '*':
+        pass
     elif toglob.count('*') == 1:
         if not frglob.count('*') == 1:
-            l.critical("input glob needs to have a '*'")
+            l.critical("Input glob needs to have a '*' (mapping %s->%s / %s->%s)" % 
+                       (fromId, toId, frglob, toglob))
+            sys.exit(-1)
         frof = [re.sub('^' + frglob.replace('*', '(.*)'),
                        toglob.replace('*', r'\1'),
                        x) for x in frof]
@@ -149,10 +153,11 @@ def _map_files(allSets, conf, fromId, toId):
         if len(frof) != 1:
             l.critical(("With no wildcard in the  %s_glob, the input may not " +
                         "consist of more than one file" % toId))
-            if toext:
-                frof = ['%s.%s' % (toglob, toext)]
-            else:
-                frof = [toglob]
+        if toext:
+            frof = [os.path.join(todir, '%s.%s' % (toglob, toext))]
+            print 'mappig to ', frof            
+        else:
+            frof = [toglob]
                 
     return frof
 

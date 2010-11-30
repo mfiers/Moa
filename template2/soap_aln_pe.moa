@@ -54,50 +54,50 @@ parameters:
     help: Prefix name for reference index [*.index]
     optional: false
     type: string
-  out_unmapped_reads_file:*
+  out_unmapped_reads_file:
     category: ''
     default: unmapped_reads.txt
     help: Output file name for unmapped reads
     optional: true
     type: string
-  rm_low_qual_reads:*
+  rm_low_qual_reads:
     category: ''
     default: 5
     help:  Filter low quality reads contain more INT bp Ns
     optional: true
     type: integer
-  out_read_id:*
+  out_read_id:
     category: ''
     default: false
     help: Output reads id instead of reads name
     optional: true
     type: boolean
-  report_read_mismatches:*
+  report_read_mismatches:
     category: ''
     default: false
     help: report all mismatched reads in SOAP Format
     optional: true
     type: boolean
-  how_report_hits:*
+  how_report_hits:
     category: ''
     default: 1
     help: How  to  report repeat hits, 0=none; 1=random one; 2=all
     optional: true
     type: integer
-  long_read_seed_len:*
+  long_read_seed_len:
     allowed: []
     category: ''
     default: 256
     help: For  long  reads  with  high  error rate at 3'-end, those can't align whole length, then  first  align  5'  INT  bp subsequence as a seed, [256] use whole length of the read
     optional: true
     type: integer
-  mismatches_per_read:*
+  mismatches_per_read:
     category: ''
     default: 6
     help:  Totally allowed mismatches in one read
     optional: true
     type: integer
-  match_mode:*
+  match_mode:
     category: ''
     default: 4
     help: Match mode for each read or the seed part of read,  which
@@ -109,45 +109,45 @@ parameters:
        4 find the best hits
     optional: true
     type: integer
-  thread_num:*
+  thread_num:
     category: ''
     default: 1
     help: Multithreads, n threads
     optional: true
     type: integer  
-  gap_size:*
+  gap_size:
     category: ''
     default: 0
     help: one continuous gap size allowed on a read
     optional: true
     type: integer
-  edge_bp_no_gaps:*
+  edge_bp_no_gaps:
     category: ''
     default: 5
     help: will not allow gap exist inside n-bp edge of a read
     optional: true
     type: integer
-  min_insert_size:*
+  min_insert_size:
     category: ''
     default: 400
     help: minimal insert size allowed
     optional: true
     type: integer
-  max_insert_size:*
+  max_insert_size:
     allowed: []
     category: ''
     default: 600
     help: maximal insert size allowed
     optional: true
-    type: integer	
-  out_file_unpaired_aln:*
+    type: integer
+  out_file_unpaired_aln:
     allowed: []
     category: ''
     default: unpaired_aln.txt
     help: output file of unpaired alignment hits
     optional: true
     type: string
-  type_of_pe:*
+  type_of_pe:
     allowed: []
     category: ''
     default: false
