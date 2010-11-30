@@ -136,13 +136,24 @@ def _map_files(allSets, conf, fromId, toId):
         frof = ['%s.%s' % (x, toext) for x in frof]    
 
     #map glob
-    if not toglob == '*' and \
-       toglob.count('*') == 1 and \
-       frglob.count('*') == 1:
+    if toglob.count('*') > 1:
+        l.critical("Cannot handle more than one '*' in the %s_glob" % toId)
+        sys.exit(-1)
+    elif toglob.count('*') == 1:
+        if not frglob.count('*') == 1:
+            l.critical("input glob needs to have a '*'")
         frof = [re.sub('^' + frglob.replace('*', '(.*)'),
-                          toglob.replace('*', r'\1'),
-                          x) for x in frof]
-        
+                       toglob.replace('*', r'\1'),
+                       x) for x in frof]
+    else:
+        if len(frof) != 1:
+            l.critical(("With no wildcard in the  %s_glob, the input may not " +
+                        "consist of more than one file" % toId))
+            if toext:
+                frof = ['%s.%s' % (toglob, toext)]
+            else:
+                frof = [toglob]
+                
     return frof
 
 def preRun(data):
