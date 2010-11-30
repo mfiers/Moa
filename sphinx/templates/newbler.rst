@@ -9,18 +9,90 @@ Commands
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
 
+
 **run**
   *no help defined*
 
 
 
-Backend 
+
+
+Filesets
+~~~~~~~~
+
+
+
+
+**input** - input SFF files
+
+  | *type*: `input`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `sff`
+  | *glob*: `{}`
+
+
+
+
+
+
+Parameters
+~~~~~~~~~~
+
+
+
+**largecontig_cutoff** - min length of a contig in 454LargeContigs.fna
+  | *type*: `integer`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
+**library_name** - A library identifier for this assembly. This is used to create an extra fasta file, named using this variable, that contain the generated contigs with their ids prepended with the library id.
+  | *type*: `string`
+  | *default*: `$(shell echo `basename $(CURDIR)` | sed "s/[ \///\/]//g" )`
+  | *optional*: `True`
+
+
+
+**mid_configuration** - Mid configuration file to use
+  | *type*: `file`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
+**mids** - mids to use for this assembly
+  | *type*: `string`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
+**min_identity** - Minimal overalp identity used during assembly
+  | *type*: `integer`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
+**title** - A name for this job
+  | *type*: `string`
+  | *default*: ``
+  | *optional*: `False`
+
+
+
+Other
+~~~~~
+
+**Backend**
   gnumake
-Author
+**Author**
   Mark Fiers
-Creation date
+**Creation date**
   Wed Nov 10 07:56:48 2010
-Modification date
+**Modification date**
   Wed Nov 10 07:56:48 2010
 
 

@@ -9,18 +9,69 @@ Commands
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
 
+
 **run**
   *no help defined*
 
 
 
-Backend 
+
+
+Filesets
+~~~~~~~~
+
+
+
+
+**input** - Input files for vmatch
+
+  | *type*: `input`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `fasta`
+  | *glob*: `{}`
+
+
+
+
+
+
+Parameters
+~~~~~~~~~~
+
+
+
+**name** - Name of the vmatch index to create
+  | *type*: `string`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
+**pl** - Prefix length
+  | *type*: `integer`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
+**title** - A name for this job
+  | *type*: `string`
+  | *default*: ``
+  | *optional*: `False`
+
+
+
+Other
+~~~~~
+
+**Backend**
   gnumake
-Author
+**Author**
   Mark Fiers
-Creation date
+**Creation date**
   Wed Nov 10 07:56:48 2010
-Modification date
+**Modification date**
   Wed Nov 10 07:56:48 2010
 
 
