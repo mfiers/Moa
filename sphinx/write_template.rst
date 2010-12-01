@@ -7,11 +7,11 @@ A MOA template is made up of a .moa file and a .jinja2 (or .mk file).
 
 The easiest way to write a moa template is to edit an existing template
 to suit your requirements. This involves understanding the parts of an 
-existing template so let’s use the bwa_aln template as an example.  
+existing template so let's use the bwa_aln template as an example.  
 
 The ''bwa_aln.moa'' file has some important components:
 
--  *Backend*: This is ‘ruff’ which means that `ruffus <http://www.ruffus.org.uk/>`_ 
+-  *Backend*: This is 'ruff' which means that `ruffus <http://www.ruffus.org.uk/>`_ 
    is used in the python script at a lower level, but this essentially means that
    ..... (have to write templates in jinja2 or similar script)
 -  *Command*: This indicates the function names that you will later define. In our 
@@ -30,7 +30,7 @@ The ''bwa_aln.moa'' file has some important components:
       With filesets, the type ``set`` refers to a simple set of files in a directory. 
 	  The type ``map`` refers to a set of files that are linked to what their ``source`` 
 	  value is. In the case of bwa_aln.moa, the output fileset is mapped to the input fileset.   
-   -  *Dir*: the directory of the output fileset is ‘.’, which means that the output files will
+   -  *Dir*: the directory of the output fileset is '.', which means that the output files will
       be placed in the current working directory.
 	  
 -  *Parameter category order*: 
@@ -51,7 +51,7 @@ a templating language for python.
 
 Important features of the bwa_aln.jinja2 file are:
 
--  The three hash’s (###) specify the start of a function and are followed by the function name and 
+-  The three hash's (###) specify the start of a function and are followed by the function name and 
    defination. In our bwa_aln example, we have defined 2 funtions: run and clean.
 -  This defination is followed by a set of commands which you would want to be executed when you type
   ``moa run`` or ``moa_clean`` in the bwa_aln job directory.
