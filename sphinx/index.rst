@@ -15,6 +15,7 @@ Contents:
    intro
    install
    using
+   write_template
    templates/index
    commands/index
    api/index
