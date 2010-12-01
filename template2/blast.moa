@@ -15,7 +15,7 @@ description: Wraps BLAST [[Alt90]], probably the most popular similarity search 
   in bioinformatics.
 filesets:
   input: {category: input, extension: fasta, help: 'Directory with the input files
-      for BLAST, in Fasta format', optional: false, type: input}
+      for BLAST, in Fasta format', optional: false, type: set}
 moa_id: blast
 modification_date: Wed Nov 10 07:56:48 2010
 name: blast

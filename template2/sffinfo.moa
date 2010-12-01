@@ -11,7 +11,7 @@ filesets:
   accession: {category: output, dir: ., extension: acc, source: input, type: map}
   flowgram: {category: output, dir: ., extension: flow, source: input, type: map}
   input: {category: input, extension: sff, help: Sff input files, optional: false,
-    type: input}
+    type: set}
   quality: {category: output, dir: ., extension: qual, source: input, type: map}
   sequence: {category: output, dir: ., extension: reads, source: input, type: map}
 moa_id: sffinfo

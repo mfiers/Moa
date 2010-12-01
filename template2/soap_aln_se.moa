@@ -17,7 +17,7 @@ filesets:
     glob: '*'
     help: Fastq input file
     optional: false
-    type: input
+    type: set
   soap_output:
     category: output
     dir: .
@@ -29,6 +29,12 @@ filesets:
     dir: .
     extension: sam
     source: fq_input
+    type: map
+  bam_output:
+    category: output
+    dir: .
+    extension: bam
+    source: fq_forward_input
     type: map
 help:
   soap_aln_se: run SOAP to align single-end reads

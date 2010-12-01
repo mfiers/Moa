@@ -1,5 +1,6 @@
 ### run
 
+echo running bwa_sampe
 bwa sampe -a {{max_insert_size}}                        \
     -o {{max_occ_read}}                                 \
     -n {{max_aln_out}}                                  \
@@ -12,6 +13,7 @@ bwa sampe -a {{max_insert_size}}                        \
     {{ sai_forward_input }} {{ sai_reverse_input }}     \
     {{ fq_forward_input }} {{ fq_reverse_input }}	    \
     -f {{ output }}
+samtools view -bS -o {{ output_bam }} {{ output }}
 
 ### clean
 

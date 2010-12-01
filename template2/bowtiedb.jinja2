@@ -1,0 +1,8 @@
+### run
+	bowtie-build {{ input_file }} {{ output_file }}
+	touch {{ output_file }}
+
+### clean
+bowtiedb_clean:
+	rm -f {{name}}.*.ebwt
+

@@ -11,7 +11,7 @@ filesets:
   gff: {category: output, dir: ., extension: gff, source: input, type: map}
   gff_invert: {category: output, dir: ., extension: invert.gff, source: input, type: map}
   input: {category: input, extension: fasta, help: Sequences to map, optional: false,
-    type: input}
+    type: set}
   raw: {category: output, dir: ./raw, extension: raw, source: input, type: map}
 moa_id: gmap
 modification_date: Wed Nov 10 07:56:48 2010

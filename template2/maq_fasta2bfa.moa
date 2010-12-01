@@ -10,7 +10,7 @@ description: Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2
 filesets:
   bfa: {category: output, dir: ./bfa, extension: bfa, source: input, type: map}
   input: {category: input, extension: fasta, help: input FASTA files, optional: false,
-    type: input}
+    type: set}
 moa_id: f2b
 modification_date: Wed Nov 10 07:56:48 2010
 name: maq_fasta2bfa

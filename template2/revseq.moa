@@ -10,7 +10,7 @@ description: This Moa template takes a set of input FASTA sequences and determin
 filesets:
   gff: {category: output, dir: ./gff, extension: gff, source: input, type: map}
   input: {category: input, extension: fasta, help: Input files for getorf, optional: false,
-    type: input}
+    type: set}
   output: {category: output, dir: ./out, extension: out, source: input, type: map}
 moa_id: getorf
 modification_date: Wed Nov 10 07:56:48 2010

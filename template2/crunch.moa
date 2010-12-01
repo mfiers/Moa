@@ -8,7 +8,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Create a crunch file for use with the Artemis ACT comparison tool.
 filesets:
   input: {category: input, extension: fasta, help: Directory with input fasta files,
-    optional: false, type: input}
+    optional: false, type: set}
 moa_id: crunch
 modification_date: Wed Nov 10 07:56:48 2010
 name: crunch

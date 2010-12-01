@@ -16,7 +16,7 @@ filesets:
     extension: fq
     help: Fastq input files
     optional: false
-    type: input
+    type: set
   output:
     category: output
     dir: .

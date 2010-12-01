@@ -1,34 +1,39 @@
 author: Mark Fiers
-backend: gnumake
+backend: ruff
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: '', mode: map}
+  clean: 
+    help: Remove all job data, not the Moa job itself, note that this must be implemented by the template
+    mode: simple
+  run: 
+    help: ''
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run BOWTIE on an set of input files (query) vs a database index.
 filesets:
-  input: {category: input, extension: fastq, help: Input files for bowtie, optional: false,
-    type: input}
+  input: 
+    category: input
+    extension: fastq
+    help: Fasta/fastq input files for bowtie
+    optional: false
+    type: set
+  db:
+    category: prerequisite
+    help: 'The (basename of the) bowtie database to use.'
+    type: single
+    optional: false
+  output:
+    category: output
+    type: bam
+    extension: bam
+    source: input
+    help: Output files
+    type: map
 moa_id: bowtie
+title: Bowtie
 modification_date: Wed Nov 10 07:56:48 2010
 name: bowtie
 parameter_category_order: ['', input, system, advanced]
 parameters:
-  basename:
-    allowed: []
-    category: ''
-    default: all
-    help: basename for generating the merged, sorted and indexed files
-    optional: true
-    type: string
-  db:
-    allowed: []
-    category: ''
-    default: ''
-    help: The bowtie database to use. It is allowed to define one of the bowtie database
-      files (.[0-9].ebwt).
-    optional: true
-    type: file
   extra_params:
     allowed: []
     category: ''
@@ -36,80 +41,12 @@ parameters:
     help: extra parameters to feed bowtie
     optional: true
     type: string
-  forward_suffix:
-    allowed: []
-    category: ''
-    default: _1
-    help: Last part of the sequence name identifying a file with forward reads
-    optional: true
-    type: string
   input_format:
     allowed: [fastq, fasta]
-    category: ''
     default: fastq
     help: Format of the input files
     optional: true
     type: set
-  insertsize:
-    allowed: []
-    category: ''
-    default: '5000'
-    help: Expected insertsize
-    optional: true
-    type: float
-  insertsize_max:
-    allowed: []
-    category: ''
-    default: '10'
-    help: Max insertsize for a paired alignment
-    optional: true
-    type: float
-  insertsize_min:
-    allowed: []
-    category: ''
-    default: '0.1'
-    help: multiplier determining the minimal acceptable value for two paired reads
-      to be apart. If the bowtie_insertsize is 10000 and this parameter is set at
-      0.8, than reads that are closer together than 8000 nt are rejecte
-    optional: true
-    type: float
-  insertsize_sed:
-    allowed: []
-    category: ''
-    default: ''
-    help: SED expression to filter the expected insertsize from the input file name
-    optional: true
-    type: string
-  msi:
-    allowed: [T, F]
-    category: ''
-    default: F
-    help: Merge, sort and index? If *T* use samtools to merge all bamfiles into one,
-      sort them and create an index
-    optional: true
-    type: set
-  output_format:
-    allowed: [bowtie, bam, sam]
-    category: ''
-    default: bam
-    help: Format of the output file
-    optional: true
-    type: set
-  paired_ends:
-    allowed: [T, F]
-    category: ''
-    default: F
-    help: perform a paired end analysis. If so, the input files are expected to be
-      of the form *_1.fastq and  *_2.fastq
-    optional: true
-    type: set
-  reverse_suffix:
-    allowed: []
-    category: ''
-    default: _2
-    help: Last part of the sequence name identifying a file with reverse reads
-    optional: true
-    type: string
   title:
     allowed: []
     category: system
@@ -117,4 +54,3 @@ parameters:
     help: A name for this job
     optional: false
     type: string
-title: Bowtie

@@ -9,7 +9,7 @@ description: Converts a FASTQ file to MAQ BFQ format.
 filesets:
   bfq: {category: output, dir: ./bfq, extension: bfq, source: input, type: map}
   input: {category: input, extension: fastq, help: input FASTA files, optional: false,
-    type: input}
+    type: set}
 moa_id: fq2bq
 modification_date: Wed Nov 10 07:56:48 2010
 name: maq_fastq2bfq
