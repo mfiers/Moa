@@ -1,7 +1,11 @@
 bowtiedb
 ------------------------------------------------
 
-**Bowtie index builder** - Builds a bowtie index from a reference sequence
+**Bowtie index builder**
+
+::
+    Builds a bowtie index from a reference sequence
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**input** - Sequence files used to build a bowtie database
+**input**::
+    Sequence files used to build a bowtie database
 
   | *type*: `input`
   | *category*: `input`
@@ -41,14 +46,18 @@ Parameters
 
 
 
-**name** - Name of the bowtie index to create
+**name**::
+    Name of the bowtie index to create
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

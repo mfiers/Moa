@@ -63,6 +63,9 @@ class Template(Yaco.Yaco):
             self.parameters = {}
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
+        if not self.modification_date:
+            self.modification_date = os.path.getmtime(self._templateDataFile)
+        
 
     def save(self):
         raise Exception("direct saving of template files is disabled")

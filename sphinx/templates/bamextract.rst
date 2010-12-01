@@ -1,7 +1,11 @@
 bamextract
 ------------------------------------------------
 
-**Bamextract** - Extract one sequence from a bam file
+**Bamextract**
+
+::
+    Extract one sequence from a bam file
+
 
 Commands
 ~~~~~~~~
@@ -22,42 +26,54 @@ Parameters
 
 
 
-**bam_input** - BAM input file
+**bam_input**::
+    BAM input file
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**fasta_file** - Fasta file with the reference sequence data
+**fasta_file**::
+    Fasta file with the reference sequence data
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**gff_file** - GFF annotation file to extract data from
+**gff_file**::
+    GFF annotation file to extract data from
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**haplotypes** - No of haplotypes in the sample
+**haplotypes**::
+    No of haplotypes in the sample
+
   | *type*: `integer`
   | *default*: `2`
   | *optional*: `True`
 
 
 
-**seq_id** - List of sequence ids to extract
+**seq_id**::
+    List of sequence ids to extract
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

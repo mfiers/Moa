@@ -1,7 +1,11 @@
 h_blast
 ------------------------------------------------
 
-**Hadoop Blast** - Runs BLAST on a hadoop cluster
+**Hadoop Blast**
+
+::
+    Runs BLAST on a hadoop cluster
+
 
 Commands
 ~~~~~~~~
@@ -22,70 +26,90 @@ Parameters
 
 
 
-**db** - Location of the blast database
+**db**::
+    Location of the blast database
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**eval** - e value cutoff
+**eval**::
+    e value cutoff
+
   | *type*: `float`
   | *default*: `1e-10`
   | *optional*: `True`
 
 
 
-**hadoop_base** - location of the hadoop installation
+**hadoop_base**::
+    location of the hadoop installation
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**hdfs_base** - htfs://SERVER:PORT for the hdfs filesystem, defaults to "hdfs://localhost:9000"
+**hdfs_base**::
+    htfs://SERVER:PORT for the hdfs filesystem, defaults to "hdfs://localhost:9000"
+
   | *type*: `string`
   | *default*: `hdfs://localhost:9000`
   | *optional*: `True`
 
 
 
-**input_dir** - location of the hadoop installation
+**input_dir**::
+    location of the hadoop installation
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_extension** - input file extension
+**input_extension**::
+    input file extension
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**nohits** - number of hits to report
+**nohits**::
+    number of hits to report
+
   | *type*: `integer`
   | *default*: `50`
   | *optional*: `True`
 
 
 
-**nothreads** - threads to run blast with (note the overlap with the Make -j parameter)
+**nothreads**::
+    threads to run blast with (note the overlap with the Make -j parameter)
+
   | *type*: `integer`
   | *default*: `1`
   | *optional*: `True`
 
 
 
-**program** - blast program to use (default: blastn)
+**program**::
+    blast program to use (default: blastn)
+
   | *type*: `set`
   | *default*: `blastn`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

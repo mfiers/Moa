@@ -1,7 +1,11 @@
 sam2bam
 ------------------------------------------------
 
-**Convert SAM to BAM using samtools** - Converts a FASTQ file to MAQ BFQ format.
+**Convert SAM to BAM using samtools**
+
+::
+    Converts a FASTQ file to MAQ BFQ format.
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**input** - input SAM files
+**input**::
+    input SAM files
 
   | *type*: `input`
   | *category*: `input`
@@ -37,7 +42,8 @@ Filesets
 
 
 
-**output** - {}
+**output**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -57,7 +63,9 @@ Parameters
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

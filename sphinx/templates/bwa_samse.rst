@@ -1,7 +1,11 @@
 bwa_samse
 ------------------------------------------------
 
- - Generate alignments in SAM format given single end reads, using both 'bwa samse'.
+
+
+::
+    Generate alignments in SAM format given single end reads, using both 'bwa samse'.
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**fq_input** - fastq input file
+**fq_input**::
+    fastq input file
 
   | *type*: `input`
   | *category*: `input`
@@ -37,7 +42,8 @@ Filesets
 
 
 
-**output** - {}
+**output**::
+    {}
 
   | *type*: `map`
   | *source*: `fq_input`
@@ -53,12 +59,13 @@ Filesets
 
 
 
-**sai_input** - sai input directory - filenames must correspond to the fastq input files
+**sai_input**::
+    sai input directory - filenames must correspond to the fastq input files
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `input`
-  | *optional*: `{}`
+  | *optional*: `False`
   | *extension*: `sai`
   | *glob*: `{}`
   | *dir*: `.`
@@ -73,21 +80,27 @@ Parameters
 
 
 
-**db** - bwa database to align against
+**db**::
+    bwa database to align against
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**max_aln_out** - Maximum number of alignments to output in the XA tag for reads paired properly
+**max_aln_out**::
+    Maximum number of alignments to output in the XA tag for reads paired properly
+
   | *type*: `integer`
   | *default*: `3`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
@@ -104,7 +117,7 @@ Other
 **Creation date**
   Wed Nov 25 17:06:48 2010
 **Modification date**
-  
+  1291084389.01
 
 
 

@@ -1,7 +1,11 @@
 sffinfo
 ------------------------------------------------
 
-**sffinfo** - Roche sffinfor tool - extract information from sff files
+**sffinfo**
+
+::
+    Roche sffinfor tool - extract information from sff files
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**accession** - {}
+**accession**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -39,7 +44,8 @@ Filesets
 
 
 
-**flowgram** - {}
+**flowgram**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -55,7 +61,8 @@ Filesets
 
 
 
-**input** - Sff input files
+**input**::
+    Sff input files
 
   | *type*: `input`
   | *category*: `input`
@@ -69,7 +76,8 @@ Filesets
 
 
 
-**quality** - {}
+**quality**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -85,7 +93,8 @@ Filesets
 
 
 
-**sequence** - {}
+**sequence**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -105,42 +114,54 @@ Parameters
 
 
 
-**accessions** - Output the accessions
+**accessions**::
+    Output the accessions
+
   | *type*: `set`
   | *default*: `T`
   | *optional*: `True`
 
 
 
-**flowgrams** - output the flowgrams
+**flowgrams**::
+    output the flowgrams
+
   | *type*: `set`
   | *default*: `F`
   | *optional*: `True`
 
 
 
-**quality** - Output quality scores
+**quality**::
+    Output quality scores
+
   | *type*: `set`
   | *default*: `T`
   | *optional*: `True`
 
 
 
-**sequences** - Output the sequences
+**sequences**::
+    Output the sequences
+
   | *type*: `set`
   | *default*: `T`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**untrimmed** - output untrimmed sequences & qualities
+**untrimmed**::
+    output untrimmed sequences & qualities
+
   | *type*: `set`
   | *default*: `F`
   | *optional*: `True`

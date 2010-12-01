@@ -1,7 +1,11 @@
 repmask
 ------------------------------------------------
 
-**Repeatmasker** - Run a default repeatmask on the input sequences
+**Repeatmasker**
+
+::
+    Run a default repeatmask on the input sequences
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**input** - Input files for repmask
+**input**::
+    Input files for repmask
 
   | *type*: `input`
   | *category*: `input`
@@ -37,7 +42,8 @@ Filesets
 
 
 
-**output** - {}
+**output**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -53,7 +59,8 @@ Filesets
 
 
 
-**OUTPUT_FILESET_ID** - {}
+**OUTPUT_FILESET_ID**::
+    {}
 
   | *type*: `map`
   | *source*: `INPUT_FILESET_ID`
@@ -73,35 +80,45 @@ Parameters
 
 
 
-**parallel** - No of threads to run in parallel
+**parallel**::
+    No of threads to run in parallel
+
   | *type*: `integer`
   | *default*: `4`
   | *optional*: `True`
 
 
 
-**quick** - Quick job
+**quick**::
+    Quick job
+
   | *type*: `set`
   | *default*: `F`
   | *optional*: `True`
 
 
 
-**simple** - Mask *only* low complex/simple repeats, not interspersed repeats (Repeatmasker -(no)int parameter)
+**simple**::
+    Mask *only* low complex/simple repeats, not interspersed repeats (Repeatmasker -(no)int parameter)
+
   | *type*: `set`
   | *default*: `F`
   | *optional*: `True`
 
 
 
-**species** - Repeatmasker species
+**species**::
+    Repeatmasker species
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

@@ -1,7 +1,11 @@
 clustalw
 ------------------------------------------------
 
-**clustalw** - Run clustalw on two sets of sequences
+**clustalw**
+
+::
+    Run clustalw on two sets of sequences
+
 
 Commands
 ~~~~~~~~
@@ -22,28 +26,36 @@ Parameters
 
 
 
-**input_dir_a** - This set is compared to the sequences in input_dir_b.
+**input_dir_a**::
+    This set is compared to the sequences in input_dir_b.
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_dir_b** - The set to compare against. Only a forward comparison is made (a against b, not the other way round)
+**input_dir_b**::
+    The set to compare against. Only a forward comparison is made (a against b, not the other way round)
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_extension** - Extension of the input files
+**input_extension**::
+    Extension of the input files
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

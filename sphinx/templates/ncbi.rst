@@ -1,7 +1,11 @@
 ncbi
 ------------------------------------------------
 
-**Download data from NCBI** - Download a set of sequences from NCBI based on a query string *ncbi_query* and database *ncbi_db*. This tempate will run only **once**, after a succesful run it creates a lock file that you need to remove to rerun
+**Download data from NCBI**
+
+::
+    Download a set of sequences from NCBI based on a query string *ncbi_query* and database *ncbi_db*. This tempate will run only **once**, after a succesful run it creates a lock file that you need to remove to rerun
+
 
 Commands
 ~~~~~~~~
@@ -22,28 +26,36 @@ Parameters
 
 
 
-**db** - NCBI database
+**db**::
+    NCBI database
+
   | *type*: `string`
   | *default*: `nuccore`
   | *optional*: `True`
 
 
 
-**query** - NCBI query (for example txid9397[Organism%3Aexp])
+**query**::
+    NCBI query (for example txid9397[Organism%3Aexp])
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**sequence_name** - Name of the file to write the downloaded sequences to.
+**sequence_name**::
+    Name of the file to write the downloaded sequences to.
+
   | *type*: `string`
   | *default*: `out`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
