@@ -79,6 +79,7 @@ def prepare(data):
                 'category' : fs.get('category', 'input'),
                 'optional' : fs.optional,
                 'help' : fs.help,
+                'default' : fs.get('dir', ''),
                 'type' : 'directory'
                 }
             job.template.parameters['%s_extension' % fsid] = {
