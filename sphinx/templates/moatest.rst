@@ -1,7 +1,11 @@
 moatest
 ------------------------------------------------
 
-**Unittest template** - Not to be used - is used by unitmoatests
+**Unittest template**
+
+::
+    Not to be used - is used by unitmoatests
+
 
 Commands
 ~~~~~~~~
@@ -22,14 +26,18 @@ Parameters
 
 
 
-**test_opt** - test variable
+**test_opt**::
+    test variable
+
   | *type*: `string`
   | *default*: `konijntje`
   | *optional*: `True`
 
 
 
-**txt** - test variable
+**txt**::
+    test variable
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

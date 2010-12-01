@@ -1,7 +1,8 @@
 blastdb
 ------------------------------------------------
 
- - 
+
+
 
 Commands
 ~~~~~~~~
@@ -22,28 +23,36 @@ Parameters
 
 
 
-**fasta_file** - The file with all input FASTA sequences for the blastdb.
+**fasta_file**::
+    The file with all input FASTA sequences for the blastdb.
+
   | *type*: `file`
   | *default*: `{}`
   | *optional*: `False`
 
 
 
-**name** - Name of the BLAST database to create.
+**name**::
+    Name of the BLAST database to create.
+
   | *type*: `string`
   | *default*: `blastdb`
   | *optional*: `True`
 
 
 
-**protein** - Protein database? (T)rue) or not (F)alse (default: F)
+**protein**::
+    Protein database? (T)rue) or not (F)alse (default: F)
+
   | *type*: `set`
   | *default*: `F`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

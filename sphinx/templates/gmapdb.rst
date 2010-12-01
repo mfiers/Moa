@@ -1,7 +1,11 @@
 gmapdb
 ------------------------------------------------
 
-**gmapdb index builder** - Builds gmapdb index from a reference sequence
+**gmapdb index builder**
+
+::
+    Builds gmapdb index from a reference sequence
+
 
 Commands
 ~~~~~~~~
@@ -22,28 +26,36 @@ Parameters
 
 
 
-**input_dir** - The reference sequence to build a gmap database with.
+**input_dir**::
+    The reference sequence to build a gmap database with.
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_extension** - Extension of the input files, defaults to fasta
+**input_extension**::
+    Extension of the input files, defaults to fasta
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**name** - Name of the gmap index to create
+**name**::
+    Name of the gmap index to create
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

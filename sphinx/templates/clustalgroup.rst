@@ -1,7 +1,11 @@
 clustalgroup
 ------------------------------------------------
 
-**clustalw** - Run clustalw on two sets of sequences
+**clustalw**
+
+::
+    Run clustalw on two sets of sequences
+
 
 Commands
 ~~~~~~~~
@@ -22,21 +26,27 @@ Parameters
 
 
 
-**cwg_input_dir** - This set of sequences to run clustalw on
+**cwg_input_dir**::
+    This set of sequences to run clustalw on
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**cwg_input_extension** - Input file extension
+**cwg_input_extension**::
+    Input file extension
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

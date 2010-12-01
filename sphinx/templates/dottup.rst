@@ -1,7 +1,11 @@
 dottup
 ------------------------------------------------
 
-**EMBOSS Dottup** - Use dottup (from EMBOSS) to compare two sets of sequences
+**EMBOSS Dottup**
+
+::
+    Use dottup (from EMBOSS) to compare two sets of sequences
+
 
 Commands
 ~~~~~~~~
@@ -22,35 +26,45 @@ Parameters
 
 
 
-**input_dir_a** - This set is compared to the sequences in input_dir_b.
+**input_dir_a**::
+    This set is compared to the sequences in input_dir_b.
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_dir_b** - The set to compare against
+**input_dir_b**::
+    The set to compare against
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**input_extension** - Extension of the dottup input files
+**input_extension**::
+    Extension of the dottup input files
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**wordsize** - Wordsize used to discover similarities between sequences
+**wordsize**::
+    Wordsize used to discover similarities between sequences
+
   | *type*: `integer`
   | *default*: `8`
   | *optional*: `True`

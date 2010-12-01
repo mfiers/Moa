@@ -1,7 +1,11 @@
 getorf
 ------------------------------------------------
 
-**Getorf** - Predicts open reading frames using the EMBOSS [[emboss]] getorf tool.
+**Getorf**
+
+::
+    Predicts open reading frames using the EMBOSS [[emboss]] getorf tool.
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**gff** - {}
+**gff**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -39,7 +44,8 @@ Filesets
 
 
 
-**input** - Input files for getorf
+**input**::
+    Input files for getorf
 
   | *type*: `input`
   | *category*: `input`
@@ -53,7 +59,8 @@ Filesets
 
 
 
-**output** - {}
+**output**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -73,49 +80,63 @@ Parameters
 
 
 
-**circular** - Is the sequence linear?
+**circular**::
+    Is the sequence linear?
+
   | *type*: `set`
   | *default*: `N`
   | *optional*: `True`
 
 
 
-**find** - What to output? 0: Translation between stop codons, 1: Translation between start & stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide sequence between start and stop codons. Default: 3
+**find**::
+    What to output? 0: Translation between stop codons, 1: Translation between start & stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide sequence between start and stop codons. Default: 3
+
   | *type*: `set`
   | *default*: `3`
   | *optional*: `True`
 
 
 
-**gff_source** - source field to use in the gff.
+**gff_source**::
+    source field to use in the gff.
+
   | *type*: `string`
   | *default*: `getorf`
   | *optional*: `True`
 
 
 
-**maxsize** - maximal nucleotide size of the predicted ORF.
+**maxsize**::
+    maximal nucleotide size of the predicted ORF.
+
   | *type*: `integer`
   | *default*: `1000000`
   | *optional*: `True`
 
 
 
-**minsize** - minimal nucleotide size of the predicted ORF.
+**minsize**::
+    minimal nucleotide size of the predicted ORF.
+
   | *type*: `integer`
   | *default*: `30`
   | *optional*: `True`
 
 
 
-**table** - Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.
+**table**::
+    Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.
+
   | *type*: `set`
   | *default*: `11`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`

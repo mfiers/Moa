@@ -1,7 +1,11 @@
 crunch
 ------------------------------------------------
 
-**Create ACT crunch files for use with Artemis ACT** - Create a crunch file for use with the Artemis ACT comparison tool.
+**Create ACT crunch files for use with Artemis ACT**
+
+::
+    Create a crunch file for use with the Artemis ACT comparison tool.
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**input** - Directory with input fasta files
+**input**::
+    Directory with input fasta files
 
   | *type*: `input`
   | *category*: `input`
@@ -41,21 +46,27 @@ Parameters
 
 
 
-**eval** - e value cutoff
+**eval**::
+    e value cutoff
+
   | *type*: `float`
   | *default*: `1e-10`
   | *optional*: `True`
 
 
 
-**nothreads** - threads to run crunch with (note the overlap with the Make -j parameter)
+**nothreads**::
+    threads to run crunch with (note the overlap with the Make -j parameter)
+
   | *type*: `integer`
   | *default*: `4`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

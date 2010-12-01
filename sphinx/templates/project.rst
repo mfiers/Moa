@@ -1,7 +1,11 @@
 project
 ------------------------------------------------
 
-**Create a project** - Create a new project, a placeholder for project settings, and used by several plugins.
+**Create a project**
+
+::
+    Create a new project, a placeholder for project settings, and used by several plugins.
+
 
 Commands
 ~~~~~~~~
@@ -22,14 +26,18 @@ Parameters
 
 
 
-**description** - A description of what this project is supposed to achieve, how to use it, and what parameters are most important to set
+**description**::
+    A description of what this project is supposed to achieve, how to use it, and what parameters are most important to set
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

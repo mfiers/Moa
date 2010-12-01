@@ -1,7 +1,11 @@
 fq2bq
 ------------------------------------------------
 
-**Convert FASTQ to BFQ** - Converts a FASTQ file to MAQ BFQ format.
+**Convert FASTQ to BFQ**
+
+::
+    Converts a FASTQ file to MAQ BFQ format.
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**bfq** - {}
+**bfq**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -39,7 +44,8 @@ Filesets
 
 
 
-**input** - input FASTA files
+**input**::
+    input FASTA files
 
   | *type*: `input`
   | *category*: `input`
@@ -57,7 +63,9 @@ Parameters
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

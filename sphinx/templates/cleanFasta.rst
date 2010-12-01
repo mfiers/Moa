@@ -1,7 +1,11 @@
 clean_fasta
 ------------------------------------------------
 
-**clean Fasta** - Convert files to unix format and convert all characters that are not an A,C,G,T or N to N.
+**clean Fasta**
+
+::
+    Convert files to unix format and convert all characters that are not an A,C,G,T or N to N.
+
 
 Commands
 ~~~~~~~~
@@ -22,28 +26,36 @@ Parameters
 
 
 
-**cf_input_dir** - Directory with the sequences to run cleanfasta on
+**cf_input_dir**::
+    Directory with the sequences to run cleanfasta on
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**cf_input_extension** - input file extension
+**cf_input_extension**::
+    input file extension
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**sed_command** - {}
+**sed_command**::
+    {}
+
   | *type*: `string`
   | *default*: `/^>/!s/[^ACGTNacgtn]/N/g`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

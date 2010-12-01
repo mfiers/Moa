@@ -1,7 +1,11 @@
 f2b
 ------------------------------------------------
 
-**Convert fasta to bfa** - Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2bfa index from a reference sequence
+**Convert fasta to bfa**
+
+::
+    Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2bfa index from a reference sequence
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**bfa** - {}
+**bfa**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -39,7 +44,8 @@ Filesets
 
 
 
-**input** - input FASTA files
+**input**::
+    input FASTA files
 
   | *type*: `input`
   | *category*: `input`
@@ -57,7 +63,9 @@ Parameters
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

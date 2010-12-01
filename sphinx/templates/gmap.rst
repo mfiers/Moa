@@ -1,7 +1,11 @@
 gmap
 ------------------------------------------------
 
-**Gmap** - Run GMAP on an set of input files (query) vs a database index.
+**Gmap**
+
+::
+    Run GMAP on an set of input files (query) vs a database index.
+
 
 Commands
 ~~~~~~~~
@@ -23,7 +27,8 @@ Filesets
 
 
 
-**genepred** - {}
+**genepred**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -39,7 +44,8 @@ Filesets
 
 
 
-**gff** - {}
+**gff**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -55,7 +61,8 @@ Filesets
 
 
 
-**gff_invert** - {}
+**gff_invert**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -71,7 +78,8 @@ Filesets
 
 
 
-**input** - Sequences to map
+**input**::
+    Sequences to map
 
   | *type*: `input`
   | *category*: `input`
@@ -85,7 +93,8 @@ Filesets
 
 
 
-**raw** - {}
+**raw**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
@@ -105,35 +114,45 @@ Parameters
 
 
 
-**db** - Gmap db
+**db**::
+    Gmap db
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**extra_parameters** - extra parameters to feed to gmap
+**extra_parameters**::
+    extra parameters to feed to gmap
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**gff_source** - Source field to use in the output GFF
+**gff_source**::
+    Source field to use in the output GFF
+
   | *type*: `string`
   | *default*: `gmap`
   | *optional*: `True`
 
 
 
-**invert_gff** - Invert the GFF (T/*F*)
+**invert_gff**::
+    Invert the GFF (T/*F*)
+
   | *type*: `set`
   | *default*: `T`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
