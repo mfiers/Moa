@@ -1,7 +1,11 @@
 {{ moa_id }}
 ------------------------------------------------
 
-{% if title %}**{{ title }}**{% endif %} - {{ description }}
+{% if title %}**{{ title }}**{% endif %}
+{% if description %}
+::
+    {{ description }}
+{% endif %}
 
 Commands
 ~~~~~~~~
@@ -19,7 +23,8 @@ Filesets
 
 {% if fs.type == 'input' %}
 
-**{{ fsid }}** - {{ fs.help }}
+**{{ fsid }}**::
+    {{ fs.help }}
 
   | *type*: `input`
   | *category*: `{{ fs.category }}`
@@ -29,7 +34,8 @@ Filesets
 
 {% else %}
 
-**{{ fsid }}** - {{ fs.help }}
+**{{ fsid }}**::
+    {{ fs.help }}
 
   | *type*: `map`
   | *source*: `{{ fs.source }}`
@@ -49,7 +55,9 @@ Parameters
 
 {% for pid, p in parameters|dictsort %}
 
-**{{ pid }}** - {{ p.help }}
+**{{ pid }}**::
+    {{ p.help }}
+
   | *type*: `{{ p.type }}`
   | *default*: `{{ p.default }}`
   | *optional*: `{{ p.optional }}`
