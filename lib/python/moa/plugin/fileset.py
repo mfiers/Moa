@@ -164,8 +164,8 @@ def _map_files(allSets, conf, fromId, toId):
                        x) for x in frof]
     else:
         if len(frof) != 1:
-            l.critical(("With no wildcard in the  %s_glob, the input may not " +
-                        "consist of more than one file" % toId))
+            l.critical(("With no wildcard in the  %s_glob, the input may not " % toId +
+                        "consist of more than one file"))
         if toext:
             frof = [os.path.join(todir, '%s.%s' % (toglob, toext))]
             print 'mappig to ', frof            

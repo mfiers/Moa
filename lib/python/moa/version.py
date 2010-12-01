@@ -58,6 +58,7 @@ def fixOld(wd):
     if not os.path.exists(moamk): return
     
     #create a regular job
+    l.info("create a new style %s job" % templateName)
     job = moa.job.Job(wd)
     #convert moamk
     with open(moamk) as F:
@@ -66,9 +67,12 @@ def fixOld(wd):
             if '+=' in line:
                 l.critical("Cannot autoconvert: %s" % line)
             k,v = line.split('=',1)
+            l.info("found parameter %s=%s" % (k,v))
             if job.template.moa_id in k:
-                k = k.replace(job.template.moa_id, '')
+                k = k.replace('%s_' % job.template.moa_id, '')
+                l.info("  -> saving to %s=%s" % (k,v))
             job.conf[k] = v
+    l.info("saving configuration")
     job.conf.save()
     l.warning("converted moa.mk - please check %s/config" % cdir)
                 
