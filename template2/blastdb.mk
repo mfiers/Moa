@@ -35,7 +35,7 @@ blastdb: $(one_blast_db_file)
 
 $(one_blast_db_file): $(blastdb_fasta_file)
 	@echo "Creating $@ from $(blastdb_input_dir)"
-	formatdb -i $< -p $(blastdb_protein) -o T -n $(blastdb_name)
+	formatdb -i $< -p $(blastdb_protein) -n $(blastdb_name)
 	touch $(blastdb_name)
 
 $(blastdb_fasta_file): $(input_files)

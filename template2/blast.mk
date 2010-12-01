@@ -88,6 +88,7 @@ gff/%.gff: out/%.xml
 	cat $< | blast2gff -b $(blast_gff_blasthit) -s $(blast_gff_source) -d query > $@
 
 # create out/*xml - run BLAST 
+.PRECIOUS: out/%.xml
 out/%.xml: $(blast_input_dir)/%.$(blast_input_extension) $(single_blast_db_file)
 	$(e) $(call echo,Running BLAST on $<)
 	$(e)echo "Processing blast $*"
