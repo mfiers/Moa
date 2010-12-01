@@ -53,6 +53,8 @@ class JobConf(object):
 
         #these fields are not to be saved
         self.doNotSave = []
+        #these fields are not be by checked
+        self.doNotCheck = []
         
         if os.path.exists(self.jobConfFile):
             self.jobConf.load(self.jobConfFile)
