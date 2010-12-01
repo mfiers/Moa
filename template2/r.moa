@@ -8,7 +8,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: run the R script in moa.R, with the specified input files
 filesets:
   input: {category: input, extension: '', help: Input files for r, optional: true,
-    type: input}
+    type: set}
 moa_id: r
 modification_date: Wed Nov 10 07:56:48 2010
 name: r

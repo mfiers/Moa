@@ -72,6 +72,11 @@ if options.verbose:
 logging.basicConfig(level=LOGLEVEL, format = "%(levelname)s - %(message)s")
 l = logging #shortcut
 
+if not args:
+    l.error("need to specify something on the commandline")
+    sys.exit()
+
+
 inFiles = args[args.index('-')+1:]
 fields = args[:args.index('-')]
 

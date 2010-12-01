@@ -47,7 +47,7 @@ bowtie_output_convert=| samtools view -bS -
 bowtie_output_format_param = -S
 endif
 ifeq ($(bowtie_output_format),sam)
-bowtie_output_convert
+bowtie_output_convert=
 bowtie_output_format_param = -S
 endif
 

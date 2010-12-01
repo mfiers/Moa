@@ -1,0 +1,13 @@
+### run
+{% set fs = forward_suffix %}
+{% set rs = reverse_suffix %}
+
+bowtie                                                                \
+    {% if input_format=="fasta" %} -f {% else %} -q {% endif %}       \
+    {{ extra_params }}                                                \
+    -S {{ db }} {{ input }} | samtools view -bS - > {{ output }}
+
+### clean
+
+rm *.bam
+

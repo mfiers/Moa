@@ -8,9 +8,9 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Run mummer between two sequences
 filesets:
   mum_input_a: {category: input, extension: fasta, help: Set 1 input fasta files,
-    optional: false, type: input}
+    optional: false, type: set}
   mum_input_b: {category: input, extension: fasta, help: Set 1 input fasta files,
-    optional: false, type: input}
+    optional: false, type: set}
 moa_id: mummer
 modification_date: Wed Nov 10 07:56:48 2010
 name: mummer

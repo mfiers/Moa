@@ -8,7 +8,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Converts a FASTQ file to MAQ BFQ format.
 filesets:
   input: {category: input, extension: sam, help: input SAM files, optional: false,
-    type: input}
+    type: set}
   output: {category: output, dir: ., extension: bam, source: input, type: map}
 moa_id: sam2bam
 modification_date: Wed Nov 10 07:56:48 2010

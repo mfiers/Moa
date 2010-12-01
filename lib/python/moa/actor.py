@@ -92,10 +92,13 @@ class Actor:
             
         :type cl: list of strings
 
-        :param background: Run this job in the background? If `True`, fork and have the parent return immediately. The child finishes. If `False`, wait for the job to finish
-        :type background: Boolean
+        :param background: Run this job in the background? If `True`,
+           fork and have the parent return immediately. The child
+           finishes. If `False`, wait for the job to finish :type
+           background: Boolean
 
-        :rtype: the process id if `background == True`, else the return code
+        :rtype: the process id if `background == True`, else the
+           return code
         """        
         if background:
             # try to fork
@@ -146,53 +149,53 @@ class Actor:
         l.debug("Finished execution with rc %d " % self.rc)
         return self.rc
 
-    def _report(self):
-        report = "\n".join([
-            'Process id: %d' % self.pid,
-            'Return code: %d' % self.rc,
-            'Command line: %s' % self.commandLine,
-            'Target: %s' % self.target,
-            'Working directory: %s' % self.wd,
-            'Start: %s' % time.asctime(time.localtime(self.runStartTime)),
-            'End: %s' % time.asctime(time.localtime(self.runStopTime)),
-            'Duration: %.4f sec' % (self.runStopTime - self.runStartTime)]) + "\n"
+    # def _report(self):
+    #     report = "\n".join([
+    #         'Process id: %d' % self.pid,
+    #         'Return code: %d' % self.rc,
+    #         'Command line: %s' % self.commandLine,
+    #         'Target: %s' % self.target,
+    #         'Working directory: %s' % self.wd,
+    #         'Start: %s' % time.asctime(time.localtime(self.runStartTime)),
+    #         'End: %s' % time.asctime(time.localtime(self.runStopTime)),
+    #         'Duration: %.4f sec' % (self.runStopTime - self.runStartTime)]) + "\n"
         
-        return report
+    #     return report
 
-    def finish(self):
+    # def finish(self):
         
-        if self.rc == 0:
-            l.debug("Succesfully finished make in %s" % (self.wd))
-        else:
-            if self.verbose:
-                l.error("Error running make in %s. Return code %s" % (
-                    self.wd, self.rc))
-            else:
-                l.debug("Error running make in %s. Return code %s" % (
-                    self.wd, self.rc))
+    #     if self.rc == 0:
+    #         l.debug("Succesfully finished make in %s" % (self.wd))
+    #     else:
+    #         if self.verbose:
+    #             l.error("Error running make in %s. Return code %s" % (
+    #                 self.wd, self.rc))
+    #         else:
+    #             l.debug("Error running make in %s. Return code %s" % (
+    #                 self.wd, self.rc))
                 
-        if self.captureName:
-            if self.captureOut: os.unlink(self.captureOutName)
-            if self.captureErr: os.unlink(self.captureErrName)
+    #     if self.captureName:
+    #         if self.captureOut: os.unlink(self.captureOutName)
+    #         if self.captureErr: os.unlink(self.captureErrName)
 
-    def getOutput(self):
-        """
-        Get the output from a moa run
-        """
-        if not os.path.exists(self.captureOutName):
-            return ""
-        l.debug("reading output from %s" % self.captureOutName)
-        return open(self.captureOutName).read()
+    # def getOutput(self):
+    #     """
+    #     Get the output from a moa run
+    #     """
+    #     if not os.path.exists(self.captureOutName):
+    #         return ""
+    #     l.debug("reading output from %s" % self.captureOutName)
+    #     return open(self.captureOutName).read()
 
-    def getError(self):
-        """
-        Get the stderr of a moa run
+    # def getError(self):
+    #     """
+    #     Get the stderr of a moa run
 
-        @returns: stderr output of this job (if captured)
-        @rtype: string
-        """
-        if not os.path.exists(self.captureErrName):
-            return ""
-        l.debug("reading error from %s" % self.captureErrName)
-        return open(self.captureErrName).read()
+    #     @returns: stderr output of this job (if captured)
+    #     @rtype: string
+    #     """
+    #     if not os.path.exists(self.captureErrName):
+    #         return ""
+    #     l.debug("reading error from %s" % self.captureErrName)
+    #     return open(self.captureErrName).read()
 

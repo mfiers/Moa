@@ -11,7 +11,7 @@ description: Run a simple, out of the box, newbler assembly. As an extra feature
   gather steps. The links are named after the directory.
 filesets:
   input: {category: input, extension: sff, help: input SFF files, optional: false,
-    type: input}
+    type: set}
 moa_id: newbler
 modification_date: Wed Nov 10 07:56:48 2010
 name: newbler

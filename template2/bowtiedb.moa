@@ -1,26 +1,32 @@
 author: Mark Fiers
-backend: gnumake
+backend: ruff
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: '', mode: map}
+  clean: 
+    help: 'Remove all job data, not the Moa job itself, note that this must be implemented by the template.'
+    mode: simple
+  run: 
+    help: Create the bowtie database
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bowtie index from a reference sequence
 filesets:
-  input: {category: input, extension: fasta, help: Sequence files used to build a
-      bowtie database, optional: false, type: input}
+  input: 
+    category: input
+    extension: fasta
+    help: Input fasta file for the bowtie database
+    optional: false
+    type: single
+  output: 
+    category: output
+    help: The basename of the bowtie database
+    optional: true
+    default: './bowtiedb'
+    type: single
 moa_id: bowtiedb
 modification_date: Wed Nov 10 07:56:48 2010
 name: bowtiedb
 parameter_category_order: ['', input, system, advanced]
 parameters:
-  name:
-    allowed: []
-    category: ''
-    default: ''
-    help: Name of the bowtie index to create
-    optional: false
-    type: string
   title:
     allowed: []
     category: system
@@ -29,3 +35,4 @@ parameters:
     optional: false
     type: string
 title: Bowtie index builder
+

@@ -63,13 +63,24 @@ def execute(job, command, verbose=False, background=False):
         if len(job.data.inputs) + len(job.data.outputs) == 0:
             l.critical("no in or output files")
             sys.exit()
-        noFiles = len(job.data.fileSets[(job.data.inputs + job.data.outputs)[0]]['files'])
-        for i in range(noFiles):
-            outputs = [job.data.fileSets[x]['files'][i] for x in job.data.outputs]
-            inputs =  [job.data.fileSets[x]['files'][i] for x in job.data.inputs]
-            fsdict = dict([(x, job.data.fileSets[x]['files'][i]) for x in job.data.fileSets])
+        noFiles = len(job.data.fileSets[
+                (job.data.inputs + job.data.outputs)[0]
+                ]['files'])
 
-            yield([inputs, outputs, fsdict, rawConf, jt, actor])
+        prereqs = []
+        for fsid in job.data.prerequisites:
+            prereqs.extend(job.data.fileSets[fsid]['files'])
+        for i in range(noFiles):
+            outputs = [job.data.fileSets[x]['files'][i] 
+                       for x in job.data.outputs]
+            inputs =  [job.data.fileSets[x]['files'][i] 
+                       for x in job.data.inputs]
+            fsdict = dict([(x, job.data.fileSets[x]['files'][i]) 
+                           for x in job.data.inputs + job.data.outputs])
+            
+            l.debug('pushing job with inputs %s' % ", ".join(inputs[:10]))
+            
+            yield([inputs + prereqs, outputs, fsdict, rawConf, jt, actor])
 
     cmode = job.template.commands[command].mode
 
@@ -81,10 +92,11 @@ def execute(job, command, verbose=False, background=False):
                             one_second_per_job=False,
                             multiprocess= job.options.threads,
                             )
+    elif cmode == 'reduce':
+        pass
     elif cmode == 'simple':
-        tf = tempfile.NamedTemporaryFile( delete = False,
-                                          prefix='moa',
-                                          mode='w')
+        tf = tempfile.NamedTemporaryFile( 
+            delete = False, prefix='moa', mode='w')
         tf.write(jt.render(job.conf))
         tf.close()
         actor.run(['bash', tf.name])

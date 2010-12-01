@@ -10,7 +10,7 @@ filesets:
   OUTPUT_FILESET_ID: {category: output, dir: ./OUTPUT_FILETYPE, extension: OUTPUT_FILETYPE,
     source: INPUT_FILESET_ID, type: map}
   input: {category: input, extension: fasta, help: Input files for repmask, optional: false,
-    type: input}
+    type: set}
   output: {category: output, dir: ., extension: masked, source: input, type: map}
 moa_id: repmask
 modification_date: Wed Nov 10 07:56:48 2010

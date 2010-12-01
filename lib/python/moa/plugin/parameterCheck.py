@@ -33,8 +33,8 @@ def _isFloat(s):
     except ValueError:
         return False
 
-def postSet(data):
-    test(data)
+#def postSet(data):
+#    test(data)
     
 def preRun(data):
     return test(data)
@@ -47,6 +47,8 @@ def test(data):
     options = data['options']
     error = False
     for p in job.conf.keys():
+        if p in job.conf.doNotCheck:
+            continue
         if not p in job.template.parameters:
             continue
         pt = job.template.parameters[p]

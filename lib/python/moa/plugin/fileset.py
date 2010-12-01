@@ -56,7 +56,7 @@ def prepare(data):
                 'category' : fs.get('category', 'input'),
                 'optional' : fs.get('optional', True),
                 'help' : 'directory for the %s file set',
-                'default' : fs.dir,
+                'default' : fs.get('dir', '.'),
                 'type' : 'directory',
                 }
             
@@ -64,7 +64,7 @@ def prepare(data):
                 'category' : fs.get('category', 'input'),
                 'optional' : True,
                 'help' : 'extension for the %s file set',
-                'default' : fs.extension,
+                'default' : fs.get('extension', ''),
                 'type' : 'string'
                 }
             job.template.parameters['%s_glob' % fsid] = {
@@ -74,7 +74,7 @@ def prepare(data):
                 'help' : 'Output glob for the mapped file set "%s"' % fsid,
                 'type' : 'string',
                 }
-        else:
+        elif fs.type in ['set']:
             job.template.parameters['%s_dir' % fsid] = {
                 'category' : fs.get('category', 'input'),
                 'optional' : fs.optional,
@@ -95,6 +95,18 @@ def prepare(data):
                 'help' : 'File glob for the file set "%s"' % fsid,
                 'type' : 'string',
                 }
+        elif fs.type == 'single':
+            job.template.parameters['%s' % fsid] = {
+                'category' : fs.get('category', 'input'),
+                'default' : fs.get('default', ''),
+                'optional' : fs.optional,
+                'help' : fs.help,
+                'type' : 'file'
+                }
+            #unless it is an input file, do not check for this
+            #file to exists! (since it might not yet)
+            if not fs.category == 'input':
+                job.conf.doNotCheck.append('%s_file' % fsid)
 
 
 def _files_from_glob(dir, pat, ext):
@@ -176,56 +188,69 @@ def preRun(data):
     job = data['job']
     moaId = job.template.name
 
+    job.data.fileSets = {}
+
     if not job.template.has_key('filesets'):
         return
 
-    #First, collect input files
+    #First, collect 'input'/'set' files
+    #create a list of all sets & order them - MAPS GO LAST!!
     for fsid in job.template.filesets.keys():
         fs = job.template.filesets[fsid]
-        if not fs.type == 'input':
-            continue
-        files = _files_from_glob(
-            job.conf['%s_dir' % fsid],
-            job.conf['%s_glob' % fsid],
-            job.conf['%s_extension' % fsid])
-        with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
-            for f in files:
-                F.write('%s\n'% f)
-                
-    #Then, map files
-    for fsid in job.template.filesets.keys():
-        fs = job.template.filesets[fsid]
-        if not fs.type == 'map':
-            continue
-        frfs = job.template.filesets[fs.source]
-        files = _map_files(
-            job.template.filesets,
-            job.conf,
-            fromId = fs.source,
-            toId = fsid)
+        if not fs.has_key('order'):
+            if fs.type == 'map':
+                fs.order = 100
+            else:
+                fs.order = 50
 
-        with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
-            for f in files:
-                F.write('%s\n'% f)
+    fileSetList = [(job.template.filesets[x].order, x)
+                   for x in job.template.filesets.keys()]
+    fileSetList.sort()
 
 
-    #rearrange the files for use by the job
-    job.data.fileSets = {}
-    job.data.inputs = []
-    job.data.outputs = []
-
-    for fsid in job.template.filesets.keys():
+    for order, fsid in fileSetList:
         fs = job.template.filesets[fsid]
         job.data.fileSets[fsid] = fs
-        job.data.fileSets[fsid]['files'] = readFileSet(job, fsid)
+
+        if fs.type == 'set':
+            files = _files_from_glob(
+                job.conf['%s_dir' % fsid],
+                job.conf['%s_glob' % fsid],
+                job.conf['%s_extension' % fsid])
+        elif fs.type == 'single':
+            files = [job.conf['%s' % fsid]]
+        elif fs.type == 'map':
+            if not fs.source:
+                moa.ui.exitError("Map fileset must have a source!")
+            frfs = job.template.filesets[fs.source]
+            files = _map_files( job.template.filesets, job.conf, 
+                                fromId = fs.source, toId = fsid)        
+        else:
+            moa.ui.exitError("Invalid data set type %s for data set %s" % (
+                    fs.type, fsid))
+        l.debug("Recovered %d files for fileset %s" % (len(files), fsid))
+        job.data.fileSets[fsid].files = files
+        with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
+            F.write("\n".join(files))
+            
+    #rearrange the files for use by the job
+    job.data.inputs = []
+    job.data.outputs = []
+    job.data.prerequisites = []
+
+    for fsid in job.template.filesets.keys():
+        fs = job.template.filesets[fsid]
         if fs.category == 'input':
             job.data.inputs.append(fsid)
         if fs.category == 'output':
             job.data.outputs.append(fsid)
-        
+        if fs.category == 'prerequisite':
+            job.data.prerequisites.append(fsid)
 
-
-
+    for fsid in job.data.fileSets.keys():
+        fs = job.data.fileSets[fsid]
+        l.info('Found fileset %s (%s) with %d files' % (
+                fsid, fs.type, len(fs.files)))
 
     
 TESTSCRIPT = """

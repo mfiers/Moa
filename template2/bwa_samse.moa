@@ -17,7 +17,7 @@ filesets:
     extension: fq
     help: fastq input file
     optional: false
-    type: input
+    type: set
   sai_input:
     optional: false
     category: input
@@ -30,6 +30,12 @@ filesets:
     category: output
     dir: .
     extension: sam
+    source: fq_input
+    type: map
+  output_bam:
+    category: output
+    dir: .
+    extension: bam
     source: fq_input
     type: map
 moa_id: bwa_samse

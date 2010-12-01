@@ -8,7 +8,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a vmatchdb index from a sequence
 filesets:
   input: {category: input, extension: fasta, help: Input files for vmatch, optional: false,
-    type: input}
+    type: set}
 moa_id: vmatchdb
 modification_date: Wed Nov 10 07:56:48 2010
 name: vmatchdb

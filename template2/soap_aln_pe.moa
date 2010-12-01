@@ -17,7 +17,7 @@ filesets:
     glob: '*_1'
     help: fastq input files directory - forward files
     optional: false
-    type: input
+    type: set
   fq_reverse_input:
     category: input
     extension: fq
@@ -36,6 +36,12 @@ filesets:
     category: output
     dir: .
     extension: sam
+    source: fq_forward_input
+    type: map
+  bam_output:
+    category: output
+    dir: .
+    extension: bam
     source: fq_forward_input
     type: map
 moa_id: soap_aln_pe
