@@ -77,7 +77,7 @@ def prepare(data):
         elif fs.type in ['set']:
             job.template.parameters['%s_dir' % fsid] = {
                 'category' : fs.get('category', 'input'),
-                'optional' : fs.optional,
+                'optional' : fs.get('optional', False),
                 'help' : fs.help,
                 'default' : fs.get('dir', ''),
                 'type' : 'directory'

@@ -15,12 +15,14 @@ filesets:
     category: input
     extension: fq
     help: Fastq input files
+    glob: '*'
     optional: false
     type: set
   output:
     category: output
     dir: .
     extension: sai
+    glob: '{{ input_glob }}'
     source: input
     type: map
 moa_id: bwa_aln
