@@ -88,6 +88,13 @@ class JobConf(object):
     def update(self, data):
         self.jobConf.update(data)
         
+    def get(self, key, default):
+        v = self.__getitem__(key)
+        if v: 
+            return v
+        else:
+            return default
+        
     def __getitem__(self, key):
         v = ''
         if self.jobConf.has_key(key):

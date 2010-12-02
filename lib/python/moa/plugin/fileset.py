@@ -120,23 +120,35 @@ def _files_from_glob(dir, pat, ext):
     else:
         return glob.glob(os.path.join(dir, pat))
 
-def _map_files(allSets, conf, fromId, toId):
+def _map_files(job, fromId, toId):
     """
     Map files from one set to another
     """
+    allSets = job.template.filesets
     fos = allSets[fromId]
     tos = allSets[toId]
-    
-    frext = conf['%s_extension' % fromId]
+    conf = job.conf
+
+    frof = [os.path.basename(x) for x in job.data.fileSets[fromId]['files']]
+
+    #no input files - no output files
+    if len(frof) == 0: 
+        return []
+
     todir = conf['%s_dir' % toId]
     toext = conf['%s_extension' % toId]
-
-    frglob = conf['%s_glob' % fromId]
     toglob = conf['%s_glob' % toId]
-    
-    with open(os.path.join('.moa', '%s.fof' % fromId)) as F:
-        frof = map(os.path.basename, F.read().split())
 
+    if fos.type == 'single':
+        frglob = '*'
+        infile = os.path.basename(frof[0])
+        if '.' in infile:
+            frext = infile.rsplit('.',1)[-1]
+        else: frex = ''
+    else:
+        frext = conf.get('%s_extension' % fromId, '')
+        frglob = conf.get('%s_glob' % fromId, '*')
+    
     #map directory
     if todir:
         frof = [os.path.join(todir, x) for x in frof]
@@ -156,7 +168,8 @@ def _map_files(allSets, conf, fromId, toId):
         pass
     elif toglob.count('*') == 1:
         if not frglob.count('*') == 1:
-            l.critical("Input glob needs to have a '*' (mapping %s->%s / %s->%s)" % 
+            l.critical(("Input glob needs to have a '*' "
+                        "(mapping %s->%s / %s->%s)") % 
                        (fromId, toId, frglob, toglob))
             sys.exit(-1)
         frof = [re.sub('^' + frglob.replace('*', '(.*)'),
@@ -164,8 +177,8 @@ def _map_files(allSets, conf, fromId, toId):
                        x) for x in frof]
     else:
         if len(frof) != 1:
-            l.critical(("With no wildcard in the  %s_glob, the input may not " % toId +
-                        "consist of more than one file"))
+            l.critical(("With no wildcard in the  %s_glob, the input "
+                        "may not consist of more than one file") % toId)
         if toext:
             frof = [os.path.join(todir, '%s.%s' % (toglob, toext))]
             print 'mappig to ', frof            
@@ -224,8 +237,7 @@ def preRun(data):
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")
             frfs = job.template.filesets[fs.source]
-            files = _map_files( job.template.filesets, job.conf, 
-                                fromId = fs.source, toId = fsid)        
+            files = _map_files(job, fromId = fs.source, toId = fsid)
         else:
             moa.ui.exitError("Invalid data set type %s for data set %s" % (
                     fs.type, fsid))
