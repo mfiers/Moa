@@ -1,11 +1,9 @@
 ### run
 
 bwa samse -n {{ max_aln_out }} {{ db }} {{sai_input}} {{fq_input}} > {{output}}
-samtools view -bS -o {{ output }} {{ output_bam }}
-
-{{ snippets.test }}
-
+{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
 
 ### clean
 
 rm *.sam
+rm *.bam

@@ -13,7 +13,8 @@ bwa sampe -a {{max_insert_size}}                        \
     {{ sai_forward_input }} {{ sai_reverse_input }}     \
     {{ fq_forward_input }} {{ fq_reverse_input }}	    \
     -f {{ output }}
-samtools view -bS -o {{ output_bam }} {{ output }}
+
+{{ snippets.sam2bam }} {{ output_bam }} {{ output }} 2>&1
 
 ### clean
 
