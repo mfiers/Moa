@@ -1,4 +1,8 @@
 """
+Yaco
+----
+
+Yaco provides a `dict` like structure that can be serialized to & from `yaml <http://www.yaml.org/>`_ 
 """
 
 import os
@@ -9,26 +13,31 @@ import moa.utils
 class Yaco(dict):
     """
     Loosely based on http://code.activestate.com/recipes/473786/ (r1)
+
+    >>> v= Yaco()
+    >>> v.a = 1
+    >>> assert(v.a == 1)
+    >>> assert(v['a'] == 1)
+    >>> v= Yaco({'a':1})
+    >>> assert(v.a == 1)
+    >>> assert(v['a'] == 1)
     
     """
     
     def __init__(self, data={}):
         """
-        >>> v= Yaco()
-        >>> v.a = 1
-        >>> assert(v.a == 1)
-        >>> assert(v['a'] == 1)
-
-        >>> v= Yaco({'a':1})
-        >>> assert(v.a == 1)
-        >>> assert(v['a'] == 1)
-
-        """        
+        Constructor
+        
+        :param data: data to initialize the Yaco structure with
+        :type data: dict
+        """
         dict.__init__(self)
         self.update(data)
 
     def __str__(self):
         """
+        Map the structure to a string
+        
         >>> v= Yaco({'a':1})
         >>> assert(str(v.a) == '1')
         """
@@ -36,6 +45,8 @@ class Yaco(dict):
 
     def __setitem__(self, key, value):
         """
+        Set the value of a key
+        
         >>> v= Yaco()
         >>> v.a = 18
         >>> assert(v.a == 18)
@@ -60,6 +71,8 @@ class Yaco(dict):
         >>> v.f.h.i.j.k.l = 14
         >>> assert(v.f.h.i.j.k.l == 14)
 
+        :param key: The key to set
+        :param value: The value to assign to key
         """
         
         old_value = super(Yaco, self).get(key, None)

@@ -3,7 +3,7 @@ import moa.logger as l
 import moa.backend
 import moa.ui
 
-class NojobBackend(moa.backend.BaseBackend):
+class Nojob(moa.backend.BaseBackend):
     """
     Nojob backend - placeholde for directories without a job
     """    

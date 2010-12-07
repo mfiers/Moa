@@ -1,57 +1,36 @@
-author: Yogini Idnani, Mark Fiers
-version: 1
-backend: ruff
-commands:
-  prepare:
-    mode: simple
-    help: prepare for the unittest
-  run:
-    mode: map
-    help: Run unittest
-  clean:
-    mode: simple
-    help: Remove all job data
-creation_date: Wed Nov 25 17:06:48 2010
-description: Template used in testing - has no other purpose
-filesets:
-  input_files_1:
-    category: input
-    extension: txt
-    glob: '*.1'
-    help: Input file set 1
-    optional: false
-    type: input
-  input_files_2:
-    category: input
-    extension: txt
-    glob: '*.2'    
-    help: Input file set 2
-    dir: '{{ input_files_1_dir }}'
-    source: input_files_1
-    type: map
-  output_files:
-    category: output
-    extension: out
-    help: output files
-    dir: .
-    source: input_files_1
-    type: map
-moa_id: unittest
-modification_data: Wed Nov 25 17:06:48 2010
-name: Unittest
-parameter_category_order:
-- ''
-- input
-- system
-- advanced
-parameters:
-  test_string:
-    type: string
-    help: Test string values
-  title:
-    allowed: []
-    category: system
-    default: 'unittesting'
-    help: A name for this job
-    optional: true
-    type: string
+### prepare
+
+mkdir in1 || true
+mkdir in2 || true
+mkdir out || true
+
+for x in `seq -f '%05g' 1 100`  
+  do echo $x > in1/${x}_1.txt
+done
+
+for x in `seq -f '%05g' 1 100`  
+  do echo $x > in2/${x}_2.txt
+done
+ 
+### run2
+
+for x in `seq 10000`; do
+	cat {{ input_1 }} >> {{ output }}
+	cat {{ input_2 }} >> {{ output }}
+	md5sum {{ output }}
+done
+sleep 0.5
+
+### moacore
+
+moa
+
+### clean
+
+rm -rf in1
+rm -rf in2
+rm -rf out
+
+### testMoa
+
+moa

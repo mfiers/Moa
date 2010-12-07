@@ -114,11 +114,16 @@ def _files_from_glob(dir, pat, ext):
     """
     Return a set of files from a glob
     """
+    rv = []
     if ext:
-        return glob.glob(os.path.join(
+        rv = glob.glob(os.path.join(
             dir, '%s.%s' % (pat, ext)))
     else:
-        return glob.glob(os.path.join(dir, pat))
+        rv = glob.glob(os.path.join(dir, pat))
+    
+    l.debug("from glob %s // %s // %s" % (dir, pat, ext))
+    l.debug("found %d files" % len(rv))
+    return rv
 
 def _map_files(job, fromId, toId):
     """
@@ -197,7 +202,12 @@ def readFileSet(job, fsid):
     else:
         return []
 
-def preRun(data):
+
+def preCommand(data):
+    l.debug("preparing input files")
+    return readFilesets(data)
+
+def readFilesets(data):
     
     job = data['job']
     moaId = job.template.name
@@ -250,7 +260,7 @@ def preRun(data):
     job.data.inputs = []
     job.data.outputs = []
     job.data.prerequisites = []
-
+    
     for fsid in job.template.filesets.keys():
         fs = job.template.filesets[fsid]
         if fs.category == 'input':
@@ -262,7 +272,7 @@ def preRun(data):
 
     for fsid in job.data.fileSets.keys():
         fs = job.data.fileSets[fsid]
-        l.info('Found fileset %s (%s) with %d files' % (
+        l.debug('Found fileset %s (%s) with %d files' % (
                 fsid, fs.type, len(fs.files)))
 
     

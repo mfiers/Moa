@@ -18,9 +18,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Moa frontend
+Moa executable
 
-This script serves as a command dispatcher for all moa functionality
+This script is a command dispatcher for all Moa functionality.
+
 """
 
 import os
@@ -52,6 +53,7 @@ plugins = moa.plugin.PluginHandler(moa.sysConf.getPlugins())
 wd = os.getcwd()
 moa.version.fixOld(wd)
 job = moa.job.Job(wd)
+job.plugins = plugins
 
 #use of cwd is deprecated
 plugins.register(cwd = wd)
@@ -115,12 +117,17 @@ if __name__ == "__main__":
     newargs = []
     
     if len(args) > 0:
-        command = args[0]
+        commands = [args[0]]
         newargs = args[1:]
     else:
-        command = 'status'
+        commands = ['status']
         
-    l.debug("start moa %s" % command)
+    ## Ask the job if it's is ok with
+    ## these commands (might want to change order, or insert
+    ## stuff
+    commands = job.checkCommands(commands)
+    
+    l.debug("Run moa commands: %s" % ",".join(commands))
     l.debug("with args %s" % newargs)
 
     plugins.register(newargs = newargs)
@@ -134,17 +141,21 @@ if __name__ == "__main__":
 
     #see if there is a callback to a plugin - If so call it
 
-    plugins.run("pre%s" % command.capitalize())
-    if command in moaCommands:
-        if moaCommands[command].has_key('call'):
-            l.debug("using a callback for moa %s" % command)
-            plugins.runCallback(moaCommands[command])
-            rc = 0
-    else:
-        #No callback, defer this to the job
-        rc = job.execute(command)
+    for command in commands:
+        plugins.run("preCommand")
+        plugins.run("pre%s" % command.capitalize())
+        if command in moaCommands:
+            if moaCommands[command].has_key('call'):
+                l.debug("using a callback for moa %s" % command)
+                plugins.runCallback(moaCommands[command])
+                rc = 0
+        else:
+            #No callback, defer this to the job
+            rc = job.execute(command)
         
-    plugins.run("post%s" % command.capitalize())
+        plugins.run("post%s" % command.capitalize())
+        plugins.run("postCommand")
+        
     plugins.run("finish")
     
     sys.exit(rc)

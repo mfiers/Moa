@@ -19,13 +19,13 @@ filesets:
   db:
     category: input
     help: The (basename of the) bowtie database to use.
-	type: single
-	optional: false
+    type: single
+    optional: false
   output:
     category: output
-	type: bam
+    type: bam
     help: Output files
-	type: map
+    type: map
 moa_id: bowtie
 modification_date: Wed Nov 10 07:56:48 2010
 name: bowtie

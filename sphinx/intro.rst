@@ -1,44 +1,49 @@
-**NOTE: both the software and the manual are under development. Expect things to change.**
+**NOTE: both the software and the manual are under development. Things might change.**
 
 Introduction
 ============
 
-A bioinformatics project is often consists of many separate,
-interdependent, steps. Once a project gets bigger it becomes vital to
-apply some organization and automation.
+A bioinformatics project commonly consists of a number of separate
+steps that chain (3\ :sup:`rd` party) tools together. To finetune the
+behaviour of of such an analysis pipeline, a number of custom steps
+are often necessary. Particularly when such projects get bigger, it
+becomes vital to organize, automate and store analysis pipelines.
 
-There are many different ways to automate a bioinformatics project
-. Many bioinformaticians, however, continue using the command-line or
-tailor-made scripts to organize and automate their work. This has
-obvious advantages, most importantly flexibility. Potential downsides
-to scripting are that a project easily becomes disorganized and
-untrackable unless explicit measures are taken.
+There are many different ways to organize bioinformatics
+projects. Many bioinformaticians use the command line or tailor made
+scripts to organize and automate their work. This approach has obvious
+advantages, most importantly flexibility. Potential downsides to
+scripting are that a project easily becomes disorganized and
+untrackable unless measures are taken.
 
-Moa aims to assist in organizing, automating and maintaining a command
-line bioinformatics project without losing flexibility. The best way
-to understand how Moa aims to achieve this is by an example:
+*Moa aims to assist in organizing, automating and maintaining a command
+line bioinformatics project without loss of flexibility.*
+
+The best way to understand how Moa aims to achieve this is by a simple
+example:
 
 ::
 
     moa new blast -t "run a demo"
-    moa set blast_db=/data/blast/db/nt
-    moa set blast_input_dir=../sequences/
+    moa set db=/data/blast/db/nt
+    moa set input_dir=../sequences/
     moa set moa_postprocess='grep polymerase gff/*gff > pol.gff'
     moa run
 
 In the first line, a new BLAST job (titled "run a demo") is created in
-the current directory. What really happens is that Moa creates a
-script (Makefile) that imports a BLAST specific template. The next two
-lines set a few parameters for BLAST. In the last line Moa is executed
-and 'blasts' the input sequences (in ``../sequences``) against the
-database in ``/data/blast/db/nt``. BLAST output files (XML) are
-generated and converted to GFF (GFF conversion is an extra, not part
-of the BLAST suite). The one to last statement is probably most
-remarkable; it is a single (shell) commmand that will be executed
-after BLAST is executed (there is a corresponding
-``moa_preprocess``). This shell comamand filters all BLAST hits that
-have the word "polymerase" in their description into a separater GFF
-file.
+the current directory. What really happens is that Moa associates the
+`blast` template to the current directory. The `blast` template
+(obviously) knows how to execute a [BLAST]_ job, but needs at least
+two variables defined, as demonstrated in lines two and three. The
+fourth line demonstrates a specific Moa is executed and 'blasts' the
+input sequences (in ``../sequences``) against the database in
+``/data/blast/db/nt``. BLAST output files (XML) are generated and
+converted to GFF (GFF conversion is an extra, not part of the BLAST
+suite). The one to last statement is probably most remarkable; it is a
+single (shell) commmand that will be executed after BLAST is executed
+(there is a corresponding ``moa_preprocess``). This shell comamand
+filters all BLAST hits that have the word "polymerase" in their
+description into a separater GFF file.
 
 Moa employs `GNU make <http://www.gnu.org/software/make>`_ to describe
 its building blocks. GNU Make is originally developed for software
@@ -185,3 +190,8 @@ what other templates are available, try ``moa list``.
 
 
 .. |moa help| image:: images/screenshot_moa_help.png
+
+
+-------------------
+
+.. [BLAST] Altschul SF, Gish W, Miller W, Myers EW, Lipman DJ. Basic local alignment search tool. J Mol Biol. 1990 Oct 5;215(3):403-10. PubMed PMID: `2231712 <http://www.ncbi.nlm.nih.gov/pubmed/2231712>`_.

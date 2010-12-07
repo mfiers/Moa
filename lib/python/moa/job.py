@@ -63,22 +63,19 @@ def newJob(wd, template, title, parameters=[]):
     return job
 
 def newTestJob(template, title="Test job"):
-    """
-    Test function - creates a temp directory and uses that to
-    instantiate the job in. This function returns the directory where
-    the job is created. All parameters are passed on to L{newJob}
+    """    
+    for testing purposes - creates a temporary directory and uses that to
+    instantiate a job. This function returns the job object created
 
-    >>> job = newTestJob(template = 'adhoc')
-    >>> isinstance(job, Job)
-    True
-    >>> os.path.exists(job.wd)
-    True
-    >>> os.path.exists(os.path.join(job.wd, '.moa', 'template'))
-    True
-
+    >>> job = newTestJob(template = 'adhoc', title='test title')
+    >>> assert(isinstance(job, Job))
+    >>> assert(os.path.exists(job.wd))
+    >>> assert(job.conf.title == 'test title')
+    >>> assert(os.path.exists(os.path.join(job.wd, '.moa', 'template')))
+    >>> assert(job.template.name == 'adhoc')
     
-    @returns: The directory where the job was created
-    @rtype: string
+    :returns: the created job
+    :rtype: instance of :class:`moa.job.Job`
     """
     wd = tempfile.mkdtemp()    
     job = Job(wd, template=template)
@@ -129,18 +126,68 @@ class Job(object):
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
         
+    def hasCommand(self, command):
+        """        
+        Check if this job defines a certain command
+
+        .. Warning::
+            THIS METHOD DOES NOT WORK
+            
+
+        >>> job = newTestJob('unittest')
+        >>> assert(job.hasCommand('run'))
+        >>> assert(job.hasCommand('run2'))
+        >>> assert(job.hasCommand('run3') == False)
+        """        
+        return self.backend.hasCommand(command)
+
+    def checkCommands(self, commands):
+        """
+        Check commands, and rearrange if there are delegates.
+        
+        >>> job = newTestJob('unittest')
+        >>> assert(job.template.commands.run.delegate == ['prepare', 'run2'])
+        >>> assert(job.checkCommands(['run2']) == ['run2'])
+        >>> assert(job.checkCommands(['run']) == ['prepare', 'run2'])
+        >>> assert(job.checkCommands(['prepare', 'run']) == ['prepare', 'prepare', 'run2'])
+        
+        :param commands: The list of commands to check
+        :type commands: list of strings
+        :returns: The checked list of commands
+        :rtype: list of strings
+        """        
+        rv = []
+        for command in commands:
+            if self.template.commands[command].has_key('delegate'):
+                rv.extend(self.template.commands[command].delegate)
+            else:
+                rv.append(command)
+        return rv
+
     def checkConfDir(self):
         """
         Check if the configuration directory exists. If not create it.
+        
+        >>> job = newTestJob('unittest')
+        >>> confdir = os.path.join(job.wd, '.moa')
+        >>> assert(os.path.exists(confdir))
+        >>> import shutil
+        >>> shutil.rmtree(confdir)
+        >>> assert(os.path.exists(confdir) == False)
+        >>> job.checkConfDir()
+        >>> assert(os.path.exists(confdir))
         """
+        
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
 
-
+        
     def getActor(self):
         """
-        Get an instance of :class:`moa.actor.Actor` for this job.
-
+        Return an actor (:class:`moa.actor.Actor`), a wrapper for python's subprocess.
+        
+        An actor is meant to handle the execution of out-of-python tools
+        
         :rtype: instance of :class:`moa.actor.Actor`
         """        
         return moa.actor.Actor(wd = self.wd)
@@ -151,14 +198,22 @@ class Job(object):
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
 
+        
+        .. Note::
+        
+          Should move backgrounding functionality to this module - as opposed to the backend.
+          
         :param command: the command to execute
         :type command: string
-        
+        :param verbose: output lots of data
+        :type verbose: Boolean
+
+        :param background: Run in the background (the backend is supposed to fork 
+           & this function will return immediately  
         """
         l.debug("executing %s" % command)
         if self.backend:
-            self.backend.execute(self,
-                                 command,
+            self.backend.execute(command,
                                  verbose = verbose,
                                  background = background)
         else:
@@ -169,7 +224,7 @@ class Job(object):
         Prepare this job
         """
         if self.backend and getattr(self.backend, 'prepare', None):
-            self.backend.prepare(self)
+            self.backend.prepare()
         
     def defineOptions(self, parser):
         """
@@ -185,7 +240,7 @@ class Job(object):
                   action="store_true", help="Run moa in the background")
         
         if self.backend and getattr(self.backend, 'defineOptions', None):
-            self.backend.defineOptions(self, parser)
+            self.backend.defineOptions(parser)
 
     def setTemplate(self, name):
         """
@@ -231,7 +286,7 @@ class Job(object):
             l.critical("Error loading backend %s" % backendName)
             raise
             
-        self.backend = module
+        self.backend = getattr(module, backendName.capitalize())(self)
         
     def isMoa(self):
         """
@@ -247,5 +302,5 @@ class Job(object):
         if getattr(self.backend, 'initialize', None):
             l.debug("calling backend to initialize template %s" %
                     self.template.name)
-            self.backend.initialize(self)
+            self.backend.initialize()
         

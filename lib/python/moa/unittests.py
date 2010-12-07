@@ -69,6 +69,19 @@ def testModule(m):
     f, t = doctest.testmod(m)
     failures += f
     tests += t
+
+def testTemplates(args=[]):
+    global templateFailures
+    global templateTests
+    for tfile, tname in moa.template.listAll():
+        if args and not tname in args:
+            continue
+        template = moa.template.Template(tname)
+        if not template.backend == 'ruff':
+            continue
+        print tname
+    print 'running template tests'
+    
     
 def testPlugins(args=[]):
     global pluginFailures
@@ -139,6 +152,10 @@ def run(options, args):
         l.info("Ran %d plugin test, %d failed" % (
                 pluginTests, pluginFailures))
         l.info("Finished running plugin tests")
+
+        l.info("start running template tests")
+        testTemplates()
+        l.info("Finished running template tests")
         sys.exit()
 
     elif args[0] == 'plugins':
@@ -147,6 +164,12 @@ def run(options, args):
         l.info("Ran %d plugin test, %d failed" % (
                 pluginTests, pluginFailures))
         l.info("Finished running plugin tests")
+    elif args[0] == 'templates':
+        l.info("Start running template tests")
+        testTemplates(args[1:])
+        l.info("Ran %d template test, %d failed" % (
+                templateTests, templateFailures))
+        l.info("Finished running template tests")
     elif args[0] == 'plugin':
         l.info("Start running plugin tests")
         testPlugins(args[1:])

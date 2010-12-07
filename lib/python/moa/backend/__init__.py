@@ -7,7 +7,6 @@ class BaseBackend(object):
         Initialize this backend 
         """
         self.job = job
-        self.wd = job.wd
         
         
     def isMoa(self):

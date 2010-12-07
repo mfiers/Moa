@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
 Welcome to the Moa documentation!
 =================================
 
@@ -16,8 +17,8 @@ Contents:
    install
    using
    write_template
-   templates/index
    commands/index
+   templates/index
    api/index
 
 

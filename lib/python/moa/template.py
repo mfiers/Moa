@@ -19,6 +19,10 @@
 """
 moa.template
 ------------
+
+Store information on a template. This module is also responsible for
+retrieving template information.
+
 """
 
 import os
@@ -36,10 +40,9 @@ class InvalidTemplate(Exception):
     pass
     
 class Template(Yaco.Yaco):
-    
-    #template_keys = ['description', 'commands', 'help', 'moa_id', 
-    #                 'parameter_category_order', 'author', 'creation_date',
-    #                 'modification_date', 'name', 'type']
+    """
+    Template extends Yaco
+    """
     
     def __init__(self, name = None):
         """

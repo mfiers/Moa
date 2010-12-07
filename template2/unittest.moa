@@ -6,35 +6,40 @@ commands:
     mode: simple
     help: prepare for the unittest
   run:
+    delegate: [prepare, run2]
+    help: 'Prepare & Run'
+  run2:
     mode: map
-    help: Run unittest
+    help: 'actually run'
+    private: true
   clean:
     mode: simple
     help: Remove all job data
 creation_date: Wed Nov 25 17:06:48 2010
 description: Template used in testing - has no other purpose
 filesets:
-  input_files_1:
+  input_1:
     category: input
     extension: txt
-    glob: '*.1'
+    glob: '*_1'
     help: Input file set 1
-    optional: false
-    type: input
-  input_files_2:
+    dir: in1
+    optional: true
+    type: set
+  input_2:
     category: input
     extension: txt
-    glob: '*.2'    
+    glob: '*_2'    
     help: Input file set 2
-    dir: '{{ input_files_1_dir }}'
-    source: input_files_1
+    dir: in2
+    source: input_1
     type: map
-  output_files:
+  output:
     category: output
     extension: out
     help: output files
     dir: .
-    source: input_files_1
+    source: input_1
     type: map
 moa_id: unittest
 modification_data: Wed Nov 25 17:06:48 2010
@@ -48,6 +53,7 @@ parameters:
   test_string:
     type: string
     help: Test string values
+    optional: true
   title:
     allowed: []
     category: system
