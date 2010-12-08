@@ -21,6 +21,7 @@ bwa sampe -a {{max_insert_size}}                        \
 rm *.sam
 
 ### unittest
+
 export MOA_NOLOGO=1
 mkdir 10.index
 cd 10.index
@@ -31,4 +32,5 @@ cd ..
 mkdir 20.align
 cd 20.align
 moa new bwa_aln -t 'align demo reads'
+[[ -d .moa ]] && echo "Found .moa directory" || (echo "Cannot find .moa directory"; false)
 
