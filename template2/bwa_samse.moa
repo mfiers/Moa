@@ -14,28 +14,25 @@ filesets:
   fq_input:
     optional: false
     category: input
-    extension: fq
+    pattern: '*.fq'
     help: fastq input file
     optional: false
     type: set
   sai_input:
     optional: false
     category: input
-    dir: .
+    pattern: '*/*.sai'
     help: sai input directory - filenames must correspond to the fastq input files
-    extension: sai
     source: fq_input
     type: map
   output:
     category: output
-    dir: .
-    extension: sam
+    pattern: '*.sam'
     source: fq_input
     type: map
   output_bam:
     category: output
-    dir: .
-    extension: bam
+    pattern: '*.bam'
     source: fq_input
     type: map
 moa_id: bwa_samse

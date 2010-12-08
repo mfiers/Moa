@@ -13,16 +13,13 @@ description: Use BWA to align a set of fastq reads against a db
 filesets:
   input:
     category: input
-    extension: fq
+    pattern: './*.fq'
     help: Fastq input files
-    glob: '*'
     optional: false
     type: set
   output:
     category: output
-    dir: .
-    extension: sai
-    glob: '{{ input_glob }}'
+    pattern: '*.sai'
     source: input
     type: map
 moa_id: bwa_aln

@@ -20,3 +20,12 @@ bwa sampe -a {{max_insert_size}}                        \
 
 rm *.sam
 
+### unittest
+
+mkdir 10.fasta
+cp ${MOABASE}/share/test/test.fasta 10.fasta
+mkdir 20.fasta
+cd 20.fasta
+moa new bwa_index -t 'create a demo database'
+echo 'HALL'
+false
