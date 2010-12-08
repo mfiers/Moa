@@ -36,7 +36,8 @@ def preRun(data):
     #don't print a logo during a no-job run
     if job.template.name == 'nojob':
         return
-
+    if 'MOA_NOLOGO' in os.environ.keys():
+        return
     #adjust the logo for term width
     TERMHEIGHT, TERMWIDTH = map(int, os.popen('stty size', 'r').read().split())
     MOABASE = moa.utils.getMoaBase()

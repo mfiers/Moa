@@ -61,6 +61,9 @@ class Ruff(moa.backend.BaseBackend):
         templateFile = os.path.join(
             TEMPLATEDIR, '%s.jinja2' % (self.job.template.moa_id))
         self.commands = RuffCommands()
+        if not os.path.exists(templateFile):
+            moa.ui.exitError("Template %s does not seem to be properly installed" % 
+                             self.job.template.moa_id)
         self.commands.load(templateFile)
 
         snippetsFile = os.path.join(

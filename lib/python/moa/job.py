@@ -140,6 +140,8 @@ class Job(object):
         >>> assert(job.hasCommand('run2'))
 
         """
+        if command in self.template.commands.keys():
+            return True
         if self.template.backend == 'ruff':
             return self.backend.hasCommand(command)
         else:

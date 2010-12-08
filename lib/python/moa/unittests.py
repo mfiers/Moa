@@ -92,6 +92,11 @@ def testTemplates(options, args=[]):
                 if job.actor.err.strip():
                     l.critical("Stderr\n" + job.actor.err)
                 templateFailures += 1
+            elif args:
+                if job.actor.out.strip():
+                    l.warning("Stdout\n    " +  "\n    ".join(job.actor.out.split("\n")))
+                if job.actor.err.strip():
+                    l.warning("Stderr\n    " +  "\n    ".join(job.actor.err.split("\n")))
             templateTests += 1
         else:
             l.warning("job %s has no unittest defined" % tname)
@@ -165,7 +170,7 @@ def run(options, args):
         l.info("Finished running plugin tests")
 
         l.info("start running template tests")
-        testTemplates()
+        testTemplates(options)
         l.info("Finished running template tests")
         sys.exit()
 
@@ -177,10 +182,7 @@ def run(options, args):
         l.info("Finished running plugin tests")
     elif args[0] == 'templates':
         l.info("Start running template tests")
-        setSilent()        
-        testTemplates(options, args[1:])
-        if options.verbose: setVerbose()
-        else: setInfo()
+        testTemplates(options, args[1:])        
         l.info("Ran %d template test, %d failed" % (
                 templateTests, templateFailures))
         l.info("Finished running template tests")
