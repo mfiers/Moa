@@ -17,7 +17,7 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Filesets
+filesets
 --------
 
 Define sets of files for Moa
@@ -28,11 +28,52 @@ import re
 import os
 import sys
 import readline
-import moa.ui
 import glob
+
+import fist
+
+import moa.ui
 import moa.utils
 import moa.logger as l
 
+
+
+def defineCommands(data):
+    """
+    Set the moa commands for this plugin
+    """
+    data['commands']['files'] = {
+        'desc' : 'Show an overview of the files for this job',
+        'call' : showFiles,
+        }
+    
+def showFiles(data):
+    """
+    files
+    -----
+    
+    Show an overview of the files found for this job
+    """
+    job = data['job']
+    filesets = job.template.filesets.keys()
+    filesets.sort()
+    for fsid in filesets:
+        files = job.data.filesets[fsid].files
+        if len(files) == 0:
+            moa.ui.fprint('* Fileset: %%(bold)s%-20s%%(reset)s: %%(bold)s%%(red)sNo files found%%(reset)s' % 
+                          fsid)
+        else:
+            moa.ui.fprint(('* Fileset: %%(bold)s%-20s%%(reset)s '
+                           '(%-6s: '
+                           '%%(green)s%%(bold)s%d%%(reset)s files found'
+                           '') % 
+                          (fsid, job.template.filesets[fsid].type + ')', len(files)))
+            for f in files[:3]:
+                moa.ui.fprint('    %(blue)s' + f + '%(reset)s')
+            if len(files) > 3:
+                moa.ui.fprint('       ... and %d more' % (len(files)-3))
+    
+    
 def prepare(data):
     job = data['job']
     moaId = job.template.name
@@ -47,214 +88,199 @@ def prepare(data):
     for fsid in job.template.filesets.keys():
         
         job.conf['moa_filesets'].append(fsid)
-
         fs = job.template.filesets[fsid]
-
-        if fs.type == 'map':
-
-            job.template.parameters['%s_dir' % fsid] = {
+            
+        if fs.type == 'map':            
+            job.template.parameters[fsid] = {
                 'category' : fs.get('category', 'input'),
                 'optional' : fs.get('optional', True),
-                'help' : 'directory for the %s file set',
-                'default' : fs.get('dir', '.'),
-                'type' : 'directory',
-                }
-            
-            job.template.parameters['%s_extension' % fsid] = {
-                'category' : fs.get('category', 'input'),
-                'optional' : True,
-                'help' : 'extension for the %s file set',
-                'default' : fs.get('extension', ''),
+                'help' : 'map pattern for the %s file set',
+                'default' : fs.get('pattern', '*'),
                 'type' : 'string'
                 }
-            job.template.parameters['%s_glob' % fsid] = {
-                'category' : fs.get('category', 'input'),
-                'optional' : True,
-                'default' : fs.get('glob', '*'),
-                'help' : 'Output glob for the mapped file set "%s"' % fsid,
-                'type' : 'string',
-                }
+            
         elif fs.type in ['set']:
-            job.template.parameters['%s_dir' % fsid] = {
+            
+            job.template.parameters[fsid] = {
                 'category' : fs.get('category', 'input'),
+                'default' : fs.get('pattern', ''),
                 'optional' : fs.get('optional', False),
                 'help' : fs.help,
-                'default' : fs.get('dir', ''),
-                'type' : 'directory'
                 }
-            job.template.parameters['%s_extension' % fsid] = {
-                'category' : 'input',
-                'optional' : True,
-                'default' : fs.extension,
-                'help' : 'Extension for the file set "%s"' % fsid,
-                'type' : 'string',
-                }
-            job.template.parameters['%s_glob' % fsid] = {
-                'category' : 'input',
-                'optional' : True,
-                'default' : fs.get('glob', '*'),
-                'help' : 'File glob for the file set "%s"' % fsid,
-                'type' : 'string',
-                }
+            
         elif fs.type == 'single':
-            job.template.parameters['%s' % fsid] = {
+            job.template.parameters[fsid] = {
                 'category' : fs.get('category', 'input'),
                 'default' : fs.get('default', ''),
-                'optional' : fs.optional,
+                'optional' : fs.get('optional', True),
                 'help' : fs.help,
                 'type' : 'file'
                 }
+            
             #unless it is an input file, do not check for this
-            #file to exists! (since it might not yet)
+            #file to exists! (since it might not exist yet)
             if not fs.category == 'input':
                 job.conf.doNotCheck.append('%s_file' % fsid)
-
-
-def _files_from_glob(dir, pat, ext):
-    """
-    Return a set of files from a glob
-    """
-    rv = []
-    if ext:
-        rv = glob.glob(os.path.join(
-            dir, '%s.%s' % (pat, ext)))
-    else:
-        rv = glob.glob(os.path.join(dir, pat))
-    
-    l.debug("from glob %s // %s // %s" % (dir, pat, ext))
-    l.debug("found %d files" % len(rv))
-    return rv
-
-def _map_files(job, fromId, toId):
-    """
-    Map files from one set to another
-    """
-    allSets = job.template.filesets
-    fos = allSets[fromId]
-    tos = allSets[toId]
-    conf = job.conf
-
-    frof = [os.path.basename(x) for x in job.data.fileSets[fromId]['files']]
-
-    #no input files - no output files
-    if len(frof) == 0: 
-        return []
-
-    todir = conf['%s_dir' % toId]
-    toext = conf['%s_extension' % toId]
-    toglob = conf['%s_glob' % toId]
-
-    if fos.type == 'single':
-        frglob = '*'
-        infile = os.path.basename(frof[0])
-        if '.' in infile:
-            frext = infile.rsplit('.',1)[-1]
-        else: frex = ''
-    else:
-        frext = conf.get('%s_extension' % fromId, '')
-        frglob = conf.get('%s_glob' % fromId, '*')
-    
-    #map directory
-    if todir:
-        frof = [os.path.join(todir, x) for x in frof]
-
-    #map extensions
-    if frext and toext:
-        rere = re.compile('%s$' % frext)
-        frof = [rere.sub(toext, x) for x in frof]
-    elif toext:
-        frof = ['%s.%s' % (x, toext) for x in frof]    
-
-    #map glob
-    if toglob.count('*') > 1:
-        l.critical("Cannot handle more than one '*' in the %s_glob" % toId)
-        sys.exit(-1)
-    elif toglob == '*':
-        pass
-    elif toglob.count('*') == 1:
-        if not frglob.count('*') == 1:
-            l.critical(("Input glob needs to have a '*' "
-                        "(mapping %s->%s / %s->%s)") % 
-                       (fromId, toId, frglob, toglob))
-            sys.exit(-1)
-        frof = [re.sub('^' + frglob.replace('*', '(.*)'),
-                       toglob.replace('*', r'\1'),
-                       x) for x in frof]
-    else:
-        if len(frof) != 1:
-            l.critical(("With no wildcard in the  %s_glob, the input "
-                        "may not consist of more than one file") % toId)
-        if toext:
-            frof = [os.path.join(todir, '%s.%s' % (toglob, toext))]
-            print 'mappig to ', frof            
-        else:
-            frof = [toglob]
                 
-    return frof
 
-
-
-def readFileSet(job, fsid):
-    fof = os.path.join('.moa', '%s.fof' % fsid)
-    if os.path.exists(fof):
-        with open(fof) as F:
-            return F.read().split()
-    else:
-        return []
+#def _files_from_glob(dir, pat, ext):
+#    """
+#    Return a set of files from a glob
+#    """
+#    rv = []
+#    if ext:
+#        rv = glob.glob(os.path.join(
+#            dir, '%s.%s' % (pat, ext)))
+#    else:
+#        rv = glob.glob(os.path.join(dir, pat))
+#    
+#    l.debug("from glob %s // %s // %s" % (dir, pat, ext))
+#    l.debug("found %d files" % len(rv))
+#    return rv
+#
+#def _map_files(job, fromId, toId):
+#    """
+#    Map files from one set to another
+#    """
+#    allSets = job.template.filesets
+#    fos = allSets[fromId]
+#    tos = allSets[toId]
+#    conf = job.conf
+#
+#    frof = [os.path.basename(x) for x in job.data.filesets[fromId]['files']]
+#
+#    #no input files - no output files
+#    if len(frof) == 0: 
+#        return []
+#
+#    todir = conf['%s_dir' % toId]
+#    toext = conf['%s_extension' % toId]
+#    toglob = conf['%s_glob' % toId]
+#
+#    if fos.type == 'single':
+#        frglob = '*'
+#        infile = os.path.basename(frof[0])
+#        if '.' in infile:
+#            frext = infile.rsplit('.',1)[-1]
+#        else: frex = ''
+#    else:
+#        frext = conf.get('%s_extension' % fromId, '')
+#        frglob = conf.get('%s_glob' % fromId, '*')
+#    
+#    #map directory
+#    if todir:
+#        frof = [os.path.join(todir, x) for x in frof]
+#
+#    #map extensions
+#    if frext and toext:
+#        rere = re.compile('%s$' % frext)
+#        frof = [rere.sub(toext, x) for x in frof]
+#    elif toext:
+#        frof = ['%s.%s' % (x, toext) for x in frof]    
+#
+#    #map glob
+#    if toglob.count('*') > 1:
+#        l.critical("Cannot handle more than one '*' in the %s_glob" % toId)
+#        sys.exit(-1)
+#    elif toglob == '*':
+#        pass
+#    elif toglob.count('*') == 1:
+#        if not frglob.count('*') == 1:
+#            l.critical(("Input glob needs to have a '*' "
+#                        "(mapping %s->%s / %s->%s)") % 
+#                       (fromId, toId, frglob, toglob))
+#            sys.exit(-1)
+#        frof = [re.sub('^' + frglob.replace('*', '(.*)'),
+#                       toglob.replace('*', r'\1'),
+#                       x) for x in frof]
+#    else:
+#        if len(frof) != 1:
+#            l.critical(("With no wildcard in the  %s_glob, the input "
+#                        "may not consist of more than one file") % toId)
+#        if toext:
+#            frof = [os.path.join(todir, '%s.%s' % (toglob, toext))]
+#            print 'mappig to ', frof            
+#        else:
+#            frof = [toglob]
+#                
+#    return frof
+#
+#def readfileset(job, fsid):
+#    fof = os.path.join('.moa', '%s.fof' % fsid)
+#    if os.path.exists(fof):
+#        with open(fof) as F:
+#            return F.read().split()
+#    else:
+#        return []
 
 
 def preCommand(data):
+    """
+    Run before execution of any command (backend or plugin)
+    """
     l.debug("preparing input files")
-    return readFilesets(data)
+    preparefilesets(data)
 
-def readFilesets(data):
-    
+def preparefilesets(data):
+    """
+    prepare all filesets
+    """
     job = data['job']
     moaId = job.template.name
 
-    job.data.fileSets = {}
+    job.data.filesets = {}
 
     if not job.template.has_key('filesets'):
         return
 
     #First, collect 'input'/'set' files
     #create a list of all sets & order them - MAPS GO LAST!!
-    for fsid in job.template.filesets.keys():
+    
+    fileSets = job.template.filesets.keys()
+    
+#    for fsid in job.template.filesets.keys():
+#        fs = job.template.filesets[fsid]
+#        if not fs.has_key('order'):
+#            if fs.type == 'map':
+#                fs.order = 100
+#            else:
+#                fs.order = 50
+#
+#    filesetList = [(job.template.filesets[x].order, x)
+#                   for x in job.template.filesets.keys()]
+#    filesetList.sort()
+
+    while True:
+        if len(fileSets) == 0: break
+        fsid = fileSets.pop(0)        
         fs = job.template.filesets[fsid]
-        if not fs.has_key('order'):
-            if fs.type == 'map':
-                fs.order = 100
-            else:
-                fs.order = 50
-
-    fileSetList = [(job.template.filesets[x].order, x)
-                   for x in job.template.filesets.keys()]
-    fileSetList.sort()
-
-
-    for order, fsid in fileSetList:
-        fs = job.template.filesets[fsid]
-        job.data.fileSets[fsid] = fs
-
+        job.data.filesets[fsid] = fs
+        oriPat = job.template.filesets[fsid].get('pattern', './*')
+        
         if fs.type == 'set':
-            files = _files_from_glob(
-                job.conf['%s_dir' % fsid],
-                job.conf['%s_glob' % fsid],
-                job.conf['%s_extension' % fsid])
+            files = fist.fistFileset(job.conf[fsid], oriPat)
+            files.resolve()
         elif fs.type == 'single':
-            files = [job.conf['%s' % fsid]]
+            files = files.fistSingle(job.conf[fsid], oriPat)
         elif fs.type == 'map':
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")
-            frfs = job.template.filesets[fs.source]
-            files = _map_files(job, fromId = fs.source, toId = fsid)
+            if not job.data.filesets.has_key(fs.source) or \
+                    not job.data.filesets[fs.source].has_key('files') or \
+                    not job.data.filesets[fs.source].files.resolved:
+                fileSets.append(fsid)
+                continue
+            source = job.data.filesets[fs.source].files
+            files = fist.fistMapset(job.conf[fsid], oriPat)
+            files.resolve(source)
         else:
             moa.ui.exitError("Invalid data set type %s for data set %s" % (
                     fs.type, fsid))
         l.debug("Recovered %d files for fileset %s" % (len(files), fsid))
-        job.data.fileSets[fsid].files = files
+        job.data.filesets[fsid].files = files
         with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
-            F.write("\n".join(files))
+            F.write("\n".join(files) + "\n")
+            
             
     #rearrange the files for use by the job
     job.data.inputs = []
@@ -270,8 +296,8 @@ def readFilesets(data):
         if fs.category == 'prerequisite':
             job.data.prerequisites.append(fsid)
 
-    for fsid in job.data.fileSets.keys():
-        fs = job.data.fileSets[fsid]
+    for fsid in job.data.filesets.keys():
+        fs = job.data.filesets[fsid]
         l.debug('Found fileset %s (%s) with %d files' % (
                 fsid, fs.type, len(fs.files)))
 

@@ -39,41 +39,48 @@ class Actor:
     
     :param wd: Working directory
     :type wd: String
-    :param captureOut: Capture the output in log files
-    :type captureOut: Boolean
-    :param captureErr: Capture the output in log files
-    :type captureErr: Boolean
-    :param captureName: Basename for the log files that will
-        capture the output
-    :type captureName: String
     """
-    def __init__(self, wd, 
-                 captureOut = False,
-                 captureErr = False,
-                 captureName = None
-                 ):
+    def __init__(self, wd):
+        
         self.wd = wd
+        self.sendOutTo = 'stdout'
+        self.sendErrTo = 'stderr'
+        self.out = ''
+        self.err = ''
+        self.saveName = os.path.join(wd, 'moa')
         
-        self.captureName = captureName
-        self.captureOut = captureOut
-        self.captureErr = captureErr
-        
-        #prepare capturing of output
-        self.FERR = None
-        self.FOUT = None
-        
-        if not captureName:
-            if os.path.exists(os.path.join(self.wd, '.moa')):
-                base = os.path.join(self.wd, '.moa', 'out')
-                if not os.path.exists(base):
-                    os.makedirs(base)
-            else:
-                base = self.wd
                 
-        captureName = os.path.join(base, 'out.%d' % os.getpid())
-        self.captureErrName = "%s.err" % captureName
-        self.captureOutName = "%s.out" % captureName        
-        
+    def setSaveName(self, name):
+        self.saveName = name
+   
+    def setOut(self, to):
+        """
+        Determine where to send the output. Three possibilities:
+        * file (depends on setSaveName)
+        * pipe (can be retrieved from the actor.out string)
+        * stdout (print to stdout)
+        """
+        if to == 'file':
+            self.sendOutTo = 'file'
+        elif to == 'pipe':
+            self.sendOutTo = 'pipe'
+        else:
+            self.sendOutTo = 'stdout'
+            
+    def setErr(self, to):
+        """
+        Determine where to send the stderr. Three possibilities:
+        * file (depends on setSaveName)
+        * pipe (can be retrieved from the actor.err string)
+        * stderr (print to stderr)
+        """
+        if to == 'file':
+            self.sendErrTo = 'file'
+        elif to == 'pipe':
+            self.sendErrTo = 'pipe'
+        else:
+            self.sendErrTo = 'stderr'
+                                
     def setEnv(self, d):
         """
         Setup the environment
@@ -84,54 +91,38 @@ class Actor:
         for k in d.keys():
             os.putenv(k, str(d[k]))
             
-    def run(self, cl, background = False):
+    def run(self, cl):
         """
         Actually run
 
-        :param cl: The command to execute, for example: `['ls', '/tmp']`
-            
-        :type cl: list of strings
-
-        :param background: Run this job in the background? If `True`,
-           fork and have the parent return immediately. The child
-           finishes. If `False`, wait for the job to finish :type
-           background: Boolean
-
-        :rtype: the process id if `background == True`, else the
-           return code
-        """        
-        if background:
-            # try to fork
-            child = os.fork()
-            if child != 0:
-                # This is the parent thread - return
-                return child
-
-            l.debug("Child thread - start executing - start run %s" % child)
-            
-            #no questions asked - we're saving the output
-            self.captureOut = True
-            self.captureErr = True
+        :param cl: The command to execute, for example: `['ls', '/tmp']`            
+        :type cl: list of strings        
+        :returns: return code of the job
+        :rtype: integer
         
-        return self.run2(cl)
-        
-    def run2(self, cl):
-        """
-        Really run, this function is called by :func:`run`.
-        """
+        """   
         self.runStartTime = time.time()
         
         l.debug("Starting actor now in %s" % self.wd)
         l.debug(" - with command line: '%s'" % " ".join(cl))
         
-        if self.captureOut:
-            self.FOUT = open(self.captureOutName, 'w')
-        if self.captureErr:
-            self.FERR = open(self.captureErrName, 'w')
+        if self.sendOutTo == 'file':
+            FOUT = open('%s.out' % self.saveName, 'a')
+        elif self.sendOutTo == 'pipe':
+            FOUT = subprocess.PIPE
+        else:
+            FOUT = None
+
+        if self.sendErrTo == 'file':
+            FERR = open('%s.err' % self.saveName, 'a')
+        elif self.sendErrTo == 'pipe':
+            FERR = subprocess.PIPE
+        else:
+            FERR = None        
 
         self.p = subprocess.Popen(
             cl, shell=False, cwd = self.wd,
-            stdout = self.FOUT, stderr = self.FERR)
+            stdout = FOUT, stderr = FERR)
 
         l.debug("execution has started with pid %d" % self.p.pid)            
         self.pid = self.p.pid
@@ -140,12 +131,12 @@ class Actor:
 
         self.rc = self.p.returncode
         self.runStopTime = time.time()
-        
-        if self.captureOut:
-            self.FOUT.close()
-        if self.captureErr:
-            self.FERR.close()
-            
+
+        if self.sendOutTo == 'file':
+            FOUT.close()
+        if self.sendErrTo == 'file':
+            FERR.close()
+                    
         l.debug("Finished execution with rc %d " % self.rc)
         return self.rc
 

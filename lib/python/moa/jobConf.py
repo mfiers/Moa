@@ -51,10 +51,15 @@ class JobConf(object):
         self.jobConfFile = os.path.join(self.job.confDir, 'config')
         self.jobConf = Yaco.Yaco()
 
-        #these fields are not to be saved
+        #: these fields are not to be saved
         self.doNotSave = []
-        #these fields are not be by checked
+        
+        #: these fields are not be type-checked
         self.doNotCheck = []
+        
+        #: these fields are private (i.e. not to be
+        #: displayed by default)
+        self.private = []
         
         if os.path.exists(self.jobConfFile):
             self.jobConf.load(self.jobConfFile)
@@ -109,7 +114,7 @@ class JobConf(object):
 
         if key in self.template.parameters.keys() and \
                self.template.parameters[key].has_key('callback'):
-            v = self.template.parameters[key].callback(v)
+            v = self.template.parameters[key].callback(key, v)
         return v
     
     def __delitem__(self, key):

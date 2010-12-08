@@ -60,12 +60,11 @@ class Ruff(moa.backend.BaseBackend):
         
         templateFile = os.path.join(
             TEMPLATEDIR, '%s.jinja2' % (self.job.template.moa_id))
-        
-        snippetsFile = os.path.join(
-            MOABASE, 'lib', 'ruff', 'snippets.jinja2')
-
         self.commands = RuffCommands()
         self.commands.load(templateFile)
+
+        snippetsFile = os.path.join(
+            MOABASE, 'lib', 'ruff', 'snippets.jinja2')
         self.snippets = RuffCommands()
         self.snippets.load(snippetsFile)
         
@@ -73,7 +72,7 @@ class Ruff(moa.backend.BaseBackend):
         return jTemplate(self.commands[command])
                 
     def hasCommand(self, command):
-        return True
+        return command in self.commands.keys()
 
     def defineOptions(self, parser):
         g = parser.add_option_group('Ruffus backend')
@@ -88,12 +87,12 @@ class Ruff(moa.backend.BaseBackend):
         """
         Execute a command
         """
-        #self.job.plugins.run("readFilesets")
+        #self.job.plugins.run("readfilesets")
 
         l.debug("executing %s" % command)
         jt = self.getCommandTemplate(command)
-        actor = moa.actor.Actor(self.job.wd)
-        
+        actor = self.job.getActor()
+
         #rawConf = {}
         #for k in self.job.conf.keys():
         #        rawConf[k] = self.job.conf[k]
@@ -102,7 +101,7 @@ class Ruff(moa.backend.BaseBackend):
         #determine which files are prerequisites
         prereqs = []
         for fsid in self.job.data.prerequisites:
-            prereqs.extend(self.job.data.fileSets[fsid]['files'])
+            prereqs.extend(self.job.data.filesets[fsid]['files'])
                 
             
         def generate_data_map():
@@ -117,32 +116,36 @@ class Ruff(moa.backend.BaseBackend):
                 
             #determine number the number of files
             noFiles = 0
-            for i, k in enumerate(self.job.data.fileSets.keys()):
+            for i, k in enumerate(self.job.data.filesets.keys()):
                 if i == 0:
-                    noFiles = len(self.job.data.fileSets[k]['files'])
+                    noFiles = len(self.job.data.filesets[k].files)
                 else:
-                    assert(len(self.job.data.fileSets[k]['files']) == noFiles)
+                    assert(len(self.job.data.filesets[k].files) == noFiles)
           
             #rearrange files
             for i in range(noFiles):
-                outputs = [self.job.data.fileSets[x]['files'][i] 
+                outputs = [self.job.data.filesets[x].files[i] 
                            for x in self.job.data.outputs]
-                inputs =  [self.job.data.fileSets[x]['files'][i] 
+                inputs =  [self.job.data.filesets[x].files[i] 
                            for x in self.job.data.inputs]
 
                 l.debug('pushing job with inputs %s' % ", ".join(inputs[:10]))
                 
-                fsDict = dict([(x, self.job.data.fileSets[x]['files'][i]) 
+                
+                fsDict = dict([(x, self.job.data.filesets[x]['files'][i]) 
                                for x in self.job.data.inputs + self.job.data.outputs])
                 
-                jobData = fsDict
-                jobData.update(self.job.conf)
+                jobData = self.job.conf
                 jobData['snippets'] = self.snippets
+                jobData.update(fsDict)
                 script = jt.render(jobData)
                                  
                 yield([inputs + prereqs], outputs, actor, script)
                        
-        cmode = self.job.template.commands[command].mode
+        if self.job.template.commands.has_key(command):
+            cmode = self.job.template.commands[command].mode
+        else:
+            cmode = 'simple'
 
         if cmode == 'map':
             #late decoration - see if that works :/
@@ -152,6 +155,7 @@ class Ruff(moa.backend.BaseBackend):
                                 one_second_per_job=False,
                                 multiprocess= self.job.options.threads,
                                 )
+            rc = 0
         elif cmode == 'reduce':
             pass
         elif cmode == 'simple':
@@ -160,11 +164,13 @@ class Ruff(moa.backend.BaseBackend):
             tf.write(jt.render(self.job.conf))
             tf.close()
             l.debug("exxxxxecuting script %s" % tf.name)
-            actor.run(['bash', '-e', tf.name])
+            rc = actor.run(['bash', '-e', tf.name])
+            
+        return rc
 
 
 def executor(input, output, actor, script):
-
+    print 'processing', input, output
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
                                       mode='w')

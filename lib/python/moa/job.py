@@ -30,6 +30,7 @@ import moa.utils
 import moa.logger as l
 import moa.template
 import moa.jobConf
+import moa.actor
 
 def newJob(wd, template, title, parameters=[]):
     """
@@ -110,7 +111,8 @@ class Job(object):
         self.template = None
         self.backend = None
         self.args = []
-
+        self.actor = moa.actor.Actor(wd = self.wd)        
+        
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
         
@@ -131,15 +133,17 @@ class Job(object):
         Check if this job defines a certain command
 
         .. Warning::
-            THIS METHOD DOES NOT WORK
-            
+            THIS METHOD DOES NOT WORK PROPERLY YET
 
         >>> job = newTestJob('unittest')
         >>> assert(job.hasCommand('run'))
         >>> assert(job.hasCommand('run2'))
-        >>> assert(job.hasCommand('run3') == False)
-        """        
-        return self.backend.hasCommand(command)
+
+        """
+        if self.template.backend == 'ruff':
+            return self.backend.hasCommand(command)
+        else:
+            return True
 
     def checkCommands(self, commands):
         """
@@ -189,8 +193,8 @@ class Job(object):
         An actor is meant to handle the execution of out-of-python tools
         
         :rtype: instance of :class:`moa.actor.Actor`
-        """        
-        return moa.actor.Actor(wd = self.wd)
+        """
+        return self.actor        
 
     
     def execute(self, command, verbose=False, background=False):
@@ -198,26 +202,30 @@ class Job(object):
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
 
-        
-        .. Note::
-        
-          Should move backgrounding functionality to this module - as opposed to the backend.
-          
         :param command: the command to execute
         :type command: string
         :param verbose: output lots of data
-        :type verbose: Boolean
+        :type verbose: Boolean        
+        :param background: Run this job in the background? If `True`,
+           fork and have the parent return immediately. The child
+           finishes. If `False`, wait for the job to finish            
+        :type background: Boolean
 
-        :param background: Run in the background (the backend is supposed to fork 
-           & this function will return immediately  
         """
+        if not self.backend:
+            l.critical("No backend loaded - cannot execute %s" % command)
+
+        if background:
+            #Fork
+            child = os.fork()
+            if child != 0:
+                # This is the parent thread - return
+                return child
+            
+            l.debug("In the child thread - start executing - start run %s" % child)
+   
         l.debug("executing %s" % command)
-        if self.backend:
-            self.backend.execute(command,
-                                 verbose = verbose,
-                                 background = background)
-        else:
-            l.error("No backend loaded - cannot execute %s" % command)
+        return self.backend.execute(command, verbose = verbose, background = background)
                     
     def prepare(self):
         """
