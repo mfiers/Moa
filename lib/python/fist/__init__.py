@@ -17,35 +17,46 @@ class fistCore(list):
     """
     Core class for all fist classes
     """
-    def __init__(self, url):
+    def __init__(self, url, mapPattern=None):
         self.url = url
+        if not mapPattern: 
+            self.mapPattern = url
+        else:
+            self.mapPattern = mapPattern
         self.init()
+        self.resolved = False
 
     def init(self):
-        self._urlparse()
+        self.scheme, self.netloc, self.path, self.glob = \
+            self._urlparse(self.url)
+            
+        self.mapScheme, self.mapNetloc, self.mapPath, self.mapGlob = \
+            self._urlparse(self.mapPattern)
         
-    def _urlparse(self):
-        o = urlparse.urlparse(self.url)
+    def _urlparse(self, url):
+        o = urlparse.urlparse(url)
         
-        if o.scheme: self.scheme = o.scheme
-        else: self.scheme = 'file'
+        if o.scheme: scheme = o.scheme
+        else: scheme = 'file'
         
-        self.netloc = o.netloc
+        netloc = o.netloc
         
         if o.path and o.path[-1] == '/':
-            self.path = o.path[:-1]
-            self.glob = '*'
+            urlpath = o.path[:-1]
+            urlglob = '*'
         elif o.path and os.path.isdir(o.path):
-            self.path = o.path
-            self.glob = '*'
+            urlpath = o.path
+            urlglob = '*'
         elif not o.path:
-            self.path = '.'
-            self.glob = '*'
+            urlpath = '*'
+            urlglob = '*'
         elif '/' in o.path:
-            self.path, self.glob = o.path.rsplit('/', 1)
+            urlpath, urlglob = o.path.rsplit('/', 1)
         else:
-            self.path='.'
-            self.glob=o.path
+            urlpath='.'
+            urlglob=o.path
+            
+        return scheme, netloc, urlpath, urlglob
     
     def resolve(self):
         raise Exception("needs to be overridden")    
@@ -59,7 +70,12 @@ class fistSingle(fistCore):
         """
         Assuming the url is a single file
         """
+        super(fistFileset, self).init()
+        self.resolved = True
         self.extend(self.url)
+        
+    def resolve(self):
+        pass
     
 
 class fistFileset(fistCore):
@@ -71,27 +87,27 @@ class fistFileset(fistCore):
     * `../*.txt`
     * `file:///home/name/data/*.txt`
         
-    >>> f = fistFileSet('*.txt')
+    >>> f = fistFileset('*.txt')
     >>> assert(f.path=='.')
     >>> assert(f.glob=='*.txt')   
     >>> assert(f.path=='.')
     >>> assert(f.glob=='*.txt')     
-    >>> f = fistFileSet('/tmp')
+    >>> f = fistFileset('/tmp')
     >>> assert(f.path=='/tmp')
     >>> assert(f.glob=='*')    
-    >>> f = fistFileSet('/tmp/*.txt')
+    >>> f = fistFileset('/tmp/*.txt')
     >>> assert(f.path=='/tmp')
     >>> assert(f.glob=='*.txt')       
-    >>> f = fistFileSet('../*.txt')
+    >>> f = fistFileset('../*.txt')
     >>> assert(f.path=='..')
     >>> assert(f.glob=='*.txt')        
-    >>> f = fistFileSet(os.path.join(wd, 'in', '*.txt'))
+    >>> f = fistFileset(os.path.join(wd, 'in', '*.txt'))
     >>> f.resolve()
     >>> assert(len(f) == 100)
-    >>> f = fistFileSet(os.path.join(wd, 'in', 'in1*.txt'))
+    >>> f = fistFileset(os.path.join(wd, 'in', 'in1*.txt'))
     >>> f.resolve()
     >>> assert(len(f) == 10)
-    >>> f = fistFileSet('~/*')
+    >>> f = fistFileset('~/*')
     >>> f.resolve()
     >>> assert(len(f) > 0)
     """
@@ -99,60 +115,95 @@ class fistFileset(fistCore):
     def init(self):
         if '~' in self.url:
             self.url = os.path.expanduser(self.url)
-        self._urlparse()
+        super(fistFileset, self).init()
     
     def resolve(self):
+        self.resolved = True    
         self.extend(glob.glob('%s/%s' % (self.path, self.glob)))
 
 class fistMapset(fistCore):
     """
-    fistMapSet
+    fistMapset
     ----------
     
     Map set - map a fileset based on a target uri
     
-    >>> f = fistFileSet(os.path.join(wd, 'in', 'in*.txt'))
+    >>> f = fistFileset(os.path.join(wd, 'in', 'in*.txt'))
     >>> f.resolve()
     >>> assert(len(f) == 100)
-    >>> m = fistMapSet('out/test.*.test')
+    >>> m = fistMapset('out/test.*.test')
     >>> m.resolve(f)
-    >>> m
     
     """
     
     def init(self):
         if '~' in self.url:
             self.url = os.path.expanduser(self.url)
-        self._urlparse()
+        super(fistMapset, self).init()
+    
+    def __str__(self):
+        return self.url    
+    
+    def resolver(self, mapFrom, list):
+        """
+        map all files in the incoming list
+        """
+##        print 'x' * 80
+#        print 'ORIping from %20s -- %20s:' % (mapFrom.mapPath, mapFrom.mapGlob)
+#        print 'THIping from %20s -- %20s:' % (mapFrom.path, mapFrom.glob)
+#        print 'ORIping to   %20s -- %20s:' % (self.mapPath, self.mapGlob)
+#        print 'THIping to   %20s -- %20s:' % (self.path, self.glob)
+        reF = ''
+        reT = ''
+        method = ''
+        if '*' in mapFrom.path and '*' in self.path:
+            method += 'a'
+            #raise Exception("Don't think that this should happen")
+            reF = mapFrom.path.replace('*', r'(?P<path>.*)')
+            reT = self.path.replace('*', r'\g<path>')
+        elif self.path == '*':
+            method += 'b'
+            reF = r'.*'
+            reT = self.path.replace('*', mapFrom.path)
+        elif mapFrom.path == '*':
+            method += 'c'
+            reF = mapFrom.path.replace('*', '.*')
+            reT = self.path
+        elif ('*' in self.path) or ('*' in mapFrom.path):            
+            raise Exception("Cannot handle path globs other than '*'")
+        else:
+            method += 'd'
+            reF = mapFrom.path
+            reT = self.path
+                      
+        if '*' in self.glob and '*' in mapFrom.mapGlob:
+            #raise Exception("Don't think that this should happen")
+            method += '1'
+            reF += '/' + mapFrom.mapGlob.replace('*', r'(?P<glob>[^/]*)')
+            reT += '/' + self.mapGlob.replace('*', r'\g<glob>')
+        elif '*' in mapFrom.glob:
+            method += '2'
+            reF += '/' + mapFrom.glob.replace('*', '.*')
+            reT += '/' + self.mapGlob        
+        else:
+            method += '4'
+            reF += '/' + mapFrom.mapGlob
+            reT += '/' + self.mapGlob
+
+#        print '## method', method
+#        print '##### reF', reF
+#        print '##### reT', reT
+        rex = re.compile(reF)        
+        return [rex.sub(reT, x) for x in list]
     
     def resolve(self, mapFrom):
         """
-        Resolve the mapped set based on a input fileSet
-        
+        Resolve the mapped set based on a input fileSet    
         """
-        reF = ''
-        reT = ''
-        if '*' in mapFrom.path and '*' in self.path:
-            reF = mapFrom.path.replace('*', r'(.*)')
-            reT = self.path.replace('*', r'\1')
-        elif '*' in mapFrom.path:
-            reF = mapFrom.path.replace('*', '.*')
-            reT = self.path
-        else:
-            reF = mapFrom.path
-            reT = self.path
-        if '*' in mapFrom.glob and '*' in self.glob:
-            reF += '/' + mapFrom.glob.replace('*', r'(.*)')
-            reT += '/' + self.glob.replace('*', r'\1')
-        elif '*' in mapFrom.glob:
-            reF += '/' + mapFrom.glob.replace('*', '.*')
-            reT += '/' + self.glob
-        else:
-            reF += '/' + mapFrom.glob
-            reT += '/' + self.glob
-            
-        rex = re.compile(reF)
-        self.extend([rex.sub(reT, x) for x in mapFrom])
+        self.extend(self.resolver(mapFrom, mapFrom))
+        self.resolved = True                
+
+
 
     
 if __name__ == '__main__':
