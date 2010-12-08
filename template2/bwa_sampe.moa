@@ -49,12 +49,14 @@ filesets:
     dir: .
     extension: sam
     source: fq_forward_input
+    glob:  '{{ fq_forward_input_glob}}_2'
     type: map
   output_bam:
     category: output
     dir: .
     extension: bam
     source: fq_forward_input
+    glob:  '{{ fq_forward_input_glob}}_2'
     type: map
 moa_id: bwa_sampe
 modification_data: Wed Nov 25 17:06:48 2010

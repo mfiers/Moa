@@ -35,4 +35,3 @@ parameters:
     optional: false
     type: string
 title: Bowtie index builder
-

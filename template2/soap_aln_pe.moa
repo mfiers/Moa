@@ -31,18 +31,14 @@ filesets:
     dir: .
     extension: soap
     source: fq_forward_input
+    glob: '{{fq_forward_input_glob}}_And_2'
     type: map
   sam_output:
     category: output
     dir: .
     extension: sam
     source: fq_forward_input
-    type: map
-  bam_output:
-    category: output
-    dir: .
-    extension: bam
-    source: fq_forward_input
+    glob: '{{fq_forward_input_glob}}_And_2'
     type: map
 moa_id: soap_aln_pe
 modification_data: Wed Nov 30 22:00:01 2010

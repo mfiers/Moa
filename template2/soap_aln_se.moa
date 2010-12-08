@@ -30,12 +30,6 @@ filesets:
     extension: sam
     source: fq_input
     type: map
-  bam_output:
-    category: output
-    dir: .
-    extension: bam
-    source: fq_forward_input
-    type: map
 help:
   soap_aln_se: run SOAP to align single-end reads
   clean: Remove all job data, not the Moa job itself, note that this must be implemented

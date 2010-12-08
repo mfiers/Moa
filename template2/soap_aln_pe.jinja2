@@ -21,7 +21,7 @@ soap -a {{ fq_forward_input }} 	\
 	{% if report_read_mismatches %} -A {% endif %} \
 	-p {{ thread_num }}
 /opt/samtools/soap2sam.pl {{ soap_output }}  > {{ sam_output }}
-#samtools view -bS -o {{ bam_output }} {{ sam_output }}
+#{{ snippets.sam2bam }} {{ bam_output }} {{ sam_output }}
 	
 ### clean
 

@@ -14,7 +14,7 @@ bwa sampe -a {{max_insert_size}}                        \
     {{ fq_forward_input }} {{ fq_reverse_input }}	    \
     -f {{ output }}
 
-{{ snippets.sam2bam }} {{ output_bam }} {{ output }} 2>&1
+{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
 
 ### clean
 
