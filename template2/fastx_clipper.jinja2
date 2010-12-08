@@ -1,0 +1,25 @@
+### run
+
+echo running fastx_clipper
+fastx_clipper 														
+	{% if help %} -h {% endif %} 									\
+	-a {{ adaptor }}												\
+	{% if debug_output %} -D {% endif %} 							\
+	-l {{ rm_short_seq }}											\
+	{% if keep_unknown_nuc_seq %} -n {% endif %} 					\
+	-d {{ adaptor_and_bases }}										\
+	{% if rm_non_clipped_seq %} -c {% endif %}						\
+	{% if rm_clipped_seq %} -C {% endif %}							\
+	{% if out_adaptor_only_seq %} -k {% endif %}					\
+	{% if verbose %} -v {% endif %}									\
+	{% if compress_output %} -z {% endif %}							\
+	-i {{ input }}													\
+    -o {{ output }}
+echo finish
+	
+# remember to check mapping in above cases	
+	
+	
+### clean
+
+rm *.fq

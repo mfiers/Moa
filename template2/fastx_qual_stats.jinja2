@@ -1,0 +1,27 @@
+### run
+
+echo running fastq_qual_stats
+fastx_quality_stats 															\
+	{% if help %} -h {% endif %} 												\
+	{% if new_out_format %} -N {% endif %}									    \
+	-i {{ input }}															    \
+    -o {{ qual_output }}
+fastx_nucleotide_distribution_graph.sh										    \
+	-i {{ qual_output }} 											        	\
+	-t {{ graph_title }}												        \
+	{% if gen_postScript_file %} -p {% endif %} 							    \
+	-o {{input_glob}}_nuc_distr.{{nuc_distr_output_extension}}
+fastq_quality_boxplot_graph.sh									                \
+	-i {{ qual_output }} 											         	\
+	-t {{ graph_title }}			 									        \
+	{% if gen_postScript_file %} -p {% endif %} 							    \
+	-o {{input_glob}}_boxplot.{{boxplot_output_extension}}
+echo finish
+	
+# remember to check mapping in above cases	
+	
+	
+### clean
+
+rm *.png *.txt
+

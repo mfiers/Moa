@@ -1,0 +1,116 @@
+author: Mark Fiers, Yogini Idnani
+version: 1
+backend: ruff
+commands:
+  run:
+    mode: map
+    help: run maq's fasta2bfa, fastq2bfq and map. 
+  clean:
+    mode: simple
+    help: Remove all job data, not the Moa job itself
+creation_date: Wed Dec 02 17:06:48 2010
+description: Generate alignments in SAM format given single end reads using Maq.
+filesets:
+  fq_input:
+    category: input
+    extension: fq
+    help: fastq input files
+    type: set
+    optional: false
+  bfq_output:
+    category: output
+    dir: .
+    extension: bfq
+    source: fq_input
+    type: map
+  fa_input:
+    category: input
+    extension: fasta
+    help: directory with reference fasta file name
+    type: single
+    optional: false
+  bfa_output:
+    category: output
+    dir: .
+    extension: bfa
+    source: fa_input
+    help: directory with output
+    optional: true
+    type: map
+  map_output:
+    category: output
+    dir: .
+    extension: map
+    source: fq_input
+    type: map
+  sam_output:
+    category: output
+    dir: .
+    extension: sam
+    source: fq_input
+    type: map
+moa_id: maq_se
+modification_data: Wed Dec 02 17:06:48 2010
+name: maq_se
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
+    type: string
+  read_ref_diff_rate:
+    category: ''
+    default: 0.001
+    help: rate of difference between reads and references
+    optional: true
+    type: float
+  max_mismatch_qual_sum:
+    category: ''
+    default: 70
+    help: maximum allowed sum of qualities of mismatches 
+    optional: true
+    type: integer
+  num_mismatch_24bp:
+    category: ''
+    default: 2
+    help: number of mismatches in the first 24bp
+    optional: true
+    type: integer
+  max_num_hits_out:
+    category: ''
+    default: 250
+    help: number of mismatches in the first 24bp
+    optional: true
+    type: integer
+  disable_sw:
+    category: ''
+    default: false
+    help: disable Smith-Waterman alignment
+    optional: true
+    type: boolean
+  trim_all_reads:
+    category: ''
+    default: false
+    help: trim all reads (usually not recommended)
+    optional: true
+    type: boolean 
+  match_in_colorspace:
+    category: ''
+    default: false
+    help: match in the colorspace
+    optional: true
+    type: boolean
+  extra_parameters:
+    allowed: []
+    category: ''
+    default: ''
+    help: other parameters
+    optional: true
+    type: string

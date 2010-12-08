@@ -1,0 +1,110 @@
+author: Mark Fiers, Yogini Idnani
+version: 1
+backend: ruff
+commands:
+  run:
+    mode: map
+    help: run fastx_clipper
+  clean:
+    mode: simple
+    help: Remove all job data, not the Moa job itself
+creation_date: Wed Dec 06 17:06:48 2010
+description: run fastx_clipper
+filesets:
+  input:
+    category: input
+    extension: fq
+    help: fastq input files directory
+    optional: false
+    type: set
+  output:
+    category: output
+    dir: .
+    extension: fq
+    source: input
+    type: map
+moa_id: fastx_clipper
+modification_data: Wed Dec 06 17:06:48 2010
+name: FASTX clipper
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  help:
+    category: ''
+    default: false
+    help: help screen
+    optional: true
+    type: boolean
+  adaptor:
+    category: ''
+    default: 'CCTTAAGG'
+    help: ADAPTER string. default is CCTTAAGG (dummy adapter).
+    optional: true
+    type: string
+  rm_short_seq:
+    category: ''
+    default: 5
+    help: discard sequences shorter than N nucleotides. default is 5.
+    optional: true
+    type: integer
+  adaptor_and_bases:
+    category: ''
+    default: 0
+    help: Keep the adapter and N bases after it.
+    optional: true
+    type: integer
+  rm_non_clipped_seq:
+    category: ''
+    default: false
+    help: Discard non-clipped sequences (i.e. - keep only sequences which contained the adapter).
+    optional: true
+    type: boolean
+  rm_clipped_seq:
+    category: ''
+    default: false
+    help: Discard clipped sequences (i.e. - keep only sequences which did not contained the adapter).
+    optional: true
+    type: boolean
+  out_adaptor_only_seq:
+    category: ''
+    default: false
+    help: Report Adapter-Only sequences.
+    optional: true
+    type: boolean
+  keep_unknown_nuc_seq:
+    category: ''
+    default: false
+    help: keep sequences with unknown (N) nucleotides. default is to discard such sequences.
+    optional: true
+    type: boolean
+  verbose:
+    category: ''
+    default: false
+    help:  Verbose - report number of sequences.
+                  If [-o] is specified,  report will be printed to STDOUT.
+                  If [-o] is not specified (and output goes to STDOUT),
+                  report will be printed to STDERR.
+    optional: true
+    type: boolean
+  compress_output:
+    category: ''
+    default: false
+    help: Compress output with GZIP.
+    optional: true
+    type: boolean
+  debug_output:
+    category: ''
+    default: false
+    help: DEBUG output.
+    optional: true
+    type: boolean
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
+    type: string

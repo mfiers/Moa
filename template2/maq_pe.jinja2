@@ -1,0 +1,25 @@
+### run
+
+maq fastq2bfq {{ fq_forward_input }} {{ bfq_forward_output }}
+maq fastq2bfq {{ fq_reverse_input }} {{ bfq_reverse_output }}
+maq fasta2bfa {{ fa_input }} {{ bfa_output }}
+maq map -m {{ read_ref_diff_rate }}                        \
+    -e {{ max_mismatch_qual_sum }}                         \
+    -n {{ num_mismatch_24bp }}                             \
+    -C {{ max_num_hits_out }}                              \
+	-1 {{ first_read_len }}                                \
+    -2 {{ sec_read_len }}                                  \
+    -a {{max_dist_read_pairs}}                             \
+	-A {{ max_dist_RF_read_pairs }}                        \
+    {{ extra_parameters }}                                 \
+    {% if disable_sw %} -W {% endif %}		               \
+	{% if trim_all_reads %} -t {% endif %}				   \
+	{% if match_in_colorspace %} -c {% endif %}			   \
+	{{ map_output }} {{ bfa_output }}					   \
+	{{ bfq_forward_output }} {{ bfq_reverse_output }}
+/opt/samtools/maq2sam-long {{ map_output }}  > {{ sam_output }}
+
+### clean
+
+rm *.bfq *.bfa *.map *.sam
+
