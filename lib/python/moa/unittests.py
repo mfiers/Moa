@@ -70,7 +70,7 @@ def testModule(m):
     failures += f
     tests += t
 
-def testTemplates(args=[]):
+def testTemplates(options, args=[]):
     global templateFailures
     global templateTests
     for tfile, tname in moa.template.listAll():
@@ -78,10 +78,24 @@ def testTemplates(args=[]):
             continue
         template = moa.template.Template(tname)
         if not template.backend == 'ruff':
-            continue
-        print tname
-    print 'running template tests'
-    
+            continue        
+        job = moa.job.newTestJob(tname)            
+        if job.hasCommand('unittest'):
+            l.info('testing template %s' % tname)
+            job.actor.setOut('pipe')
+            job.actor.setErr('pipe')
+            rc = job.execute('unittest', verbose = options.verbose)
+            if rc != 0:
+                l.critical("error testing template %s (rc %d)" % (tname, rc))
+                if job.actor.out.strip():
+                    l.critical("Stdout\n" + job.actor.out)
+                if job.actor.err.strip():
+                    l.critical("Stderr\n" + job.actor.err)
+                templateFailures += 1
+            templateTests += 1
+        else:
+            l.warning("job %s has no unittest defined" % tname)
+            
     
 def testPlugins(args=[]):
     global pluginFailures
@@ -135,9 +149,6 @@ def run(options, args):
         l.info("Start running python doctests")
         setSilent()        
         testModule(moa.utils)
-        #testModule(moa.lock)
-        #testModule(moa.conf)
-        #testModule(moa.project)
         testModule(moa.template)
         testModule(moa.job)
         
@@ -166,7 +177,10 @@ def run(options, args):
         l.info("Finished running plugin tests")
     elif args[0] == 'templates':
         l.info("Start running template tests")
-        testTemplates(args[1:])
+        setSilent()        
+        testTemplates(options, args[1:])
+        if options.verbose: setVerbose()
+        else: setInfo()
         l.info("Ran %d template test, %d failed" % (
                 templateTests, templateFailures))
         l.info("Finished running template tests")
