@@ -1,15 +1,23 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: '', mode: map}
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: ''
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: predict genes using geneMarkS
+filesets: {}
 moa_id: genemarks
 modification_date: Wed Nov 10 07:56:48 2010
 name: genemarks
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   gff_source:
     allowed: []

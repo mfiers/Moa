@@ -1,38 +1,34 @@
 author: Mark Fiers, Yogini Idnani
-version: 1
 backend: ruff
 commands:
-  run:
-    mode: map
-    help: run fastx_quality_stats, fastq_quality_boxplot_graph.sh and fastx_nucleotide_distribution_graph.sh
   clean:
-    mode: simple
     help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: run fastx_quality_stats, fastq_quality_boxplot_graph.sh and fastx_nucleotide_distribution_graph.sh
+    mode: map
 creation_date: Wed Dec 03 17:06:48 2010
 description: run fastx_quality_stats, fastq_quality_boxplot_graph.sh and fastx_nucleotide_distribution_graph.sh
 filesets:
-  input:
-    category: input
-    extension: fq
-    help: fastq input files directory
-    optional: false
-    type: set
-  qual_output:
-    category: output
-    dir: .
-    extension: txt
-    source: input
-    type: map
-  nuc_distr_output:
-    category: output
-    dir: .
-    extension: png
-    source: input
-    type: map
   boxplot_output:
     category: output
-    dir: .
-    extension: png
+    pattern: ./*.png
+    source: input
+    type: map
+  input:
+    category: input
+    help: fastq input files directory
+    optional: false
+    pattern: '*/*.fq'
+    type: set
+  nuc_distr_output:
+    category: output
+    pattern: ./*.png
+    source: input
+    type: map
+  qual_output:
+    category: output
+    pattern: ./*.txt
     source: input
     type: map
 moa_id: fastx_qual_stats
@@ -44,6 +40,19 @@ parameter_category_order:
 - system
 - advanced
 parameters:
+  gen_postScript_file:
+    category: ''
+    default: false
+    help: Generate PostScript (.PS) file. Default is PNG image.
+    optional: true
+    type: boolean
+  graph_title:
+    allowed: []
+    category: ''
+    default: '{{ input_glob }}'
+    help: Title - will be plotted on the graph.
+    optional: true
+    type: string
   help:
     category: ''
     default: false
@@ -56,19 +65,6 @@ parameters:
     help: New output format (with more information per nucleotide/cycle)
     optional: true
     type: boolean
-  gen_postScript_file:
-    category: ''
-    default: false
-    help: Generate PostScript (.PS) file. Default is PNG image.
-    optional: true
-    type: boolean
-  graph_title:
-    allowed: []
-    category: ''
-    default: '{{ input_glob }}'
-    help:  Title - will be plotted on the graph.
-    optional: true
-    type: string
   title:
     allowed: []
     category: system
@@ -76,3 +72,4 @@ parameters:
     help: A name for this job
     optional: false
     type: string
+version: 1

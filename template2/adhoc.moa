@@ -1,21 +1,37 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: '', mode: map}
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: ''
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: The ad hoc template aids in executing a one line on a set of input files.
 filesets:
-  input: {category: input, extension: '', help: Input files for adhoc, optional: true,
-    type: set}
+  input:
+    category: input
+    help: Input files for adhoc
+    optional: true
+    pattern: '*/*'
+    type: set
 moa_id: adhoc
 modification_date: Wed Nov 10 07:56:48 2010
 name: adhoc
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
   mode:
-    allowed: [seq, par, all, simple]
+    allowed:
+    - seq
+    - par
+    - all
+    - simple
     category: ''
     default: seq
     help: ' operation mode: *seq*, sequential: process the input files one by one;
@@ -42,7 +58,9 @@ parameters:
     optional: true
     type: directory
   powerclean:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: F
     help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
@@ -59,7 +77,9 @@ parameters:
     optional: true
     type: string
   r_mode:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: F
     help: R mode is a dedication mode to run R scripts
@@ -73,7 +93,9 @@ parameters:
     optional: true
     type: string
   touch:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: T
     help: use touch files to track if input files have changed.

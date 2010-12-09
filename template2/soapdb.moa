@@ -1,21 +1,28 @@
 author: Mark Fiers, Yogini Idnani
-version: 1
 backend: gnumake
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: '', mode: map}
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: ''
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bowtie index from a reference sequence
+filesets: {}
 moa_id: soapdb
 modification_date: Wed Nov 10 07:56:48 2010
 name: soapdb
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   input_fasta:
+    help: input fasta file for the database
     optional: false
     type: file
-    help: input fasta file for the database  
   title:
     allowed: []
     category: system
@@ -24,3 +31,4 @@ parameters:
     optional: false
     type: string
 title: Bowtie index builder
+version: 1

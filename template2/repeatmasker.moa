@@ -1,21 +1,40 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: '', mode: map}
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: ''
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run a default repeatmask on the input sequences
 filesets:
-  OUTPUT_FILESET_ID: {category: output, dir: ./OUTPUT_FILETYPE, extension: OUTPUT_FILETYPE,
-    source: INPUT_FILESET_ID, type: map}
-  input: {category: input, extension: fasta, help: Input files for repmask, optional: false,
-    type: set}
-  output: {category: output, dir: ., extension: masked, source: input, type: map}
+  OUTPUT_FILESET_ID:
+    category: output
+    pattern: ./OUTPUT_FILETYPE/*.OUTPUT_FILETYPE
+    source: INPUT_FILESET_ID
+    type: map
+  input:
+    category: input
+    help: Input files for repmask
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+  output:
+    category: output
+    pattern: ./*.masked
+    source: input
+    type: map
 moa_id: repmask
 modification_date: Wed Nov 10 07:56:48 2010
 name: repeatmasker
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
   parallel:
     allowed: []
@@ -25,14 +44,18 @@ parameters:
     optional: true
     type: integer
   quick:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: F
     help: Quick job
     optional: true
     type: set
   simple:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: F
     help: Mask *only* low complex/simple repeats, not interspersed repeats (Repeatmasker

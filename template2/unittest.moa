@@ -1,44 +1,40 @@
 author: Yogini Idnani, Mark Fiers
-version: 1
 backend: ruff
 commands:
-  prepare:
-    mode: simple
-    help: prepare for the unittest
-  run:
-    delegate: [prepare, run2]
-    help: 'Prepare & Run'
-  run2:
-    mode: map
-    help: 'actually run'
-    private: true
   clean:
-    mode: simple
     help: Remove all job data
+    mode: simple
+  prepare:
+    help: prepare for the unittest
+    mode: simple
+  run:
+    delegate:
+    - prepare
+    - run2
+    help: Prepare & Run
+  run2:
+    help: actually run
+    mode: map
+    private: true
 creation_date: Wed Nov 25 17:06:48 2010
 description: Template used in testing - has no other purpose
 filesets:
   input_1:
     category: input
-    extension: txt
-    glob: '*_1'
     help: Input file set 1
-    dir: in1
     optional: true
+    pattern: in1/*_1.txt
     type: set
   input_2:
     category: input
-    extension: txt
-    glob: '*_2'    
     help: Input file set 2
-    dir: in2
+    pattern: in2/*_2.txt
     source: input_1
     type: map
   output:
     category: output
-    extension: out
     help: output files
-    dir: .
+    pattern: ./*.out
     source: input_1
     type: map
 moa_id: unittest
@@ -51,13 +47,14 @@ parameter_category_order:
 - advanced
 parameters:
   test_string:
-    type: string
     help: Test string values
     optional: true
+    type: string
   title:
     allowed: []
     category: system
-    default: 'unittesting'
+    default: unittesting
     help: A name for this job
     optional: true
     type: string
+version: 1

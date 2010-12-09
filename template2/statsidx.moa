@@ -1,26 +1,24 @@
 author: Yogini Idnani, Mark Fiers
-version: 1
 backend: ruff
 commands:
-  run:
-    mode: map
-    help: run samtools idxstats
   clean:
-    mode: simple
     help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: run samtools idxstats
+    mode: map
 creation_date: Wed Dec 08 17:06:48 2010
 description: Retrieve and print stats from BAM file to an index file
 filesets:
   input:
     category: input
-    extension: bam
     help: bam input files directory - forward files
     optional: false
+    pattern: '*/*.bam'
     type: set
   output:
     category: output
-    dir: .
-    extension: index
+    pattern: ./*.index
     source: input
     type: map
 moa_id: statsidx
@@ -39,3 +37,4 @@ parameters:
     help: A name for this job
     optional: false
     type: string
+version: 1

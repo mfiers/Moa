@@ -1,38 +1,42 @@
 author: Mark Fiers
 backend: ruff
 commands:
-  clean: 
-    help: Remove all job data, not the Moa job itself, note that this must be implemented by the template
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template
     mode: simple
-  run: 
+  run:
     help: ''
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run BOWTIE on an set of input files (query) vs a database index.
 filesets:
-  input: 
-    category: input
-    extension: fastq
-    help: Fasta/fastq input files for bowtie
-    optional: false
-    type: set
   db:
     category: prerequisite
-    help: 'The (basename of the) bowtie database to use.'
-    type: single
+    help: The (basename of the) bowtie database to use.
     optional: false
+    pattern: '*/*'
+    type: single
+  input:
+    category: input
+    help: Fasta/fastq input files for bowtie
+    optional: false
+    pattern: '*/*.fastq'
+    type: set
   output:
     category: output
-    type: bam
-    extension: bam
-    source: input
     help: Output files
+    pattern: '*/*.bam'
+    source: input
     type: map
 moa_id: bowtie
-title: Bowtie
 modification_date: Wed Nov 10 07:56:48 2010
 name: bowtie
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
   extra_params:
     allowed: []
@@ -42,7 +46,9 @@ parameters:
     optional: true
     type: string
   input_format:
-    allowed: [fastq, fasta]
+    allowed:
+    - fastq
+    - fasta
     default: fastq
     help: Format of the input files
     optional: true
@@ -54,3 +60,4 @@ parameters:
     help: A name for this job
     optional: false
     type: string
+title: Bowtie

@@ -1,36 +1,35 @@
 author: Mark Fiers, Yogini Idnani
-version: 1
 backend: ruff
 commands:
-  run:
-    mode: map
-    help: run soap to align paired end reads
   clean:
-    mode: simple
     help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: run soap to align paired end reads
+    mode: map
 creation_date: Wed Nov 30 07:56:48 2010
-description: Use SOAP to align a set of paired fastq reads against a db 
+description: Use SOAP to align a set of paired fastq reads against a db
 filesets:
   fq_forward_input:
     category: input
-    pattern: '*/*_1.fq'
     help: fastq input files directory - forward files
     optional: false
+    pattern: '*/*_1.fq'
     type: set
   fq_reverse_input:
     category: input
-    pattern: '*/*_2.fq' 
     help: fastq input files directory - reverse files
-    source: fq_forward_input
-    type: map
-  soap_output:
-    category: output
-    pattern: './*.soap'
+    pattern: '*/*_2.fq'
     source: fq_forward_input
     type: map
   sam_output:
     category: output
-    pattern: './*.sam'
+    pattern: ./*.sam
+    source: fq_forward_input
+    type: map
+  soap_output:
+    category: output
+    pattern: ./*.soap
     source: fq_forward_input
     type: map
 moa_id: soap_aln_pe
@@ -49,30 +48,18 @@ parameters:
     help: Prefix name for reference index [*.index]
     optional: false
     type: string
-  out_unmapped_reads_file:
-    category: ''
-    default: unmapped_reads.txt
-    help: Output file name for unmapped reads
-    optional: true
-    type: string
-  rm_low_qual_reads:
+  edge_bp_no_gaps:
     category: ''
     default: 5
-    help:  Filter low quality reads contain more INT bp Ns
+    help: will not allow gap exist inside n-bp edge of a read
     optional: true
     type: integer
-  out_read_id:
+  gap_size:
     category: ''
-    default: false
-    help: Output reads id instead of reads name
+    default: 0
+    help: one continuous gap size allowed on a read
     optional: true
-    type: boolean
-  report_read_mismatches:
-    category: ''
-    default: false
-    help: report all mismatched reads in SOAP Format
-    optional: true
-    type: boolean
+    type: integer
   how_report_hits:
     category: ''
     default: 1
@@ -83,49 +70,17 @@ parameters:
     allowed: []
     category: ''
     default: 256
-    help: For  long  reads  with  high  error rate at 3'-end, those can't align whole length, then  first  align  5'  INT  bp subsequence as a seed, [256] use whole length of the read
-    optional: true
-    type: integer
-  mismatches_per_read:
-    category: ''
-    default: 6
-    help:  Totally allowed mismatches in one read
+    help: For  long  reads  with  high  error rate at 3'-end, those can't align whole
+      length, then  first  align  5'  INT  bp subsequence as a seed, [256] use whole
+      length of the read
     optional: true
     type: integer
   match_mode:
     category: ''
     default: 4
-    help: Match mode for each read or the seed part of read,  which
-       shouldn't contain more than 2 mismaches, 
-       0 exact match only
-       1 1 mismatch match only
-       2 2 mismatch match only
-       3 [gap] (coming soon)
-       4 find the best hits
-    optional: true
-    type: integer
-  thread_num:
-    category: ''
-    default: 1
-    help: Multithreads, n threads
-    optional: true
-    type: integer  
-  gap_size:
-    category: ''
-    default: 0
-    help: one continuous gap size allowed on a read
-    optional: true
-    type: integer
-  edge_bp_no_gaps:
-    category: ''
-    default: 5
-    help: will not allow gap exist inside n-bp edge of a read
-    optional: true
-    type: integer
-  min_insert_size:
-    category: ''
-    default: 400
-    help: minimal insert size allowed
+    help: Match mode for each read or the seed part of read,  which shouldn't contain
+      more than 2 mismaches, 0 exact match only 1 1 mismatch match only 2 2 mismatch
+      match only 3 [gap] (coming soon) 4 find the best hits
     optional: true
     type: integer
   max_insert_size:
@@ -135,12 +90,61 @@ parameters:
     help: maximal insert size allowed
     optional: true
     type: integer
+  min_insert_size:
+    category: ''
+    default: 400
+    help: minimal insert size allowed
+    optional: true
+    type: integer
+  mismatches_per_read:
+    category: ''
+    default: 6
+    help: Totally allowed mismatches in one read
+    optional: true
+    type: integer
   out_file_unpaired_aln:
     allowed: []
     category: ''
     default: unpaired_aln.txt
     help: output file of unpaired alignment hits
     optional: true
+    type: string
+  out_read_id:
+    category: ''
+    default: false
+    help: Output reads id instead of reads name
+    optional: true
+    type: boolean
+  out_unmapped_reads_file:
+    category: ''
+    default: unmapped_reads.txt
+    help: Output file name for unmapped reads
+    optional: true
+    type: string
+  report_read_mismatches:
+    category: ''
+    default: false
+    help: report all mismatched reads in SOAP Format
+    optional: true
+    type: boolean
+  rm_low_qual_reads:
+    category: ''
+    default: 5
+    help: Filter low quality reads contain more INT bp Ns
+    optional: true
+    type: integer
+  thread_num:
+    category: ''
+    default: 1
+    help: Multithreads, n threads
+    optional: true
+    type: integer
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
     type: string
   type_of_pe:
     allowed: []
@@ -149,10 +153,4 @@ parameters:
     help: for long insert size of pair end reads RF (default means FR pair)
     optional: true
     type: boolean
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+version: 1

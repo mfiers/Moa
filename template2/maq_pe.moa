@@ -1,62 +1,61 @@
 author: Mark Fiers, Yogini Idnani
-version: 1
 backend: ruff
 commands:
-  run:
-    mode: map
-    help: run maq's fasta2bfa, fastq2bfq and map. 
   clean:
-    mode: simple
     help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: run maq's fasta2bfa, fastq2bfq and map.
+    mode: map
 creation_date: Wed Dec 03 17:06:48 2010
 description: Generate alignments in SAM format given paired end reads using Maq.
 filesets:
-  fq_forward_input:
-    category: input
-    pattern: '*/*_1.fq'
-    help: fastq input files directory - forward files
-    optional: false
-    type: set
-  fq_reverse_input:
-    category: input
-    pattern: '*/*_2.fq'
-    help: fastq input files directory - reverse files
-    source: fq_forward_input
+  bfa_output:
+    category: output
+    help: directory with output
+    pattern: ./*.bfa
+    source: fa_input
     type: map
   bfq_forward_output:
     category: output
-    pattern: './*_1.bfq'
+    dir: .
     extension: bfq
     help: bfq files - forward files
-    dir: .
+    pattern: ./*_1.bfq
     source: fq_forward_input
     type: map
   bfq_reverse_output:
     category: output
-    pattern: './*_2.bfq'  
-    help: bfq files - reverse files    
+    help: bfq files - reverse files
+    pattern: ./*_2.bfq
     source: bfq_forward_output
     type: map
   fa_input:
     category: input
-    pattern: '*/*.fasta'
     help: directory with reference fasta file name
-    type: set
     optional: false
-  bfa_output:
-    category: output
-    pattern: './*.bfa'
-    source: fa_input
-    help: directory with output
+    pattern: '*/*.fasta'
+    type: set
+  fq_forward_input:
+    category: input
+    help: fastq input files directory - forward files
+    optional: false
+    pattern: '*/*_1.fq'
+    type: set
+  fq_reverse_input:
+    category: input
+    help: fastq input files directory - reverse files
+    pattern: '*/*_2.fq'
+    source: fq_forward_input
     type: map
   map_output:
     category: output
-    pattern: './*.map'
+    pattern: ./*.map
     source: fq_forward_input
     type: map
   sam_output:
     category: output
-    pattern: './*.sam'
+    pattern: ./*.sam
     source: fq_forward_input
     type: map
 moa_id: maq_pe
@@ -68,35 +67,28 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+  disable_sw:
+    category: ''
+    default: false
+    help: disable Smith-Waterman alignment
+    optional: true
+    type: boolean
   first_read_len:
     category: ''
     default: 0
     help: length of the first read (<=127)s
     optional: true
     type: integer
-  sec_read_len:
+  match_in_colorspace:
+    category: ''
+    default: false
+    help: match in the colorspace
+    optional: true
+    type: boolean
+  max_dist_RF_read_pairs:
     category: ''
     default: 0
-    help: length of the second read (<=127)s
-    optional: true
-    type: integer
-  read_ref_diff_rate:
-    category: ''
-    default: 0.001
-    help: rate of difference between reads and references
-    optional: true
-    type: float
-  max_mismatch_qual_sum:
-    category: ''
-    default: 70
-    help: maximum allowed sum of qualities of mismatches 
+    help: max distance between two RF paired reads s
     optional: true
     type: integer
   max_dist_read_pairs:
@@ -105,16 +97,10 @@ parameters:
     help: max distance between two paired reads s
     optional: true
     type: integer
-  max_dist_RF_read_pairs:
+  max_mismatch_qual_sum:
     category: ''
-    default: 0
-    help: max distance between two RF paired reads s
-    optional: true
-    type: integer
-  num_mismatch_24bp:
-    category: ''
-    default: 2
-    help: number of mismatches in the first 24bp
+    default: 70
+    help: maximum allowed sum of qualities of mismatches
     optional: true
     type: integer
   max_num_hits_out:
@@ -123,21 +109,35 @@ parameters:
     help: max number of hits to output. >512 for all 01 hits.
     optional: true
     type: integer
-  disable_sw:
+  num_mismatch_24bp:
     category: ''
-    default: false
-    help: disable Smith-Waterman alignment
+    default: 2
+    help: number of mismatches in the first 24bp
     optional: true
-    type: boolean
+    type: integer
+  read_ref_diff_rate:
+    category: ''
+    default: 0.001
+    help: rate of difference between reads and references
+    optional: true
+    type: float
+  sec_read_len:
+    category: ''
+    default: 0
+    help: length of the second read (<=127)s
+    optional: true
+    type: integer
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
+    type: string
   trim_all_reads:
     category: ''
     default: false
     help: trim all reads (usually not recommended)
     optional: true
-    type: boolean 
-  match_in_colorspace:
-    category: ''
-    default: false
-    help: match in the colorspace
-    optional: true
     type: boolean
+version: 1

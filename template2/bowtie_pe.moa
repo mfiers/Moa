@@ -1,10 +1,11 @@
 author: Yogini Idnani, Mark Fiers
 backend: ruff
 commands:
-  clean: 
-    help: Remove all job data, not the Moa job itself, note that this must be implemented by the template
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template
     mode: simple
-  run: 
+  run:
     help: ''
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
@@ -12,27 +13,31 @@ description: Run BOWTIE on an set of input files (query) vs a database index.
 filesets:
   fq_forward_input:
     category: input
-    pattern: '*/*_1.fq'
     help: fastq input files directory - forward
     optional: false
+    pattern: '*/*_1.fq'
     type: set
   fq_reverse_input:
     category: input
     help: fastq input files directory - reverse
+    optional: true
     pattern: '*/*_2.fq'
     source: fq_forward_input
-    optional: true
     type: map
   output:
     category: output
-    pattern: './*.sam'
     help: sam output file
+    pattern: ./*.sam
     source: fq_forward_input
     type: map
 moa_id: bowtie_pe
 modification_date: Wed Nov 10 07:56:48 2010
 name: bowtie_pe
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
   ebwt_base:
     category: ''
@@ -52,7 +57,9 @@ parameters:
     optional: true
     type: string
   input_format:
-    allowed: [fastq, fasta]
+    allowed:
+    - fastq
+    - fasta
     category: ''
     default: fastq
     help: Format of the input files
@@ -89,7 +96,9 @@ parameters:
     optional: true
     type: string
   msi:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: F
     help: Merge, sort and index? If *T* use samtools to merge all bamfiles into one,
@@ -97,14 +106,19 @@ parameters:
     optional: true
     type: set
   output_format:
-    allowed: [bowtie, bam, sam]
+    allowed:
+    - bowtie
+    - bam
+    - sam
     category: ''
     default: bam
     help: Format of the output file
     optional: true
     type: set
   paired_ends:
-    allowed: [T, F]
+    allowed:
+    - T
+    - F
     category: ''
     default: F
     help: perform a paired end analysis. If so, the input files are expected to be

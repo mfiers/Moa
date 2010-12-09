@@ -1,18 +1,26 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: 'Glimmer3 is a open reading frame discovery program from the EMBOSS
-      [[emboss]] package. It takes a set of input sequences and predicts all open
-      reading frames. Additionally, this template converts the default output (predicted
-      protein sequences) to GFF3.', mode: map}
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: Glimmer3 is a open reading frame discovery program from the EMBOSS [[emboss]]
+      package. It takes a set of input sequences and predicts all open reading frames.
+      Additionally, this template converts the default output (predicted protein sequences)
+      to GFF3.
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Predicts (prokaryotic) using glimmer3.
+filesets: {}
 moa_id: glimmer3
 modification_date: Wed Nov 10 07:56:48 2010
 name: glimmer3
-parameter_category_order: ['', system, advanced]
+parameter_category_order:
+- ''
+- system
+- advanced
 parameters:
   gene_len:
     allowed: []

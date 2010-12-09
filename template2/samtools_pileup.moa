@@ -1,54 +1,53 @@
 author: Yogini Idnani, Mark Fiers
-version: 1
 backend: ruff
 commands:
-  run:
-    mode: map
-    help: run samtools pileup
   clean:
-    mode: simple
     help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: run samtools pileup
+    mode: map
 creation_date: Wed Dec 09 17:06:48 2010
 description: Print the alignment in the pileup format.
 filesets:
   fq_forward_input:
     category: input
-    pattern: '*/*.1.fq'
     help: fastq input files directory - forward
     optional: false
+    pattern: '*/*.1.fq'
     type: set
   fq_reverse_input:
     category: input
     help: fastq input files directory - reverse
+    optional: true
     pattern: '*/*.2.fq'
     source: fq_forward_input
-    optional: true
-    type: map
-  sai_forward_input:
-    optional: false
-    category: input
-    extension: sai
-    pattern: '*/*.1.sai'
-    help: sai input files - forward
-    source: fq_forward_input
-    type: map
-  sai_reverse_input:
-    optional: true
-    category: input
-    extension: sai
-    help: sai input files - reverse files
-    pattern: '*/*.2.sai'
-    source: sai_forward_input
     type: map
   output:
     category: output
+    pattern: ./*.sam
     source: fq_forward_input
-    pattern:  './*.sam'
     type: map
   output_bam:
     category: output
+    pattern: ./*.bam
     source: fq_forward_input
-    pattern:  './*.bam'
+    type: map
+  sai_forward_input:
+    category: input
+    extension: sai
+    help: sai input files - forward
+    optional: false
+    pattern: '*/*.1.sai'
+    source: fq_forward_input
+    type: map
+  sai_reverse_input:
+    category: input
+    extension: sai
+    help: sai input files - reverse files
+    optional: true
+    pattern: '*/*.2.sai'
+    source: sai_forward_input
     type: map
 moa_id: bwa_sampe
 modification_data: Wed Nov 25 17:06:48 2010
@@ -66,6 +65,24 @@ parameters:
     help: bwa database to align against
     optional: false
     type: string
+  disable_SW:
+    category: ''
+    default: false
+    help: disable Smith-Waterman for the unmapped mate
+    optional: true
+    type: boolean
+  disable_insert_size:
+    category: ''
+    default: false
+    help: disable insert size estimate (force -s)
+    optional: true
+    type: boolean
+  max_aln_out:
+    category: ''
+    default: 3
+    help: maximum hits to output for paired reads
+    optional: true
+    type: integer
   max_insert_size:
     category: ''
     default: 500
@@ -78,22 +95,10 @@ parameters:
     help: maximum occurrences for one end
     optional: true
     type: integer
-  max_aln_out:
-    category: ''
-    default: 3
-    help:  maximum hits to output for paired reads
-    optional: true
-    type: integer
   max_out_discordant_pairs:
     category: ''
     default: 10
     help: maximum hits to output for discordant pairs
-    optional: true
-    type: integer
-  prior_chimeric_rate:
-    category: ''
-    default: 1.0e-05
-    help: prior of chimeric rate (lower bound) 
     optional: true
     type: integer
   preload_index:
@@ -102,18 +107,12 @@ parameters:
     help: preload index into memory (for base-space reads only)
     optional: true
     type: boolean
-  disable_SW:
+  prior_chimeric_rate:
     category: ''
-    default: false
-    help: disable Smith-Waterman for the unmapped mate
+    default: 1.0000000000000001e-05
+    help: prior of chimeric rate (lower bound)
     optional: true
-    type: boolean 
-  disable_insert_size:
-    category: ''
-    default: false
-    help:  disable insert size estimate (force -s)
-    optional: true
-    type: boolean
+    type: integer
   title:
     allowed: []
     category: system
@@ -121,3 +120,4 @@ parameters:
     help: A name for this job
     optional: false
     type: string
+version: 1

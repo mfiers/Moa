@@ -1,38 +1,37 @@
 author: Mark Fiers
 backend: ruff
 commands:
-  clean: 
-    help: Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
     mode: simple
-  run: 
+  run:
     help: generate a list of bidirectional best blast hits
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Discover the bidirectional best blast hit between two sets of sequences
-moa_id: bidibebla
-name: bidibebla
 filesets:
   input:
     category: input
-    extension: fasta
     help: Fasta input files
-    glob: '*'
     optional: false
+    pattern: '*/*.fasta'
     type: set
-  reference:
-    category: prerequisite
-    extension: fasta
-    optional: false
-    help:  Reference fasta file to compare against
-    type: single
   output:
     category: output
-    extension: list
     help: Lists of bidirectional best blasts
-    glob: '*'
-    source: input
     optional: true
-    type: map 
+    pattern: '*/*.list'
+    source: input
+    type: map
+  reference:
+    category: prerequisite
+    help: Reference fasta file to compare against
+    optional: false
+    pattern: '*/*.fasta'
+    type: single
+moa_id: bidibebla
+name: bidibebla
 parameters:
   eval:
     allowed: []

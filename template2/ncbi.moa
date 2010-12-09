@@ -1,17 +1,24 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: Start downloading, mode: map}
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: Start downloading
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Download a set of sequences from NCBI based on a query string *ncbi_query*
   and database *ncbi_db*. This tempate will run only **once**, after a succesful run
   it creates a lock file that you need to remove to rerun
+filesets: {}
 moa_id: ncbi
 modification_date: Wed Nov 10 07:56:48 2010
 name: ncbi
-parameter_category_order: ['', system]
+parameter_category_order:
+- ''
+- system
 parameters:
   db:
     allowed: []

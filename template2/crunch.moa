@@ -1,18 +1,30 @@
 author: Mark Fiers
 backend: gnumake
 commands:
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: create crunch files, mode: map}
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: create crunch files
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Create a crunch file for use with the Artemis ACT comparison tool.
 filesets:
-  input: {category: input, extension: fasta, help: Directory with input fasta files,
-    optional: false, type: set}
+  input:
+    category: input
+    help: Directory with input fasta files
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
 moa_id: crunch
 modification_date: Wed Nov 10 07:56:48 2010
 name: crunch
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
   eval:
     allowed: []

@@ -4,25 +4,21 @@ commands:
   clean:
     help: Remove all job data
     mode: simple
-  run: 
+  run:
     help: Create the index
     mode: simple
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bwa index from a reference sequence
+filesets: {}
 moa_id: bwa_index
 modification_date: Wed Nov 10 07:56:48 2010
 name: bwa_index
-parameter_category_order: ['', input, system, advanced]
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
 parameters:
-  input_fasta:
-    optional: false
-    type: file
-    help: input fasta file for the database  
-  prefix:
-    default: 'bwa_index'
-    help: Name of the bwa index to create
-    optional: true
-    type: string
   algorithm:
     category: ''
     default: is
@@ -35,6 +31,15 @@ parameters:
     help: input sequences are in the color space
     optional: true
     type: boolean
+  input_fasta:
+    help: input fasta file for the database
+    optional: false
+    type: file
+  prefix:
+    default: bwa_index
+    help: Name of the bwa index to create
+    optional: true
+    type: string
   title:
     allowed: []
     category: system
