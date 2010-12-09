@@ -1,27 +1,60 @@
 author: Mark Fiers
-backend: gnumake
+backend: ruff
 commands:
-  blast_report: {help: Generate a text BLAST report., mode: simple}
-  clean: {help: 'Remove all job data, not the Moa job itself, note that this must
-      be implemented by the template.', mode: simple}
-  run: {help: 'Running BLAST takes an input directory (*blast_input_dir*), determines
-      what sequence files are present (with the parameter *blast_input_extension*)
-      and executes BLAST on each of these. Moa BLAST is configured to create XML output
-      (as opposed to the standard text based output) in the *./out* directory. The
-      output XML is subsequently converted to GFF3 by the custom *blast2gff* script
-      (using BioPython). Additionally, a simple text report is created.', mode: map}
+  blast_report:
+    help: Generate a text BLAST report.
+    mode: simple
+  clean: 
+    help: Remove all job data, not the Moa job itself, note that this must
+      be implemented by the template.
+    mode: simple
+  run2:
+    mode: map
+  prepare:
+    mode: simple
+  run:
+    delegate: [prepare, run2, blast_report] 
+    help: Running BLAST takes an input directory, determines what
+      sequences are present and executes BLAST on each of these. Moa
+      BLAST is configured to create XML output (as opposed to the
+      standard text based output) in the out directory. The output
+      XML is subsequently converted to GFF3 by the custom blast2gff
+      script (using BioPython). Additionally, a simple text report is
+      created.
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
-description: Wraps BLAST [[Alt90]], probably the most popular similarity search tool
-  in bioinformatics.
+description: 'Wraps BLAST [[Alt90]], probably the most popular similarity search tool
+  in bioinformatics.'
 filesets:
-  input: {category: input, extension: fasta, help: 'Directory with the input files
-      for BLAST, in Fasta format', optional: false, type: set}
+  input: 
+    category: input
+    pattern: '*/*.fasta'
+    help: Directory with the input files for BLAST, in Fasta format
+    optional: false
+    type: set
+  output:
+    category: output
+    type: map
+    source: input
+    pattern: 'out/*.out'
+    optional: true
+  outgff:
+    category: output
+    type: map
+    source: input
+    pattern: 'gff/*.gff'
+    optional: true
+  db:
+    category: prerequisite
+    type: single
+    help: Blast database 
+    optional: false
 moa_id: blast
 modification_date: Wed Nov 10 07:56:48 2010
 name: blast
 parameter_category_order: ['', input, system, advanced]
 parameters:
-  blast_gff_blasthit:
+  gff_blasthit:
     allowed: [T, F]
     cardinality: one
     category: ''
@@ -31,15 +64,6 @@ parameters:
     optional: true
     type: set
     value: F
-  db:
-    allowed: []
-    category: ''
-    default: ''
-    help: Location of the blast database. You can either define the blast db parameter
-      as used by blast, or any of the blast database files, in which case the extension
-      will be removed before use
-    optional: false
-    type: file
   eval:
     allowed: []
     category: ''
