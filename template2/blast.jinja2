@@ -1,0 +1,31 @@
+### clean
+
+rm -rf out || true
+rm -rf gff || true
+
+### prepare
+
+mkdir out || true 2> /dev/null
+mkdir gff || true 2> /dev/null
+
+### run2
+
+    blastall -i {{ input }} -p {{ program }} \
+		-e {{ eval }} -m 7 -a {{ nothreads }} -d {{ db }} \
+		-b {{ nohits }} -v  {{ nohits }} -o {{ output }}
+
+    cat {{ output }} | blast2gff -b {{ gff_blasthit }}  \
+        -s {{ gff_source }} -d query > {{ outgff }}
+
+### blast_report
+    blastReport out/ -o blast_report
+
+### unittest
+    moa new -d 10.blastdb -t 'test blast db' blastdb \
+            bdb_fasta_file=$$MOADATA/dna/test01.fasta bdb_name=test
+    cd 10.blastdb; moa 
+    moa new -d 20.blast -t 'test blast' blast \
+            blast_db=../10.blastdb/test blast_input_dir=$$MOADATA/dna
+    cd 20.blast; moa 
+    cd 20.blast; ls
+    [[ -f 20.blast/blast_report ]] || false
