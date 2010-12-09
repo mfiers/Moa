@@ -1,0 +1,28 @@
+df%^&*
+
+jj
+
+### run
+
+echo samtools pileup
+samtools pileup 
+    -c {{prior_chimeric_rate}}                          \
+    {% if preload_index %} -P {% endif %}				\
+    {{ fq_forward_input }} {{ fq_reverse_input }}	    \
+    -f {{ output }}
+
+{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
+
+### clean
+
+rm *.sam
+
+### unittest
+
+mkdir 10.fasta
+cp ${MOABASE}/share/test/test.fasta 10.fasta
+mkdir 20.fasta
+cd 20.fasta
+moa new bwa_index -t 'create a demo database'
+echo 'HALL'
+false
