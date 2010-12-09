@@ -70,6 +70,11 @@ class Template(Yaco.Yaco):
             self.modification_date = os.path.getmtime(self._templateDataFile)
         
 
+    def getRaw(self):
+        y = Yaco.Yaco()
+        y.load(self._templateDataFile)
+        return y
+    
     def save(self):
         raise Exception("direct saving of template files is disabled")
         
