@@ -13,14 +13,14 @@ description: Generate alignments in SAM format given paired end reads
 filesets:
   fq_forward_input:
     category: input
-    pattern: '*/*.1.fq'
+    pattern: '*/*_1.fq'
     help: fastq input files directory - forward
     optional: false
     type: set
   fq_reverse_input:
     category: input
     help: fastq input files directory - reverse
-    pattern: '*/*.2.fq'
+    pattern: '*/*_2.fq'
     source: fq_forward_input
     optional: true
     type: map
@@ -28,7 +28,7 @@ filesets:
     optional: false
     category: input
     extension: sai
-    pattern: '*/*.1.sai'
+    pattern: '*/*_1.sai'
     help: sai input files - forward
     source: fq_forward_input
     type: map
@@ -37,7 +37,7 @@ filesets:
     category: input
     extension: sai
     help: sai input files - reverse files
-    pattern: '*/*.2.sai'
+    pattern: '*/*_2.sai'
     source: sai_forward_input
     type: map
   output:

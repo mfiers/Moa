@@ -14,7 +14,7 @@ filesets:
   fq_input:
     optional: false
     category: input
-    pattern: '*.fq'
+    pattern: '*/*.fq'
     help: fastq input file
     optional: false
     type: set
@@ -27,16 +27,16 @@ filesets:
     type: map
   output:
     category: output
-    pattern: '*.sam'
+    pattern: './*.sam'
     source: fq_input
     type: map
   output_bam:
     category: output
-    pattern: '*.bam'
+    pattern: './*.bam'
     source: fq_input
     type: map
 moa_id: bwa_samse
-modification_data: Wed Nov 26 14:06:48 2010
+modification_data: Wed 08 26 14:06:48 2010
 name: Bwa samse
 parameter_category_order:
 - ''
