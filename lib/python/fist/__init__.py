@@ -70,9 +70,9 @@ class fistSingle(fistCore):
         """
         Assuming the url is a single file
         """
-        super(fistFileset, self).init()
+        super(fistSingle, self).init()
         self.resolved = True
-        self.extend(self.url)
+        self.append(self.url)
         
     def resolve(self):
         pass

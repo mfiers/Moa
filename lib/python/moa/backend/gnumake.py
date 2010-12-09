@@ -56,7 +56,6 @@ class Gnumake(moa.backend.BaseBackend):
         #self.job.plugins.run("readFilesets")
         
         verbose = options.get('verbose', False)
-        background = options.get('background', False)
         
         ## make sure the MOA_THREADS env var is set - this is used from inside
         ## the Makefiles later threads need to be treated different from the
@@ -69,7 +68,6 @@ class Gnumake(moa.backend.BaseBackend):
         if not self.job.options.verbose:
             self.job.makeArgs.append('-s')
 
-        background = self.job.options.background
 
         l.debug("Calling make for command %s" % command)
         actor = self.job.getActor()
@@ -99,7 +97,7 @@ class Gnumake(moa.backend.BaseBackend):
         cl = ['make', command] + self.job.makeArgs
 
         l.debug("executing %s" % " ".join(cl))
-        actor.run(cl, background = background)
+        actor.run(cl)
 
     def defineOptions(self, parser):
         g = parser.add_option_group('Gnu Make Backend')

@@ -123,97 +123,6 @@ def prepare(data):
                 job.conf.doNotCheck.append('%s_file' % fsid)
                 
 
-#def _files_from_glob(dir, pat, ext):
-#    """
-#    Return a set of files from a glob
-#    """
-#    rv = []
-#    if ext:
-#        rv = glob.glob(os.path.join(
-#            dir, '%s.%s' % (pat, ext)))
-#    else:
-#        rv = glob.glob(os.path.join(dir, pat))
-#    
-#    l.debug("from glob %s // %s // %s" % (dir, pat, ext))
-#    l.debug("found %d files" % len(rv))
-#    return rv
-#
-#def _map_files(job, fromId, toId):
-#    """
-#    Map files from one set to another
-#    """
-#    allSets = job.template.filesets
-#    fos = allSets[fromId]
-#    tos = allSets[toId]
-#    conf = job.conf
-#
-#    frof = [os.path.basename(x) for x in job.data.filesets[fromId]['files']]
-#
-#    #no input files - no output files
-#    if len(frof) == 0: 
-#        return []
-#
-#    todir = conf['%s_dir' % toId]
-#    toext = conf['%s_extension' % toId]
-#    toglob = conf['%s_glob' % toId]
-#
-#    if fos.type == 'single':
-#        frglob = '*'
-#        infile = os.path.basename(frof[0])
-#        if '.' in infile:
-#            frext = infile.rsplit('.',1)[-1]
-#        else: frex = ''
-#    else:
-#        frext = conf.get('%s_extension' % fromId, '')
-#        frglob = conf.get('%s_glob' % fromId, '*')
-#    
-#    #map directory
-#    if todir:
-#        frof = [os.path.join(todir, x) for x in frof]
-#
-#    #map extensions
-#    if frext and toext:
-#        rere = re.compile('%s$' % frext)
-#        frof = [rere.sub(toext, x) for x in frof]
-#    elif toext:
-#        frof = ['%s.%s' % (x, toext) for x in frof]    
-#
-#    #map glob
-#    if toglob.count('*') > 1:
-#        l.critical("Cannot handle more than one '*' in the %s_glob" % toId)
-#        sys.exit(-1)
-#    elif toglob == '*':
-#        pass
-#    elif toglob.count('*') == 1:
-#        if not frglob.count('*') == 1:
-#            l.critical(("Input glob needs to have a '*' "
-#                        "(mapping %s->%s / %s->%s)") % 
-#                       (fromId, toId, frglob, toglob))
-#            sys.exit(-1)
-#        frof = [re.sub('^' + frglob.replace('*', '(.*)'),
-#                       toglob.replace('*', r'\1'),
-#                       x) for x in frof]
-#    else:
-#        if len(frof) != 1:
-#            l.critical(("With no wildcard in the  %s_glob, the input "
-#                        "may not consist of more than one file") % toId)
-#        if toext:
-#            frof = [os.path.join(todir, '%s.%s' % (toglob, toext))]
-#            print 'mappig to ', frof            
-#        else:
-#            frof = [toglob]
-#                
-#    return frof
-#
-#def readfileset(job, fsid):
-#    fof = os.path.join('.moa', '%s.fof' % fsid)
-#    if os.path.exists(fof):
-#        with open(fof) as F:
-#            return F.read().split()
-#    else:
-#        return []
-
-
 def preCommand(data):
     """
     Run before execution of any command (backend or plugin)
@@ -233,23 +142,8 @@ def preparefilesets(data):
     if not job.template.has_key('filesets'):
         return
 
-    #First, collect 'input'/'set' files
-    #create a list of all sets & order them - MAPS GO LAST!!
-    
     fileSets = job.template.filesets.keys()
     
-#    for fsid in job.template.filesets.keys():
-#        fs = job.template.filesets[fsid]
-#        if not fs.has_key('order'):
-#            if fs.type == 'map':
-#                fs.order = 100
-#            else:
-#                fs.order = 50
-#
-#    filesetList = [(job.template.filesets[x].order, x)
-#                   for x in job.template.filesets.keys()]
-#    filesetList.sort()
-
     while True:
         if len(fileSets) == 0: break
         fsid = fileSets.pop(0)        
@@ -261,7 +155,7 @@ def preparefilesets(data):
             files = fist.fistFileset(job.conf[fsid], oriPat)
             files.resolve()
         elif fs.type == 'single':
-            files = files.fistSingle(job.conf[fsid], oriPat)
+            files = fist.fistSingle(job.conf[fsid], oriPat)
         elif fs.type == 'map':
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")

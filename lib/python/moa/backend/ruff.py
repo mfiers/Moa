@@ -164,7 +164,7 @@ class Ruff(moa.backend.BaseBackend):
         elif cmode == 'simple':
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
-            tf.write(jt.render(self.job.conf))
+            tf.write("\n" + jt.render(self.job.conf)+ "\n")
             tf.close()
             l.debug("exxxxxecuting script %s" % tf.name)
             rc = actor.run(['bash', '-e', tf.name])
