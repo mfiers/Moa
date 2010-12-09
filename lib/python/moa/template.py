@@ -75,6 +75,9 @@ class Template(Yaco.Yaco):
         y.load(self._templateDataFile)
         return y
     
+    def saveRaw(self, raw):
+        raw.save(self._templateDataFile)
+    
     def save(self):
         raise Exception("direct saving of template files is disabled")
         
