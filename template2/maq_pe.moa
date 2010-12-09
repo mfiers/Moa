@@ -13,59 +13,50 @@ description: Generate alignments in SAM format given paired end reads using Maq.
 filesets:
   fq_forward_input:
     category: input
-    extension: fq
-    glob: '*_1'
+    pattern: '*/*_1.fq'
     help: fastq input files directory - forward files
     optional: false
     type: set
   fq_reverse_input:
     category: input
-    extension: fq
-    glob: '*_2'    
+    pattern: '*/*_2.fq'
     help: fastq input files directory - reverse files
-    dir: '{{ fq_forward_input_dir }}'
     source: fq_forward_input
     type: map
   bfq_forward_output:
     category: output
+    pattern: './*_1.bfq'
     extension: bfq
-    glob: '{{ fq_forward_input_glob }}'
-    help: bfq input files - forward files
+    help: bfq files - forward files
     dir: .
     source: fq_forward_input
     type: map
   bfq_reverse_output:
     category: output
-    extension: bfq
-    glob:  '{{ fq_reverse_input_glob }}'
-    help: bfq input files - reverse files
-    dir: .
-    source: fq_forward_input
+    pattern: './*_2.bfq'  
+    help: bfq files - reverse files    
+    source: bfq_forward_output
     type: map
   fa_input:
     category: input
-    extension: fasta
+    pattern: '*/*.fasta'
     help: directory with reference fasta file name
-    type: single
+    type: set
     optional: false
   bfa_output:
     category: output
-    dir: .
-    extension: bfa
+    pattern: './*.bfa'
     source: fa_input
     help: directory with output
-    optional: true
     type: map
   map_output:
     category: output
-    dir: .
-    extension: map
+    pattern: './*.map'
     source: fq_forward_input
     type: map
   sam_output:
     category: output
-    dir: .
-    extension: sam
+    pattern: './*.sam'
     source: fq_forward_input
     type: map
 moa_id: maq_pe

@@ -26,6 +26,7 @@ export MOA_NOLOGO=1
 mkdir 10.index
 cd 10.index
 moa new bwa_index -t 'create a demo database'
+echo ${MOA_BASE}
 moa set input_fasta="${MOABASE}/share/test/test.fasta"
 moa run
 cd ..

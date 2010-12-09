@@ -13,35 +13,28 @@ description: Use SOAP to align a set of paired fastq reads against a db
 filesets:
   fq_forward_input:
     category: input
-    extension: fq
-    glob: '*_1'
+    pattern: '*/*_1.fq'
     help: fastq input files directory - forward files
     optional: false
     type: set
   fq_reverse_input:
     category: input
-    extension: fq
-    glob: '*_2'    
+    pattern: '*/*_2.fq' 
     help: fastq input files directory - reverse files
-    dir: '{{ fq_forward_input_dir }}'
     source: fq_forward_input
     type: map
   soap_output:
     category: output
-    dir: .
-    extension: soap
+    pattern: './*.soap'
     source: fq_forward_input
-    glob: '{{fq_forward_input_glob}}_And_2'
     type: map
   sam_output:
     category: output
-    dir: .
-    extension: sam
+    pattern: './*.sam'
     source: fq_forward_input
-    glob: '{{fq_forward_input_glob}}_And_2'
     type: map
 moa_id: soap_aln_pe
-modification_data: Wed Nov 30 22:00:01 2010
+modification_data: Wed Dec 09 22:00:01 2010
 name: soap_aln_pe
 parameter_category_order:
 - ''

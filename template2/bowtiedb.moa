@@ -12,21 +12,21 @@ description: Builds a bowtie index from a reference sequence
 filesets:
   input: 
     category: input
-    extension: fasta
+    pattern: '*/*.fasta'
     help: Input fasta file for the bowtie database
     optional: false
-    type: single
-  output: 
-    category: output
-    help: The basename of the bowtie database
-    optional: true
-    default: './bowtiedb'
-    type: single
+    type: set
 moa_id: bowtiedb
-modification_date: Wed Nov 10 07:56:48 2010
+modification_date: Wed Dec 09 07:56:48 2010
 name: bowtiedb
 parameter_category_order: ['', input, system, advanced]
 parameters:
+  ebwt_outfile_base:
+    category: ''
+    default: db_index
+    help: write Ebwt data to files with this dir/basename
+    optional: true
+    type: string 
   title:
     allowed: []
     category: system
