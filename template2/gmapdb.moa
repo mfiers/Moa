@@ -1,5 +1,5 @@
 author: Mark Fiers
-backend: gnumake
+backend: ruff
 commands:
   clean:
     help: Remove all job data, not the Moa job itself, note that this must be implemented
@@ -10,7 +10,13 @@ commands:
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds gmapdb index from a reference sequence
-filesets: {}
+filesets:
+  input:
+    pattern: '*/*.fasta'
+    category: input
+    type: single
+    help: The reference sequence to build a gmap database with.
+    optional: false
 moa_id: gmapdb
 modification_date: Wed Nov 10 07:56:48 2010
 name: gmapdb
@@ -19,29 +25,12 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  input_dir:
-    allowed: []
-    category: ''
-    default: ''
-    help: The reference sequence to build a gmap database with.
-    optional: false
-    type: directory
-  input_extension:
-    allowed: []
-    category: ''
-    default: fasta
-    help: Extension of the input files, defaults to fasta
-    optional: true
-    type: string
   name:
-    allowed: []
-    category: ''
-    default: ''
+    default: gmapdb
     help: Name of the gmap index to create
     optional: true
     type: string
   title:
-    allowed: []
     category: system
     default: ''
     help: A name for this job
