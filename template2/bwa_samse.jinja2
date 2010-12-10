@@ -1,9 +1,8 @@
 ### run
-
-bwa samse -n {{ max_aln_out }} {{ db }} {{sai_input}} {{fq_input}} > {{output}}
-{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
+echo bwa samse 
+echo -n {{ max_aln_out }} {{ db }} {{sai_input}} {{fq_input}} > {{output}}
+echo {{ snippets.sam2bam }} {{ output_bam }} {{ output }}
 
 ### clean
 
-rm *.sam
-rm *.bam
+rm *.sam *.bam

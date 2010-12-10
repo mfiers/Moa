@@ -36,9 +36,8 @@ parameters:
     optional: false
     type: file
   prefix:
-    default: bwa_index
     help: Name of the bwa index to create
-    optional: true
+    optional: false
     type: string
   title:
     allowed: []
