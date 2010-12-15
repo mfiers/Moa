@@ -15,19 +15,19 @@ filesets:
     category: input
     help: fastq input files directory - forward
     optional: false
-    pattern: '*/*_1.fq'
+    pattern: '*/*_1.*'
     type: set
   fq_reverse_input:
     category: input
     help: fastq input files directory - reverse
     optional: true
-    pattern: '*/*_2.fq'
+    pattern: '*/*_2.*'
     source: fq_forward_input
     type: map
   output:
     category: output
-    help: sam output file
-    pattern: ./*.sam
+    help: Bam output file
+    pattern: './*.bam'
     source: fq_forward_input
     type: map
 moa_id: bowtie_pe
@@ -49,13 +49,6 @@ parameters:
     help: extra parameters to feed to bowtie
     optional: true
     type: string
-  forward_suffix:
-    allowed: []
-    category: ''
-    default: _1
-    help: Last part of the sequence name identifying a file with forward reads
-    optional: true
-    type: string
   input_format:
     allowed:
     - fastq
@@ -65,46 +58,16 @@ parameters:
     help: Format of the input files
     optional: true
     type: set
-  insertsize:
-    allowed: []
-    category: ''
-    default: '5000'
-    help: Expected insertsize
+  min_insertsize:
+    default: '1'
+    help: Minimum allowed insertsize
     optional: true
-    type: float
-  insertsize_max:
-    allowed: []
-    category: ''
-    default: '10'
-    help: Max insertsize for a paired alignment
+    type: integer
+  max_insertsize:
+    default: '500'
+    help: Maximum allowed insertsize
     optional: true
-    type: float
-  insertsize_min:
-    allowed: []
-    category: ''
-    default: '0.1'
-    help: multiplier determining the minimal acceptable value for two paired reads
-      to be apart. If the bowtie_insertsize is 10000 and this parameter is set at
-      0.8, than reads that are closer together than 8000 nt are rejecte
-    optional: true
-    type: float
-  insertsize_sed:
-    allowed: []
-    category: ''
-    default: ''
-    help: SED expression to filter the expected insertsize from the input file name
-    optional: true
-    type: string
-  msi:
-    allowed:
-    - T
-    - F
-    category: ''
-    default: F
-    help: Merge, sort and index? If *T* use samtools to merge all bamfiles into one,
-      sort them and create an index
-    optional: true
-    type: set
+    type: integer
   output_format:
     allowed:
     - bowtie
@@ -115,23 +78,6 @@ parameters:
     help: Format of the output file
     optional: true
     type: set
-  paired_ends:
-    allowed:
-    - T
-    - F
-    category: ''
-    default: F
-    help: perform a paired end analysis. If so, the input files are expected to be
-      of the form *_1.fastq and  *_2.fastq
-    optional: true
-    type: set
-  reverse_suffix:
-    allowed: []
-    category: ''
-    default: _2
-    help: Last part of the sequence name identifying a file with reverse reads
-    optional: true
-    type: string
   title:
     allowed: []
     category: system

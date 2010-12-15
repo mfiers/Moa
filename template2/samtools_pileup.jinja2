@@ -1,21 +1,33 @@
-df%^&*
-
-jj
-
 ### run
 
-echo samtools pileup
-samtools pileup 
-    -c {{prior_chimeric_rate}}                          \
-    {% if preload_index %} -P {% endif %}				\
-    {{ fq_forward_input }} {{ fq_reverse_input }}	    \
-    -f {{ output }}
+echo sort
 
-{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
+{{ snippets.samtools_sort }} {{ input }} {{output_bam }}
+
+echo samtools pileup
+samtools pileup                                     \
+	{% if simple_pileup_format %} -s {% endif %}	\
+	{% if input_is_SAM %} -S {% endif %}			\
+	{% if use_SOAPsnp_model %} -a {% endif %}		\
+	{% if out_2nd_best %} -2 {% endif %}			\
+	{% if show_lines_indels %} -i {% endif %}		\
+    -m {{filter_read_bits}}                         \
+    -M {{cap_mapQ_at}}                              \
+	{{ extra_params }}                              \
+	{% if out_maq_consensus %} -c {% endif %}		\
+	{% if print_variants_only %} -v {% endif %}		\
+	{% if out_GLFv3_format %} -g {% endif %}		\
+	-N {{num_haplotypes}}                           \
+    -I {{phred_prob_indel}}                         \
+	-T {{theta_maq_model}}                          \
+    -r {{prior_diff_haplotypes}}                    \
+	-G {{prior_indel_haplotypes}}                   \
+	{{ output_bam}}.bam > {{ output }}
+
 
 ### clean
 
-rm *.sam
+rm *.pileup
 
 ### unittest
 

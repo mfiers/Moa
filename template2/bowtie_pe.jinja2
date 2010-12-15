@@ -1,8 +1,14 @@
 ### run
-echo start
-bowtie 
-	-S {{ extra_params }} {{ ebwt_base }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }} {{ output }}
+echo start bowtie run
+bowtie									\
+    -S {{ extra_params }}               \
+    -I {{ min_insertsize }}             \
+    -X {{ max_insertsize }}             \
+    {{ ebwt_base }}                     \
+    -1 {{ fq_forward_input }}           \
+    -2 {{ fq_reverse_input }}           \
+	    | samtools view -bS - > {{ output }}
 
 ### clean
 
-rm *.sam
+rm *.bam
