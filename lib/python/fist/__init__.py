@@ -13,7 +13,7 @@ import re
 import glob
 import urlparse
 
-DEBUG=False
+DEBUG=True
 
 if DEBUG:
     import logging
@@ -286,7 +286,7 @@ class fistMapset(fistCore):
             logging.info( 'GLOB cur.value : %50s -> %-50s' % (mapFrom.glob, self.glob))
             logging.info( 'REGEX FROM '+ reF)
             logging.info( 'REGEX TO   '+ reT)
-            
+            logging.info( 'METHOD %s' % method)
         rex = re.compile(reF)        
         rv = [rex.sub(reT, x) for x in list]
 
