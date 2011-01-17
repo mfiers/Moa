@@ -64,7 +64,7 @@ parameters:
     optional: true
     type: integer
   max_insertsize:
-    default: '500'
+    default: '250'
     help: Maximum allowed insertsize
     optional: true
     type: integer

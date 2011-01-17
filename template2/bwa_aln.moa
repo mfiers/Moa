@@ -15,7 +15,7 @@ filesets:
     category: input
     help: Fastq input files
     optional: false
-    pattern: '*/*.fq'
+    pattern: '*/*.*'
     type: set
   output:
     category: output

@@ -45,8 +45,6 @@ class RuffCommands(Yaco.Yaco):
         commands = dict([(rawc[i], rawc[i+1].strip())
                          for i in range(1, len(rawc), 2)])
         self.update(commands)
-
-
     
     
 class Ruff(moa.backend.BaseBackend):
@@ -75,6 +73,7 @@ class Ruff(moa.backend.BaseBackend):
         return jTemplate(self.commands[command])
                 
     def hasCommand(self, command):
+        return True
         return command in self.commands.keys()
 
     def defineOptions(self, parser):
@@ -123,7 +122,7 @@ class Ruff(moa.backend.BaseBackend):
                 if i == 0:
                     noFiles = len(self.job.data.filesets[k].files)
                 else:
-                    assert(len(self.job.data.filesets[k].files) == noFiles)
+                    assert(len(self.job.data.filesets[k].files) == noFiles)                    
           
             #rearrange files
             for i in range(noFiles):
@@ -144,12 +143,13 @@ class Ruff(moa.backend.BaseBackend):
                 script = jt.render(jobData)
                                  
                 yield([inputs + prereqs], outputs, actor, script)
-                       
+
         if self.job.template.commands.has_key(command):
             cmode = self.job.template.commands[command].mode
         else:
             cmode = 'simple'
-
+            
+        rc = 0
         if cmode == 'map':
             #late decoration - see if that works :/
             executor2 = ruffus.files(generate_data_map)(executor)
@@ -167,8 +167,7 @@ class Ruff(moa.backend.BaseBackend):
             tf.write("\n" + jt.render(self.job.conf)+ "\n")
             tf.close()
             l.debug("exxxxxecuting script %s" % tf.name)
-            rc = actor.run(['bash', '-e', tf.name])
-            
+            rc = actor.run(['bash', '-e', tf.name])            
         return rc
 
 

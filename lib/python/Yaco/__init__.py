@@ -85,6 +85,13 @@ class Yaco(dict):
         else:
             super(Yaco, self).__setitem__(key, value)
      
+    def has_key(self, key):
+        rv = super(Yaco, self).has_key(key)
+        if rv and isinstance(self[key], Yaco) and \
+                not self[key].get_data():
+            return False
+        return rv
+
     def __getitem__(self, key):
         """
         >>> v= Yaco()
