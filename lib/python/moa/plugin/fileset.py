@@ -65,9 +65,9 @@ def showFiles(data):
         else:
             moa.ui.fprint(('* Fileset: %%(bold)s%-20s%%(reset)s '
                            '(%-6s: '
-                           '%%(green)s%%(bold)s%d%%(reset)s files found'
-                           '') % 
-                          (fsid, job.template.filesets[fsid].type + ')', len(files)))
+                           '%%(green)s%%(bold)s%d%%(reset)s file(s) found'
+                           ' (%s)') % 
+                          (fsid, job.template.filesets[fsid].type + ')', len(files), str(job.template.filesets[fsid].pattern)))
             for f in files[:3]:
                 moa.ui.fprint('    %(blue)s' + f + '%(reset)s')
             if len(files) > 3:

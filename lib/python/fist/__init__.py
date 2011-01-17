@@ -13,6 +13,12 @@ import re
 import glob
 import urlparse
 
+DEBUG=False
+
+if DEBUG:
+    import logging
+    logging.basicConfig(filename='/tmp/fist.log', level=logging.DEBUG)
+    
 class fistCore(list):
     """
     Core class for all fist classes
@@ -41,15 +47,14 @@ class fistCore(list):
         
         netloc = o.netloc
         
+        urlglob = '*'
+
         if o.path and o.path[-1] == '/':
             urlpath = o.path[:-1]
-            urlglob = '*'
         elif o.path and os.path.isdir(o.path):
             urlpath = o.path
-            urlglob = '*'
         elif not o.path:
             urlpath = '*'
-            urlglob = '*'
         elif '/' in o.path:
             urlpath, urlglob = o.path.rsplit('/', 1)
         else:
@@ -128,12 +133,69 @@ class fistMapset(fistCore):
     
     Map set - map a fileset based on a target uri
     
-    >>> f = fistFileset(os.path.join(wd, 'in', 'in*.txt'))
+    >>> f = fistFileset(os.path.join(wd, 'in', '*'))
     >>> f.resolve()
     >>> assert(len(f) == 100)
-    >>> m = fistMapset('out/test.*.test')
+    >>> ##
+    >>> ## Null mapping
+    >>> ##
+    >>> m = fistMapset('*/*')
     >>> m.resolve(f)
-    
+    >>> assert(len(m) == 100)
+    >>> assert(os.path.join(wd, 'in/in18.txt') in m)
+    >>> ##
+    >>> ## simple folder mapping
+    >>> ##
+    >>> m = fistMapset('out/*')
+    >>> m.resolve(f)
+    >>> assert(len(m) == 100)
+    >>> assert('out/in18.txt' in m)
+    >>> ##
+    >>> ## simple folder mapping
+    >>> ##
+    >>> m = fistMapset('./*')
+    >>> m.resolve(f)
+    >>> assert(len(m) == 100)
+    >>> assert('./in18.txt' in m)
+    >>> ##
+    >>> ## simple folder & mapping & extension append
+    >>> ##
+    >>> m = fistMapset('out/*.out')
+    >>> m.resolve(f)
+    >>> assert(len(m) == 100)
+    >>> assert('out/in18.txt.out' in m)
+    >>> ##
+    >>> ## New from fileset - now with a pattern defining the extension
+    >>> ##
+    >>> f = fistFileset(os.path.join(wd, 'in', '*.txt'))
+    >>> f.resolve()
+    >>> ##
+    >>> ## extension mapping
+    >>> ##
+    >>> m = fistMapset('out/*.out')
+    >>> m.resolve(f)
+    >>> assert(len(m) == 100)
+    >>> assert('out/in18.out' in m)
+    >>> ##
+    >>> ## New from fileset - now with a pattern defining file glob &
+    >>> ## extension
+    >>> ##
+    >>> f = fistFileset(os.path.join(wd, 'in', 'in*.txt'))
+    >>> f.resolve()
+    >>> ##
+    >>> ## more complex filename mapping
+    >>> ##
+    >>> m = fistMapset('out/test*.out')
+    >>> m.resolve(f)
+    >>> assert(len(m) == 100)
+    >>> assert('out/test18.out' in m)
+    >>> ##
+    >>> ## mapping keeping the extension the same
+    >>> ##
+    >>> m = fistMapset('out/test*.*')
+    >>> m.resolve(f)
+    >>> assert(len(m) == 100)
+    >>> assert('out/test18.txt' in m)
     """
     
     def init(self):
@@ -148,17 +210,21 @@ class fistMapset(fistCore):
         """
         map all files in the incoming list
         """
-##        print 'x' * 80
-#        print 'ORIping from %20s -- %20s:' % (mapFrom.mapPath, mapFrom.mapGlob)
-#        print 'THIping from %20s -- %20s:' % (mapFrom.path, mapFrom.glob)
-#        print 'ORIping to   %20s -- %20s:' % (self.mapPath, self.mapGlob)
-#        print 'THIping to   %20s -- %20s:' % (self.path, self.glob)
+        
         reF = ''
         reT = ''
         method = ''
+
+        if not '*' in self.path and not '*' in self.glob:
+            #special case - no interpretation is needed
+            if len(list) == 0:
+                return []
+            if len(list) == 1:
+                return [os.path.join(self.path, self.glob)]
+            raise Exception("mapping more than one file to a wildcardless map pattern")
+
         if '*' in mapFrom.path and '*' in self.path:
             method += 'a'
-            #raise Exception("Don't think that this should happen")
             reF = mapFrom.path.replace('*', r'(?P<path>.*)')
             reT = self.path.replace('*', r'\g<path>')
         elif self.path == '*':
@@ -173,14 +239,35 @@ class fistMapset(fistCore):
             raise Exception("Cannot handle path globs other than '*'")
         else:
             method += 'd'
-            reF = mapFrom.path
+            reF = mapFrom.path.replace('.', '\.')
             reT = self.path
-                      
+            
+
+            
         if '*' in self.glob and '*' in mapFrom.mapGlob:
-            #raise Exception("Don't think that this should happen")
-            method += '1'
-            reF += '/' + mapFrom.mapGlob.replace('*', r'(?P<glob>[^/]*)')
-            reT += '/' + self.mapGlob.replace('*', r'\g<glob>')
+            #special case - if there the self.glob ends in .*, try to copy the extension 
+            #from the fromglob
+            if self.glob.count('*') == 2:
+                if self.glob[-2:] == '.*' and '.' in mapFrom.mapGlob:
+                    method += '1b'
+                    reF += '/' + mapFrom.mapGlob.rsplit('.',1)[0].replace('*', r'(?P<glob>[^/]*)')
+                    reF += r'\.(?P<ext>[^\.]*)$'                    
+                    reT += '/' + self.mapGlob.rsplit('.',1)[0].replace('*', r'\g<glob>')
+                    reT += '.' + self.mapGlob.rsplit('.',1)[1].replace('*', r'\g<ext>')
+                else:
+                    raise Exception('INVALID MAP')
+            elif mapFrom.mapGlob.count('*') == 2:
+                method += '1c'
+                reF += '/' + mapFrom.mapGlob.rsplit('.',1)[0].replace('*', r'(?P<glob>[^/]*)')
+                reF += r'\.' + mapFrom.mapGlob.rsplit('.',1)[1].replace('*', r'(?P<ext>[^\.]*)$')
+                reT += '/' + self.mapGlob.rsplit('.',1)[0].replace('*', r'\g<glob>')
+                reT += '.' + self.mapGlob.rsplit('.',1)[1].replace('*', r'\g<ext>')
+            else:
+                method += '1a'
+                reF += '/' + mapFrom.mapGlob.replace('*', r'(?P<glob>[^/]*)')
+                reT += '/' + self.mapGlob.replace('*', r'\g<glob>')
+
+
         elif '*' in mapFrom.glob:
             method += '2'
             reF += '/' + mapFrom.glob.replace('*', '.*')
@@ -190,12 +277,24 @@ class fistMapset(fistCore):
             reF += '/' + mapFrom.mapGlob
             reT += '/' + self.mapGlob
 
-#        print '## method', method
-#        print '##### reF', reF
-#        print '##### reT', reT
+        if DEBUG:
+            logging.info( '#' * 95 )
+            logging.info(" Method %s" % method)
+            logging.info( 'PATH patterns  : %50s -> %-50s' % (mapFrom.mapPath, self.mapPath))
+            logging.info( 'PATH cur.value : %50s -> %-50s' % (mapFrom.path, self.path))
+            logging.info( 'GLOB patterns  : %50s -> %-50s' % (mapFrom.mapGlob, self.mapGlob))
+            logging.info( 'GLOB cur.value : %50s -> %-50s' % (mapFrom.glob, self.glob))
+            logging.info( 'REGEX FROM '+ reF)
+            logging.info( 'REGEX TO   '+ reT)
+            
         rex = re.compile(reF)        
-        return [rex.sub(reT, x) for x in list]
+        rv = [rex.sub(reT, x) for x in list]
+
+        if DEBUG:
+            logging.info( '-' * 95)
+            logging.info( ' Returning %s' % rv[:3])
     
+        return rv
     def resolve(self, mapFrom):
         """
         Resolve the mapped set based on a input fileSet    
@@ -207,7 +306,6 @@ class fistMapset(fistCore):
 
     
 if __name__ == '__main__':
-        
     import tempfile
 
     wd = tempfile.mkdtemp('.fist')

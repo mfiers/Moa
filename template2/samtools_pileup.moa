@@ -5,114 +5,133 @@ commands:
     help: Remove all job data, not the Moa job itself
     mode: simple
   run:
-    help: run samtools pileup
+    help: run samtools pileup command
     mode: map
-creation_date: Wed Dec 09 17:06:48 2010
+creation_date: Wed Dec 15 17:06:48 2010
 description: Print the alignment in the pileup format.
 filesets:
-  fq_forward_input:
+  input:
     category: input
-    help: fastq input files directory - forward
+    help: bam or sam files
     optional: false
-    pattern: '*/*.1.fq'
+    pattern: '*/*.bam'
     type: set
-  fq_reverse_input:
-    category: input
-    help: fastq input files directory - reverse
-    optional: true
-    pattern: '*/*.2.fq'
-    source: fq_forward_input
+  output_bam:
+    category: output
+    pattern: ./*.sorted
+    source: input
     type: map
   output:
     category: output
-    pattern: ./*.sam
-    source: fq_forward_input
+    pattern: ./*.pileup
+    source: input
     type: map
-  output_bam:
-    category: output
-    pattern: ./*.bam
-    source: fq_forward_input
-    type: map
-  sai_forward_input:
-    category: input
-    extension: sai
-    help: sai input files - forward
-    optional: false
-    pattern: '*/*.1.sai'
-    source: fq_forward_input
-    type: map
-  sai_reverse_input:
-    category: input
-    extension: sai
-    help: sai input files - reverse files
-    optional: true
-    pattern: '*/*.2.sai'
-    source: sai_forward_input
-    type: map
-moa_id: bwa_sampe
-modification_data: Wed Nov 25 17:06:48 2010
-name: Bwa sampe
+moa_id: samtools_pileup
+modification_data: Wed Dec 15 17:06:48 2010
+name: samtools pileup
 parameter_category_order:
 - ''
 - input
 - system
 - advanced
 parameters:
-  db:
+  simple_pileup_format:
+    category: ''
+    default: false
+    help: simple (yet incomplete) pileup format
+    optional: true
+    type: boolean
+  input_is_SAM:
+    category: ''
+    default: false
+    help: the input is in SAM
+    optional: true
+    type: boolean
+  use_SOAPsnp_model:
+    category: ''
+    default: false
+    help: use the SOAPsnp model for SNP calling
+    optional: true
+    type: boolean
+  out_2nd_best:
+    category: ''
+    default: false
+    help: output the 2nd best call and quality
+    optional: true
+    type: boolean
+  show_lines_indels:
+    category: ''
+    default: false
+    help: only show lines/consensus with indels
+    optional: true
+    type: boolean
+  filter_read_bits:
+    category: ''
+    default: 1796
+    help: filtering reads with bits in INT 
+    optional: true
+    type: integer
+  cap_mapQ_at:
+    category: ''
+    default: 60
+    help: cap mapping quality at INT 
+    optional: true
+    type: integer
+  extra_params:
     allowed: []
     category: ''
     default: ''
-    help: bwa database to align against
-    optional: false
+    help: any extra parameters
+    optional: true
     type: string
-  disable_SW:
+  out_maq_consensus:
     category: ''
     default: false
-    help: disable Smith-Waterman for the unmapped mate
+    help: output the maq consensus sequence
     optional: true
     type: boolean
-  disable_insert_size:
+  print_variants_only:
     category: ''
     default: false
-    help: disable insert size estimate (force -s)
+    help: print variants only (for -c)
     optional: true
     type: boolean
-  max_aln_out:
-    category: ''
-    default: 3
-    help: maximum hits to output for paired reads
-    optional: true
-    type: integer
-  max_insert_size:
-    category: ''
-    default: 500
-    help: maximum insert size
-    optional: true
-    type: integer
-  max_occ_read:
-    category: ''
-    default: 100000
-    help: maximum occurrences for one end
-    optional: true
-    type: integer
-  max_out_discordant_pairs:
-    category: ''
-    default: 10
-    help: maximum hits to output for discordant pairs
-    optional: true
-    type: integer
-  preload_index:
+  out_GLFv3_format:
     category: ''
     default: false
-    help: preload index into memory (for base-space reads only)
+    help: output in the GLFv3 format (suppressing -c/-i/-s)
     optional: true
     type: boolean
-  prior_chimeric_rate:
+  num_haplotypes:
     category: ''
-    default: 1.0000000000000001e-05
-    help: prior of chimeric rate (lower bound)
+    default: 2
+    help: number of haplotypes in the sample (for -c/-g)
     optional: true
     type: integer
+  phred_prob_indel:
+    category: ''
+    default: 40
+    help: phred prob. of an indel in sequencing/prep. (for -c/-g) 
+    optional: true
+    type: integer
+  theta_maq_model:
+    category: ''
+    default: 0.85
+    help: number of haplotypes in the sample (for -c/-g)
+    optional: true
+    type: float
+  prior_diff_haplotypes:
+    category: ''
+    default: 0.001
+    help: phred prob. of an indel in sequencing/prep. (for -c/-g) 
+    optional: true
+    type: float
+  prior_indel_haplotypes:
+    category: ''
+    default: 0.00015
+    help: number of haplotypes in the sample (for -c/-g)
+    optional: true
+    type: float
   title:
     allowed: []
     category: system
@@ -120,4 +139,3 @@ parameters:
     help: A name for this job
     optional: false
     type: string
-version: 1
