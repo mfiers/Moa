@@ -23,22 +23,15 @@ class fistCore(list):
     """
     Core class for all fist classes
     """
-    def __init__(self, url, mapPattern=None):
+    def __init__(self, url):
         self.url = url
-        if not mapPattern: 
-            self.mapPattern = url
-        else:
-            self.mapPattern = mapPattern
         self.init()
         self.resolved = False
 
     def init(self):
         self.scheme, self.netloc, self.path, self.glob = \
-            self._urlparse(self.url)
+             self._urlparse(self.url)
             
-        self.mapScheme, self.mapNetloc, self.mapPath, self.mapGlob = \
-            self._urlparse(self.mapPattern)
-        
     def _urlparse(self, url):
         o = urlparse.urlparse(url)
         
@@ -46,6 +39,8 @@ class fistCore(list):
         else: scheme = 'file'
         
         netloc = o.netloc
+
+        ext = ''
         
         urlglob = '*'
 
@@ -60,7 +55,7 @@ class fistCore(list):
         else:
             urlpath='.'
             urlglob=o.path
-            
+
         return scheme, netloc, urlpath, urlglob
     
     def resolve(self):
@@ -192,7 +187,7 @@ class fistMapset(fistCore):
     >>> ##
     >>> ## mapping keeping the extension the same
     >>> ##
-    >>> m = fistMapset('out/test*.*')
+    >>> m = fistMapset('out/test*.txt')
     >>> m.resolve(f)
     >>> assert(len(m) == 100)
     >>> assert('out/test18.txt' in m)
@@ -243,46 +238,30 @@ class fistMapset(fistCore):
             reT = self.path
             
 
-            
-        if '*' in self.glob and '*' in mapFrom.mapGlob:
-            #special case - if there the self.glob ends in .*, try to copy the extension 
-            #from the fromglob
-            if self.glob.count('*') == 2:
-                if self.glob[-2:] == '.*' and '.' in mapFrom.mapGlob:
-                    method += '1b'
-                    reF += '/' + mapFrom.mapGlob.rsplit('.',1)[0].replace('*', r'(?P<glob>[^/]*)')
-                    reF += r'\.(?P<ext>[^\.]*)$'                    
-                    reT += '/' + self.mapGlob.rsplit('.',1)[0].replace('*', r'\g<glob>')
-                    reT += '.' + self.mapGlob.rsplit('.',1)[1].replace('*', r'\g<ext>')
-                else:
-                    raise Exception('INVALID MAP')
-            elif mapFrom.mapGlob.count('*') == 2:
-                method += '1c'
-                reF += '/' + mapFrom.mapGlob.rsplit('.',1)[0].replace('*', r'(?P<glob>[^/]*)')
-                reF += r'\.' + mapFrom.mapGlob.rsplit('.',1)[1].replace('*', r'(?P<ext>[^\.]*)$')
-                reT += '/' + self.mapGlob.rsplit('.',1)[0].replace('*', r'\g<glob>')
-                reT += '.' + self.mapGlob.rsplit('.',1)[1].replace('*', r'\g<ext>')
-            else:
-                method += '1a'
-                reF += '/' + mapFrom.mapGlob.replace('*', r'(?P<glob>[^/]*)')
-                reT += '/' + self.mapGlob.replace('*', r'\g<glob>')
 
+        fromStarCount = mapFrom.glob.count('*')
+        toStarCount = self.glob.count('*')
 
-        elif '*' in mapFrom.glob:
-            method += '2'
-            reF += '/' + mapFrom.glob.replace('*', '.*')
-            reT += '/' + self.mapGlob        
+        if fromStarCount != toStarCount:
+            raise Exception("Invalid patterns '%s' -> '%s'" % (mapFrom.glob, self.glob))
+
+        if fromStarCount == 0:
+            method = '0'
+            reF += '/.*$'
+            reT += '/' % self.glob
         else:
-            method += '4'
-            reF += '/' + mapFrom.mapGlob
-            reT += '/' + self.mapGlob
+            addReF = mapFrom.glob
+            addReT = self.glob
+            for c in range(fromStarCount):
+                addReF = addReF.replace('*', '(?P<glob' + str(c) +'>[\S]*)',1)
+                addReT = addReT.replace('*', '\g<glob' + str(c) +'>',1)
+            reF += '/' + addReF
+            reT += '/' + addReT
 
         if DEBUG:
             logging.info( '#' * 95 )
-            logging.info(" Method %s" % method)
-            logging.info( 'PATH patterns  : %50s -> %-50s' % (mapFrom.mapPath, self.mapPath))
+            logging.info(" Method %s *count %d" % (method, fromStarCount))
             logging.info( 'PATH cur.value : %50s -> %-50s' % (mapFrom.path, self.path))
-            logging.info( 'GLOB patterns  : %50s -> %-50s' % (mapFrom.mapGlob, self.mapGlob))
             logging.info( 'GLOB cur.value : %50s -> %-50s' % (mapFrom.glob, self.glob))
             logging.info( 'REGEX FROM '+ reF)
             logging.info( 'REGEX TO   '+ reT)
@@ -295,6 +274,7 @@ class fistMapset(fistCore):
             logging.info( ' Returning %s' % rv[:3])
     
         return rv
+    
     def resolve(self, mapFrom):
         """
         Resolve the mapped set based on a input fileSet    
