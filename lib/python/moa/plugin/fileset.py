@@ -149,13 +149,13 @@ def preparefilesets(data):
         fsid = fileSets.pop(0)        
         fs = job.template.filesets[fsid]
         job.data.filesets[fsid] = fs
-        oriPat = job.template.filesets[fsid].get('pattern', './*')
         
         if fs.type == 'set':
-            files = fist.fistFileset(job.conf[fsid], oriPat)
+            files = fist.fistFileset(job.conf[fsid])
             files.resolve()
         elif fs.type == 'single':
-            files = fist.fistSingle(job.conf[fsid], oriPat)
+            files = fist.fistSingle(job.conf[fsid])
+            
         elif fs.type == 'map':
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")
@@ -165,7 +165,7 @@ def preparefilesets(data):
                 fileSets.append(fsid)
                 continue
             source = job.data.filesets[fs.source].files
-            files = fist.fistMapset(job.conf[fsid], oriPat)
+            files = fist.fistMapset(job.conf[fsid])
             files.resolve(source)
         else:
             moa.ui.exitError("Invalid data set type %s for data set %s" % (
