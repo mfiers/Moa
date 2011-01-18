@@ -1,7 +1,11 @@
 glimmer3
 ------------------------------------------------
 
-**Glimmer3** - Predicts (prokaryotic) using glimmer3.
+**Glimmer3**
+
+::
+    Predicts (prokaryotic) using glimmer3.
+
 
 Commands
 ~~~~~~~~
@@ -22,49 +26,72 @@ Parameters
 
 
 
-**gene_len** - Minimum gene length (glimmer3 -g/--gene_len)
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**gene_len**::
+    Minimum gene length (glimmer3 -g/--gene_len)
+
   | *type*: `integer`
   | *default*: `110`
   | *optional*: `True`
 
 
 
-**gff_source** - source field to use in the gff. Defaults to "glimmer3"
+**gff_source**::
+    source field to use in the gff. Defaults to "glimmer3"
+
   | *type*: `string`
   | *default*: `glimmer3`
   | *optional*: `True`
 
 
 
-**input_dir** - Input directory with the sequences to run glimmer3 on
+**input_dir**::
+    Input directory with the sequences to run glimmer3 on
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**input_extension** - input file extension. Defaults to fasta
+**input_extension**::
+    input file extension. Defaults to fasta
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**max_overlap** - Maximum overlap, see the glimmer documentation for the -o or --max_olap parameter
+**max_overlap**::
+    Maximum overlap, see the glimmer documentation for the -o or --max_olap parameter
+
   | *type*: `integer`
   | *default*: `50`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**treshold** - treshold for calling a gene a gene (glimmer3 -t)
+**treshold**::
+    treshold for calling a gene a gene (glimmer3 -t)
+
   | *type*: `integer`
   | *default*: `30`
   | *optional*: `True`

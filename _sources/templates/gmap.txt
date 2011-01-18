@@ -1,7 +1,11 @@
 gmap
 ------------------------------------------------
 
-**Gmap** - Run GMAP on an set of input files (query) vs a database index.
+**Gmap**
+
+::
+    Run GMAP on an set of input files (query) vs a database index.
+
 
 Commands
 ~~~~~~~~
@@ -23,15 +27,16 @@ Filesets
 
 
 
-**genepred** - {}
+**genepred**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `genepred`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -39,15 +44,16 @@ Filesets
 
 
 
-**gff** - {}
+**gff**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `gff`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -55,15 +61,16 @@ Filesets
 
 
 
-**gff_invert** - {}
+**gff_invert**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `invert.gff`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -71,13 +78,16 @@ Filesets
 
 
 
-**input** - Sequences to map
+**input**::
+    Sequences to map
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -85,15 +95,16 @@ Filesets
 
 
 
-**raw** - {}
+**raw**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `raw`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `./raw`
+  | *dir*: `{}`
 
 
 
@@ -105,35 +116,54 @@ Parameters
 
 
 
-**db** - Gmap db
+**db**::
+    Gmap db
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**extra_parameters** - extra parameters to feed to gmap
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**extra_parameters**::
+    extra parameters to feed to gmap
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**gff_source** - Source field to use in the output GFF
+**gff_source**::
+    Source field to use in the output GFF
+
   | *type*: `string`
   | *default*: `gmap`
   | *optional*: `True`
 
 
 
-**invert_gff** - Invert the GFF (T/*F*)
+**invert_gff**::
+    Invert the GFF (T/*F*)
+
   | *type*: `set`
   | *default*: `T`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

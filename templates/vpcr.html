@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>vpcr &mdash; Moa v0.10.0alpha documentation</title>
+    <title>vpcr &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="vpcr_list" href="vpcr_list.html" />
     <link rel="prev" title="vmatchdb" href="vmatchdb.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="vmatchdb.html" title="vmatchdb"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="vpcr">
 <h1>vpcr<a class="headerlink" href="#vpcr" title="Permalink to this headline">¶</a></h1>
-<p><strong>VPCR</strong> - Virtual PCR, based on Bowtie</p>
+<p><strong>VPCR</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Virtual PCR, based on Bowtie</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -65,43 +69,64 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>bowtie_db</strong> - Location of the bowtie database used for the vpcr</dt>
-<dd><div class="first last line-block">
+<dt><strong>bowtie_db</strong>::</dt>
+<dd><blockquote class="first">
+Location of the bowtie database used for the vpcr</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>insert_max</strong> - maximum insert size for a vpcr fragment</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>insert_max</strong>::</dt>
+<dd><blockquote class="first">
+maximum insert size for a vpcr fragment</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>10000</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>insert_min</strong> - minimal insert size for a fragment</dt>
-<dd><div class="first last line-block">
+<dt><strong>insert_min</strong>::</dt>
+<dd><blockquote class="first">
+minimal insert size for a fragment</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>10</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>primer_1</strong> - First primer to use</dt>
-<dd><div class="first last line-block">
+<dt><strong>primer_1</strong>::</dt>
+<dd><blockquote class="first">
+First primer to use</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>primer_2</strong> - Second primer to use</dt>
-<dd><div class="first last line-block">
+<dt><strong>primer_2</strong>::</dt>
+<dd><blockquote class="first">
+Second primer to use</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -186,13 +211,13 @@
         <li class="right" >
           <a href="vmatchdb.html" title="vmatchdb"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

@@ -1,7 +1,11 @@
 adhoc_one
 ------------------------------------------------
 
-**Run an ad-hoc onliner** - Run an adhoc oneliner - without moa defined input files
+**Run an ad-hoc onliner**
+
+::
+    Run an adhoc oneliner - without moa defined input files
+
 
 Commands
 ~~~~~~~~
@@ -22,14 +26,27 @@ Parameters
 
 
 
-**process** - The one-liner to execute
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**process**::
+    The one-liner to execute
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

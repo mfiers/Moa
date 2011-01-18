@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bartab &mdash; Moa v0.10.0alpha documentation</title>
+    <title>bartab &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="bdbb" href="bidibebla.html" />
+    <link rel="next" title="bidibebla" href="bidibebla.html" />
     <link rel="prev" title="bamextract" href="bamextract.html" /> 
   </head>
   <body>
@@ -35,12 +35,12 @@
           <a href="../modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="bidibebla.html" title="bdbb"
+          <a href="bidibebla.html" title="bidibebla"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="bamextract.html" title="bamextract"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="bartab">
 <h1>bartab<a class="headerlink" href="#bartab" title="Permalink to this headline">¶</a></h1>
-<p><strong>Bartab</strong> - BARTAB - a tool to process sff files</p>
+<p><strong>Bartab</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>BARTAB - a tool to process sff files</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -65,71 +69,100 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>extra_parameters</strong> - extra parameters to feed bartab</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>extra_parameters</strong>::</dt>
+<dd><blockquote class="first">
+extra parameters to feed bartab</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>forward_primer</strong> - remove forward primer</dt>
-<dd><div class="first last line-block">
+<dt><strong>forward_primer</strong>::</dt>
+<dd><blockquote class="first">
+remove forward primer</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>in</strong> - input file for bartab</dt>
-<dd><div class="first last line-block">
+<dt><strong>in</strong>::</dt>
+<dd><blockquote class="first">
+input file for bartab</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>map</strong> - A file mapping barcodes to metadata</dt>
-<dd><div class="first last line-block">
+<dt><strong>map</strong>::</dt>
+<dd><blockquote class="first">
+A file mapping barcodes to metadata</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>min_length</strong> - minimun acceptable sequence length</dt>
-<dd><div class="first last line-block">
+<dt><strong>min_length</strong>::</dt>
+<dd><blockquote class="first">
+minimun acceptable sequence length</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>50</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>out</strong> - base output name</dt>
-<dd><div class="first last line-block">
+<dt><strong>out</strong>::</dt>
+<dd><blockquote class="first">
+base output name</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>bartab</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>qin</strong> - Quality scores for the input fasta file</dt>
-<dd><div class="first last line-block">
+<dt><strong>qin</strong>::</dt>
+<dd><blockquote class="first">
+Quality scores for the input fasta file</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>reverse_primer</strong> - remove reverse primer</dt>
-<dd><div class="first last line-block">
+<dt><strong>reverse_primer</strong>::</dt>
+<dd><blockquote class="first">
+remove reverse primer</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>trim</strong> - Trim barcode</dt>
-<dd><div class="first last line-block">
+<dt><strong>trim</strong>::</dt>
+<dd><blockquote class="first">
+Trim barcode</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>T</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
@@ -176,7 +209,7 @@
                                   title="previous chapter">bamextract</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="bidibebla.html"
-                                  title="next chapter">bdbb</a></p>
+                                  title="next chapter">bidibebla</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/templates/bartab.txt"
@@ -209,18 +242,18 @@
           <a href="../modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="bidibebla.html" title="bdbb"
+          <a href="bidibebla.html" title="bidibebla"
              >next</a> |</li>
         <li class="right" >
           <a href="bamextract.html" title="bamextract"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

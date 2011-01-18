@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>f2b &mdash; Moa v0.10.0alpha documentation</title>
+    <title>f2b &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="fq2bq" href="maq_fastq2bfq.html" />
     <link rel="prev" title="lftp" href="lftp.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="lftp.html" title="lftp"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="f2b">
 <h1>f2b<a class="headerlink" href="#f2b" title="Permalink to this headline">¶</a></h1>
-<p><strong>Convert fasta to bfa</strong> - Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2bfa index from a reference sequence</p>
+<p><strong>Convert fasta to bfa</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2bfa index from a reference sequence</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -64,34 +68,51 @@
 </div>
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
-<p><strong>bfa</strong> - {}</p>
-<blockquote>
-<div class="line-block">
+<dl class="docutils">
+<dt><strong>bfa</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>bfa</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>./bfa</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>input</strong> - input FASTA files</p>
-<blockquote>
-<div class="line-block">
-<div class="line"><em>type</em>: <cite>input</cite></div>
+</dd>
+<dt><strong>input</strong>::</dt>
+<dd><blockquote class="first">
+input FASTA files</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>fasta</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
+</dd>
+</dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -177,13 +198,13 @@
         <li class="right" >
           <a href="lftp.html" title="lftp"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

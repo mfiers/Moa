@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fasta2gff &mdash; Moa v0.10.0alpha documentation</title>
+    <title>fasta2gff &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="gap4export" href="gap4export.html" />
+    <link rel="next" title="fastx_clipper" href="fastx_clipper.html" />
     <link rel="prev" title="empty" href="empty.html" /> 
   </head>
   <body>
@@ -35,12 +35,12 @@
           <a href="../modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="gap4export.html" title="gap4export"
+          <a href="fastx_clipper.html" title="fastx_clipper"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="empty.html" title="empty"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="fasta2gff">
 <h1>fasta2gff<a class="headerlink" href="#fasta2gff" title="Permalink to this headline">¶</a></h1>
-<p><strong>GFF from FASTA</strong> - Derive GFF from a FASTA file, usually to accompany the Sequence for upload to a generic genome browser database.</p>
+<p><strong>GFF from FASTA</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Derive GFF from a FASTA file, usually to accompany the Sequence for upload to a generic genome browser database.</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -65,43 +69,64 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>f2g_gffsource</strong> - Source to be used in the gff</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>f2g_gffsource</strong>::</dt>
+<dd><blockquote class="first">
+Source to be used in the gff</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>f2g_input_dir</strong> - Directory with the input fasta files</dt>
-<dd><div class="first last line-block">
+<dt><strong>f2g_input_dir</strong>::</dt>
+<dd><blockquote class="first">
+Directory with the input fasta files</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>f2g_input_extension</strong> - glob pattern of the fasta files (default: <a href="#id1"><span class="problematic" id="id2">*</span></a>.fasta)</dt>
-<dd><div class="first last line-block">
+<dt><strong>f2g_input_extension</strong>::</dt>
+<dd><blockquote class="first">
+glob pattern of the fasta files (default: <a href="#id1"><span class="problematic" id="id2">*</span></a>.fasta)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>fasta</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>f2g_options</strong> - options to be passed to the fasta2gff script</dt>
-<dd><div class="first last line-block">
+<dt><strong>f2g_options</strong>::</dt>
+<dd><blockquote class="first">
+options to be passed to the fasta2gff script</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>f2g_output_dir</strong> - Directory with the output gff</dt>
-<dd><div class="first last line-block">
+<dt><strong>f2g_output_dir</strong>::</dt>
+<dd><blockquote class="first">
+Directory with the output gff</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: <cite>./gff</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -147,8 +172,8 @@
             <p class="topless"><a href="empty.html"
                                   title="previous chapter">empty</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="gap4export.html"
-                                  title="next chapter">gap4export</a></p>
+            <p class="topless"><a href="fastx_clipper.html"
+                                  title="next chapter">fastx_clipper</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/templates/fasta2gff.txt"
@@ -181,18 +206,18 @@
           <a href="../modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="gap4export.html" title="gap4export"
+          <a href="fastx_clipper.html" title="fastx_clipper"
              >next</a> |</li>
         <li class="right" >
           <a href="empty.html" title="empty"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

@@ -1,7 +1,11 @@
 vpcr
 ------------------------------------------------
 
-**VPCR** - Virtual PCR, based on Bowtie
+**VPCR**
+
+::
+    Virtual PCR, based on Bowtie
+
 
 Commands
 ~~~~~~~~
@@ -22,42 +26,63 @@ Parameters
 
 
 
-**bowtie_db** - Location of the bowtie database used for the vpcr
+**bowtie_db**::
+    Location of the bowtie database used for the vpcr
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**insert_max** - maximum insert size for a vpcr fragment
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**insert_max**::
+    maximum insert size for a vpcr fragment
+
   | *type*: `integer`
   | *default*: `10000`
   | *optional*: `True`
 
 
 
-**insert_min** - minimal insert size for a fragment
+**insert_min**::
+    minimal insert size for a fragment
+
   | *type*: `integer`
   | *default*: `10`
   | *optional*: `True`
 
 
 
-**primer_1** - First primer to use
+**primer_1**::
+    First primer to use
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**primer_2** - Second primer to use
+**primer_2**::
+    Second primer to use
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

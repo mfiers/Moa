@@ -1,7 +1,11 @@
 blat
 ------------------------------------------------
 
-**Blat** - Run BLAT on an set of input files (query) vs a database.
+**Blat**
+
+::
+    Run BLAT on an set of input files (query) vs a database.
+
 
 Commands
 ~~~~~~~~
@@ -22,70 +26,99 @@ Parameters
 
 
 
-**db** - type of the database (dna, prot or dnax)
+**db**::
+    type of the database (dna, prot or dnax)
+
   | *type*: `set`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**db_id_list** - a sorted list of db ids and descriptions, enhances the report generated
+**db_id_list**::
+    a sorted list of db ids and descriptions, enhances the report generated
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**db_type** - type of the database (dna, prot or dnax)
+**db_type**::
+    type of the database (dna, prot or dnax)
+
   | *type*: `set`
   | *default*: `dna`
   | *optional*: `True`
 
 
 
-**eval** - evalue cutoff to select the reported hits on (defaults to 1e-15)
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**eval**::
+    evalue cutoff to select the reported hits on (defaults to 1e-15)
+
   | *type*: `float`
   | *default*: `1e-10`
   | *optional*: `True`
 
 
 
-**gff_source** - Source field for the generated GFF files
+**gff_source**::
+    Source field for the generated GFF files
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_dir** - source field in the generated gff
+**input_dir**::
+    source field in the generated gff
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_extension** - extension of the input files
+**input_extension**::
+    extension of the input files
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**input_file** - input query file. If this variable is not defined, the combination of blat_input_dir and blat_input_extension is used to find a list of input files
+**input_file**::
+    input query file. If this variable is not defined, the combination of blat_input_dir and blat_input_extension is used to find a list of input files
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**query_type** - type of the query (dna, rna, prot, dnax or rnax)
+**query_type**::
+    type of the query (dna, rna, prot, dnax or rnax)
+
   | *type*: `set`
   | *default*: `dna`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

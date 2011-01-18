@@ -1,7 +1,11 @@
 repmask
 ------------------------------------------------
 
-**Repeatmasker** - Run a default repeatmask on the input sequences
+**Repeatmasker**
+
+::
+    Run a default repeatmask on the input sequences
+
 
 Commands
 ~~~~~~~~
@@ -23,13 +27,16 @@ Filesets
 
 
 
-**input** - Input files for repmask
+**input**::
+    Input files for repmask
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -37,15 +44,16 @@ Filesets
 
 
 
-**output** - {}
+**output**::
+    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `masked`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -53,15 +61,16 @@ Filesets
 
 
 
-**OUTPUT_FILESET_ID** - {}
+**OUTPUT_FILESET_ID**::
+    {}
 
   | *type*: `map`
   | *source*: `INPUT_FILESET_ID`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `OUTPUT_FILETYPE`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `./OUTPUT_FILETYPE`
+  | *dir*: `{}`
 
 
 
@@ -73,35 +82,54 @@ Parameters
 
 
 
-**parallel** - No of threads to run in parallel
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**parallel**::
+    No of threads to run in parallel
+
   | *type*: `integer`
   | *default*: `4`
   | *optional*: `True`
 
 
 
-**quick** - Quick job
+**quick**::
+    Quick job
+
   | *type*: `set`
   | *default*: `F`
   | *optional*: `True`
 
 
 
-**simple** - Mask *only* low complex/simple repeats, not interspersed repeats (Repeatmasker -(no)int parameter)
+**simple**::
+    Mask *only* low complex/simple repeats, not interspersed repeats (Repeatmasker -(no)int parameter)
+
   | *type*: `set`
   | *default*: `F`
   | *optional*: `True`
 
 
 
-**species** - Repeatmasker species
+**species**::
+    Repeatmasker species
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>getorf &mdash; Moa v0.10.0alpha documentation</title>
+    <title>getorf &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="sam2bam" href="sam2bam.html" />
     <link rel="prev" title="repmask" href="repeatmasker.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="repeatmasker.html" title="repmask"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="getorf">
 <h1>getorf<a class="headerlink" href="#getorf" title="Permalink to this headline">¶</a></h1>
-<p><strong>Revseq</strong> - This Moa template takes a set of input FASTA sequences and determines the reverse complement using the EMBOSS revseq utility.</p>
+<p><strong>Revseq</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>This Moa template takes a set of input FASTA sequences and determines the reverse complement using the EMBOSS revseq utility.</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -64,88 +68,118 @@
 </div>
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
-<p><strong>gff</strong> - {}</p>
-<blockquote>
-<div class="line-block">
+<dl class="docutils">
+<dt><strong>gff</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>gff</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>./gff</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>input</strong> - Input files for getorf</p>
-<blockquote>
-<div class="line-block">
-<div class="line"><em>type</em>: <cite>input</cite></div>
+</dd>
+<dt><strong>input</strong>::</dt>
+<dd><blockquote class="first">
+Input files for getorf</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>fasta</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>output</strong> - {}</p>
-<blockquote>
-<div class="line-block">
+</dd>
+<dt><strong>output</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>out</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>./out</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
+</dd>
+</dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>circular</strong> - Is the sequence linear?</dt>
-<dd><div class="first last line-block">
+<dt><strong>circular</strong>::</dt>
+<dd><blockquote class="first">
+Is the sequence linear?</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>N</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>find</strong> - What to output? 0: Translation between stop codons, 1: Translation between start &amp; stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide sequence between start and stop codons. Default: 3</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>find</strong>::</dt>
+<dd><blockquote class="first">
+What to output? 0: Translation between stop codons, 1: Translation between start &amp; stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide sequence between start and stop codons. Default: 3</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>3</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gff_source</strong> - source field to use in the gff.</dt>
-<dd><div class="first last line-block">
+<dt><strong>gff_source</strong>::</dt>
+<dd><blockquote class="first">
+source field to use in the gff.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>getorf</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>maxsize</strong> - maximal nucleotide size of the predicted ORF.</dt>
-<dd><div class="first last line-block">
+<dt><strong>maxsize</strong>::</dt>
+<dd><blockquote class="first">
+maximal nucleotide size of the predicted ORF.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1000000</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>minsize</strong> - minimal nucleotide size of the predicted ORF.</dt>
-<dd><div class="first last line-block">
+<dt><strong>minsize</strong>::</dt>
+<dd><blockquote class="first">
+minimal nucleotide size of the predicted ORF.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>30</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>table</strong> - Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.</dt>
-<dd><div class="first last line-block">
+<dt><strong>table</strong>::</dt>
+<dd><blockquote class="first">
+Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>11</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
@@ -231,13 +265,13 @@
         <li class="right" >
           <a href="repeatmasker.html" title="repmask"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

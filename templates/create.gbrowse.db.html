@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>upload2gbrowse &mdash; Moa v0.10.0alpha documentation</title>
+    <title>upload2gbrowse &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="crunch" href="crunch.html" />
     <link rel="prev" title="concatenate" href="concatenate.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="concatenate.html" title="concatenate"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="upload2gbrowse">
 <h1>upload2gbrowse<a class="headerlink" href="#upload2gbrowse" title="Permalink to this headline">¶</a></h1>
-<p><strong>Library for uploading data to GBrowse</strong> - A library that aids in uploading FASTA and GFF to a Generic Genome Browser database. This template is only to be used embedded in another template. This library expects that the following variables are preset; gup_fasta_dir, gup_gff_dir gup_upload_fasta, gup_upload_gff</p>
+<p><strong>Library for uploading data to GBrowse</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>A library that aids in uploading FASTA and GFF to a Generic Genome Browser database. This template is only to be used embedded in another template. This library expects that the following variables are preset; gup_fasta_dir, gup_gff_dir gup_upload_fasta, gup_upload_gff</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -69,64 +73,91 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>gup_db</strong> - gbrowse database. If not defined, this defaults to moa.</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>gup_db</strong>::</dt>
+<dd><blockquote class="first">
+gbrowse database. If not defined, this defaults to moa.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>gup_fasta_extension</strong> - extension of the FASTA files to upload (.fasta)</dt>
-<dd><div class="first last line-block">
+<dt><strong>gup_fasta_extension</strong>::</dt>
+<dd><blockquote class="first">
+extension of the FASTA files to upload (.fasta)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>fasta</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gup_force_upload</strong> - upload to gbrowse, ignore gup_lock and upload all, not only files newer that upload_gff or upload_fasta</dt>
-<dd><div class="first last line-block">
+<dt><strong>gup_force_upload</strong>::</dt>
+<dd><blockquote class="first">
+upload to gbrowse, ignore gup_lock and upload all, not only files newer that upload_gff or upload_fasta</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gup_gff_extension</strong> - extension of the GFF files to upload (.gff)</dt>
-<dd><div class="first last line-block">
+<dt><strong>gup_gff_extension</strong>::</dt>
+<dd><blockquote class="first">
+extension of the GFF files to upload (.gff)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>gff</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gup_upload_fasta</strong> - upload fasta to gbrowse (T/F)</dt>
-<dd><div class="first last line-block">
+<dt><strong>gup_upload_fasta</strong>::</dt>
+<dd><blockquote class="first">
+upload fasta to gbrowse (T/F)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gup_upload_gff</strong> - upload gff to gbrowse (T/F)</dt>
-<dd><div class="first last line-block">
+<dt><strong>gup_upload_gff</strong>::</dt>
+<dd><blockquote class="first">
+upload gff to gbrowse (T/F)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gup_user</strong> - gbrowse db user. If not defined, this defaults to moa.</dt>
-<dd><div class="first last line-block">
+<dt><strong>gup_user</strong>::</dt>
+<dd><blockquote class="first">
+gbrowse db user. If not defined, this defaults to moa.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>marks_extensions</strong> - Add some extensions to the Gbrowse database to be initalized, for use by Mark.</dt>
-<dd><div class="first last line-block">
+<dt><strong>marks_extensions</strong>::</dt>
+<dd><blockquote class="first">
+Add some extensions to the Gbrowse database to be initalized, for use by Mark.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -211,13 +242,13 @@
         <li class="right" >
           <a href="concatenate.html" title="concatenate"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

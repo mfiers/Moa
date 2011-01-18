@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Filesets &mdash; Moa v0.10.0alpha documentation</title>
+    <title>filesets &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../../index.html" />
     <link rel="up" title="moa.plugin" href="index.html" />
     <link rel="next" title="Help" href="help.html" />
     <link rel="prev" title="configure - Configure jobs" href="configure.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="configure.html" title="configure - Configure jobs"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
       </ul>
@@ -52,8 +52,30 @@
           <div class="body">
             
   <div class="section" id="filesets">
-<span id="module-moa.plugin.fileset"></span><h1>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h1>
+<span id="module-moa.plugin.fileset"></span><h1>filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h1>
 <p>Define sets of files for Moa</p>
+<dl class="function">
+<dt id="moa.plugin.fileset.defineCommands">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">defineCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.defineCommands" title="Permalink to this definition">¶</a></dt>
+<dd>Set the moa commands for this plugin</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.fileset.preCommand">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">preCommand</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.preCommand" title="Permalink to this definition">¶</a></dt>
+<dd>Run before execution of any command (backend or plugin)</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.fileset.preparefilesets">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">preparefilesets</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.preparefilesets" title="Permalink to this definition">¶</a></dt>
+<dd>prepare all filesets</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.fileset.showFiles">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">showFiles</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.showFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>files</p>
+<p>Show an overview of the files found for this job</p>
+</dd></dl>
+
 </div>
 
 
@@ -108,14 +130,14 @@
         <li class="right" >
           <a href="configure.html" title="configure - Configure jobs"
              >previous</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
           <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

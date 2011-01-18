@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bwa_sampe &mdash; Moa v0.10.0alpha documentation</title>
+    <title>bwa_sampe &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="bwa_samse" href="bwa_samse.html" />
     <link rel="prev" title="bwa_index" href="bwa_index.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="bwa_index.html" title="bwa_index"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,11 +52,10 @@
             
   <div class="section" id="bwa-sampe">
 <h1>bwa_sampe<a class="headerlink" href="#bwa-sampe" title="Permalink to this headline">¶</a></h1>
-<blockquote>
-<ul class="simple">
-<li>Generate alignments in SAM format given paired end reads</li>
-</ul>
-</blockquote>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Generate alignments in SAM format given paired end reads</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -68,133 +67,184 @@
 </div>
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
-<p><strong>fq_forward_input</strong> - fastq input files directory - forward files</p>
-<blockquote>
-<div class="line-block">
-<div class="line"><em>type</em>: <cite>input</cite></div>
+<dl class="docutils">
+<dt><strong>fq_forward_input</strong>::</dt>
+<dd><blockquote class="first">
+fastq input files directory - forward</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>fq</cite></div>
-<div class="line"><em>glob</em>: <cite>*.1</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>fq_reverse_input</strong> - fastq input files directory - reverse files</p>
-<blockquote>
-<div class="line-block">
+</dd>
+<dt><strong>fq_reverse_input</strong>::</dt>
+<dd><blockquote class="first">
+fastq input files directory - reverse</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>fq</cite></div>
-<div class="line"><em>glob</em>: <cite>*.2</cite></div>
-<div class="line"><em>dir</em>: <cite>{{ fq_forward_input_dir }}</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>output</strong> - {}</p>
-<blockquote>
-<div class="line-block">
+</dd>
+<dt><strong>output</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>sam</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>.</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>sai_forward_input</strong> - sai input files - forward files</p>
-<blockquote>
-<div class="line-block">
+</dd>
+<dt><strong>output_bam</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+<dt><strong>sai_forward_input</strong>::</dt>
+<dd><blockquote class="first">
+sai input files - forward</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
 <div class="line"><em>extension</em>: <cite>sai</cite></div>
-<div class="line"><em>glob</em>: <cite>{{ fq_forward_input_glob }}</cite></div>
-<div class="line"><em>dir</em>: <cite>.</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>sai_reverse_input</strong> - sai input files - reverse files</p>
-<blockquote>
-<div class="line-block">
+</dd>
+<dt><strong>sai_reverse_input</strong>::</dt>
+<dd><blockquote class="first">
+sai input files - reverse files</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
+<div class="line"><em>source</em>: <cite>sai_forward_input</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
 <div class="line"><em>extension</em>: <cite>sai</cite></div>
-<div class="line"><em>glob</em>: <cite>{{ fq_reverse_input_glob }}</cite></div>
-<div class="line"><em>dir</em>: <cite>{{ sai_forward_input_dir }}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
+</dd>
+</dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>db</strong> - bwa database to align against</dt>
-<dd><div class="first last line-block">
+<dt><strong>db</strong>::</dt>
+<dd><blockquote class="first">
+bwa database to align against</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>disable_insert_size</strong> - disable insert size estimate (force -s)</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>disable_insert_size</strong>::</dt>
+<dd><blockquote class="first">
+disable insert size estimate (force -s)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>disable_SW</strong> - disable Smith-Waterman for the unmapped mate</dt>
-<dd><div class="first last line-block">
+<dt><strong>disable_SW</strong>::</dt>
+<dd><blockquote class="first">
+disable Smith-Waterman for the unmapped mate</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_aln_out</strong> - maximum hits to output for paired reads</dt>
-<dd><div class="first last line-block">
+<dt><strong>max_aln_out</strong>::</dt>
+<dd><blockquote class="first">
+maximum hits to output for paired reads</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>3</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_insert_size</strong> - maximum insert size</dt>
-<dd><div class="first last line-block">
+<dt><strong>max_insert_size</strong>::</dt>
+<dd><blockquote class="first">
+maximum insert size</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>500</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_occ_read</strong> - maximum occurrences for one end</dt>
-<dd><div class="first last line-block">
+<dt><strong>max_occ_read</strong>::</dt>
+<dd><blockquote class="first">
+maximum occurrences for one end</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>100000</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_out_discordant_pairs</strong> - maximum hits to output for discordant pairs</dt>
-<dd><div class="first last line-block">
+<dt><strong>max_out_discordant_pairs</strong>::</dt>
+<dd><blockquote class="first">
+maximum hits to output for discordant pairs</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>10</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>preload_index</strong> - preload index into memory (for base-space reads only)</dt>
-<dd><div class="first last line-block">
+<dt><strong>preload_index</strong>::</dt>
+<dd><blockquote class="first">
+preload index into memory (for base-space reads only)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>prior_chimeric_rate</strong> - prior of chimeric rate (lower bound)</dt>
-<dd><div class="first last line-block">
+<dt><strong>prior_chimeric_rate</strong>::</dt>
+<dd><blockquote class="first">
+prior of chimeric rate (lower bound)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1e-05</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -211,8 +261,9 @@
 <dd>Yogini Idnani, Mark Fiers</dd>
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Nov 25 17:06:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>1291933989.03</dd>
 </dl>
-<p><strong>Modification date</strong></p>
 </div>
 </div>
 
@@ -279,13 +330,13 @@
         <li class="right" >
           <a href="bwa_index.html" title="bwa_index"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

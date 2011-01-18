@@ -1,7 +1,11 @@
 vmatchdb
 ------------------------------------------------
 
-**vmatch database builder** - Builds a vmatchdb index from a sequence
+**vmatch database builder**
+
+::
+    Builds a vmatchdb index from a sequence
+
 
 Commands
 ~~~~~~~~
@@ -23,13 +27,16 @@ Filesets
 
 
 
-**input** - Input files for vmatch
+**input**::
+    Input files for vmatch
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -41,21 +48,36 @@ Parameters
 
 
 
-**name** - Name of the vmatch index to create
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**name**::
+    Name of the vmatch index to create
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**pl** - Prefix length
+**pl**::
+    Prefix length
+
   | *type*: `integer`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

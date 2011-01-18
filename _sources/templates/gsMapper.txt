@@ -1,7 +1,11 @@
 gsmap
 ------------------------------------------------
 
-**GSMapper** - Run the Roche GS Reference mapper
+**GSMapper**
+
+::
+    Run the Roche GS Reference mapper
+
 
 Commands
 ~~~~~~~~
@@ -22,49 +26,72 @@ Parameters
 
 
 
-**annotation** - Gene annotation file in the UCSC GenePred format
+**annotation**::
+    Gene annotation file in the UCSC GenePred format
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**min_overlap_ident** - Minimum identity length in the assembly step
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**min_overlap_ident**::
+    Minimum identity length in the assembly step
+
   | *type*: `integer`
   | *default*: `90`
   | *optional*: `True`
 
 
 
-**min_overlap_len** - Minimum overlap length in the assembly step
+**min_overlap_len**::
+    Minimum overlap length in the assembly step
+
   | *type*: `integer`
   | *default*: `40`
   | *optional*: `True`
 
 
 
-**name** - Name identifying this mapping in the output gff
+**name**::
+    Name identifying this mapping in the output gff
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**reference_fasta** - A multifasta file with the reference sequence(s)with the library id.
+**reference_fasta**::
+    A multifasta file with the reference sequence(s)with the library id.
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**sfffile** - SFF files with reads to map against the reference sequences
+**sfffile**::
+    SFF files with reads to map against the reference sequences
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

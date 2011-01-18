@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pregap &mdash; Moa v0.10.0alpha documentation</title>
+    <title>pregap &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="project" href="project.html" />
     <link rel="prev" title="nstretch" href="nstretch.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="nstretch.html" title="nstretch"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="pregap">
 <h1>pregap<a class="headerlink" href="#pregap" title="Permalink to this headline">¶</a></h1>
-<p><strong>Pregap</strong> - Run Pregap. Note that running phrap could be a part of this.</p>
+<p><strong>Pregap</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Run Pregap. Note that running phrap could be a part of this.</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -65,71 +69,100 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>cloning_vector</strong> - File containing the cloning vector</dt>
-<dd><div class="first last line-block">
+<dt><strong>cloning_vector</strong>::</dt>
+<dd><blockquote class="first">
+File containing the cloning vector</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>ecoli_screenseq</strong> - File containing ecoli screen sequences</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>ecoli_screenseq</strong>::</dt>
+<dd><blockquote class="first">
+File containing ecoli screen sequences</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>input_dir</strong> - Directory with the input data</dt>
-<dd><div class="first last line-block">
+<dt><strong>input_dir</strong>::</dt>
+<dd><blockquote class="first">
+Directory with the input data</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>input_pattern</strong> - file name pattern</dt>
-<dd><div class="first last line-block">
+<dt><strong>input_pattern</strong>::</dt>
+<dd><blockquote class="first">
+file name pattern</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>quality_value_clip</strong> - quality cutoff</dt>
-<dd><div class="first last line-block">
+<dt><strong>quality_value_clip</strong>::</dt>
+<dd><blockquote class="first">
+quality cutoff</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>10</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>repeat_masker_lib</strong> - File with a repeatmasker library</dt>
-<dd><div class="first last line-block">
+<dt><strong>repeat_masker_lib</strong>::</dt>
+<dd><blockquote class="first">
+File with a repeatmasker library</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>sequencing_vector</strong> - File containing the sequencing vector</dt>
-<dd><div class="first last line-block">
+<dt><strong>sequencing_vector</strong>::</dt>
+<dd><blockquote class="first">
+File containing the sequencing vector</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>template</strong> - the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.</dt>
-<dd><div class="first last line-block">
+<dt><strong>template</strong>::</dt>
+<dd><blockquote class="first">
+the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: <cite>./files/pregap.config.</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>vector_primerfile</strong> - File with the vector primers</dt>
-<dd><div class="first last line-block">
+<dt><strong>vector_primerfile</strong>::</dt>
+<dd><blockquote class="first">
+File with the vector primers</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -214,13 +247,13 @@
         <li class="right" >
           <a href="nstretch.html" title="nstretch"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

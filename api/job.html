@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>moa.job &mdash; Moa v0.10.0alpha documentation</title>
+    <title>moa.job &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
     <link rel="next" title="moa.jobConf" href="jobConf.html" />
     <link rel="prev" title="moa.commands" href="commands.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="commands.html" title="moa.commands"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -77,9 +77,45 @@ read the template from <cite>./.moa/template</cite></li>
 </tbody>
 </table>
 <dl class="method">
+<dt id="moa.job.Job.checkCommands">
+<tt class="descname">checkCommands</tt><big>(</big><em>commands</em><big>)</big><a class="headerlink" href="#moa.job.Job.checkCommands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check commands, and rearrange if there are delegates.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">delegate</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">([</span><span class="s">&#39;run2&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;run2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">([</span><span class="s">&#39;run&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">([</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run2&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>commands</em> (list of strings) &#8211; The list of commands to check</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The checked list of commands</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of strings</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="moa.job.Job.checkConfDir">
 <tt class="descname">checkConfDir</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.checkConfDir" title="Permalink to this definition">¶</a></dt>
-<dd>Check if the configuration directory exists. If not create it.</dd></dl>
+<dd><p>Check if the configuration directory exists. If not create it.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">confdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">confdir</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">shutil</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">confdir</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">confdir</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">checkConfDir</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">confdir</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="moa.job.Job.defineOptions">
@@ -95,7 +131,14 @@ alwasy deferred to the backend</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>command</em> (string) &#8211; the command to execute</td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><em>command</em> (string) &#8211; the command to execute</li>
+<li><em>verbose</em> (Boolean) &#8211; output lots of data</li>
+<li><em>background</em> (Boolean) &#8211; Run this job in the background? If <cite>True</cite>,
+fork and have the parent return immediately. The child
+finishes. If <cite>False</cite>, wait for the job to finish</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -104,7 +147,8 @@ alwasy deferred to the backend</p>
 <dl class="method">
 <dt id="moa.job.Job.getActor">
 <tt class="descname">getActor</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.getActor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get an instance of <a title="moa.actor.Actor" class="reference external" href="actor.html#moa.actor.Actor"><tt class="xref docutils literal"><span class="pre">moa.actor.Actor</span></tt></a> for this job.</p>
+<dd><p>Return an actor (<a title="moa.actor.Actor" class="reference external" href="actor.html#moa.actor.Actor"><tt class="xref docutils literal"><span class="pre">moa.actor.Actor</span></tt></a>), a wrapper for python&#8217;s subprocess.</p>
+<p>An actor is meant to handle the execution of out-of-python tools</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -113,6 +157,21 @@ alwasy deferred to the backend</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.hasCommand">
+<tt class="descname">hasCommand</tt><big>(</big><em>command</em><big>)</big><a class="headerlink" href="#moa.job.Job.hasCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if this job defines a certain command</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">THIS METHOD DOES NOT WORK PROPERLY YET</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">hasCommand</span><span class="p">(</span><span class="s">&#39;run&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">hasCommand</span><span class="p">(</span><span class="s">&#39;run2&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -183,20 +242,26 @@ directory must already exists</li>
 <dl class="function">
 <dt id="moa.job.newTestJob">
 <tt class="descclassname">moa.job.</tt><tt class="descname">newTestJob</tt><big>(</big><em>template</em>, <em>title='Test job'</em><big>)</big><a class="headerlink" href="#moa.job.newTestJob" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test function - creates a temp directory and uses that to
-instantiate the job in. This function returns the directory where
-the job is created. All parameters are passed on to L{newJob}</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="n">template</span> <span class="o">=</span> <span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template&#39;</span><span class="p">))</span>
-<span class="go">True</span>
+<dd><p>for testing purposes - creates a temporary directory and uses that to
+instantiate a job. This function returns the job object created</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="n">template</span> <span class="o">=</span> <span class="s">&#39;adhoc&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;test title&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="s">&#39;test title&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template&#39;</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>&#64;returns: The directory where the job was created
-&#64;rtype: string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the created job</td>
+</tr>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">instance of <a title="moa.job.Job" class="reference internal" href="#moa.job.Job"><tt class="xref docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -253,13 +318,13 @@ the job is created. All parameters are passed on to L{newJob}</p>
         <li class="right" >
           <a href="commands.html" title="moa.commands"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Moa API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

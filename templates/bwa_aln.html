@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bwa_aln &mdash; Moa v0.10.0alpha documentation</title>
+    <title>bwa_aln &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="bwa_index" href="bwa_index.html" />
     <link rel="prev" title="bowtiedb" href="bowtiedb.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="bowtiedb.html" title="bowtiedb"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,11 +52,10 @@
             
   <div class="section" id="bwa-aln">
 <h1>bwa_aln<a class="headerlink" href="#bwa-aln" title="Permalink to this headline">¶</a></h1>
-<blockquote>
-<ul class="simple">
-<li>Use BWA to align a set of fastq reads against a db</li>
-</ul>
-</blockquote>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Use BWA to align a set of fastq reads against a db</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -68,160 +67,213 @@
 </div>
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
-<p><strong>input</strong> - Fastq input files</p>
-<blockquote>
-<div class="line-block">
-<div class="line"><em>type</em>: <cite>input</cite></div>
+<dl class="docutils">
+<dt><strong>input</strong>::</dt>
+<dd><blockquote class="first">
+Fastq input files</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>fq</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
-<p><strong>output</strong> - {}</p>
-<blockquote>
-<div class="line-block">
+</dd>
+<dt><strong>output</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>sai</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>.</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
-</blockquote>
+</dd>
+</dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>best_hits_stop</strong> - stop searching when there are &gt;INT equally best hits</dt>
-<dd><div class="first last line-block">
+<dt><strong>best_hits_stop</strong>::</dt>
+<dd><blockquote class="first">
+stop searching when there are &gt;INT equally best hits</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>30</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>color_space</strong> - input sequences are in the color space</dt>
-<dd><div class="first last line-block">
+<dt><strong>color_space</strong>::</dt>
+<dd><blockquote class="first">
+input sequences are in the color space</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>db</strong> - bwa database to align against</dt>
-<dd><div class="first last line-block">
+<dt><strong>db</strong>::</dt>
+<dd><blockquote class="first">
+bwa database to align against</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>edit_dist_missing_prob</strong> - max</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>edit_dist_missing_prob</strong>::</dt>
+<dd><blockquote class="first">
+max</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>0.04</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gap_ext_max</strong> - maximum number of gap extensions, -1 for disabling long gaps</dt>
-<dd><div class="first last line-block">
+<dt><strong>gap_ext_max</strong>::</dt>
+<dd><blockquote class="first">
+maximum number of gap extensions, -1 for disabling long gaps</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>-1</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gap_ext_penalty</strong> - gap extension penalty</dt>
-<dd><div class="first last line-block">
+<dt><strong>gap_ext_penalty</strong>::</dt>
+<dd><blockquote class="first">
+gap extension penalty</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>4</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gap_open_penalty</strong> - gap open penalty</dt>
-<dd><div class="first last line-block">
+<dt><strong>gap_open_penalty</strong>::</dt>
+<dd><blockquote class="first">
+gap open penalty</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>11</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gap_opens_max</strong> - maximum number or fraction of gap opens</dt>
-<dd><div class="first last line-block">
+<dt><strong>gap_opens_max</strong>::</dt>
+<dd><blockquote class="first">
+maximum number or fraction of gap opens</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>log_gap_penalty_del</strong> - log-scaled gap penalty for long deletions</dt>
-<dd><div class="first last line-block">
+<dt><strong>log_gap_penalty_del</strong>::</dt>
+<dd><blockquote class="first">
+log-scaled gap penalty for long deletions</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_ext_long_del</strong> - maximum occurrences for extending a long deletion</dt>
-<dd><div class="first last line-block">
+<dt><strong>max_ext_long_del</strong>::</dt>
+<dd><blockquote class="first">
+maximum occurrences for extending a long deletion</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>10</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_queue_entry</strong> - maximum entries in the queue</dt>
-<dd><div class="first last line-block">
+<dt><strong>max_queue_entry</strong>::</dt>
+<dd><blockquote class="first">
+maximum entries in the queue</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2000000</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>mismatch_penalty</strong> - mismatch penalty</dt>
-<dd><div class="first last line-block">
+<dt><strong>mismatch_penalty</strong>::</dt>
+<dd><blockquote class="first">
+mismatch penalty</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>3</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>no_indel_from_ends</strong> - do not put an indel within INT bp towards the ends</dt>
-<dd><div class="first last line-block">
+<dt><strong>no_indel_from_ends</strong>::</dt>
+<dd><blockquote class="first">
+do not put an indel within INT bp towards the ends</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>5</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>non_iterative</strong> - non-iterative mode search for all n-difference hits (slow)</dt>
-<dd><div class="first last line-block">
+<dt><strong>non_iterative</strong>::</dt>
+<dd><blockquote class="first">
+non-iterative mode search for all n-difference hits (slow)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>quality_step</strong> - quality threshold for read trimming down to 35bp</dt>
-<dd><div class="first last line-block">
+<dt><strong>quality_step</strong>::</dt>
+<dd><blockquote class="first">
+quality threshold for read trimming down to 35bp</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>0</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>seed_len</strong> - Seed length</dt>
-<dd><div class="first last line-block">
+<dt><strong>seed_len</strong>::</dt>
+<dd><blockquote class="first">
+Seed length</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>30</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>seed_max_diff</strong> - Maximum differences in the seed</dt>
-<dd><div class="first last line-block">
+<dt><strong>seed_max_diff</strong>::</dt>
+<dd><blockquote class="first">
+Maximum differences in the seed</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>thread_num</strong> - number of threads</dt>
-<dd><div class="first last line-block">
+<dt><strong>thread_num</strong>::</dt>
+<dd><blockquote class="first">
+number of threads</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -238,8 +290,9 @@
 <dd>Mark Fiers, Yogini Idnani</dd>
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Nov 10 07:56:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>1291933988.93</dd>
 </dl>
-<p><strong>Modification date</strong></p>
 </div>
 </div>
 
@@ -306,13 +359,13 @@
         <li class="right" >
           <a href="bowtiedb.html" title="bowtiedb"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

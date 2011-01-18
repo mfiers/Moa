@@ -1,7 +1,11 @@
 maqpair
 ------------------------------------------------
 
-**MAQ paired ends mapper** - Map paired ends to a reference sequence using MAQ
+**MAQ paired ends mapper**
+
+::
+    Map paired ends to a reference sequence using MAQ
+
 
 Commands
 ~~~~~~~~
@@ -22,49 +26,72 @@ Parameters
 
 
 
-**forward_suffix** - Suffix of each forward filename - recognize forward files this way. Note this is not a regular extension, no . is assumed between the filename & suffix
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**forward_suffix**::
+    Suffix of each forward filename - recognize forward files this way. Note this is not a regular extension, no . is assumed between the filename & suffix
+
   | *type*: `string`
   | *default*: `_f.bfq`
   | *optional*: `True`
 
 
 
-**maxdist** - max outer distance for a (non RF) readpair. This applies to illumina matepairs - i.e. short inserts
+**maxdist**::
+    max outer distance for a (non RF) readpair. This applies to illumina matepairs - i.e. short inserts
+
   | *type*: `integer`
   | *default*: `250`
   | *optional*: `True`
 
 
 
-**read_dir** - directory containing the forward reads
+**read_dir**::
+    directory containing the forward reads
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**reference** - Reference bfa file to map the reads to
+**reference**::
+    Reference bfa file to map the reads to
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**reverse_suffix** - suffix of reverse files
+**reverse_suffix**::
+    suffix of reverse files
+
   | *type*: `string`
   | *default*: `_r.bfq`
   | *optional*: `True`
 
 
 
-**RF_maxdist** - max outer distance for an RF readpair (corresponds to the -A parameter). This applies to long insert illumina pairs
+**RF_maxdist**::
+    max outer distance for an RF readpair (corresponds to the -A parameter). This applies to long insert illumina pairs
+
   | *type*: `integer`
   | *default*: `15000`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

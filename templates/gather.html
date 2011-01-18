@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>gather &mdash; Moa v0.10.0alpha documentation</title>
+    <title>gather &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,7 +19,7 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="genemarks" href="genemarks.html" />
     <link rel="prev" title="gap4export" href="gap4export.html" /> 
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="gap4export.html" title="gap4export"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="gather">
 <h1>gather<a class="headerlink" href="#gather" title="Permalink to this headline">¶</a></h1>
-<p><strong>gather files</strong> - gather a set of files and create hardlinks to. Hardlinks have as advantage that updates are noticed via the timestamp. Hence, make recognizes them.</p>
+<p><strong>gather files</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>gather a set of files and create hardlinks to. Hardlinks have as advantage that updates are noticed via the timestamp. Hence, make recognizes them.</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -65,64 +69,91 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>g_input_dir</strong> - list of directories with the input files</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>g_input_dir</strong>::</dt>
+<dd><blockquote class="first">
+list of directories with the input files</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>g_input_pattern</strong> - glob pattern to download</dt>
-<dd><div class="first last line-block">
+<dt><strong>g_input_pattern</strong>::</dt>
+<dd><blockquote class="first">
+glob pattern to download</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>*</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>g_limit</strong> - limit the number of files gathered (with the most recent files first, defaults to 1mln)</dt>
-<dd><div class="first last line-block">
+<dt><strong>g_limit</strong>::</dt>
+<dd><blockquote class="first">
+limit the number of files gathered (with the most recent files first, defaults to 1mln)</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1000000</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>g_name_sed</strong> - SED expression to be executed on each file name - allows you to change file names</dt>
-<dd><div class="first last line-block">
+<dt><strong>g_name_sed</strong>::</dt>
+<dd><blockquote class="first">
+SED expression to be executed on each file name - allows you to change file names</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>s/a/a/</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>g_output_dir</strong> - Output subdirectory, defaults to .</dt>
-<dd><div class="first last line-block">
+<dt><strong>g_output_dir</strong>::</dt>
+<dd><blockquote class="first">
+Output subdirectory, defaults to .</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: <cite>.</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>g_parallel</strong> - allow parallel execution (T) or not (<strong>F</strong>). If for example concatenating to one single file, you should not have multiple threads.</dt>
-<dd><div class="first last line-block">
+<dt><strong>g_parallel</strong>::</dt>
+<dd><blockquote class="first">
+allow parallel execution (T) or not (<strong>F</strong>). If for example concatenating to one single file, you should not have multiple threads.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>g_powerclean</strong> - Do brute force cleaning (T/F). Remove all files, except moa.mk &amp; Makefile when calling make clean. Defaults to F.</dt>
-<dd><div class="first last line-block">
+<dt><strong>g_powerclean</strong>::</dt>
+<dd><blockquote class="first">
+Do brute force cleaning (T/F). Remove all files, except moa.mk &amp; Makefile when calling make clean. Defaults to F.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>g_process</strong> - Command to process the files. If undefined, hardlink the files.</dt>
-<dd><div class="first last line-block">
+<dt><strong>g_process</strong>::</dt>
+<dd><blockquote class="first">
+Command to process the files. If undefined, hardlink the files.</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>ln -f $$&lt; $$(g_target)</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -207,13 +238,13 @@
         <li class="right" >
           <a href="gap4export.html" title="gap4export"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

@@ -1,7 +1,11 @@
 gmapdb
 ------------------------------------------------
 
-**gmapdb index builder** - Builds gmapdb index from a reference sequence
+**gmapdb index builder**
+
+::
+    Builds gmapdb index from a reference sequence
+
 
 Commands
 ~~~~~~~~
@@ -17,33 +21,54 @@ Commands
 
 
 
+Filesets
+~~~~~~~~
+
+
+
+
+**input**::
+    The reference sequence to build a gmap database with.
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
 Parameters
 ~~~~~~~~~~
 
 
 
-**input_dir** - The reference sequence to build a gmap database with.
-  | *type*: `directory`
-  | *default*: ``
-  | *optional*: `False`
+**default_command**::
+    command to run for this template
 
-
-
-**input_extension** - Extension of the input files, defaults to fasta
-  | *type*: `string`
-  | *default*: `fasta`
+  | *type*: `{}`
+  | *default*: `run`
   | *optional*: `True`
 
 
 
-**name** - Name of the gmap index to create
+**name**::
+    Name of the gmap index to create
+
   | *type*: `string`
-  | *default*: ``
+  | *default*: `gmapdb`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
@@ -54,7 +79,7 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

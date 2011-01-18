@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Templates &mdash; Moa v0.10.0alpha documentation</title>
+    <title>Templates &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="next" title="crunch" href="act_crunch.html" />
-    <link rel="prev" title="Creating a pipeline" href="../using.html" /> 
+    <link rel="prev" title="Command reference" href="../commands/index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,9 +37,9 @@
           <a href="act_crunch.html" title="crunch"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../using.html" title="Creating a pipeline"
+          <a href="../commands/index.html" title="Command reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,15 +54,17 @@
 <ul>
 <li class="toctree-l1"><a class="reference external" href="act_crunch.html">crunch</a></li>
 <li class="toctree-l1"><a class="reference external" href="adhoc.html">adhoc</a></li>
+<li class="toctree-l1"><a class="reference external" href="adhoc2.html">adhoc2</a></li>
 <li class="toctree-l1"><a class="reference external" href="adhoc_one.html">adhoc_one</a></li>
 <li class="toctree-l1"><a class="reference external" href="bamextract.html">bamextract</a></li>
 <li class="toctree-l1"><a class="reference external" href="bartab.html">bartab</a></li>
-<li class="toctree-l1"><a class="reference external" href="bidibebla.html">bdbb</a></li>
+<li class="toctree-l1"><a class="reference external" href="bidibebla.html">bidibebla</a></li>
 <li class="toctree-l1"><a class="reference external" href="blast.html">blast</a></li>
 <li class="toctree-l1"><a class="reference external" href="blastSingle.html">blast</a></li>
 <li class="toctree-l1"><a class="reference external" href="blastdb.html">blastdb</a></li>
 <li class="toctree-l1"><a class="reference external" href="blat.html">blat</a></li>
 <li class="toctree-l1"><a class="reference external" href="bowtie.html">bowtie</a></li>
+<li class="toctree-l1"><a class="reference external" href="bowtie_pe.html">bowtie_pe</a></li>
 <li class="toctree-l1"><a class="reference external" href="bowtiedb.html">bowtiedb</a></li>
 <li class="toctree-l1"><a class="reference external" href="bwa_aln.html">bwa_aln</a></li>
 <li class="toctree-l1"><a class="reference external" href="bwa_index.html">bwa_index</a></li>
@@ -79,6 +81,8 @@
 <li class="toctree-l1"><a class="reference external" href="dottupSelf.html">dotself</a></li>
 <li class="toctree-l1"><a class="reference external" href="empty.html">empty</a></li>
 <li class="toctree-l1"><a class="reference external" href="fasta2gff.html">fasta2gff</a></li>
+<li class="toctree-l1"><a class="reference external" href="fastx_clipper.html">fastx_clipper</a></li>
+<li class="toctree-l1"><a class="reference external" href="fastx_qual_stats.html">fastx_qual_stats</a></li>
 <li class="toctree-l1"><a class="reference external" href="gap4export.html">gap4export</a></li>
 <li class="toctree-l1"><a class="reference external" href="gather.html">gather</a></li>
 <li class="toctree-l1"><a class="reference external" href="genemarks.html">genemarks</a></li>
@@ -92,6 +96,8 @@
 <li class="toctree-l1"><a class="reference external" href="maq_fasta2bfa.html">f2b</a></li>
 <li class="toctree-l1"><a class="reference external" href="maq_fastq2bfq.html">fq2bq</a></li>
 <li class="toctree-l1"><a class="reference external" href="maq_match_pair.html">maqpair</a></li>
+<li class="toctree-l1"><a class="reference external" href="maq_pe.html">maq_pe</a></li>
+<li class="toctree-l1"><a class="reference external" href="maq_se.html">maq_se</a></li>
 <li class="toctree-l1"><a class="reference external" href="moatest.html">moatest</a></li>
 <li class="toctree-l1"><a class="reference external" href="mummer.html">mummer</a></li>
 <li class="toctree-l1"><a class="reference external" href="ncbi.html">ncbi</a></li>
@@ -103,10 +109,15 @@
 <li class="toctree-l1"><a class="reference external" href="repeatmasker.html">repmask</a></li>
 <li class="toctree-l1"><a class="reference external" href="revseq.html">getorf</a></li>
 <li class="toctree-l1"><a class="reference external" href="sam2bam.html">sam2bam</a></li>
+<li class="toctree-l1"><a class="reference external" href="samtools_pileup.html">samtools_pileup</a></li>
 <li class="toctree-l1"><a class="reference external" href="scaffolder.html">scaf</a></li>
 <li class="toctree-l1"><a class="reference external" href="sffinfo.html">sffinfo</a></li>
+<li class="toctree-l1"><a class="reference external" href="soap_aln_pe.html">soap_aln_pe</a></li>
+<li class="toctree-l1"><a class="reference external" href="soap_aln_se.html">soap_aln_se</a></li>
 <li class="toctree-l1"><a class="reference external" href="soapdb.html">soapdb</a></li>
+<li class="toctree-l1"><a class="reference external" href="statsidx.html">statsidx</a></li>
 <li class="toctree-l1"><a class="reference external" href="traverse.html">traverse</a></li>
+<li class="toctree-l1"><a class="reference external" href="unittest.html">unittest</a></li>
 <li class="toctree-l1"><a class="reference external" href="varscan.html">varscan</a></li>
 <li class="toctree-l1"><a class="reference external" href="vmatch.html">vmatch</a></li>
 <li class="toctree-l1"><a class="reference external" href="vmatchdb.html">vmatchdb</a></li>
@@ -125,8 +136,8 @@
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
             <h4>Previous topic</h4>
-            <p class="topless"><a href="../using.html"
-                                  title="previous chapter">Creating a pipeline</a></p>
+            <p class="topless"><a href="../commands/index.html"
+                                  title="previous chapter">Command reference</a></p>
             <h4>Next topic</h4>
             <p class="topless"><a href="act_crunch.html"
                                   title="next chapter">crunch</a></p>
@@ -165,14 +176,14 @@
           <a href="act_crunch.html" title="crunch"
              >next</a> |</li>
         <li class="right" >
-          <a href="../using.html" title="Creating a pipeline"
+          <a href="../commands/index.html" title="Command reference"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

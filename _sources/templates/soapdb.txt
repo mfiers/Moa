@@ -1,7 +1,11 @@
 soapdb
 ------------------------------------------------
 
-**Bowtie index builder** - Builds a bowtie index from a reference sequence
+**Bowtie index builder**
+
+::
+    Builds a bowtie index from a reference sequence
+
 
 Commands
 ~~~~~~~~
@@ -22,14 +26,27 @@ Parameters
 
 
 
-**input** - Input fasta file to build a SOAP bwt database from
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**input_fasta**::
+    input fasta file for the database
+
   | *type*: `file`
-  | *default*: ``
+  | *default*: `{}`
   | *optional*: `False`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
@@ -42,7 +59,7 @@ Other
 **Backend**
   gnumake
 **Author**
-  Mark Fiers
+  Mark Fiers, Yogini Idnani
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**

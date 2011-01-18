@@ -1,7 +1,11 @@
 nstretch
 ------------------------------------------------
 
-**Nstretch** - Run NSTRETCH on an set of input files
+**Nstretch**
+
+::
+    Run NSTRETCH on an set of input files
+
 
 Commands
 ~~~~~~~~
@@ -22,28 +26,45 @@ Parameters
 
 
 
-**input_dir** - input dir with the fasta files
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**input_dir**::
+    input dir with the fasta files
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**input_extension** - extension of the input files
+**input_extension**::
+    extension of the input files
+
   | *type*: `string`
   | *default*: `fasta`
   | *optional*: `True`
 
 
 
-**len** - minimal number of Ns before its reported (default 10)
+**len**::
+    minimal number of Ns before its reported (default 10)
+
   | *type*: `integer`
   | *default*: `10`
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

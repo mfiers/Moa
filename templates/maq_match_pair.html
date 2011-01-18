@@ -5,13 +5,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>maqpair &mdash; Moa v0.10.0alpha documentation</title>
+    <title>maqpair &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.0alpha',
+        VERSION:     '0.10.1',
         COLLAPSE_MODINDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -19,9 +19,9 @@
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.0alpha documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="moatest" href="moatest.html" />
+    <link rel="next" title="maq_pe" href="maq_pe.html" />
     <link rel="prev" title="fq2bq" href="maq_fastq2bfq.html" /> 
   </head>
   <body>
@@ -35,12 +35,12 @@
           <a href="../modindex.html" title="Global Module Index"
              accesskey="M">modules</a> |</li>
         <li class="right" >
-          <a href="moatest.html" title="moatest"
+          <a href="maq_pe.html" title="maq_pe"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="maq_fastq2bfq.html" title="fq2bq"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -52,7 +52,11 @@
             
   <div class="section" id="maqpair">
 <h1>maqpair<a class="headerlink" href="#maqpair" title="Permalink to this headline">¶</a></h1>
-<p><strong>MAQ paired ends mapper</strong> - Map paired ends to a reference sequence using MAQ</p>
+<p><strong>MAQ paired ends mapper</strong></p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Map paired ends to a reference sequence using MAQ</dd>
+</dl>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -65,50 +69,73 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>forward_suffix</strong> - Suffix of each forward filename - recognize forward files this way. Note this is not a regular extension, no . is assumed between the filename &amp; suffix</dt>
-<dd><div class="first last line-block">
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>forward_suffix</strong>::</dt>
+<dd><blockquote class="first">
+Suffix of each forward filename - recognize forward files this way. Note this is not a regular extension, no . is assumed between the filename &amp; suffix</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>_f.bfq</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>maxdist</strong> - max outer distance for a (non RF) readpair. This applies to illumina matepairs - i.e. short inserts</dt>
-<dd><div class="first last line-block">
+<dt><strong>maxdist</strong>::</dt>
+<dd><blockquote class="first">
+max outer distance for a (non RF) readpair. This applies to illumina matepairs - i.e. short inserts</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>250</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>read_dir</strong> - directory containing the forward reads</dt>
-<dd><div class="first last line-block">
+<dt><strong>read_dir</strong>::</dt>
+<dd><blockquote class="first">
+directory containing the forward reads</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>reference</strong> - Reference bfa file to map the reads to</dt>
-<dd><div class="first last line-block">
+<dt><strong>reference</strong>::</dt>
+<dd><blockquote class="first">
+Reference bfa file to map the reads to</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>reverse_suffix</strong> - suffix of reverse files</dt>
-<dd><div class="first last line-block">
+<dt><strong>reverse_suffix</strong>::</dt>
+<dd><blockquote class="first">
+suffix of reverse files</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>_r.bfq</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>RF_maxdist</strong> - max outer distance for an RF readpair (corresponds to the -A parameter). This applies to long insert illumina pairs</dt>
-<dd><div class="first last line-block">
+<dt><strong>RF_maxdist</strong>::</dt>
+<dd><blockquote class="first">
+max outer distance for an RF readpair (corresponds to the -A parameter). This applies to long insert illumina pairs</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>15000</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong> - A name for this job</dt>
-<dd><div class="first last line-block">
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
@@ -154,8 +181,8 @@
             <p class="topless"><a href="maq_fastq2bfq.html"
                                   title="previous chapter">fq2bq</a></p>
             <h4>Next topic</h4>
-            <p class="topless"><a href="moatest.html"
-                                  title="next chapter">moatest</a></p>
+            <p class="topless"><a href="maq_pe.html"
+                                  title="next chapter">maq_pe</a></p>
             <h3>This Page</h3>
             <ul class="this-page-menu">
               <li><a href="../_sources/templates/maq_match_pair.txt"
@@ -188,18 +215,18 @@
           <a href="../modindex.html" title="Global Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="moatest.html" title="moatest"
+          <a href="maq_pe.html" title="maq_pe"
              >next</a> |</li>
         <li class="right" >
           <a href="maq_fastq2bfq.html" title="fq2bq"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.0alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
       &copy; Copyright 2010, Mark Fiers.
-      Last updated on Nov 30, 2010.
+      Last updated on Jan 18, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
     </div>
   </body>

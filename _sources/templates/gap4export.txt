@@ -1,7 +1,11 @@
 gap4export
 ------------------------------------------------
 
-**Assembly export using gap4** - Export data from an assembly using gap4
+**Assembly export using gap4**
+
+::
+    Export data from an assembly using gap4
+
 
 Commands
 ~~~~~~~~
@@ -22,21 +26,36 @@ Parameters
 
 
 
-**ge_input_dir** - Directory with the input data
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**ge_input_dir**::
+    Directory with the input data
+
   | *type*: `directory`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**ge_input_pattern** - file name pattern
+**ge_input_pattern**::
+    file name pattern
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

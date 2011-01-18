@@ -1,7 +1,11 @@
 bwa_index
 ------------------------------------------------
 
-**Bwa index builder** - Builds a bwa index from a reference sequence
+**Bwa index builder**
+
+::
+    Builds a bwa index from a reference sequence
+
 
 Commands
 ~~~~~~~~
@@ -22,21 +26,54 @@ Parameters
 
 
 
-**input_fasta** - input fasta file for the database
+**algorithm**::
+    Algorithm for constructing BWT index. Available options are 'is' and  'bwtsw'
+
+  | *type*: `string`
+  | *default*: `is`
+  | *optional*: `True`
+
+
+
+**color_space**::
+    input sequences are in the color space
+
+  | *type*: `boolean`
+  | *default*: `False`
+  | *optional*: `True`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**input_fasta**::
+    input fasta file for the database
+
   | *type*: `file`
   | *default*: `{}`
   | *optional*: `False`
 
 
 
-**name** - Name of the bwa index to create
+**prefix**::
+    Name of the bwa index to create
+
   | *type*: `string`
-  | *default*: `bwa_index`
-  | *optional*: `True`
+  | *default*: `{}`
+  | *optional*: `False`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
@@ -47,9 +84,9 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
-  Mark Fiers
+  Mark Fiers, Yogini Idnani
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
