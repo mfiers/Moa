@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Yaco &mdash; Moa v0.10.1 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
+    <link rel="up" title="Moa API" href="index.html" />
+    <link rel="next" title="fist" href="fist.html" />
+    <link rel="prev" title="twit - Tweet results" href="plugin/twit.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="fist.html" title="fist"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="plugin/twit.html" title="twit - Tweet results"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="yaco">
+<span id="module-Yaco"></span><h1>Yaco<a class="headerlink" href="#yaco" title="Permalink to this headline">¶</a></h1>
+<p>Yaco provides a <cite>dict</cite> like structure that can be serialized to &amp; from
+<a class="reference external" href="http://www.yaml.org/">yaml</a></p>
+<p>Yaco can be <a class="reference external" href="http://pypi.python.org/pypi/Yaco/0.1.1">found</a> from the
+<a class="reference external" href="http://pypi.python.org/pypi/">Python package index</a> and is also
+part of the <a class="reference external" href="https://github.com/mfiers/Moa/tree/master/lib/python/Yaco">Moa source distribution</a></p>
+<dl class="class">
+<dt id="Yaco.Yaco">
+<em class="property">class </em><tt class="descclassname">Yaco.</tt><tt class="descname">Yaco</tt><big>(</big><em>data={}</em><big>)</big><a class="headerlink" href="#Yaco.Yaco" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loosely based on <a class="reference external" href="http://code.activestate.com/recipes/473786/">http://code.activestate.com/recipes/473786/</a> (r1)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span> <span class="n">Yaco</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">a</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span><span class="o">=</span> <span class="n">Yaco</span><span class="p">({</span><span class="s">&#39;a&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">a</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="Yaco.Yaco.get_data">
+<tt class="descname">get_data</tt><big>(</big><big>)</big><a class="headerlink" href="#Yaco.Yaco.get_data" title="Permalink to this definition">¶</a></dt>
+<dd>Prepare &amp; parse data for export</dd></dl>
+
+<dl class="method">
+<dt id="Yaco.Yaco.load">
+<tt class="descname">load</tt><big>(</big><em>from_file</em><big>)</big><a class="headerlink" href="#Yaco.Yaco.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load this dict from_file</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tf</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s">&#39;a&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="s">&#39;5&#39;</span><span class="p">}))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Yaco.Yaco.save">
+<tt class="descname">save</tt><big>(</big><em>to_file</em>, <em>doNotSave=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#Yaco.Yaco.save" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Yaco.Yaco.update">
+<tt class="descname">update</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#Yaco.Yaco.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="plugin/twit.html"
+                                  title="previous chapter"><strong>twit</strong> - Tweet results</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="fist.html"
+                                  title="next chapter">fist</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/api/Yaco.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fist.html" title="fist"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="plugin/twit.html" title="twit - Tweet results"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Moa API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Jan 18, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

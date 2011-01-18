@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fist &mdash; Moa v0.10.1 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
+    <link rel="up" title="Moa API" href="index.html" />
+    <link rel="prev" title="Yaco" href="Yaco.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="Yaco.html" title="Yaco"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fist">
+<span id="module-fist"></span><h1>fist<a class="headerlink" href="#fist" title="Permalink to this headline">¶</a></h1>
+<p><strong>Fi</strong>le<strong>s</strong>e<strong>t</strong>s</p>
+<p>Handle &amp; manipulate sets of files</p>
+<p>This module aims at providing classes to handle and manipulate sets of
+files. Two simple examples are a simple set containing one file
+(<a title="fist.fistSingle" class="reference internal" href="#fist.fistSingle"><tt class="xref docutils literal"><span class="pre">fist.fistSingle</span></tt></a>) or a <cite>glob</cite> based set of files
+(<a title="fist.fistFileset" class="reference internal" href="#fist.fistFileset"><tt class="xref docutils literal"><span class="pre">fist.fistFileset</span></tt></a>). A more complicated example is
+<a title="fist.fistMapset" class="reference internal" href="#fist.fistMapset"><tt class="xref docutils literal"><span class="pre">fistMapset</span></tt></a> that maps another fileset based on a pattern.</p>
+<p>Each fileset inherits from <cite>list</cite> - hence fist filesets behave as
+lists.</p>
+<p>Future work should allow the definition of remote filesets (for
+example over http or ssh).</p>
+<p>Each fist class is istantiated with a url defining the file(set). In
+the case of <a title="fist.fistFileset" class="reference internal" href="#fist.fistFileset"><tt class="xref docutils literal"><span class="pre">fist.fistFileset</span></tt></a> this url contains a globbing
+characters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fs</span> <span class="o">=</span> <span class="n">fist</span><span class="o">.</span><span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;/tmp/*&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>this fs returns a list with all files in <cite>/tmp</cite></p>
+<dl class="class">
+<dt id="fist.fistCore">
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistCore</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistCore" title="Permalink to this definition">¶</a></dt>
+<dd>Core class for all fist classes</dd></dl>
+
+<dl class="class">
+<dt id="fist.fistFileset">
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistFileset</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistFileset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Most basic set of files - handle a set of files described by a single URI with wildcards, for
+example:</p>
+<div class="highlight-python"><pre>* `*.txt`
+* `../*.txt`
+* `file:///home/name/data/*.txt`</pre>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;*.txt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="o">==</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">glob</span><span class="o">==</span><span class="s">&#39;*.txt&#39;</span><span class="p">)</span>   
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="o">==</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">glob</span><span class="o">==</span><span class="s">&#39;*.txt&#39;</span><span class="p">)</span>     
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;/tmp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="o">==</span><span class="s">&#39;/tmp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">glob</span><span class="o">==</span><span class="s">&#39;*&#39;</span><span class="p">)</span>    
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;/tmp/*.txt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="o">==</span><span class="s">&#39;/tmp&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">glob</span><span class="o">==</span><span class="s">&#39;*.txt&#39;</span><span class="p">)</span>       
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;../*.txt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">path</span><span class="o">==</span><span class="s">&#39;..&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">glob</span><span class="o">==</span><span class="s">&#39;*.txt&#39;</span><span class="p">)</span>        
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="s">&#39;*.txt&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="s">&#39;in1*.txt&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;~/*&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="fist.fistMapset">
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistMapset</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistMapset" title="Permalink to this definition">¶</a></dt>
+<dd><p>fistMapset</p>
+<p>Map set - map a fileset based on a target uri</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## Null mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">fistMapset</span><span class="p">(</span><span class="s">&#39;*/*&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;in/in18.txt&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## simple folder mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">fistMapset</span><span class="p">(</span><span class="s">&#39;out/*&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="s">&#39;out/in18.txt&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## simple folder mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">fistMapset</span><span class="p">(</span><span class="s">&#39;./*&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="s">&#39;./in18.txt&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## simple folder &amp; mapping &amp; extension append</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">fistMapset</span><span class="p">(</span><span class="s">&#39;out/*.out&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="s">&#39;out/in18.txt.out&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## New from fileset - now with a pattern defining the extension</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="s">&#39;*.txt&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## extension mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">fistMapset</span><span class="p">(</span><span class="s">&#39;out/*.out&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="s">&#39;out/in18.out&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## New from fileset - now with a pattern defining file glob &amp;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## extension</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="s">&#39;in*.txt&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## more complex filename mapping</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">fistMapset</span><span class="p">(</span><span class="s">&#39;out/test*.out&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="s">&#39;out/test18.out&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">## mapping keeping the extension the same</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c">##</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">fistMapset</span><span class="p">(</span><span class="s">&#39;out/test*.txt&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="s">&#39;out/test18.txt&#39;</span> <span class="ow">in</span> <span class="n">m</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="fist.fistMapset.resolve">
+<tt class="descname">resolve</tt><big>(</big><em>mapFrom</em><big>)</big><a class="headerlink" href="#fist.fistMapset.resolve" title="Permalink to this definition">¶</a></dt>
+<dd>Resolve the mapped set based on a input fileSet</dd></dl>
+
+<dl class="method">
+<dt id="fist.fistMapset.resolver">
+<tt class="descname">resolver</tt><big>(</big><em>mapFrom</em>, <em>list</em><big>)</big><a class="headerlink" href="#fist.fistMapset.resolver" title="Permalink to this definition">¶</a></dt>
+<dd>map all files in the incoming list</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fist.fistSingle">
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistSingle</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistSingle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a single file</p>
+<dl class="method">
+<dt id="fist.fistSingle.init">
+<tt class="descname">init</tt><big>(</big><big>)</big><a class="headerlink" href="#fist.fistSingle.init" title="Permalink to this definition">¶</a></dt>
+<dd>Assuming the url is a single file</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="Yaco.html"
+                                  title="previous chapter">Yaco</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/api/fist.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Yaco.html" title="Yaco"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Moa API</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Jan 18, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

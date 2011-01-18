@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fastx_clipper &mdash; Moa v0.10.1 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="fastx_qual_stats" href="fastx_qual_stats.html" />
+    <link rel="prev" title="fasta2gff" href="fasta2gff.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="fastx_qual_stats.html" title="fastx_qual_stats"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="fasta2gff.html" title="fasta2gff"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fastx-clipper">
+<h1>fastx_clipper<a class="headerlink" href="#fastx-clipper" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>::</dt>
+<dd>run fastx_clipper</dd>
+</dl>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself</dd>
+<dt><strong>run</strong></dt>
+<dd>run fastx_clipper</dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>input</strong>::</dt>
+<dd><blockquote class="first">
+fastq input files directory</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+<dt><strong>output</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>adaptor</strong>::</dt>
+<dd><blockquote class="first">
+ADAPTER string. default is CCTTAAGG (dummy adapter).</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: <cite>CCTTAAGG</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>adaptor_and_bases</strong>::</dt>
+<dd><blockquote class="first">
+Keep the adapter and N bases after it.</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>0</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>compress_output</strong>::</dt>
+<dd><blockquote class="first">
+Compress output with GZIP.</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>debug_output</strong>::</dt>
+<dd><blockquote class="first">
+DEBUG output.</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>help</strong>::</dt>
+<dd><blockquote class="first">
+help screen</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>keep_unknown_nuc_seq</strong>::</dt>
+<dd><blockquote class="first">
+keep sequences with unknown (N) nucleotides. default is to discard such sequences.</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>out_adaptor_only_seq</strong>::</dt>
+<dd><blockquote class="first">
+Report Adapter-Only sequences.</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>rm_clipped_seq</strong>::</dt>
+<dd><blockquote class="first">
+Discard clipped sequences (i.e. - keep only sequences which did not contained the adapter).</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>rm_non_clipped_seq</strong>::</dt>
+<dd><blockquote class="first">
+Discard non-clipped sequences (i.e. - keep only sequences which contained the adapter).</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>rm_short_seq</strong>::</dt>
+<dd><blockquote class="first">
+discard sequences shorter than N nucleotides. default is 5.</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>5</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+<dt><strong>verbose</strong>::</dt>
+<dd><blockquote class="first">
+Verbose - report number of sequences. If [-o] is specified,  report will be printed to STDOUT. If [-o] is not specified (and output goes to STDOUT), report will be printed to STDERR.</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>ruff</dd>
+<dt><strong>Author</strong></dt>
+<dd>Mark Fiers, Yogini Idnani</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Dec 06 17:06:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>1291933989.51</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">fastx_clipper</a><ul>
+<li><a class="reference external" href="#commands">Commands</a></li>
+<li><a class="reference external" href="#filesets">Filesets</a></li>
+<li><a class="reference external" href="#parameters">Parameters</a></li>
+<li><a class="reference external" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="fasta2gff.html"
+                                  title="previous chapter">fasta2gff</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="fastx_qual_stats.html"
+                                  title="next chapter">fastx_qual_stats</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/fastx_clipper.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fastx_qual_stats.html" title="fastx_qual_stats"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="fasta2gff.html" title="fasta2gff"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Jan 18, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

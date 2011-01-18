@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>samtools_pileup &mdash; Moa v0.10.1 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="scaf" href="scaffolder.html" />
+    <link rel="prev" title="sam2bam" href="sam2bam.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="scaffolder.html" title="scaf"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sam2bam.html" title="sam2bam"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="samtools-pileup">
+<h1>samtools_pileup<a class="headerlink" href="#samtools-pileup" title="Permalink to this headline">¶</a></h1>
+<dl class="docutils">
+<dt>::</dt>
+<dd>Print the alignment in the pileup format.</dd>
+</dl>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself</dd>
+<dt><strong>run</strong></dt>
+<dd>run samtools pileup command</dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>input</strong>::</dt>
+<dd><blockquote class="first">
+bam or sam files</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+<dt><strong>output</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+<dt><strong>output_bam</strong>::</dt>
+<dd><blockquote class="first">
+{}</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>cap_mapQ_at</strong>::</dt>
+<dd><blockquote class="first">
+cap mapping quality at INT</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>60</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>default_command</strong>::</dt>
+<dd><blockquote class="first">
+command to run for this template</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>{}</cite></div>
+<div class="line"><em>default</em>: <cite>run</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>extra_params</strong>::</dt>
+<dd><blockquote class="first">
+any extra parameters</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>filter_read_bits</strong>::</dt>
+<dd><blockquote class="first">
+filtering reads with bits in INT</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>1796</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>input_is_SAM</strong>::</dt>
+<dd><blockquote class="first">
+the input is in SAM</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>num_haplotypes</strong>::</dt>
+<dd><blockquote class="first">
+number of haplotypes in the sample (for -c/-g)</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>2</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>out_2nd_best</strong>::</dt>
+<dd><blockquote class="first">
+output the 2nd best call and quality</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>out_GLFv3_format</strong>::</dt>
+<dd><blockquote class="first">
+output in the GLFv3 format (suppressing -c/-i/-s)</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>out_maq_consensus</strong>::</dt>
+<dd><blockquote class="first">
+output the maq consensus sequence</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>phred_prob_indel</strong>::</dt>
+<dd><blockquote class="first">
+phred prob. of an indel in sequencing/prep. (for -c/-g)</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>40</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>print_variants_only</strong>::</dt>
+<dd><blockquote class="first">
+print variants only (for -c)</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>prior_diff_haplotypes</strong>::</dt>
+<dd><blockquote class="first">
+phred prob. of an indel in sequencing/prep. (for -c/-g)</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>float</cite></div>
+<div class="line"><em>default</em>: <cite>0.001</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>prior_indel_haplotypes</strong>::</dt>
+<dd><blockquote class="first">
+number of haplotypes in the sample (for -c/-g)</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>float</cite></div>
+<div class="line"><em>default</em>: <cite>0.00015</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>show_lines_indels</strong>::</dt>
+<dd><blockquote class="first">
+only show lines/consensus with indels</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>simple_pileup_format</strong>::</dt>
+<dd><blockquote class="first">
+simple (yet incomplete) pileup format</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>theta_maq_model</strong>::</dt>
+<dd><blockquote class="first">
+number of haplotypes in the sample (for -c/-g)</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>float</cite></div>
+<div class="line"><em>default</em>: <cite>0.85</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>title</strong>::</dt>
+<dd><blockquote class="first">
+A name for this job</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div>
+</dd>
+<dt><strong>use_SOAPsnp_model</strong>::</dt>
+<dd><blockquote class="first">
+use the SOAPsnp model for SNP calling</blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="other">
+<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>ruff</dd>
+<dt><strong>Author</strong></dt>
+<dd>Yogini Idnani, Mark Fiers</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Dec 15 17:06:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>1295223801.82</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h3><a href="../index.html">Table Of Contents</a></h3>
+            <ul>
+<li><a class="reference external" href="#">samtools_pileup</a><ul>
+<li><a class="reference external" href="#commands">Commands</a></li>
+<li><a class="reference external" href="#filesets">Filesets</a></li>
+<li><a class="reference external" href="#parameters">Parameters</a></li>
+<li><a class="reference external" href="#other">Other</a></li>
+</ul>
+</li>
+</ul>
+
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="sam2bam.html"
+                                  title="previous chapter">sam2bam</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="scaffolder.html"
+                                  title="next chapter">scaf</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="../_sources/templates/samtools_pileup.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="../search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="scaffolder.html" title="scaf"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sam2bam.html" title="sam2bam"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Jan 18, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>

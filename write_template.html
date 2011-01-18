@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to write a template &mdash; Moa v0.10.1 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.10.1',
+        COLLAPSE_MODINDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.1 documentation" href="index.html" />
+    <link rel="next" title="Command reference" href="commands/index.html" />
+    <link rel="prev" title="Filesets" href="filesets.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             accesskey="M">modules</a> |</li>
+        <li class="right" >
+          <a href="commands/index.html" title="Command reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="filesets.html" title="Filesets"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Moa v0.10.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p><strong>NOTE: both the software and the manual are under development. Expect things to change.</strong></p>
+<div class="section" id="how-to-write-a-template">
+<h1>How to write a template<a class="headerlink" href="#how-to-write-a-template" title="Permalink to this headline">¶</a></h1>
+<p>A MOA template is made up of a <tt class="docutils literal"><span class="pre">.moa</span> <span class="pre">file</span></tt> and a <tt class="docutils literal"><span class="pre">.jinja2</span></tt> (or <tt class="docutils literal"><span class="pre">.mk</span></tt>) file.</p>
+<p>The <tt class="docutils literal"><span class="pre">.moa</span></tt> file mainly contains input-output file sets and parameter options used for
+the bash command(s). Some of these options have default values which the user can change while
+constructing the job.</p>
+<p>The <tt class="docutils literal"><span class="pre">.jinja2</span></tt> file includes information to structure the command(s). It is written in <a class="reference external" href="http://jinja.pocoo.org">jinja</a>,
+which is a templating language for python and is simple to write and easy to understand.</p>
+<p>These files are used by the backend, currently <em>ruffus</em>, that manages file set and parameter dependencies
+to make pipelines and render commands to the bash prompt. Initially, <em>GNU make</em> was the backend used. It is
+very powerful but some of its limitations and its complexity led to including <em>ruffus</em> as an option for
+the backend as well.</p>
+<p>The easiest way to write a moa template is to edit an existing template
+to suit your requirements. This involves understanding the parts of an
+existing template.</p>
+<p>The <tt class="docutils literal"><span class="pre">bwa_aln</span></tt> template is used as an example below. Just as a background,
+the <em>bwa aln</em> command takes a FASTQ file as input and aligns it to a reference genome that
+was previously indexed. The output is a .sai file with the alignments.</p>
+<p>The <tt class="docutils literal"><span class="pre">bwa_aln.moa</span></tt> file has some main components:</p>
+<ul>
+<li><p class="first"><em>Backend</em></p>
+<div class="highlight-python"><pre>backend: ruff</pre>
+</div>
+<p>This is &#8216;ruff&#8217; which means that <a class="reference external" href="http://www.ruffus.org.uk/">ruffus</a>
+is used in the python script at a lower level to read the template .moa and .jinja2 file,
+and render the corresponding commands to the bash prompt.</p>
+</li>
+<li><p class="first"><em>Commands</em></p>
+<div class="highlight-python"><pre>commands:
+  run:
+    mode: map
+    help:  run bwa aln
+  clean:
+    mode: simple
+    help: Remove all job data, not the Moa job itself, note that this must be implemented by the template.</pre>
+</div>
+<p>This indicates the function names that you will later define. In the example above,
+there are 2 commands- run and clean, so <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">run</span></tt> or <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">clean</span></tt> on the
+command prompt in the job directory would execute these functions.</p>
+</li>
+<li><p class="first"><em>Filesets</em></p>
+<div class="highlight-python"><pre>filesets:
+  input:
+    category: input
+    extension: fq
+    help: Fastq input files
+    glob: '*'
+    optional: false
+    type: set
+  output:
+    category: output
+    dir: .
+    extension: sai
+    glob: '{{ input_glob }}'
+    source: input
+    type: map</pre>
+</div>
+<p>Like the name, each filesets refer to a set of files in a single directory.
+The bwa_aln template shows 2 filesets: <tt class="docutils literal"><span class="pre">input</span></tt> and <tt class="docutils literal"><span class="pre">output</span></tt>.</p>
+<ul>
+<li><p class="first"><em>Category</em>: is essentially used to separate input from output.</p>
+</li>
+<li><p class="first"><em>Extension</em>: refers to the type of file(s) required or generated.</p>
+</li>
+<li><p class="first"><em>Glob</em>: searches for files with a specified pattern.
+Moa, by default (glob= *) automatically processes all files of the specified input
+extension in the directory specified. By specifying a glob, Moa will only process
+those files whose name pattern matches what is in the glob.</p>
+</li>
+<li><p class="first"><em>Type</em>:  refers to the data type of the fileset or parameter.</p>
+<p>A fileset can either be of <tt class="docutils literal"><span class="pre">set</span></tt> or <tt class="docutils literal"><span class="pre">map</span></tt> type.
+The type <tt class="docutils literal"><span class="pre">set</span></tt> refers to a simple set of files in a directory.
+The type <tt class="docutils literal"><span class="pre">map</span></tt> refers to a set of files that are linked to what their <tt class="docutils literal"><span class="pre">source</span></tt>
+value is. In the above code, the output fileset is mapped to the input fileset.</p>
+</li>
+<li><p class="first"><em>Dir</em>: the directory of the output fileset is &#8216;.&#8217;, which means that the output files will
+be placed in the current working directory.</p>
+</li>
+</ul>
+</li>
+<li><p class="first"><em>Parameter category order</em></p>
+<div class="highlight-python"><pre>parameter_category_order:
+  - ''
+  - input
+  - system
+  - advanced</pre>
+</div>
+</li>
+<li><p class="first"><em>Parameters</em></p>
+<div class="highlight-python"><pre>mismatch_penalty:
+  category: ''
+  default: 3
+  help: mismatch penalty
+  optional: true
+  type: integer</pre>
+</div>
+<p>They are the variables/options that specify a command.</p>
+<ul class="simple">
+<li><em>Category</em>:</li>
+<li><em>Default</em>: is the value that is used by default if not changed by the user.</li>
+<li><em>Optional</em>: specifies if it is necessary for the user to fill in a value for the variable.
+If <tt class="docutils literal"><span class="pre">optional</span></tt> is false, the user has to indicate a value for the parameter in order to execute
+the job.</li>
+<li><em>Type</em>: specifies the data type of the variable eg. integer, string, boolean.</li>
+</ul>
+</li>
+<li><p class="first"><em>Moa_id</em></p>
+<div class="highlight-python"><pre>moa_id: bwa_aln</pre>
+</div>
+<p>is supposed to be the same as the filename. Ideally something descriptive (eg. bwa_aln).
+This is used to later link to the other template file.</p>
+</li>
+</ul>
+<p>The other template file is &#8216;&#8217;bwa_aln.jinja2&#8217;&#8217; which is written in <a class="reference external" href="http://jinja.pocoo.org">jinja</a>,
+a templating language for python.
+<em>Note that the jinja2 file name is the same as the moa file name.</em></p>
+<p>Important features of the bwa_aln.jinja2 file are:</p>
+<ul>
+<li><p class="first">The three hash&#8217;s (###) specify the start of a function and are followed by the function name.
+In our bwa_aln example, we have defined 2 funtions: <tt class="docutils literal"><span class="pre">run</span></tt> and <tt class="docutils literal"><span class="pre">clean</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">### run</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">This defination is followed by a set of commands which you would want to be executed when you type
+<tt class="docutils literal"><span class="pre">moa</span> <span class="pre">run</span></tt> or <tt class="docutils literal"><span class="pre">moa_clean</span></tt> in the bwa_aln job directory.
+The commands in our example file look the same as what you would put in the command prompt but the
+values of the parameters are bought from the .moa file and hence it&#8217;s value is replaced by the
+parameter name.</p>
+<div class="highlight-python"><pre>bwa aln {{db}}                             \
+    -n {{edit_dist_missing_prob}}          \
+    .                                      \
+    .                                      \
+    .                                      \
+    {{ input }}                            \
+    -f {{ output}}</pre>
+</div>
+</li>
+<li><p class="first">It is also possible to add if-else statements or other computing blocks in accordance with the design
+language.</p>
+<div class="highlight-python"><pre>{% if color_space %} -c {% endif %}</pre>
+</div>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+            <h4>Previous topic</h4>
+            <p class="topless"><a href="filesets.html"
+                                  title="previous chapter">Filesets</a></p>
+            <h4>Next topic</h4>
+            <p class="topless"><a href="commands/index.html"
+                                  title="next chapter">Command reference</a></p>
+            <h3>This Page</h3>
+            <ul class="this-page-menu">
+              <li><a href="_sources/write_template.txt"
+                     rel="nofollow">Show Source</a></li>
+            </ul>
+          <div id="searchbox" style="display: none">
+            <h3>Quick search</h3>
+              <form class="search" action="search.html" method="get">
+                <input type="text" name="q" size="18" />
+                <input type="submit" value="Go" />
+                <input type="hidden" name="check_keywords" value="yes" />
+                <input type="hidden" name="area" value="default" />
+              </form>
+              <p class="searchtip" style="font-size: 90%">
+              Enter search terms or a module, class or function name.
+              </p>
+          </div>
+          <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modindex.html" title="Global Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="commands/index.html" title="Command reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="filesets.html" title="Filesets"
+             >previous</a> |</li>
+        <li><a href="index.html">Moa v0.10.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+      &copy; Copyright 2010, Mark Fiers.
+      Last updated on Jan 18, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+    </div>
+  </body>
+</html>
