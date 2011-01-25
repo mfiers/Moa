@@ -11,12 +11,6 @@ commands:
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run BOWTIE on an set of input files (query) vs a database index.
 filesets:
-  db:
-    category: prerequisite
-    help: The (basename of the) bowtie database to use.
-    optional: false
-    pattern: '*/*'
-    type: single
   input:
     category: input
     help: Fasta/fastq input files for bowtie
@@ -26,7 +20,7 @@ filesets:
   output:
     category: output
     help: Output files
-    pattern: '*/*.bam'
+    pattern: './*.bam'
     source: input
     type: map
 moa_id: bowtie
@@ -38,6 +32,12 @@ parameter_category_order:
 - system
 - advanced
 parameters:
+  db:
+    help: The (basename of the) bowtie database to use.
+    optional: false
+    type: string
+    category: ''
+    allowed: []
   extra_params:
     allowed: []
     category: ''

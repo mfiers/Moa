@@ -1,7 +1,7 @@
 ### run
-echo bwa samse 
-echo -n {{ max_aln_out }} {{ db }} {{sai_input}} {{fq_input}} > {{output}}
-echo {{ snippets.sam2bam }} {{ output_bam }} {{ output }}
+bwa samse \
+	-n {{ max_aln_out }} {{ db }} {{sai_input}} {{fq_input}} > {{output}} 
+{{ snippets.sam2bam }} -o {{ output_bam }} {{ output }}
 
 ### clean
 
