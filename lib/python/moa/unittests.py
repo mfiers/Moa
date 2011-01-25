@@ -147,6 +147,7 @@ def run(options, args):
     args.pop(0)
 
     os.putenv('MOA_UNITTESTS', "yes")
+    os.putenv('MOA_NOLOGO', "1")
     if args:
         l.info("Testing '%s'" % " ".join(args))
 
@@ -180,7 +181,7 @@ def run(options, args):
         l.info("Ran %d plugin test, %d failed" % (
                 pluginTests, pluginFailures))
         l.info("Finished running plugin tests")
-    elif args[0] == 'templates':
+    elif args[0] == 'templates' or args[0] == 'template':
         l.info("Start running template tests")
         testTemplates(options, args[1:])        
         l.info("Ran %d template test, %d failed" % (

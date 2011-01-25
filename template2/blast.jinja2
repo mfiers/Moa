@@ -21,11 +21,15 @@ mkdir gff || true 2> /dev/null
     blastReport out/ -o blast_report
 
 ### unittest
-    moa new -d 10.blastdb -t 'test blast db' blastdb \
-            bdb_fasta_file=$$MOADATA/dna/test01.fasta bdb_name=test
-    cd 10.blastdb; moa 
-    moa new -d 20.blast -t 'test blast' blast \
-            blast_db=../10.blastdb/test blast_input_dir=$$MOADATA/dna
-    cd 20.blast; moa 
-    cd 20.blast; ls
-    [[ -f 20.blast/blast_report ]] || false
+	mkdir 10.blastdb
+	cd 10.blastdb
+	moa new blastdb -t 'test blast database'
+	moa set fasta_file=$MOABASE/share/test/test.fasta
+	moa run
+	cd ../
+	mkdir 20.blast
+    cd 20.blast
+	moa new blast -t 'test blast'
+    moa set db=../10.blastdb/blastdb
+	moa set input=$MOABASE/share/test/*.fasta -j 12
+	moa run
