@@ -2,13 +2,34 @@
 Yaco
 ----
 
-Yaco provides a `dict` like structure that can be serialized to & from `yaml <http://www.yaml.org/>`_ 
+Yaco provides a `dict` like structure that can be serialized to & from
+`yaml <http://www.yaml.org/>`_. Yaco objects behave as dictionaries
+but also allow attribute access (loosely based on this `recipe <
+http://code.activestate.com/recipes/473786/>`_). Sublevel dictionaries
+are automatically converted to Yaco objects, allowing sublevel
+attribute access, for example::
+
+    >>> x = Yaco()
+    >>> x.test = 1
+    >>> x.sub.test = 2
+    >>> x.sub.test
+    2
+
+Note that sub-dictionaries do not need to be initialized. This has as
+a consequence that requesting uninitialized items automatically return
+an empty Yaco object (inherited from a dictionary).
+
+Yaco can be `found <http://pypi.python.org/pypi/Yaco/0.1.1>`_ in the
+`Python package index <http://pypi.python.org/pypi/>`_ and is also
+part of the `Moa source distribution
+<https://github.com/mfiers/Moa/tree/master/lib/python/Yaco>`_
+
+
 """
 
 import os
+import sys
 import yaml
-
-import moa.utils          
 
 class Yaco(dict):
     """
@@ -32,6 +53,8 @@ class Yaco(dict):
         :type data: dict
         """
         dict.__init__(self)
+        if type(data) == type("string"):
+            data = yaml.load(data)
         self.update(data)
 
     def __str__(self):
@@ -74,14 +97,20 @@ class Yaco(dict):
         :param key: The key to set
         :param value: The value to assign to key
         """
-        
+
         old_value = super(Yaco, self).get(key, None)
+        #sys.stderr.write("\nSetting %s to %s (%s)\n" % (key, value, type(value)))
+
         if isinstance(value, dict):
             #setting a dict
             if isinstance(old_value, Yaco):
                 old_value.update(value)
             else:
                 super(Yaco, self).__setitem__(key, Yaco(value))
+        elif isinstance(value, list):
+            #parse the list to see if there are dicts - which need to be translated to Yaco objects
+            new_value = self._list_parser(value)
+            super(Yaco, self).__setitem__(key, new_value)
         else:
             super(Yaco, self).__setitem__(key, value)
      
@@ -102,23 +131,46 @@ class Yaco(dict):
     def __delitem__(self, name):
         return super(Yaco, self).__delitem__(name)
 
+    def _list_parser(self, old_list):
+        """
+        Recursively parse a list & replace all dicts with Yaco objects
+        """
+        new_list = []
+        for item in old_list:
+            if isinstance(item, dict):
+                new_list.append(Yaco(item))
+            elif isinstance(item, list):
+                new_list.append(self._list_parser(item))
+            else:
+                new_list.append(item)
+        return new_list
+
     def update(self, data):
         """
-        
+        >>> v = Yaco({'a' : [1,2,3,{'b' : 12}]})
+        >>> assert(v.a[3].b == 12)
+
+        >>> v = Yaco({'a' : [1,2,3,[1,{'b' : 12}]]})
+        >>> assert(v.a[3][1].b == 12)
+
         """
         if not data: return 
-        for key, val in data.items():
-            if isinstance(val, Yaco):
-                raise Exception("Wow - updating with a Yaco - should not happen (%s = %s)!" % (key, val))
+        for key, value in data.items():
+            if isinstance(value, Yaco):
+                raise Exception("Wow - updating with a Yaco - should not happen (%s = %s)!" % (key, value))
 
             old_value = super(Yaco, self).get(key, None)
-            if isinstance(val, dict):
+            if isinstance(value, dict):
                 if old_value and isinstance(old_value, Yaco):
-                    old_value.update(val)
+                    old_value.update(value)
                 else:
-                    super(Yaco, self).__setitem__(key, Yaco(val))
+                    super(Yaco, self).__setitem__(key, Yaco(value))
+            elif isinstance(value, list):
+                #parse the list to see if there are dicts - which need to be translated to Yaco objects                
+                new_value = self._list_parser(value)
+                super(Yaco, self).__setitem__(key, new_value)
             else:
-                super(Yaco, self).__setitem__(key, val)
+                super(Yaco, self).__setitem__(key, value)
 
     __getattr__ = __getitem__
     __setattr__ = __setitem__
@@ -134,8 +186,11 @@ class Yaco(dict):
         >>> import yaml
         >>> import tempfile
         >>> tf = tempfile.NamedTemporaryFile(delete=False)
-        >>> tf.write(yaml.dump({'a' : [1,2,3], 'b': 4, 'c': '5'}))
-        
+        >>> tf.write(yaml.dump({'a' : [1,2,3, [1,2,3, {'d' : 4}]], 'b': 4, 'c': '5'}))
+        >>> tf.close()
+        >>> y = Yaco()
+        >>> y.load(tf.name)
+        >>> assert(y.a[3][3].d == 4)
         """
         with open(from_file) as F:
             data = yaml.load(F)
