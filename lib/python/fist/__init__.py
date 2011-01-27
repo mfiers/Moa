@@ -98,7 +98,7 @@ class fistSingle(fistCore):
         self.append(self.url)
         
     def resolve(self):
-        pass
+        self.resolved = True
     
 
 class fistFileset(fistCore):
