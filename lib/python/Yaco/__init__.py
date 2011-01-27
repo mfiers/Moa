@@ -142,15 +142,14 @@ class Yaco(dict):
         """
         Recursively parse a list & replace all dicts with Yaco objects
         """
-        new_list = []
-        for item in old_list:
+        for i, item in enumerate(old_list):
             if isinstance(item, dict):
-                new_list.append(Yaco(item))
+                old_list[i] = Yaco(item)
             elif isinstance(item, list):
-                new_list.append(self._list_parser(item))
+                old_list[i] = self._list_parser(item)
             else:
-                new_list.append(item)
-        return new_list
+                pass
+        return old_list
 
     def update(self, data):
         """
