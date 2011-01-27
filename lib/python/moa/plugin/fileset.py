@@ -50,7 +50,6 @@ def defineCommands(data):
 def showFiles(data):
     """
     files
-    -----
     
     Show an overview of the files found for this job
     """

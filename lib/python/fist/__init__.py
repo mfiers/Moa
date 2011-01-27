@@ -1,10 +1,33 @@
 """
 fist
-====
+----
 
-Filesets - 
+**Fi**\ le\ **s**\ e\ **t**\ s
 
 Handle & manipulate sets of files
+
+This module aims at providing classes to handle and manipulate sets of
+files. Two simple examples are a simple set containing one file
+(:class:`fist.fistSingle`) or a `glob` based set of files
+(:class:`fist.fistFileset`). A more complicated example is
+:class:`fistMapset` that maps another fileset based on a pattern.
+
+Each fileset inherits from `list` - hence fist filesets behave as
+lists.
+
+Future work should allow the definition of remote filesets (for
+example over http or ssh).
+
+Each fist class is istantiated with a url defining the file(set). In
+the case of :class:`fist.fistFileset` this url contains a globbing
+characters::
+
+    fs = fist.fistFileset('/tmp/*,txt')
+
+This fileset object contains a list with all `*.txt` files in
+`/tmp`. Subsequently it is possible to map this set
+
+ 
 
 """
 
@@ -124,7 +147,6 @@ class fistFileset(fistCore):
 class fistMapset(fistCore):
     """
     fistMapset
-    ----------
     
     Map set - map a fileset based on a target uri
     
