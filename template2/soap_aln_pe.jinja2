@@ -23,11 +23,15 @@ soap -a {{ fq_forward_input }} 						\
 
 samtools faidx {{ fa_input }}
 
-/opt/samtools/soap2sam.pl {{ soap_ouput }} | samtools view -bt {{fa_input}}.fai - > {{ bam_output }}
+/opt/samtools/soap2sam.pl {{ soap_ouput }} \
+    | samtools view -bt {{fa_input}}.fai - \
+    > {{ bam_output }}
 
 ### clean
 
-rm *.bam | rm *.soap | rm *.txt
+rm *.bam 
+rm *.soap 
+rm *.txt
 
 ### unittest
 
@@ -43,6 +47,11 @@ mkdir 20.aln_pe
 cd 20.aln_pe
 moa new soap_aln_pe -t 'aln demo reads - SOAP'
 moa set db_index_files=${MOABASE}/share/test/test.fasta.index
-moa set fq_forward_input=${MOABASE}/share/test/read_1.fq
+moa set fq_forward_input=${MOABASE}/share/test/reads_1.fq
+moa set fq_reverse_input=${MOABASE}/share/test/reads_2.fq
 moa set fa_input=${MOABASE}/share/test/test.fasta
+moa show
+pwd
 moa run
+pwd
+ls

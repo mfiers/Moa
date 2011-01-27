@@ -14,17 +14,30 @@ rm *.bam
 
 ### unittest
 
-export MOA_NOLOGO=1
+pwd
 
 mkdir 10.bowtiedb
 cd 10.bowtiedb 
-moa new bowtiedb -t 'demo index referece using bowtie'
-[[ -d .moa ]] && echo "Found .moa INDEX directory" || (echo "Cannot find .moa INDEX directory"; false)
+moa new bowtiedb -t 'demo index referece using bowtie';
+
+[[ -d .moa ]] \
+   && echo "Found .moa INDEX directory" \
+   || (echo "Cannot find .moa INDEX directory"; false)
+
 moa set input="${MOABASE}/share/test/test.fasta"
 moa set ebwt_outfile_base=testDB
-moa run
+MOALOGO=1 moa run
+echo "---- moa show"
+moa show
+
+echo '---- Running ls'
+pwd
+ls -l
+
 numFiles= ls -l * | grep '^-' | grep testDB | wc -l
-[[ ${numFiles} -eq 6 ]] && (echo "Index files created"; true) || (echo "Index files not created"; false)
+[[ ${numFiles} -eq 6 ]] \
+   && (echo "Index files created"; true) \
+   || (echo "Index files not created"; false)
 
 
 cd ../

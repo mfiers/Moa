@@ -1,20 +1,22 @@
 ### run
 	bowtie-build {{ extra_params }} {{ input }} {{ ebwt_outfile_base }}
-	#touch {{ output_file }}
+	touch {{ ebwt_outfile_base }}
 
 ### clean
 	rm -f {{name}}.*.ebwt
 
 ### unittest
 
-export MOA_NOLOGO=1
-
-mkdir 10.bowtiedb
-cd 10.bowtiedb 
-moa new bowtiedb -t 'demo index referece using bowtie'
-[[ -d .moa ]] && echo "Found .moa INDEX directory" || (echo "Cannot find .moa INDEX directory"; false)
+moa set title=bla
 moa set input="${MOABASE}/share/test/test.fasta"
 moa set ebwt_outfile_base=testDB
 moa run
-#numFiles= ls -l * | grep '^-' | grep testDB | wc -l
-#[[ ${numFiles} -eq 6 ]] && (echo "Index files created"; true) || (echo "Index files not created"; false)
+
+[[ -f testDB ]]
+[[ -f testDB.1.ebwt ]]
+[[ -f testDB.2.ebwt ]]
+[[ -f testDB.3.ebwt ]]
+[[ -f testDB.4.ebwt ]]
+[[ -f testDB.rev.1.ebwt ]]
+[[ -f testDB.rev.2.ebwt ]]
+
