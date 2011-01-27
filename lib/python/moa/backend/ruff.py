@@ -95,11 +95,6 @@ class Ruff(moa.backend.BaseBackend):
         jt = self.getCommandTemplate(command)
         actor = self.job.getActor()
 
-        #rawConf = {}
-        #for k in self.job.conf.keys():
-        #        rawConf[k] = self.job.conf[k]
-
-  
         #determine which files are prerequisites
         prereqs = []
         for fsid in self.job.data.prerequisites:
@@ -118,11 +113,12 @@ class Ruff(moa.backend.BaseBackend):
                 
             #determine number the number of files
             noFiles = 0
-            for i, k in enumerate(self.job.data.filesets.keys()):
+            in_out_files = self.job.data.outputs + self.job.data.inputs
+            for i, k in enumerate(in_out_files):
                 if i == 0:
                     noFiles = len(self.job.data.filesets[k].files)
                 else:
-                    assert(len(self.job.data.filesets[k].files) == noFiles)                    
+                    assert(len(self.job.data.filesets[k].files) == noFiles)
           
             #rearrange files
             for i in range(noFiles):
@@ -169,7 +165,6 @@ class Ruff(moa.backend.BaseBackend):
                 delete = False, prefix='moa', mode='w')
             tf.write("\n" + jt.render(self.job.conf)+ "\n")
             tf.close()
-            l.debug("exxxxxecuting script %s" % tf.name)
             rc = actor.run(['bash', '-e', tf.name])            
         return rc
 
@@ -183,7 +178,7 @@ def executor(input, output, script, jobData):
     tf.write(script)
     tf.close()
     cl = ['bash', '-e', tf.name]
-
+    l.debug("Executing %s" % " ".join(cl))
     #dump the configuration in the env
     for k in jobData:
         v = jobData[k]
@@ -193,6 +188,5 @@ def executor(input, output, script, jobData):
             continue
         else:
             os.putenv(k, str(v))
-    #sp = subprocess.Popen(cl, shell=True)
+    rc = subprocess.call(cl)
     print cl
-    #actor.run(cl)
