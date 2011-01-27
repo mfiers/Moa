@@ -1,0 +1,48 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  runmap: 
+    help: ''
+    mode: map
+  runsimple:
+    help: ''
+    mode: simple
+creation_date: Wed Nov 10 07:56:48 2010
+description: The adhoc2 template aids in executing a one line on a set of input files. 
+filesets:
+  input:
+    category: input
+    help: Input files for adhoc
+    optional: true
+    pattern: '*/*'
+    type: set
+  output:
+    category: output
+    help: adhoc output files
+    optional: true
+    pattern: '*/*'
+    type: map    
+moa_id: adhoc2
+modification_date: Wed Nov 10 07:56:48 2010
+name: adhoc2
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  command:
+    default: ''
+    help: Command to execute for each input file. The path to the input file is available
+      as $in and the output file as $out. (it is not mandatory to use both parameters,
+      for example "cat $< > output" would concatenate all files into one big file
+    optional: false
+    type: string
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: true
+    type: string
+title: Execute an ad hoc analysis
