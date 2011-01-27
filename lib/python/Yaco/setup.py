@@ -11,20 +11,21 @@ for scheme in INSTALL_SCHEMES.values():
     scheme['data'] = scheme['purelib']
 
 DESCRIPTION = """
-Yaco - A dict like object that saves to and loads from yaml files.
-
-Yaco is useful to store file configurations and make them easily
-accessible. Yaco items can be accessed both as regular dict keys
-(`a['key']`) or as attributes: (`a.key`).
-
-"""
+Yaco provides a 'dict' like object that can be saved to disk as a YAML
+file. Yaco can be used to store program configuration and make the
+configuration data easily accessible. Keys of a Yaco object can be
+accessed both as regular dict keys (`a['key']`) or as attributes
+(`a.key`). Lower level dictionaries are automatically converted to
+Yaco objects allowing similar access (`a.key.subkey`). Lists are
+(recursively) parsed and dictionaries in list are converted to Yaco
+objects allowing access allong the lines of `a.key[3].subkey`."""
 
 setup(name='Yaco',
-      version='0.1',
+      version='0.1.4',
       description=DESCRIPTION,
       author='Mark Fiers',
       author_email='mark.fiers42@gmail.com',
-      url='http://mfiers.github.com/Moa/',
+      url='http://mfiers.github.com/Moa/api/Yaco.html',
       packages=['Yaco', ],
       package_dir = {'Yaco': '.'},
       requires = [
