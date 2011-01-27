@@ -163,10 +163,6 @@ def preparefilesets(data):
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")
             
-            if job.data.filesets[fs.source].has_key('files'):
-                _fls = job.data.filesets[fs.source].files
-                print fsid, fs.source, _fls, type(_fls)
-            
             if not job.data.filesets.has_key(fs.source) or \
                     not job.data.filesets[fs.source].has_key('files') or \
                     not job.data.filesets[fs.source].files.resolved:
@@ -180,7 +176,6 @@ def preparefilesets(data):
                     fs.type, fsid))
             
         l.debug("Recovered %d files for fileset %s" % (len(files), fsid))
-        print fsid, files, type(files)
 
         job.data.filesets[fsid].files = files
         with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
