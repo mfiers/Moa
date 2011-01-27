@@ -1,7 +1,11 @@
 vmatch
 ------------------------------------------------
 
-**Vmatch** - Run VMATCH on an set of input files (query) vs a database index.
+**Vmatch**
+
+::
+    Run VMATCH on an set of input files (query) vs a database index.
+
 
 Commands
 ~~~~~~~~
@@ -22,28 +26,45 @@ Parameters
 
 
 
-**db** - vmatch db to compare against
+**db**::
+    vmatch db to compare against
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**extra_parameters** - extra parameters to feed to vmatch
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**extra_parameters**::
+    extra parameters to feed to vmatch
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**input_file** - input file with the sequences to map
+**input_file**::
+    input file with the sequences to map
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

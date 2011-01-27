@@ -30,11 +30,13 @@ Filesets
 **fq_input**::
     fastq input file
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fq`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -49,9 +51,26 @@ Filesets
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `sam`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**output_bam**::
+    {}
+
+  | *type*: `map`
+  | *source*: `fq_input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -66,9 +85,9 @@ Filesets
   | *source*: `fq_input`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `sai`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -86,6 +105,15 @@ Parameters
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 
@@ -117,7 +145,7 @@ Other
 **Creation date**
   Wed Nov 25 17:06:48 2010
 **Modification date**
-  1291084389.01
+  1291933989.07
 
 
 

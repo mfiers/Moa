@@ -44,6 +44,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **title**::
     A name for this job
 

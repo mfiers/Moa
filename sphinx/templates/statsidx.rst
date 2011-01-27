@@ -1,21 +1,21 @@
-sam2bam
+statsidx
 ------------------------------------------------
 
-**Convert SAM to BAM using samtools**
+
 
 ::
-    Converts a FASTQ file to MAQ BFQ format.
+    Retrieve and print stats from BAM file to an index file
 
 
 Commands
 ~~~~~~~~
 
 **clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+  Remove all job data, not the Moa job itself
 
 
 **run**
-  *no help defined*
+  run samtools idxstats
 
 
 
@@ -28,7 +28,7 @@ Filesets
 
 
 **input**::
-    input SAM files
+    bam input files directory - forward files
 
   | *type*: `map`
   | *source*: `{}`
@@ -87,13 +87,13 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
-  Mark Fiers
+  Yogini Idnani, Mark Fiers
 **Creation date**
-  Wed Nov 10 07:56:48 2010
+  Wed Dec 08 17:06:48 2010
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  1291933991.11
 
 
 

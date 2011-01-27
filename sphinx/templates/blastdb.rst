@@ -23,6 +23,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **fasta_file**::
     The file with all input FASTA sequences for the blastdb.
 

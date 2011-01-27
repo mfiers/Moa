@@ -34,9 +34,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `gff`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `./gff`
+  | *dir*: `{}`
 
 
 
@@ -47,11 +47,13 @@ Filesets
 **input**::
     Input files for getorf
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -66,9 +68,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `out`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `./out`
+  | *dir*: `{}`
 
 
 
@@ -85,6 +87,15 @@ Parameters
 
   | *type*: `set`
   | *default*: `N`
+  | *optional*: `True`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
   | *optional*: `True`
 
 

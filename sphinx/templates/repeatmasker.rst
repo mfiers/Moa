@@ -30,11 +30,13 @@ Filesets
 **input**::
     Input files for repmask
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -49,9 +51,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `masked`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -66,9 +68,9 @@ Filesets
   | *source*: `INPUT_FILESET_ID`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `OUTPUT_FILETYPE`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `./OUTPUT_FILETYPE`
+  | *dir*: `{}`
 
 
 
@@ -77,6 +79,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 

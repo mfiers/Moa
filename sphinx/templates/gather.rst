@@ -26,6 +26,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **g_input_dir**::
     list of directories with the input files
 

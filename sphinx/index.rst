@@ -16,6 +16,7 @@ Contents:
    intro
    install
    using
+   filesets
    write_template
    commands/index
    templates/index

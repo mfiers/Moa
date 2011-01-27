@@ -30,11 +30,13 @@ Filesets
 **input**::
     Input files for r
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `True`
-  | *extension*: ``
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -43,6 +45,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 

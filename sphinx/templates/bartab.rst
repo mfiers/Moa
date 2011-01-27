@@ -26,6 +26,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **extra_parameters**::
     extra parameters to feed bartab
 

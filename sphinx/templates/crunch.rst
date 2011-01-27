@@ -30,11 +30,13 @@ Filesets
 **input**::
     Directory with input fasta files
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -43,6 +45,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 

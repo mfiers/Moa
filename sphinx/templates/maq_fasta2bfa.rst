@@ -34,9 +34,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `bfa`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `./bfa`
+  | *dir*: `{}`
 
 
 
@@ -47,11 +47,13 @@ Filesets
 **input**::
     input FASTA files
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -60,6 +62,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 

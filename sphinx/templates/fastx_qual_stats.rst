@@ -1,21 +1,21 @@
-gmap
+fastx_qual_stats
 ------------------------------------------------
 
-**Gmap**
+
 
 ::
-    Run GMAP on an set of input files (query) vs a database index.
+    run fastx_quality_stats, fastq_quality_boxplot_graph.sh and fastx_nucleotide_distribution_graph.sh
 
 
 Commands
 ~~~~~~~~
 
 **clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+  Remove all job data, not the Moa job itself
 
 
 **run**
-  *no help defined*
+  run fastx_quality_stats, fastq_quality_boxplot_graph.sh and fastx_nucleotide_distribution_graph.sh
 
 
 
@@ -27,41 +27,7 @@ Filesets
 
 
 
-**genepred**::
-    {}
-
-  | *type*: `map`
-  | *source*: `input`
-  | *category*: `output`
-  | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
-**gff**::
-    {}
-
-  | *type*: `map`
-  | *source*: `input`
-  | *category*: `output`
-  | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
-**gff_invert**::
+**boxplot_output**::
     {}
 
   | *type*: `map`
@@ -79,7 +45,7 @@ Filesets
 
 
 **input**::
-    Sequences to map
+    fastq input files directory
 
   | *type*: `map`
   | *source*: `{}`
@@ -95,7 +61,24 @@ Filesets
 
 
 
-**raw**::
+**nuc_distr_output**::
+    {}
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**qual_output**::
     {}
 
   | *type*: `map`
@@ -116,15 +99,6 @@ Parameters
 
 
 
-**db**::
-    Gmap db
-
-  | *type*: `file`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
 **default_command**::
     command to run for this template
 
@@ -134,29 +108,38 @@ Parameters
 
 
 
-**extra_parameters**::
-    extra parameters to feed to gmap
+**gen_postScript_file**::
+    Generate PostScript (.PS) file. Default is PNG image.
 
-  | *type*: `string`
-  | *default*: ``
+  | *type*: `boolean`
+  | *default*: `False`
   | *optional*: `True`
 
 
 
-**gff_source**::
-    Source field to use in the output GFF
+**graph_title**::
+    Title - will be plotted on the graph.
 
   | *type*: `string`
-  | *default*: `gmap`
+  | *default*: `{{ input_glob }}`
   | *optional*: `True`
 
 
 
-**invert_gff**::
-    Invert the GFF (T/*F*)
+**help**::
+    help screen
 
-  | *type*: `set`
-  | *default*: `T`
+  | *type*: `boolean`
+  | *default*: `False`
+  | *optional*: `True`
+
+
+
+**new_out_format**::
+    New output format (with more information per nucleotide/cycle)
+
+  | *type*: `boolean`
+  | *default*: `False`
   | *optional*: `True`
 
 
@@ -174,13 +157,13 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
-  Mark Fiers
+  Mark Fiers, Yogini Idnani
 **Creation date**
-  Wed Nov 10 07:56:48 2010
+  Wed Dec 03 17:06:48 2010
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  1291933989.56
 
 
 

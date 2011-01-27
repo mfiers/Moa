@@ -1,20 +1,20 @@
-sam2bam
+adhoc2
 ------------------------------------------------
 
-**Convert SAM to BAM using samtools**
+**Execute an ad hoc analysis**
 
 ::
-    Converts a FASTQ file to MAQ BFQ format.
+    The adhoc2 template aids in executing a one line on a set of input files.
 
 
 Commands
 ~~~~~~~~
 
-**clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+**runmap**
+  *no help defined*
 
 
-**run**
+**runsimple**
   *no help defined*
 
 
@@ -28,12 +28,12 @@ Filesets
 
 
 **input**::
-    input SAM files
+    Input files for adhoc
 
   | *type*: `map`
   | *source*: `{}`
   | *category*: `input`
-  | *optional*: `False`
+  | *optional*: `True`
   | *extension*: `{}`
   | *glob*: `{}`
   | *dir*: `{}`
@@ -45,12 +45,12 @@ Filesets
 
 
 **output**::
-    {}
+    adhoc output files
 
   | *type*: `map`
-  | *source*: `input`
+  | *source*: `{}`
   | *category*: `output`
-  | *optional*: `{}`
+  | *optional*: `True`
   | *extension*: `{}`
   | *glob*: `{}`
   | *dir*: `{}`
@@ -62,6 +62,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**command**::
+    Command to execute for each input file. The path to the input file is available as $in and the output file as $out. (it is not mandatory to use both parameters, for example "cat $< > output" would concatenate all files into one big file
+
+  | *type*: `string`
+  | *default*: ``
+  | *optional*: `False`
 
 
 
@@ -79,7 +88,7 @@ Parameters
 
   | *type*: `string`
   | *default*: ``
-  | *optional*: `False`
+  | *optional*: `True`
 
 
 
@@ -87,7 +96,7 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

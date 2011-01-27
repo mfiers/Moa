@@ -26,6 +26,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **input_dir_a**::
     This set is compared to the sequences in input_dir_b. only a forward comparison is made (a against b, not the other way round )
 

@@ -28,13 +28,15 @@ Filesets
 
 
 **fq_forward_input**::
-    fastq input files directory - forward files
+    fastq input files directory - forward
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fq`
-  | *glob*: `*_1`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -43,15 +45,15 @@ Filesets
 
 
 **fq_reverse_input**::
-    fastq input files directory - reverse files
+    fastq input files directory - reverse
 
   | *type*: `map`
   | *source*: `fq_forward_input`
   | *category*: `input`
-  | *optional*: `{}`
-  | *extension*: `fq`
-  | *glob*: `*_2`
-  | *dir*: `{{ fq_forward_input_dir }}`
+  | *optional*: `True`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -66,9 +68,26 @@ Filesets
   | *source*: `fq_forward_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `sam`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**output_bam**::
+    {}
+
+  | *type*: `map`
+  | *source*: `fq_forward_input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -77,15 +96,15 @@ Filesets
 
 
 **sai_forward_input**::
-    sai input files - forward files
+    sai input files - forward
 
   | *type*: `map`
   | *source*: `fq_forward_input`
   | *category*: `input`
-  | *optional*: `{}`
+  | *optional*: `False`
   | *extension*: `sai`
-  | *glob*: `{{ fq_forward_input_glob }}`
-  | *dir*: `.`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -97,12 +116,12 @@ Filesets
     sai input files - reverse files
 
   | *type*: `map`
-  | *source*: `fq_forward_input`
+  | *source*: `sai_forward_input`
   | *category*: `input`
-  | *optional*: `{}`
+  | *optional*: `True`
   | *extension*: `sai`
-  | *glob*: `{{ fq_reverse_input_glob }}`
-  | *dir*: `{{ sai_forward_input_dir }}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -120,6 +139,15 @@ Parameters
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 
@@ -214,7 +242,7 @@ Other
 **Creation date**
   Wed Nov 25 17:06:48 2010
 **Modification date**
-  1291075198.28
+  1291933989.03
 
 
 

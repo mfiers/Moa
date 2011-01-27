@@ -1,21 +1,29 @@
-bowtie
+unittest
 ------------------------------------------------
 
-**Bowtie**
+
 
 ::
-    Run BOWTIE on an set of input files (query) vs a database index.
+    Template used in testing - has no other purpose
 
 
 Commands
 ~~~~~~~~
 
 **clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template
+  Remove all job data
+
+
+**prepare**
+  prepare for the unittest
 
 
 **run**
-  *no help defined*
+  Prepare & Run
+
+
+**run2**
+  actually run
 
 
 
@@ -27,13 +35,13 @@ Filesets
 
 
 
-**db**::
-    The (basename of the) bowtie database to use.
+**input_1**::
+    Input file set 1
 
   | *type*: `map`
   | *source*: `{}`
-  | *category*: `prerequisite`
-  | *optional*: `False`
+  | *category*: `input`
+  | *optional*: `True`
   | *extension*: `{}`
   | *glob*: `{}`
   | *dir*: `{}`
@@ -44,13 +52,13 @@ Filesets
 
 
 
-**input**::
-    Fasta/fastq input files for bowtie
+**input_2**::
+    Input file set 2
 
   | *type*: `map`
-  | *source*: `{}`
+  | *source*: `input_1`
   | *category*: `input`
-  | *optional*: `False`
+  | *optional*: `{}`
   | *extension*: `{}`
   | *glob*: `{}`
   | *dir*: `{}`
@@ -62,10 +70,10 @@ Filesets
 
 
 **output**::
-    Output files
+    output files
 
   | *type*: `map`
-  | *source*: `input`
+  | *source*: `input_1`
   | *category*: `output`
   | *optional*: `{}`
   | *extension*: `{}`
@@ -91,20 +99,11 @@ Parameters
 
 
 
-**extra_params**::
-    extra parameters to feed bowtie
+**test_string**::
+    Test string values
 
   | *type*: `string`
-  | *default*: ``
-  | *optional*: `True`
-
-
-
-**input_format**::
-    Format of the input files
-
-  | *type*: `set`
-  | *default*: `fastq`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -113,8 +112,8 @@ Parameters
     A name for this job
 
   | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
+  | *default*: `unittesting`
+  | *optional*: `True`
 
 
 
@@ -124,11 +123,11 @@ Other
 **Backend**
   ruff
 **Author**
-  Mark Fiers
+  Yogini Idnani, Mark Fiers
 **Creation date**
-  Wed Nov 10 07:56:48 2010
+  Wed Nov 25 17:06:48 2010
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  1291933991.17
 
 
 
