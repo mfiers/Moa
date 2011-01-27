@@ -53,6 +53,16 @@ class Template(Yaco.Yaco):
         """        
 
         super(Template, self).__init__(self)
+
+        #set a few defaults to be used by each template
+        self.parameters = {}
+        self.parameters.default_command = {
+            'default' : 'run',
+            'help' : 'command to run for this template',
+            'optional' : True,
+            'private' : True,
+            }
+        
         if name:
             self._templateDataFile = os.path.join(
                 TEMPLATEDIR, '%s.moa' % name)

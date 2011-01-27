@@ -73,6 +73,10 @@ def configShow(data):
     
     for p in keys:
         if p[:4] == 'moa_': continue
+        
+        if job.template.parameters[p].private == True:
+            continue
+        
         if job.conf.setInJobConf(p):
             moa.ui.fprint("%%(bold)s%s\t%s%%(reset)s" % (
                 p, job.conf[p]))
@@ -122,7 +126,7 @@ def configSet(data):
     In the first two forms, moa set set the parameter 'PARAMETER_NAME'
     to the described value. In the latter form, Moa will present the
     user with a prompt to enter the value. Note that these command
-    lines will first be processed by bash, and care needs to be taken
+    lines will first be processed by bash, and care needs to be taken   
     that bash does not expand or interpret special characters. To
     prevent this, the third form can be used.
     """
