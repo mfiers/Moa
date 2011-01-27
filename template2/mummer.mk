@@ -36,14 +36,11 @@ mummer_prepare:
 .PHONY: mummer_post
 mummer_post:
 
-mummer_debug:
-	@echo $(mum_a_set)
-	@echo $(mum_b_set)
 
 .PHONY: mummer
 mummer: $(mum_a_set)
 
-aix = $(mum_input_a_extension)
+aix = $(cd mum_input_a_extension)
 bix = $(mum_input_b_extension)
 
 $(mum_a_set): a__%: $(mum_b_set)

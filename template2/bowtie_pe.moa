@@ -15,13 +15,13 @@ filesets:
     category: input
     help: fastq input files directory - forward
     optional: false
-    pattern: '*/*_1.*'
+    pattern: '*/*_1.fq'
     type: set
   fq_reverse_input:
     category: input
     help: fastq input files directory - reverse
     optional: true
-    pattern: '*/*_2.*'
+    pattern: '*/*_2.fq'
     source: fq_forward_input
     type: map
   output:
@@ -64,7 +64,7 @@ parameters:
     optional: true
     type: integer
   max_insertsize:
-    default: '500'
+    default: '250'
     help: Maximum allowed insertsize
     optional: true
     type: integer

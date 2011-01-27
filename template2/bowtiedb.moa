@@ -32,6 +32,12 @@ parameters:
     help: write Ebwt data to files with this dir/basename
     optional: true
     type: string
+  extra_params:
+    category: ''
+    default: ''
+    help: any option parameters
+    optional: true
+    type: string
   title:
     allowed: []
     category: system

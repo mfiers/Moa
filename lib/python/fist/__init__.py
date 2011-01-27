@@ -264,10 +264,13 @@ class fistMapset(fistCore):
         fromStarCount = mapFrom.glob.count('*')
         toStarCount = self.glob.count('*')
 
-        if fromStarCount != toStarCount:
+        if fromStarCount == 0 and toStarCount == 1:
+            method += '9'
+            reF += '/(?P<glob>.*)\.[^\.\s]*?$' 
+            reT += '/' + self.glob.replace('*', '\g<glob>')
+        elif fromStarCount != toStarCount:
             raise Exception("Invalid patterns '%s' -> '%s'" % (mapFrom.glob, self.glob))
-
-        if fromStarCount == 0:
+        elif  fromStarCount == 0:
             method = '0'
             reF += '/.*$'
             reT += '/' % self.glob
@@ -287,13 +290,15 @@ class fistMapset(fistCore):
             logging.info( 'GLOB cur.value : %50s -> %-50s' % (mapFrom.glob, self.glob))
             logging.info( 'REGEX FROM '+ reF)
             logging.info( 'REGEX TO   '+ reT)
-            
+            logging.info( 'METHOD %s' % method)
+            for x in range(min(len(list),3)):
+                logging.info( 'input file no %d: %s' % (x +1, list[x])) 
         rex = re.compile(reF)        
         rv = [rex.sub(reT, x) for x in list]
 
         if DEBUG:
-            logging.info( '-' * 95)
-            logging.info( ' Returning %s' % rv[:3])
+            for x in range(min(len(list),3)):
+                logging.info( 'output file no %d: %s' % (x +1, rv[x])) 
     
         return rv
     

@@ -29,6 +29,7 @@ adhoc_touch=F
 else
 adhoc_touch_files=$(addprefix touch/,$(notdir $(adhoc_input_files)))
 adhoc_input_dir=$(shell dirname $(word 1,$(adhoc_input_files)))
+
 endif
 
 .PHONY: adhoc_prepare
@@ -53,7 +54,6 @@ ifeq ($(adhoc_mode),seq)
 
 adhoc: $(adhoc_touch_files)
 touch/%: t=$(shell echo '$*' | sed -e '$(adhoc_name_sed)')
-touch/%: b=$(shell basename $< .$(adhoc_input_extension))
 touch/%: $(adhoc_input_dir)/%
 	$(call echo,considering $< -- $t ($b) )
 	$(call echo,running $(adhoc_process))
@@ -61,7 +61,6 @@ touch/%: $(adhoc_input_dir)/%
 	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
 		touch $@; \
 	fi
-
 endif
 
 ################################################################################
@@ -71,7 +70,6 @@ ifeq ($(adhoc_mode),par)
 adhoc:  $(adhoc_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed -e '$(adhoc_name_sed)')
-touch/%: b=$(shell basename $< .$(adhoc_input_extension))
 touch/%: $(adhoc_input_dir)/%
 	$(call echo,considering $< -- $t)
 	$(call warn,running '$(adhoc_process)')
@@ -123,39 +121,30 @@ adhoc_unittest:
 	echo -n '3' > 10.input/test.3.input
 	echo -n '4' > 10.input/test.4.input
 	echo -n '5' > 10.input/what.5.input
-	moa set adhoc_mode=simple
-	moa set adhoc_process='cat 10.input/* > test.1'
-	moa
+	moa set mode=simple
+	moa set process='cat 10.input/* > test.1'
+	moa run
 	[[ "`cat test.1`" == "12345" ]]
 	rm test.1
-	moa set adhoc_mode=seq
-	moa set adhoc_input_dir=10.input
-	moa set adhoc_input_extensions=input
-	moa set adhoc_input_glob=test.*
-	moa set adhoc_process='cat $$< >> test.2'
-	moa
-	#cat test.2
+	moa set mode=seq
+	moa set input=10.input/test.*.input
+	moa set process='cat $$< >> test.2'
+	moa run
 	[[ "`cat test.2`" == "2341" ]]
 	rm test.2
-	moa set adhoc_name_sed='s/input/output/'
-	moa set adhoc_process='cat $$< > $$t'
-	moa
+	moa set name_sed='s/input/output/'
+	moa set process='cat $$< > $$t'
+	moa run
 	ls
 	[[ ! ( -e test.1.output ) ]]
 	moa clean
-	moa
+	moa run
 	moa show
 	ls
 	[[ -e test.1.output ]]
 	rm test.?.output
 	sleep 1
 	touch 10.input/test.2.input
-	moa
+	moa run
 	[[ -e test.2.output ]]
 	[[ ! (-e test.1.output) ]]
-	moa set adhoc_touch=F
-	rm test.?.output
-	moa -v
-	ls
-	[[  (-e test.1.output) ]]
-	moa set adhoc_touch=T

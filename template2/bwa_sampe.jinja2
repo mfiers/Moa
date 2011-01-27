@@ -11,27 +11,63 @@ bwa sampe -a {{max_insert_size}}                        \
     {% if disable_insert_size %}, -A {% endif %} 		\
     {{ db }}                                            \
     {{ sai_forward_input }} {{ sai_reverse_input }}     \
-    {{ fq_forward_input }} {{ fq_reverse_input }}	    \
-    -f {{ output }}
+    {{ fq_forward_input }} {{ fq_reverse_input }} | {{ snippets.sam2bam }} -o {{ output_bam }} -
+#-f {{ output }} 
+#{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
 
-{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
+#[[  ls -ltr read_ | awk '{ print $5 }' ]]
+#[[ ! -s potato.bfa ]] && echo 'is empty' || echo 'not empty'
 
 ### clean
 
 rm *.sam
 
 ### unittest
-
 export MOA_NOLOGO=1
+
 mkdir 10.index
 cd 10.index
 moa new bwa_index -t 'create a demo database'
-echo ${MOA_BASE}
+[[ -d .moa ]] && echo "Found .moa INDEX directory" || (echo "Cannot find .moa INDEX directory"; false)
 moa set input_fasta="${MOABASE}/share/test/test.fasta"
+moa set prefix=testDB
 moa run
-cd ..
-mkdir 20.align
-cd 20.align
-moa new bwa_aln -t 'align demo reads'
-[[ -d .moa ]] && echo "Found .moa directory" || (echo "Cannot find .moa directory"; false)
+numFiles= ls -l * | grep '^-' | grep testDB | wc -l
+[[ ${numFiles} -eq 9 ]] && (echo "Index files created"; true) || (echo "Index files not created"; false)
+
+cd ../
+
+mkdir 20.align_1
+cd 20.align_1
+moa new bwa_aln -t 'align demo forward reads'
+[[ -d .moa ]] && echo "Found .moa ALN1 directory" || (echo "Cannot find .moa ALN1 directory"; false)
+moa set db=${PWD%/*}/10.index/testDB
+moa set input=${MOABASE}/share/test/read_1.fq
+moa run
+pwd >&2
+[[ -f read_1.sai ]] && ( [[ ! -s read_1.sai ]] && echo "read_1.sai file exists and has size > 0" || echo "read_1.sai file is empty", false) || (echo "read_1.sai file does not exist")
+
+cd ../
+
+mkdir 30.align_2
+cd 30.align_2
+moa new bwa_aln -t 'align demo reverse reads'
+[[ -d .moa ]] && echo "Found .moa ALN2 directory" || (echo "Cannot find .moa ALN2 directory"; false)
+moa set db=${PWD%/*}/10.index/testDB
+moa set input=${MOABASE}/share/test/read_2.fq
+moa run
+[[ -f read_2.sai ]] && ( [[ ! -s read_2.sai ]] && echo "read_2.sai file exists and has size > 0" || echo "read_2.sai file is empty", false) || (echo "read_2.sai file does not exist")
+
+cd ../
+
+mkdir 40.sampe
+cd 40.sampe
+moa new bwa_sampe -t 'bwa sampe demo'
+[[ -d .moa ]] && echo "Found .moa SAMPE directory" || (echo "Cannot find .moa SAMPE directory"; false)
+moa set db=${PWD%/*}/10.index/testDB
+moa set fq_forward_input=${MOABASE}/share/test/read_1.fq
+moa set sai_forward_input=${PWD%/*}/20.align_1/*_1.sai
+moa set sai_reverse_input=${PWD%/*}/30.align_2/*_2.sai
+moa run
+[[ -f read.bam ]] && ( [[ ! -s read.bam ]] && echo "read.bam file exists and has size > 0" || echo "read.bam file is empty", false) || (echo "read.bam file does not exist")
 
