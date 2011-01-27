@@ -69,10 +69,12 @@ class Ruff(moa.backend.BaseBackend):
         self.snippets.load(snippetsFile)
 
     def getCommandTemplate(self, command):
-        return jTemplate(self.commands[command])
+        if self.commands.has_key(command):
+            return jTemplate(self.commands[command])
+        else:
+            return False
                 
     def hasCommand(self, command):
-        return True
         return command in self.commands.keys()
 
     def defineOptions(self, parser):
@@ -90,7 +92,6 @@ class Ruff(moa.backend.BaseBackend):
         """
         #self.job.plugins.run("readfilesets")
 
-        l.debug("executing %s" % command)
         jt = self.getCommandTemplate(command)
         actor = self.job.getActor()
 
