@@ -40,6 +40,13 @@ USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
                           '.config', 'moa', 'config')
 
 class JobConf(object):
+    """
+    This is a wrapper around a Yaco object - with a few extras, such as
+    checking if a parameter is of the promised type
+
+    to distinguish between attributes of this object & proper job
+    configuration parameters
+    """
     
     def __init__(self, job):
         """
@@ -47,15 +54,14 @@ class JobConf(object):
         """
         
         self.job = job
-        self.template = self.job.template
-        self.jobConfFile = os.path.join(self.job.confDir, 'config')
         self.jobConf = Yaco.Yaco()
-
+        self.jobConfFile = os.path.join(self.job.confDir, 'config')
+        
         #: these fields are not to be saved
-        self.doNotSave = []
+        self._JC_doNotSave = []
         
         #: these fields are not be type-checked
-        self.doNotCheck = []
+        self._JC_doNotCheck = []
         
         #: these fields are private (i.e. not to be
         #: displayed by default)
@@ -64,9 +70,12 @@ class JobConf(object):
         if os.path.exists(self.jobConfFile):
             self.jobConf.load(self.jobConfFile)
 
+    def doNotSave(self, parameter):
+        self._JC_doNotSave.append(parameter)
+    
     def save(self):
         self.job.checkConfDir()
-        self.jobConf.save(self.jobConfFile, self.doNotSave)
+        self.jobConf.save(self.jobConfFile, self._JC_doNotSave)
 
     def setInJobConf(self, key):
         if self.jobConf.has_key(key):
@@ -79,14 +88,14 @@ class JobConf(object):
         return a dict with all known parameters and values, either
         defined in the job configuration of the template
         """
-        rvt = set(self.template.parameters.keys())
+        rvt = set(self.job.template.parameters.keys())
         rvj = set(self.jobConf.keys())
         return list(rvt.union(rvj))
 
     def has_key(self, key):
         if self.jobConf.has_key(key):
             return True
-        if self.template.parameters.has_key(key):
+        if self.job.template.parameters.has_key(key):
             return True
         return False
 
@@ -104,25 +113,27 @@ class JobConf(object):
         v = ''
         if self.jobConf.has_key(key):
             v = self.jobConf[key]
-        elif key in self.template.parameters.keys() and \
-                 self.template.parameters[key].has_key('default'):
-            v = self.template.parameters[key].default
+        elif key in self.job.template.parameters.keys() and \
+                 self.job.template.parameters[key].has_key('default'):
+            v = self.job.template.parameters[key].default
 
         if isinstance(v, str) and '{{' in v:
             rere = re.compile('\{\{ *([^ \}]*) *\}\}')
             v = rere.sub(lambda x: self.__getitem__(x.groups()[0]), v)
 
-        if key in self.template.parameters.keys() and \
-               self.template.parameters[key].has_key('callback'):
-            v = self.template.parameters[key].callback(key, v)
+        if key in self.job.template.parameters.keys() and \
+               self.job.template.parameters[key].has_key('callback'):
+            v = self.job.template.parameters[key].callback(key, v)
         return v
     
     def __delitem__(self, key):
         del(self.jobConf[key])
 
-    def __setitem__(self, key,value):
-        if key in self.template.parameters.keys():
-            pd = self.template.parameters[key]
+
+    def __setitem__(self, key, value):
+        l.critical("setting %s to %s" % (key, value))
+        if key in self.job.template.parameters.keys():
+            pd = self.job.template.parameters[key]
             if pd.type == 'boolean':
                 if value.lower() in ["yes", "true", "1", 'y', 't']:
                     value = True
@@ -138,6 +149,20 @@ class JobConf(object):
                 except ValueError:
                     pass
                 
-                    
         self.jobConf[key] = value
 
+    def __setattr__(self, key, value):
+        if key in ['job', 'jobConf', 'jobConfFile']:
+            object.__setattr__(self, key, value)
+        elif key[:4] == '_JC_':
+            object.__setattr__(self, key, value)
+        else:
+            return self.__setitem__(key, value)
+        
+    def __getattr__(self, key):
+        if key in ['job', 'jobConf', 'jobConfFile']:
+            object.__getattr__(self, key)
+        elif key[:4] == '_JC_':
+            object.__getattr__(self, key)
+        else:
+            return self.__getitem__(key)
