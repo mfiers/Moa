@@ -118,11 +118,12 @@ class Ruff(moa.backend.BaseBackend):
                 
             #determine number the number of files
             noFiles = 0
-            for i, k in enumerate(self.job.data.filesets.keys()):
+            in_out_files = self.job.data.outputs + self.job.data.inputs
+            for i, k in enumerate(in_out_files):
                 if i == 0:
                     noFiles = len(self.job.data.filesets[k].files)
                 else:
-                    assert(len(self.job.data.filesets[k].files) == noFiles)                    
+                    assert(len(self.job.data.filesets[k].files) == noFiles)
           
             #rearrange files
             for i in range(noFiles):
@@ -172,7 +173,6 @@ class Ruff(moa.backend.BaseBackend):
 
 
 def executor(input, output, actor, script):
-    print 'processing', input, output
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
                                       mode='w')
