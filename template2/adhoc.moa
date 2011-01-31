@@ -57,16 +57,6 @@ parameters:
     help: Output subdirectory
     optional: true
     type: directory
-  powerclean:
-    allowed:
-    - T
-    - F
-    category: ''
-    default: F
-    help: Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile
-      when calling make clean. Defaults to F.
-    optional: true
-    type: set
   process:
     allowed: []
     category: ''
@@ -76,15 +66,6 @@ parameters:
       for example "cat $< > output" would concatenate all files into one big file
     optional: true
     type: string
-  r_mode:
-    allowed:
-    - T
-    - F
-    category: ''
-    default: F
-    help: R mode is a dedication mode to run R scripts
-    optional: true
-    type: set
   title:
     allowed: []
     category: system

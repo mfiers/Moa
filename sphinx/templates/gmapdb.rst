@@ -21,25 +21,38 @@ Commands
 
 
 
+Filesets
+~~~~~~~~
+
+
+
+
+**input**::
+    The reference sequence to build a gmap database with.
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
 Parameters
 ~~~~~~~~~~
 
 
 
-**input_dir**::
-    The reference sequence to build a gmap database with.
+**default_command**::
+    command to run for this template
 
-  | *type*: `directory`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**input_extension**::
-    Extension of the input files, defaults to fasta
-
-  | *type*: `string`
-  | *default*: `fasta`
+  | *type*: `{}`
+  | *default*: `run`
   | *optional*: `True`
 
 
@@ -48,7 +61,7 @@ Parameters
     Name of the gmap index to create
 
   | *type*: `string`
-  | *default*: ``
+  | *default*: `gmapdb`
   | *optional*: `True`
 
 
@@ -66,7 +79,7 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

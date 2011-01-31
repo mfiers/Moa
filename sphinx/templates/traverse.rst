@@ -1,7 +1,11 @@
 traverse
 ------------------------------------------------
 
-**Traverse** - Do nothing, except be a part in executing full directory structures
+**Traverse**
+
+::
+    Do nothing, except be a part in executing full directory structures
+
 
 Commands
 ~~~~~~~~
@@ -22,7 +26,18 @@ Parameters
 
 
 
-**title** - A name for this job
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

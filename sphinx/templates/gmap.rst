@@ -34,9 +34,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `genepred`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -51,9 +51,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `gff`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -68,9 +68,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `invert.gff`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -81,11 +81,13 @@ Filesets
 **input**::
     Sequences to map
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -100,9 +102,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `raw`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `./raw`
+  | *dir*: `{}`
 
 
 
@@ -120,6 +122,15 @@ Parameters
   | *type*: `file`
   | *default*: ``
   | *optional*: `False`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 

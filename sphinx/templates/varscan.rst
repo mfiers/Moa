@@ -1,7 +1,11 @@
 varscan
 ------------------------------------------------
 
-**Varscan** - Run VARSCAN to detect snps
+**Varscan**
+
+::
+    Run VARSCAN to detect snps
+
 
 Commands
 ~~~~~~~~
@@ -22,35 +26,54 @@ Parameters
 
 
 
-**extra_params** - location of varscan.pl, defaults to /usr/lib/perl5/site_perl/5.8.8/varscan.pl
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**extra_params**::
+    location of varscan.pl, defaults to /usr/lib/perl5/site_perl/5.8.8/varscan.pl
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**input_file** - Varscan input alignments file
+**input_file**::
+    Varscan input alignments file
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**output_name** - Base name of the output files
+**output_name**::
+    Base name of the output files
+
   | *type*: `string`
   | *default*: `out`
   | *optional*: `True`
 
 
 
-**perl_file** - the varscan (perl) executable
+**perl_file**::
+    the varscan (perl) executable
+
   | *type*: `file`
   | *default*: ``
   | *optional*: `True`
 
 
 
-**title** - A name for this job
+**title**::
+    A name for this job
+
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`

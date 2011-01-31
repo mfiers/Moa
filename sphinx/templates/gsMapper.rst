@@ -35,6 +35,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **min_overlap_ident**::
     Minimum identity length in the assembly step
 

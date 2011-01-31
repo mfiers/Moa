@@ -35,6 +35,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **query**::
     NCBI query (for example txid9397[Organism%3Aexp])
 

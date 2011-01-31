@@ -50,7 +50,6 @@ def defineCommands(data):
 def showFiles(data):
     """
     files
-    -----
     
     Show an overview of the files found for this job
     """
@@ -132,7 +131,7 @@ def preCommand(data):
 
 def preparefilesets(data):
     """
-    prepare all filesets
+    prepare all filesets 
     """
     job = data['job']
     moaId = job.template.name
@@ -143,22 +142,27 @@ def preparefilesets(data):
         return
 
     fileSets = job.template.filesets.keys()
-    
+
+    import copy
+    allSets = copy.copy(fileSets)
+    allSets.sort()
     while True:
+            
         if len(fileSets) == 0: break
-        fsid = fileSets.pop(0)        
+        fsid = fileSets.pop(0)
         fs = job.template.filesets[fsid]
+                
         job.data.filesets[fsid] = fs
-        
-        if fs.type == 'set':
+
+        #Resolve filesets - first the NON-map sets
+        if fs.type == 'set' or fs.type == 'single':
             files = fist.fistFileset(job.conf[fsid])
             files.resolve()
-        elif fs.type == 'single':
-            files = fist.fistSingle(job.conf[fsid])
             
         elif fs.type == 'map':
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")
+            
             if not job.data.filesets.has_key(fs.source) or \
                     not job.data.filesets[fs.source].has_key('files') or \
                     not job.data.filesets[fs.source].files.resolved:
@@ -170,7 +174,9 @@ def preparefilesets(data):
         else:
             moa.ui.exitError("Invalid data set type %s for data set %s" % (
                     fs.type, fsid))
+            
         l.debug("Recovered %d files for fileset %s" % (len(files), fsid))
+
         job.data.filesets[fsid].files = files
         with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
             F.write("\n".join(files) + "\n")

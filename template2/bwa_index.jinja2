@@ -1,17 +1,3 @@
-### prep_1
-echo "dbVendor=mysql " >> orthomcl.config
-echo "dbConnectString=dbi:mysql:{{mysql_db}}:{{mysql_host}}:{{mysql_port}}" >> orthomcl.config
-echo "dbLogin={{mysql_login}}" >> orthomcl.config
-echo "dbPassword={{mysql_pass}}" >> orthomcl.config
-echo "similarSequencesTable=SimilarSequences" >> orthomcl.config
-echo "orthologTable=Ortholog" >> orthomcl.config
-echo "inParalogTable=InParalog" >> orthomcl.config
-echo "coOrthologTable=CoOrtholog" >> orthomcl.config
-echo "interTaxonMatchView=InterTaxonMatch" >> orthomcl.config
-echo "percentMatchCutoff=50" >> orthomcl.config
-echo "evalueExponentCutoff=-5" >> orthomcl.config
-echo "oracleIndexTblSpc=NONE" >> orthomcl.config
-
 ### run 
 
 bwa index -p {{ prefix }} -a {{ algorithm }} \
@@ -23,18 +9,14 @@ bwa index -p {{ prefix }} -a {{ algorithm }} \
 rm -f {{prefix}}.*
 
 ### unittest
-export MOA_NOLOGO=1
 
-mkdir 10.index
-cd 10.index
-moa new bwa_index -t 'create a demo database'
-[[ -d .moa ]] && echo "Found .moa INDEX directory" || (echo "Cannot find .moa INDEX directory"; false)
 moa set input_fasta="${MOABASE}/share/test/test.fasta"
 moa set prefix=testDB
-pwd >&2
 moa run
-numFiles= ls -l * | grep '^-' | grep testDB | wc -l
-echo $numFiles
-[[ ${numFiles} == 9 ]] && (echo "Index files created"; true) || (echo "Index files not created"; false)
-
-#[[ ( ls -l * | grep '^-' | grep testDB | wc -l ) -eq 9 ]] && (echo "Index files created"; true) || (echo "Index files not created"; false)
+ls -l
+[[ -s testDB.amb ]]
+[[ -s testDB.ann ]]
+[[ -s testDB.bwt ]]
+[[ -s testDB.pac ]]
+[[ -s testDB.rbwt ]]
+[[ -s testDB.rpac ]]

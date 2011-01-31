@@ -30,11 +30,13 @@ Filesets
 **fq_input**::
     Fastq input file
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fq`
-  | *glob*: `*`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -49,9 +51,9 @@ Filesets
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `sam`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -66,9 +68,9 @@ Filesets
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `soap`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -86,6 +88,15 @@ Parameters
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 
@@ -198,7 +209,7 @@ Other
 **Creation date**
   Wed Nov 29 07:56:48 2010
 **Modification date**
-  1291085573.25
+  1291933991.07
 
 
 

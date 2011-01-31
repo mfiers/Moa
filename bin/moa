@@ -54,7 +54,7 @@ wd = os.getcwd()
 moa.version.fixOld(wd)
 job = moa.job.Job(wd)
 job.plugins = plugins
-
+    
 #use of cwd is deprecated
 plugins.register(cwd = wd)
 plugins.register(sysConf = moa.sysConf.sysConf)
@@ -72,6 +72,7 @@ plugins.register(job=job)
 moaCommands = moa.commands.Commands()
 plugins.register(commands = moaCommands)
 plugins.run('defineCommands')
+
 
 ## start defining the command line interface
 USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
@@ -121,7 +122,8 @@ if __name__ == "__main__":
         newargs = args[1:]
     else:
         commands = ['status']
-        
+           
+
     ## Ask the job if it's is ok with
     ## these commands (might want to change order, or insert
     ## stuff
@@ -132,9 +134,11 @@ if __name__ == "__main__":
 
     plugins.register(newargs = newargs)
     job.args = newargs
-    
+
     ### Start job initialization
     job.prepare()
+
+    
 
     ### Start plugin initialization
     plugins.run('prepare')
@@ -144,6 +148,7 @@ if __name__ == "__main__":
     for command in commands:
         plugins.run("preCommand")
         plugins.run("pre%s" % command.capitalize())
+
         if command in moaCommands:
             if moaCommands[command].has_key('call'):
                 l.debug("using a callback for moa %s" % command)

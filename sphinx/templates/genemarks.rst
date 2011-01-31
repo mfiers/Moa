@@ -26,6 +26,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **gff_source**::
     source field to use in the gff. Defaults to "geneMarkS"
 

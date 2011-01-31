@@ -4,14 +4,18 @@
 .SH DESCRIPTION 
 {{ description }}
 .SH COMMANDS
-.IP (undefined) / {{ moa_id }}
-{{ help.get(moa_id) }}
-{% for command in commands -%}
-{% if command != moa_id -%}
+.IP undefined/run
+{{ commands[run].get('help', 'Execute default action for this template') }}
+{% for command in commands.keys() -%}
+{% if command != 'run' -%}
 .IP {{ command }}
-{{ help[command] }}
-{% endif %}
-{% endfor %}
+{% if commands[command].get('help', None) -%}
+{{ commands[command].get('help') }}
+{% else -%}
+No help provided
+{% endif -%}
+{% endif -%}
+{%- endfor %}
 
 .SH PARAMETERS
 (* denotes a mandatory parameter)

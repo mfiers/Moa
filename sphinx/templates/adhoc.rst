@@ -30,11 +30,13 @@ Filesets
 **input**::
     Input files for adhoc
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `True`
-  | *extension*: ``
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -43,6 +45,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 
@@ -73,29 +84,11 @@ Parameters
 
 
 
-**powerclean**::
-    Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile when calling make clean. Defaults to F.
-
-  | *type*: `set`
-  | *default*: `F`
-  | *optional*: `True`
-
-
-
 **process**::
     Command to execute for each input file. The path to the input file is available as $< and the output file as $t. (it is not mandatory to use both parameters, for example "cat $< > output" would concatenate all files into one big file
 
   | *type*: `string`
   | *default*: `echo "needs a sensbile command"`
-  | *optional*: `True`
-
-
-
-**r_mode**::
-    R mode is a dedication mode to run R scripts
-
-  | *type*: `set`
-  | *default*: `F`
   | *optional*: `True`
 
 

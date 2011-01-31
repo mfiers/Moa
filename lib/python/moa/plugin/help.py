@@ -28,9 +28,9 @@ import sys
 import time
 import shutil
 import pydoc
-import pprint
 import optparse
-from subprocess import Popen, PIPE
+import textwrap
+import subprocess as sp
 
 import jinja2
 
@@ -65,19 +65,21 @@ def templateHelp(data):
     else:
         template = job.template
 
+    for t in job.template.commands:
+        print t
+    sys.exit()
+    
     if template.name == 'nojob':
         return welcome(data)
-        #moa.ui.exitError("Either run moa template in a moa job directory, " +
-        #                 "or specify a template name")
 
-    #prep the template object for perusion by jinja
+    #prep the template object for rendering by jinja
     template._categories = {}
     for pn in template.parameters:
         p = template.parameters[pn]
-        if not template._categories.has_key(p.category):
-            template._categories[p.category] = []
-        template._categories[p.category].append(pn)
-        
+        cat = str(p.category).strip()
+        if not template._categories.has_key(cat):
+            template._categories[cat] = []
+        template._categories[cat].append(pn)
     global JENV
     JENV = jinja2.Environment(loader=jinja2.FileSystemLoader(
         os.path.join(MOABASE, 'lib', 'jinja2')))
@@ -91,9 +93,8 @@ def pager(template, templateData):
     render the template & send it to the pager
     """
     mancode = template.render(templateData)
-        
-    p2 = Popen("nroff -c -mandoc".split(),
-               stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    p2 = sp.Popen("nroff -c -mandoc".split(),
+               stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
     p2.stdin.write(mancode)
     doc, err = p2.communicate()
     pydoc.pager(doc)
@@ -103,13 +104,21 @@ def welcome(data):
     """
     print a welcome message
     """
-    moa.ui.fprint("""%%(bold)s%%(blue)sWelcome to MOA!%%(reset)s (v %(version)s)
-Managing command line workflows
+    commands =  "\n".join(textwrap.wrap(
+        ", ".join(data['commands'].keys()),
+        subsequent_indent='   ',
+        initial_indent='                   ',
+        )).lstrip()
+    
+    moa.ui.fprint("""{{bold}}{{blue}}Welcome to MOA!{{reset}} (v %(version)s)
 
-%%(bold)sAvailable commands%%(reset)s: %(commands)s
+{{bold}}Available commands{{reset}}: %(commands)s
 
-Try: `%%(bold)smoa --help%%(reset)s` for more help,
-or read the manual at: %%(green)shttp://mfiers.github.com/Moa/%%(reset)s
-"""  % {'commands' : ", ".join(data['commands'].keys()),
+Try:
+* `{{bold}}moa --help{{reset}}` for information on running the `{{green}}moa{{reset}}` command.
+* `{{bold}}moa help{{reset}}` inside a moa job directory for information on the operation
+  of that template
+* reading the manual at: {{green}}http://mfiers.github.com/Moa/{{reset}}
+"""  % {'commands' : commands,
         'version' : data['sysConf'].getVersion()
-})
+}, f='jinja')

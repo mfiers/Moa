@@ -34,6 +34,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **gup_db**::
     gbrowse database. If not defined, this defaults to moa.
 

@@ -34,6 +34,7 @@ import shutil
 import readline
 import traceback
 import contextlib
+import jinja2
 
 import moa.logger as l
 import moa.sysConf
@@ -61,13 +62,18 @@ def exitError(message):
     fprint("%%(red)s%%(bold)sError:%%(reset)s %s" % message)
     sys.exit(-1)
     
-def fprint(message):
+def fprint(message, f='text'):
     sysConf = moa.sysConf.sysConf
     if sys.stdout.isatty() and sysConf.use_ansi:
         codes = FORMAT_CODES_ANSI
     else:
         codes = FORMAT_CODES_NOANSI
-    print message % codes
+
+    if f == 'text':
+        print message % codes
+    elif f == 'jinja':
+        template = jinja2.Template(message)
+        print template.render(**codes)
 
 
 ################################################################################

@@ -50,9 +50,18 @@ class Template(Yaco.Yaco):
         
         * Check if the template exists, if not raise an Exception
         * Load template info
-        """        
-
+        """                
         super(Template, self).__init__(self)
+
+        #set a few defaults to be used by each template
+        self.parameters = {}
+        self.parameters.default_command = {
+            'default' : 'run',
+            'help' : 'command to run for this template',
+            'optional' : True,
+            'private' : True,
+            }
+        
         if name:
             self._templateDataFile = os.path.join(
                 TEMPLATEDIR, '%s.moa' % name)
@@ -68,7 +77,6 @@ class Template(Yaco.Yaco):
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         if not self.name == 'nojob' and not self.modification_date:
             self.modification_date = os.path.getmtime(self._templateDataFile)
-        
 
     def getRaw(self):
         y = Yaco.Yaco()

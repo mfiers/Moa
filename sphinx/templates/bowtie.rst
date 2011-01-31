@@ -11,7 +11,7 @@ Commands
 ~~~~~~~~
 
 **clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template
 
 
 **run**
@@ -27,14 +27,50 @@ Filesets
 
 
 
-**input**::
-    Input files for bowtie
+**db**::
+    The (basename of the) bowtie database to use.
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `prerequisite`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**input**::
+    Fasta/fastq input files for bowtie
+
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fastq`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**output**::
+    Output files
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -46,20 +82,11 @@ Parameters
 
 
 
-**basename**::
-    basename for generating the merged, sorted and indexed files
+**default_command**::
+    command to run for this template
 
-  | *type*: `string`
-  | *default*: `all`
-  | *optional*: `True`
-
-
-
-**db**::
-    The bowtie database to use. It is allowed to define one of the bowtie database files (.[0-9].ebwt).
-
-  | *type*: `file`
-  | *default*: ``
+  | *type*: `{}`
+  | *default*: `run`
   | *optional*: `True`
 
 
@@ -73,92 +100,11 @@ Parameters
 
 
 
-**forward_suffix**::
-    Last part of the sequence name identifying a file with forward reads
-
-  | *type*: `string`
-  | *default*: `_1`
-  | *optional*: `True`
-
-
-
 **input_format**::
     Format of the input files
 
   | *type*: `set`
   | *default*: `fastq`
-  | *optional*: `True`
-
-
-
-**insertsize**::
-    Expected insertsize
-
-  | *type*: `float`
-  | *default*: `5000`
-  | *optional*: `True`
-
-
-
-**insertsize_max**::
-    Max insertsize for a paired alignment
-
-  | *type*: `float`
-  | *default*: `10`
-  | *optional*: `True`
-
-
-
-**insertsize_min**::
-    multiplier determining the minimal acceptable value for two paired reads to be apart. If the bowtie_insertsize is 10000 and this parameter is set at 0.8, than reads that are closer together than 8000 nt are rejecte
-
-  | *type*: `float`
-  | *default*: `0.1`
-  | *optional*: `True`
-
-
-
-**insertsize_sed**::
-    SED expression to filter the expected insertsize from the input file name
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `True`
-
-
-
-**msi**::
-    Merge, sort and index? If *T* use samtools to merge all bamfiles into one, sort them and create an index
-
-  | *type*: `set`
-  | *default*: `F`
-  | *optional*: `True`
-
-
-
-**output_format**::
-    Format of the output file
-
-  | *type*: `set`
-  | *default*: `bam`
-  | *optional*: `True`
-
-
-
-**paired_ends**::
-    perform a paired end analysis. If so, the input files are expected to be of the form *_1.fastq and  *_2.fastq
-
-  | *type*: `set`
-  | *default*: `F`
-  | *optional*: `True`
-
-
-
-**reverse_suffix**::
-    Last part of the sequence name identifying a file with reverse reads
-
-  | *type*: `string`
-  | *default*: `_2`
   | *optional*: `True`
 
 
@@ -176,7 +122,7 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

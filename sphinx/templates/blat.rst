@@ -53,6 +53,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **eval**::
     evalue cutoff to select the reported hits on (defaults to 1e-15)
 

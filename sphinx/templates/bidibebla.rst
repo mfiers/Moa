@@ -1,4 +1,4 @@
-bdbb
+bidibebla
 ------------------------------------------------
 
 **Bidirectional best BLAST hit**
@@ -15,7 +15,63 @@ Commands
 
 
 **run**
-  generate a list of bidirectional best blast hits.
+  generate a list of bidirectional best blast hits
+
+
+
+
+
+Filesets
+~~~~~~~~
+
+
+
+
+**input**::
+    Fasta input files
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**output**::
+    Lists of bidirectional best blasts
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `True`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**reference**::
+    Reference fasta file to compare against
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `prerequisite`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
 
 
 
@@ -23,6 +79,15 @@ Commands
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 
@@ -35,26 +100,8 @@ Parameters
 
 
 
-**input_file_a**::
-    First multifasta input file
-
-  | *type*: `file`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**input_file_b**::
-    First multifasta input file
-
-  | *type*: `file`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
 **nothreads**::
-    threads to run bdbb with (note the overlap with the Make -j parameter)
+    Threads to run blast with with
 
   | *type*: `integer`
   | *default*: `4`
@@ -63,9 +110,9 @@ Parameters
 
 
 **protein**::
-    Are we looking at proteins?
+    Is this a protein set
 
-  | *type*: `set`
+  | *type*: `boolean`
   | *default*: `F`
   | *optional*: `True`
 
@@ -84,13 +131,13 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  1291933988.45
 
 
 

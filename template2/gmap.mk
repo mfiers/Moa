@@ -43,6 +43,7 @@ gmap_report: $(gmap_gff_invert_files)
 	$e cat $(gmap_gff_invert_files) | cut -f 1 | grep -v '#' | sort | uniq | wc -l >> gmap_report
 
 $(gmap_gff_files): gmap_dbname=$(shell basename $(gmap_db))
+
 $(gmap_gff_files): %.gff: %.raw
 	cat $< \
 		| sed "s/$(gmap_dbname)/$(gmap_gff_source)/" \
@@ -65,7 +66,7 @@ $(gmap_raw_files): %.raw: $(gmap_input_dir)/%.$(gmap_input_extension)
 		 -A $< -F -f 3 > $@
 	gmap -D $(shell dirname $(gmap_db)) \
 		 -d $(shell basename $(gmap_db)) \
-		 $(gmap_extra_parameters) \
+		 $(gmap_extra_parameters) \mo	
 		 $< -A -F -i 10 > output.align
 
 gmap_clean:

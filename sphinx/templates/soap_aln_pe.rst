@@ -30,11 +30,13 @@ Filesets
 **fq_forward_input**::
     fastq input files directory - forward files
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fq`
-  | *glob*: `*_1`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -49,9 +51,9 @@ Filesets
   | *source*: `fq_forward_input`
   | *category*: `input`
   | *optional*: `{}`
-  | *extension*: `fq`
-  | *glob*: `*_2`
-  | *dir*: `{{ fq_forward_input_dir }}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -66,9 +68,9 @@ Filesets
   | *source*: `fq_forward_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `sam`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -83,9 +85,9 @@ Filesets
   | *source*: `fq_forward_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `soap`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -103,6 +105,15 @@ Parameters
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 
@@ -260,7 +271,7 @@ Other
 **Creation date**
   Wed Nov 30 07:56:48 2010
 **Modification date**
-  1291083108.97
+  1291933991.0
 
 
 

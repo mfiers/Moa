@@ -18,8 +18,16 @@ Commands
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
 
 
+**prepare**
+  *no help defined*
+
+
 **run**
-  Running BLAST takes an input directory (*blast_input_dir*), determines what sequence files are present (with the parameter *blast_input_extension*) and executes BLAST on each of these. Moa BLAST is configured to create XML output (as opposed to the standard text based output) in the *./out* directory. The output XML is subsequently converted to GFF3 by the custom *blast2gff* script (using BioPython). Additionally, a simple text report is created.
+  Running BLAST takes an input directory, determines what sequences are present and executes BLAST on each of these. Moa BLAST is configured to create XML output (as opposed to the standard text based output) in the out directory. The output XML is subsequently converted to GFF3 by the custom blast2gff script (using BioPython). Additionally, a simple text report is created.
+
+
+**run2**
+  *no help defined*
 
 
 
@@ -31,14 +39,67 @@ Filesets
 
 
 
+**db**::
+    Blast database
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `prerequisite`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
 **input**::
     Directory with the input files for BLAST, in Fasta format
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**outgff**::
+    {}
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `True`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**output**::
+    {}
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `True`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -50,21 +111,12 @@ Parameters
 
 
 
-**blast_gff_blasthit**::
-    (T,**F**) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.
+**default_command**::
+    command to run for this template
 
-  | *type*: `set`
-  | *default*: `F`
+  | *type*: `{}`
+  | *default*: `run`
   | *optional*: `True`
-
-
-
-**db**::
-    Location of the blast database. You can either define the blast db parameter as used by blast, or any of the blast database files, in which case the extension will be removed before use
-
-  | *type*: `file`
-  | *default*: ``
-  | *optional*: `False`
 
 
 
@@ -73,6 +125,15 @@ Parameters
 
   | *type*: `float`
   | *default*: `1e-10`
+  | *optional*: `True`
+
+
+
+**gff_blasthit**::
+    (T,**F**) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.
+
+  | *type*: `set`
+  | *default*: `F`
   | *optional*: `True`
 
 
@@ -126,7 +187,7 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

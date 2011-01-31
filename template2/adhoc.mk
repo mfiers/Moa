@@ -28,15 +28,16 @@ ifeq ($(adhoc_mode),simple)
 adhoc_touch=F
 else
 adhoc_touch_files=$(addprefix touch/,$(notdir $(adhoc_input_files)))
-adhoc_input_dir=$(dir $(word 1, $(adhoc_input_files)))
+adhoc_input_dir=$(shell dirname $(word 1,$(adhoc_input_files)))
+
 endif
 
 .PHONY: adhoc_prepare
 adhoc_prepare:
 	$e if [[ "$(adhoc_touch)" == "T" ]]; then \
-		mkdir touch || true 2>/dev/null; \
+		(mkdir touch || true) 2>/dev/null; \
 	else \
-		rm -rf touch || true; \
+		(rm -rf touch || true) 2>/dev/null; \
 	fi
 	-$e [[ "$(adhoc_output_dir)" == "." ]] || mkdir $(adhoc_output_dir)
 
@@ -66,7 +67,7 @@ endif
 ## adhoc mode: par
 ifeq ($(adhoc_mode),par)
 
-adhoc: adhoc_check $(adhoc_touch_files)
+adhoc:  $(adhoc_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed -e '$(adhoc_name_sed)')
 touch/%: $(adhoc_input_dir)/%
@@ -82,7 +83,7 @@ endif
 ## adhoc mode: all
 ifeq ($(adhoc_mode),all)
 
-adhoc:  adhoc_check adhoc_all
+adhoc:   adhoc_all
 
 adhoc_all: $(adhoc_input_files)
 	$(call echo,considering $(words $<) files)

@@ -1,0 +1,30 @@
+### run
+
+mkdir -p raw
+mkdir -p align
+mkdir -p genepred
+mkdir -p gff
+
+gmap -D `dirname {{ db }}` -d `basename {{ db }}` \
+	{{ extra_parameters }} {{ input }} -A -F -f 3 -n 100000 > {{ raw }}
+
+gmap -D `dirname {{ db }}` -d `basename {{ db }}` \
+	{{ extra_parameters }} -A {{ input }} -F -f 3  -n 100000  > {{ align }}
+
+gmapgff2genepred {{ raw }} > {{ genepred }}
+
+cat {{ raw }} \
+	| sed "s/`basename {{ db }}`/{{ gff_source }}/" \
+	| sed "s/cDNA_match/match/" \
+	| sed "s/^\([^\t]*\)\(.*\)ID=\([^;]*\).path\([0-9]\+\);Name=\([^;]*\)\(.*\)/\1\2ID=gmap__\1__\3__\4;Name=gmap__\1__\3__\4\6/" \
+	| sed "s/Target=/Target=Sequence:/" \
+	> {{ gff }}
+
+invertGff {{ gff }} {{ gff_invert }}
+
+### clean
+
+rm -rf raw || true
+rm -rf align || true
+rm -rf gff || true
+rm -rf genepred || true

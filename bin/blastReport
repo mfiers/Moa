@@ -32,7 +32,7 @@ l = logging
 
 parser = optparse.OptionParser()
 parser.set_defaults(noalignments=5)
-parser.add_option('-n', dest='noalignments',
+parser.add_option('-n', dest='noalignments', type="int",
         help = "no of alignments per record to parse")
 parser.set_defaults(outfile='report.out')
 parser.add_option('-o', dest='outfile',
@@ -79,7 +79,7 @@ def processRec(rec):
         i += 1
         l.debug("processing alignment %d" % i)
         processAlignment(data, alignment)
-        if i > options.noalignments: break
+        if i >= options.noalignments: break
         
     return i    
     
@@ -88,10 +88,10 @@ i = 0; r = 0; empty = 0
 
 G = open(options.outfile, 'w')
 
-for infile in os.listdir(sys.argv[1]):
+for infile in os.listdir(args[0]):
     i +=1 ; j = 0
     l.debug("Processing %s" % infile)
-    F = open(os.path.join(sys.argv[1], infile))
+    F = open(os.path.join(args[0], infile))
     #try:
     records = NCBIXML.parse(F)
     #except ValueError:

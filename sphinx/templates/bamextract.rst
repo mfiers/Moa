@@ -35,6 +35,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **fasta_file**::
     Fasta file with the reference sequence data
 

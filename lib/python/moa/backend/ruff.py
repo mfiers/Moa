@@ -9,6 +9,7 @@ import os
 import re
 import sys
 import tempfile
+import subprocess
 
 import ruffus
 
@@ -29,15 +30,12 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 
 class RuffCommands(Yaco.Yaco):
     """
-    Read commands for use with Ruff
-    
+    Read commands for use with Ruff    
     """
-
     def load(self, from_file):
         """
         Load a ruff/jinja file
         """
-
         with open(from_file) as F:
             raw = F.read()
 
@@ -45,7 +43,6 @@ class RuffCommands(Yaco.Yaco):
         commands = dict([(rawc[i], rawc[i+1].strip())
                          for i in range(1, len(rawc), 2)])
         self.update(commands)
-    
     
 class Ruff(moa.backend.BaseBackend):
     """
@@ -58,8 +55,11 @@ class Ruff(moa.backend.BaseBackend):
         
         templateFile = os.path.join(
             TEMPLATEDIR, '%s.jinja2' % (self.job.template.moa_id))
+
         self.commands = RuffCommands()
+
         if not os.path.exists(templateFile):
+            l.critical("cannot find template file %s" % templateFile)
             moa.ui.exitError("Template %s does not seem to be properly installed" % 
                              self.job.template.moa_id)
         self.commands.load(templateFile)
@@ -68,12 +68,14 @@ class Ruff(moa.backend.BaseBackend):
             MOABASE, 'lib', 'ruff', 'snippets.jinja2')
         self.snippets = RuffCommands()
         self.snippets.load(snippetsFile)
-        
+
     def getCommandTemplate(self, command):
-        return jTemplate(self.commands[command])
+        if self.commands.has_key(command):
+            return jTemplate(self.commands[command])
+        else:
+            return False
                 
     def hasCommand(self, command):
-        return True
         return command in self.commands.keys()
 
     def defineOptions(self, parser):
@@ -91,15 +93,9 @@ class Ruff(moa.backend.BaseBackend):
         """
         #self.job.plugins.run("readfilesets")
 
-        l.debug("executing %s" % command)
         jt = self.getCommandTemplate(command)
         actor = self.job.getActor()
 
-        #rawConf = {}
-        #for k in self.job.conf.keys():
-        #        rawConf[k] = self.job.conf[k]
-
-  
         #determine which files are prerequisites
         prereqs = []
         for fsid in self.job.data.prerequisites:
@@ -138,12 +134,13 @@ class Ruff(moa.backend.BaseBackend):
                 fsDict = dict([(x, self.job.data.filesets[x]['files'][i]) 
                                for x in self.job.data.inputs + self.job.data.outputs])
                 
-                jobData = self.job.conf
-                jobData['snippets'] = self.snippets
+                jobData = {}
+                jobData.update(self.job.conf)
+                jobData['snippets'] = self.snippets.get_data()
                 jobData.update(fsDict)
                 script = jt.render(jobData)
-                                 
-                yield([inputs + prereqs], outputs, actor, script)
+                yield([inputs + prereqs], outputs, script, jobData)
+
 
         if self.job.template.commands.has_key(command):
             cmode = self.job.template.commands[command].mode
@@ -154,11 +151,13 @@ class Ruff(moa.backend.BaseBackend):
         if cmode == 'map':
             #late decoration - see if that works :/
             executor2 = ruffus.files(generate_data_map)(executor)
+            l.critical("start run map with %d threads" % self.job.options.threads)
             ruffus.pipeline_run([executor2],
                                 verbose = self.job.options.verbose,
                                 one_second_per_job=False,
                                 multiprocess= self.job.options.threads,
                                 )
+            l.critical("Done run map with %d threads" % self.job.options.threads)
             rc = 0
         elif cmode == 'reduce':
             pass
@@ -167,16 +166,27 @@ class Ruff(moa.backend.BaseBackend):
                 delete = False, prefix='moa', mode='w')
             tf.write("\n" + jt.render(self.job.conf)+ "\n")
             tf.close()
-            l.debug("exxxxxecuting script %s" % tf.name)
             rc = actor.run(['bash', '-e', tf.name])            
         return rc
 
 
-def executor(input, output, actor, script):
+
+def executor(input, output, script, jobData):    
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
                                       mode='w')
     tf.write(script)
     tf.close()
     cl = ['bash', '-e', tf.name]
-    actor.run(cl)
+    l.debug("Executing %s" % " ".join(cl))
+    #dump the configuration in the env
+    for k in jobData:
+        v = jobData[k]
+        if isinstance(v, list):
+            os.putenv(k, " ".join(v))
+        elif isinstance(v, dict):
+            continue
+        else:
+            os.putenv(k, str(v))
+    rc = subprocess.call(cl)
+    print cl

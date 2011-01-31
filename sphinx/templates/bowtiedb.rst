@@ -15,7 +15,7 @@ Commands
 
 
 **run**
-  *no help defined*
+  Create the bowtie database
 
 
 
@@ -28,13 +28,15 @@ Filesets
 
 
 **input**::
-    Sequence files used to build a bowtie database
+    Input fasta file for the bowtie database
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fasta`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -46,12 +48,21 @@ Parameters
 
 
 
-**name**::
-    Name of the bowtie index to create
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
+**ebwt_outfile_base**::
+    write Ebwt data to files with this dir/basename
 
   | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
+  | *default*: `db_index`
+  | *optional*: `True`
 
 
 
@@ -68,13 +79,13 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  Wed Dec 09 07:56:48 2010
 
 
 

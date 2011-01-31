@@ -30,11 +30,13 @@ Filesets
 **input**::
     Fastq input files
 
-  | *type*: `input`
+  | *type*: `map`
+  | *source*: `{}`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `fq`
+  | *extension*: `{}`
   | *glob*: `{}`
+  | *dir*: `{}`
 
 
 
@@ -49,9 +51,9 @@ Filesets
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `sai`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -87,6 +89,15 @@ Parameters
   | *type*: `string`
   | *default*: ``
   | *optional*: `False`
+
+
+
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
 
 
 
@@ -244,7 +255,7 @@ Other
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
-  1291052023.18
+  1291933988.93
 
 
 

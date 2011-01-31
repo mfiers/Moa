@@ -44,6 +44,15 @@ Parameters
 
 
 
+**default_command**::
+    command to run for this template
+
+  | *type*: `{}`
+  | *default*: `run`
+  | *optional*: `True`
+
+
+
 **input_fasta**::
     input fasta file for the database
 
@@ -57,8 +66,8 @@ Parameters
     Name of the bwa index to create
 
   | *type*: `string`
-  | *default*: `bwa_index`
-  | *optional*: `True`
+  | *default*: `{}`
+  | *optional*: `False`
 
 
 

@@ -1,5 +1,5 @@
 author: Mark Fiers
-backend: gnumake
+backend: ruff
 commands:
   clean:
     help: Remove all job data, not the Moa job itself, note that this must be implemented
@@ -13,17 +13,17 @@ description: Run GMAP on an set of input files (query) vs a database index.
 filesets:
   genepred:
     category: output
-    pattern: ./*.genepred
+    pattern: ./genepred/*.genepred
     source: input
     type: map
   gff:
     category: output
-    pattern: ./*.gff
+    pattern: ./gff/*.gff
     source: input
     type: map
   gff_invert:
     category: output
-    pattern: ./*.invert.gff
+    pattern: ./gff/*.invert.gff
     source: input
     type: map
   input:
@@ -37,6 +37,12 @@ filesets:
     pattern: ./raw/*.raw
     source: input
     type: map
+  align:
+    category: output
+    pattern: ./align/*.align
+    source: input
+    type: map
+moa_id: gmap
 moa_id: gmap
 modification_date: Wed Nov 10 07:56:48 2010
 name: gmap
