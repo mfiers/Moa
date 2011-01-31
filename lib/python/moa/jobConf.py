@@ -58,10 +58,10 @@ class JobConf(object):
         self.jobConfFile = os.path.join(self.job.confDir, 'config')
         
         #: these fields are not to be saved
-        self._JC_doNotSave = []
+        self.doNotSave = []
         
         #: these fields are not be type-checked
-        self._JC_doNotCheck = []
+        self.doNotCheck = []
         
         #: these fields are private (i.e. not to be
         #: displayed by default)
@@ -70,12 +70,10 @@ class JobConf(object):
         if os.path.exists(self.jobConfFile):
             self.jobConf.load(self.jobConfFile)
 
-    def doNotSave(self, parameter):
-        self._JC_doNotSave.append(parameter)
-    
+            
     def save(self):
         self.job.checkConfDir()
-        self.jobConf.save(self.jobConfFile, self._JC_doNotSave)
+        self.jobConf.save(self.jobConfFile, self.doNotSave)
 
     def setInJobConf(self, key):
         if self.jobConf.has_key(key):
@@ -131,7 +129,6 @@ class JobConf(object):
 
 
     def __setitem__(self, key, value):
-        l.critical("setting %s to %s" % (key, value))
         if key in self.job.template.parameters.keys():
             pd = self.job.template.parameters[key]
             if pd.type == 'boolean':
@@ -152,7 +149,8 @@ class JobConf(object):
         self.jobConf[key] = value
 
     def __setattr__(self, key, value):
-        if key in ['job', 'jobConf', 'jobConfFile']:
+        if key in ['job', 'jobConf', 'jobConfFile',
+                   'doNotCheck', 'doNotSave']:
             object.__setattr__(self, key, value)
         elif key[:4] == '_JC_':
             object.__setattr__(self, key, value)
@@ -160,7 +158,8 @@ class JobConf(object):
             return self.__setitem__(key, value)
         
     def __getattr__(self, key):
-        if key in ['job', 'jobConf', 'jobConfFile']:
+        if key in ['job', 'jobConf', 'jobConfFile',
+                   'doNotCheck', 'doNotSave']:
             object.__getattr__(self, key)
         elif key[:4] == '_JC_':
             object.__getattr__(self, key)

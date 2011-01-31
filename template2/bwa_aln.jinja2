@@ -27,26 +27,21 @@ bwa aln {{db}} 				 					\
 rm *.sai
 
 ### unittest
-export MOA_NOLOGO=1
 
 mkdir 10.index
 cd 10.index
 moa new bwa_index -t 'create a demo database'
-[[ -d .moa ]] && echo "Found .moa INDEX directory" || (echo "Cannot find .moa INDEX directory"; false)
 moa set input_fasta="${MOABASE}/share/test/test.fasta"
 moa set prefix=testDB
 moa run
-numFiles= ls -l * | grep '^-' | grep testDB | wc -l
-[[ ${numFiles} -eq 9 ]] && (echo "Index files created"; true) || (echo "Index files not created"; false)
 
 cd ../
-
 mkdir 20.align
 cd 20.align
+
 moa new bwa_aln -t 'align demo reads'
-[[ -d .moa ]] && echo "Found .moa ALN directory" || (echo "Cannot find .moa ALN directory"; false)
 moa set db=${PWD%/*}/10.index/testDB
-moa set input=${MOABASE}/share/test/read_1.fq
+moa set input=${MOABASE}/share/test/reads_1.fq
 moa run
-pwd >&2
-[[ -f read_1.sai ]] && ( [[ ! -s read_1.sai ]] && echo "read_1.sai file exists and has size > 0" || echo "read_1.sai file is empty", false) || (echo "read_1.sai file does not exist")
+
+[[ -s reads_1.sai ]]

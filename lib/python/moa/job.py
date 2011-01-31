@@ -78,9 +78,11 @@ def newTestJob(template, title="Test job"):
     :returns: the created job
     :rtype: instance of :class:`moa.job.Job`
     """
-    wd = tempfile.mkdtemp()    
+    wd = tempfile.mkdtemp()
     job = Job(wd, template=template)
+    #job.conf['title'] = title
     job.conf.title = title
+    job.conf.save()
     return job
 
 class Job(object):
@@ -108,7 +110,6 @@ class Job(object):
         
         self.confDir = os.path.join(self.wd, '.moa')
 
-        self.template = None
         self.backend = None
         self.args = []
         self.actor = moa.actor.Actor(wd = self.wd)        
@@ -164,7 +165,7 @@ class Job(object):
         """        
         rv = []
         for command in commands:
-            if self.template.commands[command].has_key('delegate'):
+            if self.template.commands.get(command, {}).has_key('delegate'):
                 rv.extend(self.template.commands[command].delegate)
             else:
                 rv.append(command)

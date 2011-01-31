@@ -24,6 +24,41 @@ Yaco can be `found <http://pypi.python.org/pypi/Yaco/0.1.1>`_ in the
 part of the `Moa source distribution
 <https://github.com/mfiers/Moa/tree/master/lib/python/Yaco>`_
 
+Autogenerating keys
+===================
+
+An important feature (or annoyance) of Yaco is the auto generation of
+keys that are not present (yet). For example::
+
+    >>> x = Yaco()
+    >>> x.a.b.c.d = 1
+    >>> assert(x.a.b.c.d == 1)
+    
+works - `a`, `b` and `c` are assumed to be `Yaco` dictionaries and d
+is give value `1`. This makes populating data structures easy.
+
+It might also generate some confusion when querying for keys in the
+Yaco structure - if a key does not exists, it automatically comes back
+as an empy `dict` or `Yaco` object (renders as `{}`). This means that
+if it is easy to check if a certain 'branch' of a Yaco datastructure
+exists::
+
+   >>> x = Yaco()
+   >>> assert (not x.a.b)
+
+but now the following works as well:
+
+   >>> assert(x.has_key('a'))
+   >>> assert(x.a.has_key('b'))
+
+So, a safe way to test a data structure, without introducing extra
+branches is:
+
+   >>> x = Yaco()
+   >>> assert(not x.has_key('a'))
+
+Todo: Need to find a more elegant way of testing without introducing
+data structures
 
 """
 
@@ -33,7 +68,7 @@ import yaml
 
 class Yaco(dict):
     """
-    Loosely based on http://code.activestate.com/recipes/473786/ (r1)
+    Very loosely based on http://code.activestate.com/recipes/473786/ (r1)
 
     >>> v= Yaco()
     >>> v.a = 1
@@ -98,6 +133,7 @@ class Yaco(dict):
         :param value: The value to assign to key
         """
 
+        #print "setting %s to %s" % (key, value)
         old_value = super(Yaco, self).get(key, None)
         #sys.stderr.write("\nSetting %s to %s (%s)\n" % (key, value, type(value)))
 
@@ -116,9 +152,6 @@ class Yaco(dict):
      
     def has_key(self, key):
         rv = super(Yaco, self).has_key(key)
-        if rv and isinstance(self[key], Yaco) and \
-                not self[key].get_data():
-            return False
         return rv
 
     def __getitem__(self, key):
@@ -228,6 +261,10 @@ class Yaco(dict):
             F.write(yaml.dump(data, default_flow_style=False))
 
 if __name__ == "__main__":
-
-    import doctest
-    doctest.testmod()
+    if 'x' in sys.argv:
+        y = Yaco()
+        y.x.z = 1
+        print y.x.z
+    else:
+        import doctest
+        doctest.testmod()
