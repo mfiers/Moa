@@ -29,7 +29,7 @@ import moa.ui
 import moa.utils
 import moa.logger as l
 import moa.template
-
+import jinja2
 
 def prepare(data):
     job = data['job']
@@ -50,11 +50,33 @@ def prepare(data):
         }
 
 
+def executeExtraCommand(command, job):
+    jobData = job.conf
+    for k in job.conf.keys():
+        v = job.conf[k]
+        if isinstance(v, list):
+            os.putenv(k, " ".join(v))
+        elif isinstance(v, dict):
+            continue
+        else:
+            os.putenv(k, str(v))            
+    template = jinja2.Template(command)
+    os.system(template.render(jobData))
+
 def preRun(data):
     """
     If defined, execute the precommand
     """
     job = data['job']
-    precommand = job.conf['precommand']
-    if not precommand: return
-    os.system(precommand)
+    precommand = str(job.conf['precommand'])
+    if precommand:
+        executeExtraCommand(precommand, job)
+
+def postRun(data):
+    """
+    If defined, execute the postCommand
+    """
+    job = data['job']
+    postcommand = str(job.conf['postcommand'])
+    if postcommand:
+        executeExtraCommand(postcommand, job)
