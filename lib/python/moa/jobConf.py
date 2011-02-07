@@ -70,6 +70,12 @@ class JobConf(object):
         if os.path.exists(self.jobConfFile):
             self.jobConf.load(self.jobConfFile)
 
+        #this is a temp addition - private was accidentaly
+        #added to the jobconf in a number of jobs - can't
+        #be theremoa
+        if self.jobConf.has_key('private'):
+            del self.jobConf['private']
+
             
     def save(self):
         self.job.checkConfDir()
@@ -150,7 +156,7 @@ class JobConf(object):
 
     def __setattr__(self, key, value):
         if key in ['job', 'jobConf', 'jobConfFile',
-                   'doNotCheck', 'doNotSave']:
+                   'doNotCheck', 'doNotSave', 'private']:
             object.__setattr__(self, key, value)
         elif key[:4] == '_JC_':
             object.__setattr__(self, key, value)
@@ -159,7 +165,7 @@ class JobConf(object):
         
     def __getattr__(self, key):
         if key in ['job', 'jobConf', 'jobConfFile',
-                   'doNotCheck', 'doNotSave']:
+                   'doNotCheck', 'doNotSave', 'private']:
             object.__getattr__(self, key)
         elif key[:4] == '_JC_':
             object.__getattr__(self, key)
