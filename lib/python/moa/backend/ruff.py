@@ -59,6 +59,7 @@ class Ruff(moa.backend.BaseBackend):
         self.commands = RuffCommands()
 
         if not os.path.exists(templateFile):
+            l.critical("cannot find template file %s" % templateFile)
             moa.ui.exitError("Template %s does not seem to be properly installed" % 
                              self.job.template.moa_id)
         self.commands.load(templateFile)
@@ -169,9 +170,8 @@ class Ruff(moa.backend.BaseBackend):
         return rc
 
 
-def executor(input, output, script, jobData):    
 
-    l.critical('processing %s -> %s' % (input, output))
+def executor(input, output, script, jobData):    
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
                                       mode='w')
