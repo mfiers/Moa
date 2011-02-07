@@ -121,9 +121,9 @@ class JobConf(object):
                  self.job.template.parameters[key].has_key('default'):
             v = self.job.template.parameters[key].default
 
-        if isinstance(v, str) and '{{' in v:
-            rere = re.compile('\{\{ *([^ \}]*) *\}\}')
-            v = rere.sub(lambda x: self.__getitem__(x.groups()[0]), v)
+#        if isinstance(v, str) and '{{' in v:
+#            rere = re.compile('\{\{ *([^ \}]*) *\}\}')
+#            v = rere.sub(lambda x: self.__getitem__(x.groups()[0]), v)
 
         if key in self.job.template.parameters.keys() and \
                self.job.template.parameters[key].has_key('callback'):
