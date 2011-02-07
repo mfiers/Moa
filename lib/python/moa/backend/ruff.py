@@ -189,4 +189,3 @@ def executor(input, output, script, jobData):
         else:
             os.putenv(k, str(v))
     rc = subprocess.call(cl)
-    print cl
