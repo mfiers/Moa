@@ -116,11 +116,10 @@ def prepare(data):
                 'type' : 'file'
                 }
             
-            #unless it is an input file, do not check for this
-            #file to exists! (since it might not exist yet)
-            if not fs.category == 'input':
-                job.conf.doNotCheck.append('%s_file' % fsid)
-                
+        #unless it is an input file, do not check for this
+        #file to exists! (since it might not exist yet)
+        if not fs.category == 'input':
+            job.conf.doNotCheck.append('%s' % fsid)
 
 def preCommand(data):
     """
@@ -150,6 +149,7 @@ def preparefilesets(data):
             
         if len(fileSets) == 0: break
         fsid = fileSets.pop(0)
+
         fs = job.template.filesets[fsid]
                 
         job.data.filesets[fsid] = fs
@@ -186,6 +186,7 @@ def preparefilesets(data):
     job.data.inputs = []
     job.data.outputs = []
     job.data.prerequisites = []
+    job.data.others = []
     
     for fsid in job.template.filesets.keys():
         fs = job.template.filesets[fsid]
@@ -195,6 +196,8 @@ def preparefilesets(data):
             job.data.outputs.append(fsid)
         if fs.category == 'prerequisite':
             job.data.prerequisites.append(fsid)
+        if fs.category == 'other':
+            job.data.others.append(fsid)
 
     for fsid in job.data.filesets.keys():
         fs = job.data.filesets[fsid]
