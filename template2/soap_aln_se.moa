@@ -10,15 +10,22 @@ commands:
 creation_date: Wed Nov 29 07:56:48 2010
 description: Use SOAP to align a set of fastq reads against a db
 filesets:
+  fa_input:
+    category: prerequisite
+    help: directory with reference fasta file name
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+    optional: false
   fq_input:
     category: input
     help: Fastq input file
     optional: false
     pattern: '*/*.fq'
     type: set
-  sam_output:
+  bam_output:
     category: output
-    pattern: ./*.sam
+    pattern: ./*.bam
     source: fq_input
     type: map
   soap_output:

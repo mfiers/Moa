@@ -10,6 +10,12 @@ commands:
 creation_date: Wed Dec 15 17:06:48 2010
 description: Print the alignment in the pileup format.
 filesets:
+  fasta:
+    category: prerequisite
+    help: reference fasta file
+    optional: true
+    pattern: '*/*.fasta'
+    type: single
   input:
     category: input
     help: bam or sam files

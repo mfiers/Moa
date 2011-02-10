@@ -14,9 +14,9 @@ soap -a {{ fq_input }} 					\
 	-g {{ gap_size }}					\
 	-e {{ edge_bp_no_gaps }}			\
 	-p {{ thread_num }}
-	
-/opt/samtools/soap2sam.pl {{ soap_output }}  > {{ sam_output }}
-#{{ snippets.sam2bam }} {{ bam_output }} {{ sam_output }}
+
+samtools faidx {{ fa_input }}	
+/opt/samtools/soap2sam.pl {{ soap_output }} | samtools view -bt {{fa_input}}.fai - > {{ bam_output }}
 
 ### clean
 

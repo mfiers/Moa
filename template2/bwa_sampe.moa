@@ -23,11 +23,6 @@ filesets:
     pattern: '*/*_2.fq'
     source: fq_forward_input
     type: map
-  output:
-    category: output
-    pattern: ./*.sam
-    source: fq_forward_input
-    type: map
   output_bam:
     category: output
     pattern: ./*.bam

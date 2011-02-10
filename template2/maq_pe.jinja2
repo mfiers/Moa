@@ -3,17 +3,17 @@
 echo fasta2bfa
 maq fasta2bfa {{ fa_input }} {{ bfa_output }}
 
-echo fasta2bfq1
+echo fastq2bfq1
 maq fastq2bfq {{ fq_forward_input }} {{ bfq_forward_output }}
 
-echo fasta2bfq2
+echo fastq2bfq2
 maq fastq2bfq {{ fq_reverse_input }} {{ bfq_reverse_output }}
 
 echo maq_map
 maq map -m {{ read_ref_diff_rate }}                        \
     -e {{ max_mismatch_qual_sum }}                         \
     -n {{ num_mismatch_24bp }}                             \
-    -C {{ max_num_hits_out }}                              \
+	-C {{ max_num_hits_out }}                              \
 	-1 {{ first_read_len }}                                \
     -2 {{ sec_read_len }}                                  \
     -a {{max_dist_read_pairs}}                             \
@@ -27,8 +27,18 @@ maq map -m {{ read_ref_diff_rate }}                        \
 
 echo fasta_to_fai
 samtools faidx {{ fa_input }}
+echo maq_to_bam
 /opt/samtools/maq2sam-long {{ map_output }}  | samtools view -bt {{fa_input}}.fai - > {{ bam_output }}
 
 ### clean
 
-rm *.bfq *.bfa *.map *.sam *.bam
+rm *.bfq *.bfa *.map *.bam
+
+### unittest
+
+mkdir 10.maq
+cd 10.maq
+moa new maq_pe -t 'maq unittest'
+moa set fa_input="${MOABASE}/share/test/test.fasta"
+moa set fq_forward_input=${MOABASE}/share/test/*_1.fq
+moa run

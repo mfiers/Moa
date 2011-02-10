@@ -16,6 +16,7 @@ samtools pileup                                     \
 	{{ extra_params }}                              \
 	{% if out_maq_consensus %} -c {% endif %}		\
 	{% if print_variants_only %} -v {% endif %}		\
+	{% if fasta %} -f {{ fasta }} {% endif %}       \
 	{% if out_GLFv3_format %} -g {% endif %}		\
 	-N {{num_haplotypes}}                           \
     -I {{phred_prob_indel}}                         \

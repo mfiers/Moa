@@ -11,7 +11,7 @@ creation_date: Wed Nov 30 07:56:48 2010
 description: Use SOAP to align a set of paired fastq reads against a db
 filesets:
   fa_input:
-    category: input
+    category: prerequisite
     help: directory with reference fasta file name
     optional: false
     pattern: '*/*.fasta'

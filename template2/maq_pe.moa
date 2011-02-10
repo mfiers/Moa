@@ -23,21 +23,18 @@ filesets:
     source: fq_forward_input
     type: map
   fa_input:
-    category: input
+    category: prerequisite
     help: directory with reference fasta file name
     optional: false
     pattern: '*/*.fasta'
     type: set
   bfa_output:
-    category: output
-    help: directory with output
-    pattern: ./*.bfa
-    source: fa_input
-    type: map
+    category: other
+    help: BFA Index name
+    default: ./index.bfa
+    type: single
   bfq_forward_output:
     category: output
-    dir: .
-    extension: bfq
     help: bfq files - forward files
     pattern: ./*_1.bfq
     source: fq_forward_input
@@ -51,11 +48,13 @@ filesets:
   map_output:
     category: output
     pattern: ./*.map
+    help: maq map output files
     source: fq_forward_input
     type: map
   bam_output:
     category: output
     pattern: ./*.bam
+    help: bam alignment output file
     source: fq_forward_input
     type: map
 moa_id: maq_pe

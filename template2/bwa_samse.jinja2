@@ -1,7 +1,7 @@
 ### run
 bwa samse \
-	-n {{ max_aln_out }} {{ db }} {{sai_input}} {{fq_input}} > {{output}} 
-{{ snippets.sam2bam }} -o {{ output_bam }} {{ output }}
+	-n {{ max_aln_out }} {{ db }} {{sai_input}} \
+	{{fq_input}} | {{ snippets.sam2bam }} -o {{ output_bam }} -
 
 ### clean
 

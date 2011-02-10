@@ -17,13 +17,9 @@ filesets:
     optional: false
     pattern: '*/*.fq'
     type: set
-  output:
-    category: output
-    pattern: ./*.sam
-    source: fq_input
-    type: map
   output_bam:
     category: output
+    help: output bam file
     pattern: ./*.bam
     source: fq_input
     type: map

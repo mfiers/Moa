@@ -10,38 +10,39 @@ commands:
 creation_date: Wed Dec 02 17:06:48 2010
 description: Generate alignments in SAM format given single end reads using Maq.
 filesets:
-  bfa_output:
-    category: output
-    help: directory with output
-    optional: true
-    pattern: ./*.bfa
-    source: fa_input
-    type: map
-  bfq_output:
-    category: output
-    pattern: ./*.bfq
-    source: fq_input
-    type: map
-  fa_input:
-    category: input
-    help: directory with reference fasta file name
-    optional: false
-    pattern: '*/*.fasta'
-    type: single
   fq_input:
     category: input
     help: fastq input files
     optional: false
     pattern: '*/*.fq'
     type: set
-  map_output:
+  bfq_output:
     category: output
-    pattern: ./*.map
+    help: bfq files - forward files
+    pattern: './*.bfq'
     source: fq_input
     type: map
-  sam_output:
+  fa_input:
+    category: prerequisite
+    help: directory with reference fasta file name
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+  bfa_output:
+    category: other
+    help: BFA Index name
+    default: ./index.bfa
+    type: single
+  map_output:
     category: output
-    pattern: ./*.sam
+    pattern: './*.map'
+    help: maq map output files
+    source: fq_input
+    type: map
+  bam_output:
+    category: output
+    pattern: './*.bam'
+    help: bam alignment output file
     source: fq_input
     type: map
 moa_id: maq_se

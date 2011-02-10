@@ -12,21 +12,19 @@ bwa sampe -a {{max_insert_size}}                        \
     {{ db }}                                            \
     {{ sai_forward_input }} {{ sai_reverse_input }}     \
     {{ fq_forward_input }} {{ fq_reverse_input }} | {{ snippets.sam2bam }} -o {{ output_bam }} -
-#-f {{ output }} 
-#{{ snippets.sam2bam }} {{ output_bam }} {{ output }}
+
 
 #[[  ls -ltr read_ | awk '{ print $5 }' ]]
 #[[ ! -s potato.bfa ]] && echo 'is empty' || echo 'not empty'
 
 ### clean
 
-rm *.sam
+rm *.bam
 
 ### unittest
 
 mkdir 10.index
 cd 10.index
-
 moa new bwa_index -t 'create a demo database'
 moa set input_fasta="${MOABASE}/share/test/test.fasta"
 moa set prefix=testDB
@@ -38,8 +36,7 @@ cd 20.align
 
 moa new bwa_aln -t 'align demo forward reads'
 moa set db=../10.index/testDB
-moa set input=${MOABASE}/share/test/reads_*.fq
-moa set output=./reads_*.sai
+moa set input=${MOABASE}/share/test/*.fq
 moa run
 
 [[ -s reads_1.sai ]] 
@@ -52,11 +49,7 @@ cd 30.sampe
 moa new bwa_sampe -t 'bwa sampe demo'
 moa set db=../10.index/testDB
 moa set fq_forward_input=${MOABASE}/share/test/*_1.fq
-moa set fq_reverse_input=${MOABASE}/share/test/*_2.fq
 moa set sai_forward_input=../20.align/*_1.sai
-moa set sai_reverse_input=../20.align/*_2.sai
-moa set output=*.bam
-
 moa run
 
 [[ -s reads.bam ]]
