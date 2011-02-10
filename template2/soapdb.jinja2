@@ -1,0 +1,16 @@
+### run
+
+echo running_soapdb
+2bwt-builder {{ input_fasta }} 
+
+### clean
+
+rm *.index
+
+### unittest
+
+mkdir 10.index
+cd 10.index
+moa new soapdb -t 'soap index unittest'
+moa set input_fasta="${MOABASE}/share/test/test.fasta"
+moa run
