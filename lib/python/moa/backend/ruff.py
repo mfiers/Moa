@@ -101,6 +101,11 @@ class Ruff(moa.backend.BaseBackend):
         for fsid in self.job.data.prerequisites:
             prereqs.extend(self.job.data.filesets[fsid]['files'])
                 
+        #determine which files are 'others'
+        others = []
+        for fsid in self.job.data.others:
+            others.extend(self.job.data.filesets[fsid]['files'])
+                
             
         def generate_data_map():
             """
@@ -151,13 +156,13 @@ class Ruff(moa.backend.BaseBackend):
         if cmode == 'map':
             #late decoration - see if that works :/
             executor2 = ruffus.files(generate_data_map)(executor)
-            l.critical("start run map with %d threads" % self.job.options.threads)
+            l.info("Start run (with %d thread(s))" % self.job.options.threads)
             ruffus.pipeline_run([executor2],
                                 verbose = self.job.options.verbose,
                                 one_second_per_job=False,
                                 multiprocess= self.job.options.threads,
                                 )
-            l.critical("Done run map with %d threads" % self.job.options.threads)
+            l.info("Finished running (with %d thread(s))" % self.job.options.threads)
             rc = 0
         elif cmode == 'reduce':
             pass
@@ -189,4 +194,3 @@ def executor(input, output, script, jobData):
         else:
             os.putenv(k, str(v))
     rc = subprocess.call(cl)
-    print cl
