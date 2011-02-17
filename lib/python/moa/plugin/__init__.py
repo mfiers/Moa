@@ -16,7 +16,7 @@ class PluginHandler(UserDict.DictMixin):
 
         ## Determine what plugins are loaded
         self.plugins = {}
-        self.data = {}
+        self.data = {'plugins' : self}
         self.allPlugins = plugins
         l.debug("Plugins %s" % ", ".join(self.allPlugins))
         ## load the plugins as seperate modules. A plugin does not need to
@@ -55,11 +55,13 @@ class PluginHandler(UserDict.DictMixin):
         self.data.update(kwargs)
             
     def run(self, command):
+        rv = {}
         for p in self.allPlugins:
             if not command in dir(self[p]):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
-            getattr(self[p], command)(self.data)
+            rv['p'] = getattr(self[p], command)(self.data)
+        return rv
             
     def runCallback(self, command):
         """

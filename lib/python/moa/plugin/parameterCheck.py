@@ -10,7 +10,7 @@ def defineCommands(data):
     """
     data['commands']['test'] = {
         'desc' : 'Test the currennt configuration',
-        'call' : test,
+        'call' : test_ui,
         }
 
     
@@ -32,57 +32,71 @@ def _isFloat(s):
         return True
     except ValueError:
         return False
-
-#def postSet(data):
-#    test(data)
     
 def preRun(data):
-    return test(data)
+    test_ui(data)
 
+def promptSnippet(data):
+    """
+    Function used by the prompt plugin to generate snippets for inlusion 
+    in the prompt
+    """  
+    m = test(data)
+    print m
+    if m: 
+        return "{{red}}X{{reset}}"
+    else:
+        return "{{green}}o{{reset}}"
+    
+    
+def test_ui(data):
+    
+    options = data['options']
+    messages = test(data)
+    
+    for message, detail in messages:
+        errorMessage(message, detail)
+    
+    if messages and not options.force:
+        sys.exit(-1)
+    
+    
 def test(data):
     job = data['job']
     if not job.isMoa():
         moa.utils.moaDirOrExit(job)
         
-    options = data['options']
-    error = False
+    messages = []
     for p in job.conf.keys():
+        
         if p in job.conf.doNotCheck:
             continue
+        
         if not p in job.template.parameters:
             continue
+        
         pt = job.template.parameters[p]
         if not pt.optional and not job.conf[p]:
-            errorMessage("Undefined variable", p)
-            error = True
+            messages.append(("Undefined variable", p))
         elif pt.type == 'file' \
                and job.conf[p] \
                and not os.path.isfile(job.conf[p]):
-            errorMessage("Not a file",
-                         "%s=%s " % (
-                p, job.conf[p]))
-            error = True
+            messages.append(("Not a file",
+                             "%s=%s " % (p, job.conf[p])))
         elif pt.type == 'directory' \
                and job.conf[p] \
                and not os.path.isdir(job.conf[p]):
-            errorMessage("Not a directory",
-                         "%s=%s " % (
-                p, job.conf[p]))
-            error = True
+            messages.append(("Not a directory",
+                             "%s=%s " % ( p, job.conf[p])))
         elif pt.type == 'integer' \
                and job.conf[p] \
                and not _isInteger(job.conf[p]):
-            errorMessage("Not an integer",
-                         "%s=%s " % (
-                p, job.conf[p]))
-            error = True
+            messages.append(("Not an integer",
+                             "%s=%s " % (p, job.conf[p])))
         elif pt.type == 'float' \
                and job.conf[p] \
                and not _isFloat(job.conf[p]):
-            errorMessage("Not a float",
-                         "%s=%s " % (
-                p, job.conf[p]))
-            error = True
-
-    if not options.force and error:
-        sys.exit(-1)
+            messages.append(("Not a float",
+                             "%s=%s " % (p, job.conf[p])))
+            
+    return messages
