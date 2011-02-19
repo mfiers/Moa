@@ -47,13 +47,20 @@ from moa.exceptions import *
 ################################################################################
 
 FORMAT_CODES_ANSI = {
-    'reset' : chr(27) + "[0m",
-    'bold' : chr(27) + "[1m",
+    'reset'     : chr(27) + "[0m",
+    'bold'      : chr(27) + "[1m",
     'underline' : chr(27) + "[4m",
-    'black' : chr(27) + "[30m",
-    'blue' : chr(27) + "[34m",
-    'green' : chr(27) + "[32m",
-    'red' : chr(27) + "[31m",
+    
+    'black'     : chr(27) + "[30m",
+    'red'       : chr(27) + "[31m",
+    'green'     : chr(27) + "[32m",
+    'yellow'    : chr(27) + "[33m",
+    'blue'      : chr(27) + "[34m",
+    'white'     : chr(27) + "[37m",
+
+    'bred'      : chr(27) + "[41m",
+    'bgreen'    : chr(27) + "[42m",
+    'byellow'   : chr(27) + "[42m",
     }
 
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
@@ -62,18 +69,26 @@ def exitError(message):
     fprint("%%(red)s%%(bold)sError:%%(reset)s %s" % message)
     sys.exit(-1)
     
-def fprint(message, f='text'):
+def fprint(message, f='text', newline = True, ansi = None):
     sysConf = moa.sysConf.sysConf
-    if sys.stdout.isatty() and sysConf.use_ansi:
+    if ansi == True:
         codes = FORMAT_CODES_ANSI
-    else:
+    elif ansi == False:
         codes = FORMAT_CODES_NOANSI
-
+    else:
+        if sys.stdout.isatty() and sysConf.use_ansi:
+            codes = FORMAT_CODES_ANSI
+        else:
+            codes = FORMAT_CODES_NOANSI
+        
     if f == 'text':
-        print message % codes
+        sys.stdout.write(message % codes)
     elif f == 'jinja':
         template = jinja2.Template(message)
-        print template.render(**codes)
+        #sys.stdout.write(message)
+        sys.stdout.write(template.render(**codes))
+    if newline:
+        sys.stdout.write("\n")
 
 
 ################################################################################

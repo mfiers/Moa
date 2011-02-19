@@ -1,0 +1,4 @@
+#!/bin/bash
+if [ -d ".moa" ]; then
+  moa prompt
+fi
