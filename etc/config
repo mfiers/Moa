@@ -1,4 +1,16 @@
-plugins: [fileset, configure, newjob, logo, test, adhoc, help, template, info, extraCommands, parameterCheck]
+plugins:
+- fileset
+- configure
+- newjob
+- logo
+- test
+- adhoc
+- help
+- template
+- info
+- extraCommands
+- parameterCheck
+- moautil
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True

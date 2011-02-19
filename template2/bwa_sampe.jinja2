@@ -7,7 +7,7 @@ bwa sampe -a {{max_insert_size}}                        \
     -N {{max_out_discordant_pairs}}                     \
     -c {{prior_chimeric_rate}}                          \
     {% if preload_index %} -P {% endif %}				\
-    {% if disable_SW %} -s {% endif %}				    \
+    {% if disable_SW %} -s {% endif %}					\
     {% if disable_insert_size %}, -A {% endif %} 		\
     {{ db }}                                            \
     {{ sai_forward_input }} {{ sai_reverse_input }}     \
@@ -43,6 +43,7 @@ moa run
 [[ -s reads_2.sai ]]
 
 cd ../
+
 mkdir 30.sampe
 cd 30.sampe
 

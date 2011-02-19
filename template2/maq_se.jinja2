@@ -26,3 +26,13 @@ echo maq_to_bam
 ### clean
 
 rm *.bfq *.bfa *.map
+
+### unittest
+
+mkdir 10.maq_se
+cd 10.maq_se
+moa new maq_se -t 'maq unittest'
+moa set fa_input="${MOABASE}/share/test/test.fasta"
+moa set fq_input=${MOABASE}/share/test/*.fq
+moa run
+

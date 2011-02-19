@@ -6,3 +6,33 @@ bwa samse \
 ### clean
 
 rm *.sam *.bam
+
+### unittest
+
+mkdir 10.index
+cd 10.index
+moa new bwa_index -t 'create a demo database'
+moa set input_fasta="${MOABASE}/share/test/test.fasta"
+moa set prefix=testDB
+moa run
+
+cd ../
+mkdir 20.align
+cd 20.align
+moa new bwa_aln -t 'align reads demo'
+moa set db=../10.index/testDB
+moa set input=${MOABASE}/share/test/*.fq
+moa run
+
+[[ -s reads_1.sai ]] 
+[[ -s reads_2.sai ]]
+
+cd ../
+
+mkdir 30.samse
+cd 30.samse
+moa new bwa_samse -t 'bwa samse demo'
+moa set db=../10.index/testDB
+moa set fq_input=${MOABASE}/share/test/*.fq
+moa set sai_input=../20.align/*.sai
+moa run

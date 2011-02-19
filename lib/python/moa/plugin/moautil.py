@@ -27,7 +27,9 @@ import sys
 import glob
 import shutil
 import optparse
+
 import moa.logger as l
+import moa.ui
 
 def defineCommands(data):
     data['commands']['cp'] = {
@@ -35,25 +37,25 @@ def defineCommands(data):
         'use moa cp DIR_FROM DIR_TO',
         'call' : moacp }
 
-    data['commands']['mv'] = {
-        'desc' : 'Move a moa job, ',
-        'call' : moamv }
-        
-    data['commands']['kill'] = {
-        'desc' : 'Kill a running moa job',
-        'call' : moakill }
-
-    data['commands']['pause'] = {
-        'desc' : 'Pause a running moa job',
-        'call' : moapause }
-
-    data['commands']['resume'] = {
-        'desc' : 'Resume a paused moa job',
-        'call' : moaresume }
-
-    data['commands']['tree'] = {
-        'desc' : 'return a tree structure with extra moa information',
-        'call' : moaTree }
+#    data['commands']['mv'] = {
+#        'desc' : 'Move a moa job, ',
+#        'call' : moamv }
+#        
+#    data['commands']['kill'] = {
+#        'desc' : 'Kill a running moa job',
+#        'call' : moakill }
+#
+#    data['commands']['pause'] = {
+#        'desc' : 'Pause a running moa job',
+#        'call' : moapause }
+#
+#    data['commands']['resume'] = {
+#        'desc' : 'Resume a paused moa job',
+#        'call' : moaresume }
+#
+#    data['commands']['tree'] = {
+#        'desc' : 'return a tree structure with extra moa information',
+#        'call' : moaTree }
 
 
 #def moaTree(data):
@@ -148,34 +150,43 @@ def moacp(data):
     options = data['options']
     args = data['newargs']
 
-    if len(args) > 1: dirto = args[1]
-    else: dirto = '.'
+    if len(args) > 1: dirTo = args[1]
+    else: dirTo = '.'
 
-    dirfrom = args[0]
-
+    
+    dirFrom = args[0]
+    dirFromM = os.path.join(dirFrom, '.moa')
+    if not os.path.exists(dirFromM):
+        moa.ui.exitError(
+            "%s does not appear to be a moa directory" % dirFrom)
+        
     #remove trailing slash & determine basename
-    if dirfrom[-1] == '/': dirfrom = dirfrom[:-1]
-    fromBase = os.path.basename(dirfrom)
+    if dirFrom[-1] == '/': dirFrom = dirFrom[:-1]
+    fromBase = os.path.basename(dirFrom)
+
+    if dirTo[-1] == '/': dirTo = dirTo[:-1]
+    toBase = os.path.basename(dirTo)
 
     # trick - the second argument is a number
     # renumber the target directory
-    if re.match("^[0-9]+$", dirto):
-        dirto = re.sub("^[0-9]*\.", dirto + '.', fromBase)
-    
-    if not os.path.exists(dirto):
-        l.info("creating directory %s" % dirto)
-        os.makedirs(dirto)
-    else:
-        dirto = os.path.join(dirto, fromBase)
-        os.makedirs(dirto)
-
+    if re.match("^[0-9]+$", toBase):
+        toBase = re.sub("^[0-9]*\.", toBase + '.', fromBase)
+        dirTo = os.path.join(os.path.dirname(dirTo), toBase)
         
-    l.info("Copying from %s to %s" % (dirfrom, dirto))
+    elif os.path.exists(dirTo):
+        #if the 'to' directory exists - create a new directory 
+        dirTo = os.path.join(dirTo, fromBase)     
+    
+    dirToM = os.path.join(dirTo, '.moa')
+    
+    l.info("creating directory %s" % dirTo)
+    
+    #create the target '.moa' dir    
+    os.makedirs(dirToM)
+        
+    l.info("Copying from %s to %s" % (dirFrom, dirTo))
 
-    for f in ['Makefile', 'moa.mk']:
-        cfr = os.path.join(dirfrom, f)
-        cto = os.path.join(dirto, f)
-
-        l.info("copy %s to %s" % (cfr, cto))
-
-        shutil.copyfile(cfr, cto)
+    for f in os.listdir(dirFromM):
+        if f[-4:] == '.fof': continue
+        shutil.copyfile(os.path.join(dirFromM, f),
+                        os.path.join(dirToM, f))
