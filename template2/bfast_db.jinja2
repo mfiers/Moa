@@ -1,0 +1,19 @@
+### run
+
+bfast fasta2brg											\
+    -f {{ fa_input }}									\
+	{% if timing_information %} -t {% endif %}			\
+	{% if algorithm_colour_space %} -A 1 {% endif %}	\
+	{% if print_params %} -p {% endif %}				\
+	{% if usage_summary %} -h {% endif %}
+
+bfast index												\
+    -f {{ fa_input }}									\
+	-m {{ mask }} -w {{ hash_width }} -d {{ depth }}	\
+	-i {{ index_num }} {{ extra_params }}				\
+	{% if timing_information %} -t {% endif %}			\
+	{% if algorithm_colour_space %} -A 1 {% endif %}	\
+	{% if print_params %} -p {% endif %}				\
+	{% if usage_summary %} -h {% endif %}				\
+	-n {{ thread_num }}
+	
