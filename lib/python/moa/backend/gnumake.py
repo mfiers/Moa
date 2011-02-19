@@ -62,12 +62,15 @@ class Gnumake(moa.backend.BaseBackend):
         ## other parameters. multi-threaded operation is only allowed in the
         ## second phase of execution.
         self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
+        self.job.env['MOA_TEMPLATE'] = "%s" % self.job.template.name
         self.job.env['moa_plugins'] = "%s" % " ".join(moa.sysConf.getPlugins())
 
         #if moa is silent, make should be silent
         if not self.job.options.verbose:
             self.job.makeArgs.append('-s')
-
+            
+        self.job.makeArgs.append('-f')
+        self.job.makeArgs.append('-f')
 
         l.debug("Calling make for command %s" % command)
         actor = self.job.getActor()
