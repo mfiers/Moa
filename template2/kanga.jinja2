@@ -1,0 +1,31 @@
+### run
+
+BASE=/home/hrards/software
+
+# to make the library loadable
+LD_LIBRARY_PATH=$BASE/lib
+
+# so running kanga is possible
+# otherwise use full path
+PATH=$PATH:$BASE/bin
+
+kanga -F {{ output_log }} -i {{ rds_input }}    		\
+	-o {{ output }} -I {{ sfx_input }}  			\
+	{{ extra_params }} 									\
+	{% if help %} -h {% endif %}						\
+	{% if version %} -v {% endif %}						\
+	{% if color_space %}, -C {% endif %} 				\
+	{% if no_multireads %}, -k {% endif %} 				\
+	-q {{ quality }} -y {{ trim5 }} -Y {{ trim3 }}  	\
+	-n {{ max_Ns }} -M {{ out_format }} 				\
+	-d {{ min_pair_len }} -D {{ max_pair_len }} 		\
+	-T {{ thread_num }} -U {{ pe_mode }}
+
+echo fasta_to_fai
+samtools faidx {{ input_fasta }}
+echo sam_to_bam
+samtools view -bt {{input_fasta}}.fai {{ output }} > {{ output_bam }}
+
+### clean
+
+rm *.sam *.txt *.bam

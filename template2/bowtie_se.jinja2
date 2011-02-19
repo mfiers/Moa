@@ -10,21 +10,24 @@ rm *.bam
 
 ### unittest
 
-mkdir 10.bowtiedb
-cd 10.bowtiedb 
-moa new bowtiedb -t 'demo index referece using bowtie'
+moa set title=bowtiedb
 moa set input="${MOABASE}/share/test/test.fasta"
 moa set ebwt_outfile_base=testDB
 moa run
+ls
+
+if [ -f testDB.11.ebwt ] && (echo "Index files created"; true) || (echo "Index files not created"; false)
 
 cd ../
 
-mkdir 20.bowtie_pe
-cd 20.bowtie_pe
+mkdir 02.bowtie_se
+cd 02.bowtie_se
 pwd >&2
-moa new bowtie_pe -t 'demo bowtie aligning paired ends'
+moa new bowtie_se -t 'bowtie se'
 [[ -d .moa ]] && echo "Found .moa ALN directory" || (echo "Cannot find .moa ALN directory"; false)
 moa set ebwt_base=${PWD%/*}/10.bowtiedb/testDB
-moa set fq_forward_input=${MOABASE}/share/test/read_1.fq
+moa set fq_input=${MOABASE}/share/test/*.fq
 moa run
+ls
+
 [[ -f read.bam ]] && ( [[ ! -s read.bam ]] && echo "read.bam file exists and has size > 0" || echo "read.bam file is empty", false) || (echo "read.bam file does not exist")

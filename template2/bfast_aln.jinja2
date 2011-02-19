@@ -1,0 +1,34 @@
+### run
+
+bfast match												\
+    -f {{ fa_input }} -w {{ which_strand }}				\
+	-r {{ fq_input }} {{extra_params_match}}			\
+	{% if timing_information %} -t {% endif %}			\
+	{% if algorithm_colour_space %} -A 1 {% endif %}	\
+	{% if print_params %} -p {% endif %}				\
+	{% if usage_summary %} -h {% endif %}				\
+	-n {{ thread_num }} | bfast localalign				\
+	-f {{ fa_input }} {{ extra_params_localalign }}		\
+	{% if ungapped_aln %} -u {% endif %}				\
+	{% if timing_information %} -t {% endif %}			\
+	{% if algorithm_colour_space %} -A 1 {% endif %}	\
+	{% if print_params %} -p {% endif %}				\
+	{% if usage_summary %} -h {% endif %}				\
+	-n {{ thread_num }} -q {{ avg_mism_qual }} > {{ output_aln }}
+
+bfast postprocess -i {{ output_aln }}			  		\
+	-f {{ fa_input }} {{ extra_params_postprocess }}	\
+	{% if algorithm_colour_space %} -A 1 {% endif %}	\
+	{% if timing_information %} -t {% endif %}			\
+	{% if print_params %} -p {% endif %}				\
+	{% if usage_summary %} -h {% endif %}				\
+	{% if unpaired_reads %} -U {% endif %}				\
+	{% if ungapped_pairing_rescue %} -g {% endif %}		\
+	{% if paired_opp_strands %} -R {% endif %}			\
+	-m {{ min_mapping_qual }} -M {{ min_norm_score }}	\
+	-S {{ pairing_std_dev }} -O {{ output_format }}		\
+	-n {{ thread_num }} | {{ snippets.sam2bam }} -o {{ output_bam }} -
+
+### clean
+
+rm *.bam *.aln

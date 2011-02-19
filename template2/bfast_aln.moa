@@ -1,0 +1,162 @@
+author: Yogini Idnani, Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: run bfast match, localalign, postprocess commands
+    mode: map
+creation_date: Wed Feb 15 10:06:48 2011
+description: Generate bam format alignments using bfast
+filesets:
+  fa_input:
+    category: prerequisite
+    help: fasta input file
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+  fq_input:
+    category: input
+    help: fastq input files
+    optional: false
+    pattern: '*/*.fq'
+    type: set
+  output_bam:
+    category: output
+    pattern: ./*.bam
+    source: fq_input
+    type: map
+  output_aln:
+    category: output
+    pattern: ./*.aln
+    source: fq_input
+    type: map
+moa_id: bfast_aln
+modification_data: Wed Feb 15 10:06:48 2011
+name: bfast aln
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  algorithm_colour_space:
+    category: ''
+    default: false
+    help: true -> colour space, false -> NT space
+    optional: true
+    type: boolean
+  timing_information:
+    category: ''
+    default: true
+    help: specifies output timing information
+    optional: true
+    type: boolean
+  print_params:
+    category: ''
+    default: false
+    help: print program parameters
+    optional: true
+    type: boolean
+  usage_summary:
+    category: ''
+    default: false
+    help: Display usage summary (help)
+    optional: true
+    type: boolean
+  ungapped_aln:
+    category: ''
+    default: false
+    help: Do ungapped local alignment
+    optional: true
+    type: boolean
+  unpaired_reads:
+    category: ''
+    default: false
+    help: True value specifies that pairing should not be performed
+    optional: true
+    type: boolean
+  paired_opp_strands:
+    category: ''
+    default: false
+    help: Specifies that paired reads are on opposite strands
+    optional: true
+    type: boolean
+  ungapped_pairing_rescue:
+    category: ''
+    default: false
+    help: Specifies that ungapped pairing rescue should be performed
+    optional: true
+    type: boolean
+  thread_num:
+    category: ''
+    default: 1
+    help: Specifies the number of threads to use
+    optional: true
+    type: integer 
+  avg_mism_qual:
+    category: ''
+    default: 10
+    help: Specifies the average mismatch quality
+    optional: true
+    type: integer 
+  min_mapping_qual:
+    category: ''
+    default: -2147483648
+    help: Specifies to remove low mapping quality alignments
+    optional: true
+    type: integer 
+  min_norm_score:
+    category: ''
+    default: -2147483648
+    help: Specifies to remove low (alignment) scoring alignments
+    optional: true
+    type: integer 
+  pairing_std_dev:
+    category: ''
+    default: 2.000000
+    help: Specifies the pairing distance standard deviation to examine when recuing
+    optional: true
+    type: float
+  extra_params_match:
+    allowed: []
+    category: ''
+    default: ''
+    help: Any extra parameters for the match command
+    optional: true
+    type: string
+  extra_params_localalign:
+    allowed: []
+    category: ''
+    default: ''
+    help: Any extra parameters for the localalign command
+    optional: true
+    type: string
+  extra_params_postprocess:
+    allowed: []
+    category: ''
+    default: ''
+    help: Any extra parameters for the postprocess command
+    optional: true
+    type: string
+  which_strand:
+    category: ''
+    default: 0
+    help: 0 - consider both strands, 1 - forwards strand only, 2 - reverse strand only
+    optional: true
+    type: integer
+  output_format:
+    category: ''
+    default: 1
+    help: 0 - BAF, 1 - SAM
+    optional: true
+    type: integer
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
+    type: string
+version: 1

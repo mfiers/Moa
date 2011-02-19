@@ -1,0 +1,96 @@
+author: Yogini Idnani, Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: run bfast fasta2brg and index commands
+    mode: map
+creation_date: Wed Feb 15 10:06:48 2011
+description: Generate db index files for aligning reads with bfast
+filesets:
+  fa_input:
+    category: input
+    help: fasta input file
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+moa_id: bfast_db
+modification_data: Wed Feb 15 10:06:48 2011
+name: bfast db
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  algorithm_colour_space:
+    category: ''
+    default: false
+    help: true -> colour space, false -> NT space
+    optional: true
+    type: boolean
+  timing_information:
+    category: ''
+    default: true
+    help: specifies output timing information
+    optional: true
+    type: boolean
+  print_params:
+    category: ''
+    default: false
+    help: print program parameters
+    optional: true
+    type: boolean
+  usage_summary:
+    category: ''
+    default: false
+    help: Display usage summary (help)
+    help: Display usage summary (help)
+    optional: true
+    type: boolean
+  depth:
+    category: ''
+    default: 0
+    help: The depth of the splitting(d). The index will be split into 4^d parts.
+    optional: true
+    type: integer
+  hash_width:
+    category: ''
+    help: The hash width for the index (recommended from manual = 14)
+    optional: false
+    type: integer
+  index_num:
+    category: ''
+    default: 1
+    help: Specifies this is the ith index you are creating
+    optional: true
+    type: integer
+  thread_num:
+    category: ''
+    default: 1
+    help: Specifies the number of threads to use
+    optional: true
+    type: integer 
+  mask:
+    allowed: []
+    category: ''
+    help: The mask or spaced seed to use.
+    optional: false
+    type: string
+  extra_params:
+    allowed: []
+    category: ''
+    default: ''
+    help: Any extra parameters
+    optional: true
+    type: string
+  title:
+    allowed: []
+    category: system
+    default: ''
+    help: A name for this job
+    optional: false
+    type: string
+version: 1

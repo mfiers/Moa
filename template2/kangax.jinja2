@@ -1,0 +1,18 @@
+### run
+
+BASE=/home/hrards/software
+
+# to make the library loadable
+LD_LIBRARY_PATH=$BASE/lib
+
+# so running kanga is possible
+# otherwise use full path
+PATH=$PATH:$BASE/bin
+
+kangax -F {{ output_log }} -i {{ input_fasta }}    \
+	{% if help %} -h {% endif %}					\
+	{% if version %} -v {% endif %}					\
+	{% if color_space %}, -C {% endif %} 			\
+	{% if target_dep %}, -D {% endif %}				\
+	-o {{ output_sfx }} -r {{ reference_species }}  \
+	{{ extra_params }} -s {{ block_seq_len }} 		

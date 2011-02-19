@@ -68,9 +68,12 @@ class Gnumake(moa.backend.BaseBackend):
         #if moa is silent, make should be silent
         if not self.job.options.verbose:
             self.job.makeArgs.append('-s')
-            
+
         self.job.makeArgs.append('-f')
-        self.job.makeArgs.append('-f')
+        makefileLoc = os.path.join(moa.utils.getMoaBase(), 'lib', 
+                                   'gnumake', 'execute.mk')
+        self.job.makeArgs.append(makefileLoc)
+        l.debug("makefile @ %s" % makefileLoc)
 
         l.debug("Calling make for command %s" % command)
         actor = self.job.getActor()
@@ -97,6 +100,9 @@ class Gnumake(moa.backend.BaseBackend):
 
         actor.setEnv(confDict)
 
+        if command == 'run':
+            command = self.job.template.name
+            
         cl = ['make', command] + self.job.makeArgs
 
         l.debug("executing %s" % " ".join(cl))

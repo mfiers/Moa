@@ -1,0 +1,23 @@
+### run
+
+BASE=/home/hrards/software
+
+# to make the library loadable
+LD_LIBRARY_PATH=$BASE/lib
+
+# so running kanga is possible
+# otherwise use full path
+PATH=$PATH:$BASE/bin
+
+kangar -F {{ output_log }} -i {{ fq_input }}    		\
+	-o {{ rds_output }} -n {{ reads_num }}  			\
+	-m {{ mode }} {{ extra_params }} 					\
+	{% if help %} -h {% endif %}						\
+	{% if version %} -v {% endif %}						\
+	{% if rm_duplicates %}, -k {% endif %} 				\
+	-q {{ quality }} -t {{ trim5 }} -T {{ trim3 }}
+	
+
+### clean
+
+rm *.rds *.txt
