@@ -15,4 +15,4 @@ source $MOABASE/etc/bash_completion.d/moa
 
 #a colorful prompt message when inside a Moa directory:
 #export PROMPT_COMMAND="[[ -d .moa ]] && moa prompt; $PROMPT_COMMAND"
-export PS1="\$([ -d '.moa' ] && moa prompt)$PS1"
+#export PS1="\$([ -d '.moa' ] && moa prompt)$PS1"
