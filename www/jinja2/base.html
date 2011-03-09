@@ -92,6 +92,7 @@ Content-type: text/html
     {% endblock %}
   </div> <!-- <div class="moaSecondRow"> -->
   
+
   <div id="tabs"> 
     {% block tabs %}
 	<ul> 
@@ -100,12 +101,14 @@ Content-type: text/html
 	  {% endif %}
 	  <li><a href="#fileBrowser">File browser</a></li> 
 	</ul> 
+
 	{% if jobDescription %}
 	<div id='jobDescription'>    
 	  {{ jobDescription }}
 	</div>
 	{% endif %}
 	<div id='fileBrowser' class='fileList'> 
+
 </div>
     {% endblock %}
 </div>

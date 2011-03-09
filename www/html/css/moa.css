@@ -51,7 +51,7 @@ a:active { color: #FE5D44; }
 
 .moaTopRow {
     position: absolute;
-    left: 50px;
+    left: 80px;
     top: 2px;
     right: 20px;
     height: 14px;
@@ -60,7 +60,7 @@ a:active { color: #FE5D44; }
 
 .moaSecondRow{
     position: absolute;
-    left: 50px;
+    left: 90px;
     top: 25px;
     right: 20px;
 	font-size: 120%;
@@ -133,6 +133,20 @@ a:active { color: #FE5D44; }
 	background-color: #8C9C9A;
     color: white;    
 	border: 1px solid #485C5A;
+}
+
+.moaParameterHeader {
+	font-weight: bold;
+	padding-right: 15px;
+	border-right: 1px dotted grey;
+}
+
+.moaParameterValue {
+	font-family: Courier-new, Courier;
+}
+
+.moaParameters {
+	font-size: 100%;
 }
 
 #fileFilter {

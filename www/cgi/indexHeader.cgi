@@ -111,6 +111,6 @@ if job.template.name == 'nojob':
 
 #ok, this must be a moa directory: gather information
 d['job'] = job
-
+d['status'] = 'moa'
 pageTemplate = jenv.get_template('Moa.html')
 print pageTemplate.render(**d)

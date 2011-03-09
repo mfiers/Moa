@@ -12,7 +12,6 @@
   {% endif %}
   <li><a href="#fileBrowser">File browser</a></li> 
   <li><a href="#templateInfoTab">Job info</a></li> 
-  <!--<li><a href="#parameterTab">Parameters</a></li>-->
 </ul> 
 
 {% if jobDescription %}
@@ -23,21 +22,45 @@
 
 <div id='fileBrowser' class='fileList'> 
 </div>
+
 <div id='templateInfoTab'>
-  <a href='#' class='jqmClose'>Close</a>
   <h3>Template {{ job.template.name }}</h3>
-  <i>{{job.template.description }}</i>
+  <i>{{job.template.description }}</i>  
   <h4>Parameters</h4>
-  <ul>
+  <table class='moaParameters'>
     {% for k in job.conf.keys() %}
-    <li>
-      <b>{{k}}</b>: {{ job.conf[k]  }}
-    </li>
+    <tr>
+      <td class='moaParameterHeader'>
+		{{k}}
+	  </td>
+	  <td class='moaParameterValue' >
+		{{ job.conf[k]  }}
+	  </td>
+	  </td>
+    </tr>
     {% endfor %}
-  </ul>
-  <h4>Author</h4>
-  {{ job.template.author }}
+  </table>
+  <h4>Template settings</h4>
+  <table class='moaParameters'>
+	<tr>
+	  <td class='moaParameterHeader'>
+		Author
+	  </td>
+	  <td class='moaParameterValue'>
+		{{ job.template.author }}
+	  </td>
+	</tr>
+	<tr>
+	  <td class='moaParameterHeader'>
+		Backend
+	  </td>
+	  <td class='moaParameterValue'>
+		{{ job.template.backend }}
+	  </td>
+	</tr>
+  </table>
 </div>
+
 {% endblock %}
 
 {% block moaTemplate %}

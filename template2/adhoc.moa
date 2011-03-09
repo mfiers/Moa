@@ -9,7 +9,7 @@ commands:
     help: ''
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
-description: The ad hoc template aids in executing a one line on a set of input files.
+description: The `adhoc` template assists in running one-liners - possibly on a set of input files
 filesets:
   input:
     category: input
