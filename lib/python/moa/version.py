@@ -17,8 +17,10 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 
+import re
 import os
 import sys
+import shutil
 
 import moa.logger as l
 import moa.job
@@ -32,8 +34,6 @@ def fixOld(wd):
         t = F.read()
     if not 'include $(MOABASE)/template/moa/prepare.mk' in t:
         return False
-
-    import shutil
 
     l.warning("Old style Makefile trying to upgrade!")
     
@@ -61,17 +61,39 @@ def fixOld(wd):
     l.info("create a new style %s job" % templateName)
     job = moa.job.Job(wd)
     #convert moamk
+    filesets = {}
+    fs_re = re.compile(job.template.moa_id + '_(.*?)_((?:glob)|(?:dir)|(?:extension))')
+
     with open(moamk) as F:
         for line in F.readlines():
             line = line.strip()
             if '+=' in line:
                 l.critical("Cannot autoconvert: %s" % line)
             k,v = line.split('=',1)
-            l.info("found parameter %s=%s" % (k,v))
-            if job.template.moa_id in k:
-                k = k.replace('%s_' % job.template.moa_id, '')
-                l.info("  -> saving to %s=%s" % (k,v))
-            job.conf[k] = v
+            
+            fsmatch = fs_re.match(k)
+            if fsmatch:
+                name, comp = fsmatch.groups()
+                l.info("Found fileset component %s %s" % (name, comp))
+                if not filesets.has_key(name): filesets[name] = {}
+                filesets[name][comp] = v
+            else:                
+                l.info("found parameter %s=%s" % (k,v))
+                if job.template.moa_id in k:
+                    k = k.replace('%s_' % job.template.moa_id, '')
+                    l.info("  -> saving to %s=%s" % (k,v))
+                job.conf[k] = v
+        for fs in filesets.keys():
+            fsinf = filesets[fs]
+            l.info("processing fileset %s" % fs)
+            fsdir = fsinf.get('dir', '*')
+            if fsdir[-1] == '/': fsdir = fsdir[:-1]
+            fspat = '%s/%s.%s' % (
+                fsdir,
+                fsinf.get('glob', '*'),
+                fsinf.get('extension', '*'))
+            l.info("  -> saving fileset %s=%s" % (fs, fspat))
+            job.conf[fs] = fspat
     l.info("saving configuration")
     job.conf.save()
     l.warning("converted moa.mk - please check %s/config" % cdir)
