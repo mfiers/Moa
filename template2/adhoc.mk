@@ -32,6 +32,8 @@ adhoc_input_dir=$(shell dirname $(word 1,$(adhoc_input_files)))
 
 endif
 
+$(warning $(adhoc_mode))
+
 .PHONY: adhoc_prepare
 adhoc_prepare:
 	$e if [[ "$(adhoc_touch)" == "T" ]]; then \

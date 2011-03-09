@@ -73,8 +73,7 @@ class Gnumake(moa.backend.BaseBackend):
         makefileLoc = os.path.join(moa.utils.getMoaBase(), 'lib', 
                                    'gnumake', 'execute.mk')
         self.job.makeArgs.append(makefileLoc)
-        l.critical("makefile @ %s" % makefileLoc)
-
+        l.debug("makefile @ %s" % makefileLoc)
 
         l.debug("Calling make for command %s" % command)
         actor = self.job.getActor()
