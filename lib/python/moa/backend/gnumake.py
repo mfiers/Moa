@@ -13,13 +13,6 @@ import moa.backend
 import moa.sysConf
 import moa.logger as l
 
-NEW_MAKEFILE_HEADER = """#!/usr/bin/env make
-## Moa Makefile
-## http://mfiers.github.com/Moa
-
-include $(MOABASE)/lib/gnumake/prepare.mk
-"""
-
 class Gnumake(moa.backend.BaseBackend):
     def prepare(self):
         """
@@ -136,9 +129,3 @@ class Gnumake(moa.backend.BaseBackend):
             l.error("template backend mismatch")
             return False
 
-        makefile = os.path.join(self.job.wd, 'Makefile')
-
-        l.debug("Start writing %s" % makefile)
-        with open(makefile, 'w') as F:
-            F.write(NEW_MAKEFILE_HEADER)
-            F.write("$(call moa_load,%s)\n" % self.job.template.moa_id)

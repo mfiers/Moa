@@ -42,7 +42,6 @@ def promptSnippet(data):
     in the prompt
     """  
     m = test(data)
-    print m
     if m: 
         return "{{red}}X{{reset}}"
     else:

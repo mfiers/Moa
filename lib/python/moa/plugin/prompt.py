@@ -77,7 +77,7 @@ def prompt(data):
         for k in kys:
             snip += (rv[k])
         message += snip + "|"
-    moa.ui.fprint(message, f='jinja', newline=True, ansi=True)
+    moa.ui.fprint(message, f='jinja', newline=False, ansi=True)
     
     
     
