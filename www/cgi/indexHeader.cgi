@@ -17,7 +17,7 @@ if not os.environ.has_key('MOABASE'):
 MOABASE = os.environ['MOABASE']
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 
-import moa.info
+import moa.job
 
 #initialize the jinja environment
 jenv = Environment(
@@ -63,12 +63,14 @@ def getDescription(cwd):
         
 def getBreadCrumbs():
     ## Prepare breadcrumbs
+    dataRoot = getDataRoot()
     if moacwd.find(dataRoot) != 0:
         blocks = [{'name' : moacwd,
                    'class' : 'moaBreadCrumb',
                    'link' : requestUri,
                    'notlast' : True}]
     else:
+        webRoot = getWebRoot()
         pathUntilNow = webRoot
         steps = moacwd[len(dataRoot)+1:].split('/')
 
@@ -94,29 +96,21 @@ moacwd = getLocalDir()
 d['requestUri'] = os.environ.get('REQUEST_URI')
 d['moacwd'] = moacwd
 d['status'] = 'notmoa'
-dataRoot = getDataRoot()
-d['dataRoot'] = dataRoot
-webRoot = getWebRoot()
-d['webRoot'] = webRoot
+d['dataRoot'] = getDataRoot()
+d['webRoot'] = getWebRoot()
 d['blocks']  = getBreadCrumbs()
 d['jobDescription'] = getDescription(moacwd)
-
 #Fire off a generic page without any information if this is not a Moa dir
-if not moa.info.isMoaDir(moacwd):
+sys.stderr.write("getting a job for %s" % moacwd)
+job = moa.job.Job(moacwd)
+sys.stderr.write("found a job? %s %s" % (job, job.template.name))
+if job.template.name == 'nojob':
     pageTemplate = jenv.get_template('notMoa.html')
     print pageTemplate.render(**d)
     sys.exit()
 
 #ok, this must be a moa directory: gather information
-
-d['status'] = moa.info.status(moacwd)
-d['template'] = moa.info.template(moacwd)
-d['jobTitle'] = moa.info.getTitle(moacwd)
-d['allinfo'] = moa.info.info(moacwd)
-d['parameterKeys'] = d['allinfo']['parameters'].keys()
-d['parameterKeys'].sort()
-d['description'] = d['allinfo'].get('template_description', '')
+d['job'] = job
 
 pageTemplate = jenv.get_template('Moa.html')
-
 print pageTemplate.render(**d)

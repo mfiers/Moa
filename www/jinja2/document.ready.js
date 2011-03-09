@@ -15,11 +15,6 @@ $(document).ready(function()
 
     //add a few triggers 
 
-    // message bar dissapears when the mouse enters it
-    $(".moaMessage")
-        .mouseenter(
-            function() {$(".moaMessage").hide();});
-
     $(".moaTemplate")
         .click(
             function() { 
@@ -39,7 +34,9 @@ $(document).ready(function()
 	    });
 
     // initialize tabs
-    var $tabs = $("#tabs").tabs();
+    $("#tabs").tabs({
+			cookie : { expires : 3 } 
+		});
     $(".moaTemplate")
         .click(
             function() { 
