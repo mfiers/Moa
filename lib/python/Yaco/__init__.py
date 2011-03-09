@@ -68,7 +68,7 @@ import yaml
 
 class Yaco(dict):
     """
-    Very loosely based on http://code.activestate.com/recipes/473786/ (r1)
+    Rather loosely based on http://code.activestate.com/recipes/473786/ (r1)
 
     >>> v= Yaco()
     >>> v.a = 1
@@ -231,17 +231,38 @@ class Yaco(dict):
         >>> y.load(tf.name)
         >>> assert(y.a[3][3].d == 4)
         """
+        from_file = os.path.abspath(os.path.expanduser(from_file))
         with open(from_file) as F:
             data = yaml.load(F)
         self.update(data)
 
     def get_data(self):
         """
-        Prepare & parse data for export             
+        Prepare & parse data for export
+
+        >>> y = Yaco()
+        >>> y.a = 1
+        >>> y.b = 2
+        >>> y._c = 3
+        >>> assert(y._c == 3)
+        >>> d = y.get_data()
+        >>> assert(d.has_key('a') == True)
+        >>> assert(d.has_key('b') == True)
+        >>> assert(d.has_key('_c') == False)
+        >>> y._private = ['b']
+        >>> d = y.get_data()
+        >>> assert(d.has_key('a') == True)
+        >>> assert(d.has_key('b') == False)
+        >>> assert(d.has_key('_c') == False)
+        
         """
         data = {}
+        _priv = self.get('_private', [])
         for k in self.keys():
-            if k[0] == '_': continue
+            if k in _priv:
+                continue
+            if k[0] == '_':
+                continue
             val = self[k]
             if isinstance(val, Yaco):
                 val = val.get_data()
