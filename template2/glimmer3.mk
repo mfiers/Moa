@@ -54,7 +54,6 @@ prereq_awkscripts_installed:
 #include moabase, if it isn't already done yet..
 include $(MOABASE)/lib/gnumake/core.mk
 glimmer3_input_files ?= $(wildcard $(glimmer3_input_dir)/*.$(glimmer3_input_extension))
-
 glimmer3_output_files = $(addprefix out/, $(notdir $(patsubst		\
     %.$(glimmer3_input_extension), %.g3.predict, $(glimmer3_input_files))))
 
@@ -89,7 +88,7 @@ glimmer3_clean:
 	-rm -rf ./fasta/
 
 .PHONY: glimmer3
-glimmer3: $(glimmer3_gff_files) $(glimmer3_cds_files)
+glimmer3: glimmer3_prepare $(glimmer3_gff_files) $(glimmer3_cds_files)
 
 $(glimmer3_gff_files): gff/%.g3.gff: out/%.g3.predict
 	cat $<											\

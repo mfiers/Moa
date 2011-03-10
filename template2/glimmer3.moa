@@ -13,14 +13,16 @@ commands:
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Predicts (prokaryotic) using glimmer3.
-filesets: {}
+filesets: 
+  input:
+    category: input
+    help: Directory with the input files for Glimmer3
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
 moa_id: glimmer3
 modification_date: Wed Nov 10 07:56:48 2010
 name: glimmer3
-parameter_category_order:
-- ''
-- system
-- advanced
 parameters:
   gene_len:
     allowed: []
@@ -34,20 +36,6 @@ parameters:
     category: ''
     default: glimmer3
     help: source field to use in the gff. Defaults to "glimmer3"
-    optional: true
-    type: string
-  input_dir:
-    allowed: []
-    category: ''
-    default: ''
-    help: Input directory with the sequences to run glimmer3 on
-    optional: true
-    type: directory
-  input_extension:
-    allowed: []
-    category: ''
-    default: fasta
-    help: input file extension. Defaults to fasta
     optional: true
     type: string
   max_overlap:
