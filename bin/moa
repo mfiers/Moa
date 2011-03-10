@@ -123,12 +123,13 @@ if __name__ == "__main__":
     else:
         commands = ['status']
            
+    plugins.register(executeCommand=commands)
 
     ## Ask the job if it's is ok with
     ## these commands (might want to change order, or insert
     ## stuff
     commands = job.checkCommands(commands)
-    
+
     l.debug("Run moa commands: %s" % ",".join(commands))
     l.debug("with args %s" % newargs)
 
@@ -137,8 +138,6 @@ if __name__ == "__main__":
 
     ### Start job initialization
     job.prepare()
-
-    
 
     ### Start plugin initialization
     plugins.run('prepare')

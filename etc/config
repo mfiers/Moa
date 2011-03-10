@@ -2,7 +2,7 @@ plugins:
 - fileset
 - configure
 - newjob
-- logo
+- logger
 - test
 - adhoc
 - help

@@ -9,6 +9,8 @@ import sys
 import UserDict
 import moa.logger as l
 
+import Yaco
+
 ## Load & handle plugins
 class PluginHandler(UserDict.DictMixin):
 
@@ -16,7 +18,7 @@ class PluginHandler(UserDict.DictMixin):
 
         ## Determine what plugins are loaded
         self.plugins = {}
-        self.data = {'plugins' : self}
+        self.data = Yaco.Yaco({'plugins' : self})
         self.allPlugins = plugins
         l.debug("Plugins %s" % ", ".join(self.allPlugins))
         ## load the plugins as seperate modules. A plugin does not need to

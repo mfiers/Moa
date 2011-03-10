@@ -14,9 +14,8 @@ with open('VERSION') as F:
     version = F.read().strip()
 
 scripts  = [os.path.join('bin', x) for x in """
-moa
-fastaSplitter    fastaNfinder   fastaInfo        fastaExtract
-fasta2gff        blastReport    blastInfo        blast2gff
+moa        fastaSplitter  fastaNfinder  fastaInfo  fastaExtract
+fasta2gff  blastReport    blastInfo     blast2gff
 """.split()]
 
 data_files = []

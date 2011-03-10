@@ -98,5 +98,5 @@ def newJob(data):
 
 TESTSCRIPT = """
 moa new adhoc -t 'testJob' adhoc_mode=par dummy=nonsense
-[[ -f ./Makefile ]] || exer 'No job was created'
+[[ -d ./.moa ]] || exer 'No job was created'
 """

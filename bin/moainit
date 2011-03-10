@@ -13,6 +13,5 @@ export PATH=$MOABASE/bin:$PATH
 export PYTHONPATH=$MOABASE/lib/python:$PYTHONPATH
 source $MOABASE/etc/bash_completion.d/moa 
 
-#a colorful prompt message when inside a Moa directory:
-#export PROMPT_COMMAND="[[ -d .moa ]] && moa prompt; $PROMPT_COMMAND"
-#export PS1="\$([ -d '.moa' ] && moa prompt)$PS1"
+##set a convenient alias to capture history
+alias moa!='moa adhoc -t "set from history" -- `history -p \!\!`'

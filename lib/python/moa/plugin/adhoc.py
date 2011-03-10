@@ -28,22 +28,18 @@ import os
 import re
 import sys
 import optparse
+import subprocess
 
 import moa.job
 import moa.logger as l
 import moa.plugin
-
 
 def defineCommands(data):
     data['commands']['adhoc'] = { 
         'desc' : 'Quickly create an adhoc analysis',
         'call' : createAdhoc
         }
-    #data['commands']['adstore'] = {
-    #    'desc' : 'Remeber this adhoc analysis for reuse',
-    #    'call' : addStore
-    #    }
-    
+
 def defineOptions(data):
     parserN = optparse.OptionGroup(data['parser'], "Moa adhoc (a)")
     try:
