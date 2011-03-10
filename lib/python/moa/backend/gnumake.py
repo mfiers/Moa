@@ -3,6 +3,7 @@ Gnumake
 -------
 
 """
+import re
 import os
 import sys
 
@@ -90,6 +91,15 @@ class Gnumake(moa.backend.BaseBackend):
                 confDict[k] = v
             else:
                 confDict['%s_%s' % (moaId, k)] = str(v)
+        #and store some extra fileset information in the env
+        for fsid in self.job.template.filesets.keys():
+            fsconf = self.job.conf[fsid]
+            refs = re.compile('(?P<path>.*/)?(?P<glob>[^/]*?)(?:\.(?P<ext>[^/\.]*))?$')
+            match = refs.match(fsconf)
+            if match:                
+                confDict['%s_%s_dir' % (moaId, fsid)] = match.groups()[0]
+                confDict['%s_%s_glob' % (moaId, fsid)] = match.groups()[1]
+                confDict['%s_%s_extension' % (moaId, fsid)] = match.groups()[2]
 
         actor.setEnv(confDict)
 
