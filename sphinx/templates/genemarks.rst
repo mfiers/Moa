@@ -21,6 +21,28 @@ Commands
 
 
 
+Filesets
+~~~~~~~~
+
+
+
+
+**input**::
+    Directory with the input files for Genemarks
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
 Parameters
 ~~~~~~~~~~
 
@@ -39,25 +61,7 @@ Parameters
     source field to use in the gff. Defaults to "geneMarkS"
 
   | *type*: `string`
-  | *default*: `genemarks`
-  | *optional*: `True`
-
-
-
-**input_dir**::
-    directory containing the input sequences
-
-  | *type*: `directory`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**input_extension**::
-    input file extension. Defaults to fasta
-
-  | *type*: `string`
-  | *default*: `fasta`
+  | *default*: `genemarkS`
   | *optional*: `True`
 
 
@@ -84,9 +88,9 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
-  Mark Fiers
+  
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**

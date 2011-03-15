@@ -1,7 +1,7 @@
-bowtie
+bowtie_se
 ------------------------------------------------
 
-**Bowtie**
+
 
 ::
     Run BOWTIE on an set of input files (query) vs a database index.
@@ -27,8 +27,8 @@ Filesets
 
 
 
-**input**::
-    Fasta/fastq input files for bowtie
+**fq_input**::
+    fastq input files directory
 
   | *type*: `map`
   | *source*: `{}`
@@ -45,10 +45,10 @@ Filesets
 
 
 **output**::
-    Output files
+    Bam output file
 
   | *type*: `map`
-  | *source*: `input`
+  | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
   | *extension*: `{}`
@@ -65,15 +65,6 @@ Parameters
 
 
 
-**db**::
-    The (basename of the) bowtie database to use.
-
-  | *type*: `string`
-  | *default*: `{}`
-  | *optional*: `False`
-
-
-
 **default_command**::
     command to run for this template
 
@@ -83,8 +74,17 @@ Parameters
 
 
 
+**ebwt_base**::
+    The (basename of the) bowtie database to use.
+
+  | *type*: `string`
+  | *default*: `{}`
+  | *optional*: `False`
+
+
+
 **extra_params**::
-    extra parameters to feed bowtie
+    extra parameters to feed to bowtie
 
   | *type*: `string`
   | *default*: ``
@@ -97,6 +97,15 @@ Parameters
 
   | *type*: `set`
   | *default*: `fastq`
+  | *optional*: `True`
+
+
+
+**output_format**::
+    Format of the output file
+
+  | *type*: `set`
+  | *default*: `bam`
   | *optional*: `True`
 
 
@@ -116,7 +125,7 @@ Other
 **Backend**
   ruff
 **Author**
-  Mark Fiers
+  Yogini Idnani, Mark Fiers
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**

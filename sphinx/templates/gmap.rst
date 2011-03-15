@@ -27,6 +27,23 @@ Filesets
 
 
 
+**align**::
+    {}
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
 **genepred**::
     {}
 
@@ -174,7 +191,7 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

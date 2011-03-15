@@ -27,12 +27,29 @@ Filesets
 
 
 
-**fq_input**::
-    Fastq input file
+**bam_output**::
+    {}
+
+  | *type*: `map`
+  | *source*: `fq_input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**fa_input**::
+    directory with reference fasta file name
 
   | *type*: `map`
   | *source*: `{}`
-  | *category*: `input`
+  | *category*: `prerequisite`
   | *optional*: `False`
   | *extension*: `{}`
   | *glob*: `{}`
@@ -44,13 +61,13 @@ Filesets
 
 
 
-**sam_output**::
-    {}
+**fq_input**::
+    Fastq input file
 
   | *type*: `map`
-  | *source*: `fq_input`
-  | *category*: `output`
-  | *optional*: `{}`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
   | *extension*: `{}`
   | *glob*: `{}`
   | *dir*: `{}`
@@ -209,7 +226,7 @@ Other
 **Creation date**
   Wed Nov 29 07:56:48 2010
 **Modification date**
-  1291933991.07
+  1297380110.93
 
 
 

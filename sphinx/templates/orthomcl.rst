@@ -1,21 +1,21 @@
-bowtiedb
+orthomcl
 ------------------------------------------------
 
-**Bowtie index builder**
+**Bwa index builder**
 
 ::
-    Builds a bowtie index from a reference sequence
+    Run orhthomcl on a set of input fasta files
 
 
 Commands
 ~~~~~~~~
 
 **clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+  Remove all job data
 
 
 **run**
-  Create the bowtie database
+  Run orthomcl
 
 
 
@@ -28,7 +28,7 @@ Filesets
 
 
 **input**::
-    Input fasta file for the bowtie database
+    Directory with the input fasta files
 
   | *type*: `map`
   | *source*: `{}`
@@ -48,6 +48,15 @@ Parameters
 
 
 
+**db**::
+    DB name
+
+  | *type*: `string`
+  | *default*: `orthomcl`
+  | *optional*: `True`
+
+
+
 **default_command**::
     command to run for this template
 
@@ -57,20 +66,47 @@ Parameters
 
 
 
-**ebwt_outfile_base**::
-    write Ebwt data to files with this dir/basename
+**host**::
+    DB host
 
   | *type*: `string`
-  | *default*: `db_index`
+  | *default*: `localhost`
   | *optional*: `True`
 
 
 
-**extra_params**::
-    any option parameters
+**login**::
+    DB login
 
   | *type*: `string`
-  | *default*: ``
+  | *default*: `{}`
+  | *optional*: `False`
+
+
+
+**pass**::
+    DB password
+
+  | *type*: `string`
+  | *default*: `{}`
+  | *optional*: `False`
+
+
+
+**port**::
+    DB port
+
+  | *type*: `string`
+  | *default*: `3306`
+  | *optional*: `True`
+
+
+
+**prefix**::
+    prefix for separating tables & output fields
+
+  | *type*: `string`
+  | *default*: `run1`
   | *optional*: `True`
 
 
@@ -94,7 +130,7 @@ Other
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
-  Wed Dec 09 07:56:48 2010
+  Wed Nov 10 07:56:48 2010
 
 
 

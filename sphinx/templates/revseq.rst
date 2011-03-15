@@ -1,21 +1,17 @@
-getorf
+emboss/revseq
 ------------------------------------------------
 
-**Revseq**
+
 
 ::
-    This Moa template takes a set of input FASTA sequences and determines the reverse complement using the EMBOSS revseq utility.
+    Run emboss revseq
 
 
 Commands
 ~~~~~~~~
 
-**clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
-**run**
-  *no help defined*
+**revseq**
+  Run Revseq
 
 
 
@@ -27,33 +23,14 @@ Filesets
 
 
 
-**gff**::
-    {}
-
-  | *type*: `map`
-  | *source*: `input`
-  | *category*: `output`
-  | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
 **input**::
-    Input files for getorf
+    Input files for revseq
 
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
+  | *type*: `input`
+  | *category*: `{}`
   | *optional*: `False`
-  | *extension*: `{}`
+  | *extension*: `fasta`
   | *glob*: `{}`
-  | *dir*: `{}`
 
 
 
@@ -66,11 +43,11 @@ Filesets
 
   | *type*: `map`
   | *source*: `input`
-  | *category*: `output`
+  | *category*: `{}`
   | *optional*: `{}`
-  | *extension*: `{}`
+  | *extension*: `out`
   | *glob*: `{}`
-  | *dir*: `{}`
+  | *dir*: `./out`
 
 
 
@@ -105,42 +82,6 @@ Parameters
 
   | *type*: `set`
   | *default*: `3`
-  | *optional*: `True`
-
-
-
-**gff_source**::
-    source field to use in the gff.
-
-  | *type*: `string`
-  | *default*: `getorf`
-  | *optional*: `True`
-
-
-
-**maxsize**::
-    maximal nucleotide size of the predicted ORF.
-
-  | *type*: `integer`
-  | *default*: `1000000`
-  | *optional*: `True`
-
-
-
-**minsize**::
-    minimal nucleotide size of the predicted ORF.
-
-  | *type*: `integer`
-  | *default*: `30`
-  | *optional*: `True`
-
-
-
-**table**::
-    Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.
-
-  | *type*: `set`
-  | *default*: `11`
   | *optional*: `True`
 
 

@@ -27,6 +27,23 @@ Filesets
 
 
 
+**fasta**::
+    reference fasta file
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `prerequisite`
+  | *optional*: `True`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
 **input**::
     bam or sam files
 
@@ -254,7 +271,7 @@ Other
 **Creation date**
   Wed Dec 15 17:06:48 2010
 **Modification date**
-  1295223801.82
+  1297380110.93
 
 
 

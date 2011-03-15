@@ -122,7 +122,7 @@ Parameters
     Maximum allowed insertsize
 
   | *type*: `integer`
-  | *default*: `500`
+  | *default*: `250`
   | *optional*: `True`
 
 
