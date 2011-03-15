@@ -65,6 +65,7 @@ data structures
 import os
 import sys
 import yaml
+import pprint
 
 class Yaco(dict):
     """
@@ -242,6 +243,12 @@ class Yaco(dict):
             data = yaml.load(F)
         self.update(data)
 
+    def pretty(self):
+        """
+        Return data as a pprint.pformatted string
+        """
+        return pprint.pformat(self.get_data())
+    
     def get_data(self):
         """
         Prepare & parse data for export
