@@ -16,16 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-
 """
-Git
+**moaGit** - maintain a git repository with job information
+-----------------------------------------------------------
+
 """
 import os
 import optparse
 import git 
 import time
 
-import moa.info
 import moa.logger as l
 import moa.plugin.newjob
 

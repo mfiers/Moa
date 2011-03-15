@@ -18,7 +18,8 @@
 # 
 
 """
-Moa utilities
+**moautil** - Some extra utilities - copy/move jobs
+---------------------------------------------------
 """
 
 import os

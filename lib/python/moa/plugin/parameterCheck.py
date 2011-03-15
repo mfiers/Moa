@@ -1,3 +1,8 @@
+"""
+**parameterCheck** - check parameters
+-------------------------------------
+"""
+
 import os
 import sys
 import moa.ui
@@ -57,8 +62,7 @@ def test_ui(data):
         errorMessage(message, detail)
     
     if messages and not options.force:
-        sys.exit(-1)
-    
+        sys.exit(-1)    
     
 def test(data):
     job = data['job']
@@ -67,7 +71,6 @@ def test(data):
         
     messages = []
     for p in job.conf.keys():
-        
         if p in job.conf.doNotCheck:
             continue
         

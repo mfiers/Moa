@@ -18,8 +18,8 @@
 # 
 
 """
-**logo** - Print the moa logo
------------------------------
+**logo** - Print a big, in your face, moa logo
+----------------------------------------------
 """
 import os
 

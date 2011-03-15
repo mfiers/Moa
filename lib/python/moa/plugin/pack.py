@@ -18,7 +18,8 @@
 # 
 
 """
-Pack - saves pipelines, or parts of pipelines for reuse
+**Pack** - saves pipelines, or parts of pipelines for reuse
+-----------------------------------------------------------
 """
 
 import os
@@ -26,11 +27,6 @@ import re
 import sys
 import tarfile
 import optparse
-
-import moa.conf
-import moa.info
-import moa.conf
-import moa.logger as l
 
 def defineCommands(data):
     data['commands']['pack'] = { 

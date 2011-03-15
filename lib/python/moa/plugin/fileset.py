@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-filesets
---------
+**fileset** - define sets of in&output files
+--------------------------------------------
 
 Define sets of files for Moa
 
@@ -118,7 +118,7 @@ def prepare(data):
             
         #unless it is an input file, do not check for this
         #file to exists! (since it might not exist yet)
-        if not fs.category == 'input':
+        if not fs.category in ['input', 'prerequisite']:
             job.conf.doNotCheck.append('%s' % fsid)
 
 def preCommand(data):

@@ -1,5 +1,6 @@
 """
-**logger** - Log Moa activity
+**lock** - Lock/Unlock moa jobs
+-------------------------------
 
 
 

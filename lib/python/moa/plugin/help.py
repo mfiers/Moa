@@ -17,10 +17,9 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Help
-----
+**help** - generate help
+------------------------
 
-Generate help
 """
 
 import os

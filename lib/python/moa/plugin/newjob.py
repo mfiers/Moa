@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Instantiate new jobs
-~~~~~~~~~~~~~~~~~~~~~~~~
+**newjob** - Instantiate new jobs
+---------------------------------
 """
 
 import os

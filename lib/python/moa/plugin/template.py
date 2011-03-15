@@ -15,10 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa. If not, see <http://www.gnu.org/licenses/>.
 """
-Manipulate templates
---------------------
+**template** - get information on templates
+-------------------------------------------
 
-View and edit template definitions
 """
 import time
 import optparse

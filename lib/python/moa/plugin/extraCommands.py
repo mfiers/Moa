@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Pre & Post commands
--------------------
+**extraCommands** - Pre & Post commands
+---------------------------------------
 
 Allow execution of a bash oneline before & after job completion
 """

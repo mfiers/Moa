@@ -17,8 +17,8 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Job information
----------------
+**info** - Job information
+---------------------------
 
 Print info on Moa jobs and Moa
 """
@@ -47,6 +47,7 @@ def defineCommands(data):
         'needsJob' : True,
         'call' : rawCommands,
         }
+    
     data['commands']['raw_parameters'] = {
         'private' : True,
         'log' : False,

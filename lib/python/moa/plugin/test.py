@@ -18,7 +18,8 @@
 # 
 
 """
-Test
+**test** - Run unittests
+------------------------
 """
 
 import os
