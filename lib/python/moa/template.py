@@ -42,10 +42,10 @@ class InvalidTemplate(Exception):
     """ Invalid Template """
     pass
 
-def getTemplate(job, name):
-    #try to find the related template file
-
-    l.info('Trying to find template %s' % name)
+def getTemplateFile(name):
+    """
+    Return a base filename for a template
+    """
 
     templateFile = os.path.join(
         TEMPLATEDIR, '%s.moa' % name)
@@ -53,14 +53,22 @@ def getTemplate(job, name):
     if not os.path.exists(templateFile):
         raise InvalidTemplate()
 
-    l.info("found template file: %s" % templateFile)
+    return templateFile
+    
+def initTemplate(target, name):
+    #try to find the related template file
 
-    extraFileDir = os.path.join(job.confDir, 'template.d')
+    templateFile = getTemplateFile(name)
+    
+    l.debug('Trying to find template %s' % name)
+    l.debug("found template file: %s" % templateFile)
+
+    extraFileDir = os.path.join(target, 'template.d')
     if not os.path.isdir(extraFileDir):
         os.makedirs(extraFileDir)
 
     shutil.copy(templateFile,
-                os.path.join(job.confDir, 'template'))
+                os.path.join(target, 'template'))
                 
     #copy additional files
     templateGlob = templateFile[:-3] + '*'
@@ -73,7 +81,7 @@ class Template(Yaco.Yaco):
     Template extends Yaco
     """
     
-    def __init__(self, job):
+    def __init__(self, templateFile):
         """
         Initialze the template object, which means:
         
@@ -83,7 +91,7 @@ class Template(Yaco.Yaco):
 
         super(Template, self).__init__(self)
 
-        self.job = job
+        self.templateFile = templateFile
 
         #set a few defaults to be used by each template
         self.parameters = {}
@@ -95,15 +103,16 @@ class Template(Yaco.Yaco):
             }
 
         #try to load the template!!
-        templateFile = os.path.join(self.job.confDir, 'template')
         
-        if os.path.exists(templateFile):
-            _tempTemplate = open(templateFile).read().strip()
+        if os.path.exists(self.templateFile):
+            _tempTemplate = open(self.templateFile).read().strip()
             if len(_tempTemplate) < 20 and \
                    not "\n" in _tempTemplate:
                 #this must be an old style template name- try to load the template
-                getTemplate(job, _tempTemplate)
-            self.load(templateFile)
+                initTemplate(os.path.dirname(templateFile),
+                             name = _tempTemplate)
+                
+            self.load(self.templateFile)
         else:
             self.name = 'nojob'
             self.backend = 'nojob'
@@ -111,15 +120,15 @@ class Template(Yaco.Yaco):
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         if not self.name == 'nojob' and not self.modification_date:
-            self.modification_date = os.path.getmtime(self._templateDataFile)
+            self.modification_date = os.path.getmtime(self.templateFile)
 
     def getRaw(self):
         y = Yaco.Yaco()
-        y.load(self._templateDataFile)
+        y.load(self.templateFile)
         return y
     
     def saveRaw(self, raw):
-        raw.save(self._templateDataFile)
+        raw.save(self.templateFile)
     
     def save(self):
         raise Exception("direct saving of template files is disabled")
@@ -145,7 +154,7 @@ def check(what):
         False
     """
     try:
-        template = Template(what)
+        template = getTemplateFile(what)
         return True
     except:
         return False
@@ -203,5 +212,6 @@ def listAllLong():
     @rtype: generator
     """
     for tFile, tName in listAll():
-        t = Template(tName)
-        yield tName, t.description
+        f = Yaco.Yaco()
+        f.load(tFile)
+        yield tName, f.description

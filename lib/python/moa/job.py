@@ -54,7 +54,8 @@ def newJob(wd, template, title, parameters=[]):
     
     """
     
-    job = Job(wd, template = template)
+    job = Job(wd)
+    job.setTemplate(template)
     job.conf.title = title
     for pk, pv in parameters:
         job.conf[pk] = pv
@@ -78,7 +79,8 @@ def newTestJob(template, title="Test job"):
     :rtype: instance of :class:`moa.job.Job`
     """
     wd = tempfile.mkdtemp()
-    job = Job(wd, template=template)
+    job = Job(wd)
+    job.setTemplate(template)
     job.conf.title = title
     job.conf.save()
     return job
@@ -97,31 +99,22 @@ class Job(object):
         read the template from `./.moa/template`
     :param options: Additional options to feed to this job
     """
-    
-    def __init__(self,
-                 wd,
-                 template = None):
+      
+    def __init__(self, wd):
 
         if wd[-1] == '/':
             wd = wd[:-1]
         self.wd = wd
         
         self.confDir = os.path.join(self.wd, '.moa')
-
+        self.templateFile = os.path.join(self.confDir, 'template')
         self.backend = None
         self.args = []
         
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
         
-        #first load the template
-        if template:
-            self.setTemplate(template)
-            self.loadBackend()
-            self.initialize()
-        else:
-            self.loadTemplate()
-            self.loadBackend()
+        self.loadTemplate()
 
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
@@ -245,17 +238,17 @@ class Job(object):
         """
         self.checkConfDir()
         l.debug("Setting job template to %s" % name)
-        self.template = moa.template.Template(name)
-        with open(os.path.join(self.confDir, 'template'), 'w') as F:
-            F.write(name)
-            l.debug('set job in %s to template %s' % (self.wd, name))
+        #get the template
+        moa.template.initTemplate(self.confDir, name)
+        self.loadTemplate()
         
     def loadTemplate(self):
         """
         Load the template for this job, based on what configuration 
         can be found
         """
-        self.template = moa.template.Template(self)
+        self.template = moa.template.Template(self.templateFile)
+        self.loadBackend()
                 
     def loadBackend(self):
         """
@@ -275,6 +268,8 @@ class Job(object):
             raise
             
         self.backend = getattr(module, backendName.capitalize())(self)
+        self.initialize()
+
         
     def isMoa(self):
         """

@@ -54,7 +54,8 @@ class Ruff(moa.backend.BaseBackend):
         super(Ruff, self).__init__(job)
         
         templateFile = os.path.join(
-            TEMPLATEDIR, '%s.jinja2' % (self.job.template.moa_id))
+            self.job.confDir, 'template.d',
+            '%s.jinja2' % (self.job.template.moa_id))
 
         self.commands = RuffCommands()
 

@@ -76,10 +76,10 @@ def testTemplates(options, args=[]):
     for tfile, tname in moa.template.listAll():
         if args and not tname in args:
             continue
-        
-        template = moa.template.Template(tname)
+
+        template = moa.template.Template(tfile)
         if not template.backend == 'ruff':
-            continue        
+            continue
 
         job = moa.job.newTestJob(tname)
         if not job.hasCommand('unittest'):

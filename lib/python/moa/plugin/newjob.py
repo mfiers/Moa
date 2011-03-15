@@ -83,7 +83,7 @@ def newJob(data):
     if not options.title:
         moa.ui.exitError("Must define a title for this job")
         
-    job = moa.job.newJob(wd, template = template, title = options.title)
+    job = moa.job.newJob(wd, template=template, title = options.title)
     job.conf['title'] = options.title
     
     for p in params:
