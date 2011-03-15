@@ -28,9 +28,10 @@ mkdir 20.bowtie_pe
 cd 20.bowtie_pe
 pwd >&2
 moa new bowtie_pe -t 'demo bowtie aligning paired ends'
-[[ -d .moa ]] && (echo "Found .moa ALN directory") || (echo "Cannot find .moa ALN directory"; false)
-moa set ebwt_base=${PWD%/*}/10.bowtiedb/testDB
-moa set fq_forward_input=${MOABASE}/share/test/*.fq
+
+moa set ebwt_base=../10.bowtiedb/testDB
+moa set fq_forward_input=${MOABASE}/share/test/reads_1.fq
+moa set fq_reverse_input=${MOABASE}/share/test/reads_2.fq
 moa run
 ls
 

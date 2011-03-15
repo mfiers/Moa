@@ -21,7 +21,7 @@ mkdir gff || true 2> /dev/null
     blastReport out/ -o blast_report
 
 ### unittest
-	mkdir 10.blastdb
+   	mkdir 10.blastdb
 	cd 10.blastdb
 	moa new blastdb -t 'test blast database'
 	moa set fasta_file=$MOABASE/share/test/test.fasta
