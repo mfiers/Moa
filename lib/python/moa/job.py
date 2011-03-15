@@ -30,7 +30,6 @@ import moa.utils
 import moa.logger as l
 import moa.template
 import moa.jobConf
-import moa.actor
 
 def newJob(wd, template, title, parameters=[]):
     """
@@ -80,7 +79,6 @@ def newTestJob(template, title="Test job"):
     """
     wd = tempfile.mkdtemp()
     job = Job(wd, template=template)
-    #job.conf['title'] = title
     job.conf.title = title
     job.conf.save()
     return job
@@ -112,7 +110,6 @@ class Job(object):
 
         self.backend = None
         self.args = []
-        self.actor = moa.actor.Actor(wd = self.wd)        
         
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
@@ -188,18 +185,7 @@ class Job(object):
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
 
-        
-    def getActor(self):
-        """
-        Return an actor (:class:`moa.actor.Actor`), a wrapper for python's subprocess.
-        
-        An actor is meant to handle the execution of out-of-python tools
-        
-        :rtype: instance of :class:`moa.actor.Actor`
-        """
-        return self.actor        
-
-    
+            
     def execute(self, command, verbose=False, background=False):
         """
         Execute `command` in the context of this job. Execution is

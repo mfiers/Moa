@@ -31,21 +31,17 @@ prereq_wget:
 
 #Include base moa code - does variable checks & generates help
 include $(MOABASE)/lib/gnumake/core.mk
-#define extra variables to register in couchdb
-#moa_register_extra += fastadir
-#moa_register_fastadir = $(shell echo `pwd`)/fasta
 
 ################################################################################
 .PHONY: ncbi
-ncbi: fasta.tmp
-	seqret fasta.tmp $(ncbi_sequence_name).fasta
+ncbi: $(ncbi_sequence_name).fasta
 	touch lock
 
 #the fasta file as downloaded from NCBI
-fasta.tmp: webEnv=$(shell xml_grep --cond "WebEnv" query.xml --text_only)
-fasta.tmp: queryKey=$(shell xml_grep --cond "QueryKey" query.xml --text_only)
-fasta.tmp: query.xml
-	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&report=fasta" -O fasta.tmp
+$(ncbi_sequence_name).fasta: webEnv=$(shell xml_grep --cond "WebEnv" query.xml --text_only)
+$(ncbi_sequence_name).fasta: queryKey=$(shell xml_grep --cond "QueryKey" query.xml --text_only)
+$(ncbi_sequence_name).fasta: query.xml
+	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&report=fasta" -O $(ncbi_sequence_name).tmp
 
 #query.xml contains the IDs of the sequences to download
 query.xml: 

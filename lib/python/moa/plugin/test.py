@@ -31,7 +31,8 @@ import moa.logger as l
 def defineCommands(data):
     data['commands']['unittest'] = {
         'desc' : 'Run Moa unittests',
-        'call' : runTests
+        'call' : runTests,
+        'needsJob' : False
         }
 
 def runTests(data):

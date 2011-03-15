@@ -33,12 +33,6 @@ import moa.utils
 
 MOABASE = moa.utils.getMoaBase()
 
-sysConf = None
-
-SYSCONFIGFILE = os.path.join(MOABASE, 'etc', 'config')
-USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
-                          '.config', 'moa', 'config')
-
 class JobConf(object):
     """
     This is a wrapper around a Yaco object - with a few extras, such as

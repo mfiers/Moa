@@ -70,7 +70,7 @@ def configShow(data):
     
     keys = job.conf.keys()
     keys.sort()
-    
+
     for p in keys:
         if p[:4] == 'moa_': continue
         

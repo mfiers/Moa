@@ -94,7 +94,6 @@ class Ruff(moa.backend.BaseBackend):
         #self.job.plugins.run("readfilesets")
 
         jt = self.getCommandTemplate(command)
-        actor = self.job.getActor()
 
         #determine which files are prerequisites
         prereqs = []
@@ -171,7 +170,8 @@ class Ruff(moa.backend.BaseBackend):
                 delete = False, prefix='moa', mode='w')
             tf.write("\n" + jt.render(self.job.conf)+ "\n")
             tf.close()
-            rc = actor.run(['bash', '-e', tf.name])            
+            rc = moa.actor.simpleRunner(
+                self.job, ['bash', '-e', tf.name])
         return rc
 
 

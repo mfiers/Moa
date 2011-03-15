@@ -47,6 +47,7 @@ def defineCommands(data):
     data['commands']['list'] = {
         'desc' : 'Print a list of all known templates',
         'call' : listTemplates,
+        'needsJob' : False
         }
 
     data['commands']['template_set'] = {

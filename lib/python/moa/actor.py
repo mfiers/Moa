@@ -23,170 +23,59 @@ moa.actor
 """
 
 import os
-import sys
-import time
-import tempfile
+import datetime
 import subprocess
 
 import moa.logger as l
-import moa.utils
-from moa.exceptions import *
 
-class Actor:
+def simpleRunner(job, cl):
     """
-    A class that standardizes a number of operations around execution
-    in the Moa context.
+    - put env in the environment
+    - Execute the commandline (in cl)
+    - store stdout & stderr in log files
+    - return the rc
+    """
     
-    :param wd: Working directory
-    :type wd: String
+    stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
+    outDir = os.path.join(job.confDir, 'out', stst)
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
+    STDOUT = open(os.path.join(outDir, 'stdout'), 'w')
+    STDERR = open(os.path.join(outDir, 'stderr'), 'w')
+    l.debug("executing %s" % " ".join(cl))
+    sp = subprocess.Popen(cl, cwd = job.wd,
+                          stdout=STDOUT, stderr=STDERR)
+    sp.communicate()
+    return sp.returncode
+
+def getRecentOutDir(job):
     """
-    def __init__(self, wd):
-        
-        self.wd = wd
-        self.sendOutTo = 'stdout'
-        self.sendErrTo = 'stderr'
-        self.out = ''
-        self.err = ''
-        self.saveName = os.path.join(wd, 'moa')
-        
-                
-    def setSaveName(self, name):
-        self.saveName = name
-   
-    def setOut(self, to):
-        """
-        Determine where to send the output. Three possibilities:
-        * file (depends on setSaveName)
-        * pipe (can be retrieved from the actor.out string)
-        * stdout (print to stdout)
-        """
-        if to == 'file':
-            self.sendOutTo = 'file'
-        elif to == 'pipe':
-            self.sendOutTo = 'pipe'
-        else:
-            self.sendOutTo = 'stdout'
-            
-    def setErr(self, to):
-        """
-        Determine where to send the stderr. Three possibilities:
-        * file (depends on setSaveName)
-        * pipe (can be retrieved from the actor.err string)
-        * stderr (print to stderr)
-        """
-        if to == 'file':
-            self.sendErrTo = 'file'
-        elif to == 'pipe':
-            self.sendErrTo = 'pipe'
-        else:
-            self.sendErrTo = 'stderr'
-                                
-    def setEnv(self, d):
-        """
-        Setup the environment
+    Return the most recent output directory
+    """
+    baseDir = os.path.join(job.confDir, 'out')
+    if not os.path.exists(baseDir):
+        return []
+    subDirs = [os.path.join(baseDir, x) for x in os.listdir(baseDir)]
+    subDirs = filter(os.path.isdir, subDirs)
+    subDirs.sort(key=lambda x: os.path.getmtime(x))
+    return subDirs[-1]
 
-        :param d: The data to transfer to the environment
-        :type d: dict
-        """
-        for k in d.keys():
-            os.putenv(k, str(d[k]))
-            
-    def run(self, cl):
-        """
-        Actually run
+def getLastStdout(job):
+    """
+    Get the last stdout
+    """
+    outDir = getRecentOutDir(job)
+    if not outDir:
+        return None
+    with open(os.path.join(outDir, 'stdout')) as F:
+        return F.read().strip()
 
-        :param cl: The command to execute, for example: `['ls', '/tmp']`            
-        :type cl: list of strings        
-        :returns: return code of the job
-        :rtype: integer
-        
-        """   
-        self.runStartTime = time.time()
-        
-        l.debug("Starting actor now in %s" % self.wd)
-        l.debug(" - with command line: '%s'" % " ".join(cl))
-        
-        if self.sendOutTo == 'file':
-            FOUT = open('%s.out' % self.saveName, 'a')
-        elif self.sendOutTo == 'pipe':
-            FOUT = subprocess.PIPE
-        else:
-            FOUT = None
-
-        if self.sendErrTo == 'file':
-            FERR = open('%s.err' % self.saveName, 'a')
-        elif self.sendErrTo == 'pipe':
-            FERR = subprocess.PIPE
-        else:
-            FERR = None        
-
-        self.p = subprocess.Popen(
-            cl, shell=False, cwd = self.wd,
-            stdout = FOUT, stderr = FERR)
-
-        l.debug("execution has started with pid %d" % self.p.pid)            
-        self.pid = self.p.pid
-        
-        self.out, self.err = self.p.communicate()
-
-        self.rc = self.p.returncode
-        self.runStopTime = time.time()
-
-        if self.sendOutTo == 'file':
-            FOUT.close()
-        if self.sendErrTo == 'file':
-            FERR.close()
-                    
-        l.debug("Finished execution with rc %d " % self.rc)
-        return self.rc
-
-    # def _report(self):
-    #     report = "\n".join([
-    #         'Process id: %d' % self.pid,
-    #         'Return code: %d' % self.rc,
-    #         'Command line: %s' % self.commandLine,
-    #         'Target: %s' % self.target,
-    #         'Working directory: %s' % self.wd,
-    #         'Start: %s' % time.asctime(time.localtime(self.runStartTime)),
-    #         'End: %s' % time.asctime(time.localtime(self.runStopTime)),
-    #         'Duration: %.4f sec' % (self.runStopTime - self.runStartTime)]) + "\n"
-        
-    #     return report
-
-    # def finish(self):
-        
-    #     if self.rc == 0:
-    #         l.debug("Succesfully finished make in %s" % (self.wd))
-    #     else:
-    #         if self.verbose:
-    #             l.error("Error running make in %s. Return code %s" % (
-    #                 self.wd, self.rc))
-    #         else:
-    #             l.debug("Error running make in %s. Return code %s" % (
-    #                 self.wd, self.rc))
-                
-    #     if self.captureName:
-    #         if self.captureOut: os.unlink(self.captureOutName)
-    #         if self.captureErr: os.unlink(self.captureErrName)
-
-    # def getOutput(self):
-    #     """
-    #     Get the output from a moa run
-    #     """
-    #     if not os.path.exists(self.captureOutName):
-    #         return ""
-    #     l.debug("reading output from %s" % self.captureOutName)
-    #     return open(self.captureOutName).read()
-
-    # def getError(self):
-    #     """
-    #     Get the stderr of a moa run
-
-    #     @returns: stderr output of this job (if captured)
-    #     @rtype: string
-    #     """
-    #     if not os.path.exists(self.captureErrName):
-    #         return ""
-    #     l.debug("reading error from %s" % self.captureErrName)
-    #     return open(self.captureErrName).read()
-
+def getLastStderr(job):
+    """
+    Get the last stderr
+    """
+    outDir = getRecentOutDir(job)
+    if not outDir:
+        return None
+    with open(os.path.join(outDir, 'stderr')) as F:
+        return F.read().strip()

@@ -27,6 +27,7 @@ import optparse
 
 import moa.ui
 import moa.utils
+import moa.actor
 import moa.logger as l
 import moa.template
 
@@ -48,14 +49,41 @@ def defineCommands(data):
         }
     data['commands']['version'] = {
         'desc' : 'Print the moa version',
-        'call' : version }
+        'call' : version,
+        'needsJob' : False
+        }
+    data['commands']['out'] = {
+        'desc' : 'Returns stdout of the last moa run',
+        'call' : getOut,
+        'needsJob' : True
+        }
+    data['commands']['err'] = {
+        'desc' : 'Returns stderr of the last moa run',
+        'call' : getErr,
+        'needsJob' : True
+        }
 
+
+def getOut(data):
+    out = moa.actor.getLastStdout(data.job)
+    if out == None:
+        moa.ui.exitError("No stdout found")
+    else:
+        print out
+
+def getErr(data):
+    err = moa.actor.getLastStderr(data.job)
+    if err == None:
+        moa.ui.exitError("No stderr found")
+    else:
+        print err
 
 def version(data):
     """
     **moa version** - Print the moa version number
     """
-    print data['sysConf'].getVersion()
+    print data.sysConf.__class__.__name__
+    print data.sysConf.getVersion()
 
 def status(data):
     """
@@ -101,10 +129,21 @@ def rawParameters(data):
     Usage::
 
         moa raw_parameters
-
+        
     print a list of all defined or known parameters
     """
     job = data['job']
     if job.template.name == 'nojob':
         return
     print " ".join(job.conf.keys())
+
+
+TESTSCRIPT = """
+moa new adhoc -t 'something'
+moa set mode=simple
+moa set process='echo "ERR" >&2; echo "OUT"'
+moa run
+moa out | grep OUT
+moa err | grep ERR
+moa version
+"""

@@ -82,26 +82,30 @@ def testTemplates(options, args=[]):
             continue        
 
         job = moa.job.newTestJob(tname)
-        if job.hasCommand('unittest'):
-            l.info('testing template %s' % tname)
-            job.actor.setOut('pipe')
-            job.actor.setErr('pipe')
-            rc = job.execute('unittest', verbose = options.verbose)
-            if rc != 0:
-                l.critical("error testing template %s (rc %d)" % (tname, rc))
-                if job.actor.out.strip():
-                    l.critical("Stdout\n" + job.actor.out)
-                if job.actor.err.strip():
-                    l.critical("Stderr\n" + job.actor.err)
-                templateFailures += 1
-            elif args:
-                if job.actor.out.strip():
-                    l.warning("Stdout\n    " +  "\n    ".join(job.actor.out.split("\n")))
-                if job.actor.err.strip():
-                    l.warning("Stderr\n    " +  "\n    ".join(job.actor.err.split("\n")))
-            templateTests += 1
-        else:
+        if not job.hasCommand('unittest'):
             l.warning("job %s has no unittest defined" % tname)
+            continue
+
+        l.info('testing template %s' % tname)
+        rc = job.execute('unittest', verbose = options.verbose)
+        if rc != 0:
+            l.critical("error testing template %s (rc %d)" % (tname, rc))
+            out = moa.actor.getLastStdout(job)
+            err = moa.actor.getLastStderr(job)
+            if out:
+                l.critical("Stdout\n" + out)
+            if err:
+                l.critical("Stderr\n" + err)
+            templateFailures += 1
+        elif args:
+            out = moa.actor.getLastStdout(job)
+            err = moa.actor.getLastStderr(job)
+            if out:
+                l.warning("Stdout\n    " +  "\n    ".join(out.split("\n")))
+            if err:
+                l.warning("Stderr\n    " +  "\n    ".join(err.split("\n")))
+        templateTests += 1
+                    
             
     
 def testPlugins(args=[]):
@@ -135,8 +139,8 @@ def testPlugins(args=[]):
             if out: l.critical("Stdout:\n" + out)
             if err: l.critical("Stderr:\n" + err)
             pluginFailures += 1
-        else: 
-            if out: l.debug("Stdout:\n" + out)
+        elif args:
+            if out: l.info("Stdout:\n" + out)
             if err: l.info("Stderr:\n" + err)
            
         l.info("Success testing %s (%d lines)" % (

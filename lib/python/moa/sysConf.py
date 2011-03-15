@@ -49,7 +49,7 @@ class SysConf(Yaco.Yaco):
         l.debug("Loading system config: %s" % USERCONFIGFILE)
         if os.path.exists(USERCONFIGFILE):
             self.load(USERCONFIGFILE)
-
+              
     def getVersion(self):
         """
         Return the version number of this Moa instance
@@ -59,13 +59,14 @@ class SysConf(Yaco.Yaco):
     
     def getPlugins(self):
         
-        rv = set(sysConf.get('plugins', []))
+        rv = set(self.get('plugins', []))
         
-        for p in sysConf.get('plugins_extra', []):
+        for p in self.get('plugins_extra', []):
             rv.add(p)
         return list(rv)
 
 def getPlugins():
     return sysConf.getPlugins()
 
-sysConf = SysConf()
+if sysConf == None:
+    sysConf = SysConf()

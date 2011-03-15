@@ -54,7 +54,8 @@ class PluginHandler(UserDict.DictMixin):
         by any of the plugins - this seems cleaner than relying
         on using globals
         """
-        self.data.update(kwargs)
+        for k in kwargs:
+            self.data[k] = kwargs[k]
             
     def run(self, command):
         rv = {}

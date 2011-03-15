@@ -70,10 +70,10 @@ class Gnumake(moa.backend.BaseBackend):
         l.debug("makefile @ %s" % makefileLoc)
 
         l.debug("Calling make for command %s" % command)
-        actor = self.job.getActor()
 
-        #dump the self.job env into the actor environment (sys env)
-        actor.setEnv(self.job.env)
+        #put the job.env in the environment
+        for k in self.job.env.keys():
+            os.putenv(k, str(self.job.env[k]))
 
         #and the self.job configuration
         confDict = {}
@@ -91,6 +91,7 @@ class Gnumake(moa.backend.BaseBackend):
                 confDict[k] = v
             else:
                 confDict['%s_%s' % (moaId, k)] = str(v)
+                
         #and store some extra fileset information in the env
         for fsid in self.job.template.filesets.keys():
             fsconf = self.job.conf[fsid]
@@ -101,7 +102,9 @@ class Gnumake(moa.backend.BaseBackend):
                 confDict['%s_%s_glob' % (moaId, fsid)] = match.groups()[1]
                 confDict['%s_%s_extension' % (moaId, fsid)] = match.groups()[2]
 
-        actor.setEnv(confDict)
+        #dump the configuration in the environment
+        for k in confDict.keys():
+            os.putenv(k, str(confDict[k]))
 
         if command == 'run':
             command = self.job.template.name
@@ -109,7 +112,8 @@ class Gnumake(moa.backend.BaseBackend):
         cl = ['make', command] + self.job.makeArgs
 
         l.debug("executing %s" % " ".join(cl))
-        actor.run(cl)
+        return moa.actor.simpleRunner(self.job, cl)
+        
 
     def defineOptions(self, parser):
         g = parser.add_option_group('Gnu Make Backend')
@@ -126,11 +130,9 @@ class Gnumake(moa.backend.BaseBackend):
                   "information")
 
     def initialize(self):
-
         """
         Create a new GnuMake self.job in the `wd`
         """
-
         l.debug("Creating a new self.job from template '%s'" %
                 self.job.template.name)
         l.debug("- in wd %s" % self.job.wd)

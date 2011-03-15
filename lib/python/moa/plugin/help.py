@@ -47,11 +47,14 @@ JENV = None
 def defineCommands(data):
     data['commands']['help'] = {
         'desc' : 'Display help for a template',
-        'call' : templateHelp
+        'call' : templateHelp,
+        'needsJob' : True
         }
+    
     data['commands']['welcome'] = {
         'desc' : 'Display a welcome text',
-        'call' : welcome
+        'call' : welcome,
+        'private' : True
         }
 
 def templateHelp(data):

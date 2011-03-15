@@ -4,6 +4,7 @@ plugins:
 - newjob
 - logger
 - test
+- lock
 - adhoc
 - help
 - template

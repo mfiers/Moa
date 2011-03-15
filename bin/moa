@@ -32,12 +32,14 @@ import textwrap
 #moa specific libs
 import moa.job
 import moa.utils
-import moa.sysConf
 import moa.version
 import moa.project
 import moa.unittests
 import moa.plugin
 import moa.commands
+
+from moa.sysConf import sysConf
+
 
 ## Initialize the logger
 import moa.logger as l
@@ -47,7 +49,7 @@ if '-v' in sys.argv:
     moa.logger.setVerbose()
 
 ## Initialze the plugins
-plugins = moa.plugin.PluginHandler(moa.sysConf.getPlugins())
+plugins = moa.plugin.PluginHandler(sysConf.getPlugins())
 
 # Initialize the job object
 wd = os.getcwd()
@@ -57,9 +59,10 @@ job.plugins = plugins
     
 #use of cwd is deprecated
 plugins.register(cwd = wd)
-plugins.register(sysConf = moa.sysConf.sysConf)
+plugins.register(sysConf = sysConf)
 plugins.register(wd = wd)
-plugins.register(job=job)
+plugins.register(job = job)
+
 
 ### Determine project root (if there is one)
 #projectRoot = moa.project.findProjectRoot(job)
@@ -81,11 +84,17 @@ moaCommandNames.sort()
 for _c in moaCommandNames:
     if moaCommands[_c].get('private', False):
         continue
+    if moaCommands[_c].get('needsJob', True):
+        needsJob = '*'
+    else:
+        needsJob = ' '
+
     USAGE += "\n".join(
         textwrap.wrap(
-            '%s: %s' % (_c, moaCommands[_c]['desc']),
-            initial_indent=' - ',
-            subsequent_indent = '     ')) + "\n"
+            '%9s: %s' % (needsJob + _c, moaCommands[_c]['desc']),
+            initial_indent=' ',
+            subsequent_indent = '            ')) + "\n"
+USAGE += '*: needs to be executed in the context of Moa job'
 
 ## define & parse command line options  
 parser = optparse.OptionParser(usage=USAGE)
@@ -124,6 +133,7 @@ if __name__ == "__main__":
         commands = ['status']
            
     plugins.register(executeCommand=commands)
+    plugins.register(originalCommand=commands[0])
 
     ## Ask the job if it's is ok with
     ## these commands (might want to change order, or insert
@@ -151,15 +161,24 @@ if __name__ == "__main__":
         if command in moaCommands:
             if moaCommands[command].has_key('call'):
                 l.debug("using a callback for moa %s" % command)
-                plugins.runCallback(moaCommands[command])
-                rc = 0
+                try:
+                    plugins.runCallback(moaCommands[command])
+                    rc = 0
+                except:
+                    rc = -1
+                    plugins.register(rc = rc)
+                    plugins.run("post%s" % command.capitalize())
+                    plugins.run("postCommand")
+                    raise
         else:
             #No callback, defer this to the job
-            rc = job.execute(command)
-        
+            rc = job.execute(command,
+                             verbose = options.verbose,
+                             background=options.background)
+            
+        plugins.register(rc = rc)
         plugins.run("post%s" % command.capitalize())
-        plugins.run("postCommand")
-        
+        plugins.run("postCommand")        
+
     plugins.run("finish")
-    
     sys.exit(rc)

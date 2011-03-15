@@ -37,7 +37,8 @@ import moa.plugin
 def defineCommands(data):
     data['commands']['adhoc'] = { 
         'desc' : 'Quickly create an adhoc analysis',
-        'call' : createAdhoc
+        'call' : createAdhoc,
+        'needsJob' : False        
         }
 
 def defineOptions(data):
