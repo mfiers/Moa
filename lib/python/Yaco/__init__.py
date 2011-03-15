@@ -101,7 +101,7 @@ class Yaco(dict):
         """
         return str(self.get_data())
 
-    def __setitem__(self, key, value):
+    def __setattr__(self, key, value):
         """
         Set the value of a key
         
@@ -141,6 +141,8 @@ class Yaco(dict):
             #setting a dict
             if isinstance(old_value, Yaco):
                 old_value.update(value)
+            elif isinstance(value, Yaco):
+                super(Yaco, self).__setitem__(key, value)
             else:
                 super(Yaco, self).__setitem__(key, Yaco(value))
         elif isinstance(value, list):
@@ -154,13 +156,16 @@ class Yaco(dict):
         rv = super(Yaco, self).has_key(key)
         return rv
 
-    def __getitem__(self, key):
+    def __getattr__(self, key):
         """
         >>> v= Yaco()
         >>> v.a = 18       
         >>> assert(v.a == 18)
         >>> assert(isinstance(v.a, int))
         """
+        if key == 'getVersion':
+            print self
+            print self.__dict__
         try:
             return super(Yaco, self).__getitem__(key)
         except KeyError:
@@ -212,8 +217,8 @@ class Yaco(dict):
             else:
                 super(Yaco, self).__setitem__(key, value)
 
-    __getattr__ = __getitem__
-    __setattr__ = __setitem__
+    __getitem__ = __getattr__
+    __setitem__ = __setattr__
 
     def copy(self):
         ch = Yaco(self)
