@@ -43,25 +43,3 @@ def lock(data):
         with open(lockfile, 'w') as F:
             F.write(" ")
         
-def finish(data):
-
-    data.logger.end_time = datetime.today()
-    data.logger.run_time = data.logger.end_time - data.logger.start_time
-    runtime = data.logger.end_time - data.logger.start_time
-    logFile = os.path.join(data.job.confDir, 'log')
-    
-    with open(logFile, 'a') as F:
-        F.write("%s\n" % "\t".join([
-            str(data.rc),
-            ",".join(data.executeCommand),
-            data.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
-            data.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
-            str(runtime),
-            " ".join(sys.argv)
-            ]))
-        
-def showLog(data):
-    logFile = os.path.join(data.job.confDir, 'log')
-    with open(logFile) as F:
-        for line in F:
-            print line

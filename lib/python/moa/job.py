@@ -255,17 +255,8 @@ class Job(object):
         Load the template for this job, based on what configuration 
         can be found
         """
-        templateFile = os.path.join(self.confDir, 'template')
-        if os.path.exists(templateFile):
-            templateName = open(templateFile).read()
-            l.debug("Loading template %s" % templateName)
-            self.template = moa.template.Template(templateName)
-            l.debug("Loaded template %s" % self.template.name)
-            return
-        
-        #no template found - maybe nothing is installed here
-        self.template = moa.template.Template()
-        
+        self.template = moa.template.Template(self)
+                
     def loadBackend(self):
         """
         load the backend

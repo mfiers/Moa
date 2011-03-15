@@ -53,28 +53,43 @@ def niceRunTime(d):
     else:
         return "%d sec" % seconds
     
-def finish(data):
+def postCommand(data):
     data.logger.end_time = datetime.today()
     data.logger.run_time = data.logger.end_time - data.logger.start_time
     runtime = data.logger.end_time - data.logger.start_time
+    data.runtime = str(runtime)
     logFile = os.path.join(data.job.confDir, 'log')
 
+    commandInfo = {}
     if data.originalCommand in data.commands.keys():
         commandInfo = data.commands[data.originalCommand]
-        if commandInfo.get('log', False):
-            #do not log this command!
-            return
+    if commandInfo.get('log', True):
+        l.debug("Logging %s" % data.originalCommand)
+        with open(logFile, 'a') as F:
+            F.write("%s\n" % "\t".join([
+                str(data.rc),
+                ",".join(data.executeCommand),
+                data.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
+                data.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
+                str(data.runtime),
+                " ".join(sys.argv)
+                ]))
 
-    with open(logFile, 'a') as F:
-        F.write("%s\n" % "\t".join([
-            str(data.rc),
-            ",".join(data.executeCommand),
-            data.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
-            data.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
-            str(runtime),
-            " ".join(sys.argv)
-            ]))
+    #and - probably not the location to do this, but print something to screen
+    #as well
+    if data.options.background:
+        return
+    if data.originalCommand == 'run':
+        if data.rc == 0:
+            moa.ui.fprint("Moa {{green}}Success{{reset}} running %s  (%s)" % (
+                data.originalCommand,
+                niceRunTime(str(data.runtime))), f='jinja')
+        else:
+            moa.ui.fprint("Moa {{red}}Error{{reset}} running %s  (%s)" % (
+                data.originalCommand,
+                niceRunTime(str(data.runtime))), f='jinja')
         
+                      
 def showLog(data):
     args = data.args
     if len(args) > 1:
@@ -82,7 +97,7 @@ def showLog(data):
     else:
         noLines = 5
         
-    logFile = os.path.join(data.job.confDir, 'log')    
+    logFile = os.path.join(data.job.confDir, 'log')
     with open(logFile) as F:
         #read the last 2k - prevent reading the whole file
         try:

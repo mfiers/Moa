@@ -93,14 +93,8 @@ moa_postprocess:
 ## Template loader
 
 moa_load=$(eval include \
-	$(if $(wildcard ./.moa/$(1).mk),\
-		./.moa/$(1).mk,\
-		$(if $(wildcard ~/.config/moa/gnumake/$(1).mk),\
-			~/.config/moa/gnumake/$(1).mk,\
-			$(if $(wildcard $(MOABASE)/template2/$(1).mk),\
-				$(MOABASE)/template2/$(1).mk,\
-				$(error Cannot find a template called $(1))\
-			)\
-		)\
+	$(if $(wildcard ./.moa/template.d/$(1).mk),\
+		./.moa/template.d/$(1).mk,\
+		$(error Cannot find a template called $(1))\
 	)\
 )

@@ -37,15 +37,21 @@ def defineCommands(data):
         'desc' : 'Set, append, change or remove variables from the ' +
         'configuration of a Moa job.',
         'call' : configSet,
+        'needsJob' : True,
+        'log' : True
         }
     data['commands']['unset'] = {
         'desc' : 'Remove (the value of) a variable',
         'call' : configUnset,
+        'needsJob' : True,
+        'log' : True
         }
 
     data['commands']['show'] = {
         'desc' : 'Show the current configured variables',
         'call' : configShow,
+        'needsJob' : True,
+        'log' : False
         }
 
 

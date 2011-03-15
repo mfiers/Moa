@@ -37,30 +37,39 @@ def defineCommands(data):
     """
     data['commands']['status'] = {
         'desc' : 'Show the state of the current job',
+        'log' : False,
+        'needsJob' : True,
         'call' : status,
         }
     data['commands']['raw_commands'] = {
         'private' : True,
+        'log' : False,
+        'needsJob' : True,
         'call' : rawCommands,
         }
     data['commands']['raw_parameters'] = {
         'private' : True,
+        'log' : False,
+        'needsJob' : True,
         'call' : rawParameters,
         }
     data['commands']['version'] = {
         'desc' : 'Print the moa version',
         'call' : version,
+        'log' : False,
         'needsJob' : False
         }
     data['commands']['out'] = {
         'desc' : 'Returns stdout of the last moa run',
         'call' : getOut,
-        'needsJob' : True
+        'needsJob' : True,
+        'log' : False
         }
     data['commands']['err'] = {
         'desc' : 'Returns stderr of the last moa run',
         'call' : getErr,
-        'needsJob' : True
+        'needsJob' : True,
+        'log' : False
         }
 
 

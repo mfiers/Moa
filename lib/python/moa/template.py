@@ -26,8 +26,11 @@ retrieving template information.
 """
 
 import os
+import shutil
+import glob
 
 import Yaco
+import yaml
 
 import moa.utils
 import moa.logger as l
@@ -38,20 +41,49 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 class InvalidTemplate(Exception):
     """ Invalid Template """
     pass
+
+def getTemplate(job, name):
+    #try to find the related template file
+
+    l.info('Trying to find template %s' % name)
+
+    templateFile = os.path.join(
+        TEMPLATEDIR, '%s.moa' % name)
+    
+    if not os.path.exists(templateFile):
+        raise InvalidTemplate()
+
+    l.info("found template file: %s" % templateFile)
+
+    extraFileDir = os.path.join(job.confDir, 'template.d')
+    if not os.path.isdir(extraFileDir):
+        os.makedirs(extraFileDir)
+
+    shutil.copy(templateFile,
+                os.path.join(job.confDir, 'template'))
+                
+    #copy additional files
+    templateGlob = templateFile[:-3] + '*'
+    for fl in glob.glob(templateGlob):
+        if fl == templateFile: continue
+        shutil.copy(fl, extraFileDir)
     
 class Template(Yaco.Yaco):
     """
     Template extends Yaco
     """
     
-    def __init__(self, name = None):
+    def __init__(self, job):
         """
         Initialze the template object, which means:
         
         * Check if the template exists, if not raise an Exception
         * Load template info
-        """                
+        """
+
         super(Template, self).__init__(self)
+
+        self.job = job
 
         #set a few defaults to be used by each template
         self.parameters = {}
@@ -61,14 +93,17 @@ class Template(Yaco.Yaco):
             'optional' : True,
             'private' : True,
             }
+
+        #try to load the template!!
+        templateFile = os.path.join(self.job.confDir, 'template')
         
-        if name:
-            self._templateDataFile = os.path.join(
-                TEMPLATEDIR, '%s.moa' % name)
-            if not os.path.exists(self._templateDataFile):
-                raise InvalidTemplate()
-            l.debug("loading template from %s" % self._templateDataFile)
-            self.load(self._templateDataFile)
+        if os.path.exists(templateFile):
+            _tempTemplate = open(templateFile).read().strip()
+            if len(_tempTemplate) < 20 and \
+                   not "\n" in _tempTemplate:
+                #this must be an old style template name- try to load the template
+                getTemplate(job, _tempTemplate)
+            self.load(templateFile)
         else:
             self.name = 'nojob'
             self.backend = 'nojob'
