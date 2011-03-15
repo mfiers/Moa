@@ -25,10 +25,13 @@ moa.commands
 Handle Moa commands (i.e. anything that you can run as `moa COMMAND` on the
 commandline
 
+
+.. todo::
+    See if this module can go. It doesn't seem to be doing much. If it
+    stays - convert to Yaco.
+   
 """
 
-import os
-import sys
 import textwrap
 import UserDict
 import moa.logger as l
@@ -54,19 +57,7 @@ class Commands(UserDict.DictMixin):
         for k in self.commands.keys():
             if not self.commands[k].get('private', False):
                 rv.append(k)
-        return rv
-
-    def hasCallback(self, command):
-        if self[command].has_key('call') and \
-           type(self[command]['call']) == types.FunctionType:
-            return True
-        else:
-            return False
-        
-    def executeCallback(self, invocation):
-        c = self[i.command]
-        self[c]['call'](i)
-    
+        return rv   
     
     def generateUsageString(self, usageHeader):
         u = usageHeader

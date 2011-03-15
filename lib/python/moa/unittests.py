@@ -36,9 +36,10 @@ from moa.logger import setSilent, setInfo, setVerbose
 #import moa.lock
 import moa.utils
 import moa.job
-import moa.sysConf
 import moa.plugin
-#import moa.project
+import moa.ui
+import moa.sysConf
+import moa.jobConf
 import moa.template
 
 MOABASE = moa.utils.getMoaBase()
@@ -163,6 +164,9 @@ def run(options, args):
         testModule(moa.utils)
         testModule(moa.template)
         testModule(moa.job)
+        testModule(moa.ui)
+        testModule(moa.sysConf)
+        testModule(moa.jobConf)
         
         if options.verbose: setVerbose()
         else: setInfo()
@@ -205,7 +209,7 @@ def run(options, args):
         l.info("Finished running unittests for %s" % args[0])
         l.info("Ran %d test, %d failed" % (tests, failures))
     else:
-        l.error("sorry - no clue what you might have meant")
+        l.error("sorry - cannot parse the command line")
 
         
     

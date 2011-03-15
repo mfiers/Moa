@@ -131,7 +131,8 @@ if __name__ == "__main__":
         newargs = args[1:]
     else:
         commands = ['status']
-           
+
+    originalCommand = commands[0]
     plugins.register(executeCommand=commands)
     plugins.register(originalCommand=commands[0])
 
@@ -156,7 +157,7 @@ if __name__ == "__main__":
 
     for command in commands:
         plugins.run("preCommand")
-        plugins.run("pre%s" % command.capitalize())
+        plugins.run("pre%s" % originalCommand.capitalize())
 
         if command in moaCommands:
             if moaCommands[command].has_key('call'):
@@ -177,7 +178,7 @@ if __name__ == "__main__":
                              background=options.background)
             
         plugins.register(rc = rc)
-        plugins.run("post%s" % command.capitalize())
+        plugins.run("post%s" % originalCommand.capitalize())
         plugins.run("postCommand")        
 
     plugins.run("finish")

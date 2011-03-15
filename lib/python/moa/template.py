@@ -79,6 +79,9 @@ def initTemplate(target, name):
 class Template(Yaco.Yaco):
     """
     Template extends Yaco
+
+    
+    
     """
     
     def __init__(self, templateFile):

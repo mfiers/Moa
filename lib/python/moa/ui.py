@@ -131,7 +131,6 @@ def renumber(path, fr, to):
 
     >>> import tempfile
     >>> emptyDir = tempfile.mkdtemp()
-    >>> removeFiles(emptyDir, recursive=True)
     >>> fromDir = os.path.join(emptyDir, '10.test')
     >>> problemDir = os.path.join(emptyDir, '20.problem')
     >>> toDir = os.path.join(emptyDir, '20.test')
