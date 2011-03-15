@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import os
+import yaml
+import moa.utils
+import moa.template
+
+from jinja2 import Template as jTemplate
+
+tPluginFile = os.path.join(
+    moa.utils.getMoaBase(), 'lib', 'jinja2', 'plugin.rst.jinja2')
+tIndexFile = os.path.join(
+    moa.utils.getMoaBase(), 'lib', 'jinja2', 'plugin.index.rst.jinja2')
+
+tPlugin = jTemplate(open(tPluginFile).read())
+tIndex = jTemplate(open(tIndexFile).read())
+
+os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'api', 'plugin'))
+
+all_plugs = []
+for plugin in os.listdir( os.path.join(
+    moa.utils.getMoaBase(), 'lib', 'python', 'moa', 'plugin')):
+
+    if not plugin[-3:] == '.py': continue
+    if plugin == '__init__.py': continue
+    name = plugin.replace('.py', '')
+    print 'Found plugin: ' + name
+    all_plugs.append(name)
+    with open('%s.rst' % name, 'w') as F:
+        F.write(tPlugin.render({'name' : name}))
+
+all_plugs.sort()
+with open("index.rst", 'w') as F:
+    F.write(tIndex.render({'plugins' : all_plugs}))
