@@ -48,7 +48,7 @@ def niceRunTime(d):
     if hours > 0:
         return "%d hrs" % hours
     elif minutes > 0:
-        return "%d min" % int(float(seconds) / 60)
+        return "%d min" % minutes
     else:
         return "%d sec" % seconds
     
@@ -58,7 +58,8 @@ def postCommand(data):
     runtime = data.logger.end_time - data.logger.start_time
     data.runtime = str(runtime)
     logFile = os.path.join(data.job.confDir, 'log')
-
+    if not os.path.exists(data.job.confDir):
+        return
     commandInfo = {}
     if data.originalCommand in data.commands.keys():
         commandInfo = data.commands[data.originalCommand]
