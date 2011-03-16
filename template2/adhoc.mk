@@ -52,7 +52,7 @@ ifeq ($(adhoc_mode),seq)
 
 .NOTPARALLEL: adhoc
 
-adhoc: $(adhoc_touch_files)
+adhoc:  adhoc_prepare $(adhoc_touch_files)
 touch/%: t=$(shell echo '$*' | sed -e '$(adhoc_name_sed)')
 touch/%: $(adhoc_input_dir)/%
 	$(call echo,considering $< -- $t ($b) )
@@ -67,7 +67,7 @@ endif
 ## adhoc mode: par
 ifeq ($(adhoc_mode),par)
 
-adhoc:  $(adhoc_touch_files)
+adhoc:  adhoc_prepare $(adhoc_touch_files)
 
 touch/%: t=$(shell echo '$*' | sed -e '$(adhoc_name_sed)')
 touch/%: $(adhoc_input_dir)/%
@@ -83,7 +83,7 @@ endif
 ## adhoc mode: all
 ifeq ($(adhoc_mode),all)
 
-adhoc:   adhoc_all
+adhoc:  adhoc_prepare adhoc_all
 
 adhoc_all: $(adhoc_input_files)
 	$(call echo,considering $(words $<) files)
