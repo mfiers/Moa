@@ -10,7 +10,8 @@ $(document).ready(function()
 	//console.log($("table:last > tbody > tr > td:last").detach());
     //And insert it again as a proper thead
     $("table:last").prepend($('<thead></thead>').append(fr));
-    //and now pick up the complete table and dump it in the correct div
+
+    //and now pick up the complete table and put it in the correct div
     $("#fileBrowser").prepend($("table:last").css('width', '95%').detach());
 
     //add a few triggers 
@@ -26,7 +27,7 @@ $(document).ready(function()
     document.onclick = jsddm_close;    
 
     // Turn the file table into a data table
-    $("table:first").dataTable(
+    $("table:last").dataTable(
         {
 		    "sPaginationType": "full_numbers",
             "iDisplayLength": 20,
@@ -34,9 +35,10 @@ $(document).ready(function()
 	    });
 
     // initialize tabs
-    $("#tabs").tabs({
-			cookie : { expires : 3 } 
-		});
+    $("#tabs").tabs();
+	//#    $("#tabs").tabs({
+	//			cookie : { expires : 3 } 
+	//		});
     $(".moaTemplate")
         .click(
             function() { 
