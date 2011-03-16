@@ -7,9 +7,7 @@
 """
 
 import os
-import re
 import sys
-from datetime import datetime
 
 import moa.ui
 import moa.job
@@ -36,11 +34,13 @@ def preRun(data):
 def unlock(data):
     lockfile = os.path.join(data.job.confDir, 'lock')
     if os.path.exists(lockfile):
+        l.debug("unlocking job in %s" % data.job.wd)
         os.remove(lockfile)
 
 def lock(data):
     lockfile = os.path.join(data.job.confDir, 'lock')
     if not os.path.exists(lockfile):
+        l.debug("locking job in %s" % data.job.wd)
         with open(lockfile, 'w') as F:
             F.write(" ")
         

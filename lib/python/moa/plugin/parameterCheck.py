@@ -7,8 +7,6 @@ import os
 import sys
 import moa.ui
 
-import moa.logger as l
-
 def defineCommands(data):
     """
     Define the parameters test commands

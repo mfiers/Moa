@@ -24,11 +24,7 @@ Allow execution of a bash oneline before & after job completion
 """
 
 import os
-
-import moa.ui
-import moa.utils
 import moa.logger as l
-import moa.template
 import jinja2
 
 def prepare(data):
@@ -70,6 +66,7 @@ def preRun(data):
     job = data['job']
     precommand = str(job.conf['precommand'])
     if precommand:
+        l.debug("Executing precommand %s" % precommand)
         executeExtraCommand(precommand, job)
 
 def postRun(data):
@@ -79,4 +76,5 @@ def postRun(data):
     job = data['job']
     postcommand = str(job.conf['postcommand'])
     if postcommand:
+        l.debug("Executing postcommand %s" % postcommand)
         executeExtraCommand(postcommand, job)

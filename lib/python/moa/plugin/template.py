@@ -21,10 +21,10 @@
 """
 import time
 import optparse
+import textwrap
 
 import moa.ui
 import moa.utils
-import moa.logger as l
 import moa.template
 
 def defineCommands(data):
@@ -56,8 +56,6 @@ def defineCommands(data):
         }
     
 def defineOptions(data):
-    parser = data['parser']
-    
     parserN = optparse.OptionGroup(data['parser'], "moa list")
     parserN.add_option("-l", "--long", dest="listlong", action='store_true',
                        help="Show a description for moa list")
@@ -92,7 +90,6 @@ def templateSet(data):
     This only works for top level template parameters
     """
     template = _getTemplateFromData(data)
-    args = data['args']
     for i, a in enumerate(data['args']):
         print i,a
         if i == 0 and not '=' in a: continue
@@ -119,11 +116,12 @@ def listTemplates(data):
     options = data['options']
     if options.listlong:
         for job, info in moa.template.listAllLong():
-            for line in textwrap.wrap(
-                '%%(bold)s%s%%(reset)s:%%(blue)s %s%%(reset)s' % (job, info),
-                initial_indent=' - ',
-                subsequent_indent = '     '):
-                moa.ui.fprint(line)
+            txt = moa.ui.fformat(
+                '{{bold}}%s{{reset}}:{{blue}} %s{{reset}}' % (job, info),
+                f='jinja')
+            for line in textwrap.wrap(txt, initial_indent=' - ', width=80,
+                                      subsequent_indent = '   '):
+                print line
     else:
         for tFile, tName  in moa.template.listAll():
             print tName

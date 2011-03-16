@@ -23,7 +23,6 @@
 
 import os
 import sys
-import optparse
 
 import moa.logger as l
 
@@ -73,7 +72,6 @@ exit -1
 }
 
 """
-
 
 failures = 0
 tests = 0

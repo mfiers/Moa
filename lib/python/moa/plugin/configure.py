@@ -23,8 +23,6 @@
 Control job configuration
 """
 
-import optparse
-
 import moa.ui
 import moa.utils
 import moa.logger as l
@@ -138,8 +136,6 @@ def configSet(data):
     """
     job = data['job']
     args = data['newargs']
-
-    newArgs = []
 
     #see if we need to query the user for input somehwere
     for a in args:

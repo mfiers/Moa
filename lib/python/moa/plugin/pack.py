@@ -28,6 +28,8 @@ import sys
 import tarfile
 import optparse
 
+import moa.logger as l
+
 def defineCommands(data):
     data['commands']['pack'] = { 
         'desc' : 'pack a job or pipeline, or manage packs',

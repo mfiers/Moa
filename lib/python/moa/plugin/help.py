@@ -24,10 +24,7 @@
 
 import os
 import sys
-import time
-import shutil
 import pydoc
-import optparse
 import textwrap
 import subprocess as sp
 
@@ -36,7 +33,6 @@ import jinja2
 import moa.job
 import moa.utils
 import moa.template
-import moa.logger as l
 import moa.plugin
 
 MOABASE = moa.utils.getMoaBase()
@@ -86,7 +82,6 @@ def templateHelp(data):
     JENV = jinja2.Environment(loader=jinja2.FileSystemLoader(
         os.path.join(MOABASE, 'lib', 'jinja2')))
 
-    moaId = template.moa_id
     jinjaTemplate = JENV.get_template('template.help.jinja2')
     pager(jinjaTemplate, template)
 

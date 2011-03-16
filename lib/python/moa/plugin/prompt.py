@@ -21,7 +21,6 @@
 **prompt** - Moa BASH prompt enhancer
 -------------------------------------
 """
-import os
 
 import signal
 
@@ -52,14 +51,12 @@ def timeOutHandler(signum, frame):
 def prompt(data):
     job = data['job']
     template = job.template.name
-    moacol  = '{{yellow}}'
-    
+
     #set a signal to prevent this routine from running for more 
     # than 0.5 seconds
     signal.signal(signal.SIGALRM, timeOutHandler)
     signal.setitimer(signal.ITIMER_REAL, 0.5)
     
-    prompt_snippet = ''    
     #see if the parameter check is available & loaded
     rv = {}
     try:

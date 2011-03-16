@@ -23,12 +23,9 @@
 Print info on Moa jobs and Moa
 """
 
-import optparse
-
 import moa.ui
 import moa.utils
 import moa.actor
-import moa.logger as l
 import moa.template
 
 def defineCommands(data):

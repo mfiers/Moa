@@ -27,7 +27,6 @@ import re
 import sys
 import glob
 import shutil
-import optparse
 
 import moa.logger as l
 import moa.ui
@@ -112,8 +111,6 @@ def moaresume(data):
 
 def moamv(data):
     
-    wd = data['cwd']
-    options = data['options']
     args = data['newargs']
 
     fr = args[0]
@@ -147,8 +144,6 @@ def moacp(data):
 
     TODO: adapt file & dir links
     """
-    wd = data['cwd']
-    options = data['options']
     args = data['newargs']
 
     if len(args) > 1: dirTo = args[1]

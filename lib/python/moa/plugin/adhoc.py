@@ -28,7 +28,6 @@ import os
 import re
 import sys
 import optparse
-import subprocess
 
 import moa.job
 import moa.logger as l
@@ -164,7 +163,6 @@ def createAdhoc(data):
                 ouD, ouG, ouE = outGlob.groups()
                 if not ouD: ouD = ""
                 if not ouE: ouE = ""
-                ogg = outGlob.groups()
 
                 ouG1, ouG2 = ouG.split('*')
                 sed = r"s^\(.*\)%s^%s%s\1%s%s^g" % (
@@ -203,9 +201,8 @@ def createAdhoc(data):
 
     for pk, pv in params:
         l.debug('setting parameters %s to %s' % (pk, pv))
-
     
-    job = moa.job.newJob(wd, template='adhoc',
+    moa.job.newJob(wd, template='adhoc',
                          title = options.title,
                          parameters=params)
 

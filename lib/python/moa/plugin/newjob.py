@@ -22,7 +22,6 @@
 """
 
 import os
-import sys
 
 import optparse
 import moa.job
@@ -40,8 +39,6 @@ def defineCommands(data):
     
 
 def defineOptions(data):
-    parser = data['parser']
-
     try:
         parserN = optparse.OptionGroup(data['parser'], "moa new")
         data['parser'].set_defaults(title="")

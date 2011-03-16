@@ -22,9 +22,10 @@
 
 """
 import os
-import optparse
+import sys
 import git 
 import time
+import optparse
 
 import moa.logger as l
 import moa.plugin.newjob
@@ -73,8 +74,6 @@ def prepare(data):
     if not data.has_key('projectRoot'):
         return
 
-    wd = data['cwd']
-
     projectRoot = data['projectRoot']
     l.debug("seeing if %s is a git repos" % projectRoot)
     repo = git.Repo(projectRoot)
@@ -90,7 +89,6 @@ def postSet(data):
     """
     Execute just after setting a parameter
     """
-    wd = data['cwd']
     global GITROOT
     global GITREPO
     #try to commit this project
@@ -155,7 +153,6 @@ def gitlog(data):
         #if str(c) in tags.keys()
         t = time.strftime("%d %b %Y %H:%M", time.localtime(c.authored_date))
 
-        tag = None
         if c in tags.keys():
             print " tag| %s" % tags[c]
         

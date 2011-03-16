@@ -4,8 +4,6 @@ Handle Moa commands (i.e. anything that you can run as `moa COMMAND` on the
 commandline
 """
 
-import os
-import sys
 import UserDict
 import moa.logger as l
 

@@ -68,8 +68,13 @@ FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
 def exitError(message):
     fprint("%%(red)s%%(bold)sError:%%(reset)s %s" % message)
     sys.exit(-1)
+
+def fprint(message, **kwargs):
+    sys.stdout.write(fformat(message, **kwargs))
     
-def fprint(message, f='text', newline = True, ansi = None):
+def fformat(message, f='text', newline = True, ansi = None):
+    if f == 'text':
+        l.critical("deprecated use of text formatter")
     sysConf = moa.sysConf.sysConf
     if ansi == True:
         codes = FORMAT_CODES_ANSI
@@ -80,15 +85,18 @@ def fprint(message, f='text', newline = True, ansi = None):
             codes = FORMAT_CODES_ANSI
         else:
             codes = FORMAT_CODES_NOANSI
-        
+
+    rt = ""
+
     if f == 'text':
-        sys.stdout.write(message % codes)
+        rt += message % codes
     elif f == 'jinja':
         template = jinja2.Template(message)
-        #sys.stdout.write(message)
-        sys.stdout.write(template.render(**codes))
+        rt += template.render(**codes)
     if newline:
-        sys.stdout.write("\n")
+        rt += "\n"
+        
+    return rt
 
 
 ################################################################################

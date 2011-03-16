@@ -24,11 +24,7 @@ Define sets of files for Moa
 
 """
 
-import re
 import os
-import sys
-import readline
-import glob
 
 import fist
 
@@ -75,7 +71,6 @@ def showFiles(data):
     
 def prepare(data):
     job = data['job']
-    moaId = job.template.name
 
     if not job.template.has_key('filesets'):
         return
@@ -133,8 +128,6 @@ def preparefilesets(data):
     prepare all filesets 
     """
     job = data['job']
-    moaId = job.template.name
-
     job.data.filesets = {}
 
     if not job.template.has_key('filesets'):
