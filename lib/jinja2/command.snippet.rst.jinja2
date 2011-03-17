@@ -1,0 +1,27 @@
+moa **{{ name }}**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+{% if private %}
+**This is a private command - do not use, unless you know what you're doing**
+{% endif %}
+{{ desc }}
+
+{% if usage %}
+Usage::
+  
+  {{usage }}
+{% endif %}
+
+{% if longdesc %}
+**Description:**
+
+{{ longdesc }}
+{% endif %}
+
+{% if log %}
+*Usage of this command will be logged*
+{% else %}
+*Usage of this command will **NOT** be logged*
+{% endif %}
+
+
+

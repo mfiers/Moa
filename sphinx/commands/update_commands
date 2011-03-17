@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+
+import os
+
+import Yaco
+
+import moa.utils
+import moa.logger as l
+
+from jinja2 import Template as jTemplate
+
+#initialize jinja template
+templateFile = os.path.join(
+    moa.utils.getMoaBase(), 'lib', 'jinja2', 'command.snippet.rst.jinja2')
+template = jTemplate(open(templateFile).read())
+
+MOABASE = moa.utils.getMoaBase()
+PLUGINDIR = os.path.join(MOABASE, 'lib', 'python', 'moa', 'plugin')
+
+F = open('index.rst', 'w')
+G = open('private.rst', 'w')
+
+F.write("""
+Command reference
+=================
+
+""")
+
+G.write("""
+Command reference (+private)
+============================
+
+Includes private commands - private commands are for internal use
+only.
+
+""")
+
+allCommands = {}
+
+for plugin in os.listdir(PLUGINDIR):
+    if plugin[-3:] != '.py': continue
+    if plugin[0] in ['.', '#', '_']: continue
+    
+    modname = 'moa.plugin.%s' % (plugin.replace('.py', ''))
+    l.info("looking at module %s" % modname)
+    mod =  __import__( modname, globals(),
+                       locals(), [modname], -1)
+    data = Yaco.Yaco()
+    data.commands = {}
+    
+    if not getattr(mod, 'defineCommands', False):
+        continue
+
+    #F.write(".. automodule:: %s\n" % modname)
+    mod.defineCommands(data)
+
+    if len(data.commands) == 0: continue
+
+    for command in data.commands:
+        fi = data.commands[command]
+        l.info("Command %s" %  command)
+        func =data.commands[command].call
+
+        #extract a longer description from the function docs
+        longdesc = ''
+        ld = []
+        if func.func_doc:
+            ld = func.func_doc.split("\n")
+            while ld and not ld[0].strip():
+                ld.pop(0)
+            if ld:
+                ws = min([len(x) - len(x.lstrip()) for x in ld if x.strip()])
+                ld = [x[ws:] for x in ld]
+                longdesc = "\n".join(ld)
+            
+        td = {
+            'name' : command,
+            'desc' : fi['desc'],
+            'needsJob' : fi.get('needsJob', True),
+            'log' : fi.get('log', True),
+            'usage' : fi.get('usage', ""),
+            'longdesc' : longdesc
+              }
+        allCommands[command] = td
+        
+allComkeys = allCommands.keys()
+allComkeys.sort()
+print allComkeys
+for k in allComkeys:
+    dt = allCommands[k]
+    if dt.private:
+        G.write(template.render(dt))
+    else:
+        F.write(template.render(dt))
+        G.write(template.render(dt))
+
+F.close()
+G.close()
+    #F.write("   :members: %s\n" % ",".join(commands))
+    #F.write("   :noindex: %s\n" % ",".join(commands))
+    #F.write("\n")
