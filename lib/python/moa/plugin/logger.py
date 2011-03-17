@@ -8,7 +8,6 @@
 """
 **logger** - Log Moa activity
 -----------------------------
-
 """
 
 import os
@@ -97,6 +96,18 @@ def postCommand(data):
         
                       
 def showLog(data):
+    """
+    **moa log** - show a log of the most recent moa calls
+
+    Usage::
+
+        moa log [LINES]
+
+    Shows a log of moa commands executed. Only commands with an impact
+    on the pipeline are logged, such as `moa run` & `moa set`. The
+    number of log entries to display can be controlled with the
+    optional LINES parameter.    
+    """
     args = data.args
     if len(args) > 1:
         noLines = int(args[1])

@@ -8,9 +8,6 @@
 """
 **fileset** - define sets of in&output files
 --------------------------------------------
-
-Define sets of files for Moa
-
 """
 
 import os
@@ -34,9 +31,15 @@ def defineCommands(data):
     
 def showFiles(data):
     """
-    files
+    **moa files** - Display discovered & inferred files for this job
+
+    Usage::
+
+       moa files
+
+    Display a list of all files discovered (for input & prerequisite
+    type filesets) and inferred from these for map type filesets.
     
-    Show an overview of the files found for this job
     """
     job = data['job']
     filesets = job.template.filesets.keys()

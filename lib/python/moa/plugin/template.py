@@ -6,7 +6,7 @@
 # Licensed under the GPL license (see 'COPYING')
 # 
 """
-**template** - get information on templates
+**template** - information on templates
 -------------------------------------------
 
 """

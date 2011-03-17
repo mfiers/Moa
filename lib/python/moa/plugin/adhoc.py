@@ -6,10 +6,8 @@
 # Licensed under the GPL license (see 'COPYING')
 # 
 """
-**adhoc** - create Jobs on the fly
-----------------------------------
-
-Generate jobs on the fly with one or a few lines of bash code
+**adhoc** - create jobs from adhoc bash code
+--------------------------------------------
 """
 
 import os
@@ -25,7 +23,8 @@ def defineCommands(data):
     data['commands']['adhoc'] = { 
         'desc' : 'Quickly create an adhoc analysis',
         'call' : createAdhoc,
-        'needsJob' : False        
+        'needsJob' : False,
+        'usage' : 'moa adhoc -t "title" -- echo "do something"'        
         }
 
 def defineOptions(data):
@@ -57,15 +56,7 @@ def _sourceOrTarget(g):
 
 def createAdhoc(data):
     """
-     **moa adhoc** - Create an adhoc job
-
-    Usage::
-
-       moa adhoc -t 'job title'
-       moa adhoc -t 'job title' -f
-
-
-    Create an adhoc job
+    Creates an adhoc job.
     """
     wd = data['cwd']
     options = data['options']

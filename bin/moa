@@ -34,7 +34,6 @@ import moa.job
 import moa.utils
 import moa.version
 import moa.project
-import moa.unittests
 import moa.plugin
 import moa.commands
 

@@ -130,8 +130,11 @@ def moacp(data):
       0 create a new directory
       1 copy the configuration
 
-    TODO: adapt file & dir links
+    ::TODO..
+      Warn for changing file & dir links
+            
     """
+    
     args = data['newargs']
 
     if len(args) > 1: dirTo = args[1]
