@@ -87,16 +87,25 @@ def testTemplates(options, args=[]):
             continue
 
         template = moa.template.Template(tfile)
-        if not template.backend == 'ruff':
-            continue
 
         job = moa.job.newTestJob(tname)
-        if not job.hasCommand('unittest'):
-            l.warning("job %s has no unittest defined" % tname)
-            continue
-
+        job.options = options
+        job.prepare()
         l.info('testing template %s' % tname)
-        rc = job.execute('unittest', verbose = options.verbose)
+
+        if template.backend == 'gnumake':
+            rc = job.execute('%s_unittest' % tname, 
+                             verbose = options.verbose)
+            err = moa.actor.getLastStderr(job)
+            if 'No rule to make target' in err:
+                l.warning("job %s has no unittest defined" % tname)
+                continue
+        else:                        
+            if not job.hasCommand('unittest'):
+                l.warning("job %s has no unittest defined" % tname)
+                continue
+            rc = job.execute('unittest', verbose = options.verbose)
+            
         if rc != 0:
             l.critical("error testing template %s (rc %d)" % (tname, rc))
             out = moa.actor.getLastStdout(job)
@@ -114,7 +123,7 @@ def testTemplates(options, args=[]):
             if err:
                 l.warning("Stderr\n    " +  "\n    ".join(err.split("\n")))
         templateTests += 1
-                    
+
             
     
 def testPlugins(args=[]):
@@ -199,15 +208,18 @@ def _run_test(options, args):
         l.info("Ran %d plugin test, %d failed" % (
                 pluginTests, pluginFailures))
         l.info("Finished running plugin tests")
+
     elif args[0] == 'templates' or args[0] == 'template':
         l.info("Start running template tests")
         testTemplates(options, args[1:])        
         l.info("Ran %d template test, %d failed" % (
                 templateTests, templateFailures))
         l.info("Finished running template tests")
+
     elif args[0] == 'plugin':
         l.info("Start running plugin tests")
         testPlugins(args[1:])
+
     elif args[0][:4] == 'moa.':            
         l.info("testing moa python module %s" % args[0])
         setSilent()

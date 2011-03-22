@@ -100,7 +100,7 @@ class Job(object):
         self.templateFile = os.path.join(self.confDir, 'template')
         self.backend = None
         self.args = []
-        
+        self.env = {}
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
         

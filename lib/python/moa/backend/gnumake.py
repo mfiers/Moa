@@ -55,7 +55,10 @@ class Gnumake(moa.backend.BaseBackend):
         ## the Makefiles later threads need to be treated different from the
         ## other parameters. multi-threaded operation is only allowed in the
         ## second phase of execution.
-        self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
+        if self.job.options.threads:
+            self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
+        else:
+            self.job.env['MOA_THREADS'] = "1"
         self.job.env['MOA_TEMPLATE'] = "%s" % self.job.template.name
         self.job.env['moa_plugins'] = "%s" % " ".join(moa.sysConf.getPlugins())
 
