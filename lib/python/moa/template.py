@@ -96,9 +96,6 @@ def initTemplate(wd, name):
 class Template(Yaco.Yaco):
     """
     Template extends Yaco
-
-    
-    
     """
     
     def __init__(self, templateFile):
@@ -126,10 +123,10 @@ class Template(Yaco.Yaco):
         
         if os.path.exists(self.templateFile):
             _tempTemplate = open(self.templateFile).read().strip()
-            if len(_tempTemplate) < 20 and \
+            if len(_tempTemplate) < 50 and \
                    not "\n" in _tempTemplate:
                 #this must be an old style template name- try to load the template
-                initTemplate(os.path.dirname(templateFile),
+                initTemplate(os.path.dirname(os.path.dirname(templateFile)),
                              name = _tempTemplate)
                 
             self.load(self.templateFile)
