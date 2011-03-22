@@ -13,6 +13,7 @@ bwa sampe -a {{max_insert_size}}                        \
     {{ sai_forward_input }} {{ sai_reverse_input }}     \
     {{ fq_forward_input }} {{ fq_reverse_input }} | {{ snippets.sam2bam }} -o {{ output_bam }} -
 
+samtools sort {{ output_bam }} `basename {{ output_bam }} .bam`.sorted.bam
 
 #[[  ls -ltr read_ | awk '{ print $5 }' ]]
 #[[ ! -s potato.bfa ]] && echo 'is empty' || echo 'not empty'
