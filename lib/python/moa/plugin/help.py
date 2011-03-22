@@ -52,10 +52,6 @@ def templateHelp(data):
     else:
         template = job.template
 
-    for t in job.template.commands:
-        print t
-    sys.exit()
-    
     if template.name == 'nojob':
         return welcome(data)
 
