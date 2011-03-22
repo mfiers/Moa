@@ -169,11 +169,16 @@ def moacp(data):
     l.info("creating directory %s" % dirTo)
     
     #create the target '.moa' dir    
-    os.makedirs(dirToM)
+    #os.makedirs(dirToM)
         
     l.info("Copying from %s to %s" % (dirFrom, dirTo))
 
-    for f in os.listdir(dirFromM):
-        if f[-4:] == '.fof': continue
-        shutil.copyfile(os.path.join(dirFromM, f),
-                        os.path.join(dirToM, f))
+    def _ignore(src, names):        
+        if src[-5:] == '/.moa': 
+            ignore =  [x for x in names 
+                       if (x == 'out') or 
+                       (x[-4:] == '.fof')]
+            return ignore
+        return []
+
+    shutil.copytree(dirFromM, dirToM, ignore=_ignore)
