@@ -142,6 +142,7 @@ class Ruff(moa.backend.BaseBackend):
                 jobData = {}
                 jobData.update(self.job.conf)
                 jobData['snippets'] = self.snippets.get_data()
+                jobData['wd'] = self.job.wd
                 jobData.update(fsDict)
                 script = jt.render(jobData)
                 yield([inputs + prereqs], outputs, script, jobData)
@@ -172,9 +173,8 @@ class Ruff(moa.backend.BaseBackend):
             tf.write("\n" + jt.render(self.job.conf)+ "\n")
             tf.close()
             rc = moa.actor.simpleRunner(
-                self.job, ['bash', '-e', tf.name])
+                self.job.wd, ['bash', '-e', tf.name])
         return rc
-
 
 
 def executor(input, output, script, jobData):    
@@ -183,9 +183,9 @@ def executor(input, output, script, jobData):
                                       mode='w')
     tf.write(script)
     tf.close()
+
     cl = ['bash', '-e', tf.name]
-    l.debug("Executing %s" % " ".join(cl))
-    #dump the configuration in the env
+
     for k in jobData:
         v = jobData[k]
         if isinstance(v, list):
@@ -194,4 +194,7 @@ def executor(input, output, script, jobData):
             continue
         else:
             os.putenv(k, str(v))
-    rc = subprocess.call(cl)
+
+    rc = moa.actor.simpleRunner(jobData['wd'], cl)
+    l.debug("Executing %s" % " ".join(cl))
+
