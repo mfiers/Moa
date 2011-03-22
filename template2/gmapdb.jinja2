@@ -1,6 +1,6 @@
 ### run
 
-gmap_setup -S -d {{ name }} {{ input }}
+gmap_setup -d {{ name }} {{ input }}
 make -f Makefile.{{name }} coords
 make -f Makefile.{{name }} gmapdb
 touch {{ name }}
@@ -16,4 +16,3 @@ gmapdb_clean:
 	rm -f coords.$(gmapdb_name)
 	rm -f Makefile.$(gmapdb_name)
 	rm -f INSTALL*
-
