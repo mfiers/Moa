@@ -115,7 +115,7 @@ class Gnumake(moa.backend.BaseBackend):
         cl = ['make', command] + self.job.makeArgs
 
         l.debug("executing %s" % " ".join(cl))
-        return moa.actor.simpleRunner(self.job, cl)
+        return moa.actor.simpleRunner(self.job.wd, cl)
         
 
     def defineOptions(self, parser):
