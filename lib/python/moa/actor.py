@@ -42,7 +42,8 @@ def simpleRunner(wd, cl, silent=False):
         p.communicate()
         return p.returncode
 
-    #non silent - 
+    #non silent - split output to the output files &
+    #stdout/stderr
     p = subprocess.Popen(
         cl, cwd = wd,
         stdout=subprocess.PIPE,
