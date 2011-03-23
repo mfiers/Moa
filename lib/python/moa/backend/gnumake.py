@@ -38,8 +38,8 @@ class Gnumake(moa.backend.BaseBackend):
 
     def hasCommand(self, command):
         """
-        No way of finding out if this self.job exists (well, we might have a
-        way, but I'm to lazy to try to find out.
+        No way of finding out if this self.job exists (well, we might
+        have a way, but I'm to lazy to try to find out.
         """
         return True
 
@@ -50,17 +50,21 @@ class Gnumake(moa.backend.BaseBackend):
         #self.job.plugins.run("readFilesets")
         
         verbose = options.get('verbose', False)
+        silent = options.get('silent', False)
         
-        ## make sure the MOA_THREADS env var is set - this is used from inside
-        ## the Makefiles later threads need to be treated different from the
-        ## other parameters. multi-threaded operation is only allowed in the
-        ## second phase of execution.
+        ## make sure the MOA_THREADS env var is set - this is used
+        ## from inside the Makefiles later threads need to be treated
+        ## different from the other parameters. multi-threaded
+        ## operation is only allowed in the second phase of execution.
+
         if self.job.options.threads:
             self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
         else:
             self.job.env['MOA_THREADS'] = "1"
+            
         self.job.env['MOA_TEMPLATE'] = "%s" % self.job.template.name
-        self.job.env['moa_plugins'] = "%s" % " ".join(moa.sysConf.getPlugins())
+        self.job.env['moa_plugins'] = "%s" % " ".join(
+            moa.sysConf.getPlugins())
 
         #if moa is silent, make should be silent
         if not self.job.options.verbose:
@@ -98,12 +102,17 @@ class Gnumake(moa.backend.BaseBackend):
         #and store some extra fileset information in the env
         for fsid in self.job.template.filesets.keys():
             fsconf = self.job.conf[fsid]
-            refs = re.compile('(?P<path>.*/)?(?P<glob>[^/]*?)(?:\.(?P<ext>[^/\.]*))?$')
+            refs = re.compile(
+                '(?P<path>.*/)?(?P<glob>[^/]*?)'+
+                '(?:\.(?P<ext>[^/\.]*))?$')
             match = refs.match(fsconf)
             if match:                
-                confDict['%s_%s_dir' % (moaId, fsid)] = match.groups()[0]
-                confDict['%s_%s_glob' % (moaId, fsid)] = match.groups()[1]
-                confDict['%s_%s_extension' % (moaId, fsid)] = match.groups()[2]
+                confDict['%s_%s_dir' % (
+                    moaId, fsid)] = match.groups()[0]
+                confDict['%s_%s_glob' % (
+                    moaId, fsid)] = match.groups()[1]
+                confDict['%s_%s_extension' % (
+                    moaId, fsid)] = match.groups()[2]
 
         #dump the configuration in the environment
         for k in confDict.keys():
@@ -115,8 +124,8 @@ class Gnumake(moa.backend.BaseBackend):
         cl = ['make', command] + self.job.makeArgs
 
         l.debug("executing %s" % " ".join(cl))
+
         return moa.actor.simpleRunner(self.job.wd, cl)
-        
 
     def defineOptions(self, parser):
         g = parser.add_option_group('Gnu Make Backend')

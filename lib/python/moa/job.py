@@ -169,7 +169,7 @@ class Job(object):
             os.mkdir(self.confDir)
 
             
-    def execute(self, command, verbose=False, background=False):
+    def execute(self, command, verbose=False, silent=False):
         """
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
@@ -178,26 +178,17 @@ class Job(object):
         :type command: string
         :param verbose: output lots of data
         :type verbose: Boolean        
-        :param background: Run this job in the background? If `True`,
-           fork and have the parent return immediately. The child
-           finishes. If `False`, wait for the job to finish            
-        :type background: Boolean
+        :param silent: output nothing
+        :type silent: Boolean        
 
         """
         if not self.backend:
-            l.critical("No backend loaded - cannot execute %s" % command)
+            l.critical("No backend loaded - cannot execute %s" %
+                       command)
 
-        if background:
-            #Fork
-            child = os.fork()
-            if child != 0:
-                # This is the parent thread - return
-                return child
-            
-            l.debug("In the child thread - start executing - start run %s" % child)
-   
         l.debug("executing %s" % command)
-        return self.backend.execute(command, verbose = verbose, background = background)
+        return self.backend.execute(
+            command, verbose = verbose, silent=silent)
                     
     def prepare(self):
         """
@@ -209,16 +200,7 @@ class Job(object):
     def defineOptions(self, parser):
         """
         Set command line options
-        """
-        parser.add_option('-f', '--force', dest='force', action='store_true',
-                  help = 'Force an action, if applicable.')
-
-        parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true", help="verbose output")
-
-        parser.add_option("--bg", dest="background",
-                  action="store_true", help="Run moa in the background")
-        
+        """                
         if self.backend and getattr(self.backend, 'defineOptions', None):
             self.backend.defineOptions(parser)
 

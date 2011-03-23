@@ -13,12 +13,14 @@ moa.actor
 """
 
 import os
+import sys
+import fcntl
 import datetime
 import subprocess
 
 import moa.logger as l
 
-def simpleRunner(wd, cl):
+def simpleRunner(wd, cl, silent=False):
     """
     - put env in the environment
     - Execute the commandline (in cl)
@@ -30,12 +32,56 @@ def simpleRunner(wd, cl):
     outDir = os.path.join(wd, '.moa', 'out', stst)
     if not os.path.exists(outDir):
         os.makedirs(outDir)
-    STDOUT = open(os.path.join(outDir, 'stdout'), 'w')
-    STDERR = open(os.path.join(outDir, 'stderr'), 'w')
+    SOUT = open(os.path.join(outDir, 'stdout'), 'w')
+    SERR = open(os.path.join(outDir, 'stderr'), 'w')    
     l.debug("executing %s" % " ".join(cl))
-    sp = subprocess.Popen(cl, cwd = wd, stdout=STDOUT, stderr=STDERR)
-    sp.communicate()
-    return sp.returncode
+
+
+    if silent:
+        p = subprocess.Popen(cl, cwd = wd, stdout=SOUT, stderr=SERR)
+        p.communicate()
+        return p.returncode
+
+    #non silent - 
+    p = subprocess.Popen(
+        cl, cwd = wd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE)
+
+    #make the file handles non-blocking
+    fdout = p.stdout.fileno()
+    flout = fcntl.fcntl(fdout, fcntl.F_GETFL)
+    fcntl.fcntl(fdout, fcntl.F_SETFL, flout | os.O_NONBLOCK)
+
+    fderr = p.stderr.fileno()
+    flerr = fcntl.fcntl(fderr, fcntl.F_GETFL)
+    fcntl.fcntl(fderr, fcntl.F_SETFL, flerr | os.O_NONBLOCK)
+
+    #now start polling & output the data
+    while True:
+        if p.poll() != None: break
+        try:
+            o = p.stdout.read(1024)
+            sys.stdout.write(o)
+            SOUT.write(o)
+        except IOError:
+            pass
+        try:
+            e = p.stderr.read(1024)
+            sys.stderr.write(e)
+            SERR.write(e)
+        except IOError:
+            pass
+
+        sys.stdout.flush(); sys.stderr.flush()
+    #make sure that nothing is left
+    o = p.stdout.read(); e = p.stderr.read()
+    sys.stdout.write(o); sys.stderr.write(e)
+    SOUT.write(o); SERR.write(e)
+    sys.stdout.flush();     sys.stderr.flush()
+
+    #return returncode
+    return p.returncode
 
 def getRecentOutDir(job):
     """

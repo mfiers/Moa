@@ -88,7 +88,7 @@ class Ruff(moa.backend.BaseBackend):
         g.add_option("-B", dest="remake", action='store_true',
                      help="Reexecute all targets (corresponds to make -B) ")
         
-    def execute(self, command, verbose=False, background=False):
+    def execute(self, command, verbose=False, silent=False):
         """
         Execute a command
         """
