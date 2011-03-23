@@ -78,9 +78,13 @@ parser.add_option('-x', '--extraSequenceAttributes', dest='xattrs',
 parser.add_option('--interpret_htg', dest='interpret_htg',
     help = 'interpret the sequence as an HTG sequence', action="store_true")
 
+parser.add_option('--gff3mode', dest='gff3', help='gff 3 mode - do not ' + 
+                 'generate sequence records, but use the ##sequence-region' +
+                 'tag', action='store_true')
+
 (options, args) = parser.parse_args()
 if not options.source:
-    raise "Must define a source!"
+    raise Exception("Must define a source!")
 
 inputFile = args[0]
 
@@ -152,7 +156,10 @@ for name,seq in fastareader(inputFile):
         
     ls.append(atts)
     
-    print "\t".join([str(x) for x in ls])
+    if options.gff3:
+        print "##sequence-region %s %d %d" % (seqid, 1, len(seq))
+    else:
+        print "\t".join([str(x) for x in ls])
 
     if options.interpret_htg:
         contig_template = [seqid, "FastaToGff", "Contig", 0, 0, '.', '.', '.'] 

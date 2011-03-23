@@ -1,10 +1,10 @@
 .TH {{ moa_id }} 7 "moa {{ moa_id }}" "" "moa {{ moa_id }}"
-.SH NAME
-{{ moa_id }} - {{ title }}
+.SH NAME: {{ moa_id }}
+{{ title }}
 .SH DESCRIPTION 
 {{ description }}
 .SH COMMANDS
-.IP undefined/run
+.IP run
 {{ commands[run].get('help', 'Execute default action for this template') }}
 {% for command in commands.keys() -%}
 {% if command != 'run' -%}
@@ -45,11 +45,17 @@ Default value: "{{ par.default }}"
 {% endfor -%}
 {% endfor %}
 .SH SEE ALSO 
-.IP http://mfiers.github.com/Moa/ for a online manual
-.IP http://github.com/mfiers/Moa for the github page
+.IP Manual
+http://mfiers.github.com/Moa/
+.IP Github
+http://github.com/mfiers/Moa 
 .SH NOTE 
-This page is specific for the {{ moa_id }} template. To get more Moa
+This is a help page generated for {{ moa_id }} template. To get Moa
 specific help, please run:
+
     moa --help
 .SH AUTHOR(S)
-{{ author }}, {{ modification_date }}
+{{ author }}
+
+.SH LAST MODIFIED
+{{ modification_date }}

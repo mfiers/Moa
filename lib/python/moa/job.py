@@ -100,7 +100,7 @@ class Job(object):
         self.templateFile = os.path.join(self.confDir, 'template')
         self.backend = None
         self.args = []
-        
+        self.env = {}
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
         
@@ -222,6 +222,12 @@ class Job(object):
         if self.backend and getattr(self.backend, 'defineOptions', None):
             self.backend.defineOptions(parser)
 
+    def refreshTemplate(self):
+        """
+        Attempt to reload the template
+        """
+        moa.template.refresh(self.wd, default=self.template.name)
+        
     def setTemplate(self, name):
         """
         Set a new template for this job
@@ -229,7 +235,7 @@ class Job(object):
         self.checkConfDir()
         l.debug("Setting job template to %s" % name)
         #get the template
-        moa.template.initTemplate(self.confDir, name)
+        moa.template.initTemplate(self.wd, name)
         self.loadTemplate()
         
     def loadTemplate(self):

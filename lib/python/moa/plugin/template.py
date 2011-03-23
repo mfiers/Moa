@@ -40,6 +40,12 @@ def defineCommands(data):
         'needsJob' : False
         }
 
+    data['commands']['refresh'] = {
+        'desc' : 'Reload the template',
+        'call' : refresh,
+        'needsJob' : True
+        }
+
     data['commands']['template_set'] = {
         'desc' : 'Set a template parameters',
         'private': True,
@@ -52,6 +58,8 @@ def defineOptions(data):
                        help="Show a description for moa list")
     data['parser'].add_option_group(parserN)
 
+def refresh(data):
+    data.job.refreshTemplate()
 
 def _getTemplateFromData(data):
     """

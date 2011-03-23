@@ -77,7 +77,8 @@ def newJob(data):
 
     job.conf.save()
 
-    moa.ui.fprint("Created a Moa %%(green)s%%(bold)s%s%%(reset)s job" % template)
+    moa.ui.fprint("Created a Moa {{green}}{{bold}}%s{{reset}} job" % template,
+                  f='jinja')
     #moa.ui.fprint('With title "%%(bold)s%s%%(reset)s"' % job.conf.title)
 
 

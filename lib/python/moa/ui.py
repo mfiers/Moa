@@ -55,7 +55,7 @@ FORMAT_CODES_ANSI = {
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
  
 def exitError(message):
-    fprint("%%(red)s%%(bold)sError:%%(reset)s %s" % message)
+    fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
     sys.exit(-1)
 
 def fprint(message, **kwargs):
@@ -63,7 +63,7 @@ def fprint(message, **kwargs):
     
 def fformat(message, f='text', newline = True, ansi = None):
     if f == 'text':
-        l.critical("deprecated use of text formatter")
+        l.debug("deprecated use of text formatter")
     sysConf = moa.sysConf.sysConf
     if ansi == True:
         codes = FORMAT_CODES_ANSI

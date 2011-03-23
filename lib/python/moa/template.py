@@ -15,12 +15,15 @@ retrieving template information.
 """
 
 import os
-import shutil
 import glob
+import shutil
+import datetime
 
-import Yaco
 import yaml
 
+import Yaco
+
+import moa.ui
 import moa.utils
 import moa.logger as l
 
@@ -44,33 +47,55 @@ def getTemplateFile(name):
 
     return templateFile
     
-def initTemplate(target, name):
-    #try to find the related template file
+def refresh(wd, default=None):
+    """
+    Refresh the template - try to find out what the template is from 
+    {{wd}}/.moa/template.d/source. If that doesn't work, revert to the 
+    default template. If default is not specified - exit with an error
+    """
+    source = default
+    meta = Yaco.Yaco()
+    try:
+        meta.load(os.path.join(wd, '.moa', 'template.d', 'source'))
+        source = meta.source
+    except (IOError):
+        pass
 
+    if not source:
+        moa.ui.exitError("Cannot refresh this job")    
+        
+    initTemplate(wd, source)
+    
+def initTemplate(wd, name):
+
+    #try to find the related template file
     templateFile = getTemplateFile(name)
     
     l.debug('Trying to find template %s' % name)
     l.debug("found template file: %s" % templateFile)
 
-    extraFileDir = os.path.join(target, 'template.d')
+    extraFileDir = os.path.join(wd, '.moa', 'template.d')
+
     if not os.path.isdir(extraFileDir):
         os.makedirs(extraFileDir)
 
-    shutil.copy(templateFile,
-                os.path.join(target, 'template'))
+    shutil.copyfile(templateFile,
+                    os.path.join(wd, '.moa', 'template'))
                 
     #copy additional files
     templateGlob = templateFile[:-3] + '*'
     for fl in glob.glob(templateGlob):
         if fl == templateFile: continue
-        shutil.copy(fl, extraFileDir)
+        shutil.copyfile(fl,  os.path.join(extraFileDir, os.path.basename(fl)))
+        
+    meta = Yaco.Yaco()
+    meta.source = name
+    meta.loaded_on = datetime.datetime.now().isoformat()
+    meta.save(os.path.join(wd, '.moa', 'template.d', 'source'))
     
 class Template(Yaco.Yaco):
     """
     Template extends Yaco
-
-    
-    
     """
     
     def __init__(self, templateFile):
@@ -98,10 +123,10 @@ class Template(Yaco.Yaco):
         
         if os.path.exists(self.templateFile):
             _tempTemplate = open(self.templateFile).read().strip()
-            if len(_tempTemplate) < 20 and \
+            if len(_tempTemplate) < 50 and \
                    not "\n" in _tempTemplate:
                 #this must be an old style template name- try to load the template
-                initTemplate(os.path.dirname(templateFile),
+                initTemplate(os.path.dirname(os.path.dirname(templateFile)),
                              name = _tempTemplate)
                 
             self.load(self.templateFile)

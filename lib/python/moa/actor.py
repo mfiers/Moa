@@ -18,7 +18,7 @@ import subprocess
 
 import moa.logger as l
 
-def simpleRunner(job, cl):
+def simpleRunner(wd, cl):
     """
     - put env in the environment
     - Execute the commandline (in cl)
@@ -27,14 +27,13 @@ def simpleRunner(job, cl):
     """
     
     stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
-    outDir = os.path.join(job.confDir, 'out', stst)
+    outDir = os.path.join(wd, '.moa', 'out', stst)
     if not os.path.exists(outDir):
         os.makedirs(outDir)
     STDOUT = open(os.path.join(outDir, 'stdout'), 'w')
     STDERR = open(os.path.join(outDir, 'stderr'), 'w')
     l.debug("executing %s" % " ".join(cl))
-    sp = subprocess.Popen(cl, cwd = job.wd,
-                          stdout=STDOUT, stderr=STDERR)
+    sp = subprocess.Popen(cl, cwd = wd, stdout=STDOUT, stderr=STDERR)
     sp.communicate()
     return sp.returncode
 
