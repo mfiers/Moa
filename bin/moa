@@ -62,7 +62,6 @@ plugins.register(sysConf = sysConf)
 plugins.register(wd = wd)
 plugins.register(job = job)
 
-
 ### Determine project root (if there is one)
 #projectRoot = moa.project.findProjectRoot(job)
 #if projectRoot:
@@ -95,31 +94,47 @@ for _c in moaCommandNames:
             subsequent_indent = '            ')) + "\n"
 USAGE += '*: needs to be executed in the context of Moa job'
 
-## define & parse command line options  
-parser = optparse.OptionParser(usage=USAGE)
 
-## Aks the job & backend if they want to add to the options
-job.defineOptions(parser)
+def run():
 
-## See if the plugins have anything to add to the optparse instance:
-plugins.register(parser=parser)
-plugins.register(commands=moaCommands)
-plugins.run('defineOptions')
+    ## define & parse command line options  
+    parser = optparse.OptionParser(usage=USAGE)
 
-## Parse the options
-(options, args) = parser.parse_args()
+    parser.add_option(
+        '-f', '--force', dest='force', action='store_true',
+        help='Force an action, if applicable.')
 
-## make sure that the options are accessible to the plugins
-plugins.register(options = options, args = args)
-job.options = options
-job.args = args
+    parser.add_option(
+        "-v", "--verbose", dest="verbose", action="store_true",
+        help="Verbose output")
 
-## Proper setting of verbosity - after parsing of the command line
-if options.verbose:
-    moa.logger.setVerbose()
+    parser.add_option(
+        "-s", "--silent", dest="silent", action="store_true",
+        help="Be very silent")
 
-## Command dispatcher
-if __name__ == "__main__":
+    parser.add_option(
+        "--bg", dest="background", action="store_true",
+        help="Run moa in the background (implies -s)")
+
+    ## Aks the job & backend if they want to add to the options
+    job.defineOptions(parser)
+
+    ## See if the plugins have anything to add to the optparse instance:
+    plugins.register(parser=parser)
+    plugins.register(commands=moaCommands)
+    plugins.run('defineOptions')
+
+    ## Parse the options
+    (options, args) = parser.parse_args()
+
+    ## make sure that the options are accessible to the plugins
+    plugins.register(options = options, args = args)
+    job.options = options
+    job.args = args
+
+    ## Proper setting of verbosity - after parsing of the command line
+    if options.verbose:
+        moa.logger.setVerbose()
 
     ## Determine command to run:
     command = ""
@@ -153,8 +168,9 @@ if __name__ == "__main__":
     plugins.run('prepare')
 
     #see if there is a callback to a plugin - If so call it
-
+    
     for command in commands:
+
         plugins.run("preCommand")
         plugins.run("pre%s" % originalCommand.capitalize())
 
@@ -172,9 +188,22 @@ if __name__ == "__main__":
                     raise
         else:
             #No callback, defer this to the job
-            rc = job.execute(command,
-                             verbose = options.verbose,
-                             background=options.background)
+
+            #first see if we need to fork - if this is a background job
+            if options.background:
+                options.silent = True
+                child = os.fork()
+                if child != 0:
+                    # This is the parent thread - exit now - all
+                    plugins.register(childPid = child)
+                    plugins.run("bgParentExit")
+                    moa.ui.fprint("Running in the background")
+                    sys.exit(0)
+
+            rc = job.execute(
+                command,
+                verbose = options.verbose,
+                silent = options.silent)
             
         plugins.register(rc = rc)
         plugins.run("post%s" % originalCommand.capitalize())
@@ -182,3 +211,13 @@ if __name__ == "__main__":
 
     plugins.run("finish")
     sys.exit(rc)
+
+    
+## Command dispatcher
+if __name__ == "__main__":
+    try:
+        run()
+    except KeyboardInterrupt:
+        plugins.run("postInterrupt")
+        moa.ui.warn("Interrupted")
+        sys.exit(-1)

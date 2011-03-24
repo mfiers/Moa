@@ -7,6 +7,7 @@ plugins:
 - lock
 - adhoc
 - help
+- status
 - template
 - prompt
 - info
