@@ -97,10 +97,9 @@ endif
 ################################################################################
 ## adhoc mode: simple
 ifeq ($(adhoc_mode),simple)
-
 adhoc:
-	$(call echo,Running adhoc without input files)
 	$(adhoc_process)
+
 endif
 
 adhoc_clean: find_exclude_args = \

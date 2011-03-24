@@ -58,6 +58,9 @@ def exitError(message):
     fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
     sys.exit(-1)
 
+def warn(message):
+    fprint("{{blue}}Warning:{{reset}} %s" % message, f='jinja')
+
 def fprint(message, **kwargs):
     sys.stdout.write(fformat(message, **kwargs))
     

@@ -21,12 +21,7 @@ def defineCommands(data):
     """
     Set the moa commands for this plugin
     """
-    data['commands']['status'] = {
-        'desc' : 'Show the state of the current job',
-        'log' : False,
-        'needsJob' : True,
-        'call' : status,
-        }
+
     data['commands']['raw_commands'] = {
         'private' : True,
         'log' : False,
@@ -78,7 +73,6 @@ def version(data):
     """
     **moa version** - Print the moa version number
     """
-    print data.sysConf.__class__.__name__
     print data.sysConf.getVersion()
 
 def status(data):

@@ -95,7 +95,8 @@ def testTemplates(options, args=[]):
 
         if template.backend == 'gnumake':
             rc = job.execute('%s_unittest' % tname, 
-                             verbose = options.verbose)
+                             verbose = options.verbose,
+                             silent=not options.verbose)
             err = moa.actor.getLastStderr(job)
             if 'No rule to make target' in err:
                 l.warning("job %s has no unittest defined" % tname)
@@ -104,7 +105,9 @@ def testTemplates(options, args=[]):
             if not job.hasCommand('unittest'):
                 l.warning("job %s has no unittest defined" % tname)
                 continue
-            rc = job.execute('unittest', verbose = options.verbose)
+            rc = job.execute('unittest',
+                             verbose = options.verbose,
+                             silent = not options.verbose)
             
         if rc != 0:
             l.critical("error testing template %s (rc %d)" % (tname, rc))

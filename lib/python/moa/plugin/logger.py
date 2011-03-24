@@ -29,11 +29,16 @@ def prepare(data):
     data.logger.start_time = datetime.today()
 
 def niceRunTime(d):
+    """
+    Nice representation of the run time
+    d is time duration string    
+    """
     if ',' in d:
         days, time = d.split(',')
     else:
         days = 0
         time = d
+
     hours, minutes, seconds = time.split(':')
     hours, minutes = int(hours), int(minutes)
     seconds, miliseconds = seconds.split('.')
@@ -41,19 +46,17 @@ def niceRunTime(d):
     miliseconds = int(miliseconds)
     
     if days > 0:
-        if days == 1:
-            if hours == 0:
-                return "one day"
-            else:
-                return "one day, %d hours" % hours
+        if days == 1:            
+            return "1 day, %d hrs" % hours
         else:
-            return "%d days" % days
+            return "%d days, %d hrs" % (days, hours)
+        
     if hours == 0 and minutes == 0 and seconds == 0:
         return "<1 sec"
     if hours > 0:
-        return "%d hrs" % hours
+        return "%d:%02d hrs" % (hours, minutes)
     elif minutes > 0:
-        return "%d min" % minutes
+        return "%d:%02d min" % (minutes, seconds)
     else:
         return "%d sec" % seconds
     
@@ -132,6 +135,6 @@ def showLog(data):
             else:
                 lc += "{{bold}}{{red}}%-8s{{reset}}" % ("Err " + str(rc))
 
-            lc += " - %8s" % niceRunTime(delta)
+            lc += " - %10s" % niceRunTime(delta)
             lc += " - " + command
             moa.ui.fprint(lc, f='jinja')

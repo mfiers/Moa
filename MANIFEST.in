@@ -1,9 +1,10 @@
 exclude .*
 include VERSION
-include README.txt
+include README
+include COPYING
 include etc/bash_completion.d/moa
 include etc/config
-recursive-include template2 *.mk *.moa
+recursive-include template2 *.mk *.moa *.jinja2
 recursive-include doc/images *.svg *.png *.jpg *gif
 recursive-include doc/jinja2/ *.md *.html *.css Makefile *.bib *.tex *.bst *.asc 
 recursive-include lib/jinja2/ *.jinja2

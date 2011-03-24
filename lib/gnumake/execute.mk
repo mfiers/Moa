@@ -16,6 +16,5 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-
 include $(MOABASE)/lib/gnumake/prepare.mk
 $(call moa_load,$(MOA_TEMPLATE))

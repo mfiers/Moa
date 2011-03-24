@@ -20,6 +20,7 @@ import glob
 import errno
 import readline
 import traceback
+import subprocess
 import contextlib
 
 import moa.utils
@@ -59,6 +60,26 @@ def flock(path, waitDelay=.1, maxWait=100):
     finally:
         os.unlink(path)
 
+def getProcessInfo(pid):
+    """
+    
+    Return some info on a process
+    """
+    cl = ('ps --no-heading -fp %s' % (pid)).split()
+    p = subprocess.Popen(cl, stdout=subprocess.PIPE)
+    out = p.communicate()[0].strip().split(None, 7)
+    if not out: return {}
+    pi = dict(zip(
+        'uid pid ppid c stime tty time cmd'.split(), out))
+
+    #check if this is moa invocation
+    if 'python' in pi['cmd'] and \
+       'moa' in pi['cmd']:
+        pi['moa'] = True
+    else:
+        pi['moa'] = False
+    return pi
+    
 def getMoaBase():
     """
     Return MOABASE - the directory where Moa is installed. This
