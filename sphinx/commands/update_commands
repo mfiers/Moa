@@ -85,10 +85,9 @@ for plugin in os.listdir(PLUGINDIR):
         
 allComkeys = allCommands.keys()
 allComkeys.sort()
-print allComkeys
 for k in allComkeys:
     dt = allCommands[k]
-    if dt.private:
+    if dt.get('private', False):
         G.write(template.render(dt))
     else:
         F.write(template.render(dt))

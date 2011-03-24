@@ -180,7 +180,7 @@ def postRun(data):
     if data.rc != 0:
         status = 'error'
     _setStatus(data, status)
-    _removePid()
+    _removePid(data)
 
 def postInterrupt(data):
     _setStatus(data, 'interrupted')

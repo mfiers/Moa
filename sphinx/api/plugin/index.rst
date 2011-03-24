@@ -19,6 +19,7 @@ moa.plugin
    pack
    parameterCheck
    prompt
+   status
    template
    test
    twit

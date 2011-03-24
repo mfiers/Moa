@@ -119,6 +119,7 @@ class Job(object):
         >>> job = newTestJob('unittest')
         >>> assert(job.hasCommand('run'))
         >>> assert(job.hasCommand('run2'))
+        >>> assert(not job.hasCommand('dummy'))
 
         """
         if command in self.template.commands.keys():
@@ -174,6 +175,13 @@ class Job(object):
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
 
+        >>> job = newTestJob('unittest')
+        >>> rc = job.execute('run')
+        >>> assert(type(rc) == type(18))
+
+        #Note: Uncertain how to test verbose & silent
+
+        
         :param command: the command to execute
         :type command: string
         :param verbose: output lots of data
@@ -192,27 +200,52 @@ class Job(object):
                     
     def prepare(self):
         """
-        Prepare this job
+        Give this job a chance to prepare for execution - deferred to
+        the backend.
+
+        >>> job = newTestJob('unittest')
+        >>> job.prepare()
+        
         """
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
         
     def defineOptions(self, parser):
         """
-        Set command line options
-        """                
-        if self.backend and getattr(self.backend, 'defineOptions', None):
-            self.backend.defineOptions(parser)
+        Set command line options - deferred to the backends
+        
+        >>> job = newTestJob('unittest')
+        >>> import optparse
+        >>> parser = optparse.OptionParser()
+        >>> job.defineOptions(parser)
 
+        """
+        if self.backend and getattr(self.backend, 'defineOptions'):
+            self.backend.defineOptions(parser)
+                
     def refreshTemplate(self):
         """
-        Attempt to reload the template
+        Reload the template into the local .moa/template.d directory
+
+        >>> job = newTestJob('unittest')
+        >>> templateFile = os.path.join(job.confDir, 'template.d', 'unittest.jinja2')
+        >>> assert(os.path.exists(templateFile))
+        >>> os.unlink(templateFile)
+        >>> assert(not os.path.exists(templateFile))
+        >>> job.refreshTemplate()
+        >>> assert(os.path.exists(templateFile))
+        
         """
         moa.template.refresh(self.wd, default=self.template.name)
         
     def setTemplate(self, name):
         """
         Set a new template for this job
+
+        >>> job = newTestJob('unittest')
+        >>> job.setTemplate('adhoc')
+        >>> afile = os.path.join(job.confDir, 'template.d', 'adhoc.mk')
+        >>> assert(os.path.exists(afile))
         """
         self.checkConfDir()
         l.debug("Setting job template to %s" % name)
@@ -222,6 +255,7 @@ class Job(object):
         
     def loadTemplate(self):
         """
+        
         Load the template for this job, based on what configuration 
         can be found
         """
@@ -252,6 +286,8 @@ class Job(object):
     def isMoa(self):
         """
         Check if this is a Moa directory - Currently, this needs to be overridden
+        #weird; uncertain if this ever gets called
+        
         """
         if os.path.exists('.moa'):
             return True
