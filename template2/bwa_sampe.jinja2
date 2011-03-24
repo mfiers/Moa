@@ -11,7 +11,8 @@ bwa sampe -a {{max_insert_size}}                        \
     {% if disable_insert_size %}, -A {% endif %} 		\
     {{ db }}                                            \
     {{ sai_forward_input }} {{ sai_reverse_input }}     \
-    {{ fq_forward_input }} {{ fq_reverse_input }} | samtools view -bhS | samtools sort - {{ output_bam }} 
+    {{ fq_forward_input }} {{ fq_reverse_input }}       \
+       | samtools view -bhS - | samtools sort - `basename {{ output_bam }} .bam`
 
 
 ### clean

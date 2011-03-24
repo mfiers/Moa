@@ -15,23 +15,19 @@ import moa.sysConf
 import moa.logger as l
 
 class Gnumake(moa.backend.BaseBackend):
+
+
     def prepare(self):
         """
         Prepare for later execution
         """
-
-        self.job.options = self.job.options
-
         self.job.makeArgs = getattr(self.job, 'makeArgs', [])
         self.job.env = getattr(self.job, 'env', {})
 
-        if self.job.options.makedebug:
-            self.job.makeArgs.append('-d')
-
         ## Define extra parameters to use with Make
-        if self.job.options.remake:
+        if getattr(self.job.options, 'remake', False):
             self.job.makeArgs.append('-B')
-        if self.job.options.makedebug:
+        if getattr(self.job.options, 'makedebug', False):
             self.job.makeArgs.append('-d')
 
         self.job.makeArgs.extend(self.job.args)
@@ -57,7 +53,7 @@ class Gnumake(moa.backend.BaseBackend):
         ## different from the other parameters. multi-threaded
         ## operation is only allowed in the second phase of execution.
 
-        if self.job.options.threads:
+        if getattr(self.job.options, 'threads', False):
             self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
         else:
             self.job.env['MOA_THREADS'] = "1"
@@ -129,6 +125,7 @@ class Gnumake(moa.backend.BaseBackend):
 
     def defineOptions(self, parser):
         g = parser.add_option_group('Gnu Make Backend')
+
         parser.set_defaults(threads=1)
         g.add_option("-j", dest="threads", type='int',
                   help="threads to use when running Make (corresponds " +

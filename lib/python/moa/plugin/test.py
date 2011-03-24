@@ -96,7 +96,7 @@ def testTemplates(options, args=[]):
         if template.backend == 'gnumake':
             rc = job.execute('%s_unittest' % tname, 
                              verbose = options.verbose,
-                             silent=not options.verbose)
+                             silent = not options.verbose)
             err = moa.actor.getLastStderr(job)
             if 'No rule to make target' in err:
                 l.warning("job %s has no unittest defined" % tname)
@@ -167,6 +167,14 @@ def testPlugins(args=[]):
         l.info("Success testing %s (%d lines)" % (
             plugin, len(testCode.strip().split("\n"))))
         pluginTests += 1
+
+def runDocTests():
+    testModule(moa.utils)
+    testModule(moa.template)
+    testModule(moa.job)
+    testModule(moa.ui)
+    testModule(moa.sysConf)
+    testModule(moa.jobConf)
     
 def _run_test(options, args):
 
@@ -180,14 +188,9 @@ def _run_test(options, args):
 
     if not args:
         l.info("Start running python doctests")
-        setSilent()        
-        testModule(moa.utils)
-        testModule(moa.template)
-        testModule(moa.job)
-        testModule(moa.ui)
-        testModule(moa.sysConf)
-        testModule(moa.jobConf)
         
+        setSilent()        
+        runDocTests()
         if options.verbose: setVerbose()
         else: setInfo()
         
@@ -205,6 +208,16 @@ def _run_test(options, args):
         l.info("Finished running template tests")
         sys.exit()
 
+    elif args[0] == 'doctests':
+
+        setSilent()        
+        runDocTests()
+        if options.verbose: setVerbose()
+        else: setInfo()
+
+        l.info("Finished running of python unittests")
+        l.info("Ran %d test, %d failed" % (tests, failures))
+        
     elif args[0] == 'plugins':
         l.info("Start running plugin tests")
         testPlugins(args[1:])
