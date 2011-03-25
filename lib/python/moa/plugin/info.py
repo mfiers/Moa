@@ -12,6 +12,9 @@
 Print info on Moa jobs and Moa
 """
 
+import os
+import glob
+
 import moa.ui
 import moa.utils
 import moa.actor
@@ -53,6 +56,52 @@ def defineCommands(data):
         'needsJob' : True,
         'log' : False
         }
+    data['commands']['tree'] = {
+        'desc' : 'Print a directory tree with extra information',
+        'call' : tree,
+        'needsJob' : False,
+        'log' : False
+        }
+
+
+def tree(data):
+    wd = data.wd
+    filt = data.args[1:]
+        
+    for path, dirs, files in os.walk(data.wd):
+        rpath = path.replace(wd, '')[1:]
+        
+        if filt and not rpath:
+            for d in dirs:
+                if d in filt: continue
+                dirs.remove(d)
+
+        
+        isMoa = '.moa' in dirs
+        while '.moa' in dirs: dirs.remove('.moa')
+        dirs.sort()
+
+        if not rpath: lev = 0
+        else: lev = rpath.count('/') + 1
+
+        if not isMoa:
+            moa.ui.fprint('.. %s./%s' % ('  ' * lev, rpath), f='jinja')
+            continue
+        tag = '{{green}}M{{reset}}'
+        statusFile = os.path.join(path, '.moa', 'status')
+        if not os.path.exists(statusFile):
+            status = '{{bold}}{{black}}?{{reset}}'
+        else:
+            with open(statusFile) as F:
+                message = F.read().strip()            
+            status = {
+                'success' : '{{green}}O{{reset}}',
+                'error' : '{{red}}E{{reset}}',
+                'interrupted' : '{{blue}}I{{reset}}'
+                }.get(message, '{{green}}?{{reset}}')
+        moa.ui.fprint("%s%s %s./%s" % ( tag, status, '  ' * lev, rpath),
+                      f = 'jinja')
+    
 
 
 def getOut(data):

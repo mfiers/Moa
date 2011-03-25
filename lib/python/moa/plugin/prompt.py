@@ -10,6 +10,8 @@
 -------------------------------------
 """
 
+import os
+import sys
 import signal
 
 import moa.utils    
@@ -21,11 +23,13 @@ def defineCommands(data):
     """
     Set the moa commands for this plugin
     """
-    data['commands']['prompt'] = {
-        'desc' : 'Show the state of the current job',
-        'private' : True,
-        'call' : prompt,
-        }
+    pass
+
+    # data['commands']['prompt'] = {
+    #     'desc' : 'Show the state of the current job',
+    #     'private' : True,
+    #     'call' : prompt,
+    #     }
     
 
 class TimeOutException(Exception):
@@ -34,6 +38,10 @@ class TimeOutException(Exception):
 def timeOutHandler(signum, frame):
     raise TimeOutException()
 
+def preRun(data):
+    "A little trick to set the gnu screen title"
+    if 'screen' in os.environ.get('TERM', '').lower():
+        sys.stdout.write(chr(27) + 'kmoa ' + data.job.template.name + chr(27) + '\\')
 
         
 def prompt(data):
