@@ -37,6 +37,15 @@ class InvalidTemplate(Exception):
 def getTemplateFile(name):
     """
     Return a base filename for a template
+
+    >>> x = getTemplateFile('adhoc')
+    >>> assert(x == os.path.join(moa.utils.getMoaBase(), 'template2', 'adhoc.moa'))
+    >>> x= getTemplateFile('not.existing')
+    Traceback (most recent call last):
+      ...
+    InvalidTemplate
+
+    
     """
 
     templateFile = os.path.join(
@@ -52,6 +61,20 @@ def refresh(wd, default=None):
     Refresh the template - try to find out what the template is from 
     {{wd}}/.moa/template.d/source. If that doesn't work, revert to the 
     default template. If default is not specified - exit with an error
+
+    >>> import tempfile
+    >>> wd = tempfile.mkdtemp()
+    >>> initTemplate(wd, 'adhoc')
+    >>> templateFile = os.path.join(wd, '.moa', 'template')
+    >>> adhocFile = os.path.join(wd, '.moa', 'template.d', 'adhoc.mk')
+    >>> os.unlink(adhocFile)    
+    >>> os.unlink(templateFile)
+    >>> assert(not os.path.exists(templateFile))
+    >>> assert(not os.path.exists(adhocFile))
+    >>> refresh(wd)
+    >>> assert(os.path.exists(templateFile))
+    >>> assert(os.path.exists(adhocFile))
+    
     """
     source = default
     meta = Yaco.Yaco()
@@ -67,7 +90,23 @@ def refresh(wd, default=None):
     initTemplate(wd, source)
     
 def initTemplate(wd, name):
+    """
+    Initialize the template - this means - try to figure out where the
+    template came from & copy the template files into
+    `job/.moa/template` & `job/.moa/template.d/extra`.
 
+    Currently all templates come from the moa repository. In the
+    future, multiple sources must be possible
+
+    >>> import tempfile
+    >>> wd = tempfile.mkdtemp()
+    >>> initTemplate(wd, 'adhoc')
+    >>> templateFile = os.path.join(wd, '.moa', 'template')
+    >>> adhocFile = os.path.join(wd, '.moa', 'template.d', 'adhoc.mk')
+    >>> assert(os.path.exists(templateFile))
+    >>> assert(os.path.exists(adhocFile))
+    
+    """
     #try to find the related template file
     templateFile = getTemplateFile(name)
     
@@ -95,7 +134,8 @@ def initTemplate(wd, name):
     
 class Template(Yaco.Yaco):
     """
-    Template extends Yaco
+    Template extends Yaco    
+    
     """
     
     def __init__(self, templateFile):
@@ -104,6 +144,14 @@ class Template(Yaco.Yaco):
         
         * Check if the template exists, if not raise an Exception
         * Load template info
+
+        >>> import moa.job
+        >>> job = moa.job.newTestJob(template='adhoc')
+        >>> tfile = os.path.join(job.confDir, 'template')
+        >>> t = Template(tfile)
+        >>> assert(isinstance(t, Yaco.Yaco))
+        >>> assert(len(t.parameters) > 0)
+        >>> assert(isinstance(t.name, str))
         """
 
         super(Template, self).__init__(self)
@@ -140,6 +188,17 @@ class Template(Yaco.Yaco):
             self.modification_date = os.path.getmtime(self.templateFile)
 
     def getRaw(self):
+        """
+        Return a Yaco representation of the yaml-template, without any
+        of this Template processing. This is really useful when
+        processing a template that needs to be written back to disk
+        
+        >>> import moa.job
+        >>> job = moa.job.newTestJob(template='adhoc')
+        >>> raw = job.template.getRaw()
+        >>> assert(isinstance(raw, Yaco.Yaco))
+        >>> assert(raw.has_key('parameters'))
+        """
         y = Yaco.Yaco()
         y.load(self.templateFile)
         return y
