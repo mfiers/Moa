@@ -11,8 +11,6 @@
 .IP {{ command }}
 {% if commands[command].get('help', None) -%}
 {{ commands[command].get('help') }}
-{% else -%}
-No help provided
 {% endif -%}
 {% endif -%}
 {%- endfor %}
@@ -50,12 +48,14 @@ http://mfiers.github.com/Moa/
 .IP Github
 http://github.com/mfiers/Moa 
 .SH NOTE 
-This is a help page generated for {{ moa_id }} template. To get Moa
-specific help, please run:
+This is a help page generated for the "{{ moa_id }}" template. To get help
+on running Moa, please try:
 
     moa --help
 .SH AUTHOR(S)
 {{ author }}
 
+.SH CREATED
+{{ creation_date }}
 .SH LAST MODIFIED
 {{ modification_date }}

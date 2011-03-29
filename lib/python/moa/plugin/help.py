@@ -47,8 +47,12 @@ def templateHelp(data):
 
     job = data['job']
     args = data['newargs']
+
+    tmpjob = None
     if len(args) > 0:
-        template = moa.template.Template(args[0])
+        #create a tmp job
+        tmpjob = moa.job.newTestJob(args[0])
+        template = tmpjob.template
     else:
         template = job.template
 
@@ -59,17 +63,25 @@ def templateHelp(data):
     template._categories = {}
     for pn in template.parameters:
         p = template.parameters[pn]
-        cat = str(p.category).strip()
+        if p.category:
+            cat = str(p.category).strip()
+        else:
+            cat = ""
         if not template._categories.has_key(cat):
             template._categories[cat] = []
         template._categories[cat].append(pn)
+    if not template.has_key('parameter_category_order'):
+        template.parameter_category_order = template._categories.keys()
+        template.parameter_category_order.sort()
+        
     global JENV
     JENV = jinja2.Environment(loader=jinja2.FileSystemLoader(
         os.path.join(MOABASE, 'lib', 'jinja2')))
 
     jinjaTemplate = JENV.get_template('template.help.jinja2')
     pager(jinjaTemplate, template)
-
+    
+    
 def pager(template, templateData):
     """
     render the template & send it to the pager
@@ -86,11 +98,14 @@ def welcome(data):
     """
     print a welcome message
     """
+    clist = data['commands'].keys()
+    clist.sort()
     commands =  "\n".join(textwrap.wrap(
-        ", ".join(data['commands'].keys()),
+        ", ".join(clist),
         subsequent_indent='   ',
         initial_indent='                   ',
         )).lstrip()
+    
     
     moa.ui.fprint("""{{bold}}{{blue}}Welcome to MOA!{{reset}} (v %(version)s)
 
