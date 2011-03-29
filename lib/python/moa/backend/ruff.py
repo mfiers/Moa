@@ -43,6 +43,22 @@ class RuffCommands(Yaco.Yaco):
         commands = dict([(rawc[i], rawc[i+1].strip())
                          for i in range(1, len(rawc), 2)])
         self.update(commands)
+
+    def  render(self, command, data):
+        if not self.has_key(command):
+            return ""
+
+        jt = jTemplate(self.get(command))
+        script = jt.render(data)
+        
+        if '{{' or '{%' in script:
+            #try a second level jinja interpretation
+            jt2 = jTemplate(script)
+            script = jt2.render(data)
+
+        return script
+                
+
     
 class Ruff(moa.backend.BaseBackend):
     """
@@ -65,20 +81,15 @@ class Ruff(moa.backend.BaseBackend):
                              self.job.template.moa_id)
         self.commands.load(templateFile)
 
+        #TODO: Remove snippets
         snippetsFile = os.path.join(
             MOABASE, 'lib', 'ruff', 'snippets.jinja2')
         self.snippets = RuffCommands()
         self.snippets.load(snippetsFile)
 
-    def getCommandTemplate(self, command):
-        if self.commands.has_key(command):
-            return jTemplate(self.commands[command])
-        else:
-            return False
-                
     def hasCommand(self, command):
         return command in self.commands.keys()
-
+    
     def defineOptions(self, parser):
         g = parser.add_option_group('Ruffus backend')
         parser.set_defaults(threads=1)
@@ -87,14 +98,11 @@ class Ruff(moa.backend.BaseBackend):
 
         g.add_option("-B", dest="remake", action='store_true',
                      help="Reexecute all targets (corresponds to make -B) ")
-        
+
     def execute(self, command, verbose=False, silent=False):
         """
         Execute a command
         """
-        #self.job.plugins.run("readfilesets")
-
-        jt = self.getCommandTemplate(command)
 
         #determine which files are prerequisites
         prereqs = []
@@ -105,7 +113,7 @@ class Ruff(moa.backend.BaseBackend):
         others = []
         for fsid in self.job.data.others:
             others.extend(self.job.data.filesets[fsid]['files'])
-                
+        
             
         def generate_data_map():
             """
@@ -145,7 +153,8 @@ class Ruff(moa.backend.BaseBackend):
                 jobData['wd'] = self.job.wd
                 jobData['silent'] = silent
                 jobData.update(fsDict)
-                script = jt.render(jobData)
+                script = self.commands.render(command, jobData)
+
                 yield([inputs + prereqs], outputs, script, jobData)
 
 
@@ -159,11 +168,12 @@ class Ruff(moa.backend.BaseBackend):
             #late decoration - see if that works :/
             executor2 = ruffus.files(generate_data_map)(executor)
             l.info("Start run (with %d thread(s))" % self.job.options.threads)
-            ruffus.pipeline_run([executor2],
-                                verbose = self.job.options.verbose,
-                                one_second_per_job=False,
-                                multiprocess= self.job.options.threads,
-                                )
+            ruffus.pipeline_run(
+                [executor2],
+                verbose = self.job.options.verbose,
+                one_second_per_job=False,
+                multiprocess= self.job.options.threads,
+                )
             l.info("Finished running (with %d thread(s))" % self.job.options.threads)
             rc = 0
         elif cmode == 'reduce':
@@ -171,7 +181,8 @@ class Ruff(moa.backend.BaseBackend):
         elif cmode == 'simple':
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
-            tf.write("\n" + jt.render(self.job.conf)+ "\n")
+            script = self.commands.render(command, self.job.conf)
+            tf.write("\n" + script + "\n")
             tf.close()
             rc = moa.actor.simpleRunner(
                 self.job.wd, ['bash', '-e', tf.name],
