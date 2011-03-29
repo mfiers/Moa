@@ -33,7 +33,7 @@ parameters:
     - all
     - simple
     category: ''
-    default: seq
+    default: simple
     help: ' operation mode: *seq*, sequential: process the input files one by one;
       *par*, parallel: process the input files in parallel (use with `-j`); *all*:
       process all input files at once (use `$^` in `adhoc_process`) and *simple*:
