@@ -26,6 +26,12 @@ def defineCommands(data):
         'needsJob' : False,
         'usage' : 'moa adhoc -t "title" -- echo "do something"'        
         }
+    data['commands']['simple'] = { 
+        'desc' : 'Quickly create a "simple" adhoc analysis',
+        'call' : createSimple,
+        'needsJob' : False,
+        'usage' : 'moa simple -t "title" -- echo "do something"'
+        }
 
 def defineOptions(data):
     parserN = optparse.OptionGroup(data['parser'], "Moa adhoc (a)")
@@ -54,6 +60,37 @@ def _sourceOrTarget(g):
     if d[0] == '/': return 'source'
     return 'target'
 
+def createSimple(data):
+    """
+    Create a 'simple' adhoc job. Simple meaning that no in or output
+    files are tracked.
+
+    There are a number of ways this command can be used::
+
+        moa simple -t 'a title' -- echo 'define a command'
+
+    Anything after `--` will be the executable command. Note that 
+    
+    """
+    wc = data['wd']
+
+    if not options.force and \
+           os.path.exists(os.path.join(wd, '.moa', 'template')):
+        moa.ui.exitError("Job already exists, use -f to override")
+
+    command = " ".join(args).strip()
+    
+    if not command:
+        command=moa.ui.askUser('command:\n>', '')
+
+    
+    
+    moa.job.newJob(
+        wd, template='simple',
+        title = options.title,
+        parameters=params)
+
+    
 def createAdhoc(data):
     """
     Creates an adhoc job.
