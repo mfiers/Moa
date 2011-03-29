@@ -76,45 +76,60 @@ plugins.run('defineCommands')
 
 
 ## start defining the command line interface
-USAGE = "Usage: %prog [options] COMMAND ARGUMENTS\n\nCommands:\n"
+USAGE = "Usage: {{bold}}{{green}}%prog {{blue}}[options] COMMAND ARGUMENTS{{reset}}\n\n"
 moaCommandNames = moaCommands.keys()
 moaCommandNames.sort()
+
+commandsG = []
+commandsJ = []
+
 for _c in moaCommandNames:
     if moaCommands[_c].get('private', False):
         continue
-    if moaCommands[_c].get('needsJob', True):
-        needsJob = '*'
+    if moaCommands[_c].get('needsJob',  True):
+        commandsJ.append([_c, moaCommands[_c]['desc']])
     else:
-        needsJob = ' '
+        commandsG.append([_c, moaCommands[_c]['desc']])
 
+commandsG.sort()
+commandsJ.sort()
+USAGE += "Universal Moa commands:\n"
+for c, d in commandsG:
     USAGE += "\n".join(
         textwrap.wrap(
-            '%9s: %s' % (needsJob + _c, moaCommands[_c]['desc']),
+            '{{bold}}%15s{{reset}} : %s' % (c, d),
             initial_indent=' ',
-            subsequent_indent = '            ')) + "\n"
-USAGE += '*: needs to be executed in the context of Moa job'
+            subsequent_indent = ' ' * 19)) + "\n"
 
+USAGE += "\nJob specific Moa commands:\n"
+for c,d  in commandsJ:
+    USAGE += "\n".join(
+        textwrap.wrap(
+            '{{bold}}%15s{{reset}} : %s' % (c, d),
+            initial_indent=' ',
+            subsequent_indent = ' ' * 19)) + "\n"
+
+
+## define & parse command line options  
+parser = optparse.OptionParser(usage=moa.ui.fformat(USAGE, f='jinja'))
+
+parser.add_option(
+    '-f', '--force', dest='force', action='store_true',
+    help='Force an action, if applicable.')
+
+parser.add_option(
+    "-v", "--verbose", dest="verbose", action="store_true",
+    help="Verbose output")
+
+parser.add_option(
+    "-s", "--silent", dest="silent", action="store_true",
+    help="Be very silent")
+
+parser.add_option(
+    "--bg", dest="background", action="store_true",
+    help="Run moa in the background (implies -s)")
 
 def run():
-
-    ## define & parse command line options  
-    parser = optparse.OptionParser(usage=USAGE)
-
-    parser.add_option(
-        '-f', '--force', dest='force', action='store_true',
-        help='Force an action, if applicable.')
-
-    parser.add_option(
-        "-v", "--verbose", dest="verbose", action="store_true",
-        help="Verbose output")
-
-    parser.add_option(
-        "-s", "--silent", dest="silent", action="store_true",
-        help="Be very silent")
-
-    parser.add_option(
-        "--bg", dest="background", action="store_true",
-        help="Run moa in the background (implies -s)")
 
     ## Aks the job & backend if they want to add to the options
     job.defineOptions(parser)
@@ -218,6 +233,7 @@ if __name__ == "__main__":
     try:
         run()
     except KeyboardInterrupt:
+        plugins.register(rc = -1)
         plugins.run("postInterrupt")
         moa.ui.warn("Interrupted")
         sys.exit(-1)
