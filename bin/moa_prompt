@@ -18,26 +18,25 @@ function _moa_prompt {
     local blue="\033[34m"
     local black="\033[30m"
     local bright="\033[1m"
+    local gray="\033[30;1m"
     local red="\033[31m"
     local magenta="\033[35m"
     local green="\033[32m"
-    local bg="\033[0;47m"
-    local end="\033[47m\033[0Kx\033[0m"
     local reset="\033[0m"
 
     #print an empty line 
-    local ELINE=""
-    printf -v ELINE  "%${COLUMNS}s" " "
-    local line="${bg}${ELINE}\033[1K\033[0G"
+    #local ELINE=""
+    #printf -v ELINE  "%${COLUMNS}s" " "
+    #local line="${bg}${ELINE}\033[1K\033[0G"
 
     #get status information
     [[ -f '.moa/status' ]] && status=$(< .moa/status)
     case "$status" in
-    error) status="${red}Error${bg}"
+    error) status="${red}Error${reset}"
             ;;
-    success) status="${green}Success${bg}"
+    success) status="${gray}Success${reset}"
             ;;
-    interrupted) status="${black}${bright}Interrupted${bg}"
+    interrupted) status="${black}Interrupted${reset}"
             ;;
     *) status="?"
     esac
@@ -72,5 +71,5 @@ function _moa_prompt {
             timing="$timing ${seconds}s."
         fi
     fi
-    echo -e "${line}${green}#${green}Moa${bg}/${blue}${template}${bg} ${status}${timing}${reset}"
+    echo -e "${gray}...Moa/${blue}${template}${gray}. ${status}${gray}${timing}${reset}"
 }
