@@ -37,17 +37,11 @@ def defineOptions(data):
                        action='store_true' )
     parserN.add_option("--pn", dest="packName",
                        help="Name for the pack, defaults to a name "
-                       "derived from the job title" )
+                       "if undefined, it's taken from the job title" )
     parserN.add_option("--pd", dest="packData",
-                       help="Include all data files into the save",
+                       help="Include all non Moa files into the archive",
                        action='store_true' )
-    try:
-        parser.add_option("-d", dest="packData",
-                          help="Create/unpack the job/pipeline int this directory")
-    except optparse.OptionConflictError:
-        #probably already defined in plugin/newjob
-        pass
-        
+
     data['parser'].add_option_group(parserN)
 
 def prepare(data):
