@@ -59,7 +59,9 @@ def niceRunTime(d):
         return "%d:%02d min" % (minutes, seconds)
     else:
         return "%d sec" % seconds
-    
+
+def postInterrupt(data):
+    return postCommand(data)
 def postCommand(data):
     data.logger.end_time = datetime.today()
     data.logger.run_time = data.logger.end_time - data.logger.start_time
@@ -77,8 +79,8 @@ def postCommand(data):
             F.write("%s\n" % "\t".join([
                 str(data.rc),
                 ",".join(data.executeCommand),
-                data.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
-                data.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S:%f"),
+                data.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+                data.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 str(data.runtime),
                 " ".join(sys.argv)
                 ]))
