@@ -1,0 +1,76 @@
+#!/bin/bash
+
+function _moa_prompt {
+    [[ -d '.moa' ]] || return 0
+    [[ -f '.moa/template' ]] || return 0
+
+    #save history to a .moa/history
+    # based on:
+    #http://stackoverflow.com/questions/945288/...
+    #     ...saving-current-directory-to-bash-history
+    #
+    local lc=$(history 1)
+    lc="${lc# *[0-9]*  }"
+    echo $lc >> .moa/history
+
+    #prepare for visualization
+
+    local blue="\033[34m"
+    local black="\033[30m"
+    local bright="\033[1m"
+    local red="\033[31m"
+    local magenta="\033[35m"
+    local green="\033[32m"
+    local bg="\033[0;47m"
+    local end="\033[47m\033[0Kx\033[0m"
+    local reset="\033[0m"
+
+    #print an empty line 
+    local ELINE=""
+    printf -v ELINE  "%${COLUMNS}s" " "
+    local line="${bg}${ELINE}\033[1K\033[0G"
+
+    #get status information
+    [[ -f '.moa/status' ]] && status=$(< .moa/status)
+    case "$status" in
+    error) status="${red}Error${bg}"
+            ;;
+    success) status="${green}Success${bg}"
+            ;;
+    interrupted) status="${black}${bright}Interrupted${bg}"
+            ;;
+    *) status="?"
+    esac
+
+    #get template information
+    template=`(grep moa_id .moa/template | cut -c9-) 2>/dev/null`
+
+    #get last run dates
+    if [[ -f '.moa/log' ]]; then
+        ll=`tail -1 .moa/log`
+        tstart=`echo ${ll} | awk '{print $3}'`
+        tstop=`echo ${ll} | awk '{print $4}'`
+        startseq=`date -d "${tstart}" +%s`
+        stopseq=`date -d "${tstop}" +%s`
+        tdiff=$(($stopseq - $startseq))
+        pstart=`echo ${tstart} | sed "s/\.[^\.]*$//" | sed "s/T/ /" `
+        minute_secs=60 hour_secs=$((60 * minute_secs)) day_secs=$((24 * hour_secs))
+        # parse
+        days=$((tdiff / day_secs))
+        hours=$((tdiff % day_secs / hour_secs))
+        minutes=$((tdiff % day_secs % hour_secs / minute_secs))
+        seconds=$((tdiff % day_secs % hour_secs % minute_secs))
+        # pretty-print
+        timing=" on: ${pstart} taking"
+        if [[ ${days} > 0 ]]; then
+            timing="$timing ${days}d, ${hours}h, ${minutes}m and ${seconds}s."
+        elif [[ ${hours} > 0 ]]; then
+            timing="$timing ${hours}h, ${minutes}m and ${seconds}s."
+        elif [[ ${minutes} > 0 ]]; then
+            timing="$timing ${minutes}m and ${seconds}s. "
+        else
+            timing="$timing ${seconds}s."
+        fi
+    fi
+    echo -e "${line}${green}#${green}Moa${bg}/${blue}${template}${bg} ${status}${timing}${reset}"
+}
