@@ -213,6 +213,55 @@ optional LINES parameter.
 
 
 
+moa **map**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Quickly create a "map" adhoc analysis
+
+
+Usage::
+  
+  moa map -t "title" -- echo "do something"
+
+
+
+**Description:**
+
+Create a 'map' adhoc job.
+
+There are a number of ways this command can be used::
+
+    $ moa map -t 'a title' -- echo 'define a command'
+
+Anything after `--` will be the executable command. If omitted,
+Moa will query the user for a command.
+
+Moa will also query the user for input & output files. An example
+session::
+
+    $ moa map -t 'something intelligent'
+    process:
+    > echo {{ input }} {{ output }}
+    input:
+    > ../10.input/*.txt
+    output:
+    > ./*.out
+
+Assuming you have a number of text files in the `../10/input/`
+directory, you will see, upon running::
+
+   ../10.input/test.01.txt ./test.01.out
+   ../10.input/test.02.txt ./test.02.out
+   ../10.input/test.03.txt ./test.03.out
+
+
+
+
+
+*Usage of this command will be logged*
+
+
+
 moa **new**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -262,20 +311,6 @@ pack a job or pipeline, or manage packs
 **Description:**
 
 Create an adhoc job
-
-
-
-
-*Usage of this command will be logged*
-
-
-
-moa **prompt**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Show the state of the current job
-
-
 
 
 
@@ -413,6 +448,42 @@ optional.
 
 
 
+moa **simple**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Quickly create a "simple" adhoc analysis
+
+
+Usage::
+  
+  moa simple -t "title" -- echo "do something"
+
+
+
+**Description:**
+
+Create a 'simple' adhoc job. Simple meaning that no in or output
+files are tracked.
+
+There are a number of ways this command can be used::
+
+    moa simple -t 'a title' -- echo 'define a command'
+    
+Anything after `--` will be the executable command. Note that bash
+will attempt to process the command line. A safer method is::
+
+    moa simple -t 'a title'
+
+Moa will query you for a command to execute (the parameter
+`process`).
+
+
+
+
+*Usage of this command will be logged*
+
+
+
 moa **status**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -532,6 +603,20 @@ Test the currennt configuration
 
 
 *Usage of this command will be logged*
+
+
+
+moa **tree**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Print a directory tree with extra information
+
+
+
+
+
+
+*Usage of this command will **NOT** be logged*
 
 
 
