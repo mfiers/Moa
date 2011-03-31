@@ -111,6 +111,10 @@ def setSilent():
     handler.setFormatter(normalFormatter)
     LOGGER.setLevel(logging.CRITICAL)
 
+def setWarning():
+    handler.setFormatter(normalFormatter)
+    LOGGER.setLevel(logging.WARNING)
+
 def setInfo():
     handler.setFormatter(normalFormatter)
     LOGGER.setLevel(logging.INFO)

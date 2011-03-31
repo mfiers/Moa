@@ -19,6 +19,18 @@ import moa.job
 import moa.logger as l
 import moa.plugin
 
+MAPTEST = '''
+for x in `seq -w 1 20`; do
+   touch test.$x
+done
+moa map --np -t test
+moa set process="echo {{ output }}; cp {{input}} {{ output }}"
+moa set input="./test.*"  output="./out.*"
+output=`moa run 2>&1`
+[[ "$output" =~ "out\.1" ]] || (echo "invalid output 1" && false )
+echo $output
+'''
+
 def defineCommands(data):
     data['commands']['adhoc'] = { 
         'desc' : 'Quickly create an adhoc analysis',
@@ -32,11 +44,20 @@ def defineCommands(data):
         'needsJob' : False,
         'usage' : 'moa simple -t "title" -- echo "do something"'
         }
+    data['commands']['map'] = { 
+        'desc' : 'Quickly create a "map" adhoc analysis',
+        'call' : createMap,
+        'needsJob' : False,
+        'usage' : 'moa map -t "title" -- echo "do something"',
+        'unittest' : MAPTEST
+        }
 
 def defineOptions(data):
-    parserN = optparse.OptionGroup(data['parser'], "Moa adhoc (a)")
+    parserN = optparse.OptionGroup(data['parser'], "Moa adhoc, simple & map")
     try:
         parserN.add_option("-t", "--title", dest="title", help="Job title")
+        parserN.add_option("--np", dest="noprompt", action='store_true',
+                           help="Do not prompt for process, input or output")
         
     except optparse.OptionConflictError:
         pass # these options are probably already defined in the newjob plugin
@@ -47,6 +68,103 @@ def defineOptions(data):
     data['parser'].add_option_group(parserN)
 
 
+def createSimple(data):
+    """
+    Create a 'simple' adhoc job. Simple meaning that no in or output
+    files are tracked.
+
+    There are a number of ways this command can be used::
+
+        moa simple -t 'a title' -- echo 'define a command'
+        
+    Anything after `--` will be the executable command. Note that bash
+    will attempt to process the command line. A safer method is::
+
+        moa simple -t 'a title'
+
+    Moa will query you for a command to execute (the parameter
+    `process`).
+    """
+    wd = data['wd']
+    options = data['options']
+    args = data['args']
+    if not options.force and \
+           os.path.exists(os.path.join(wd, '.moa', 'template')):
+        moa.ui.exitError("Job already exists, use -f to override")
+
+    command = " ".join(args[1:]
+                       ).strip()
+    if not command:
+        command=moa.ui.askUser('process:\n> ', '')
+        
+    params = [('process', command)]
+        
+    moa.job.newJob(
+        wd, template='simple',
+        title = options.title,
+        parameters=params)
+
+
+def createMap(data):
+    """
+    Create a 'map' adhoc job.
+
+    There are a number of ways this command can be used::
+
+        $ moa map -t 'a title' -- echo 'define a command'
+
+    Anything after `--` will be the executable command. If omitted,
+    Moa will query the user for a command.
+
+    Moa will also query the user for input & output files. An example
+    session::
+
+        $ moa map -t 'something intelligent'
+        process:
+        > echo 'processing {{ input }} {{ output }}'
+        input:
+        > ../10.input/*.txt
+        output:
+        > ./*.out
+
+    Assuming you have a number of text files in the `../10/input/`
+    directory, you will see, upon running::
+
+       processing ../10.input/test.01.txt ./test.01.out
+       processing ../10.input/test.02.txt ./test.02.out
+       processing ../10.input/test.03.txt ./test.03.out
+       ...
+
+    """
+    wd = data['wd']
+    options = data['options']
+    args = data['args']
+    if not options.force and \
+           os.path.exists(os.path.join(wd, '.moa', 'template')):
+        moa.ui.exitError("Job already exists, use -f to override")
+
+    command = " ".join(args[1:]
+                       ).strip()
+    params = []
+    if not command and not options.noprompt:
+        command=moa.ui.askUser('process:\n> ', '')
+        params[('process', command)]
+
+    if not options.noprompt:
+        input=moa.ui.askUser('input:\n> ', '')
+        output=moa.ui.askUser('output:\n> ', './*')
+        params.append(('input', input))
+        params.append(('output', output))
+        
+    moa.job.newJob(
+        wd, template='map',
+        title = options.title,
+        parameters=params)
+
+
+
+
+### Old adhoc code - still here for historical purposes
 def _sourceOrTarget(g):
     """
     Determine if this glob is a likely source or
@@ -59,37 +177,6 @@ def _sourceOrTarget(g):
     if d[:2] == '..': return 'source'
     if d[0] == '/': return 'source'
     return 'target'
-
-def createSimple(data):
-    """
-    Create a 'simple' adhoc job. Simple meaning that no in or output
-    files are tracked.
-
-    There are a number of ways this command can be used::
-
-        moa simple -t 'a title' -- echo 'define a command'
-
-    Anything after `--` will be the executable command. Note that 
-    
-    """
-    wc = data['wd']
-
-    if not options.force and \
-           os.path.exists(os.path.join(wd, '.moa', 'template')):
-        moa.ui.exitError("Job already exists, use -f to override")
-
-    command = " ".join(args).strip()
-    
-    if not command:
-        command=moa.ui.askUser('command:\n>', '')
-
-    
-    
-    moa.job.newJob(
-        wd, template='simple',
-        title = options.title,
-        parameters=params)
-
     
 def createAdhoc(data):
     """
@@ -221,12 +308,4 @@ def createAdhoc(data):
     moa.job.newJob(wd, template='adhoc',
                          title = options.title,
                          parameters=params)
-
-def addStore(data):
-    wd = data['wd']
-    job = moa.job.Job(wd)
-    if not job.isMoa():
-        l.warn("Needs to be executed in a moa adhoc job directory")
-        sys.exit(-1)
-    
 

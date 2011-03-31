@@ -23,7 +23,7 @@ import tempfile
 import subprocess
 
 import moa.logger as l
-from moa.logger import setSilent, setInfo, setVerbose
+from moa.logger import setSilent, setWarning, setInfo, setVerbose
 
 #import moa.lock
 import moa.utils
@@ -40,10 +40,6 @@ def defineCommands(data):
         'call' : runTests,
         'needsJob' : False
         }
-
-def runTests(data):
-    _run_test(data['options'], data['args'])
-
 
 #####
 ##### private functions
@@ -70,6 +66,9 @@ templateTests = 0
 
 pluginFailures = 0
 pluginTests = 0
+
+commandFailures = 0
+commandTests = 0
 
 
 def testModule(m):
@@ -127,7 +126,54 @@ def testTemplates(options, args=[]):
                 l.warning("Stderr\n    " +  "\n    ".join(err.split("\n")))
         templateTests += 1
 
-            
+
+def testCommands(data):
+    global commandTests
+    global commandFailures
+    
+    args = data.args
+    args = args.pop()
+
+    for c in data.commands:
+        if (len(args) > 0) and (not c in args):
+            l.debug("skipping command test %s" % c)
+            continue
+        cinfo = data.commands[c]
+        if not cinfo.has_key('unittest'):
+            l.warning("No unittest for command %s" % c)
+            continue
+        cut = cinfo['unittest']
+        rc = _testScript('command %s' % c, cut, len(args) > 0)
+        commandTests += 1
+        if rc != 0:
+            commandFailures += 1
+
+def _testScript(name, script, output_warning=False):
+    testDir = tempfile.mkdtemp()
+    testScript = os.path.join(testDir, 'test.sh')
+    with open(testScript, 'w') as F:
+        F.write(TESTSCRIPTHEADER)
+        F.write(script)
+    l.debug("executing test.sh in %s" % testScript)
+    p = subprocess.Popen('bash %s' % testScript,
+                         shell=True,
+                         cwd = testDir,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         close_fds=True)
+    out, err = p.communicate()
+    rc = p.returncode
+    if rc != 0:
+        l.critical("Errors in %s (rc %d)" % (name, rc))
+        if out: l.critical("Stdout:\n" + out)
+        if err: l.critical("Stderr:\n" + err)
+    elif output_warning:
+        if out: l.warning("Stdout:\n" + out)
+        if err: l.warning("Stderr:\n" + err)
+    else:
+        if out: l.info("Stdout:\n" + out)
+        if err: l.info("Stderr:\n" + err)           
+    return rc
     
 def testPlugins(args=[]):
     global pluginFailures
@@ -175,10 +221,12 @@ def runDocTests():
     testModule(moa.ui)
     testModule(moa.sysConf)
     testModule(moa.jobConf)
-    
-def _run_test(options, args):
 
-    #remove the first argument from args (should be 'test')
+def runTests(data):
+
+    options = data['options']
+    args = data['args']
+
     args.pop(0)
 
     os.putenv('MOA_UNITTESTS', "yes")
@@ -189,7 +237,7 @@ def _run_test(options, args):
     if not args:
         l.info("Start running python doctests")
         
-        setSilent()        
+        setWarning()        
         runDocTests()
         if options.verbose: setVerbose()
         else: setInfo()
@@ -208,15 +256,23 @@ def _run_test(options, args):
         l.info("Finished running template tests")
         sys.exit()
 
+    elif args[0][:3] == 'com':
+        setWarning()
+        testCommands(data)
+        if options.verbose: setVerbose()
+        else: setInfo()
+        l.info("Finished running of python command tests")
+        l.info("Tested %d commands, %d failed" % (commandTests, commandFailures))
+
     elif args[0] == 'doctests':
 
-        setSilent()        
+        setWarning()        
         runDocTests()
         if options.verbose: setVerbose()
         else: setInfo()
 
         l.info("Finished running of python unittests")
-        l.info("Ran %d test, %d failed" % (tests, failures))
+        l.info("Ran %d doctests, %d failed" % (tests, failures))
         
     elif args[0] == 'plugins':
         l.info("Start running plugin tests")
@@ -238,7 +294,7 @@ def _run_test(options, args):
 
     elif args[0][:4] == 'moa.':            
         l.info("testing moa python module %s" % args[0])
-        setSilent()
+        setWarning()
         eval("testModule(%s)" % args[0])
         if options.verbose: setVerbose()
         else: setInfo()
