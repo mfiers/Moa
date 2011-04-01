@@ -2,10 +2,34 @@
 Command reference
 =================
 
+moa **!**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Moa-fy the last (bash) command issued
+
+
+Usage::
+  
+  moa !
+
+
+
+**Description:**
+
+Set the 'process' parameter to the last issued command. If no moa
+job exists, create a 'simple'job.
+
+
+
+
+*Usage of this command will be logged*
+
+
+
 moa **adhoc**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Quickly create an adhoc analysis
+Create an adhoc analysis
 
 
 Usage::
@@ -25,23 +49,83 @@ Creates an adhoc job.
 
 
 
+moa **blog**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+record a short note
+
+
+Usage::
+  
+  moa blog
+
+
+
+**Description:**
+
+Allows a user to enter a short note that is appended to
+moa.description (including a timestamp). Use it as follows::
+
+    $ moa blog
+    Here you can enter a short, conscise, multi-
+    line message describing what you have been
+    doing
+    [ctrl-d]
+
+Note: the ctrl-d needs to be given on an empty line. The text is
+appended to moa.desciption. In the web interface this is converted
+to Markdown_.
+
+.. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
+
+
+
+
+*Usage of this command will be logged*
+
+
+
 moa **cp**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy a moa job (only the configuration, not the data), use moa cp DIR_FROM DIR_TO
+Copy a moa job
 
 
 
 
 **Description:**
 
-Copy a moa job - 
-  0 create a new directory
-  1 copy the configuration
+Copy a moa job, or a tree with jobs.
 
-::TODO..
-  Warn for changing file & dir links
-        
+moa cp copies only those files defining a job: the template files
+and the job configuration. Additionaly, all files in the moa
+directory that start with `moa.` (for example `moa.description`
+are copied as well. Data and log files are not copied!
+
+The command has two modes of operation. The first is::
+
+    moa cp 10.from 20.to
+
+copies the moa job in 10.from to a newly created 20.to
+directory. If the `20.to` directory already exists, a new
+directory is created in `20.to/10.from`. As an shortcut one can
+use::
+
+    moa cp 10.from 20
+
+in which case the job will be copied to the `20.from` directory.
+
+If the source (`10.from`) directory is not a Moa job, the command
+exits with an error.
+
+The second mode of operation is recursive copying::
+
+   moa cp -r 10.from 20.to
+
+in which case all subdirectories under 10.from are traversed and
+copied - if a directory contains a Moa job. 
+
+::TODO..  Warn for changing file & dir links
 
 
 
@@ -216,7 +300,7 @@ optional LINES parameter.
 moa **map**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Quickly create a "map" adhoc analysis
+Create a "map" adhoc analysis
 
 
 Usage::
@@ -241,7 +325,7 @@ session::
 
     $ moa map -t 'something intelligent'
     process:
-    > echo {{ input }} {{ output }}
+    > echo 'processing {{ input }} {{ output }}'
     input:
     > ../10.input/*.txt
     output:
@@ -250,9 +334,10 @@ session::
 Assuming you have a number of text files in the `../10/input/`
 directory, you will see, upon running::
 
-   ../10.input/test.01.txt ./test.01.out
-   ../10.input/test.02.txt ./test.02.out
-   ../10.input/test.03.txt ./test.03.out
+   processing ../10.input/test.01.txt ./test.01.out
+   processing ../10.input/test.02.txt ./test.02.out
+   processing ../10.input/test.03.txt ./test.03.out
+   ...
 
 
 
@@ -265,7 +350,7 @@ directory, you will see, upon running::
 moa **new**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a new Moa job in the this directory
+Create a new Moa job
 
 
 
@@ -451,7 +536,7 @@ optional.
 moa **simple**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Quickly create a "simple" adhoc analysis
+Create a "simple" adhoc analysis
 
 
 Usage::
@@ -609,7 +694,7 @@ Test the currennt configuration
 moa **tree**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Print a directory tree with extra information
+display a directory tree
 
 
 
