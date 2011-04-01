@@ -1,6 +1,11 @@
-Moa - makefiles for bioinformatics.
+Moa - lightweight workflows in bioinformatics.
 
-For installation & operation please read the manual in
-./doc/manual.pdf or read it using your browser in ./doc/html/
+For installation & operation please read the manual:
+
+http://mfiers.github.com/Moa/
+
+or try:
+
+moa --help
 
 
