@@ -41,7 +41,7 @@ newbler: 454AllContigs.fna 454LargeContigs.all.png
 
 #454LargeContigs.all.png
 
-newbler_cl = runAssembly -ace -o . -consed \
+newbler_cl = runAssembly -ace -o . \
 		$(if $(newbler_mid_configuration),-mcf $(newbler_mid_configuration)) 	\
 		$(if $(newbler_min_identity), -mi $(newbler_min_identity)) 		\
 		$(if $(newbler_largecontig_cutoff), -l $(newbler_largecontig_cutoff)) 	\
