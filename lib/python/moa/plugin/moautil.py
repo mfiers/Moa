@@ -19,11 +19,37 @@ import shutil
 import moa.logger as l
 import moa.ui
 
+COPYTEST = '''
+mkdir 10.test
+cd 10.test
+moa simple -t "test" -- echo "hello"
+cd ..
+moa cp 10.test 20 2>/dev/null
+cd 20.test
+output=`moa run`
+[[ "$output" =~ "hello" ]] || (echo "invalid output"; false)
+cd ..
+pwd
+moa cp 10.test 30.test2 2>/dev/null
+cd 30.test2
+output=`moa run`
+[[ "$output" =~ "hello" ]] || (echo "invalid output"; false)
+cd ../10.test
+mkdir 05.subtest
+cd 05.subtest
+moa simple -t "test2" -- echo "subtest"
+cd ../../
+moa cp 10.test 40.test 2>/dev/null
+[[ ! -d "40.test/05.subtest" ]] || (echo "subdirectory should not be there"; false)
+moa cp -r 10.test 50.test 2>/dev/null
+[[ -d "50.test/05.subtest" ]] || (echo "subdirectory is not there?"; false)
+'''
 def defineCommands(data):
     data['commands']['cp'] = {
-        'desc' : 'Copy a moa job (only the configuration, not the data), '+
-        'use moa cp DIR_FROM DIR_TO',
-        'call' : moacp }
+        'desc' : 'Copy a moa job',
+        'call' : moacp,
+        'needsJob' : False,
+        'unittest' : COPYTEST}
 
 #    data['commands']['mv'] = {
 #        'desc' : 'Move a moa job, ',
@@ -41,19 +67,6 @@ def defineCommands(data):
 #        'desc' : 'Resume a paused moa job',
 #        'call' : moaresume }
 #
-#    data['commands']['tree'] = {
-#        'desc' : 'return a tree structure with extra moa information',
-#        'call' : moaTree }
-
-
-#def moaTree(data):
-#    """
-#    Print a tree with Moa info
-#    """
-#    cwd = data['cwd']
-#    for root, dirs, files in os.walk(cwd):
-#        state = moa.info.status(root)
-#        print "%-10s %s" % (state, os.path.relpath(root, cwd))
 
 def moakill(data):
     """
@@ -126,28 +139,46 @@ def moamv(data):
     
 def moacp(data):
     """
-    Copy a moa job - 
-      0 create a new directory
-      1 copy the configuration
+    Copy a moa job, or a tree with jobs.
 
-    ::TODO..
-      Warn for changing file & dir links
-            
+    moa cp copies only those files defining a job: the template files
+    and the job configuration. Additionaly, all files in the moa
+    directory that start with `moa.` (for example `moa.description`
+    are copied as well. Data and log files are not copied!
+
+    The command has two modes of operation. The first is::
+
+        moa cp 10.from 20.to
+
+    copies the moa job in 10.from to a newly created 20.to
+    directory. If the `20.to` directory already exists, a new
+    directory is created in `20.to/10.from`. As an shortcut one can
+    use::
+
+        moa cp 10.from 20
+
+    in which case the job will be copied to the `20.from` directory.
+
+    If the source (`10.from`) directory is not a Moa job, the command
+    exits with an error.
+
+    The second mode of operation is recursive copying::
+
+       moa cp -r 10.from 20.to
+
+    in which case all subdirectories under 10.from are traversed and
+    copied - if a directory contains a Moa job. 
+
+    ::TODO..  Warn for changing file & dir links
     """
     
-    args = data['newargs']
-
+    options = data.options
+    args = data.newargs
+    
     if len(args) > 1: dirTo = args[1]
     else: dirTo = '.'
 
-    
     dirFrom = args[0]
-    dirFromM = os.path.join(dirFrom, '.moa')
-    if not os.path.exists(dirFromM):
-        moa.ui.exitError(
-            "%s does not appear to be a moa directory" % dirFrom)
-        
-    #remove trailing slash & determine basename
     if dirFrom[-1] == '/': dirFrom = dirFrom[:-1]
     fromBase = os.path.basename(dirFrom)
 
@@ -161,24 +192,39 @@ def moacp(data):
         dirTo = os.path.join(os.path.dirname(dirTo), toBase)
         
     elif os.path.exists(dirTo):
-        #if the 'to' directory exists - create a new directory 
+        #if the 'to' directory exists - create a new sub directory 
         dirTo = os.path.join(dirTo, fromBase)     
     
-    dirToM = os.path.join(dirTo, '.moa')
-    
-    l.info("creating directory %s" % dirTo)
-    
-    #create the target '.moa' dir    
-    #os.makedirs(dirToM)
-        
     l.info("Copying from %s to %s" % (dirFrom, dirTo))
 
-    def _ignore(src, names):        
-        if src[-5:] == '/.moa': 
-            ignore =  [x for x in names 
-                       if (x == 'out') or 
-                       (x[-4:] == '.fof')]
-            return ignore
-        return []
+    if  not options.recursive:
+        if not os.path.isdir(dirFrom):
+            moa.ui.exitError(
+                "Need %s to be a directory" % dirFrom)
+        fromJob = moa.job.Job(dirFrom)
+        if not fromJob.isMoa():
+            moa.ui.exitError(
+                "Need %s to be a moa directory" % dirFrom)
+        _copyMoaDir(fromJob, dirTo)
+    else:
+        #recursive: start traversing through dirFrom
+        for path, dirs, files in os.walk(dirFrom):
+            if '.moa' in dirs:
+                fromJob = moa.job.Job(path)
+                dirs.remove('.moa')
+                thisToPath = path.replace(dirFrom, dirTo)
+                _copyMoaDir(fromJob, thisToPath)
 
-    shutil.copytree(dirFromM, dirToM, ignore=_ignore)
+                            
+def _copyMoaDir(job, toDir):
+    for pattern in job.data.moaFiles:
+        for fromFile in  glob.glob(os.path.join(job.wd, pattern)):
+            toFile = fromFile.replace(job.wd, toDir)
+            if os.path.exists(fromFile) and not os.path.isfile(fromFile):
+                l.critical("Uncertain about copying %s" % fromFile)
+                sys.exit()
+            if os.path.exists(fromFile):
+                thisToDir = os.path.dirname(toFile)
+                if not os.path.exists(thisToDir):
+                    os.makedirs(thisToDir)
+                shutil.copyfile(fromFile, toFile)

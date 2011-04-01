@@ -132,7 +132,7 @@ def testCommands(data):
     global commandFailures
     
     args = data.args
-    args = args.pop()
+    args.pop(0)
 
     for c in data.commands:
         if (len(args) > 0) and (not c in args):
@@ -164,13 +164,15 @@ def _testScript(name, script, output_warning=False):
     out, err = p.communicate()
     rc = p.returncode
     if rc != 0:
-        l.critical("Errors in %s (rc %d)" % (name, rc))
+        l.critical("Error testing %s (rc %d)" % (name, rc))
         if out: l.critical("Stdout:\n" + out)
         if err: l.critical("Stderr:\n" + err)
     elif output_warning:
+        l.critical("Success testing %s" % name)
         if out: l.warning("Stdout:\n" + out)
         if err: l.warning("Stderr:\n" + err)
     else:
+        l.warning("Success testing %s" % name)
         if out: l.info("Stdout:\n" + out)
         if err: l.info("Stderr:\n" + err)           
     return rc
@@ -242,18 +244,21 @@ def runTests(data):
         if options.verbose: setVerbose()
         else: setInfo()
         
-        l.info("Finished running of python unittests")
         l.info("Ran %d test, %d failed" % (tests, failures))
+
+        l.info("Start running command tests")
+        testCommands(data)
+        l.info("Ran %d command tests, %d failed" % (
+                commandTests, commandFailures))
+
         
         l.info("Start running plugin tests")
         testPlugins()
         l.info("Ran %d plugin test, %d failed" % (
                 pluginTests, pluginFailures))
-        l.info("Finished running plugin tests")
 
         l.info("start running template tests")
         testTemplates(options)
-        l.info("Finished running template tests")
         sys.exit()
 
     elif args[0][:3] == 'com':

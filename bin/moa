@@ -129,6 +129,9 @@ parser.add_option(
     "--bg", dest="background", action="store_true",
     help="Run moa in the background (implies -s)")
 
+parser.add_option("-r", "--recursive", dest="recursive",
+                  help="Perfom action recursively", action='store_true')
+
 def run():
 
     ## Aks the job & backend if they want to add to the options

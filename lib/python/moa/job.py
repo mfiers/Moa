@@ -103,6 +103,15 @@ class Job(object):
         self.env = {}
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
+
+        # a list of globs that defines what is crucial to a Moa job
+        # and what is not.
+        self.data.moaFiles = [
+            '.moa/template',
+            '.moa/template.d/*',
+            '.moa/config',
+            'moa.*'
+            ]
         
         self.loadTemplate()
 
@@ -289,8 +298,12 @@ class Job(object):
         #weird; uncertain if this ever gets called
         
         """
-        if os.path.exists('.moa'):
-            return True
+        if not os.path.exists(os.path.join(self.wd, '.moa')):
+            return False
+        if self.template.name == 'noJob':
+            return False
+        return True
+                              
 
     def initialize(self):
         """
