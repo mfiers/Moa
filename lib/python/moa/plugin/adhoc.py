@@ -33,19 +33,19 @@ echo $output
 
 def defineCommands(data):
     data['commands']['adhoc'] = { 
-        'desc' : 'Quickly create an adhoc analysis',
+        'desc' : 'Create an adhoc analysis',
         'call' : createAdhoc,
         'needsJob' : False,
         'usage' : 'moa adhoc -t "title" -- echo "do something"'        
         }
     data['commands']['simple'] = { 
-        'desc' : 'Quickly create a "simple" adhoc analysis',
+        'desc' : 'Create a "simple" adhoc analysis',
         'call' : createSimple,
         'needsJob' : False,
         'usage' : 'moa simple -t "title" -- echo "do something"'
         }
     data['commands']['map'] = { 
-        'desc' : 'Quickly create a "map" adhoc analysis',
+        'desc' : 'Create a "map" adhoc analysis',
         'call' : createMap,
         'needsJob' : False,
         'usage' : 'moa map -t "title" -- echo "do something"',

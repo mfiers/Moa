@@ -19,31 +19,6 @@ import shutil
 import moa.logger as l
 import moa.ui
 
-COPYTEST = '''
-mkdir 10.test
-cd 10.test
-moa simple -t "test" -- echo "hello"
-cd ..
-moa cp 10.test 20 2>/dev/null
-cd 20.test
-output=`moa run`
-[[ "$output" =~ "hello" ]] || (echo "invalid output"; false)
-cd ..
-pwd
-moa cp 10.test 30.test2 2>/dev/null
-cd 30.test2
-output=`moa run`
-[[ "$output" =~ "hello" ]] || (echo "invalid output"; false)
-cd ../10.test
-mkdir 05.subtest
-cd 05.subtest
-moa simple -t "test2" -- echo "subtest"
-cd ../../
-moa cp 10.test 40.test 2>/dev/null
-[[ ! -d "40.test/05.subtest" ]] || (echo "subdirectory should not be there"; false)
-moa cp -r 10.test 50.test 2>/dev/null
-[[ -d "50.test/05.subtest" ]] || (echo "subdirectory is not there?"; false)
-'''
 def defineCommands(data):
     data['commands']['cp'] = {
         'desc' : 'Copy a moa job',
@@ -228,3 +203,30 @@ def _copyMoaDir(job, toDir):
                 if not os.path.exists(thisToDir):
                     os.makedirs(thisToDir)
                 shutil.copyfile(fromFile, toFile)
+
+#Unittest scripts
+
+COPYTEST = '''
+mkdir 10.test
+cd 10.test
+moa simple -t "test" -- echo "hello"
+cd ..
+moa cp 10.test 20 2>/dev/null
+cd 20.test
+output=`moa run`
+[[ "$output" =~ "hello" ]] || (echo "invalid output"; false)
+cd ..
+moa cp 10.test 30.test2 2>/dev/null
+cd 30.test2
+output=`moa run`
+[[ "$output" =~ "hello" ]] || (echo "invalid output"; false)
+cd ../10.test
+mkdir 05.subtest
+cd 05.subtest
+moa simple -t "test2" -- echo "subtest"
+cd ../../
+moa cp 10.test 40.test 2>/dev/null
+[[ ! -d "40.test/05.subtest" ]] || (echo "subdirectory should not be there"; false)
+moa cp -r 10.test 50.test 2>/dev/null
+[[ -d "50.test/05.subtest" ]] || (echo "subdirectory is not there?"; false)
+'''

@@ -57,7 +57,7 @@ def defineCommands(data):
         'log' : False
         }
     data['commands']['tree'] = {
-        'desc' : 'Print a directory tree with extra information',
+        'desc' : 'display a directory tree',
         'call' : tree,
         'needsJob' : False,
         'log' : False
@@ -67,25 +67,29 @@ def defineCommands(data):
 def tree(data):
     wd = data.wd
     filt = data.args[1:]
-        
     for path, dirs, files in os.walk(data.wd):
         rpath = path.replace(wd, '')[1:]
-        
-        if filt and not rpath:
-            for d in dirs:
-                if d in filt: continue
-                dirs.remove(d)
 
+        remove = set(dirs) - set(filt)
+        if not rpath and filt:
+            while True:
+                for r in remove:
+                    if r in dirs:
+                        dirs.remove(r)
+                        break
+                else:
+                    break
         
         isMoa = '.moa' in dirs
-        while '.moa' in dirs: dirs.remove('.moa')
+        for d in dirs:
+            if d[0] == '.': dirs.remove(d)
         dirs.sort()
 
         if not rpath: lev = 0
         else: lev = rpath.count('/') + 1
 
         if not isMoa:
-            moa.ui.fprint('.. %s./%s' % ('  ' * lev, rpath), f='jinja')
+            moa.ui.fprint('(..) %s./%s' % ('  ' * lev, rpath), f='jinja')
             continue
         tag = '{{green}}M{{reset}}'
         statusFile = os.path.join(path, '.moa', 'status')
@@ -99,7 +103,7 @@ def tree(data):
                 'error' : '{{red}}E{{reset}}',
                 'interrupted' : '{{blue}}I{{reset}}'
                 }.get(message, '{{green}}?{{reset}}')
-        moa.ui.fprint("%s%s %s./%s" % ( tag, status, '  ' * lev, rpath),
+        moa.ui.fprint("(%s%s) %s./%s" % ( tag, status, '  ' * lev, rpath),
                       f = 'jinja')
     
 

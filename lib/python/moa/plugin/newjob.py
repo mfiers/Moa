@@ -20,7 +20,7 @@ import moa.ui
 
 def defineCommands(data):
     data['commands']['new'] = {
-        'desc' : "Create a new Moa job in the this directory",
+        'desc' : "Create a new Moa job",
         'call' : newJob,
         'needsJob' : False
         }
