@@ -51,6 +51,12 @@ def defineCommands(data):
         'usage' : 'moa map -t "title" -- echo "do something"',
         'unittest' : MAPTEST
         }
+    data['commands']['!'] = { 
+        'desc' : 'Moa-fy the last (bash) command issued',
+        'call' : exclamate,
+        'needsJob' : False,
+        'usage' : 'moa !'
+        }
 
 def defineOptions(data):
     parserN = optparse.OptionGroup(data['parser'], "Moa adhoc, simple & map")
@@ -105,6 +111,62 @@ def createSimple(data):
         parameters=params)
 
 
+
+def exclamateNoJob(data):
+    """
+    Create a "simple" job & set the last command
+    to the 'process' parameter 
+    """
+    options = data['options']
+
+    title = options.title
+    if not options.title: 
+        moa.ui.warn("Do not forget to set a title")
+    histFile = os.path.join(os.path.expanduser('~'), '.moa.last.command')
+    if not os.path.exists(histFile):
+        moa.ui.exitError(
+            ("This needs to be used in conjunction with the " +
+             "moa_prompt code. Please read the manual") )
+
+    with open(histFile) as F:
+        last = F.read().strip()
+        
+    
+    job = moa.job.newJob(
+        wd = data.wd, template='simple', 
+        title = title,
+        parameters = [('process', last)])
+
+def exclamateInJob(data):
+    """
+    Reuse the last issued command: set it as the 'process' parameters
+    in the current job    
+    """
+    job = data.job
+    histFile = os.path.join(job.confDir, 'history')
+    if not os.path.exists(histFile):
+        moa.ui.exitError(
+            ("This needs to be used in conjunction with the " +
+             "moa_prompt code. Please read the manual") )
+
+    with open(histFile) as F:
+        last = F.readlines()[-1].strip()
+    moa.ui.fprint("{{bold}}Using command:{{reset}}", f='jinja')
+    moa.ui.fprint(last)
+    job.conf.process=last
+    job.conf.save()
+                
+def exclamate(data):
+    """
+    Set the 'process' parameter to the last issued command. If no moa
+    job exists, create a 'simple'job.
+    """
+    job = data.job    
+    if job.isMoa():
+        exclamateInJob(data)
+    else: 
+        exclamateNoJob(data)
+    
 def createMap(data):
     """
     Create a 'map' adhoc job.
@@ -148,7 +210,7 @@ def createMap(data):
     params = []
     if not command and not options.noprompt:
         command=moa.ui.askUser('process:\n> ', '')
-        params[('process', command)]
+        params.append(('process', command))
 
     if not options.noprompt:
         input=moa.ui.askUser('input:\n> ', '')

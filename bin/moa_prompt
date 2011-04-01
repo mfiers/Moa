@@ -1,20 +1,25 @@
 #!/bin/bash
 
 function _moa_prompt {
-    [[ -d '.moa' ]] || return 0
-    [[ -f '.moa/template' ]] || return 0
-
-    #save history to a .moa/history
-    # based on:
+    #Get the last command
+    #based on:
     #http://stackoverflow.com/questions/945288/...
     #     ...saving-current-directory-to-bash-history
     #
     local lc=$(history 1)
     lc="${lc# *[0-9]*  }"
+
+	#save the last command to a user specific location
+    echo $lc > ~/.moa.last.command
+
+    [[ -d '.moa' ]] || return 0
+	#and add it to the local history if this is a mob job
     echo $lc >> .moa/history
 
-    #prepare for visualization
+	#if there is no template, there is not much we can do
+    [[ -f '.moa/template' ]] || return 0
 
+    #prepare for visualization
     local blue="\033[34m"
     local black="\033[30m"
     local bright="\033[1m"

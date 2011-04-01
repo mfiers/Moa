@@ -41,7 +41,7 @@ ncbi: $(ncbi_sequence_name).fasta
 $(ncbi_sequence_name).fasta: webEnv=$(shell xml_grep --cond "WebEnv" query.xml --text_only)
 $(ncbi_sequence_name).fasta: queryKey=$(shell xml_grep --cond "QueryKey" query.xml --text_only)
 $(ncbi_sequence_name).fasta: query.xml
-	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&report=fasta" -O $(ncbi_sequence_name).tmp
+	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&report=fasta" -O $(ncbi_sequence_name).fasta
 
 #query.xml contains the IDs of the sequences to download
 query.xml: 
