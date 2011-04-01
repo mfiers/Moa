@@ -132,7 +132,8 @@ def testCommands(data):
     global commandFailures
     
     args = data.args
-    args.pop(0)
+    if args:
+        args.pop(0)
 
     for c in data.commands:
         if (len(args) > 0) and (not c in args):
@@ -168,7 +169,7 @@ def _testScript(name, script, output_warning=False):
         if out: l.critical("Stdout:\n" + out)
         if err: l.critical("Stderr:\n" + err)
     elif output_warning:
-        l.critical("Success testing %s" % name)
+        l.warning("Success testing %s" % name)
         if out: l.warning("Stdout:\n" + out)
         if err: l.warning("Stderr:\n" + err)
     else:
@@ -177,44 +178,44 @@ def _testScript(name, script, output_warning=False):
         if err: l.info("Stderr:\n" + err)           
     return rc
     
-def testPlugins(args=[]):
-    global pluginFailures
-    global pluginTests
+# def testPlugins(args=[]):
+#     global pluginFailures
+#     global pluginTests
 
-    #new style plugin tests
-    plugins = moa.plugin.PluginHandler(moa.sysConf.getPlugins())
-    for plugin, testCode in plugins.getAttr('TESTSCRIPT'):
+#     #new style plugin tests
+#     plugins = moa.plugin.PluginHandler(moa.sysConf.getPlugins())
+#     for plugin, testCode in plugins.getAttr('TESTSCRIPT'):
 
-        #if asking for a single plugin, test only that plugin
-        if args and plugin not in args: continue
+#         #if asking for a single plugin, test only that plugin
+#         if args and plugin not in args: continue
         
-        l.info("Starting new style test of %s" % plugin)
-        testDir = tempfile.mkdtemp()
-        testScript = os.path.join(testDir, 'test.sh')
-        with open(testScript, 'w') as F:
-            F.write(TESTSCRIPTHEADER)
-            F.write(testCode)
-        l.debug("executing test.sh in %s" % testScript)
-        p = subprocess.Popen('bash %s' % testScript,
-                             shell=True,
-                             cwd = testDir,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE,
-                             close_fds=True)
-        out, err = p.communicate()
-        rc = p.returncode
-        if rc != 0:
-            l.critical("Errors in plugin test %s (rc %d)" % (plugin, rc))
-            if out: l.critical("Stdout:\n" + out)
-            if err: l.critical("Stderr:\n" + err)
-            pluginFailures += 1
-        elif args:
-            if out: l.info("Stdout:\n" + out)
-            if err: l.info("Stderr:\n" + err)
+#         l.info("Starting new style test of %s" % plugin)
+#         testDir = tempfile.mkdtemp()
+#         testScript = os.path.join(testDir, 'test.sh')
+#         with open(testScript, 'w') as F:
+#             F.write(TESTSCRIPTHEADER)
+#             F.write(testCode)
+#         l.debug("executing test.sh in %s" % testScript)
+#         p = subprocess.Popen('bash %s' % testScript,
+#                              shell=True,
+#                              cwd = testDir,
+#                              stdout=subprocess.PIPE,
+#                              stderr=subprocess.PIPE,
+#                              close_fds=True)
+#         out, err = p.communicate()
+#         rc = p.returncode
+#         if rc != 0:
+#             l.critical("Errors in plugin test %s (rc %d)" % (plugin, rc))
+#             if out: l.critical("Stdout:\n" + out)
+#             if err: l.critical("Stderr:\n" + err)
+#             pluginFailures += 1
+#         elif args:
+#             if out: l.info("Stdout:\n" + out)
+#             if err: l.info("Stderr:\n" + err)
            
-        l.info("Success testing %s (%d lines)" % (
-            plugin, len(testCode.strip().split("\n"))))
-        pluginTests += 1
+#         l.info("Success testing %s (%d lines)" % (
+#             plugin, len(testCode.strip().split("\n"))))
+#         pluginTests += 1
 
 def runDocTests():
     testModule(moa.utils)
@@ -252,10 +253,10 @@ def runTests(data):
                 commandTests, commandFailures))
 
         
-        l.info("Start running plugin tests")
-        testPlugins()
-        l.info("Ran %d plugin test, %d failed" % (
-                pluginTests, pluginFailures))
+        #l.info("Start running plugin tests")
+        #testPlugins()
+        #l.info("Ran %d plugin test, %d failed" % (
+        #        pluginTests, pluginFailures))
 
         l.info("start running template tests")
         testTemplates(options)
@@ -279,12 +280,12 @@ def runTests(data):
         l.info("Finished running of python unittests")
         l.info("Ran %d doctests, %d failed" % (tests, failures))
         
-    elif args[0] == 'plugins':
-        l.info("Start running plugin tests")
-        testPlugins(args[1:])
-        l.info("Ran %d plugin test, %d failed" % (
-                pluginTests, pluginFailures))
-        l.info("Finished running plugin tests")
+    #elif args[0] == 'plugins':
+    #    l.info("Start running plugin tests")
+    #    testPlugins(args[1:])
+    #    l.info("Ran %d plugin test, %d failed" % (
+    #            pluginTests, pluginFailures))
+    #    l.info("Finished running plugin tests")
 
     elif args[0] == 'templates' or args[0] == 'template':
         l.info("Start running template tests")

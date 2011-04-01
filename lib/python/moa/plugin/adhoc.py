@@ -19,18 +19,6 @@ import moa.job
 import moa.logger as l
 import moa.plugin
 
-MAPTEST = '''
-for x in `seq -w 1 20`; do
-   touch test.$x
-done
-moa map --np -t test
-moa set process="echo {{ output }}; cp {{input}} {{ output }}"
-moa set input="./test.*"  output="./out.*"
-output=`moa run 2>&1`
-[[ "$output" =~ "out\.1" ]] || (echo "invalid output 1" && false )
-echo $output
-'''
-
 def defineCommands(data):
     data['commands']['adhoc'] = { 
         'desc' : 'Create an adhoc analysis',
@@ -100,7 +88,7 @@ def createSimple(data):
 
     command = " ".join(args[1:]
                        ).strip()
-    if not command:
+    if not command and not options.noprompt:
         command=moa.ui.askUser('process:\n> ', '')
         
     params = [('process', command)]
@@ -371,3 +359,17 @@ def createAdhoc(data):
                          title = options.title,
                          parameters=params)
 
+
+
+
+MAPTEST = '''
+for x in `seq -w 1 20`; do
+   touch test.$x
+done
+moa map --np -t test
+moa set process="echo {{ output }}; cp {{input}} {{ output }}"
+moa set input="./test.*"  output="./out.*"
+output=`moa run 2>&1`
+[[ "$output" =~ "out\.1" ]] || (echo "invalid output 1" && false )
+echo $output
+'''

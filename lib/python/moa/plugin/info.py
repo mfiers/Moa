@@ -48,13 +48,15 @@ def defineCommands(data):
         'desc' : 'Returns stdout of the last moa run',
         'call' : getOut,
         'needsJob' : True,
-        'log' : False
+        'log' : False,
+        'unittest' : TESTOUT
         }
     data['commands']['err'] = {
         'desc' : 'Returns stderr of the last moa run',
         'call' : getErr,
         'needsJob' : True,
-        'log' : False
+        'log' : False,
+        'unittest' : TESTERR
         }
     data['commands']['tree'] = {
         'desc' : 'display a directory tree',
@@ -190,3 +192,18 @@ moa out | grep OUT
 moa err | grep ERR
 moa version
 """
+
+TESTOUT = '''
+moa simple -t "test" -- echo "something"
+moa run
+out=`moa out`
+[[ "$out" =~ "something" ]] || (echo "Moa out failed" ; false)
+'''
+
+TESTERR = '''
+moa simple -t "test" --np
+moa set process='echo "something" >&2'
+moa run
+err=`moa err`
+[[ "$err" =~ "something" ]] || (echo "Moa err failed" ; false)
+'''
