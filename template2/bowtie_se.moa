@@ -20,7 +20,7 @@ filesets:
   output:
     category: output
     help: Bam output file
-    pattern: './*.bam'
+    pattern: ./*.bam
     source: fq_input
     type: map
 moa_id: bowtie_se
@@ -61,10 +61,3 @@ parameters:
     help: Format of the output file
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string

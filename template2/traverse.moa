@@ -17,12 +17,5 @@ name: traverse
 parameter_category_order:
 - system
 - advanced
-parameters:
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+parameters: {}
 title: Traverse

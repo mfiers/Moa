@@ -6,12 +6,11 @@ commands:
     mode: simple
   run:
     delegate:
-      - prep_1
+    - prep_1
     help: Run orthomcl
     mode: simple
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run orhthomcl on a set of input fasta files
-
 filesets:
   input:
     category: input
@@ -23,6 +22,16 @@ moa_id: orthomcl
 modification_date: Wed Nov 10 07:56:48 2010
 name: orthomcl
 parameters:
+  db:
+    default: orthomcl
+    help: DB name
+    optional: true
+    type: string
+  host:
+    default: localhost
+    help: DB host
+    optional: true
+    type: string
   login:
     help: DB login
     optional: false
@@ -31,32 +40,14 @@ parameters:
     help: DB password
     optional: false
     type: string
-  host:
-    help: DB host
-    optional: true
-    default: localhost
-    type: string
-  db:
-    help: DB name
-    optional: true
-    default: orthomcl
-    type: string
   port:
+    default: 3306
     help: DB port
     optional: true
-    default: 3306
     type: string
   prefix:
-    help: 'prefix for separating tables & output fields'
-    optional: true
     default: run1
+    help: prefix for separating tables & output fields
+    optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
-    
 title: Bwa index builder

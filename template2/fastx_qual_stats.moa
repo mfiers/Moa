@@ -65,11 +65,4 @@ parameters:
     help: New output format (with more information per nucleotide/cycle)
     optional: true
     type: boolean
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 version: 1

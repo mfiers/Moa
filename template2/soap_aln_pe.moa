@@ -10,13 +10,17 @@ commands:
 creation_date: Wed Nov 30 07:56:48 2010
 description: Use SOAP to align a set of paired fastq reads against a db
 filesets:
+  bam_output:
+    category: output
+    pattern: ./*.bam
+    source: fq_forward_input
+    type: map
   fa_input:
     category: prerequisite
     help: directory with reference fasta file name
     optional: false
     pattern: '*/*.fasta'
     type: set
-    optional: false
   fq_forward_input:
     category: input
     help: fastq input files directory - forward files
@@ -27,11 +31,6 @@ filesets:
     category: input
     help: fastq input files directory - reverse files
     pattern: '*/*_2.fq'
-    source: fq_forward_input
-    type: map
-  bam_output:
-    category: output
-    pattern: ./*.bam
     source: fq_forward_input
     type: map
   soap_output:
@@ -146,13 +145,6 @@ parameters:
     help: Multithreads, n threads
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   type_of_pe:
     allowed: []
     category: ''

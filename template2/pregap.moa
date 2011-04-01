@@ -75,13 +75,6 @@ parameters:
     help: the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.
     optional: true
     type: file
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   vector_primerfile:
     allowed: []
     category: ''

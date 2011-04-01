@@ -9,7 +9,8 @@ commands:
     help: run kangax
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
-description: use kangax to create the suffix array lookup database for the reference genome
+description: use kangax to create the suffix array lookup database for the reference
+  genome
 filesets:
   input_fasta:
     category: input
@@ -17,16 +18,16 @@ filesets:
     optional: false
     pattern: '*/*.fasta'
     type: set
-  output_sfx:
-    category: output
-    help: output suffix array lookup
-    pattern: ./*.sfx
-    source: input_fasta
-    type: map
   output_log:
     category: output
     help: output log file
     pattern: ./*.log.txt
+    source: input_fasta
+    type: map
+  output_sfx:
+    category: output
+    help: output suffix array lookup
+    pattern: ./*.sfx
     source: input_fasta
     type: map
 moa_id: kangax
@@ -38,13 +39,18 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  reference_species:
-    allowed: []
+  block_seq_len:
     category: ''
-    default: ''
-    help: reference species
-    optional: false
-    type: string
+    default: 3300
+    help: generated suffix blocks to hold at most this length (MB) concatenated sequences
+    optional: true
+    type: integer
+  color_space:
+    category: ''
+    default: false
+    help: generate for colorspace (SOLiD)
+    optional: true
+    type: boolean
   extra_params:
     allowed: []
     category: ''
@@ -58,35 +64,24 @@ parameters:
     help: print this help and exit
     optional: true
     type: boolean
+  reference_species:
+    allowed: []
+    category: ''
+    default: ''
+    help: reference species
+    optional: false
+    type: string
+  target_dep:
+    category: ''
+    default: false
+    help: generate target file only if missing or older than any independent source
+      files
+    optional: true
+    type: boolean
   version:
     category: ''
     default: false
     help: print version information and exit
     optional: true
     type: boolean
-  color_space:
-    category: ''
-    default: false
-    help: generate for colorspace (SOLiD)
-    optional: true
-    type: boolean
-  target_dep:
-    category: ''
-    default: false
-    help: generate target file only if missing or older than any independent source files
-    optional: true
-    type: boolean
-  block_seq_len:
-    category: ''
-    default: 3300
-    help: generated suffix blocks to hold at most this length (MB) concatenated sequences
-    optional: true
-    type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 version: 1

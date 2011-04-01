@@ -83,13 +83,6 @@ parameters:
     help: Output the sequences
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   untrimmed:
     allowed:
     - T

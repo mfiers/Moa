@@ -29,12 +29,5 @@ parameter_category_order:
 - input
 - system
 - advanced
-parameters:
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+parameters: {}
 title: Convert SAM to BAM using samtools

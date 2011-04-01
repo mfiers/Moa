@@ -94,11 +94,4 @@ parameters:
       Mark.
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Library for uploading data to GBrowse

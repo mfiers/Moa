@@ -26,11 +26,4 @@ parameters:
     help: The one-liner to execute
     optional: false
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Run an ad-hoc onliner

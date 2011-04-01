@@ -13,7 +13,7 @@ commands:
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Predicts (prokaryotic) using glimmer3.
-filesets: 
+filesets:
   input:
     category: input
     help: Directory with the input files for Glimmer3
@@ -46,13 +46,6 @@ parameters:
       parameter
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   treshold:
     allowed: []
     category: ''

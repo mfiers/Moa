@@ -27,7 +27,7 @@ filesets:
   output:
     category: output
     help: Bam output file
-    pattern: './*.bam'
+    pattern: ./*.bam
     source: fq_forward_input
     type: map
 moa_id: bowtie_pe
@@ -58,14 +58,14 @@ parameters:
     help: Format of the input files
     optional: true
     type: set
-  min_insertsize:
-    default: '1'
-    help: Minimum allowed insertsize
-    optional: true
-    type: integer
   max_insertsize:
     default: '250'
     help: Maximum allowed insertsize
+    optional: true
+    type: integer
+  min_insertsize:
+    default: '1'
+    help: Minimum allowed insertsize
     optional: true
     type: integer
   output_format:
@@ -78,10 +78,3 @@ parameters:
     help: Format of the output file
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string

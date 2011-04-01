@@ -22,14 +22,14 @@ filesets:
     optional: false
     pattern: '*/*.bam'
     type: set
-  output_bam:
-    category: output
-    pattern: ./*.sorted
-    source: input
-    type: map
   output:
     category: output
     pattern: ./*.pileup
+    source: input
+    type: map
+  output_bam:
+    category: output
+    pattern: ./*.sorted
     source: input
     type: map
 moa_id: samtools_pileup
@@ -41,46 +41,10 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  simple_pileup_format:
-    category: ''
-    default: false
-    help: simple (yet incomplete) pileup format
-    optional: true
-    type: boolean
-  input_is_SAM:
-    category: ''
-    default: false
-    help: the input is in SAM
-    optional: true
-    type: boolean
-  use_SOAPsnp_model:
-    category: ''
-    default: false
-    help: use the SOAPsnp model for SNP calling
-    optional: true
-    type: boolean
-  out_2nd_best:
-    category: ''
-    default: false
-    help: output the 2nd best call and quality
-    optional: true
-    type: boolean
-  show_lines_indels:
-    category: ''
-    default: false
-    help: only show lines/consensus with indels
-    optional: true
-    type: boolean
-  filter_read_bits:
-    category: ''
-    default: 1796
-    help: filtering reads with bits in INT 
-    optional: true
-    type: integer
   cap_mapQ_at:
     category: ''
     default: 60
-    help: cap mapping quality at INT 
+    help: cap mapping quality at INT
     optional: true
     type: integer
   extra_params:
@@ -90,22 +54,16 @@ parameters:
     help: any extra parameters
     optional: true
     type: string
-  out_maq_consensus:
+  filter_read_bits:
     category: ''
-    default: false
-    help: output the maq consensus sequence
+    default: 1796
+    help: filtering reads with bits in INT
     optional: true
-    type: boolean
-  print_variants_only:
+    type: integer
+  input_is_SAM:
     category: ''
     default: false
-    help: print variants only (for -c)
-    optional: true
-    type: boolean
-  out_GLFv3_format:
-    category: ''
-    default: false
-    help: output in the GLFv3 format (suppressing -c/-i/-s)
+    help: the input is in SAM
     optional: true
     type: boolean
   num_haplotypes:
@@ -114,34 +72,69 @@ parameters:
     help: number of haplotypes in the sample (for -c/-g)
     optional: true
     type: integer
+  out_2nd_best:
+    category: ''
+    default: false
+    help: output the 2nd best call and quality
+    optional: true
+    type: boolean
+  out_GLFv3_format:
+    category: ''
+    default: false
+    help: output in the GLFv3 format (suppressing -c/-i/-s)
+    optional: true
+    type: boolean
+  out_maq_consensus:
+    category: ''
+    default: false
+    help: output the maq consensus sequence
+    optional: true
+    type: boolean
   phred_prob_indel:
     category: ''
     default: 40
-    help: phred prob. of an indel in sequencing/prep. (for -c/-g) 
+    help: phred prob. of an indel in sequencing/prep. (for -c/-g)
     optional: true
     type: integer
-  theta_maq_model:
+  print_variants_only:
     category: ''
-    default: 0.85
-    help: number of haplotypes in the sample (for -c/-g)
+    default: false
+    help: print variants only (for -c)
     optional: true
-    type: float
+    type: boolean
   prior_diff_haplotypes:
     category: ''
     default: 0.001
-    help: phred prob. of an indel in sequencing/prep. (for -c/-g) 
+    help: phred prob. of an indel in sequencing/prep. (for -c/-g)
     optional: true
     type: float
   prior_indel_haplotypes:
     category: ''
-    default: 0.00015
+    default: 0.00014999999999999999
     help: number of haplotypes in the sample (for -c/-g)
     optional: true
     type: float
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+  show_lines_indels:
+    category: ''
+    default: false
+    help: only show lines/consensus with indels
+    optional: true
+    type: boolean
+  simple_pileup_format:
+    category: ''
+    default: false
+    help: simple (yet incomplete) pileup format
+    optional: true
+    type: boolean
+  theta_maq_model:
+    category: ''
+    default: 0.84999999999999998
+    help: number of haplotypes in the sample (for -c/-g)
+    optional: true
+    type: float
+  use_SOAPsnp_model:
+    category: ''
+    default: false
+    help: use the SOAPsnp model for SNP calling
+    optional: true
+    type: boolean

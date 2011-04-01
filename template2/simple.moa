@@ -5,7 +5,7 @@ commands:
     help: ''
     mode: simple
 creation_date: Tue Mar 29 16:34:19 2011
-description: 'Execute one command, No in or output files are tracked by Moa.'
+description: Execute one command, No in or output files are tracked by Moa.
 moa_id: simple
 modification_date: Wed Mar 30 06:02:01 2011
 name: simple
@@ -16,14 +16,9 @@ parameter_category_order:
 - advanced
 parameters:
   process:
-    default: true
     category: ''
+    default: true
     help: The command to execute
     optional: false
     type: string
-  title:
-    category: system
-    help: A title for this job
-    optional: false
-    type: string
-title: 'Execute a "simple" ad hoc analysis'
+title: Execute a "simple" ad hoc analysis

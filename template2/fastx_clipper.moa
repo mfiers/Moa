@@ -93,13 +93,6 @@ parameters:
     help: discard sequences shorter than N nucleotides. default is 5.
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   verbose:
     category: ''
     default: false

@@ -17,17 +17,17 @@ filesets:
     optional: false
     pattern: '*/*_1.fq'
     type: set
-  rds_output:
-    category: output
-    help: output rds file
-    optional: true
-    pattern: './*.rds'
-    source: fq_input
-    type: map
   output_log:
     category: output
     help: output log file
     pattern: ./*.log.txt
+    source: fq_input
+    type: map
+  rds_output:
+    category: output
+    help: output rds file
+    optional: true
+    pattern: ./*.rds
     source: fq_input
     type: map
 moa_id: kangar_se
@@ -52,53 +52,49 @@ parameters:
     help: print this help and exit
     optional: true
     type: boolean
-  version:
+  mode:
     category: ''
-    default: false
-    help: print version information and exit
+    default: 0
+    help: processing mode  0 - single end create, 1 - paired end create, 2 - output
+      statistics 3 - dump as fasta
     optional: true
-    type: boolean
+    type: integer
+  quality:
+    category: ''
+    default: 3
+    help: fastq quality scoring- 0 - sanger, 1m - Illumina 1.3+, 2 - Solexa < 1.3,
+      3 - Ignore quality
+    optional: true
+    type: integer
+  reads_num:
+    category: ''
+    default: 0
+    help: limit number of reads (or dumps) in each input file to this many, 0 if no
+      limit
+    optional: true
+    type: integer
   rm_duplicates:
     category: ''
     default: false
     help: remove duplicate reads retaining only one
     optional: true
     type: boolean
-  trim5:
-    category: ''
-    default: 0
-    help: trim this number of bases from 5' end of sequence
-    optional: true
-    type: integer
   trim3:
     category: ''
     default: 0
     help: trim this number of bases from 3' end of sequence
     optional: true
     type: integer
-  quality:
-    category: ''
-    default: 3
-    help: fastq quality scoring- 0 - sanger, 1m - Illumina 1.3+, 2 - Solexa < 1.3, 3 - Ignore quality
-    optional: true
-    type: integer
-  mode:
+  trim5:
     category: ''
     default: 0
-    help: processing mode  0 - single end create, 1 - paired end create, 2 - output statistics 3 - dump as fasta
+    help: trim this number of bases from 5' end of sequence
     optional: true
     type: integer
-  reads_num:
+  version:
     category: ''
-    default: 0
-    help: limit number of reads (or dumps) in each input file to this many, 0 if no limit
+    default: false
+    help: print version information and exit
     optional: true
-    type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+    type: boolean
 version: 1

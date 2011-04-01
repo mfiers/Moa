@@ -20,6 +20,20 @@ import moa.ui
 import moa.utils
 import moa.logger as l
 
+def prepare(data):
+    job = data['job']
+
+    job.template.parameters.title = {
+        'optional' : False,
+        'help' : 'A short title for this job',
+        'type' : 'string'
+        }
+    job.template.parameters.project = {
+        'optional' : True,
+        'help' : 'Project name',
+        'type' : 'string'
+        }
+
 def defineCommands(data):
     """
     Set the moa commands for this plugin

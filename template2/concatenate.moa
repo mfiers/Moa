@@ -40,11 +40,4 @@ parameters:
     help: name of the file, the outputfile will become ./name.fasta
     optional: false
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Concatenate

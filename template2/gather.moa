@@ -84,11 +84,4 @@ parameters:
     help: Command to process the files. If undefined, hardlink the files.
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: gather files

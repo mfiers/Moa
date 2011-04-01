@@ -10,16 +10,21 @@ commands:
 creation_date: Wed Dec 02 17:06:48 2010
 description: Generate alignments in SAM format given single end reads using Maq.
 filesets:
-  fq_input:
-    category: input
-    help: fastq input files
-    optional: false
-    pattern: '*/*.fq'
-    type: set
+  bam_output:
+    category: output
+    help: bam alignment output file
+    pattern: ./*.bam
+    source: fq_input
+    type: map
+  bfa_output:
+    category: other
+    default: ./index.bfa
+    help: BFA Index name
+    type: single
   bfq_output:
     category: output
     help: bfq files - forward files
-    pattern: './*.bfq'
+    pattern: ./*.bfq
     source: fq_input
     type: map
   fa_input:
@@ -28,21 +33,16 @@ filesets:
     optional: false
     pattern: '*/*.fasta'
     type: set
-  bfa_output:
-    category: other
-    help: BFA Index name
-    default: ./index.bfa
-    type: single
+  fq_input:
+    category: input
+    help: fastq input files
+    optional: false
+    pattern: '*/*.fq'
+    type: set
   map_output:
     category: output
-    pattern: './*.map'
     help: maq map output files
-    source: fq_input
-    type: map
-  bam_output:
-    category: output
-    pattern: './*.bam'
-    help: bam alignment output file
+    pattern: ./*.map
     source: fq_input
     type: map
 moa_id: maq_se
@@ -97,13 +97,6 @@ parameters:
     help: rate of difference between reads and references
     optional: true
     type: float
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   trim_all_reads:
     category: ''
     default: false

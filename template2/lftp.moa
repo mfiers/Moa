@@ -114,13 +114,6 @@ parameters:
       that you need to delete or touch before updating (T/*F*)
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: true
-    type: string
   url:
     allowed: []
     category: ''

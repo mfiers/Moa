@@ -66,11 +66,4 @@ parameters:
     help: Minimal overalp identity used during assembly
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Newbler

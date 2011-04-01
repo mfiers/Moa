@@ -41,11 +41,4 @@ parameters:
     help: Name of the file to write the downloaded sequences to.
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Download data from NCBI

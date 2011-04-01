@@ -40,13 +40,6 @@ parameters:
     help: Extension of the dottup input files
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   wordsize:
     allowed: []
     category: ''

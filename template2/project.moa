@@ -28,11 +28,4 @@ parameters:
       and what parameters are most important to set
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Create a project

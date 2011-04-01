@@ -47,11 +47,4 @@ parameters:
     help: the varscan (perl) executable
     optional: true
     type: file
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Varscan

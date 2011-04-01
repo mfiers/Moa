@@ -52,11 +52,4 @@ parameters:
     help: Is this a protein set
     optional: true
     type: boolean
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Bidirectional best BLAST hit

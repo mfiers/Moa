@@ -38,11 +38,4 @@ parameters:
     help: any option parameters
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Bowtie index builder

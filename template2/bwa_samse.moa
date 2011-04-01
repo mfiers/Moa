@@ -53,11 +53,4 @@ parameters:
     help: Maximum number of alignments to output in the XA tag for reads paired properly
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 version: 1

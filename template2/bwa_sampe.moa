@@ -108,11 +108,4 @@ parameters:
     help: prior of chimeric rate (lower bound)
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 version: 1

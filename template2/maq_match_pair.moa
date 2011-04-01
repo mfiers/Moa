@@ -64,11 +64,4 @@ parameters:
     help: suffix of reverse files
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: MAQ paired ends mapper

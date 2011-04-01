@@ -12,11 +12,11 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Builds gmapdb index from a reference sequence
 filesets:
   input:
-    pattern: '*/*.fasta'
     category: input
-    type: single
     help: The reference sequence to build a gmap database with.
     optional: false
+    pattern: '*/*.fasta'
+    type: single
 moa_id: gmapdb
 modification_date: Wed Nov 10 07:56:48 2010
 name: gmapdb
@@ -29,11 +29,5 @@ parameters:
     default: gmapdb
     help: Name of the gmap index to create
     optional: true
-    type: string
-  title:
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
     type: string
 title: gmapdb index builder

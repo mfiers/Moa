@@ -39,10 +39,4 @@ parameters:
     help: 'Protein database? (T)rue) or not (F)alse (default: F)'
     optional: true
     type: set
-  title:
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: ''

@@ -55,11 +55,4 @@ parameters:
     help: Directory with the output gff
     optional: true
     type: directory
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: GFF from FASTA

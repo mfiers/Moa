@@ -54,11 +54,4 @@ parameters:
     help: Second primer to use
     optional: false
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: VPCR

@@ -10,28 +10,16 @@ commands:
 creation_date: Wed Dec 03 17:06:48 2010
 description: Generate alignments in SAM format given paired end reads using Maq.
 filesets:
-  fq_forward_input:
-    category: input
-    help: fastq input files directory - forward files
-    optional: false
-    pattern: '*/*_1.fq'
-    type: set
-  fq_reverse_input:
-    category: input
-    help: fastq input files directory - reverse files
-    pattern: '*/*_2.fq'
+  bam_output:
+    category: output
+    help: bam alignment output file
+    pattern: ./*.bam
     source: fq_forward_input
     type: map
-  fa_input:
-    category: prerequisite
-    help: directory with reference fasta file name
-    optional: false
-    pattern: '*/*.fasta'
-    type: set
   bfa_output:
     category: other
-    help: BFA Index name
     default: ./index.bfa
+    help: BFA Index name
     type: single
   bfq_forward_output:
     category: output
@@ -45,16 +33,28 @@ filesets:
     pattern: ./*_2.bfq
     source: fq_forward_input
     type: map
-  map_output:
-    category: output
-    pattern: ./*.map
-    help: maq map output files
+  fa_input:
+    category: prerequisite
+    help: directory with reference fasta file name
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+  fq_forward_input:
+    category: input
+    help: fastq input files directory - forward files
+    optional: false
+    pattern: '*/*_1.fq'
+    type: set
+  fq_reverse_input:
+    category: input
+    help: fastq input files directory - reverse files
+    pattern: '*/*_2.fq'
     source: fq_forward_input
     type: map
-  bam_output:
+  map_output:
     category: output
-    pattern: ./*.bam
-    help: bam alignment output file
+    help: maq map output files
+    pattern: ./*.map
     source: fq_forward_input
     type: map
 moa_id: maq_pe
@@ -72,6 +72,13 @@ parameters:
     help: disable Smith-Waterman alignment
     optional: true
     type: boolean
+  extra_parameters:
+    allowed: []
+    category: ''
+    default: ''
+    help: Any extra parameters
+    optional: true
+    type: string
   first_read_len:
     category: ''
     default: 0
@@ -102,13 +109,6 @@ parameters:
     help: maximum allowed sum of qualities of mismatches
     optional: true
     type: integer
-  extra_parameters:
-    allowed: []
-    category: ''
-    default: ''
-    help: Any extra parameters
-    optional: true
-    type: string   
   max_num_hits_out:
     category: ''
     default: 250
@@ -133,13 +133,6 @@ parameters:
     help: length of the second read (<=127)s
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   trim_all_reads:
     category: ''
     default: false

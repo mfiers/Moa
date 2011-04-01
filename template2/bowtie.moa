@@ -20,7 +20,7 @@ filesets:
   output:
     category: output
     help: Output files
-    pattern: './*.bam'
+    pattern: ./*.bam
     source: input
     type: map
 moa_id: bowtie
@@ -33,11 +33,11 @@ parameter_category_order:
 - advanced
 parameters:
   db:
+    allowed: []
+    category: ''
     help: The (basename of the) bowtie database to use.
     optional: false
     type: string
-    category: ''
-    allowed: []
   extra_params:
     allowed: []
     category: ''
@@ -53,11 +53,4 @@ parameters:
     help: Format of the input files
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Bowtie

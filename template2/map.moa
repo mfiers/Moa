@@ -5,10 +5,7 @@ commands:
     help: ''
     mode: map
 creation_date: Tue Mar 29 16:34:19 2011
-description: 'Execute one command, on a number of input files.'
-moa_id: map
-modification_date: Wed Mar 30 06:02:01 2011
-name: map
+description: Execute one command, on a number of input files.
 filesets:
   input:
     category: input
@@ -20,19 +17,17 @@ filesets:
     category: output
     help: '"map" output files'
     optional: true
-    pattern: './*'
-    type: map
+    pattern: ./*
     source: input
+    type: map
+moa_id: map
+modification_date: Wed Mar 30 06:02:01 2011
+name: map
 parameters:
   process:
-    default: true
     category: ''
+    default: true
     help: The command to execute
     optional: false
     type: string
-  title:
-    category: system
-    help: A title for this job
-    optional: false
-    type: string
-title: 'Execute a "map" ad-hoc analysis'
+title: Execute a "map" ad-hoc analysis

@@ -50,11 +50,4 @@ parameters:
     help: Test string values
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: unittesting
-    help: A name for this job
-    optional: true
-    type: string
 version: 1

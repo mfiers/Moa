@@ -138,11 +138,4 @@ parameters:
     help: 'blast program to use (default: blastn)'
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: true
-    type: string
 title: Basic Local Alignment Tool

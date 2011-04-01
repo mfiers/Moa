@@ -75,13 +75,6 @@ parameters:
     help: remove reverse primer
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
   trim:
     allowed:
     - T

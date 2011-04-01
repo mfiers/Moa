@@ -39,11 +39,4 @@ parameters:
     help: Name of the bwa index to create
     optional: false
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Bwa index builder

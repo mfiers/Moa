@@ -33,11 +33,4 @@ parameters:
     help: Input file extension
     optional: true
     type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: clustalw

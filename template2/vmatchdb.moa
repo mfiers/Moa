@@ -40,11 +40,4 @@ parameters:
     help: Prefix length
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: vmatch database builder

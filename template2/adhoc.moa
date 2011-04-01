@@ -9,7 +9,8 @@ commands:
     help: ''
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
-description: The `adhoc` template assists in running one-liners - possibly on a set of input files
+description: The `adhoc` template assists in running one-liners - possibly on a set
+  of input files
 filesets:
   input:
     category: input
@@ -64,13 +65,6 @@ parameters:
     help: Command to execute for each input file. The path to the input file is available
       as $< and the output file as $t. (it is not mandatory to use both parameters,
       for example "cat $< > output" would concatenate all files into one big file
-    optional: true
-    type: string
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
     optional: true
     type: string
   touch:

@@ -21,32 +21,14 @@ import os
 import sys
 import moa.template
 import yaml
+import Yaco
 
-def tryDel(s,k):
-    try:
-        del s[k]
-    except KeyError:
-        pass
-    
-for fn, nm in moa.template.listAll():
-    template = moa.template.Template(nm)
-    raw = template.getRaw()    
-    for f in raw.filesets:
-        fs = raw.filesets[f]
-        if not fs.has_key('pattern'):
-            ext = fs.get('extension', '')
-            glob = fs.get('glob', '*')
-            dir = fs.get('dir', '*')
-            if ext:
-                pat = '%s/%s.%s' % (dir, glob, ext)
-            else:
-                pat = '%s/%s' % (dir, glob)
-            tryDel(fs, 'extension')
-            tryDel(fs, 'glob')
-            tryDel(fs, 'dir')       
-            fs['pattern'] = pat
-    print nm
-    
-    #the following command would save the template again
-    #template.saveRaw(raw)
-    
+for f in os.listdir(sys.argv[1]):
+    if f[0] == '.': continue
+    if f[-4:] != '.moa': continue
+    ff = os.path.join(sys.argv[1], f)
+    tmpl = Yaco.Yaco()
+    tmpl.load(ff)
+    if tmpl.parameters.has_key('title'):
+        del tmpl.parameters['title']
+        tmpl.save(ff)

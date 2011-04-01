@@ -11,6 +11,32 @@ commands:
 creation_date: Wed Nov 10 07:56:48 2010
 description: use kanga to align short reads to a reference genome
 filesets:
+  input_fasta:
+    category: prerequisite
+    help: Fasta input file
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+  output:
+    category: output
+    help: output files
+    optional: true
+    pattern: ./*.sam
+    source: rds_input
+    type: map
+  output_bam:
+    category: output
+    help: output files
+    optional: true
+    pattern: ./*.bam
+    source: rds_input
+    type: map
+  output_log:
+    category: output
+    help: output log file
+    pattern: ./*.log.txt
+    source: rds_input
+    type: map
   rds_input:
     category: input
     help: rds (preprocessed) input files
@@ -23,32 +49,6 @@ filesets:
     optional: false
     pattern: '*/*.sfx'
     type: set
-  input_fasta:
-    category: prerequisite
-    help: Fasta input file
-    optional: false
-    pattern: '*/*.fasta'
-    type: set
-  output:
-    category: output
-    help: output files
-    optional: true
-    pattern: './*.sam'
-    source: rds_input
-    type: map
-  output_bam:
-    category: output
-    help: output files
-    optional: true
-    pattern: './*.bam'
-    source: rds_input
-    type: map
-  output_log:
-    category: output
-    help: output log file
-    pattern: ./*.log.txt
-    source: rds_input
-    type: map
 moa_id: kanga
 modification_data: Thu Feb 17 22:00:01 2011
 name: kanga
@@ -58,6 +58,12 @@ parameter_category_order:
 - system
 - advanced
 parameters:
+  color_space:
+    category: ''
+    default: false
+    help: process for colorspace (SOLiD)
+    optional: true
+    type: boolean
   extra_params:
     allowed: []
     category: ''
@@ -71,64 +77,10 @@ parameters:
     help: print this help and exit
     optional: true
     type: boolean
-  version:
-    category: ''
-    default: false
-    help: print version information and exit
-    optional: true
-    type: boolean
-  color_space:
-    category: ''
-    default: false
-    help: process for colorspace (SOLiD)
-    optional: true
-    type: boolean
-  no_multireads:
-    category: ''
-    default: false
-    help: do not accept multiple reads aligning to the same loci
-    optional: true
-    type: boolean
-  trim5:
-    category: ''
-    default: 0
-    help: trim this number of bases from 5' end of reads when loading raw reads
-    optional: true
-    type: integer
-  trim3:
-    category: ''
-    default: 0
-    help: trim this number of bases from 3' end of reads when loading raw reads
-    optional: true
-    type: integer
-  quality:
-    category: ''
-    default: 3
-    help: fastq quality scoring- 0 - sanger, 1m - Illumina 1.3+, 2 - Solexa < 1.3, 3 - Ignore quality
-    optional: true
-    type: integer
   max_Ns:
     category: ''
     default: 1
     help: maximum number of intermediate N's in reads before treating read as unalignable
-    optional: true
-    type: integer
-  out_format:
-    category: ''
-    default: 0
-    help: 0 - CSV loci only, 1 - CSV loci + match sequence, 2 - CSV loci + read sequence, 3 - CSV loci + read + match sequence, 4 - UCSC BED, 5 - SAM format
-    optional: true
-    type: integer
-  pe_mode:
-    category: ''
-    default: 0
-    help: 0 - none, 1 - paired ends with recover orphan ends, 2 - paired end no orphan recovery
-    optional: true
-    type: integer
-  min_pair_len:
-    category: ''
-    default: 100
-    help: accept paired end alignments with apparent length of at least this
     optional: true
     type: integer
   max_pair_len:
@@ -137,17 +89,61 @@ parameters:
     help: accept paired end alignments with apparent length of at most this
     optional: true
     type: integer
+  min_pair_len:
+    category: ''
+    default: 100
+    help: accept paired end alignments with apparent length of at least this
+    optional: true
+    type: integer
+  no_multireads:
+    category: ''
+    default: false
+    help: do not accept multiple reads aligning to the same loci
+    optional: true
+    type: boolean
+  out_format:
+    category: ''
+    default: 0
+    help: 0 - CSV loci only, 1 - CSV loci + match sequence, 2 - CSV loci + read sequence,
+      3 - CSV loci + read + match sequence, 4 - UCSC BED, 5 - SAM format
+    optional: true
+    type: integer
+  pe_mode:
+    category: ''
+    default: 0
+    help: 0 - none, 1 - paired ends with recover orphan ends, 2 - paired end no orphan
+      recovery
+    optional: true
+    type: integer
+  quality:
+    category: ''
+    default: 3
+    help: fastq quality scoring- 0 - sanger, 1m - Illumina 1.3+, 2 - Solexa < 1.3,
+      3 - Ignore quality
+    optional: true
+    type: integer
   thread_num:
     category: ''
     default: 0
     help: number of processing threads (0 sets threads to number of CPU cores)
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
+  trim3:
+    category: ''
+    default: 0
+    help: trim this number of bases from 3' end of reads when loading raw reads
+    optional: true
+    type: integer
+  trim5:
+    category: ''
+    default: 0
+    help: trim this number of bases from 5' end of reads when loading raw reads
+    optional: true
+    type: integer
+  version:
+    category: ''
+    default: false
+    help: print version information and exit
+    optional: true
+    type: boolean
 version: 1

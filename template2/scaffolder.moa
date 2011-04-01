@@ -41,11 +41,4 @@ parameters:
     help: blast database of the reference set
     optional: true
     type: file
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: Scaffolder

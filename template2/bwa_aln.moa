@@ -141,11 +141,4 @@ parameters:
     help: number of threads
     optional: true
     type: integer
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 version: 1

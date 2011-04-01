@@ -45,10 +45,3 @@ parameters:
     help: List of primers to check
     optional: false
     type: file
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string

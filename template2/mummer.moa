@@ -68,11 +68,4 @@ parameters:
     help: mummer against self
     optional: true
     type: set
-  title:
-    allowed: []
-    category: system
-    default: ''
-    help: A name for this job
-    optional: false
-    type: string
 title: mummer
