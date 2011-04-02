@@ -25,9 +25,7 @@ MOABASE = moa.utils.getMoaBase()
 
 class JobConf(object):
     """
-    This is a wrapper around a Yaco object - with a few extras, such as
-    checking if a parameter is of the promised type
-
+    
     to distinguish between attributes of this object & proper job
     configuration parameters
     """
@@ -39,6 +37,7 @@ class JobConf(object):
         
         self.job = job
         self.jobConf = Yaco.Yaco()
+        self.localConf = Yaco.Yaco()
         self.jobConfFile = os.path.join(self.job.confDir, 'config')
         
         #: these fields are not to be saved
@@ -50,17 +49,32 @@ class JobConf(object):
         #: these fields are private (i.e. not to be
         #: displayed by default)
         self.private = []
-        
+
+        #create a list of conf files to load:
+        listToLoad = []
         if os.path.exists(self.jobConfFile):
-            self.jobConf.load(self.jobConfFile)
+            listToLoad.append(self.jobConfFile)
+            self.localConf.load(self.jobConfFile)
+            
+        parsePath = self.job.wd
+        while parsePath:
+            parent = os.path.dirname(parsePath)
+            thisConfig = os.path.join(parent, '.moa', 'config')
+            if os.path.isfile(thisConfig):
+                listToLoad.insert(0,  thisConfig)
+            parsePath = parent
+            if parent == '/': break
+            
+        for cf in listToLoad:
+            self.jobConf.load(cf)
 
         #this is a temp addition - private was accidentaly
-        #added to the jobconf in a number of jobs - can't
-        #be theremoa
+        #added to the jobconf in a number of jobs - shouldn't
+        #be there..
         if self.jobConf.has_key('private'):
             del self.jobConf['private']
 
-            
+        
     def save(self):
         self.job.checkConfDir()
         self.jobConf.save(self.jobConfFile, self.doNotSave)
@@ -80,15 +94,26 @@ class JobConf(object):
         rvj = set(self.jobConf.keys())
         return list(rvt.union(rvj))
 
+    def _is_recursive(self, key):
+        keyInfo = self.job.template.parameters.get(key, {})
+        return keyInfo.get('recursive', True)
+    
+    def _get_conf(self, key):
+        if self._is_recursive(key):
+            return self.jobConf
+        else:
+            return self.localConf
+        
     def has_key(self, key):
-        if self.jobConf.has_key(key):
+        c = self._get_conf(key)
+        if c.has_key(key):
             return True
         if self.job.template.parameters.has_key(key):
             return True
         return False
 
     def update(self, data):
-        self.jobConf.update(data)
+        self.localConf.update(data)
         
     def get(self, key, default):
         v = self.__getitem__(key)
@@ -99,15 +124,12 @@ class JobConf(object):
         
     def __getitem__(self, key):
         v = ''
-        if self.jobConf.has_key(key):
-            v = self.jobConf[key]
+        c = self._get_conf(key)
+        if c.has_key(key):
+            v = c[key]
         elif key in self.job.template.parameters.keys() and \
                  self.job.template.parameters[key].has_key('default'):
             v = self.job.template.parameters[key].default
-
-#        if isinstance(v, str) and '{{' in v:
-#            rere = re.compile('\{\{ *([^ \}]*) *\}\}')
-#            v = rere.sub(lambda x: self.__getitem__(x.groups()[0]), v)
 
         if key in self.job.template.parameters.keys() and \
                self.job.template.parameters[key].has_key('callback'):
@@ -115,7 +137,7 @@ class JobConf(object):
         return v
     
     def __delitem__(self, key):
-        del(self.jobConf[key])
+        del(self.localConf[key])
 
 
     def __setitem__(self, key, value):
@@ -135,11 +157,12 @@ class JobConf(object):
                     value = float(value)
                 except ValueError:
                     pass
-                
+
         self.jobConf[key] = value
+        self.localConf[key] = value
 
     def __setattr__(self, key, value):
-        if key in ['job', 'jobConf', 'jobConfFile',
+        if key in ['job', 'jobConf', 'jobConfFile', 'localConf',
                    'doNotCheck', 'doNotSave', 'private']:
             object.__setattr__(self, key, value)
         elif key[:4] == '_JC_':
@@ -148,7 +171,7 @@ class JobConf(object):
             return self.__setitem__(key, value)
         
     def __getattr__(self, key):
-        if key in ['job', 'jobConf', 'jobConfFile',
+        if key in ['job', 'jobConf', 'jobConfFile', 'localConf',
                    'doNotCheck', 'doNotSave', 'private']:
             object.__getattr__(self, key)
         elif key[:4] == '_JC_':
