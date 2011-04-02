@@ -11,6 +11,7 @@
 
 Control job configuration
 """
+import os
 
 import moa.ui
 import moa.utils
@@ -25,14 +26,17 @@ def defineCommands(data):
         'usage' : 'moa set [KEY] [KEY=VALUE]',
         'call' : configSet,
         'needsJob' : True,
-        'log' : True
+        'log' : True,
+        'unittest' : TESTSET
         }
+    
     data['commands']['unset'] = {
         'desc' : 'Remove a variable',
         'call' : configUnset,
         'usage' : 'moa unset KEY',
         'needsJob' : True,
-        'log' : True
+        'log' : True,
+        'unittest' : TESTUNSET
         }
 
     data['commands']['show'] = {
@@ -75,6 +79,19 @@ def configShow(data):
                 moa.ui.fprint("{{red}}%s\t%s{{reset}}" % (
                     p, job.conf[p]), f='jinja')
 
+def _unsetCallback(wd, data):
+    """
+    Does the actual unset..
+    """
+    job = moa.job.Job(wd)
+    print "unsetting", " ".join(data.unset), "in", wd
+    for u in data.unset:
+        try:
+            del job.conf[u]
+        except KeyError:
+            pass        
+    job.conf.save()
+    
 def configUnset(data):
     """
     Remove a configured parameter from this job. In the parameter was
@@ -82,17 +99,20 @@ def configUnset(data):
     value. If it was an ad-hoc parameter, it is lost from the
     configuration.
     """
+    options = data['options']
 
-    job = data['job']
-    for a in data['newargs']:
+    data.unset = []
+    for a in data.newargs:
         if '=' in a:
-            l.error("Invalid argument to unset %s" % a)
+            moa.ui.exitError("Invalid argument to unset %s" % a)
         else:
-            l.debug("Unsetting %s" % a)
-            del job.conf[a]
-    job.conf.save()
+            data.unset.append(a)
+    if not data.unset:
+        moa.ui.exitError("Nothing to unset")
 
-    
+    moa.utils.moaRecursiveWalk(
+        data.wd, _unsetCallback, data, options.recursive)
+
 def configSet(data):
     """
     This command can be used in a number of ways::
@@ -121,14 +141,44 @@ def configSet(data):
         else:
             key,val = a.split('=',1)
             job.conf[key] = val
-            
     job.conf.save()
 
-TESTSCRIPT = """
-moa new adhoc -t 'something'
-moa set title='something else'
-moa set undefvar='somewhat'
-moa set adhoc_mode=par
-moa show || exer moa show does not seem to work
-moa show | grep -q 'title[[:space:]\+]something else' || exer title is not set properly
+
+##### TESTSCRIPTS
+
+TESTUNSET = """
+moa simple -t test -- echo
+moa show | grep -Pq 'title\ttest'
+moa unset title
+moa show | grep -Pqv 'title\ttest'
+# recursive unset
+moa set aaa=bbb
+moa show | grep -Pq 'aaa\tbbb'
+mkdir 10.sub
+cd 10.sub
+moa simple -t sub -- echo
+moa set aaa=bbb
+moa show | grep -Pq 'aaa\tbbb'
+cd ..
+moa unset -r aaa
+moa show | grep -Pqv 'aaa\tbbb'
+cd 10.sub
+moa show | grep -Pqv 'aaa\tbbb'
+"""
+
+TESTSET = """
+moa simple -t test -- echo
+moa show | grep -Pq 'title\ttest'
+moa show | grep -Pqv 'title\totherwise'
+moa set title=otherwise
+moa show | grep -Pqv 'title\ttest'
+moa show | grep -Pq 'title\totherwise'
+moa set dummy=bla
+moa show | grep -Pq 'dummy\tbla'
+#now try recursive loading of variables
+mkdir 10.subdir
+cd 10.subdir
+moa simple -t subtest -- echo
+moa show | grep -Pq 'dummy\tbla'
+moa show | grep -Pqv 'title\ttest'
 """

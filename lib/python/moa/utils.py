@@ -26,6 +26,32 @@ import contextlib
 import moa.utils
 import moa.logger as l
 
+
+def moaRecursiveWalk(wd, callback, data, recursive=True):
+    """
+    Function used in recursive moa commands -
+
+    this function takes the 'wd', walks through all subdirectories
+    (excluding those starting with a '.') and running the callback
+    function on that directory.
+
+    If recursive == False - just execute the callback & return
+    """
+    if not recursive:
+        callback(wd, data)
+        return
+
+    for path, dirs, files in os.walk(wd):
+        if '.moa' in dirs:
+
+            #potentially a moa dir
+            #call the callback
+            callback(path, data)
+
+            #remove all '.' directories - 
+            toRemove = [x for x in dirs if x[0] == '.']
+            [dirs.remove(t) for t in toRemove]
+
 @contextlib.contextmanager
 def flock(path, waitDelay=.1, maxWait=100):
     """

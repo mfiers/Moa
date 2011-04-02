@@ -77,7 +77,7 @@ class JobConf(object):
         
     def save(self):
         self.job.checkConfDir()
-        self.jobConf.save(self.jobConfFile, self.doNotSave)
+        self.localConf.save(self.jobConfFile, self.doNotSave)
 
     def setInJobConf(self, key):
         if self.jobConf.has_key(key):
@@ -138,7 +138,6 @@ class JobConf(object):
     
     def __delitem__(self, key):
         del(self.localConf[key])
-
 
     def __setitem__(self, key, value):
         if key in self.job.template.parameters.keys():

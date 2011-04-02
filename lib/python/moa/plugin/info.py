@@ -195,7 +195,7 @@ moa version
 
 TESTOUT = '''
 moa simple -t "test" -- echo "something"
-moa run
+moa run >/dev/null 2>/dev/null
 out=`moa out`
 [[ "$out" =~ "something" ]] || (echo "Moa out failed" ; false)
 '''
@@ -203,7 +203,7 @@ out=`moa out`
 TESTERR = '''
 moa simple -t "test" --np
 moa set process='echo "something" >&2'
-moa run
+moa run >/dev/null 2>/dev/null
 err=`moa err`
 [[ "$err" =~ "something" ]] || (echo "Moa err failed" ; false)
 '''
