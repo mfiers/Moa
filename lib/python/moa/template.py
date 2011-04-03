@@ -48,13 +48,21 @@ def getTemplateFile(name):
     
     """
 
-    templateFile = os.path.join(
-        TEMPLATEDIR, '%s.moa' % name)
+    if name[-4:] == '.moa' and os.path.isfile(name):
+        return name
     
-    if not os.path.exists(templateFile):
-        raise InvalidTemplate()
+    if os.path.isfile('%s.moa' % name):
+        return name
+    
+    for templatePath in [
+        os.path.join( os.path.expanduser('~'), '.config', 'moa', 'template'),
+        TEMPLATEDIR]:
 
-    return templateFile
+        templateFile = os.path.join(templatePath, '%s.moa' % name)
+        if os.path.exists(templateFile):
+            return templateFile
+
+    raise InvalidTemplate()
     
 def refresh(wd, default=None):
     """
