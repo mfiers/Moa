@@ -84,7 +84,7 @@ def _unsetCallback(wd, data):
     Does the actual unset..
     """
     job = moa.job.Job(wd)
-    print "unsetting", " ".join(data.unset), "in", wd
+    #print "unsetting", " ".join(data.unset), "in", wd
     for u in data.unset:
         try:
             del job.conf[u]

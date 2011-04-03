@@ -53,14 +53,12 @@ plugins = moa.plugin.PluginHandler(sysConf.getPlugins())
 # Initialize the job object
 wd = os.getcwd()
 moa.version.fixOld(wd)
-job = moa.job.Job(wd)
-job.plugins = plugins
+
     
 #use of cwd is deprecated
 plugins.register(cwd = wd)
 plugins.register(sysConf = sysConf)
 plugins.register(wd = wd)
-plugins.register(job = job)
 
 ### Determine project root (if there is one)
 #projectRoot = moa.project.findProjectRoot(job)
@@ -134,6 +132,9 @@ parser.add_option("-r", "--recursive", dest="recursive",
 
 def run():
 
+    job = moa.job.Job(wd)
+    plugins.register(job = job)
+
     ## Aks the job & backend if they want to add to the options
     job.defineOptions(parser)
 
@@ -144,11 +145,6 @@ def run():
 
     ## Parse the options
     (options, args) = parser.parse_args()
-
-    ## make sure that the options are accessible to the plugins
-    plugins.register(options = options, args = args)
-    job.options = options
-    job.args = args
 
     ## Proper setting of verbosity - after parsing of the command line
     if options.verbose:
@@ -167,6 +163,11 @@ def run():
     originalCommand = commands[0]
     plugins.register(executeCommand=commands)
     plugins.register(originalCommand=commands[0])
+
+    ## make sure that the options are accessible to the plugins
+    plugins.register(options = options, args = args)
+    job.options = options
+    job.args = args
 
     ## Ask the job if it's is ok with
     ## these commands (might want to change order, or insert
@@ -205,7 +206,7 @@ def run():
                     plugins.run("postCommand")
                     raise
         else:
-            #No callback, defer this to the job
+            #No callback, defer this to the backend
 
             #first see if we need to fork - if this is a background job
             if options.background:
@@ -229,9 +230,8 @@ def run():
 
     plugins.run("finish")
     sys.exit(rc)
-
     
-## Command dispatcher
+## Main dispatcher
 if __name__ == "__main__":
     try:
         run()
