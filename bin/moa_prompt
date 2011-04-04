@@ -1,6 +1,8 @@
 #!/bin/bash
 
-function _moa_prompt {
+function _moa_prompt_2 {
+ 
+    
     #Get the last command
     #based on:
     #http://stackoverflow.com/questions/945288/...
@@ -8,7 +10,7 @@ function _moa_prompt {
     #
     local lc=$(history 1)
     lc="${lc# *[0-9]*  }"
-
+    
 	#save the last command to a user specific location
     echo $lc > ~/.moa.last.command
 
@@ -78,3 +80,17 @@ function _moa_prompt {
     fi
     echo -e "${gray}...Moa/${blue}${template}${gray}. ${status}${gray}${timing}${reset}"
 }
+
+function _moa_prompt {
+    # two step procedure - here we define a trap & call
+    # the second function..
+    function errex() {
+        return 0
+    }
+    trap "errex" ERR
+
+    _moa_prompt_2 2>/dev/null
+
+    trap - ERR
+}
+
