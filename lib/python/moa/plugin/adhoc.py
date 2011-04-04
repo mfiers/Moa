@@ -131,6 +131,12 @@ def exclamateInJob(data):
     Reuse the last issued command: set it as the 'process' parameters
     in the current job    
     """
+    pc = os.environ.get('PROMPT_COMMAND', '')
+    if not '_moa_prompt' in pc:
+        moa.ui.error("Need to activate the moa prompt for this to work")
+        moa.ui.exitError("Try running `moa_prompt_on`")
+
+    
     job = data.job
     histFile = os.path.join(job.confDir, 'history')
     if not os.path.exists(histFile):
@@ -150,6 +156,7 @@ def exclamate(data):
     Set the 'process' parameter to the last issued command. If no moa
     job exists, create a 'simple'job.
     """
+    
     job = data.job    
     if job.isMoa():
         exclamateInJob(data)
