@@ -13,5 +13,117 @@ export PATH=$MOABASE/bin:$PATH
 export PYTHONPATH=$MOABASE/lib/python:$PYTHONPATH
 source $MOABASE/etc/bash_completion.d/moa 
 
-##set a convenient alias to capture history
-alias moa!='moa adhoc -t "set from history" -- `history -p \!\!`'
+###
+### Moa prompt stuff!
+alias moa_prompt_off='export PROMPT_COMMAND=`echo $PROMPT_COMMAND | sed "s/_moa_prompt;*//"`'
+alias moa_prompt_on='if [[ ! "$PROMPT_COMMAND" =~ "_moa_prompt" ]]; then PROMPT_COMMAND="_moa_prompt;$PROMPT_COMMAND"; fi'
+
+function _moa_prompt_2 {
+ 
+    #prepare for visualization
+    local blue="\033[34m"
+    local black="\033[30m"
+    local bright="\033[1m"
+    local gray="\033[30;1m"
+    local red="\033[31m"
+    local magenta="\033[35m"
+    local green="\033[32m"
+    local bg="\033[47m"
+    local reset="\033[0m"
+
+    #get status information
+    [[ -f '.moa/status' ]] && rawstatus=$(< .moa/status)
+    case "$rawstatus" in
+    error) status="${red}Error${gray}"
+            ;;
+    success) status="${green}Success${gray}"
+            ;;
+    interrupted) status="${black}Interrupted${gray}"
+            ;;
+    *) status=$rawstatus
+    esac
+
+    #get template information
+    template=`(grep moa_id .moa/template | cut -c9-) 2>/dev/null`
+    
+    #get last run dates
+    if [[ -f '.moa/log' ]]; then
+        ll=`tail -1 .moa/log`
+        tstart=`echo ${ll} | awk '{print $3}'`
+        tstop=`echo ${ll} | awk '{print $4}'`
+        startseq=`date -d "${tstart}" +%s`
+        stopseq=`date -d "${tstop}" +%s`
+        tdiff=$(($stopseq - $startseq))
+        pstart=`echo ${tstart} | sed "s/\.[^\.]*$//" | sed "s/T/ /" `
+        minute_secs=60 hour_secs=$((60 * minute_secs)) day_secs=$((24 * hour_secs))
+        # parse
+        days=$((tdiff / day_secs))
+        hours=$((tdiff % day_secs / hour_secs))
+        minutes=$((tdiff % day_secs % hour_secs / minute_secs))
+        seconds=$((tdiff % day_secs % hour_secs % minute_secs))
+        # pretty-print
+        timing=":${pstart} ("
+        if [[ ${days} > 0 ]]; then
+            timing="${timing}${days}d, ${hours}h, ${minutes}m & ${seconds}s)"
+        elif [[ ${hours} > 0 ]]; then
+            timing="${timing}${hours}h, ${minutes}m & ${seconds}s)"
+        elif [[ ${minutes} > 0 ]]; then
+            timing="${timing}${minutes}m & ${seconds}s)"
+        else
+            timing="${timing}${seconds}s)"
+        fi
+    fi
+    txtbit=":moa/${template}:$rawstatus$timing"
+    frmbit="${gray}:moa/${blue}${template}${gray}:$status$timing${reset}"
+    echo -en $bg
+    printf "%$(($COLUMNS-${#txtbit}))s" " "
+    echo -e ${frmbit}
+}
+
+function _moa_prompt {
+    
+    #Get the last command
+    #based on:
+    #http://stackoverflow.com/questions/945288/...
+    #     ...saving-current-directory-to-bash-history
+    #
+    local lc=$(history 1)
+    lc="${lc# *[0-9]*  }"
+    
+	#save the last command to a user specific location
+    echo $lc > ~/.moa.last.command
+
+    [[ -d '.moa' ]] || return 0
+
+	#and add it to the local history if this is a mob job
+    echo $lc >> .moa/history
+
+	#if there is no template, there is not much we can do
+    [[ -f '.moa/template' ]] || return 0
+
+    # now display the prompt
+    # two step procedure - here we define a trap & call
+    # the second function..
+    function exxx() { 
+        return 0 
+    }
+
+    trap "exxx" ERR SIGUSR1
+
+    _moa_prompt_2 &
+    PID=$!
+
+    # and a sleeping process that kills the prompt process
+    # if it does not return
+    { ( sleep 1;  kill -SIGUSR1 $PID) & } 2>/dev/null
+    SPID=$!
+    #disown prevent a terminated message - don't know how
+    #else to achieve that
+    disown $SPID
+
+    # wait for $PID (the prompt command to complete normally)
+    wait $PID
+    # if it has: kill the sleeper
+    kill $SPID 2>/dev/null
+    trap - ERR SIGUSR1
+}
