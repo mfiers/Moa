@@ -19,8 +19,8 @@ import moa.utils
 import moa.template
 import moa.actor
 import moa.backend
-import moa.sysConf
 import moa.logger as l
+from moa.sysConf import sysConf
 
 import Yaco
 
@@ -166,15 +166,19 @@ class Ruff(moa.backend.BaseBackend):
         rc = 0
         if cmode == 'map':
             #late decoration - see if that works :/
+            #for x in generate_data_map():
+            #    print 'xxxx', x
             executor2 = ruffus.files(generate_data_map)(executor)
-            l.info("Start run (with %d thread(s))" % self.job.options.threads)
+            l.info("Start run (with %d thread(s))" %
+                   sysConf.options.threads)
             ruffus.pipeline_run(
                 [executor2],
-                verbose = self.job.options.verbose,
+                verbose = sysConf.options.verbose,
                 one_second_per_job=False,
-                multiprocess= self.job.options.threads,
+                multiprocess= sysConf.options.threads,
                 )
-            l.info("Finished running (with %d thread(s))" % self.job.options.threads)
+            l.info("Finished running (with %d thread(s))" %
+                   sysConf.options.threads)
             rc = 0
         elif cmode == 'reduce':
             pass

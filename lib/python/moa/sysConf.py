@@ -55,6 +55,7 @@ class SysConf(Yaco.Yaco):
             rv.add(p)
         return list(rv)
 
+#This function is not necessary??? or is it??
 def getPlugins():
     return sysConf.getPlugins()
 

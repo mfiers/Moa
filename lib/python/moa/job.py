@@ -138,15 +138,15 @@ class Job(object):
         else:
             return True
 
-    def checkCommands(self, commands):
+    def checkCommands(self, command):
         """
-        Check commands, and rearrange if there are delegates.
+        Check command, and rearrange if there are delegates.
         
         >>> job = newTestJob('unittest')
         >>> assert(job.template.commands.run.delegate == ['prepare', 'run2'])
-        >>> assert(job.checkCommands(['run2']) == ['run2'])
-        >>> assert(job.checkCommands(['run']) == ['prepare', 'run2'])
-        >>> assert(job.checkCommands(['prepare', 'run']) == ['prepare', 'prepare', 'run2'])
+        >>> assert(job.checkCommands('run2') == ['run2'])
+        >>> assert(job.checkCommands('run') == ['prepare', 'run2'])
+        >>> assert(job.checkCommands('prepare') == ['prepare'])
         
         :param commands: The list of commands to check
         :type commands: list of strings
@@ -154,11 +154,11 @@ class Job(object):
         :rtype: list of strings
         """        
         rv = []
-        for command in commands:
-            if self.template.commands.get(command, {}).has_key('delegate'):
-                rv.extend(self.template.commands[command].delegate)
-            else:
-                rv.append(command)
+        if self.template.commands.get(command, {}).has_key('delegate'):
+            rv.extend(self.template.commands[command].delegate)
+        else:
+            rv.append(command)
+
         return rv
 
     def checkConfDir(self):

@@ -5,6 +5,7 @@
 # 
 # Licensed under the GPL license (see 'COPYING')
 # 
+
 """
 Handle Moa commands (i.e. anything that you can run as `moa COMMAND` on the
 commandline
@@ -18,12 +19,19 @@ import Yaco
 ## Load & handle plugins
 class PluginHandler(UserDict.DictMixin):
 
-    def __init__(self, plugins):
-
+    def __init__(self, sysConf):
+        """
+        Must be called with a global 'system configuration' object
+        (Yaco)
+        
+        """
         ## Determine what plugins are loaded
+        self.sysConf = sysConf
+        plugins = sysConf.getPlugins()
         self.plugins = {}
-        self.data = Yaco.Yaco({'plugins' : self})
+        self.sysConf.plugins = self
         self.allPlugins = plugins
+        
         l.debug("Plugins %s" % ", ".join(self.allPlugins))
         ## load the plugins as seperate modules. A plugin does not need to
         self.initialize()
@@ -51,7 +59,6 @@ class PluginHandler(UserDict.DictMixin):
         newOrder.sort()
         self.allPlugins = [x[1] for x in newOrder]
             
-
     def register(self, **kwargs):
         """
         Keep track of a dictionary of data that might be used
@@ -59,7 +66,7 @@ class PluginHandler(UserDict.DictMixin):
         on using globals
         """
         for k in kwargs:
-            self.data[k] = kwargs[k]
+            self.sysConf[k] = kwargs[k]
             
     def run(self, command):
         rv = {}
@@ -67,14 +74,14 @@ class PluginHandler(UserDict.DictMixin):
             if not command in dir(self[p]):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
-            rv['p'] = getattr(self[p], command)(self.data)
+            rv['p'] = getattr(self[p], command)(self.sysConf)
         return rv
             
     def runCallback(self, command):
         """
         Run a plugin callback 
         """
-        command['call'](self.data)
+        command['call'](self.sysConf)
 
     def getAttr(self, attribute):
         """

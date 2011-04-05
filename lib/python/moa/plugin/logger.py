@@ -63,7 +63,7 @@ def niceRunTime(d):
 def postInterrupt(data):
     return postCommand(data)
 
-def postCommand(data):
+def finish(data):
     data.logger.end_time = datetime.today()
     data.logger.run_time = data.logger.end_time - data.logger.start_time
     runtime = data.logger.end_time - data.logger.start_time

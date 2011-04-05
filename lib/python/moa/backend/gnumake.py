@@ -13,6 +13,7 @@ import moa.actor
 import moa.backend
 import moa.sysConf
 import moa.logger as l
+from moa.sysConf import sysConf
 
 class Gnumake(moa.backend.BaseBackend):
 
@@ -23,14 +24,6 @@ class Gnumake(moa.backend.BaseBackend):
         """
         self.job.makeArgs = getattr(self.job, 'makeArgs', [])
         self.job.env = getattr(self.job, 'env', {})
-
-        ## Define extra parameters to use with Make
-        if getattr(self.job.options, 'remake', False):
-            self.job.makeArgs.append('-B')
-        if getattr(self.job.options, 'makedebug', False):
-            self.job.makeArgs.append('-d')
-
-        self.job.makeArgs.extend(self.job.args)
 
     def hasCommand(self, command):
         """
@@ -43,6 +36,12 @@ class Gnumake(moa.backend.BaseBackend):
         """
         Execute!
         """
+        ## Define extra parameters to use with Make
+        if getattr(sysConf.options, 'remake', False):
+            self.job.makeArgs.append('-B')
+        if getattr(sysConf.options, 'makedebug', False):
+            self.job.makeArgs.append('-d')
+
         #self.job.plugins.run("readFilesets")
         
         verbose = options.get('verbose', False)
@@ -53,17 +52,17 @@ class Gnumake(moa.backend.BaseBackend):
         ## different from the other parameters. multi-threaded
         ## operation is only allowed in the second phase of execution.
 
-        if getattr(self.job.options, 'threads', False):
-            self.job.env['MOA_THREADS'] = "%s" % self.job.options.threads
+        if getattr(sysConf.options, 'threads', False):
+            self.job.env['MOA_THREADS'] = "%s" % sysConf.options.threads
         else:
             self.job.env['MOA_THREADS'] = "1"
             
         self.job.env['MOA_TEMPLATE'] = "%s" % self.job.template.name
         self.job.env['moa_plugins'] = "%s" % " ".join(
-            moa.sysConf.getPlugins())
+            sysConf.getPlugins())
 
         #if moa is silent, make should be silent
-        if not self.job.options.verbose:
+        if not sysConf.options.verbose:
             self.job.makeArgs.append('-s')
 
         self.job.makeArgs.append('-f')

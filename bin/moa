@@ -39,7 +39,6 @@ import moa.commands
 
 from moa.sysConf import sysConf
 
-
 ## Initialize the logger
 import moa.logger as l
 
@@ -48,7 +47,7 @@ if '-v' in sys.argv:
     moa.logger.setVerbose()
 
 ## Initialze the plugins
-plugins = moa.plugin.PluginHandler(sysConf.getPlugins())
+plugins = moa.plugin.PluginHandler(sysConf)
 
 
 ### Determine project root (if there is one)
@@ -205,7 +204,7 @@ if __name__ == "__main__":
         plugins.run('defineOptions')
 
         job = moa.job.Job(wd)
-
+        job.sysConf = sysConf
         ## Aks the job & backend if they want to add to the options
         job.defineOptions(parser)
         plugins.register(job = job)
@@ -215,8 +214,9 @@ if __name__ == "__main__":
 
         ## make sure that the options are accessible to the plugins
         plugins.register(options = options, args = args)
-        job.options = options
-        job.args = args
+        
+        #job.options = options
+        #job.args = args
 
         ## Proper setting of verbosity - after parsing of the command line
         if options.verbose:
@@ -231,7 +231,7 @@ if __name__ == "__main__":
             newargs
 
         plugins.register(newargs = newargs)
-        job.args = newargs
+        #job.args = newargs
 
         plugins.register(originalCommand=command)
 

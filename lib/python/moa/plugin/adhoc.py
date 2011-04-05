@@ -386,7 +386,12 @@ output=`moa run 2>&1`
 [[ "$output" =~ "out.01" ]] || (echo "invalid output 1" && false )
 output=`moa run 2>&1`
 # out.01 should not be in the output (it was already processed last time)
-[[ ! "$output" =~ "out.01" ]] || (echo "invalid output 2" && false )
+[[ ! "$output" =~ "out.01" ]] || ( \
+    echo "invalid output 2";
+    echo $output
+    ls
+    false
+)
 touch test.01
 output=`moa run 2>&1`
 # out.01 should be in the output (it was touched since the last process)

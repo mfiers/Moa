@@ -129,7 +129,8 @@ adhoc_unittest:
 	moa set input=10.input/test.*.input
 	moa set process='cat $$< >> test.2'
 	moa run
-	[[ "`cat test.2`" == "2341" ]]
+	cat test.2
+	[[ "`cat test.2`" == "1234" ]]
 	rm test.2
 	moa set name_sed='s/input/output/'
 	moa set process='cat $$< > $$t'
