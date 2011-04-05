@@ -166,10 +166,10 @@ def kill(data):
     _setStatus(data, 'interrupted')
     
     
-def preRun(data):    
+def preRun(data): 
     status = _getStatus(data)
     if status == 'running':
-        moa.ui.exitError("Already running (pid %d)" % otherPid)
+        moa.ui.exitError("Already running")
         sys.exit(0)
         
     _setPid(data, os.getpid())
