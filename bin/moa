@@ -147,7 +147,7 @@ def run(job, command):
         plugins.run("pre%s" % command.capitalize())
 
     for execNow in execList:
-        l.info("Executing %s" % execNow)                
+        l.debug("Executing %s" % execNow)                
         plugins.run("pre%s" % execNow.capitalize())
 
         if execNow in moaCommands:
