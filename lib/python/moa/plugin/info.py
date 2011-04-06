@@ -19,6 +19,7 @@ import moa.ui
 import moa.utils
 import moa.actor
 import moa.template
+from moa.sysConf import sysConf
 
 def defineCommands(data):
     """
@@ -66,10 +67,10 @@ def defineCommands(data):
         }
 
 
-def tree(data):
-    wd = data.wd
-    filt = data.args[1:]
-    for path, dirs, files in os.walk(data.wd):
+def tree(job):
+    wd = job.wd
+    filt = sysConf.args[1:]
+    for path, dirs, files in os.walk(job.wd):
         rpath = path.replace(wd, '')[1:]
 
         remove = set(dirs) - set(filt)
@@ -110,27 +111,27 @@ def tree(data):
     
 
 
-def getOut(data):
-    out = moa.actor.getLastStdout(data.job)
+def getOut(job):
+    out = moa.actor.getLastStdout(job)
     if out == None:
         moa.ui.exitError("No stdout found")
     else:
         print out
 
-def getErr(data):
-    err = moa.actor.getLastStderr(data.job)
+def getErr(job):
+    err = moa.actor.getLastStderr(job)
     if err == None:
         moa.ui.exitError("No stderr found")
     else:
         print err
 
-def version(data):
+def version(job):
     """
     **moa version** - Print the moa version number
     """
-    print data.sysConf.getVersion()
+    print sysConf.getVersion()
 
-def status(data):
+def status(job):
     """
     **moa status** - print out a short status status message
 
@@ -139,7 +140,6 @@ def status(data):
        moa status
        
     """
-    job = data['job']
     if job.template.name == 'nojob':
         moa.ui.fprint("%(bold)s%(red)sNot a Moa job%(reset)s")
         return
@@ -147,7 +147,7 @@ def status(data):
     moa.ui.fprint("%%(blue)s%%(bold)sTemplate name: %%(reset)s%s" %
                   job.template.name)
    
-def rawCommands(data):
+def rawCommands(job):
     """
     *(private)* **moa raw_commands** - Print a list of all known commands
     
@@ -159,15 +159,14 @@ def rawCommands(data):
     commands as template specified ones. This command is mainly used
     by software interacting with Moa.
     """
-    job = data['job']
-    commands = data['commands']
+    commands = sysConf.commands
     c = commands.keys()
     if job.template.name != 'nojob':
         c.extend(job.template.commands)
     print ' '.join(c)
 
 
-def rawParameters(data):
+def rawParameters(job):
     """
     *(private)* **moa raw_parameters** - Print out a list of all known parameters
 
@@ -177,8 +176,7 @@ def rawParameters(data):
         
     print a list of all defined or known parameters
     """
-    job = data['job']
-    if job.template.name == 'nojob':
+    if not job.isMoa():
         return
     print " ".join(job.conf.keys())
 

@@ -21,6 +21,9 @@ import moa.logger as l
 import moa.template
 import moa.jobConf
 
+from moa.sysConf import sysConf
+
+
 def newJob(wd, template, title, parameters=[]):
     """
     Create a new job in the wd and return the proper job object
@@ -43,7 +46,7 @@ def newJob(wd, template, title, parameters=[]):
     :rtype: instance of :class:`moa.job.Job`
     
     """
-    
+
     job = Job(wd)
     job.setTemplate(template)
     job.conf.title = title

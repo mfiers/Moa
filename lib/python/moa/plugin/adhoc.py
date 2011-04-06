@@ -19,6 +19,8 @@ import moa.job
 import moa.logger as l
 import moa.plugin
 
+from moa.sysConf import sysConf
+
 def defineCommands(data):
     data['commands']['adhoc'] = { 
         'desc' : 'Create an adhoc analysis',
@@ -43,19 +45,23 @@ def defineCommands(data):
     data['commands']['!'] = { 
         'desc' : 'Moa-fy the last (bash) command issued',
         'call' : exclamate,
-        'needsJob' : False,
+        'needsJob' : False,        
         'usage' : 'moa !'
         }
 
 def defineOptions(data):
-    parserN = optparse.OptionGroup(data['parser'], "Moa adhoc, simple & map")
+    parserN = optparse.OptionGroup(
+        data['parser'], "Moa adhoc, simple & map")
     try:
         parserN.add_option("-t", "--title", dest="title", help="Job title")
+    except  optparse.OptionConflictError:
+        pass
+
+    try:
         parserN.add_option("--np", dest="noprompt", action='store_true',
-                           help="Do not prompt for process, input or output")
-        
+                           help="Do not prompt for process, input or output")        
     except optparse.OptionConflictError:
-        pass # these options are probably already defined in the newjob plugin
+        pass # this options are probably already defined in the newjob plugin
 
     parserN.add_option("-m", "--mode",
                        dest="mode",
@@ -63,7 +69,7 @@ def defineOptions(data):
     data['parser'].add_option_group(parserN)
 
 
-def createSimple(data):
+def createSimple(job):
     """
     Create a 'simple' adhoc job. Simple meaning that no in or output
     files are tracked.
@@ -80,9 +86,10 @@ def createSimple(data):
     Moa will query you for a command to execute (the parameter
     `process`).
     """
-    wd = data['wd']
-    options = data['options']
-    args = data['args']
+    wd = job.wd
+    options = sysConf.options
+    args = sysConf.args
+    
     if not options.force and \
            os.path.exists(os.path.join(wd, '.moa', 'template')):
         moa.ui.exitError("Job already exists, use -f to override")
@@ -101,12 +108,12 @@ def createSimple(data):
 
 
 
-def exclamateNoJob(data):
+def exclamateNoJob(job):
     """
     Create a "simple" job & set the last command
     to the 'process' parameter 
     """
-    options = data['options']
+    options = sysConf['options']
 
     title = options.title
     if not options.title: 
@@ -122,11 +129,11 @@ def exclamateNoJob(data):
         
     
     job = moa.job.newJob(
-        wd = data.wd, template='simple', 
+        wd = job.wd, template='simple', 
         title = title,
         parameters = [('process', last)])
 
-def exclamateInJob(data):
+def exclamateInJob(job):
     """
     Reuse the last issued command: set it as the 'process' parameters
     in the current job    
@@ -136,8 +143,6 @@ def exclamateInJob(data):
         moa.ui.error("Need to activate the moa prompt for this to work")
         moa.ui.exitError("Try running `moa_prompt_on`")
 
-    
-    job = data.job
     histFile = os.path.join(job.confDir, 'history')
     if not os.path.exists(histFile):
         moa.ui.exitError(
@@ -151,7 +156,7 @@ def exclamateInJob(data):
     job.conf.process=last
     job.conf.save()
                 
-def exclamate(data):
+def exclamate(job):
     """
     Set the 'process' parameter to the last issued command. If no moa
     job exists, create a 'simple'job.
@@ -159,11 +164,11 @@ def exclamate(data):
     
     job = data.job    
     if job.isMoa():
-        exclamateInJob(data)
+        exclamateInJob(job)
     else: 
-        exclamateNoJob(data)
+        exclamateNoJob(job)
     
-def createMap(data):
+def createMap(job):
     """
     Create a 'map' adhoc job.
 
@@ -194,9 +199,10 @@ def createMap(data):
        ...
 
     """
-    wd = data['wd']
-    options = data['options']
-    args = data['args']
+    wd = job.wd
+    options = sysConf.options
+    args = sysConf.args
+    
     if not options.force and \
            os.path.exists(os.path.join(wd, '.moa', 'template')):
         moa.ui.exitError("Job already exists, use -f to override")
@@ -236,13 +242,13 @@ def _sourceOrTarget(g):
     if d[0] == '/': return 'source'
     return 'target'
     
-def createAdhoc(data):
+def createAdhoc(job):
     """
     Creates an adhoc job.
     """
-    wd = data['cwd']
-    options = data['options']
-    args = data['newargs']
+    wd = sysConf['cwd']
+    options = sysConf['options']
+    args = sysConf['newargs']
 
     if not options.force and \
            os.path.exists(os.path.join(wd, '.moa', 'template')):

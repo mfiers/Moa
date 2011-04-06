@@ -17,6 +17,7 @@ import moa.job
 import moa.logger as l
 import moa.plugin
 import moa.ui
+from moa.sysConf import sysConf
 
 def defineCommands(data):
     data['commands']['new'] = {
@@ -35,7 +36,7 @@ def defineOptions(data):
     except optparse.OptionConflictError:
         pass
 
-def newJob(data):
+def newJob(job):
     """
     **moa new**
 
@@ -44,9 +45,9 @@ def newJob(data):
         moa new TEMPLATE_NAME -t 'a descriptive title'
         
     """
-    wd = data['wd']
-    options = data['options']
-    args = data['newargs']
+    wd = job.wd
+    options = sysConf['options']
+    args = sysConf['newargs']
 
     params = []
     template = 'traverse'

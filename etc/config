@@ -10,12 +10,10 @@ plugins:
 - help
 - status
 - template
-- prompt
-- pack
 - info
-- extraCommands
 - parameterCheck
 - moautil
+- extraCommands
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True

@@ -23,6 +23,7 @@ import moa.job
 import moa.utils
 import moa.template
 import moa.plugin
+from moa.sysConf import sysConf
 
 MOABASE = moa.utils.getMoaBase()
 
@@ -41,12 +42,11 @@ def defineCommands(data):
         'private' : True
         }
 
-def templateHelp(data):
+def templateHelp(job):
     """
     """
 
-    job = data['job']
-    args = data['newargs']
+    args = sysConf['newargs']
 
     tmpjob = None
     if len(args) > 0:
@@ -57,7 +57,7 @@ def templateHelp(data):
         template = job.template
 
     if template.name == 'nojob':
-        return welcome(data)
+        return welcome(job)
 
     #prep the template object for rendering by jinja
     template._categories = {}
@@ -94,11 +94,11 @@ def pager(template, templateData):
     pydoc.pager(doc)
 
     
-def welcome(data):
+def welcome(job):
     """
     print a welcome message
     """
-    clist = data['commands'].keys()
+    clist = sysConf.commands.keys()
     clist.sort()
     commands =  "\n".join(textwrap.wrap(
         ", ".join(clist),
@@ -117,5 +117,5 @@ Try:
   of that template
 * reading the manual at: {{green}}http://mfiers.github.com/Moa/{{reset}}
 """  % {'commands' : commands,
-        'version' : data['sysConf'].getVersion()
+        'version' : sysConf.getVersion()
 }, f='jinja')

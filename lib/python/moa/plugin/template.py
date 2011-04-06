@@ -18,6 +18,8 @@ import moa.ui
 import moa.utils
 import moa.template
 
+from moa.sysConf import sysConf
+
 def defineCommands(data):
     """
     Set the moa commands for this plugin
@@ -58,10 +60,14 @@ def defineOptions(data):
                        help="Show a description for moa list")
     data['parser'].add_option_group(parserN)
 
-def refresh(data):
-    data.job.refreshTemplate()
+def refresh(job):
+    """
+    Refresh the template - i.e. reload the template from the central
+    repository.
+    """
+    job.refreshTemplate()
 
-def _getTemplateFromData(data):
+def _getTemplateFromData(job):
     """
     Return a relevant template, either the one specified, or the template
     that the current directory refers to
@@ -70,8 +76,7 @@ def _getTemplateFromData(data):
     :type data: dict
     
     """
-    job = data['job']
-    args = data['newargs']
+    args = sysConf['newargs']
     if len(args) > 0 and not '=' in args[0]:
         template = moa.template.Template(args[0])
     else:
@@ -82,14 +87,14 @@ def _getTemplateFromData(data):
 
     return template
 
-def templateSet(data):
+def templateSet(job):
     """
     **moa template_set** - set a template parameter.
 
     This only works for top level template parameters
     """
-    template = _getTemplateFromData(data)
-    for i, a in enumerate(data['args']):
+    template = _getTemplateFromData(job)
+    for i, a in enumerate(sysConf.args):
         print i,a
         if i == 0 and not '=' in a: continue
         elif not '=' in a:
@@ -99,7 +104,7 @@ def templateSet(data):
         template.modification_data = time.asctime()
         template.save()
     
-def listTemplates(data):
+def listTemplates(job):
     """
     **moa list** - Print a list of all known templates
 
@@ -112,8 +117,7 @@ def listTemplates(data):
     the option '-l' is used, a short description for each tempalte is
     printed as well.
     """
-    options = data['options']
-    if options.listlong:
+    if sysConf.options.listlong:
         for job, info in moa.template.listAllLong():
             txt = moa.ui.fformat(
                 '{{bold}}%s{{reset}}:{{blue}} %s{{reset}}' % (job, info),
@@ -125,7 +129,7 @@ def listTemplates(data):
         for tFile, tName  in moa.template.listAll():
             print tName
 
-def template(data):
+def template(job):
     """
     **moa template** - Print the template name of the current job
 
@@ -135,11 +139,10 @@ def template(data):
 
         
     """
-    job = data['job']
     moa.ui.fprint(job.template.name)
 
 
-def dumpTemplate(data):
+def dumpTemplate(job):
     """
     **moa template_dump** - Show raw template information
 
@@ -149,7 +152,6 @@ def dumpTemplate(data):
 
     Show the raw template data.
     """
-    import yaml
-    template = _getTemplateFromData(data)
-    print yaml.dump(template.get_data())
+    template = _getTemplateFromData(job)
+    print template.pretty
 

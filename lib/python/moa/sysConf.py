@@ -48,12 +48,11 @@ class SysConf(Yaco.Yaco):
         return open(versionFile).read().strip()
     
     def getPlugins(self):
-        
-        rv = set(self.get('plugins', []))
-        
+        rv = self.get('plugins', [])
         for p in self.get('plugins_extra', []):
-            rv.add(p)
-        return list(rv)
+            if p in rv: continue
+            rv.append(p)
+        return rv
 
 #This function is not necessary??? or is it??
 def getPlugins():

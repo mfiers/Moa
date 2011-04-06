@@ -55,7 +55,11 @@ function _moa_prompt_2 {
         stopseq=`date -d "${tstop}" +%s`
         tdiff=$(($stopseq - $startseq))
         pstart=`echo ${tstart} | sed "s/\.[^\.]*$//" | sed "s/T/ /" `
-        minute_secs=60 hour_secs=$((60 * minute_secs)) day_secs=$((24 * hour_secs))
+
+        minute_secs=60 
+        hour_secs=$((60 * minute_secs)) 
+        day_secs=$((24 * hour_secs))
+
         # parse
         days=$((tdiff / day_secs))
         hours=$((tdiff % day_secs / hour_secs))

@@ -27,12 +27,11 @@ class PluginHandler(UserDict.DictMixin):
         """
         ## Determine what plugins are loaded
         self.sysConf = sysConf
-        plugins = sysConf.getPlugins()
+        self.pluginList = sysConf.getPlugins()
         self.plugins = {}
         self.sysConf.plugins = self
-        self.allPlugins = plugins
         
-        l.debug("Plugins %s" % ", ".join(self.allPlugins))
+        l.debug("Plugins %s" % ", ".join(self.pluginList))
         ## load the plugins as seperate modules. A plugin does not need to
         self.initialize()
 
@@ -42,7 +41,7 @@ class PluginHandler(UserDict.DictMixin):
         """
         ## do we have a python module??
         l.debug('Start plugin init')
-        for plugin in self.allPlugins:
+        for plugin in self.pluginList:
             pyModule = 'moa.plugin.%s' % plugin
             try:
                 _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
@@ -52,12 +51,6 @@ class PluginHandler(UserDict.DictMixin):
                 if not str(e) == "No module named %s" % plugin:
                     raise
                 #l.debug("No python plugin module found for %s" % plugin)
-
-        newOrder = []
-        for plugin in self.keys():
-            newOrder.append((getattr(self[plugin], 'order', 100), plugin))
-        newOrder.sort()
-        self.allPlugins = [x[1] for x in newOrder]
             
     def register(self, **kwargs):
         """
@@ -68,27 +61,31 @@ class PluginHandler(UserDict.DictMixin):
         for k in kwargs:
             self.sysConf[k] = kwargs[k]
             
-    def run(self, command):
+    def run(self, command, reverse=False):
         rv = {}
-        for p in self.allPlugins:
+        toRun = self.pluginList
+        if reverse:
+            toRun.reverse()
+        for p in toRun:
             if not command in dir(self[p]):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
             rv['p'] = getattr(self[p], command)(self.sysConf)
         return rv
             
-    def runCallback(self, command):
+    def runCallback(self, job, command):
         """
-        Run a plugin callback 
+        Run a command callback 
         """
-        command['call'](self.sysConf)
+        commandInfo = self.sysConf.commands[command]
+        commandInfo['call'](job)
 
     def getAttr(self, attribute):
         """
         A generator that returns all plugins and the
         requested attribute
         """
-        for p in self.allPlugins:
+        for p in self.pluginList:
             a = getattr(self[p], attribute, None)
             if a: yield p, a
         

@@ -37,6 +37,8 @@ import moa.project
 import moa.plugin
 import moa.commands
 
+#the system configuration is available as a global from the
+#sysConf module
 from moa.sysConf import sysConf
 
 ## Initialize the logger
@@ -49,35 +51,25 @@ if '-v' in sys.argv:
 ## Initialze the plugins
 plugins = moa.plugin.PluginHandler(sysConf)
 
-
-### Determine project root (if there is one)
-#projectRoot = moa.project.findProjectRoot(job)
-#if projectRoot:
-#    l.debug('Project root is %s' % projectRoot)
-#    job.projectRoot = projectRoot
-#    plugins.register(projectRoot = projectRoot)
-
 ## Command definitions
-moaCommands = moa.commands.Commands()
-plugins.register(commands = moaCommands)
+sysConf.commands = moa.commands.Commands()
 plugins.run('defineCommands')
 
-
-## start defining the command line interface
+## defining a usage message
 USAGE = "Usage: {{bold}}{{green}}%prog {{blue}}[options] COMMAND ARGUMENTS{{reset}}\n\n"
-moaCommandNames = moaCommands.keys()
+moaCommandNames = sysConf.commands.keys()
 moaCommandNames.sort()
 
 commandsG = []
 commandsJ = []
 
 for _c in moaCommandNames:
-    if moaCommands[_c].get('private', False):
+    if sysConf.commands[_c].get('private', False):
         continue
-    if moaCommands[_c].get('needsJob',  True):
-        commandsJ.append([_c, moaCommands[_c]['desc']])
+    if sysConf.commands[_c].get('needsJob',  True):
+        commandsJ.append([_c, sysConf.commands[_c]['desc']])
     else:
-        commandsG.append([_c, moaCommands[_c]['desc']])
+        commandsG.append([_c, sysConf.commands[_c]['desc']])
 
 commandsG.sort()
 commandsJ.sort()
@@ -120,15 +112,42 @@ parser.add_option(
 parser.add_option("-r", "--recursive", dest="recursive",
                   help="Perfom action recursively", action='store_true')
 
+## See if the plugins have anything to add to the optparse instance:
+sysConf.parser = parser
+plugins.run('defineOptions')
+
+def run2(job, command):
+
+    if command in sysConf.commands:
+        if not sysConf.commands[command].has_key('call'):
+            moa.ui.exitError("Invalid command - no callback %s" % command) 
+
+        l.debug("using a callback for moa %s" % command)
+        try:
+            plugins.runCallback(job, command)
+            rc = 0
+        except:
+            #this should not happen!!
+            rc = -1
+            sysConf.rc = rc                    
+            raise
+        
+        return rc
+    
+    #No callback, defer this to the backend
+    rc = job.execute(command,
+        verbose = options.verbose,
+        silent = options.silent)
+    
+    return rc
+
 def run(job, command):
 
     ## Ask the job if it's is ok with
     ## the command provided (might want to change order, or insert
     ## stuff
-
     execList = job.checkCommands(command)
-    plugins.register(executeCommand=execList)
-
+    sysConf.executeCommand = execList
 
     l.debug("Run moa commands: %s" % ",".join(execList))
     l.debug("with args %s" % newargs)
@@ -149,74 +168,38 @@ def run(job, command):
         l.debug("Executing %s" % execNow)                
         plugins.run("pre%s" % execNow.capitalize())
 
-        if execNow in moaCommands:
-            if moaCommands[execNow].has_key('call'):
-                l.debug("using a callback for moa %s" % execNow)
-                try:
-                    plugins.runCallback(moaCommands[execNow])
-                    rc = 0
-                except:
-                    rc = -1
-                    plugins.register(rc = rc)
-                    raise
-        else:
-            #No callback, defer this to the backend
+        rc = run2(job, execNow)
 
-            #first see if we need to fork - if this is a background job
-            if options.background:
-                options.silent = True
-                child = os.fork()
-                if child != 0:
-                    # This is the parent thread - exit now - all
-                    plugins.register(childPid = child)
-                    plugins.run("bgParentExit")
-                    moa.ui.fprint("Running in the background")
-                    sys.exit(0)
-
-            rc = job.execute(
-                execNow,
-                verbose = options.verbose,
-                silent = options.silent)
-
-        plugins.register(rc = rc)
-        plugins.run("post%s" % execNow.capitalize())
+        sysConf.rc = rc
+        plugins.run("post%s" % execNow.capitalize(), reverse=True)
 
     if command not in execList:
-        plugins.run("post%s" % command.capitalize())
+        plugins.run("post%s" % command.capitalize(), reverse=True)
 
-    plugins.run("postCommand")
-
-    plugins.run("finish")
-    sys.exit(rc)
+    plugins.run("postCommand", reverse=True)
+    plugins.run("finish", reverse=True)
+    return rc
     
 ## Main dispatcher
 if __name__ == "__main__":
     try:        
         wd = os.getcwd()
         
-        plugins.register(sysConf = sysConf)
-        plugins.register(wd = wd)
-        plugins.register(cwd = wd)
-
-        ## See if the plugins have anything to add to the optparse instance:
-        plugins.register(parser=parser)
-        plugins.register(commands=moaCommands)
-        plugins.run('defineOptions')
+        #sysConf.wd = wd
+        #sysConf.cwd = wd #deprecated...
 
         job = moa.job.Job(wd)
-        job.sysConf = sysConf
+
         ## Aks the job & backend if they want to add to the options
         job.defineOptions(parser)
-        plugins.register(job = job)
-
+        
         ## Parse the options
         (options, args) = parser.parse_args()
 
         ## make sure that the options are accessible to the plugins
-        plugins.register(options = options, args = args)
-        
-        #job.options = options
-        #job.args = args
+        sysConf.options = options
+        sysConf.args = args
+        sysConf.job = job
 
         ## Proper setting of verbosity - after parsing of the command line
         if options.verbose:
@@ -230,16 +213,63 @@ if __name__ == "__main__":
             command = 'status'
             newargs
 
-        plugins.register(newargs = newargs)
-        #job.args = newargs
-
-        plugins.register(originalCommand=command)
-
+        sysConf.newargs = newargs
+        sysConf.originalCommand = command        
         moa.version.fixOld(wd)
-        run(job, command)
-        
+
+        #first see if we need to fork - if this is a background job
+        if options.background:
+            options.silent = True
+            child = os.fork()
+            if child != 0:
+                # This is the parent thread - exit now - all
+                sysConf.childPid = child
+                plugins.run("bgParentExit")
+                moa.ui.fprint("starting background run")
+                sys.exit(0)
+
+
+        def _recursiveRun(job, command):
+            #turn of recursive - no recursively run recursive jobs
+            sysConf.options.recursive = False
+            rc = 0            
+            for path, dirs, files in os.walk(job.wd):
+                if '.moa' in dirs:
+                    rjob = moa.job.Job(path)                    
+                    moa.ui.fprint("Executing 'moa %s' in %s" % (
+                        command, path))
+                    rc += abs(run(rjob, command))
+
+                #remove all '.' directories -
+                drem = [ x for x in dirs if x[0] == '.' ]
+                [ dirs.remove(t) for t in drem]
+            return rc
+                  
+
+        if sysConf.options.recursive:
+            if command in sysConf.commands:
+                rcmode = sysConf.commands[command].get('recursive', 'none')
+                if  rcmode == 'local':
+                    #local recursive mode - recursive operation
+                    #is implemented at the command level
+                    run(job, command)
+                elif rcmode == 'none':
+                    moa.ui.exitError("Cannot run recursive run 'moa %s'")
+                else:
+                    moa.ui.fprint("Start recursive 'moa %s'" % command,
+                                  f='jinja')
+                    rc = _recursiveRun(job, command)
+            else:
+                #not command in sysConf.commands - it is not a callback
+                #but will be deferred to the backend -
+                #always recusively:
+                rc = _recursiveRun(job, command)
+        else:
+            #non recursive - just run the command
+            rc = run(job, command)
+
     except KeyboardInterrupt:
-        plugins.register(rc = -1)
+        sysConf.rc = -1
         plugins.run("postInterrupt")
         moa.ui.warn("Interrupted")
         sys.exit(-1)

@@ -17,6 +17,7 @@ from datetime import datetime
 import moa.job
 import moa.logger as l
 import moa.plugin
+from moa.sysConf import sysConf
 
 def defineCommands(data):
     data['commands']['log'] = { 
@@ -101,7 +102,7 @@ def finish(data):
                 niceRunTime(str(data.runtime))), f='jinja')
         
                       
-def showLog(data):
+def showLog(job):
     """
     **moa log** - show a log of the most recent moa calls
 
@@ -114,13 +115,13 @@ def showLog(data):
     number of log entries to display can be controlled with the
     optional LINES parameter.    
     """
-    args = data.args
+    args = sysConf.args
     if len(args) > 1:
         noLines = int(args[1])
     else:
         noLines = 5
         
-    logFile = os.path.join(data.job.confDir, 'log')
+    logFile = os.path.join(job.confDir, 'log')
     with open(logFile) as F:
         #read the last 2k - prevent reading the whole file
         try:

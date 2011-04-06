@@ -38,16 +38,15 @@ def preRun(data):
                        "(try 'moa unlock')"), f='jinja')
         sys.exit(-1)
 
-def unlock(data):
-    lockfile = os.path.join(data.job.confDir, 'lock')
+def unlock(job):
+    lockfile = os.path.join(job.confDir, 'lock')
     if os.path.exists(lockfile):
-        l.debug("unlocking job in %s" % data.job.wd)
+        l.debug("unlocking job in %s" % job.wd)
         os.remove(lockfile)
 
-def lock(data):
-    lockfile = os.path.join(data.job.confDir, 'lock')
+def lock(job):
+    lockfile = os.path.join(job.confDir, 'lock')
     if not os.path.exists(lockfile):
-        l.debug("locking job in %s" % data.job.wd)
+        l.debug("locking job in %s" % job.wd)
         with open(lockfile, 'w') as F:
-            F.write(" ")
-        
+            F.write(" ")        

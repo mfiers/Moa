@@ -34,6 +34,8 @@ import moa.sysConf
 import moa.jobConf
 import moa.template
 
+sysConf = moa.sysConf.sysConf
+
 def defineCommands(data):
     data['commands']['unittest'] = {
         'desc' : 'Run Moa unittests',
@@ -225,10 +227,10 @@ def runDocTests():
     testModule(moa.sysConf)
     testModule(moa.jobConf)
 
-def runTests(data):
+def runTests(job):
 
-    options = data['options']
-    args = data['args']
+    options = sysConf['options']
+    args = sysConf['args']
 
     args.pop(0)
 
@@ -248,7 +250,7 @@ def runTests(data):
         l.info("Ran %d test, %d failed" % (tests, failures))
 
         l.info("Start running command tests")
-        testCommands(data)
+        testCommands(sysConf)
         l.info("Ran %d command tests, %d failed" % (
                 commandTests, commandFailures))
 
@@ -264,7 +266,7 @@ def runTests(data):
 
     elif args[0][:3] == 'com':
         setWarning()
-        testCommands(data)
+        testCommands(sysConf)
         if options.verbose: setVerbose()
         else: setInfo()
         l.info("Finished running of python command tests")

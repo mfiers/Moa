@@ -24,7 +24,9 @@ import signal
 
 import moa.ui
 import moa.utils
+from moa.sysConf import sysConf
 
+LLOG = False
 STATUS = 'unknown'
 
 def defineCommands(data):
@@ -44,7 +46,7 @@ def defineCommands(data):
         'call' : kill,
         }
     
-def status(data):
+def status(job):
     """
     **moa status** - print out a short status status message
 
@@ -52,16 +54,15 @@ def status(data):
 
        moa status       
     """
-    job = data['job']
     if job.template.name == 'nojob':
         moa.ui.fprint("not a Moa job")
         return
     message = ""
 
-    message +="{{bold}}Moa{{reset}} %s. " % data.sysConf.getVersion()
+    message +="{{bold}}Moa{{reset}} %s. " % sysConf.getVersion()
     message += "template: {{bold}}%s{{reset}}. " % job.template.name
     
-    status = _getStatus(data)
+    status = _getStatus(job)
     color = {
         'running' : '{{bold}}',
         'success' : '{{green}}',
@@ -71,15 +72,15 @@ def status(data):
     moa.ui.fprint(message, f='jinja')
     
         
-def _getStatus(data, silent=False):
+def _getStatus(job, silent=False):
     """
     Figure out what the status of this job is
 
     If it is running -check if the pid corresponds with a moa process
     """
     
-    statusFile = os.path.join(data.job.wd, '.moa', 'status')
-    pidFile = os.path.join(data.job.wd, '.moa', 'pid')
+    statusFile = os.path.join(job.wd, '.moa', 'status')
+    pidFile = os.path.join(job.wd, '.moa', 'pid')
     if not os.path.exists(statusFile):
         return 'waiting'
 
@@ -90,7 +91,7 @@ def _getStatus(data, silent=False):
         return status
 
     #if running - check if it is really running    
-    otherPid = _getPid(data)
+    otherPid = _getPid()
     if otherPid == None:
         return 'error'
     
@@ -110,33 +111,33 @@ def _getStatus(data, silent=False):
             #weird - the pid file dissapeared -
             moa.ui.warn("weird - pidfile dissapeared")
             #try again
-            return _getStatus(data)
+            return _getStatus(job)
         else:
             raise
         
     return "error"
 
-def _setStatus(data, status):
-    statusFile = os.path.join(data.job.wd, '.moa', 'status')
-    
+def _setStatus(job, status):
+    statusFile = os.path.join(job.wd, '.moa', 'status')
+    if LLOG: print 'writing status %s' % status
     with open(statusFile, 'w') as F:
         F.write("%s" % status)
 
-def _setPid(data, pid):
-    pidFile = os.path.join(data.job.wd, '.moa', 'pid')
+def _setPid(job, pid):
+    pidFile = os.path.join(job.wd, '.moa', 'pid')
     with open(pidFile, 'w') as F:
         F.write("%s" % pid)
 
-def _removePid(data):
-    pidFile = os.path.join(data.job.wd, '.moa', 'pid')
+def _removePid(job):
+    pidFile = os.path.join(job.wd, '.moa', 'pid')
     try:
         os.unlink(pidFile)
     except OSError, e:
         if e.errno != 2:
             raise
         
-def _getPid(data):
-    pidFile = os.path.join(data.job.wd, '.moa', 'pid')
+def _getPid(job):
+    pidFile = os.path.join(job.wd, '.moa', 'pid')
     if not os.path.exists(pidFile):
         return None
     with open(pidFile) as F:
@@ -146,42 +147,45 @@ def bgParentExit(data):
     """
     Rewrite the pid file to contain the child pid id
     """
-    _setPid(data, data.childPid)
+    _setPid(data.job, data.childPid)
+    if LLOG: print 'local parent exit'
 
-def kill(data):
+def kill(job):
     """
     See if a job is running, if so - kill it
     """
-    status = _getStatus(data)
+    status = _getStatus(job)
+    print status
     if not status == 'running':
         moa.ui.exitError("Job is not running")
 
     pid = _getPid(data)
     moa.ui.warn("sending a kill signal to process %d" % pid)
     os.kill(pid, signal.SIGKILL)
-    status = _getStatus(data, silent=True)
+    status = _getStatus(job, silent=True)
     if status == 'running':
         moa.exitError("Failed to kill this Moa job")
     _removePid(data)
-    _setStatus(data, 'interrupted')
+    _setStatus(data.job, 'interrupted')
     
     
 def preRun(data): 
-    status = _getStatus(data)
+    status = _getStatus(data.job)
     if status == 'running':
         moa.ui.exitError("Already running")
         sys.exit(0)
         
-    _setPid(data, os.getpid())
-    _setStatus(data, 'running')
+    _setPid(data.job, os.getpid())
+    if LLOG: print 'set running'
+    _setStatus(data.job, 'running')
 
 def postRun(data):
     status = 'success'
     if data.rc != 0:
         status = 'error'
-    _setStatus(data, status)
-    _removePid(data)
+    _setStatus(data.job, status)
+    _removePid(data.job)
 
 def postInterrupt(data):
-    _setStatus(data, 'interrupted')
-    _removePid(data)
+    _setStatus(data.job, 'interrupted')
+    _removePid(data.job)

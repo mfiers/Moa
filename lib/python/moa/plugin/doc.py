@@ -49,7 +49,7 @@ def defineCommands(data):
         }
 
 
-def blog(data):
+def blog(job):
     """
     Allows a user to enter a short note that is appended to
     moa.description (including a timestamp). Use it as follows::
@@ -66,7 +66,6 @@ def blog(data):
 
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
     """
-    job = data['job']
     moa.utils.moaDirOrExit(job)
 
     txt = []

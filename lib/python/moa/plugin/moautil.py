@@ -18,12 +18,14 @@ import shutil
 
 import moa.logger as l
 import moa.ui
+from moa.sysConf import sysConf
 
 def defineCommands(data):
     data['commands']['cp'] = {
         'desc' : 'Copy a moa job',
         'call' : moacp,
         'needsJob' : False,
+        'recursive' : 'local',
         'unittest' : COPYTEST}
 
 #    data['commands']['mv'] = {
@@ -112,7 +114,7 @@ def moamv(data):
     shutil.move(fr, to)
             
     
-def moacp(data):
+def moacp(job):
     """
     Copy a moa job, or a tree with jobs.
 
@@ -147,8 +149,8 @@ def moacp(data):
     ::TODO..  Warn for changing file & dir links
     """
     
-    options = data.options
-    args = data.newargs
+    options = sysConf.options
+    args = sysConf.newargs
     
     if len(args) > 1: dirTo = args[1]
     else: dirTo = '.'

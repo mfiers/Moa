@@ -38,10 +38,10 @@ class TimeOutException(Exception):
 def timeOutHandler(signum, frame):
     raise TimeOutException()
 
-def preRun(data):
-    "A little trick to set the gnu screen title"
-    if 'screen' in os.environ.get('TERM', '').lower():
-        sys.stdout.write(chr(27) + 'kmoa ' + data.job.template.name + chr(27) + '\\')
+#def preRun(data):
+#    "A little trick to set the gnu screen title"
+#    if 'screen' in os.environ.get('TERM', '').lower():
+#        sys.stdout.write(chr(27) + 'kmoa ' + data.job.template.name + chr(27) + '\\')
 
         
 def prompt(data):

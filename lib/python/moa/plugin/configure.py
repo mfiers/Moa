@@ -16,6 +16,7 @@ import os
 import moa.ui
 import moa.utils
 import moa.logger as l
+from moa.sysConf import sysConf
 
 def defineCommands(data):
     """
@@ -26,6 +27,7 @@ def defineCommands(data):
         'usage' : 'moa set [KEY] [KEY=VALUE]',
         'call' : configSet,
         'needsJob' : True,
+        'recursive' : 'global',
         'log' : True,
         'unittest' : TESTSET
         }
@@ -34,6 +36,7 @@ def defineCommands(data):
         'desc' : 'Remove a variable',
         'call' : configUnset,
         'usage' : 'moa unset KEY',
+        'recursive' : 'global',
         'needsJob' : True,
         'log' : True,
         'unittest' : TESTUNSET
@@ -47,7 +50,7 @@ def defineCommands(data):
         'log' : False
         }
 
-def configShow(data):
+def configShow(job):
     """
     Show all parameters know to this job. Parameters in **bold** are
     specifically configured for this job (as opposed to those
@@ -56,7 +59,7 @@ def configShow(data):
     operate. Parameters in blue are not configured either, but are
     optional.
     """
-    job = data['job']
+    job = sysConf['job']
     moa.utils.moaDirOrExit(job)
     
     keys = job.conf.keys()
@@ -79,41 +82,40 @@ def configShow(data):
                 moa.ui.fprint("{{red}}%s\t%s{{reset}}" % (
                     p, job.conf[p]), f='jinja')
 
-def _unsetCallback(wd, data):
+def _unsetCallback(wd, vars):
     """
-    Does the actual unset..
+    Does the actual unset of variables `vars` in folder `wd`:
     """
     job = moa.job.Job(wd)
     #print "unsetting", " ".join(data.unset), "in", wd
-    for u in data.unset:
+    for u in vars:
         try:
             del job.conf[u]
         except KeyError:
             pass        
     job.conf.save()
     
-def configUnset(data):
+def configUnset(job):
     """
     Remove a configured parameter from this job. In the parameter was
     defined by the job template, it reverts back to the default
     value. If it was an ad-hoc parameter, it is lost from the
     configuration.
     """
-    options = data['options']
+    options = sysConf.options
 
-    data.unset = []
-    for a in data.newargs:
+    for a in sysConf.newargs:
         if '=' in a:
             moa.ui.exitError("Invalid argument to unset %s" % a)
-        else:
-            data.unset.append(a)
-    if not data.unset:
-        moa.ui.exitError("Nothing to unset")
-
-    moa.utils.moaRecursiveWalk(
-        data.wd, _unsetCallback, data, options.recursive)
-
-def configSet(data):
+        try:
+            del job.conf[a]
+        except KeyError:
+            #probably a non existsing key - ignore
+            pass
+        
+    job.conf.save()
+    
+def configSet(job):
     """
     This command can be used in a number of ways::
 
@@ -129,8 +131,7 @@ def configSet(data):
     variables that you do not want to be expandend and use single quotes
     where you can. 
     """
-    job = data['job']
-    args = data['newargs']
+    args = sysConf['newargs']
 
     #see if we need to query the user for input somehwere
     for a in args:
