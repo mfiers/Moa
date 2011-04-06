@@ -32,60 +32,7 @@ def defineCommands(data):
 #        'desc' : 'Move a moa job, ',
 #        'call' : moamv }
 #        
-#    data['commands']['kill'] = {
-#        'desc' : 'Kill a running moa job',
-#        'call' : moakill }
-#
-#    data['commands']['pause'] = {
-#        'desc' : 'Pause a running moa job',
-#        'call' : moapause }
-#
-#    data['commands']['resume'] = {
-#        'desc' : 'Resume a paused moa job',
-#        'call' : moaresume }
-#
 
-def moakill(data):
-    """
-    kill a running job
-    """
-    cwd = data['cwd']
-
-    if not moa.info.status(cwd) == 'running': 
-        l.warning("Moa does not seem to be running!")
-        sys.exit(-1)
-
-    pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
-    l.critical("killing job %d" % pid)
-    os.kill(pid, 9)
-
-def moapause(data):
-    """
-    pause a running job
-    """
-    cwd = data['cwd']
-
-    if not moa.info.status(cwd) == 'running': 
-        l.warning("Moa process does not seem to be active!")
-        sys.exit(-1)
-
-    pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
-    l.warning("Pausing job %d" % pid)
-    os.kill(pid, 19)
-
-def moaresume(data):
-    """
-    resume a paused job - 
-
-    """
-    cwd = data['cwd']
-    if not moa.info.status(cwd) == 'paused': 
-        l.warning("Moa process does not seem to be paused!")
-        sys.exit(-1)
-
-    pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
-    l.warning("Resming job %d" % pid)
-    os.kill(pid, 18)
 
 def moamv(data):
     
