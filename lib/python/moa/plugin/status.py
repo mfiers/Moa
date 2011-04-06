@@ -40,11 +40,24 @@ def defineCommands(data):
         'call' : status,
         }
     data['commands']['kill'] = {
-        'desc' : 'Kill a currently running job',
+        'desc' : 'Kill a job',
         'log' : True,
         'needsJob' : True,
         'call' : kill,
         }
+    data['commands']['pause'] = {
+        'desc' : 'Pause a job',
+        'log' : True,
+        'needsJob' : True,
+        'call' : pause,
+        }
+    data['commands']['resume'] = {
+        'desc' : 'Resume a job',
+        'log' : True,
+        'needsJob' : True,
+        'call' : resume,
+        }
+
     
 def status(job):
     """
@@ -91,7 +104,7 @@ def _getStatus(job, silent=False):
         return status
 
     #if running - check if it is really running    
-    otherPid = _getPid()
+    otherPid = _getPid(job)
     if otherPid == None:
         return 'error'
     
@@ -159,7 +172,7 @@ def kill(job):
     if not status == 'running':
         moa.ui.exitError("Job is not running")
 
-    pid = _getPid(data)
+    pid = _getPid(job)
     moa.ui.warn("sending a kill signal to process %d" % pid)
     os.kill(pid, signal.SIGKILL)
     status = _getStatus(job, silent=True)
@@ -171,9 +184,8 @@ def kill(job):
     
 def preRun(data): 
     status = _getStatus(data.job)
-    if status == 'running':
+    if status in ['running', 'paused']:
         moa.ui.exitError("Already running")
-        sys.exit(0)
         
     _setPid(data.job, os.getpid())
     if LLOG: print 'set running'
@@ -186,6 +198,38 @@ def postRun(data):
     _setStatus(data.job, status)
     _removePid(data.job)
 
+
 def postInterrupt(data):
     _setStatus(data.job, 'interrupted')
     _removePid(data.job)
+
+
+
+def pause(job):
+    """
+    pause a running job
+    """
+    status = _getStatus(job)
+    if LLOG: print 'pausing job with status', status
+    if status != 'running':
+        moa.ui.exitError("Not running")
+
+    pid = _getPid(job)
+    print pid
+    moa.ui.warn("Pausing job %d" % pid)
+    os.kill(pid, 19)
+    _setStatus(job, 'paused')
+
+def resume(job):
+    """
+    pause a running job
+    """
+    status = _getStatus(job)
+    if LLOG: print 'resuming job with status', status
+    if status != 'paused':
+        moa.ui.exitError("Not paused")
+
+    pid = _getPid(job)
+    moa.ui.warn("Resuming job %d" % pid)
+    os.kill(pid, 18)
+    _setStatus(job, 'running')
