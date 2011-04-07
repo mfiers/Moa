@@ -26,7 +26,7 @@ import contextlib
 import jinja2
 
 import moa.logger as l
-import moa.sysConf
+from moa.sysConf import sysConf
 from moa.exceptions import *
 
 ################################################################################
@@ -60,6 +60,9 @@ def exitError(message):
 
 def error(message):
     fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
+
+def message(message):
+    fprint("{{green}}Moa{{reset}} %s" % message, f='jinja')
     
 def warn(message):
     fprint("{{blue}}Warning:{{reset}} %s" % message, f='jinja')
@@ -70,7 +73,6 @@ def fprint(message, **kwargs):
 def fformat(message, f='text', newline = True, ansi = None):
     if f == 'text':
         l.debug("deprecated use of text formatter")
-    sysConf = moa.sysConf.sysConf
     if ansi == True:
         codes = FORMAT_CODES_ANSI
     elif ansi == False:
@@ -127,76 +129,3 @@ def askUser(prompt, d):
     readline.set_startup_hook() 
     return vl 
     
-def renumber(path, fr, to):
-    """
-    Renumber a moa job
-
-
-    >>> import tempfile
-    >>> emptyDir = tempfile.mkdtemp()
-    >>> fromDir = os.path.join(emptyDir, '10.test')
-    >>> problemDir = os.path.join(emptyDir, '20.problem')
-    >>> toDir = os.path.join(emptyDir, '20.test')
-    >>> os.mkdir(os.path.join(emptyDir, '10.test'))
-    >>> os.path.exists(os.path.join(emptyDir, '10.test'))
-    True
-    >>> os.path.exists(toDir)
-    False
-    >>> renumber(emptyDir, '10', '20')
-    >>> os.path.exists(fromDir)
-    False
-    >>> os.path.exists(toDir)
-    True
-    >>> os.mkdir(problemDir)
-    >>> renumber(emptyDir, '20', '30')
-    Traceback (most recent call last):
-      File '/opt/moa/lib/python/moa/utils.py', line 114, in renumber
-        raise MoaFileError(fullDir)
-    MoaFileError: Moa error handling file
-
-    
-    @param path: the path to operate in
-    @type path: String
-    @param fr: number to rename from
-    @type fr: String representing a number
-    @param to: number to rename to
-    @type to: String representing a number
-    """
-
-    frDir = None
-    toDir = None
-    l.debug("moa ren %s %s" % (fr, to))
-    for x in os.listdir(path):        
-        if x[0] == '.' : continue
-        
-        fullDir = os.path.join(path, x)
-
-        xsplit = x.split('.')
-        if xsplit[0] == fr:
-            if frDir:
-                l.error("more than one directory starting with %s" % fr)
-                raise MoaFileError(fullDir)
-            frDir = fullDir
-            toDir = os.path.join(path, to + "." + ".".join(xsplit[1:]))
-        if xsplit[0] == to:
-            l.error("target directory starting with %s already exists" % to)
-            raise MoaFileError(fullDir)
-
-    if not frDir:
-        l.error("Cannot find a directory starting with %s" % fr)
-        raise MoaFileError(path)
-    if not toDir:
-        l.error("Cannot find a directory starting with %s" % to)
-        raise MoaFileError(path)
-    
-    if not os.path.isdir(frDir):
-        l.error("%s is not a directory" % frDir)
-        raise MoaFileError(frDir)
-    #if not os.path.isdir(toDir):
-    #    l.error("%s is not a directory" % toDir)
-    #    raise MoaFileError(toDir)
-
-    l.info("renaming: %s" % (frDir))
-    l.info("  to: %s" % (toDir))
-    os.rename(frDir, toDir)
-        
