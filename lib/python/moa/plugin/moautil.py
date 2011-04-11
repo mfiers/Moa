@@ -15,6 +15,7 @@ import re
 import sys
 import glob
 import shutil
+import tarfile
 
 import moa.logger as l
 import moa.ui
@@ -28,92 +29,70 @@ def defineCommands(data):
         'recursive' : 'local',
         'unittest' : COPYTEST}
 
-#    data['commands']['mv'] = {
-#        'desc' : 'Move a moa job, ',
-#        'call' : moamv }
-#        
-#    data['commands']['kill'] = {
-#        'desc' : 'Kill a running moa job',
-#        'call' : moakill }
-#
-#    data['commands']['pause'] = {
-#        'desc' : 'Pause a running moa job',
-#        'call' : moapause }
-#
-#    data['commands']['resume'] = {
-#        'desc' : 'Resume a paused moa job',
-#        'call' : moaresume }
-#
+    data['commands']['ren'] = {
+        'desc' : 'Rename/renumber a job',
+        'call' : moaren,
+        'needsJob' : False,
+        'recursive' : 'none',
+        'unittest' : RENTEST}
 
-def moakill(data):
-    """
-    kill a running job
-    """
-    cwd = data['cwd']
-
-    if not moa.info.status(cwd) == 'running': 
-        l.warning("Moa does not seem to be running!")
-        sys.exit(-1)
-
-    pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
-    l.critical("killing job %d" % pid)
-    os.kill(pid, 9)
-
-def moapause(data):
-    """
-    pause a running job
-    """
-    cwd = data['cwd']
-
-    if not moa.info.status(cwd) == 'running': 
-        l.warning("Moa process does not seem to be active!")
-        sys.exit(-1)
-
-    pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
-    l.warning("Pausing job %d" % pid)
-    os.kill(pid, 19)
-
-def moaresume(data):
-    """
-    resume a paused job - 
-
-    """
-    cwd = data['cwd']
-    if not moa.info.status(cwd) == 'paused': 
-        l.warning("Moa process does not seem to be paused!")
-        sys.exit(-1)
-
-    pid = int(open(os.path.join(cwd, 'moa.runlock')).read())
-    l.warning("Resming job %d" % pid)
-    os.kill(pid, 18)
-
-def moamv(data):
-    
-    args = data['newargs']
-
-    fr = args[0]
-    if fr[-1] == '/':
-        fr = fr[:-1]
+    data['commands']['archive'] = {
+        'desc' : 'Archive a job, ',
+        'needsJob' : True,
+        'recursive' : 'local',
+        'call' : archive }
         
-    if len(args) > 1: to = args[1]
-    else: to = '.'
 
-    #see if fr is a number
-    if re.match('\d+', fr):
-        newfr = glob.glob('%s*' % fr)
-        if len(newfr) != 1:
-            l.critical("Cannot resolve %s (%s)" % (fr, newfr))
-            sys.exit(1)
-        fr = newfr[0]
-        
-    if re.match('\d+', to):
-        if re.search('^\d+', fr):
-            to = re.sub('^\d+', to, fr)
-        else:
-            to = '%s.%s' % (to, fr)
-    shutil.move(fr, to)
-            
+
+def archive(job):
+    """
+    Archive a job, or tree with jobs for later execution.
     
+    This command stores only those files that are necessary for
+    execution of this job, that is: templates & configuration. In &
+    output files, and any other file are ignored. An exception to this
+    are all files that start with 'moa.'
+
+    Usage::
+
+        moa archive
+
+    or
+
+        moa archive -r
+
+    The latter archives all jobs in subdirs of the current directory.
+
+    Note that only those directories that contain a moa job are
+    included into the archive.
+    
+    """
+    args = sysConf.newargs[0]
+    archiveName = sysConf.newargs[0]
+    if not archiveName[-2:] ==  'gz' :
+        archiveName += '.tar.gz'
+    l.info("archiving %s" % archiveName)
+    TF = tarfile.open(
+        name = archiveName,
+        mode = 'w:gz')
+
+    def _addFiles(tf, path, job):
+        for pattern in job.data.moaFiles:
+            for fl in glob.glob(os.path.join(path, pattern)):
+                if fl[-1] == '~': continue
+                tf.add(fl)
+                
+    if sysConf.options.recursive:
+        for path, dirs, files in os.walk('.'):
+            if '.moa' in dirs:
+                sjob = moa.job.Job(path)
+                _addFiles(TF, path, sjob) 
+            toRemove = [x for x in dirs if x[0] == '.']
+            [dirs.remove(x) for x in toRemove]
+    else:
+        _addFiles(TF, '.', job)
+
+
 def moacp(job):
     """
     Copy a moa job, or a tree with jobs.
@@ -206,7 +185,126 @@ def _copyMoaDir(job, toDir):
                     os.makedirs(thisToDir)
                 shutil.copyfile(fromFile, toFile)
 
+
+def renumber(path, fr, to):
+    """
+    Renumber a moa job
+
+    >>> import tempfile
+    >>> emptyDir = tempfile.mkdtemp()
+    >>> fromDir = os.path.join(emptyDir, '10.test')
+    >>> problemDir = os.path.join(emptyDir, '20.problem')
+    >>> toDir = os.path.join(emptyDir, '20.test')
+    >>> os.mkdir(os.path.join(emptyDir, '10.test'))
+    >>> os.path.exists(os.path.join(emptyDir, '10.test'))
+    True
+    >>> os.path.exists(toDir)
+    False
+    >>> renumber(emptyDir, '10', '20')
+    >>> os.path.exists(fromDir)
+    False
+    >>> os.path.exists(toDir)
+    True
+    >>> os.mkdir(problemDir)
+    >>> renumber(emptyDir, '20', '30')
+    Traceback (most recent call last):
+      File '/opt/moa/lib/python/moa/utils.py', line 114, in renumber
+        raise MoaFileError(fullDir)
+    MoaFileError: Moa error handling file
+
+    
+    @param path: the path to operate in
+    @type path: String
+    @param fr: number to rename from
+    @type fr: String representing a number
+    @param to: number to rename to
+    @type to: String representing a number
+    """
+
+    frDir = None
+    toDir = None
+    l.debug("moa ren %s %s" % (fr, to))
+    for x in os.listdir(path):        
+        if x[0] == '.' : continue
+        
+        fullDir = os.path.join(path, x)
+
+        xsplit = x.split('.')
+        if xsplit[0] == fr:
+            if frDir:
+                l.error("more than one directory starting with %s" % fr)
+                raise MoaFileError(fullDir)
+            frDir = fullDir
+            toDir = os.path.join(path, to + "." + ".".join(xsplit[1:]))
+        if xsplit[0] == to:
+            l.error("target directory starting with %s already exists" % to)
+            raise MoaFileError(fullDir)
+
+    if not frDir:
+        l.error("Cannot find a directory starting with %s" % fr)
+        raise MoaFileError(path)
+    if not toDir:
+        l.error("Cannot find a directory starting with %s" % to)
+        raise MoaFileError(path)
+    
+    if not os.path.isdir(frDir):
+        l.error("%s is not a directory" % frDir)
+        raise MoaFileError(frDir)
+    #if not os.path.isdir(toDir):
+    #    l.error("%s is not a directory" % toDir)
+    #    raise MoaFileError(toDir)
+
+    l.info("renaming: %s" % (frDir))
+    l.info("  to: %s" % (toDir))
+    os.rename(frDir, toDir)
+        
+
+
+def moaren(job):
+    """
+    Renumber or rename a moa job..
+    """
+    
+    args = sysConf.newargs
+
+    fr = args[0]
+    if fr[-1] == '/':
+        fr = fr[:-1]
+        
+    if len(args) > 1: to = args[1]
+    else: to = '.'
+
+    #see if fr is a number
+    if re.match('\d+', fr):
+        newfr = glob.glob('%s*' % fr)
+        if len(newfr) != 1:
+            l.critical("Cannot resolve %s (%s)" % (fr, newfr))
+            sys.exit(1)
+        fr = newfr[0]
+        
+    if re.match('^\d+$', to):
+        if re.search('^\d+', fr):
+            to = re.sub('^\d+', to, fr)
+        else:
+            to = '%s.%s' % (to, fr)
+
+    moa.ui.message("Moving %s to %s" % (fr, to))
+    shutil.move(fr, to)
+            
+
 #Unittest scripts
+RENTEST = '''
+mkdir 10.test
+moa ren 10.test 20.test
+[[ ! -d 10.test ]]
+[[ -d 20.test ]]
+moa ren 20.test 30
+[[ ! -d 20.test ]]
+[[ -d 30.test ]]
+moa ren 30 40
+[[ ! -d 30.test ]]
+[[ -d 40.test ]]
+'''
 
 COPYTEST = '''
 mkdir 10.test
