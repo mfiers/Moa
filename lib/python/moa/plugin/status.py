@@ -39,6 +39,7 @@ def defineCommands(data):
         'needsJob' : True,
         'call' : status,
         }
+
     data['commands']['kill'] = {
         'desc' : 'Kill a currently running job',
         'log' : True,
@@ -91,7 +92,7 @@ def _getStatus(job, silent=False):
         return status
 
     #if running - check if it is really running    
-    otherPid = _getPid()
+    otherPid = _getPid(job)
     if otherPid == None:
         return 'error'
     
@@ -159,7 +160,7 @@ def kill(job):
     if not status == 'running':
         moa.ui.exitError("Job is not running")
 
-    pid = _getPid(data)
+    pid = _getPid(job)
     moa.ui.warn("sending a kill signal to process %d" % pid)
     os.kill(pid, signal.SIGKILL)
     status = _getStatus(job, silent=True)
