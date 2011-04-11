@@ -47,7 +47,8 @@ def defineCommands(data):
         'call' : configShow,
         'usage' : 'moa show',
         'needsJob' : True,
-        'log' : False
+        'log' : False,
+        'unittest' : TESTSHOW
         }
 
 def configShow(job):
@@ -147,6 +148,12 @@ def configSet(job):
 
 ##### TESTSCRIPTS
 
+TESTSHOW = """
+moa simple -t test -- echo
+moa set process='echo blabla'
+moa show | grep -q 'echo blabla'
+moa show | grep -q 'title\ttest'
+"""
 TESTUNSET = """
 moa simple -t test -- echo
 moa show | grep -Pq 'title\ttest'
