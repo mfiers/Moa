@@ -38,6 +38,7 @@ def defineCommands(data):
         'log' : False,
         'needsJob' : True,
         'call' : status,
+        'unittest' : STATUSTEST
         }
     data['commands']['kill'] = {
         'desc' : 'Kill a job',
@@ -156,12 +157,12 @@ def _getPid(job):
     with open(pidFile) as F:
         return int(F.read())
 
-def bgParentExit(data):
-    """
-    Rewrite the pid file to contain the child pid id
-    """
-    _setPid(data.job, data.childPid)
-    if LLOG: print 'local parent exit'
+#def background_exit(data):
+#    """
+#3    Rewrite the pid file to contain the child pid id
+#3    """
+#    _setPid(data.job, data.childPid)
+#    if LLOG: print 'local parent exit'
 
 def kill(job):
     """
@@ -178,30 +179,32 @@ def kill(job):
     status = _getStatus(job, silent=True)
     if status == 'running':
         moa.exitError("Failed to kill this Moa job")
-    _removePid(data)
-    _setStatus(data.job, 'interrupted')
+    _removePid(job)
+    _setStatus(job, 'interrupted')
     
     
 def preRun(data): 
     status = _getStatus(data.job)
     if status in ['running', 'paused']:
         moa.ui.exitError("Already running")
-        
-    _setPid(data.job, os.getpid())
-    if LLOG: print 'set running'
-    _setStatus(data.job, 'running')
+
+    if data.job.isMoa():
+        _setPid(data.job, os.getpid())
+        _setStatus(data.job, 'running')
 
 def postRun(data):
     status = 'success'
     if data.rc != 0:
         status = 'error'
-    _setStatus(data.job, status)
-    _removePid(data.job)
+    if data.job.isMoa():
+        _setStatus(data.job, status)
+        _removePid(data.job)
 
 
 def postInterrupt(data):
-    _setStatus(data.job, 'interrupted')
-    _removePid(data.job)
+    if data.job.isMoa():
+        _setStatus(data.job, 'interrupted')
+        _removePid(data.job)
 
 
 
@@ -233,3 +236,19 @@ def resume(job):
     moa.ui.warn("Resuming job %d" % pid)
     os.kill(pid, 18)
     _setStatus(job, 'running')
+
+
+STATUSTEST = '''
+moa status | grep -qi "not a Moa job"
+moa simple --np -t test
+moa status | grep -qi "template: simple"
+moa status | grep -qi "Status: waiting"
+moa run >/dev/null 2>/dev/null || true
+moa status | grep -qi "Status: error"
+moa set process="sleep 0.5"
+moa run >/dev/null
+moa status | grep -qi "Status: success"
+moa run --bg >/dev/null
+moa kill >/dev/null
+moa status | grep -qi "Status: interrupted"
+'''
