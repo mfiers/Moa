@@ -19,40 +19,17 @@ def acb(c):
 
 moal = "%sM%sO%sA%s" % (
     acf(55), acf(61), acf(66), ac(30))
+bg = acb(252)
+fg = acf(16)
+normal = bg + fg
 
 data = {
-    'moal'       : moal,
+    'moal'      : moal,
     'reset'     : ac(0),
-    'bold'      : ac(1),
-    'underline' : ac(4),
-    
-    'black'     : ac(30),
-    'red'       : ac(31),
-    'green'     : ac(32),
-    'yellow'    : ac(33),
-    'blue'      : ac(34),
-    'magenta'   : ac(35),
-    'cyan'      : ac(36),
-    'white'     : ac(37),
-    'grey'      : ac('38;5;240'),
-    'bg'         : acb(252),
-    'bblack'     : ac(40),
-    'bred'       : ac(41),
-    'bgreen'     : ac(42),
-    'byellow'    : ac(43),
-    'bblue'      : ac(44),
-    'bmagenta'   : ac(45),
-    'bcyan'      : ac(46),
-    'bwhite'     : ac(47),
-
-    'bblack'      : ac(100),
-    'bred'       : ac(101),
-    'bgreen'     : ac(102),
-    'byellow'    : ac(103),
-    'bblue'      : ac(104),
-    'bmagenta'   : ac(105),
-    'bcyan'      : ac(106),
-    'bwhite'     : ac(107),
+    'normal'    : normal,
+    'bg'        : bg,
+    'ctemp'  : acb(215) + acf(16),
+    'cstate' : fg,
     }
 
 def getTerminalSize():
@@ -112,6 +89,11 @@ if os.path.exists('.moa/status'):
     with open('.moa/status') as F:
         data['status'] = F.read().strip()
 
+if data['status'] == 'error':
+    data['cstate'] = acb(197) + acf(16)
+elif data['status'] == 'success':
+    data['cstate'] = acb(35) + acf(16)
+
 data['time'] = ''
 #read the log tail log
 if os.path.exists('.moa/log'):
@@ -140,6 +122,6 @@ if os.path.exists('.moa/log'):
 fstring = "Moa/%(tname)s %(status)s %(time)s" % data
 data['spacer'] = " " * (tw - len(fstring))
 
-pstring = "%(bg)s%(spacer)s%(moal)s%(black)s/%(tname)s %(status)s %(time)s%(reset)s" % data
+pstring = "%(bg)s%(spacer)s%(moal)s/%(ctemp)s%(tname)s%(normal)s %(cstate)s%(status)s%(normal)s %(time)s%(reset)s" % data
 
 print pstring
