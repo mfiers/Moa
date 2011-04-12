@@ -66,7 +66,8 @@ def newJob(job):
         l.error(wd)
         l.error("use -f to override")
 
-    if not options.title:
+        
+    if not job.conf.title and not options.title:
         moa.ui.exitError("Must define a title for this job")
         
     job = moa.job.newJob(wd, template=template, title = options.title)
