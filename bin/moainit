@@ -102,32 +102,5 @@ function _moa_prompt {
 	#and add it to the local history if this is a mob job
     echo $lc >> .moa/history
 
-	#if there is no template, there is not much we can do
-    [[ -f '.moa/template' ]] || return 0
-
-    # now display the prompt
-    # two step procedure - here we define a trap & call
-    # the second function..
-    function exxx() { 
-        return 0 
-    }
-
-    trap "exxx" ERR SIGUSR1
-
-    _moa_prompt_2 &
-    PID=$!
-
-    # and a sleeping process that kills the prompt process
-    # if it does not return
-    { ( sleep 1;  kill -SIGUSR1 $PID) & } 2>/dev/null
-    SPID=$!
-    #disown prevent a terminated message - don't know how
-    #else to achieve that
-    disown $SPID
-
-    # wait for $PID (the prompt command to complete normally)
-    wait $PID
-    # if it has: kill the sleeper
-    kill $SPID 2>/dev/null
-    trap - ERR SIGUSR1
+	moaprompt
 }

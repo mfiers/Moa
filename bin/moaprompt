@@ -1,4 +1,145 @@
-#!/bin/bash
-if [ -d ".moa" ]; then
-  moa prompt
-fi
+#!/usr/bin/env python
+#this is a liteweight script that reads some stats from the moa logs & prints them to screen
+
+import os
+import sys
+import yaml
+import fcntl
+import struct
+import termios
+import datetime
+
+def ac(c):
+    return chr(27) + '[' + str(c) + 'm'
+
+def acf(c):
+    return chr(27) + '[38;5;' + str(c) + 'm'
+def acb(c):
+    return chr(27) + '[48;5;' + str(c) + 'm'
+
+moal = "%sM%sO%sA%s" % (
+    acf(55), acf(61), acf(66), ac(30))
+
+data = {
+    'moal'       : moal,
+    'reset'     : ac(0),
+    'bold'      : ac(1),
+    'underline' : ac(4),
+    
+    'black'     : ac(30),
+    'red'       : ac(31),
+    'green'     : ac(32),
+    'yellow'    : ac(33),
+    'blue'      : ac(34),
+    'magenta'   : ac(35),
+    'cyan'      : ac(36),
+    'white'     : ac(37),
+    'grey'      : ac('38;5;240'),
+    'bg'         : acb(252),
+    'bblack'     : ac(40),
+    'bred'       : ac(41),
+    'bgreen'     : ac(42),
+    'byellow'    : ac(43),
+    'bblue'      : ac(44),
+    'bmagenta'   : ac(45),
+    'bcyan'      : ac(46),
+    'bwhite'     : ac(47),
+
+    'bblack'      : ac(100),
+    'bred'       : ac(101),
+    'bgreen'     : ac(102),
+    'byellow'    : ac(103),
+    'bblue'      : ac(104),
+    'bmagenta'   : ac(105),
+    'bcyan'      : ac(106),
+    'bwhite'     : ac(107),
+    }
+
+def getTerminalSize():
+    def ioctl_GWINSZ(fd):
+        try:
+
+            cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ,
+        '1234'))
+        except:
+            return None
+        return cr
+    cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
+    if not cr:
+        try:
+            fd = os.open(os.ctermid(), os.O_RDONLY)
+            cr = ioctl_GWINSZ(fd)
+            os.close(fd)
+        except:
+            pass
+    if not cr:
+        try:
+            cr = (env['LINES'], env['COLUMNS'])
+        except:
+            cr = (25, 80)
+    return int(cr[1]), int(cr[0])
+
+def prettyDelta(d):
+    if d.days > 2:
+        return "%d days" % d.days
+    elif d.days > 0:
+        return "%d days %s hours" % (d.days. d.seconds / 3600)
+    else:
+        hours = d.seconds / 3600
+        minutes = (d.seconds % 3600) / 60
+        seconds = d.seconds % 60
+        if hours > 0:
+            return "%d:%d hours" % (hours, minutes)
+        else:
+            return "%d:%d minutes" % (minutes, seconds)
+
+tw, th = getTerminalSize()
+
+TTY = sys.stdout.isatty()
+
+if not os.path.isdir('.moa'):
+    sys.exit(0)
+    
+data['tname'] = '?'
+with open('.moa/template') as F:
+    for l in F:
+        if l[:5] == 'name:':
+            data['tname'] = l.split()[1]
+            break
+
+data['status'] = '?'
+if os.path.exists('.moa/status'):
+    with open('.moa/status') as F:
+        data['status'] = F.read().strip()
+
+data['time'] = ''
+#read the log tail log
+if os.path.exists('.moa/log'):
+    with open('.moa/log') as F:
+        try:
+            F.seek(-500, 2)      
+        except IOError:
+            #assume the log file is less than 500 bytes long
+            #read all
+            F.seek(0)
+        ll = F.read().strip().rsplit('\n', 1)[-1].split(None, 5)
+    try:
+        #old bug - 
+        start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S:%f')
+        stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S:%f')
+    except ValueError:
+        start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S.%f')
+        stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S.%f')
+
+    started = datetime.datetime.now() - start
+    duration = stop-start
+    pstarted = prettyDelta(started)
+    pduration = prettyDelta(duration)
+    data['time'] = 'started %s ago taking %s' % (pstarted, pduration)
+    
+fstring = "Moa/%(tname)s %(status)s %(time)s" % data
+data['spacer'] = " " * (tw - len(fstring))
+
+pstring = "%(bg)s%(spacer)s%(moal)s%(black)s/%(tname)s %(status)s %(time)s%(reset)s" % data
+
+print pstring
