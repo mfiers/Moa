@@ -8,6 +8,7 @@ import fcntl
 import struct
 import termios
 import datetime
+import subprocess
 
 def ac(c):
     return chr(27) + '[' + str(c) + 'm'
@@ -17,15 +18,21 @@ def acf(c):
 def acb(c):
     return chr(27) + '[48;5;' + str(c) + 'm'
 
+if not os.path.exists('.moa'):
+    sys.exit(0)
+if not os.path.exists('.moa/template'):
+    sys.exit(0)
+    
 bg = acb(252)
 fg = acf(16)
 normal = bg + fg
 
-moal = "%s %sM%s%sO%s%sA %s" % (
-    acb( 22), acf(123), 
-    acb( 23), acf(121),  
-    acb( 24), acf(119)
-    , normal
+moal = "%s %s%sM%s%sO%s%sA%s %s" % (
+    acb(250),
+    acb(247), acf(33), 
+    acb(244), acf(79),  
+    acb(241), acf(156),
+    acb(238), normal
     )
     
 data = {
@@ -78,9 +85,6 @@ tw, th = getTerminalSize()
 
 TTY = sys.stdout.isatty()
 
-if not os.path.isdir('.moa'):
-    sys.exit(0)
-    
 data['tname'] = '?'
 with open('.moa/template') as F:
     for l in F:
@@ -88,7 +92,7 @@ with open('.moa/template') as F:
             data['tname'] = l.split()[1]
             break
 
-data['status'] = '?'
+data['status'] = ''
 if os.path.exists('.moa/status'):
     with open('.moa/status') as F:
         data['status'] = F.read().strip()
@@ -98,33 +102,56 @@ if data['status'] == 'error':
 elif data['status'] == 'success':
     data['cstate'] = acb(35) + acf(16)
 
-data['time'] = ''
+title = ''
+if os.path.exists('.moa/config'):
+    with open('.moa/config') as F:
+        for l in F:
+            if l[:6] == 'title:':
+                title = l[6:].strip()
+                break
+
+if data['status']: 
+    data['time'] = '(no log found)'
+else:
+    data['time'] = '(not executed)'
+    
 #read the log tail log
 if os.path.exists('.moa/log'):
     with open('.moa/log') as F:
         try:
-            F.seek(-500, 2)      
+            F.seek(-10000, 2)
         except IOError:
-            #assume the log file is less than 500 bytes long
+            #assume the log file is less than 10k bytes long
             #read all
             F.seek(0)
-        ll = F.read().strip().rsplit('\n', 1)[-1].split(None, 5)
-    try:
-        #old bug - 
-        start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S:%f')
-        stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S:%f')
-    except ValueError:
-        start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S.%f')
-        stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S.%f')
+            lines = F.read().strip().split('\n')
 
-    started = datetime.datetime.now() - start
-    duration = stop-start
-    pstarted = prettyDelta(started)
-    pduration = prettyDelta(duration)
-    data['time'] = 'ran %s ago taking %s' % (pstarted, pduration)
-    
+    ll = []
+    for l in range(len(lines)-1, 0, -1):
+        ll = lines[l].split(None, 5)
+        if ll[1] == 'run': break
+            
+    if ll:
+        try:
+            #old bug - 
+            start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S:%f')
+            stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S:%f')
+        except ValueError:
+            start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S.%f')
+            stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S.%f')
+
+        started = datetime.datetime.now() - start
+        duration = stop-start
+        pstarted = prettyDelta(started)
+        pduration = prettyDelta(duration)
+        data['time'] = 'ran %s ago taking %s' % (pstarted, pduration)
+
+
 fstring = " Moa %(tname)s %(status)s %(time)s" % data
-data['spacer'] = " " * (tw - len(fstring))
+splen = tw - len(fstring)
+if len(title) > splen-1:
+    title = title[:splen-4] + '...'
+data['spacer'] = acf(241) + ("%%-%ds" % (splen)) % title[:splen-3]
 
 pstring = "%(bg)s%(spacer)s%(moal)s%(tname)s%(normal)s%(cstate)s %(normal)s%(status)s %(time)s%(reset)s" % data
 
