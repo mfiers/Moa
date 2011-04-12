@@ -22,8 +22,8 @@ cd 20.align
 moa new bwa_aln -t 'align reads demo'
 moa set db=../10.index/testDB
 moa set input=${MOABASE}/share/test/*.fq
+moa set output=./*.sai
 moa run
-
 [[ -s reads_1.sai ]] 
 [[ -s reads_2.sai ]]
 

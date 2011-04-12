@@ -103,6 +103,14 @@ def exitError(message):
     LOGGER.fatal(message)
     sys.exit(-1)
 
+def setLevel(level):
+    if level == logging.DEBUG:
+        handler.setFormatter(debugFormatter)
+        LOGGER.setLevel(logging.DEBUG)        
+    else:
+        handler.setFormatter(normalFormatter)
+        LOGGER.setLevel(level)
+    
 def setVerbose():
     handler.setFormatter(debugFormatter)
     LOGGER.setLevel(logging.DEBUG)

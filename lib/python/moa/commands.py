@@ -23,7 +23,6 @@ import textwrap
 import UserDict
 import moa.logger as l
 
-
 ## Command definitions
 class Commands(UserDict.DictMixin):
 
@@ -45,7 +44,10 @@ class Commands(UserDict.DictMixin):
             if not self.commands[k].get('private', False):
                 rv.append(k)
         return rv   
-    
+
+    def getAll(self):
+        return self.commands.keys()
+        
     def generateUsageString(self, usageHeader):
         u = usageHeader
         commands = self.keys()

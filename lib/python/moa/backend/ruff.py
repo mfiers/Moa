@@ -166,9 +166,8 @@ class Ruff(moa.backend.BaseBackend):
         rc = 0
         if cmode == 'map':
             #late decoration - see if that works :/
-            #for x in generate_data_map():
-            #    print 'xxxx', x
             executor2 = ruffus.files(generate_data_map)(executor)
+            
             l.info("Start run (with %d thread(s))" %
                    sysConf.options.threads)
             ruffus.pipeline_run(

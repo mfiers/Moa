@@ -116,7 +116,8 @@ class JobConf(object):
         self.localConf.update(data)
         
     def get(self, key, default):
-        v = self.__getitem__(key)
+        c = self._get_conf(key)
+        v = c.__getitem__(key)
         if v: 
             return v
         else:

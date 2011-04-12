@@ -162,7 +162,7 @@ def exclamate(job):
     job exists, create a 'simple'job.
     """
     
-    job = data.job    
+    job = job
     if job.isMoa():
         exclamateInJob(job)
     else: 

@@ -65,6 +65,7 @@ def newTestJob(template, title="Test job"):
     >>> assert(isinstance(job, Job))
     >>> assert(os.path.exists(job.wd))
     >>> assert(job.conf.title == 'test title')
+    >>> assert(os.path.exists(os.path.join(job.wd, '.moa')))
     >>> assert(os.path.exists(os.path.join(job.wd, '.moa', 'template')))
     >>> assert(job.template.name == 'adhoc')
     

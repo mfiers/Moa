@@ -27,7 +27,8 @@ def prepare(data):
         'optional' : False,
         'help' : 'A short title for this job',
         'type' : 'string',
-        'recursive' : False
+        'recursive' : False,
+        'default' : ''
         }
     
     job.template.parameters.project = {

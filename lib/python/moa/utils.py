@@ -26,69 +26,8 @@ import contextlib
 import moa.utils
 import moa.logger as l
 
-
-def moaRecursiveWalk(wd, callback, data, recursive=True):
-    """
-    Function used in recursive moa commands -
-
-    this function takes the 'wd', walks through all subdirectories
-    (excluding those starting with a '.') and running the callback
-    function on that directory.
-
-    If recursive == False - just execute the callback & return
-    """
-    if not recursive:
-        callback(wd, data)
-        return
-
-    for path, dirs, files in os.walk(wd):
-        if '.moa' in dirs:
-
-            #potentially a moa dir
-            #call the callback
-            callback(path, data)
-
-            #remove all '.' directories - 
-            toRemove = [x for x in dirs if x[0] == '.']
-            [dirs.remove(t) for t in toRemove]
-
-@contextlib.contextmanager
-def flock(path, waitDelay=.1, maxWait=100):
-    """
-    Create a file lock
-
-    Adapted from: http://code.activestate.com/recipes/576572/
-
-    
-
-    """
-    waited = 0
-    waitedTooLong = False
-    while True:
-        try:
-            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
-        except OSError, e:
-            if e.errno != errno.EEXIST:
-                raise
-            waited += waitDelay
-            time.sleep(waitDelay)
-            if waited > maxWait:
-                waitedTooLong = True
-                break
-            else:
-                continue
-        else:
-            break
-    if waitedTooLong:
-        raise Exception('CannotGetAFileLock for %s' % path)
-    try:
-        yield fd
-    finally:
-        os.unlink(path)
-
 def getProcessInfo(pid):
     """
-    
     Return some info on a process
     """
     cl = ('ps --no-heading -fp %s' % (pid)).split()
@@ -111,6 +50,11 @@ def getMoaBase():
     Return MOABASE - the directory where Moa is installed. This
     function also sets an environment variable `MOABASE`
 
+    >>> d = getMoaBase()
+    >>> assert(os.path.isdir(d))
+    >>> assert(os.path.isfile(os.path.join(d, 'README')))
+    >>> assert(os.path.isdir(os.path.join(d, 'lib')))
+    
     :rtype: string (path) 
     """
     if os.environ.has_key('MOABASE'):
@@ -158,7 +102,7 @@ def simple_decorator(decorator):
     which it is applied.
 
     Note; I got this code from somehwere, but forgot where
-    exactly. This seems the most likely source;
+    exactly. This seems the most likely source:
     
     http://svn.navi.cx/misc/trunk/djblets/djblets/util/decorators.py
 
@@ -176,8 +120,6 @@ def simple_decorator(decorator):
     new_decorator.__dict__.update(decorator.__dict__)
     return new_decorator
 
-
-
 @simple_decorator
 def flog(func):
     """
@@ -188,6 +130,8 @@ def flog(func):
         def any_function(*args);
             ...
 
+    This is for debugging purposes (obviously)
+    
     :param func: Any python function
     """
     def flogger(*args, **kwargs):
@@ -199,67 +143,3 @@ def flog(func):
         return func(*args, **kwargs)
     return flogger
                     
-
-# #def logCaller():
-#     def _m(func):
-#         def _f(*args, **kwargs):
-#             import traceback
-#             _n = func.__name__
-#             caller = traceback.extract_stack()[-3]
-#             print caller
-#             for l in  traceback.format_stack():
-#                 print l
-#                 #    with open("logCallerl.error("calling %s" % func)
-#             return func
-#         return _f
-#     return _m
-    
-def logCaller(func):
-    """
-    Profiler decorator
-    """
-    import traceback
-    def _func(*args, **kargs):
-        ch = []
-        for c in traceback.extract_stack()[:-1]:
-            blue = chr(27) + "[37m" + chr(27) + '[46m'
-            red = chr(27) + "[37m" + chr(27) + '[41m'
-            green = chr(27) + "[37m" + chr(27) + '[42m'
-            coloff = chr(27) + "[0m"
-            sys.stderr.write(' --- %s%s%s@%s%s%s:%s%05d%s\n' % (
-                blue, c[2], coloff,
-                green, c[0], coloff,
-                red, c[1], coloff))
-        res = func(*args, **kargs)
-        return res
-    return _func
-
-def logCallerVerbose(func):
-    """
-    Profiler decorator
-    """
-    import traceback
-    def _func(*args, **kargs):
-        ch = []
-        l.error("### CALLING %s" % func.__name__)
-        for c in traceback.extract_stack()[-8:]:
-            l.error("### TB %s %s %s" % (
-                c[0].split('/')[-1],
-                c[2], c[1]))
-        l.error("### ARGS %s " % " ".join(args))
-        l.error("### KWRG %s" % str(kargs))
-        res = func(*args, **kargs)
-        return res
-    return _func
-
-def profiler2(func):
-    """
-    Profiler decorator
-    """
-    import time
-    def _func(*args, **kargs):
-        start = time.time()
-        res = func(*args, **kargs)
-        l.critical("executed %s %s" % (func, time.time() - start))
-        return res
-    return _func

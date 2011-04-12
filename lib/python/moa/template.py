@@ -47,19 +47,19 @@ def getTemplateFile(name):
 
     
     """
-
     if name[-4:] == '.moa' and os.path.isfile(name):
-        return name
+        return os.path.abspath(os.path.expanduser(name))
     
-    if os.path.isfile('%s.moa' % name):
-        return name
-    
+    if os.path.isfile('%s.moa' % name):        
+        return os.path.abspath(os.path.expanduser(name + '.moa'))
+
     for templatePath in [
         os.path.join( os.path.expanduser('~'), '.config', 'moa', 'template'),
         TEMPLATEDIR]:
 
         templateFile = os.path.join(templatePath, '%s.moa' % name)
         if os.path.exists(templateFile):
+
             return templateFile
 
     raise InvalidTemplate()

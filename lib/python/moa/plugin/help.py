@@ -33,13 +33,15 @@ def defineCommands(data):
     data['commands']['help'] = {
         'desc' : 'Display help for a template',
         'call' : templateHelp,
-        'needsJob' : True
+        'needsJob' : True,
+        'unittest' : TESTHELP
         }
     
     data['commands']['welcome'] = {
         'desc' : 'Display a welcome text',
         'call' : welcome,
-        'private' : True
+        'private' : True,
+        'unittest' : TESTWELCOME
         }
 
 def templateHelp(job):
@@ -119,3 +121,19 @@ Try:
 """  % {'commands' : commands,
         'version' : sysConf.getVersion()
 }, f='jinja')
+
+
+TESTHELP = '''
+moa simple -t test -- echo
+x=`moa help`
+[[ -n "$x" ]]
+echo $x | grep -q  "moa simple"
+echo $x | grep -q  "SEE ALSO"
+echo $x | grep -q  "PARAMETERS"
+echo $x | grep -q  "process*"
+echo $x | grep -q  "process*"
+'''
+
+TESTWELCOME = """
+moa welcome | grep -q 'Welcome to MOA'
+"""

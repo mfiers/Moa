@@ -43,7 +43,8 @@ def defineCommands(data):
         'desc' : 'Print the moa version',
         'call' : version,
         'log' : False,
-        'needsJob' : False
+        'needsJob' : False,
+        'unittest' : TESTVERSION
         }
     data['commands']['out'] = {
         'desc' : 'Returns stdout of the last moa run',
@@ -204,4 +205,10 @@ moa set process='echo "something" >&2'
 moa run >/dev/null 2>/dev/null
 err=`moa err`
 [[ "$err" =~ "something" ]] || (echo "Moa err failed" ; false)
+'''
+
+TESTVERSION = '''
+x=`moa version`
+rv=`cat $MOABASE/VERSION`
+[[ "$rv" == "$x" ]]
 '''

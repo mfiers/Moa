@@ -48,16 +48,28 @@ def newJob(job):
     wd = job.wd
     options = sysConf['options']
     args = sysConf['newargs']
-
-    params = []
-    template = 'traverse'
+    if not args:
+        moa.ui.exitError("No template specified. Try `moa new TEMPLATENAME`")
     
+    params = []
+    template = 'empty'
+
+    title = job.conf.title
+    if options.title:
+        title = options.title
+        
     for a in args:
         if '=' in a:
-            params.append(a)
+            k,v = a.split('=', 1)
+            if k == 'title':
+                if options.title:
+                    moa.ui.warn("duplicate title defintions, using %s" % v)
+                title = v
+            else:
+                params.append(a)
+
         else:
             template = a
-
 
     if os.path.exists(os.path.join(
         wd, '.moa', 'template')) and \
@@ -65,10 +77,9 @@ def newJob(job):
         l.error("Seems that there is already a Moa job in")
         l.error(wd)
         l.error("use -f to override")
-
         
-    if not job.conf.title and not options.title:
-        moa.ui.exitError("Must define a title for this job")
+    if title:
+        moa.ui.warn("Please define a title for this job")
         
     job = moa.job.newJob(wd, template=template, title = options.title)
     job.conf['title'] = options.title
