@@ -17,18 +17,22 @@ def acf(c):
 def acb(c):
     return chr(27) + '[48;5;' + str(c) + 'm'
 
-moal = "%sM%sO%sA%s" % (
-    acf(55), acf(61), acf(66), ac(30))
 bg = acb(252)
 fg = acf(16)
 normal = bg + fg
 
+moal = "%s %sM%s%sO%s%sA %s" % (
+    acb( 22), acf(123), 
+    acb( 23), acf(121),  
+    acb( 24), acf(119)
+    , normal
+    )
+    
 data = {
     'moal'      : moal,
     'reset'     : ac(0),
     'normal'    : normal,
     'bg'        : bg,
-    'ctemp'  : acb(215) + acf(16),
     'cstate' : fg,
     }
 
@@ -66,9 +70,9 @@ def prettyDelta(d):
         minutes = (d.seconds % 3600) / 60
         seconds = d.seconds % 60
         if hours > 0:
-            return "%d:%d hours" % (hours, minutes)
+            return "%d:%02d hours" % (hours, minutes)
         else:
-            return "%d:%d minutes" % (minutes, seconds)
+            return "%d:%02d minutes" % (minutes, seconds)
 
 tw, th = getTerminalSize()
 
@@ -117,11 +121,11 @@ if os.path.exists('.moa/log'):
     duration = stop-start
     pstarted = prettyDelta(started)
     pduration = prettyDelta(duration)
-    data['time'] = 'started %s ago taking %s' % (pstarted, pduration)
+    data['time'] = 'ran %s ago taking %s' % (pstarted, pduration)
     
-fstring = "Moa/%(tname)s %(status)s %(time)s" % data
+fstring = " Moa %(tname)s %(status)s %(time)s" % data
 data['spacer'] = " " * (tw - len(fstring))
 
-pstring = "%(bg)s%(spacer)s%(moal)s/%(ctemp)s%(tname)s%(normal)s %(cstate)s%(status)s%(normal)s %(time)s%(reset)s" % data
+pstring = "%(bg)s%(spacer)s%(moal)s%(tname)s%(normal)s%(cstate)s %(normal)s%(status)s %(time)s%(reset)s" % data
 
 print pstring
