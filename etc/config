@@ -13,6 +13,7 @@ plugins:
 - info
 - parameterCheck
 - moautil
+- moaGit
 - extraCommands
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
