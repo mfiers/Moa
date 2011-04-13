@@ -52,7 +52,7 @@ def _getRepo(job):
 def _commit(job, message):
     repo = _getRepo(job)
     if not repo:
-        return
+        moa.ui.warning("Not inside a git repository")
         
     l.debug("Found git repo: Commiting")
     repo.index.add(job.getFiles())
@@ -62,7 +62,7 @@ def _commit(job, message):
 def tag(job):
     repo = _getRepo(job)
     if not repo:
-        l.debug("no repository is initialized")
+        moa.ui.exitError("Not inside a git repository")
         return
 
     tagname = sysConf.args[1]
