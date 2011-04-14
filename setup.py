@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import os
-from distutils.core import setup
+#from distutils.core import setup
 from distutils.command.install import INSTALL_SCHEMES
-
+from setuptools import setup
 # see:
 # http://groups.google.com/group/comp.lang.python/browse_thread/\
 #      thread/35ec7b2fed36eaec/2105ee4d9e8042cb
@@ -15,30 +15,33 @@ with open('VERSION') as F:
 
 scripts  = [os.path.join('bin', x) for x in """
 moa        fastaSplitter  fastaNfinder  fastaInfo  fastaExtract
-fasta2gff  blastReport    blastInfo     blast2gff
+fasta2gff  blastReport    blastInfo     blast2gff  moaprompt
+moainit
 """.split()]
 
-data_files = []
-template_data = []
-for dirpath, dirnames, filenames in os.walk('.'):
-    for i, dirname in enumerate(dirnames):
-        if dirname.startswith('.'): del dirnames[i]
-    if '__init__.py' in filenames: continue
-    np = os.path.join('/usr/share/moa', dirpath)
-    data_files.append([np, [os.path.join(dirpath, f) for f in filenames]])
+#data_files = []
+#template_data = []
+#exclude = ['build', 'sphinx', 'debian']
+#for dirpath, dirnames, filenames in os.walk('.'):
+#    for i, dirname in enumerate(dirnames):
+#        if dirname.startswith('.'): del dirnames[i]
+#        if dirpath == '.' and  dirname in exclude: del dirnames[i]
+#    if '__init__.py' in filenames: continue
+#    np = os.path.join('/usr/share/moa', dirpath)
+#    data_files.append([np, [os.path.join(dirpath, f) for f in filenames]])
 
-data_files.append(['/etc/bash_completion.d/', ['etc/bash_completion.d/moa']])
+#data_files.append(['/etc/bash_completion.d/', ['etc/bash_completion.d/moa']])
                    
 setup(name='moa',
       version=version,
-      description='Moa - automating command line bioinformatics',
+      description='Moa - lightweight bioinformatics pipelines',
       author='Mark Fiers',
       author_email='mark.fiers@plantandfood.co.nz',
       url='http://mfiers.github.com/Moa/',
-      packages=['moa', 'moa.plugin'],
+      packages=['moa', 'moa.plugin', 'moa.backend', 'Yaco', 'fist'],
       package_dir = {'': os.path.join('lib', 'python')},
       scripts = scripts,
-      data_files = data_files,
+#      data_files = data_files,
       requires = [
           'Jinja2 (>2.0)',
           'biopython (>1.50)',
