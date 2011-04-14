@@ -20,20 +20,7 @@
 # Help
 moa_id = lftp
 
-#varables that NEED to be defined
-
-#variables that may be defined
-
-lftp_noclean_cardinality = many
-lftp_noclean_category = advanced
-
-prereqlist += prereq_lftp_installed
-prereq_lftp_installed:
-	$(call checkPrereqPath,lftp)
-
-################################################################################
-#Include base moa code - does variable checks & generates help
-include $(MOABASE)/lib/gnumake/core.mk################################################################################
+include $(MOABASE)/lib/gnumake/core.mk
 
 ifdef lftp_user
 ifdef lftp_pass
@@ -57,7 +44,8 @@ lftp: lftp_$(lftp_mode) lftp_dos2unix
 
 .PHONY: lftp_mirror
 lftp_mirror:
-	cd $(lftp_output_dir); 														\
+	cd $(lftp_output_dir); \
+		echo lftp $(lftp_auth) $(lftp_url) -e "mirror -nrL -I $(lftp_url)/$(lftp_pattern); exit" ; \
 		lftp $(lftp_auth) $(lftp_url) -e "mirror -nrL -I $(lftp_url)/$(lftp_pattern); exit" ;
 	if [ "$(lftp_lock)" == "T" ]; then touch lock ; fi
 

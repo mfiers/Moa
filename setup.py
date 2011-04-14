@@ -45,6 +45,7 @@ setup(name='moa',
       requires = [
           'Jinja2 (>2.0)',
           'biopython (>1.50)',
+          'GitPython (>0.3)',
           ],
       classifiers = [
           'Development Status :: 4 - Beta',

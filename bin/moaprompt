@@ -87,8 +87,10 @@ def getTerminalSize():
 def prettyDelta(d):
     if d.days > 2:
         return "%d days" % d.days
-    elif d.days > 0:
-        return "%d days %s hours" % (d.days. d.seconds / 3600)
+    elif d.days == 2:
+        return "2 days %s hours" % (d.seconds / 3600)
+    elif d.days == 1:
+        return "1 day %s hours" % (d.seconds / 3600)
     else:
         hours = d.seconds / 3600
         minutes = (d.seconds % 3600) / 60

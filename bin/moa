@@ -158,7 +158,8 @@ def run_3(wd):
     """
     instantiate the job & prepare &
 
-    figure out fi there is a set of commands to be executed. If so - fire those of one by one
+    figure out if there is a set of commands to be executed. If so -
+    fire those of one by one
     
     """
     os.chdir(wd)

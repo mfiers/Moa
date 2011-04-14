@@ -16,7 +16,7 @@ import os
 import moa.logger as l
 import jinja2
 
-def prepare(data):
+def prepare_3(data):
     job = data['job']
 
     job.template.parameters.precommand = {

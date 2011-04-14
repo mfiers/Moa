@@ -27,12 +27,12 @@ $(document).ready(function()
     document.onclick = jsddm_close;    
 
     // Turn the file table into a data table
-    $("table:last").dataTable(
-        {
-		    "sPaginationType": "full_numbers",
-            "iDisplayLength": 20,
-            "sDom": '<fp<"clear">>rt<"bottom"lp<"clear">>'
-	    });
+    $("#fileBrowser table").dataTable(
+         {
+	 	    "sPaginationType": "full_numbers",
+             "iDisplayLength": 18,
+             "sDom": '<fp<"clear">>rt<"bottom"lp<"clear">>'
+	     });
 
     // initialize tabs
     $("#tabs").tabs();
