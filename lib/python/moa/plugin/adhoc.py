@@ -86,6 +86,7 @@ def createSimple(job):
     Moa will query you for a command to execute (the parameter
     `process`).
     """
+
     wd = job.wd
     options = sysConf.options
     args = sysConf.args
@@ -100,11 +101,17 @@ def createSimple(job):
         command=moa.ui.askUser('process:\n> ', '')
         
     params = [('process', command)]
-        
+
+    #make sure the correct hooks are called
+    sysConf.plugins.run("preNew")
+
     moa.job.newJob(
         wd, template='simple',
         title = options.title,
         parameters=params)
+
+    #make sure the correct hooks are called
+    sysConf.plugins.run("postNew")
 
 
 

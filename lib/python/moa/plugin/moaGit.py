@@ -52,7 +52,8 @@ def _getRepo(job):
 def _commit(job, message):
     repo = _getRepo(job)
     if not repo:
-        moa.ui.warning("Not inside a git repository")
+        moa.ui.message("git plugin is active, but no repository found")
+        return
         
     l.debug("Found git repo: Commiting")
     repo.index.add(job.getFiles())

@@ -12,6 +12,7 @@ moa.job
 """
 
 import os
+import glob
 import tempfile
 
 import Yaco
@@ -121,7 +122,20 @@ class Job(object):
 
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
-        
+
+    def getFiles(self):
+        """
+        Return all moa files - i.e. all files crucial to this job.
+
+        """
+        rv = set()
+        for gl in self.data.moaFiles:
+            rv.update(set(glob.glob(os.path.join(self.wd, gl))))
+
+        remove = [x for x in rv if x[-1] == '~']
+        rv.difference_update(remove)
+        return list(rv)
+    
     def hasCommand(self, command):
         """        
         Check if this job defines a certain command

@@ -27,12 +27,29 @@ bg = acb(252)
 fg = acf(16)
 normal = bg + fg
 
-moal = "%s %s%sM%s%sO%s%sA%s %s" % (
+moal = "%s %s%sM%s%sO%s%sA%s  " % (
     acb(250),
     acb(247), acf(33), 
     acb(244), acf(79),  
     acb(241), acf(156),
-    acb(238), normal
+    acb(238) )
+
+
+if not os.path.exists('.moa'):
+    sys.exit(0)
+if not os.path.exists('.moa/template'):
+    sys.exit(0)
+    
+bg = acb(252)
+fg = acf(16)
+normal = bg + fg
+
+moal = "%s %s%sM%s%sO%s%sA%s " % (
+    acb(250),
+    acb(247), acf(33), 
+    acb(244), acf(79),  
+    acb(241), acf(156),
+    acb(238)
     )
     
 data = {
