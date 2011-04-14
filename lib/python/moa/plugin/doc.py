@@ -20,7 +20,7 @@ import moa.ui
 import moa.utils
 import moa.logger as l
 
-def prepare(data):
+def prepare_3(data):
     job = data['job']
 
     job.template.parameters.title = {

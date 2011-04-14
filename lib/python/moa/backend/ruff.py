@@ -140,7 +140,7 @@ class Ruff(moa.backend.BaseBackend):
                            for x in self.job.data.outputs]
                 inputs =  [self.job.data.filesets[x].files[i] 
                            for x in self.job.data.inputs]
-
+                
                 l.debug('pushing job with inputs %s' % ", ".join(inputs[:10]))
                 
                 

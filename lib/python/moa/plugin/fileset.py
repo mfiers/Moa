@@ -60,9 +60,8 @@ def showFiles(job):
                 moa.ui.fprint('       ... and %d more' % (len(files)-3))
     
     
-def prepare(data):
+def prepare_3(data):
     job = data['job']
-
     if not job.template.has_key('filesets'):
         return
     
@@ -71,7 +70,6 @@ def prepare(data):
         job.conf.doNotSave.append('moa_filesets')
 
     for fsid in job.template.filesets.keys():
-        
         job.conf['moa_filesets'].append(fsid)
         fs = job.template.filesets[fsid]
             

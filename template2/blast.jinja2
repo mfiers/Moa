@@ -10,7 +10,7 @@ mkdir gff || true 2> /dev/null
 
 ### run2
 
-    blastall -i {{ input }} -p {{ program }} \
+	echo blastall -i {{ input }} -p {{ program }} \
 		-e {{ eval }} -m 7 -a {{ nothreads }} -d {{ db }} \
 		-b {{ nohits }} -v  {{ nohits }} -o {{ output }}
 
