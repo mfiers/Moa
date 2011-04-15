@@ -148,6 +148,8 @@ def run_4(job, command):
         l.debug("using a callback for moa %s" % command)
         plugins.runCallback(job, command)
         return 0
+    elif not job.isMoa():
+        moa.ui.exitError("Unknown command, not in a Moa dir")
     else:
         #No callback, defer this to the backend
         return job.execute(command,

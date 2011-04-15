@@ -59,10 +59,16 @@ def getMoaBase():
     """
     if os.environ.has_key('MOABASE'):
         MOABASE = os.environ["MOABASE"]
+        return MOABASE
+
+    thif = os.path.dirname(os.path.dirname(__file__))
+    if thif[-4:] == '.egg':
+        MOABASE = thif
     else:
         MOABASE = '/usr/share/moa'
-        #for depending scripts
-        os.putenv('MOABASE', MOABASE)
+
+    #for depending scripts
+    os.putenv('MOABASE', MOABASE)
     return MOABASE
 
 def moaDirOrExit(job):

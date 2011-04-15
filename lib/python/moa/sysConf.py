@@ -32,6 +32,7 @@ USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
 class SysConf(Yaco.Yaco):
     
     def __init__(self):
+
         super(SysConf, self).__init__()
         l.debug("Loading system config: %s" % SYSCONFIGFILE)
         if os.path.exists(SYSCONFIGFILE):
