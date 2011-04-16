@@ -77,14 +77,14 @@ def finish(data):
         commandInfo = data.commands[data.originalCommand]
     if commandInfo.get('log', True):
         l.debug("Logging %s" % data.originalCommand)
+        command = " ".join(" ".join(sys.argv).split())
         with open(logFile, 'a') as F:
             F.write("%s\n" % "\t".join([
                 str(data.rc),
                 ",".join(data.executeCommand),
                 data.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
                 data.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                str(data.runtime),
-                " ".join(sys.argv)
+                str(data.runtime), command
                 ]))
 
     #and - probably not the location to do this, but print something to screen
