@@ -337,6 +337,6 @@ if __name__ == "__main__":
     except:
         sysConf.rc = -1
         plugins.run("post_error")
-        moa.ui.warn("Error")
+        moa.ui.warn("Run error?")
         raise
 

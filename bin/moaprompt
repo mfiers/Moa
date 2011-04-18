@@ -146,9 +146,9 @@ if os.path.exists('.moa/log'):
             lines = F.read().strip().split('\n')
 
     ll = []
-    for l in range(len(lines)-1, 0, -1):
-        ll = lines[l].split(None, 5)
-        if ll[1] == 'run': break
+    for l in range(len(lines), 0, -1):
+        ll = lines[l-1].split(None, 5)
+        if ll[-1] == 'run': break
             
     if ll:
         try:
