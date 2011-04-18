@@ -35,13 +35,16 @@ include $(MOABASE)/lib/gnumake/core.mk
 ################################################################################
 .PHONY: ncbi
 ncbi: $(ncbi_sequence_name).fasta
-	touch lock
+	touch .moa/lock
+
+$(ncbi_sequence_name).fasta: $(ncbi_sequence_name).gb
+	seqret -filter -osdbname2 '$(ncbi_sequence_name) oid' < $< > $@
 
 #the fasta file as downloaded from NCBI
-$(ncbi_sequence_name).fasta: webEnv=$(shell xml_grep --cond "WebEnv" query.xml --text_only)
-$(ncbi_sequence_name).fasta: queryKey=$(shell xml_grep --cond "QueryKey" query.xml --text_only)
-$(ncbi_sequence_name).fasta: query.xml
-	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&report=fasta" -O $(ncbi_sequence_name).fasta
+$(ncbi_sequence_name).gb: webEnv=$(shell xml_grep --cond "WebEnv" query.xml --text_only)
+$(ncbi_sequence_name).gb: queryKey=$(shell xml_grep --cond "QueryKey" query.xml --text_only)
+$(ncbi_sequence_name).gb: query.xml
+	wget "http://www.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=$(ncbi_db)&WebEnv=$(webEnv)&query_key=$(queryKey)&report=gb" -O $(ncbi_sequence_name).gb
 
 #query.xml contains the IDs of the sequences to download
 query.xml: 
@@ -49,4 +52,4 @@ query.xml:
 		-O query.xml
 
 ncbi_clean:
-	-$e rm  *.fasta query.xml fasta.tmp lock 2>/dev/null
+	-$e rm  *.fasta query.xml fasta.tmp *.gb *.fasta .moa/lock 2>/dev/null
