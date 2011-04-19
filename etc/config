@@ -20,5 +20,8 @@ pandocbin: pandoc
 use_ansi: True
 default_command: status
 default_shell: '/bin/bash -e'
+plugin_settings:
+  moaGit:
+    warnings: False
 template_providers:
-- package   
+- package
