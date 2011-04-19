@@ -92,13 +92,12 @@ def testTemplates(options, args=[]):
 
     failures, tests, tcount = 0, 0, 0
     
-    for tfile, tname in moa.template.listAll():
+    for tname in moa.template.templateList():
         if args and not tname in args:
             continue
         
-        template = moa.template.Template(tfile)
-
         job = moa.job.newTestJob(tname)
+        template = job.template
         job.options = options
         job.prepare()
         l.info('Testing template %s' % tname)            
@@ -114,7 +113,7 @@ def testTemplates(options, args=[]):
                 l.warning("job %s has no unittest defined" % tname)
                 continue
             tests += 1
-        else:
+        elif template.backend == 'ruff':
             if not job.hasCommand('unittest'):
                 l.warning("job %s has no unittest defined" % tname)
                 continue
@@ -123,8 +122,13 @@ def testTemplates(options, args=[]):
                              verbose = options.verbose,
                              silent = not options.verbose)
             resetSilent()
-            tests += len([x for x in job.backend.commands.unittest.strip().split("\n") if x])
+            script = job.backend.commands.unittest.script
+            tests += len([x for x in script.strip().split("\n") if x])
+        else:
+            l.warning("job %s as no known backend  %s" % (tname, template.backend))
+            continue
 
+            rc = -1
         tcount += 1
         
         if rc != 0:

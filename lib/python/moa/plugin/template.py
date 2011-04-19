@@ -10,6 +10,7 @@
 -------------------------------------------
 
 """
+import sys
 import time
 import optparse
 import textwrap
@@ -27,19 +28,21 @@ def defineCommands(data):
     data['commands']['template_dump'] = {
         'desc' : 'Display the raw template description',
         'private': True,
-        'call' : dumpTemplate,
+        'call' : dumpTemplate
         }
     
     data['commands']['template'] = {
         'desc' : 'Display the template name',
         'private' : True,
         'call' : template,
+        'unittest' : TEMPLATETEST,
         }
     
     data['commands']['list'] = {
         'desc' : 'Print a list of all known templates',
         'call' : listTemplates,
-        'needsJob' : False
+        'needsJob' : False,
+        'unittest' : LISTTEST,
         }
 
     data['commands']['refresh'] = {
@@ -117,17 +120,18 @@ def listTemplates(job):
     the option '-l' is used, a short description for each tempalte is
     printed as well.
     """
-    if sysConf.options.listlong:
-        for job, info in moa.template.listAllLong():
+
+    for name in moa.template.templateList():
+        if sysConf.options.listlong:
+            ti = moa.template.getMoaFile(name)
             txt = moa.ui.fformat(
-                '{{bold}}%s{{reset}}:{{blue}} %s{{reset}}' % (job, info),
+                '{{bold}}%s{{reset}}:{{blue}} %s{{reset}}' % (name, ti.description),
                 f='jinja')
             for line in textwrap.wrap(txt, initial_indent=' - ', width=80,
                                       subsequent_indent = '   '):
                 print line
-    else:
-        for tFile, tName  in moa.template.listAll():
-            print tName
+        else:
+            print name
 
 def template(job):
     """
@@ -155,3 +159,11 @@ def dumpTemplate(job):
     template = _getTemplateFromData(job)
     print template.pretty
 
+LISTTEST = '''
+moa list | grep -q "map"
+'''
+
+TEMPLATETEST = '''
+moa simple -t test -- echo
+moa template | grep -q "simple"
+'''

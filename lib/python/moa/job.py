@@ -54,7 +54,6 @@ def newJob(wd, template, title, parameters=[]):
     for pk, pv in parameters:
         job.conf[pk] = pv
     job.conf.save()
-
     return job
 
 def newTestJob(template, title="Test job"):
@@ -263,7 +262,7 @@ class Job(object):
         >>> assert(os.path.exists(templateFile))
         
         """
-        moa.template.refresh(self.wd, default=self.template.name)
+        moa.template.refresh(self.wd)
         
     def setTemplate(self, name):
         """
@@ -277,7 +276,7 @@ class Job(object):
         self.checkConfDir()
         l.debug("Setting job template to %s" % name)
         #get the template
-        moa.template.initTemplate(self.wd, name)
+        moa.template.installTemplate(self.wd, name)
         self.loadTemplate()
         
     def loadTemplate(self):
