@@ -19,7 +19,7 @@ moainit
 
 data_files = []
 template_data = []
-exclude = ['build', 'sphinx', 'debian', 'dist', 'util', 'www', 'etc']
+exclude = ['build', 'sphinx', 'debian', 'dist', 'util', 'www']
 for dirpath, dirnames, filenames in os.walk('.'):
 
     toRemove = []
@@ -49,7 +49,6 @@ for dirpath, dirnames, filenames in os.walk('.'):
             
     if '__init__.py' in filenames: continue
 
-    print 'processing ', dirpath
 
     #np = os.path.join('./', dirpath)
     if dirpath[0] == '/':
@@ -58,6 +57,8 @@ for dirpath, dirnames, filenames in os.walk('.'):
         np = dirpath[2:]
     else: np = dirpath
     data_files.append([np, [os.path.join(dirpath, f) for f in filenames]])
+
+data_files.append(['etc/', ['./etc/config']])
 
 import pprint
 pprint.pprint (data_files)
@@ -74,12 +75,11 @@ setup(name='moa',
       data_files = data_files,
       install_requires = [
           'Jinja2>2.0',
-          'biopython>1.50',
           'GitPython>0.3',
           'pyyaml>3',
-          'ruffus>2.2',
-          'Yaco>0.1.5',
-          'fist>0.1.1'
+          'ruffus>=2.2',
+          'Yaco>=0.1.6',
+          'fist>=0.1.2'
           ],
       classifiers = [
           'Development Status :: 4 - Beta',

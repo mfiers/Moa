@@ -27,10 +27,26 @@ older, versions might work.
    set of standard routines for Gnu Make. GSML is distributed together
    with Moa.
 
-Python prerequisites
---------------------
+- A number of support scripts & templates depend on `Biopython
+  <http://biopython.org/wiki/Main_Page>`_. Consider installing it
+  before starting to use Moa.
 
-Moa requires the following modules to be installed:
+- `Python easy_install
+  <http://peak.telecommunity.com/DevCenter/EasyInstall>`_ is the
+  preferred way to install Moa and a number of further prerequisites.
+
+Installing Moa using easy_install
+----------------------------------
+
+Easy::
+
+    sudo easy_install moa
+
+The commandline will install moa and a number of other python
+libraries 
+
+There is a number of other prerequisites Moa requires the
+following modules to be installed:
 
 - `pyyaml <http://pyyaml.org/wiki/PyYAML>`_
 - `Jinja2 <http://jinja.pocoo.org/2/>`_ 
@@ -40,10 +56,7 @@ Moa requires the following modules to be installed:
 - `fist <http://mfiers.github.com/Moa/api/fist.html>`_
 
 
-
-
-These can be installed using `easy_install
-<http://jinja.pocoo.org/2/>`_, which subsequently can be used to
+These can be installed using 
 install Moa::
 
     easy_install-2.6 moa

@@ -148,6 +148,7 @@ if os.path.exists('.moa/log'):
     ll = []
     for l in range(len(lines)-1, 0, -1):
         ll = lines[l].split(None, 5)
+        if len(ll) != 6: continue
         if ll[1] == 'run': break
             
     if ll:
