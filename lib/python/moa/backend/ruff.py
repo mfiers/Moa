@@ -39,27 +39,48 @@ class RuffCommands(Yaco.Yaco):
         with open(from_file) as F:
             raw = F.read()
 
-        rawc = re.split('### *(\w+) *\n', raw)
-        commands = dict([(rawc[i], rawc[i+1].strip())
-                         for i in range(1, len(rawc), 2)])
-        self.update(commands)
+        rawc = re.split('###', raw)
 
+        for r in rawc:
+            r = r.strip()
+            if not r: continue
+            splitr = r.split("\n", 1)
+            if len(splitr) != 2:                
+                continue
+
+            firstline, rest = splitr
+            
+            spl = firstline.strip().split()
+            if rest[:2] != '#!':
+                rest = "#!%s\n" % sysConf.default_shell \
+                       + rest
+            self[spl[0]] = {
+                'script' : rest,
+                'args' : spl[1:] }
+            
     def  render(self, command, data):
+
         if not self.has_key(command):
             return ""
 
-        jt = jTemplate(self.get(command))
-        script = jt.render(data)
-        
-        if '{{' or '{%' in script:
-            #try a second level jinja interpretation
-            jt2 = jTemplate(script)
-            script = jt2.render(data)
+        this = self[command]
 
-        return script
+        script = this.get('script', '')
+        args = this.get('args', [])
+
+        if 'noexpand' in args:
+            return script
                 
+        jt = jTemplate(script)
+        rscript = jt.render(data)
+        
+        if '{{' or '{%' in rscript:
+            #try a second level jinja interpretation
+            jt2 = jTemplate(rscript)
+            rscript = jt2.render(data)
 
-    
+        return rscript
+
 class Ruff(moa.backend.BaseBackend):
     """
     Ruffus backend class
@@ -99,9 +120,13 @@ class Ruff(moa.backend.BaseBackend):
         g.add_option("-B", dest="remake", action='store_true',
                      help="Reexecute all targets (corresponds to make -B) ")
 
-    def execute(self, command, verbose=False, silent=False):
+    def execute(self, command,
+                verbose=False, silent=False,
+                renderTemplate = True):
         """
         Execute a command
+
+        :param renderTemplate: Jinja-render the template
         """
 
         #determine which files are prerequisites
@@ -113,8 +138,7 @@ class Ruff(moa.backend.BaseBackend):
         others = []
         for fsid in self.job.data.others:
             others.extend(self.job.data.filesets[fsid]['files'])
-        
-            
+                    
         def generate_data_map():
             """
             Process & generate the data for a map operation
@@ -133,7 +157,7 @@ class Ruff(moa.backend.BaseBackend):
                     noFiles = len(self.job.data.filesets[k].files)
                 else:
                     assert(len(self.job.data.filesets[k].files) == noFiles)
-          
+
             #rearrange files
             for i in range(noFiles):
                 outputs = [self.job.data.filesets[x].files[i] 
@@ -165,11 +189,13 @@ class Ruff(moa.backend.BaseBackend):
             
         rc = 0
         if cmode == 'map':
+            
             #late decoration - see if that works :/
             executor2 = ruffus.files(generate_data_map)(executor)
             
             l.info("Start run (with %d thread(s))" %
                    sysConf.options.threads)
+            
             ruffus.pipeline_run(
                 [executor2],
                 verbose = sysConf.options.verbose,
@@ -200,7 +226,7 @@ def executor(input, output, script, jobData):
     tf.write(script)
     tf.close()
 
-    cl = ['bash', '-e', tf.name]
+    cl = ['bash', tf.name]
 
     for k in jobData:
         v = jobData[k]
