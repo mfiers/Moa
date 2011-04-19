@@ -336,9 +336,9 @@ if __name__ == "__main__":
         plugins.run("post_interrupt")
         moa.ui.warn("Interrupted")
         sys.exit(-1)
-#    except:
-#        sysConf.rc = -1
-#        plugins.run("post_error")
-#        moa.ui.warn("Error")
-#        raise
+    except:
+        sysConf.rc = -1
+        plugins.run("post_error")
+        moa.ui.warn("Encountered a run error?")
+        raise
 
