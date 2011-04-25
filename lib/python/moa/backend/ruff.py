@@ -8,10 +8,12 @@ Ruffus/Jinja Backend
 import os
 import re
 import sys
+import stat
 import tempfile
 import subprocess
 
 import ruffus
+import ruffus.ruffus_exceptions
 
 from jinja2 import Template as jTemplate
 
@@ -97,10 +99,9 @@ class Ruff(moa.backend.BaseBackend):
         self.commands = RuffCommands()
 
         if not os.path.exists(templateFile):
-            l.critical("cannot find template file %s" % templateFile)
-            moa.ui.exitError("Template %s does not seem to be properly installed" % 
-                             self.job.template.moa_id)
-        self.commands.load(templateFile)
+            l.error("cannot find template file %s" % templateFile)
+        else:
+            self.commands.load(templateFile)
 
         #TODO: Remove snippets
         snippetsFile = os.path.join(
@@ -129,6 +130,9 @@ class Ruff(moa.backend.BaseBackend):
         :param renderTemplate: Jinja-render the template
         """
 
+        if not self.commands.has_key(command):
+            moa.ui.exitError("Unknown command %s" % command)
+            
         #determine which files are prerequisites
         prereqs = []
         for fsid in self.job.data.prerequisites:
@@ -178,6 +182,7 @@ class Ruff(moa.backend.BaseBackend):
                 jobData['silent'] = silent
                 jobData.update(fsDict)
                 script = self.commands.render(command, jobData)
+                l.debug("Executing %s" %  script)
 
                 yield([inputs + prereqs], outputs, script, jobData)
 
@@ -195,38 +200,45 @@ class Ruff(moa.backend.BaseBackend):
             
             l.info("Start run (with %d thread(s))" %
                    sysConf.options.threads)
-            
-            ruffus.pipeline_run(
-                [executor2],
-                verbose = sysConf.options.verbose,
-                one_second_per_job=False,
-                multiprocess= sysConf.options.threads,
-                )
-            l.info("Finished running (with %d thread(s))" %
+
+            try:
+                ruffus.pipeline_run(
+                    [executor2],
+                    verbose = sysConf.options.verbose,
+                    one_second_per_job=False,
+                    multiprocess= sysConf.options.threads,
+                    )
+                rc = 0
+                l.debug("Finished running (with %d thread(s))" %
                    sysConf.options.threads)
-            rc = 0
+
+            except ruffus.ruffus_exceptions.RethrownJobError, e:
+                einfo = e[0][1].split('->')[0].split('=')[1].strip()
+                einfo = einfo.replace('[', '').replace(']', '')
+                moa.ui.warn("Caught an error processing: %s" % einfo)
+                rc = 1                
         elif cmode == 'reduce':
             pass
         elif cmode == 'simple':
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
             script = self.commands.render(command, self.job.conf)
-            tf.write("\n" + script + "\n")
+            tf.write(script + "\n")
             tf.close()
+            os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             rc = moa.actor.simpleRunner(
-                self.job.wd, ['bash', '-e', tf.name],
+                self.job.wd, [tf.name],
                 silent=silent)
         return rc
-
 
 def executor(input, output, script, jobData):    
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
                                       mode='w')
+    
     tf.write(script)
     tf.close()
-
-    cl = ['bash', tf.name]
+    os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
     for k in jobData:
         v = jobData[k]
@@ -237,6 +249,8 @@ def executor(input, output, script, jobData):
         else:
             os.putenv(k, str(v))
 
-    rc = moa.actor.simpleRunner(jobData['wd'], cl, silent=jobData['silent'])
-    l.debug("Executing %s" % " ".join(cl))
-
+    rc = moa.actor.simpleRunner(jobData['wd'],  [tf.name], silent=jobData['silent'])
+    if rc != 0:
+        raise ruffus.JobSignalledBreak
+    l.debug("Executing %s" % tf.name)
+    
