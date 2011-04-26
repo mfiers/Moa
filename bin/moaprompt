@@ -39,6 +39,8 @@ if not os.path.exists('.moa'):
     sys.exit(0)
 if not os.path.exists('.moa/template'):
     sys.exit(0)
+if not os.path.isfile('.moa/template'):
+    sys.exit(0)
     
 bg = acb(252)
 fg = acf(16)
