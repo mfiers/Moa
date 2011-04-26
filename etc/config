@@ -28,3 +28,7 @@ template:
     core:
       class: core
       priority: 1
+    local:
+      class: local
+      priority: 2
+      directory: ' ~/.moa/template/'
