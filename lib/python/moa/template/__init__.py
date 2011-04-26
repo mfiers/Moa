@@ -23,20 +23,22 @@ import moa.ui
 import moa.utils
 import moa.logger as l
 
-import moa.template.provider
+from moa.template import provider
 from moa.template.template import Template
+
+PROVIDERS = provider.Providers()
 
 class InvalidTemplate(Exception):
     """ Invalid Template """
     pass
 
 def getMoaFile(name):
-    return moa.template.provider.getMoaFile(name)
+    return PROVIDERS.getTemplate(name)
     
 def templateList():
-    return moa.template.provider.templateList()
+    return PROVIDERS.templateList()
 
-def installTemplate(wd, name, fromProvider=None):
+def installTemplate(wd, tName, pName=None):
     """
     Initialize the template - this means - try to figure out where the
     template came from & copy the template files into
@@ -53,9 +55,8 @@ def installTemplate(wd, name, fromProvider=None):
     >>> assert(os.path.exists(templateFile))
     >>> assert(os.path.exists(adhocFile))
     """
-    moa.template.provider.installTemplate(wd, name, fromProvider)
-            
- 
+    PROVIDERS.installTemplate(wd, tName, pName)
+             
 def initTemplate(*args, **kwargs):
     """
     
@@ -66,7 +67,7 @@ def initTemplate(*args, **kwargs):
 def refresh(wd):
     """
     Refresh the template - try to find out what the template is from 
-    {{wd}}/.moa/template.d/source. If that doesn't work, revert to the 
+    {{wd}}/.moa/template.d/meta. If that doesn't work, revert to the 
     default template. If default is not specified - exit with an error
 
     >>> import tempfile
@@ -84,16 +85,22 @@ def refresh(wd):
     
     """
     meta = Yaco.Yaco()
+    metaFile = os.path.join(wd, '.moa', 'template.d', 'meta')
     try:
-        meta.load(os.path.join(wd, '.moa', 'template.d', 'source'))
+        meta.load(metaFile)
     except (IOError):
-        l.critical("no template to refresh found in %s" % wd)
-        pass
+        oldMetaFile = os.path.join(wd, '.moa', 'template.d', 'source')
+        if os.path.exists(oldMetaFile):
+            shutilmove(oldMetaFile, metaFile)
+            meta.load(metaFile)
+        else:
+            l.critical("no template to refresh found in %s" % wd)
+            pass
 
-    if not meta.source:
+    if not meta.name:
         moa.ui.exitError("Cannot refresh this job")
 
-    provider = meta.get('provider', None)
-    installTemplate(wd, name = meta.source,
-                    fromProvider=provider)
+    installTemplate(wd,
+                    tName = meta.name,
+                    pName=meta.get('provider', None))
     

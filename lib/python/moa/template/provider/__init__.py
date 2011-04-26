@@ -23,63 +23,88 @@ import moa.ui
 
 from moa.sysConf import sysConf
 
-PROVIDERS = {}
-
-def _getProviders():
-    global PROVIDERS
-    if PROVIDERS:
-        return PROVIDERS
+class Providers(object):
     
-    for p in sysConf.template_providers:
-        mod = 'moa.template.provider.%s' % p
-        m =  __import__( mod, globals(), locals(), [p], -1)
+    def __init__(self):
+        self.providers = {}
+        self.order = []
+
+        _order = []
+        for pName in sysConf.template.providers.keys():
+            pInfo = sysConf.template.providers[pName]
+            priority = pInfo.get('priority', 1)
+            assert(isinstance(priority, int))
+            
+            #import the correct module
+            mod = 'moa.template.provider.%s' % pInfo['class']
+            pMod =  __import__( mod, globals(), locals(), [mod], -1)
+
+            #instantiate the class (mod.Mod())
+            self.providers[pName] = getattr(pMod, pName.capitalize())(pName, pInfo)
+            _order.append((priority, pName))
+            
+        _order.sort()
+        self.order = [x[1] for x in _order]
+
+    def findProvider(self, tName, pName):
+        """
+        Get the proper provider given the system configuration, template
+        name and the fromProvider request
+
+        Tom made me write this: TOM
+
+        :returns: instantiated provider class
+        """
+        if pName:
+            return self.providers[pName]
+
+        for pName in self.order:
+            provider = self.providers[pName]
+            if provider.hasTemplate(tName):
+                return provider
+
+        #nothing found
+        return None
+
+    def getTemplate(self, tName, pName = None):
+        """
+        Return the (Yaco) template object
+
+        :param tName: Template name
+        :param pName: The provider to get the template from - if not provider
+          find the first provider that recognizes a template with this name 
+        :returns: Yaco template object
+        """
+        provider = self.findProvider(tName, pName)
         
-        PROVIDERS[p] = m
+        if not provider:
+            moa.ui.exitError("Cannot find provider for template %s.%s" % (
+                provider.name, tName))
+        return provider.getTemplate(tName)
+
+    def templateList(self):
+        rv = set()
+        for pName in self.order:
+            rv.update(set(self.providers[pName].templateList()))
+        rv = list(rv)
+        rv.sort()
+        return rv
+
+    def installTemplate(self, wd, tName, pName=None):
+        p = self.findProvider(tName, pName)
+
+        p.installTemplate(wd, tName)
         
-    return PROVIDERS
+        meta = p.getMeta()
+        meta.name = tName
+        meta.installed = datetime.datetime.now().isoformat()
+        meta.save(os.path.join(wd, '.moa', 'template.d', 'meta'))
 
-def _getProvider(name, fromProvider):
-    """
-    Get the proper provider given the system configuration, template
-    name and the fromProvider request
 
-    TOM
+#base class for all providers
+class ProviderBase:
+    def __init__(self, name, data):
+        self.name = name
+        self.data = data
+
     
-    """
-    providers = _getProviders()
-    if fromProvider:
-        return providers[fromProvider]
-    else:
-        for pn in sysConf.template_providers:
-            p = providers[pn]
-            if p.hasTemplate(name):
-                return p
-    return None
-
-def getMoaFile(name, fromProvider = None):
-    p = _getProvider(name, fromProvider)
-    if not p:
-        l.critical("cannot find provider for template %s.%s" % (
-            fromProvider, name))
-        sys.exit(-1)
-    return p.getMoaFile(name)
-
-def templateList():
-    rv = set()
-    for p in _getProviders().values():
-        rv.update(set(p.templateList()))
-    rv = list(rv)
-    rv.sort()
-    return rv
-
-def installTemplate(wd, name, fromProvider=None):
-    p = _getProvider(name, fromProvider)
-
-    p.installTemplate(wd, name)
-    
-    meta = Yaco.Yaco()
-    meta.source = name
-    meta.provider = p.__name__.split('.')[-1]
-    meta.installed = datetime.datetime.now().isoformat()
-    meta.save(os.path.join(wd, '.moa', 'template.d', 'source'))
-

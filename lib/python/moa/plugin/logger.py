@@ -26,7 +26,7 @@ def defineCommands(data):
         'log' : False
         }
 
-def prepare_1(data):
+def prepare_background(data):
     data.logger.start_time = datetime.today()
 
 def niceRunTime(d):

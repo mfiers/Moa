@@ -6,8 +6,8 @@
 # Licensed under the GPL license (see 'COPYING')
 # 
 """
-moa.template
-------------
+moa.template.template
+---------------------
 
 Store information on a template. This module is also responsible for
 retrieving template information.
@@ -19,6 +19,7 @@ import os
 import Yaco
 
 import moa.logger as l
+import moa.template
 
 class Template(Yaco.Yaco):
     """
@@ -61,8 +62,9 @@ class Template(Yaco.Yaco):
             if len(_tempTemplate) < 50 and \
                    not "\n" in _tempTemplate:
                 #this must be an old style template name- try to load the template
-                initTemplate(os.path.dirname(os.path.dirname(templateFile)),
-                             name = _tempTemplate)
+                moa.template.installTemplate(
+                    os.path.dirname(os.path.dirname(templateFile)),
+                    _tempTemplate)
                 
             self.load(self.templateFile)
         else:

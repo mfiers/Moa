@@ -132,6 +132,10 @@ class Ruff(moa.backend.BaseBackend):
 
         if not self.commands.has_key(command):
             moa.ui.exitError("Unknown command %s" % command)
+
+        if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
+            moa.ui.exitError("no in or output files")
+            sys.exit()
             
         #determine which files are prerequisites
         prereqs = []
@@ -149,9 +153,7 @@ class Ruff(moa.backend.BaseBackend):
             """
             rv = []
   
-            if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
-                l.critical("no in or output files")
-                sys.exit()
+         
                 
             #determine number the number of files
             noFiles = 0
@@ -213,9 +215,12 @@ class Ruff(moa.backend.BaseBackend):
                    sysConf.options.threads)
 
             except ruffus.ruffus_exceptions.RethrownJobError, e:
-                einfo = e[0][1].split('->')[0].split('=')[1].strip()
-                einfo = einfo.replace('[', '').replace(']', '')
-                moa.ui.warn("Caught an error processing: %s" % einfo)
+                try:
+                    einfo = e[0][1].split('->')[0].split('=')[1].strip()
+                    einfo = einfo.replace('[', '').replace(']', '')
+                    moa.ui.warn("Caught an error processing: %s" % einfo)
+                except:
+                    moa.ui.warn("Caught an error: %s" % str(e))
                 rc = 1                
         elif cmode == 'reduce':
             pass

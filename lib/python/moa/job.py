@@ -201,10 +201,6 @@ class Job(object):
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
 
-        >>> job = newTestJob('unittest')
-        >>> rc = job.execute('run')
-        >>> assert(type(rc) == type(18))
-
         #Note: Uncertain how to test verbose & silent
 
         
@@ -216,13 +212,57 @@ class Job(object):
         :type silent: Boolean        
 
         """
+        
         if not self.backend:
-            l.critical("No backend loaded - cannot execute %s" %
-                       command)
+            l.critical("No backend loaded - cannot execute %s" % command)
 
-        l.debug("executing %s" % command)
-        return self.backend.execute(
-            command, verbose = verbose, silent=silent)
+        ## Ask the job if it's is ok with
+        ## the command provided (might want to change order, or insert
+        ## stuff
+        execList = self.checkCommands(command)
+        sysConf.executeCommand = execList
+
+        l.debug("Run moa commands: %s" % ",".join(execList))
+        l.debug("with args %s" % sysConf.newargs)
+
+        ### Start job initialization
+        self.prepare()
+
+        ### Run plugin initialization step 3 - just before execution
+        sysConf.plugins.run('prepare_3')
+        sysConf.plugins.run("pre_command")
+
+        #run a prep step if the original command is not in the
+        #execlist
+        if command not in execList:
+            sysConf.plugins.run("pre%s" % command.capitalize())
+
+        #run through all commands...
+        for execNow in execList:
+            l.critical("running %s" % execNow)
+            l.info("Executing %s" % execNow)
+            sysConf.plugins.run("pre%s" % execNow.capitalize())
+
+            rc = self.backend.execute(
+                execNow, verbose = verbose, silent=silent)
+            sysConf.rc = rc
+
+            if rc != 0:
+                break
+            
+            sysConf.plugins.run("post%s" % execNow.capitalize(), reverse=True)
+
+        #likewise if the command is not in the execlist - run a
+        #post process 
+        if command not in execList:
+            sysConf.plugins.run("post%s" % command.capitalize(), reverse=True)
+
+        sysConf.plugins.run("post_command", reverse=True)
+        sysConf.plugins.run("finish", reverse=True)
+
+
+    
+
                     
     def prepare(self):
         """
@@ -331,3 +371,8 @@ class Job(object):
                     self.template.name)
             self.backend.initialize()
         
+
+
+####
+# nose tests
+

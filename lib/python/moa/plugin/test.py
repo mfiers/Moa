@@ -18,9 +18,13 @@ import logging
 
 import os
 import sys
+import optparse
 import doctest
 import tempfile
 import subprocess
+
+import Queue
+import threading
 
 from moa.logger import setLevel
 
@@ -45,6 +49,19 @@ def defineCommands(data):
         'needsJob' : False,
         'loglevel' : 1
         }
+
+def defineOptions(data):
+    try:
+        parserN = optparse.OptionGroup(data['parser'], "moa unittest")
+        parserN.add_option("-j", dest="threads",
+                           help="No threads to use", default=1,
+                           type="int")
+        parserN.add_option("--uv", dest="showOutput",
+                           help="Show test output", default=False,
+                           action='store_true')
+        data['parser'].add_option_group(parserN)
+    except optparse.OptionConflictError:
+        pass
 
 #####
 ##### private functions
@@ -81,75 +98,93 @@ failures = 0
 tests = 0
 
 templateFailures = 0
+templateRawTests = 0
 templateTests = 0
 
 pluginFailures = 0
 pluginTests = 0
 
+templateq = Queue.Queue()
+            
+
+def _templateTester():
+    global templateTests
+    global templateFailures
+    while True:
+        job = templateq.get()
+        rc = 0
+        template = job.template
+        options = sysConf.options
+        tname = template.name
+        testDefined = True
+        job.prepare()
+        l.debug('Testing template %s' % tname)            
+        if template.backend == 'gnumake':
+            setSilent()
+            rc = job.execute(
+                '%s_unittest' % tname,
+                verbose = options.verbose,
+                silent = not options.verbose)
+            resetSilent()
+            err = moa.actor.getLastStderr(job)
+            if 'No rule to make target' in err:
+                testDefined = False
+                rc = -1
+            else:                
+                templateTests += 1
+                
+        elif template.backend == 'ruff':
+            if job.hasCommand('unittest'):
+                setSilent()
+                rc = job.execute('unittest',
+                                 verbose = options.verbose,
+                                 silent = not options.verbose)
+                resetSilent()
+                script = job.backend.commands.unittest.script
+                templateTests += len([x for x in script.strip().split("\n") if x])
+            else:
+                testDefined = False
+        else:
+            l.warning("job %s has no backend (%s)" % (tname, template.backend))
+            rc = -1
+
+        if not testDefined:
+            l.warning("template %s has no unittest defined" % tname)
+        elif rc != 0:
+            l.warning("Error testing template %s (rc %d)" % (tname, rc))
+            templateFailures += 1
+        else:
+            l.info("Success testing template %s" % tname)
+            
+        if sysConf.options.showOutput:
+            out = moa.actor.getLastStdout(job)
+            err = moa.actor.getLastStderr(job)
+            if out:
+                l.warning("Stdout\n" + out)
+            if err:
+                l.warning("Stderr\n" + err)
+        templateq.task_done()
+    
 def testTemplates(options, args=[]):
 
     l.info("Start running template tests")
 
     failures, tests, tcount = 0, 0, 0
-    
+
+    for i in range(sysConf.options.threads):
+        t = threading.Thread(target=_templateTester)
+        t.daemon = True
+        t.start()
+        
     for tname in moa.template.templateList():
         if args and not tname in args:
             continue
-        
         job = moa.job.newTestJob(tname)
-        template = job.template
-        job.options = options
-        job.prepare()
-        l.info('Testing template %s' % tname)            
-        if template.backend == 'gnumake':
-            
-            setSilent()
-            rc = job.execute('%s_unittest' % tname, 
-                             verbose = options.verbose,
-                             silent = not options.verbose)
-            resetSilent()
-            err = moa.actor.getLastStderr(job)
-            if 'No rule to make target' in err:
-                l.warning("job %s has no unittest defined" % tname)
-                continue
-            tests += 1
-        elif template.backend == 'ruff':
-            if not job.hasCommand('unittest'):
-                l.warning("job %s has no unittest defined" % tname)
-                continue
-            setSilent()
-            rc = job.execute('unittest',
-                             verbose = options.verbose,
-                             silent = not options.verbose)
-            resetSilent()
-            script = job.backend.commands.unittest.script
-            tests += len([x for x in script.strip().split("\n") if x])
-        else:
-            l.warning("job %s as no known backend  %s" % (tname, template.backend))
-            continue
+        templateq.put(job)
 
-            rc = -1
-        tcount += 1
-        
-        if rc != 0:
-            l.critical("error testing template %s (rc %d)" % (tname, rc))
-            out = moa.actor.getLastStdout(job)
-            err = moa.actor.getLastStderr(job)
-            if out:
-                l.critical("Stdout\n" + out)
-            if err:
-                l.critical("Stderr\n" + err)
-            failures += 1
-        elif args:
-            out = moa.actor.getLastStdout(job)
-            err = moa.actor.getLastStderr(job)
-            if out:
-                l.warning("Stdout\n    " +  "\n    ".join(out.split("\n")))
-            if err:
-                l.warning("Stderr\n    " +  "\n    ".join(err.split("\n")))
-                
-    l.info("Ran %d test for %d template(s), %d failed" % (
-        tests, tcount, failures))
+    templateq.join()
+    #l.info("Ran %d test for %d template(s), %d failed" % (
+    #    templateTests, tcount, failures))
         
 
 

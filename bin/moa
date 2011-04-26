@@ -51,7 +51,6 @@ import textwrap
 import moa.job
 import moa.utils
 import moa.version
-import moa.project
 import moa.plugin
 import moa.commands
 
@@ -134,42 +133,20 @@ parser.add_option("-r", "--recursive", dest="recursive",
 ## See if the plugins have anything to add to the optparse instance:
 sysConf.parser = parser
 plugins.run('defineOptions')
-
-def run_4(job, command):
-    """
-    Run the command
-    """
-
-    #see if it is all callback
-    if command in sysConf.commands:
-        if not sysConf.commands[command].has_key('call'):
-            moa.ui.exitError("Invalid command - no callback %s" % command) 
-
-        l.debug("using a callback for moa %s" % command)
-        plugins.runCallback(job, command)
-        return 0
-    elif not job.isMoa():
-        moa.ui.exitError("Unknown command, not in a Moa dir")
-    else:
-        #No callback, defer this to the backend
-        return job.execute(command,
-                           verbose = sysConf.options.verbose,
-                           silent = sysConf.options.silent)
     
 def run_3(wd):
     """
-    instantiate the job & prepare &
-
-    figure out if there is a set of commands to be executed. If so -
-    fire those of one by one
-    
+    instantiate the job & prepare & run - either defer to a callback
+    or the job itself
     """
+
+    #make sure we're in the correct wd for the rest of the invocation
     os.chdir(wd)
 
     #see if we can update the job
     moa.version.fixOld(wd)
 
-    #create a job!
+    #create a job object
     job = moa.job.Job(wd)
     sysConf.job = job
 
@@ -181,8 +158,6 @@ def run_3(wd):
     
     ## Parse the options
     sysConf.options, sysConf.args = parser.parse_args()
-
-    sysConf.job = job
 
     ## Proper setting of verbosity - after parsing of the command line
     if sysConf.options.verbose:
@@ -199,45 +174,30 @@ def run_3(wd):
     sysConf.newargs = newargs
     sysConf.originalCommand = command        
 
-    ## Ask the job if it's is ok with
-    ## the command provided (might want to change order, or insert
-    ## stuff
-    execList = job.checkCommands(command)
-    sysConf.executeCommand = execList
+    #see if it is all callback
+    if command in sysConf.commands:
+        if not sysConf.commands[command].has_key('call'):
+            moa.ui.exitError("Invalid command - no callback %s" % command) 
 
-    l.debug("Run moa commands: %s" % ",".join(execList))
-    l.debug("with args %s" % newargs)
+        l.debug("using a callback for moa %s" % command)
 
-    ### Start job initialization
-    job.prepare()
-
-    ### Run plugin initialization step 3 - just before execution
-    plugins.run('prepare_3')
-
-    plugins.run("preCommand")
-
-    #run a prep step if the original command is not in the
-    #execlist
-    if command not in execList:
+        ### Run plugin initialization step 3 - just before execution
+        sysConf.plugins.run('prepare_3')
         plugins.run("pre%s" % command.capitalize())
+        plugins.runCallback(job, command)
+        plugins.run("post%s" % command.capitalize())
+        sysConf.plugins.run('finish')
 
-    #run through all commands...
-    for execNow in execList:
+    elif not job.isMoa():
+        moa.ui.exitError("Unknown command, not in a Moa dir")
+    else:
+        #No callback, defer this to the backend
+        job.execute(command,
+                    verbose = sysConf.options.verbose,
+                    silent = sysConf.options.silent)
 
-        l.debug("Executing %s" % execNow)                
-        plugins.run("pre%s" % execNow.capitalize())
 
-        sysConf.rc += abs(run_4(job, execNow))
 
-        plugins.run("post%s" % execNow.capitalize(), reverse=True)
-
-    #likewise if the command is not in the execlist - run a
-    #post process tep
-    if command not in execList:
-        plugins.run("post%s" % command.capitalize(), reverse=True)
-
-    plugins.run("postCommand", reverse=True)
-    plugins.run("finish", reverse=True)
 
 def run_recursive(wd):
     """
@@ -269,7 +229,7 @@ def run_2():
     'global'
     """
     
-    plugins.run('prepare_2')
+    plugins.run('prepare_recursion')
 
     wd = os.getcwd()
     if not '-r' in sys.argv:
@@ -296,7 +256,7 @@ def run_2():
             run_recursive(wd)
         else:
             run_3(wd)
-    plugins.run('post_2')
+    plugins.run('post_recursion')
 
 
 def run_1():
@@ -306,7 +266,7 @@ def run_1():
     if --bg is defined: fork & exit.
 
     """
-    plugins.run('prepare_1')
+    plugins.run('prepare_background')
     
     #quick check: are we're backgrounding:
     if '--bg' in sys.argv:
@@ -322,7 +282,7 @@ def run_1():
     #go to the next stage!
     run_2()
 
-    plugins.run('post_1')
+    plugins.run('post_background')
 
 ## Main dispatcher
 if __name__ == "__main__":
@@ -336,7 +296,7 @@ if __name__ == "__main__":
         plugins.run("post_interrupt")
         moa.ui.warn("Interrupted")
         sys.exit(-1)
-    except:
+    except Exception, e:
         sysConf.rc = -1
         plugins.run("post_error")
         moa.ui.warn("Encountered a run error?")
