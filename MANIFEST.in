@@ -4,18 +4,22 @@ include README
 include COPYING
 include etc/bash_completion.d/moa
 include etc/config
+
+recursive-include bin/ *
 recursive-include template2 *.mk *.moa *.jinja2
-recursive-include doc/images *.svg *.png *.jpg *gif
-recursive-include doc/jinja2/ *.md *.html *.css Makefile *.bib *.tex *.bst *.asc 
+
 recursive-include lib/jinja2/ *.jinja2
+recursive-include lib/ruff/ *.jinja2
+recursive-include lib/gnumake/ *.mk
+
+include lib/gnumake/util/__gmsl
+include lib/gnumake/util/gmsl
+
+recursive-include share/ *.fq *fasta
 
 recursive-include etc *.mk *.conf *.jinja2
 recursive-include share/ *.txt
 recursive-include www/ *.html *.js *.css *.png *.gif *.jpg *.css *.cgi
 
-
-recursive-include lib/gnumake/ *.mk
-include lib/gnumake/util/__gmsl
-include lib/gnumake/util/gmsl
 
  

@@ -2,15 +2,13 @@
 
 {{ process }}
 
-### unittest
+### unittest noexpand
 
+moa map -t test -f --np
 for x in `seq -w 1 20`; do 
    touch test.${x}.in
 done
-
-moa set process='cp {{ input }} {{ output }}'
+moa set process='cp {{input}} {{output}}'
 moa set input='test.*.in'
 moa set output='test.*.out'
 moa run
-
-

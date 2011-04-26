@@ -9,10 +9,11 @@ Moa API
    job
    jobConf
    sysConf
-   template
    ui
    unittests
    utils
+   template/index
+   template/provider/index
    backend/index
    plugin/index    
    

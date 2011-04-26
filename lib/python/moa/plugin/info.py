@@ -31,6 +31,7 @@ def defineCommands(data):
         'log' : False,
         'needsJob' : True,
         'call' : rawCommands,
+        'unittest' : TESTRAWCOMMANDS
         }
     
     data['commands']['raw_parameters'] = {
@@ -181,6 +182,13 @@ def rawParameters(job):
         return
     print " ".join(job.conf.keys())
 
+
+TESTRAWCOMMANDS = '''
+out=`moa raw_commands`
+[[ "$out" =~ "help" ]]
+[[ "$out" =~ "list" ]]
+[[ "$out" =~ "new" ]]
+'''
 
 TESTSCRIPT = """
 moa new adhoc -t 'something'

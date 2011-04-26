@@ -8,10 +8,12 @@ Ruffus/Jinja Backend
 import os
 import re
 import sys
+import stat
 import tempfile
 import subprocess
 
 import ruffus
+import ruffus.ruffus_exceptions
 
 from jinja2 import Template as jTemplate
 
@@ -39,27 +41,48 @@ class RuffCommands(Yaco.Yaco):
         with open(from_file) as F:
             raw = F.read()
 
-        rawc = re.split('### *(\w+) *\n', raw)
-        commands = dict([(rawc[i], rawc[i+1].strip())
-                         for i in range(1, len(rawc), 2)])
-        self.update(commands)
+        rawc = re.split('###', raw)
 
+        for r in rawc:
+            r = r.strip()
+            if not r: continue
+            splitr = r.split("\n", 1)
+            if len(splitr) != 2:                
+                continue
+
+            firstline, rest = splitr
+            
+            spl = firstline.strip().split()
+            if rest[:2] != '#!':
+                rest = "#!%s\n" % sysConf.default_shell \
+                       + rest
+            self[spl[0]] = {
+                'script' : rest,
+                'args' : spl[1:] }
+            
     def  render(self, command, data):
+
         if not self.has_key(command):
             return ""
 
-        jt = jTemplate(self.get(command))
-        script = jt.render(data)
-        
-        if '{{' or '{%' in script:
-            #try a second level jinja interpretation
-            jt2 = jTemplate(script)
-            script = jt2.render(data)
+        this = self[command]
 
-        return script
+        script = this.get('script', '')
+        args = this.get('args', [])
+
+        if 'noexpand' in args:
+            return script
                 
+        jt = jTemplate(script)
+        rscript = jt.render(data)
+        
+        if '{{' or '{%' in rscript:
+            #try a second level jinja interpretation
+            jt2 = jTemplate(rscript)
+            rscript = jt2.render(data)
 
-    
+        return rscript
+
 class Ruff(moa.backend.BaseBackend):
     """
     Ruffus backend class
@@ -76,10 +99,9 @@ class Ruff(moa.backend.BaseBackend):
         self.commands = RuffCommands()
 
         if not os.path.exists(templateFile):
-            l.critical("cannot find template file %s" % templateFile)
-            moa.ui.exitError("Template %s does not seem to be properly installed" % 
-                             self.job.template.moa_id)
-        self.commands.load(templateFile)
+            l.error("cannot find template file %s" % templateFile)
+        else:
+            self.commands.load(templateFile)
 
         #TODO: Remove snippets
         snippetsFile = os.path.join(
@@ -99,10 +121,17 @@ class Ruff(moa.backend.BaseBackend):
         g.add_option("-B", dest="remake", action='store_true',
                      help="Reexecute all targets (corresponds to make -B) ")
 
-    def execute(self, command, verbose=False, silent=False):
+    def execute(self, command,
+                verbose=False, silent=False,
+                renderTemplate = True):
         """
         Execute a command
+
+        :param renderTemplate: Jinja-render the template
         """
+
+        if not self.commands.has_key(command):
+            moa.ui.exitError("Unknown command %s" % command)
 
         #determine which files are prerequisites
         prereqs = []
@@ -113,17 +142,14 @@ class Ruff(moa.backend.BaseBackend):
         others = []
         for fsid in self.job.data.others:
             others.extend(self.job.data.filesets[fsid]['files'])
-        
-            
+                    
         def generate_data_map():
             """
             Process & generate the data for a map operation
             """
             rv = []
   
-            if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
-                l.critical("no in or output files")
-                sys.exit()
+         
                 
             #determine number the number of files
             noFiles = 0
@@ -133,7 +159,7 @@ class Ruff(moa.backend.BaseBackend):
                     noFiles = len(self.job.data.filesets[k].files)
                 else:
                     assert(len(self.job.data.filesets[k].files) == noFiles)
-          
+
             #rearrange files
             for i in range(noFiles):
                 outputs = [self.job.data.filesets[x].files[i] 
@@ -154,6 +180,7 @@ class Ruff(moa.backend.BaseBackend):
                 jobData['silent'] = silent
                 jobData.update(fsDict)
                 script = self.commands.render(command, jobData)
+                l.debug("Executing %s" %  script)
 
                 yield([inputs + prereqs], outputs, script, jobData)
 
@@ -165,42 +192,59 @@ class Ruff(moa.backend.BaseBackend):
             
         rc = 0
         if cmode == 'map':
+
+            if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
+                moa.ui.exitError("no in or output files")
+                sys.exit()
+            
+
             #late decoration - see if that works :/
             executor2 = ruffus.files(generate_data_map)(executor)
             
             l.info("Start run (with %d thread(s))" %
                    sysConf.options.threads)
-            ruffus.pipeline_run(
-                [executor2],
-                verbose = sysConf.options.verbose,
-                one_second_per_job=False,
-                multiprocess= sysConf.options.threads,
-                )
-            l.info("Finished running (with %d thread(s))" %
+
+            try:
+                ruffus.pipeline_run(
+                    [executor2],
+                    verbose = sysConf.options.verbose,
+                    one_second_per_job=False,
+                    multiprocess= sysConf.options.threads,
+                    )
+                rc = 0
+                l.debug("Finished running (with %d thread(s))" %
                    sysConf.options.threads)
-            rc = 0
+
+            except ruffus.ruffus_exceptions.RethrownJobError, e:
+                try:
+                    einfo = e[0][1].split('->')[0].split('=')[1].strip()
+                    einfo = einfo.replace('[', '').replace(']', '')
+                    moa.ui.warn("Caught an error processing: %s" % einfo)
+                except:
+                    moa.ui.warn("Caught an error: %s" % str(e))
+                rc = 1                
         elif cmode == 'reduce':
             pass
         elif cmode == 'simple':
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
             script = self.commands.render(command, self.job.conf)
-            tf.write("\n" + script + "\n")
+            tf.write(script + "\n")
             tf.close()
+            os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
             rc = moa.actor.simpleRunner(
-                self.job.wd, ['bash', '-e', tf.name],
+                self.job.wd, [tf.name],
                 silent=silent)
         return rc
-
 
 def executor(input, output, script, jobData):    
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
                                       mode='w')
+    
     tf.write(script)
     tf.close()
-
-    cl = ['bash', '-e', tf.name]
+    os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
     for k in jobData:
         v = jobData[k]
@@ -211,6 +255,8 @@ def executor(input, output, script, jobData):
         else:
             os.putenv(k, str(v))
 
-    rc = moa.actor.simpleRunner(jobData['wd'], cl, silent=jobData['silent'])
-    l.debug("Executing %s" % " ".join(cl))
-
+    rc = moa.actor.simpleRunner(jobData['wd'],  [tf.name], silent=jobData['silent'])
+    if rc != 0:
+        raise ruffus.JobSignalledBreak
+    l.debug("Executing %s" % tf.name)
+    

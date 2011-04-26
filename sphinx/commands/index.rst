@@ -49,6 +49,44 @@ Creates an adhoc job.
 
 
 
+moa **archive**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Archive a job, 
+
+
+
+
+**Description:**
+
+Archive a job, or tree with jobs for later execution.
+
+This command stores only those files that are necessary for
+execution of this job, that is: templates & configuration. In &
+output files, and any other file are ignored. An exception to this
+are all files that start with 'moa.'
+
+Usage::
+
+    moa archive
+
+or
+
+    moa archive -r
+
+The latter archives all jobs in subdirs of the current directory.
+
+Note that only those directories that contain a moa job are
+included into the archive.
+
+
+
+
+
+*Usage of this command will be logged*
+
+
+
 moa **blog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -211,7 +249,7 @@ Print a log to screen
 moa **kill**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Kill a currently running job
+Kill a job
 
 
 
@@ -385,17 +423,17 @@ Returns stdout of the last moa run
 
 
 
-moa **pack**
+moa **pause**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-pack a job or pipeline, or manage packs
+Pause a job
 
 
 
 
 **Description:**
 
-Create an adhoc job
+pause a running job
 
 
 
@@ -462,6 +500,50 @@ moa **refresh**
 Reload the template
 
 
+
+
+**Description:**
+
+Refresh the template - i.e. reload the template from the central
+repository.
+
+
+
+
+*Usage of this command will be logged*
+
+
+
+moa **ren**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Rename/renumber a job
+
+
+
+
+**Description:**
+
+Renumber or rename a moa job..
+
+
+
+
+*Usage of this command will be logged*
+
+
+
+moa **resume**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Resume a job
+
+
+
+
+**Description:**
+
+pause a running job
 
 
 
@@ -723,20 +805,6 @@ moa **unlock**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Unlock this job
-
-
-
-
-
-
-*Usage of this command will be logged*
-
-
-
-moa **unpack**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-unpack an earlier packed job/pipeline
 
 
 

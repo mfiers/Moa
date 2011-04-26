@@ -46,7 +46,9 @@ def defineCommands(data):
         'log' : True,
         'needsJob' : True,
         'call' : kill,
+        'unittest' : KILLTEST,
         }
+    
     data['commands']['pause'] = {
         'desc' : 'Pause a job',
         'log' : True,
@@ -120,6 +122,7 @@ def _getStatus(job, silent=False):
         if not silent:
             moa.ui.warn("Removing a stale lockfile")
         os.unlink(pidFile)
+        _setStatus(job, 'error')
         
     except OSError, e:
         if e.errno == 2:
@@ -201,10 +204,14 @@ def postRun(data):
         _setStatus(data.job, status)
         _removePid(data.job)
 
-
 def postInterrupt(data):
     if data.job.isMoa():
         _setStatus(data.job, 'interrupted')
+        _removePid(data.job)
+
+def postError(data):
+    if data.job.isMoa():
+        _setStatus(data.job, 'error')
         _removePid(data.job)
 
 
@@ -238,18 +245,24 @@ def resume(job):
     os.kill(pid, 18)
     _setStatus(job, 'running')
 
+KILLTEST = '''
 
+'''
 STATUSTEST = '''
 moa status | grep -qi "not a Moa job"
 moa simple --np -t test
 moa status | grep -qi "template: simple"
 moa status | grep -qi "Status: waiting"
 moa run >/dev/null 2>/dev/null || true
+echo a
 moa status | grep -qi "Status: error"
+echo b
 moa set process="sleep 0.5"
-moa run >/dev/null
+echo c
+moa run
 moa status | grep -qi "Status: success"
 moa run --bg >/dev/null
+echo c
 moa kill >/dev/null
 moa status | grep -qi "Status: interrupted"
 '''

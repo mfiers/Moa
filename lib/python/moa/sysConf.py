@@ -21,21 +21,18 @@ import Yaco
 import moa.logger as l
 import moa.utils
 
-MOABASE = moa.utils.getMoaBase()
-
 sysConf = None
 
-SYSCONFIGFILE = os.path.join(MOABASE, 'etc', 'config')
 USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
                           '.config', 'moa', 'config')
 
 class SysConf(Yaco.Yaco):
     
     def __init__(self):
-        super(SysConf, self).__init__()
-        l.debug("Loading system config: %s" % SYSCONFIGFILE)
-        if os.path.exists(SYSCONFIGFILE):
-            self.load(SYSCONFIGFILE)
+        
+        
+        super(SysConf, self).__init__(moa.utils.getResource('etc/config'))
+
         l.debug("Loading system config: %s" % USERCONFIGFILE)
         if os.path.exists(USERCONFIGFILE):
             self.load(USERCONFIGFILE)
@@ -44,8 +41,8 @@ class SysConf(Yaco.Yaco):
         """
         Return the version number of this Moa instance
         """
-        versionFile = os.path.join(MOABASE, "VERSION")
-        return open(versionFile).read().strip()
+        return moa.utils.getResource('VERSION').strip()
+
     
     def getPlugins(self):
         rv = self.get('plugins', [])

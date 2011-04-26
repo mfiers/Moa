@@ -18,7 +18,7 @@ import moa.ui
 import moa.utils
 import moa.logger as l
 
-
+from moa.sysConf import sysConf
 
 def defineCommands(data):
     """
@@ -61,10 +61,12 @@ def showFiles(job):
     
     
 def prepare_3(data):
-    job = data['job']
+
+    job = sysConf.job
+
     if not job.template.has_key('filesets'):
         return
-    
+
     if len(job.template.filesets.keys()) > 0:
         job.conf['moa_filesets'] = []
         job.conf.doNotSave.append('moa_filesets')
@@ -99,13 +101,14 @@ def prepare_3(data):
                 'help' : fs.help,
                 'type' : 'file'
                 }
-            
+
+
         #unless it is an input file, do not check for this
         #file to exists! (since it might not exist yet)
         if not fs.category in ['input', 'prerequisite']:
             job.conf.doNotCheck.append('%s' % fsid)
 
-def preCommand(data):
+def pre_command(data):
     """
     Run before execution of any command (backend or plugin)
     """

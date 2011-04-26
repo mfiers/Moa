@@ -45,7 +45,7 @@ def simpleRunner(wd, cl, silent=False):
     #non silent - split output to the output files &
     #stdout/stderr
     p = subprocess.Popen(
-        cl, cwd = wd,
+        cl, cwd = wd, shell=False,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
 

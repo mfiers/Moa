@@ -21,8 +21,6 @@ import Yaco
 import moa.logger as l
 import moa.utils
 
-MOABASE = moa.utils.getMoaBase()
-
 class JobConf(object):
     """
     

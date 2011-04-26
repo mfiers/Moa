@@ -14,6 +14,8 @@ rm *.bam
 
 ### unittest
 
+which bowtie || (echo 'Bowtie is not installed' >&2; false)
+
 mkdir 10.bowtiedb
 cd 10.bowtiedb 
 moa new bowtiedb -t 'demo index referece using bowtie'

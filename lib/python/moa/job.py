@@ -25,7 +25,7 @@ import moa.jobConf
 from moa.sysConf import sysConf
 
 
-def newJob(wd, template, title, parameters=[]):
+def newJob(wd, template, title, parameters=[], provider=None):
     """
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
@@ -49,15 +49,14 @@ def newJob(wd, template, title, parameters=[]):
     """
 
     job = Job(wd)
-    job.setTemplate(template)
+    job.setTemplate(template, provider=provider)
     job.conf.title = title
     for pk, pv in parameters:
         job.conf[pk] = pv
     job.conf.save()
-
     return job
 
-def newTestJob(template, title="Test job"):
+def newTestJob(template, title="Test job", provider=None):
     """    
     for testing purposes - creates a temporary directory and uses that to
     instantiate a job. This function returns the job object created
@@ -75,7 +74,7 @@ def newTestJob(template, title="Test job"):
     """
     wd = tempfile.mkdtemp()
     job = Job(wd)
-    job.setTemplate(template)
+    job.setTemplate(template, provider=provider)
     job.conf.title = title
     job.conf.save()
     return job
@@ -202,10 +201,6 @@ class Job(object):
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
 
-        >>> job = newTestJob('unittest')
-        >>> rc = job.execute('run')
-        >>> assert(type(rc) == type(18))
-
         #Note: Uncertain how to test verbose & silent
 
         
@@ -217,13 +212,60 @@ class Job(object):
         :type silent: Boolean        
 
         """
-        if not self.backend:
-            l.critical("No backend loaded - cannot execute %s" %
-                       command)
 
-        l.debug("executing %s" % command)
-        return self.backend.execute(
-            command, verbose = verbose, silent=silent)
+        rc = 0
+        
+        if not self.backend:
+            l.critical("No backend loaded - cannot execute %s" % command)
+
+        ## Ask the job if it's is ok with
+        ## the command provided (might want to change order, or insert
+        ## stuff
+        execList = self.checkCommands(command)
+        sysConf.executeCommand = execList
+
+        l.debug("Run moa commands: %s" % ",".join(execList))
+        l.debug("with args %s" % sysConf.newargs)
+
+        ### Start job initialization
+        self.prepare()
+
+        ### Run plugin initialization step 3 - just before execution
+        sysConf.plugins.run('prepare_3')
+        sysConf.plugins.run("pre_command")
+
+        #run a prep step if the original command is not in the
+        #execlist
+        if command not in execList:
+            sysConf.plugins.run("pre%s" % command.capitalize())
+
+        #run through all commands...
+        for execNow in execList:
+            l.info("Executing %s" % execNow)
+            sysConf.plugins.run("pre%s" % execNow.capitalize())
+
+            rc = self.backend.execute(
+                execNow, verbose = verbose, silent=silent)
+            sysConf.rc = rc
+
+            if rc != 0:
+                sysConf.plugins.run('postError')
+                break
+            
+            sysConf.plugins.run("post%s" % execNow.capitalize(), reverse=True)
+
+        #likewise if the command is not in the execlist - run a
+        #post process 
+        if command not in execList:
+            sysConf.plugins.run("post%s" % command.capitalize(), reverse=True)
+
+        sysConf.plugins.run("post_command", reverse=True)
+        sysConf.plugins.run("finish", reverse=True)
+
+        return rc
+
+    
+
                     
     def prepare(self):
         """
@@ -263,9 +305,9 @@ class Job(object):
         >>> assert(os.path.exists(templateFile))
         
         """
-        moa.template.refresh(self.wd, default=self.template.name)
+        moa.template.refresh(self.wd)
         
-    def setTemplate(self, name):
+    def setTemplate(self, name, provider = None):
         """
         Set a new template for this job
 
@@ -277,7 +319,7 @@ class Job(object):
         self.checkConfDir()
         l.debug("Setting job template to %s" % name)
         #get the template
-        moa.template.initTemplate(self.wd, name)
+        moa.template.installTemplate(self.wd, name, provider = provider)
         self.loadTemplate()
         
     def loadTemplate(self):
@@ -332,3 +374,8 @@ class Job(object):
                     self.template.name)
             self.backend.initialize()
         
+
+
+####
+# nose tests
+

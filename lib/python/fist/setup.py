@@ -19,11 +19,11 @@ http://mfiers.github.com/Moa/api/fist.html for more information
 """.strip()
  
 setup(name='fist',
-      version='0.1.1',
+      version='0.1.2',
       description=DESCRIPTION,
       author='Mark Fiers',
       author_email='mark.fiers42@gmail.com',
-      url='http://mfiers.github.com/Moa/',
+      url='http://mfiers.github.com/Moa/api/fist.html',
       packages=['fist', ],
       package_dir = {'fist': '.'},
       requires = [],
