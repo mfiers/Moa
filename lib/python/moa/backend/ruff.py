@@ -133,10 +133,6 @@ class Ruff(moa.backend.BaseBackend):
         if not self.commands.has_key(command):
             moa.ui.exitError("Unknown command %s" % command)
 
-        if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
-            moa.ui.exitError("no in or output files")
-            sys.exit()
-            
         #determine which files are prerequisites
         prereqs = []
         for fsid in self.job.data.prerequisites:
@@ -196,7 +192,12 @@ class Ruff(moa.backend.BaseBackend):
             
         rc = 0
         if cmode == 'map':
+
+            if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
+                moa.ui.exitError("no in or output files")
+                sys.exit()
             
+
             #late decoration - see if that works :/
             executor2 = ruffus.files(generate_data_map)(executor)
             

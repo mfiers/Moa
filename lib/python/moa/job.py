@@ -25,7 +25,7 @@ import moa.jobConf
 from moa.sysConf import sysConf
 
 
-def newJob(wd, template, title, parameters=[]):
+def newJob(wd, template, title, parameters=[], provider=None):
     """
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
@@ -49,14 +49,14 @@ def newJob(wd, template, title, parameters=[]):
     """
 
     job = Job(wd)
-    job.setTemplate(template)
+    job.setTemplate(template, provider=provider)
     job.conf.title = title
     for pk, pv in parameters:
         job.conf[pk] = pv
     job.conf.save()
     return job
 
-def newTestJob(template, title="Test job"):
+def newTestJob(template, title="Test job", provider=None):
     """    
     for testing purposes - creates a temporary directory and uses that to
     instantiate a job. This function returns the job object created
@@ -74,7 +74,7 @@ def newTestJob(template, title="Test job"):
     """
     wd = tempfile.mkdtemp()
     job = Job(wd)
-    job.setTemplate(template)
+    job.setTemplate(template, provider=provider)
     job.conf.title = title
     job.conf.save()
     return job
@@ -212,6 +212,8 @@ class Job(object):
         :type silent: Boolean        
 
         """
+
+        rc = 0
         
         if not self.backend:
             l.critical("No backend loaded - cannot execute %s" % command)
@@ -239,7 +241,6 @@ class Job(object):
 
         #run through all commands...
         for execNow in execList:
-            l.critical("running %s" % execNow)
             l.info("Executing %s" % execNow)
             sysConf.plugins.run("pre%s" % execNow.capitalize())
 
@@ -248,6 +249,7 @@ class Job(object):
             sysConf.rc = rc
 
             if rc != 0:
+                sysConf.plugins.run('postError')
                 break
             
             sysConf.plugins.run("post%s" % execNow.capitalize(), reverse=True)
@@ -260,6 +262,7 @@ class Job(object):
         sysConf.plugins.run("post_command", reverse=True)
         sysConf.plugins.run("finish", reverse=True)
 
+        return rc
 
     
 
@@ -304,7 +307,7 @@ class Job(object):
         """
         moa.template.refresh(self.wd)
         
-    def setTemplate(self, name):
+    def setTemplate(self, name, provider = None):
         """
         Set a new template for this job
 
@@ -316,7 +319,7 @@ class Job(object):
         self.checkConfDir()
         l.debug("Setting job template to %s" % name)
         #get the template
-        moa.template.installTemplate(self.wd, name)
+        moa.template.installTemplate(self.wd, name, provider = provider)
         self.loadTemplate()
         
     def loadTemplate(self):
