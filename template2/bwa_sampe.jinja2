@@ -37,8 +37,8 @@ moa set db=../10.index/testDB
 moa set input=${MOABASE}/share/test/*.fq
 moa run
 
-[[ -s reads_1.sai ]] 
-[[ -s reads_2.sai ]]
+[[ -s "reads_1.sai" ]] 
+[[ -s "reads_2.sai" ]]
 
 cd ../
 
@@ -51,4 +51,4 @@ moa set fq_forward_input=${MOABASE}/share/test/*_1.fq
 moa set sai_forward_input=../20.align/*_1.sai
 moa run
 
-[[ -s reads.bam ]]
+[[ -s "reads.bam" ]]
