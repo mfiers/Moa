@@ -108,6 +108,14 @@ def prepare_3(data):
         if not fs.category in ['input', 'prerequisite']:
             job.conf.doNotCheck.append('%s' % fsid)
 
+def preFiles(data):
+    """
+    Run before execution of any command (backend or plugin)
+    """
+    l.debug("preparing input files")
+    preparefilesets(data)
+
+
 def pre_command(data):
     """
     Run before execution of any command (backend or plugin)
