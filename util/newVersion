@@ -16,10 +16,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
+
 VERSION=$1
-echo echo $VERSION \> VERSION
-echo dch -v ${VERSION} -c Changelog.txt
+echo $VERSION \> VERSION
+
+tmp="/tmp/changelog"
+DATE=`date +'%Y-%m-%d'`
+echo -e "Moa $VERSION / $DATE\n\n" > $tmp
+git-changelog --list >> $tmp
+echo '' >> $tmp
+if [ -f Changelog.txt ]; then cat Changelog.txt >> $tmp; fi
+mv $tmp Changelog.txt
+$EDITOR Changelog.txt
+
 echo git commit -m \"version to $VERSION\" -a 
 echo git tag v${VERSION}
 echo git push --tags
-echo python sdist register upload
+echo python setup.py sdist register upload
