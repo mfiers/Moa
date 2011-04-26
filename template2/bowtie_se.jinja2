@@ -2,7 +2,7 @@
 														
 bowtie -S {{ extra_params }}           	    \
     {{ ebwt_base }}                     	\
-    {{ fq_input }} | {{ snippets.sam2bam }} - > {{ output }}
+    {{ fq_input }} | samtools view -bS - > {{ output }}
 
 ### clean
 

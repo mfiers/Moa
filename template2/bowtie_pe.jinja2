@@ -5,7 +5,7 @@ bowtie -S {{ extra_params }}           	    \
     -X {{ max_insertsize }}             	\
     {{ ebwt_base }}                     	\
     -1 {{ fq_forward_input }}           	\
-    -2 {{ fq_reverse_input }} | {{ snippets.sam2bam }} - > {{ output }}
+    -2 {{ fq_reverse_input }} | samtools view -bS - > {{ output }}
 echo fin bowtie pe
 
 ### clean

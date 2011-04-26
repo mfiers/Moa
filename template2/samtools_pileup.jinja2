@@ -1,10 +1,9 @@
 ### run
 
-echo sort
+echo Sorting
+samtools sort  {{ input }} {{ output_bam }}
 
-{{ snippets.samtools_sort }} {{ input }} {{output_bam }}
-
-echo samtools pileup
+echo Pileup
 samtools pileup                                     \
 	{% if simple_pileup_format %} -s {% endif %}	\
 	{% if input_is_SAM %} -S {% endif %}			\

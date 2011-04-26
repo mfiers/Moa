@@ -27,7 +27,7 @@ bfast postprocess -i {{ output_aln }}			  		\
 	{% if paired_opp_strands %} -R {% endif %}			\
 	-m {{ min_mapping_qual }} -M {{ min_norm_score }}	\
 	-S {{ pairing_std_dev }} -O {{ output_format }}		\
-	-n {{ thread_num }} | {{ snippets.sam2bam }} -o {{ output_bam }} -
+	-n {{ thread_num }} | samtools view -bS -o {{ output_bam }} -
 
 ### clean
 
