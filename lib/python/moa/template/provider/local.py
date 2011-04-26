@@ -34,14 +34,18 @@ class Local(provider.ProviderBase):
         self.directory = os.path.abspath(
             os.path.expanduser(
                 data.get('directory',
-                         '~/.moa/template'
+                         '~/.config/moa/template'
                          ).strip()))
         if not os.path.exists(self.directory):
-            os.makedirs(self.directory)
+            try:
+                os.makedirs(self.directory)
+            except OSError:
+                #probably not allowed to do so..
+                pass
 
     def hasTemplate(self, tName):
         fname = os.path.join(self.directory, '%s.moa' % tName)
-        return os.path.exists(fname)
+        return os.path.isfile(fname)
 
     def getTemplate(self, name):
         """

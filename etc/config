@@ -31,4 +31,4 @@ template:
     local:
       class: local
       priority: 2
-      directory: ' ~/.moa/template/'
+      directory: ' ~/.config/moa/template/'
