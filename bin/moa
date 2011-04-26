@@ -127,6 +127,10 @@ parser.add_option(
     "--bg", dest="background", action="store_true",
     help="Run moa in the background (implies -s)")
 
+parser.add_option(
+    "--profile", dest="profile", action="store_true",
+    help="Run the profiler")
+
 parser.add_option("-r", "--recursive", dest="recursive",
                   help="Perfom action recursively", action='store_true')
 
@@ -290,7 +294,23 @@ if __name__ == "__main__":
     Main run routing - not much has been prepared yet
     """
     try:
-        run_1()
+        if '--profile' in sys.argv:
+            import tempfile
+            tf = tempfile.NamedTemporaryFile(delete=False)
+            tf.close()
+            try:
+                import cProfile
+                import pstats
+                cProfile.run('run_1()', tf.name)
+                p = pstats.Stats(tf.name)
+                moa.ui.message("Profiler output")
+                p.sort_stats('cumulative').print_stats(20)
+                
+            except ImportError:
+                moa.ui.exitError("Cannot run the profiler - make sure it is properly installed")
+            
+        else:
+            run_1()
     except KeyboardInterrupt:
         sysConf.rc = -1
         plugins.run("post_interrupt")
