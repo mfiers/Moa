@@ -38,7 +38,7 @@ def getMoaFile(name):
 def templateList():
     return PROVIDERS.templateList()
 
-def installTemplate(wd, tName, pName=None):
+def installTemplate(wd, tName, provider=None):
     """
     Initialize the template - this means - try to figure out where the
     template came from & copy the template files into
@@ -55,7 +55,7 @@ def installTemplate(wd, tName, pName=None):
     >>> assert(os.path.exists(templateFile))
     >>> assert(os.path.exists(adhocFile))
     """
-    PROVIDERS.installTemplate(wd, tName, pName)
+    PROVIDERS.installTemplate(wd, tName, provider)
              
 def initTemplate(*args, **kwargs):
     """
@@ -100,7 +100,11 @@ def refresh(wd):
     if not meta.name:
         moa.ui.exitError("Cannot refresh this job")
 
+    l.debug("install template in %s" % wd)
+    l.debug("template name  %s" % meta.name)
+    l.debug("from provider %s" % provider)
+    
     installTemplate(wd,
                     tName = meta.name,
-                    pName=meta.get('provider', None))
+                    provider=meta.get('provider', None))
     
