@@ -136,6 +136,7 @@ else:
     
 #read the log tail log
 if os.path.exists('.moa/log'):
+    lines = []
     with open('.moa/log') as F:
         try:
             F.seek(-10000, 2)
@@ -148,11 +149,13 @@ if os.path.exists('.moa/log'):
     ll = []
 
     for l in range(len(lines), 0, -1):
-        ll = lines[l-1].split(None, 5)
+        ll = lines[l-1].split("\t", 5)
         if len(ll) != 6: continue
         if ll[-1] == 'run': break
-            
-    if ll:
+
+    if len(ll) != 6:
+        data['time'] = '(error parsing log)'
+    else:
         try:
             #old bug - 
             start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S:%f')
