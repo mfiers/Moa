@@ -40,7 +40,7 @@ class Providers(object):
             pMod =  __import__( mod, globals(), locals(), [mod], -1)
 
             #instantiate the class (mod.Mod())
-            self.providers[pName] = getattr(pMod, pName.capitalize())(pName, pInfo)
+            self.providers[pName] = getattr(pMod, pInfo['class'].capitalize())(pName, pInfo)
             _order.append((priority, pName))
             
         _order.sort()
@@ -102,9 +102,17 @@ class Providers(object):
 
 
 #base class for all providers
-class ProviderBase:
-    def __init__(self, name, data):
+class ProviderBase(object):
+    def __init__(self, name, data={}):
         self.name = name
         self.data = data
+
+    def getMeta(self):
+        meta = Yaco.Yaco(self.data)
+        meta.provider_type = self.__class__.__name__.lower()
+        meta.provider = self.name
+        return meta
+            
+
 
     

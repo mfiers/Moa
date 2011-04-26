@@ -13,6 +13,7 @@ Provides templates from the Moa package.
 
 """
 import os
+import sys
 import shutil
 
 import pkg_resources
@@ -26,20 +27,30 @@ from moa.sysConf import sysConf
 from moa.template import provider
 
 
-class Core(provider.ProviderBase):
-    
-    TEMPLATEBASE = 'template2'
+class Local(provider.ProviderBase):
+
+    def __init__(self, name, data):
+        super(Local, self).__init__(name, data)
+        self.directory = os.path.abspath(
+            os.path.expanduser(
+                data.get('directory',
+                         '~/.moa/template'
+                         ).strip()))
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory)
 
     def hasTemplate(self, tName):
-        fname = os.path.join(self.TEMPLATEBASE, '%s.moa' % tName)
-        return moa.utils.resourceExists(fname)
+        fname = os.path.join(self.directory, '%s.moa' % tName)
+        return os.path.exists(fname)
 
     def getTemplate(self, name):
         """
         Returns a Yaco instance of the moa template
         """
-        fname = os.path.join(self.TEMPLATEBASE, '%s.moa' % name)
-        return Yaco.Yaco(moa.utils.getResource(fname))
+        fname = os.path.join(self.directory, '%s.moa' % name)
+        with open(fname) as F:
+            data = F.read()
+        return Yaco.Yaco(data)
 
     def templateList(self):
         """
@@ -49,12 +60,13 @@ class Core(provider.ProviderBase):
         @rtype: a list of strings
         """
         r = []
-        for f in moa.utils.listResource(self.TEMPLATEBASE):
+        for f in os.listdir(self.directory):
             if f[-4:] != '.moa':
                 continue
             name = f.replace(".moa", "")
             r.append(f[:-4])
         return r
+
 
     def installTemplate(self, wd, tName):
         """
@@ -67,13 +79,13 @@ class Core(provider.ProviderBase):
             shutil.rmtree(extraFileDir)
         os.makedirs(extraFileDir)
 
-        #print type(moaFile)
         moaFile.save(os.path.join(wd, '.moa', 'template'))
 
-        for f in moa.utils.listResource(self.TEMPLATEBASE):
+        for f in os.listdir(self.directory):
             if not f.find(tName) == 0: continue
             if f[-1] in ['~', '#']: continue
             if f[-4:] == '.moa': continue
-            with open(os.path.join(wd, '.moa', 'template.d', f), 'w') as F:
-                F.write(moa.utils.getResource(os.path.join(self.TEMPLATEBASE, f)))
+            shutil.copyfile(
+                os.path.join(self.directory, f),
+                os.path.join(wd, '.moa', 'template.d', f))
 
