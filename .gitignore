@@ -8,3 +8,4 @@ www3
 MANIFEST
 dist/
 build
+moa.egg-info
