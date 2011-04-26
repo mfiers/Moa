@@ -56,8 +56,10 @@ class Template(Yaco.Yaco):
             'private' : True,
             }
 
+        self.filesets = {}
+
         #try to load the template!!        
-        if os.path.exists(self.templateFile):
+        if os.path.isfile(self.templateFile):
             _tempTemplate = open(self.templateFile).read().strip()
             if len(_tempTemplate) < 50 and \
                    not "\n" in _tempTemplate:
