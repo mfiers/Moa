@@ -23,7 +23,7 @@ echo $VERSION \> VERSION
 tmp="/tmp/changelog"
 DATE=`date +'%Y-%m-%d'`
 echo -e "Moa $VERSION / $DATE\n\n" > $tmp
-git-changelog --list >> $tmp
+git-changelog --list | grep -v 'minor:' >> $tmp
 echo '' >> $tmp
 if [ -f Changelog.txt ]; then cat Changelog.txt >> $tmp; fi
 mv $tmp Changelog.txt
