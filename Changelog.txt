@@ -1,0 +1,26 @@
+Moa 0.10.7 / 2011-04-27
+=======================
+
+  * fixed a bug confusing the ~/.moa config dir with a proper moa job
+
+Moa 0.10.6 / 2011-04-27 
+=======================
+
+  * debian pacakaging is deprecated
+  * better template handling
+  * added profiling
+  * reworked how templates are created & found
+  * improved error handling
+  * allowing keywords with jinja templates
+  * bin/moaprompt
+  * moaGit is working again
+  * a framework for recursive execuction
+  * map & simple replaces "adhoc"
+  * unittests++
+  * ruff now uses the simpleExecutor
+
+Moa 0.10.5 / 2011-04-27
+=======================
+
+  * Start keeping a changelog
+
