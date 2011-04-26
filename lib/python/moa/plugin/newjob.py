@@ -23,7 +23,8 @@ def defineCommands(data):
     data['commands']['new'] = {
         'desc' : "Create a new Moa job",
         'call' : newJob,
-        'needsJob' : False
+        'needsJob' : False,
+        'unittest' : TESTNEW
         }
     
 
@@ -67,7 +68,6 @@ def newJob(job):
                 title = v
             else:
                 params.append(a)
-
         else:
             template = a
 
@@ -80,9 +80,14 @@ def newJob(job):
         
     if not title:
         moa.ui.warn("Please define a title for this job")
+
+    provider = None
+    if ':' in template:
+        provider, template = template.split(':')
         
-    job = moa.job.newJob(wd, template=template, title = options.title)
-    job.conf['title'] = options.title
+    job = moa.job.newJob(wd, template=template, title = options.title,
+                         provider=provider)
+    job.conf['title'] = title
     
     for p in params:
         k,v = p.split('=', 1)
@@ -90,13 +95,43 @@ def newJob(job):
 
     job.conf.save()
 
-    moa.ui.fprint("Created a Moa {{green}}{{bold}}%s{{reset}} job" % template,
-                  f='jinja')
+    if provider:
+        moa.ui.fprint("Created a Moa {{bold}}%s{{reset}}:{{green}}%s{{reset}} job" %
+                      (provider, template),
+                      f='jinja')
+    else:
+        moa.ui.fprint("Created a Moa {{green}}{{bold}}%s{{reset}} job" % template,
+                      f='jinja')
     #moa.ui.fprint('With title "%%(bold)s%s%%(reset)s"' % job.conf.title)
 
 
 
-TESTSCRIPT = """
-moa new adhoc -t 'testJob' adhoc_mode=par dummy=nonsense
-[[ -d ./.moa ]] || exer 'No job was created'
+TESTNEW = """
+moa new simple -t 'test' 2>/dev/null >/dev/null
+[[ -d '.moa' ]]
+[[ -f '.moa/template' ]]
+[[ -d '.moa/template.d' ]]
+[[ -f '.moa/template.d/simple.jinja2' ]]
+[[ -f '.moa/template.d/meta' ]]
+
+grep -q 'provider: core' .moa/template.d/meta
+grep -q 'name: simple' .moa/template.d/meta
+grep -q 'simple' .moa/template
+
+moa new core:simple -ft 'test' 2>/dev/null >/dev/null
+
+##hack to create a local:simple template
+mkdir -p ~/.moa/template
+cat .moa/template | sed 's/name: simple/name: newjobtest/' \
+    | sed 's/moa_id: simple/moa_id: newjobtest/' \
+    > ~/.moa/template/newjobtest.moa
+cp .moa/template.d/simple.jinja2 ~/.moa/template/newjobtest.jinja2
+
+moa new -f local:newjobtest
+grep -q 'provider: local' .moa/template.d/meta
+grep -q 'name: newjobtest' .moa/template.d/meta
+moa set process='echo qwerqwer'
+moa show
+out=`moa run 2>/dev/null`
+[[ "$out" =~ 'qwerqwer' ]]
 """

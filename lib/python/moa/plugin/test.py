@@ -105,7 +105,6 @@ pluginFailures = 0
 pluginTests = 0
 
 templateq = Queue.Queue()
-            
 
 def _templateTester():
     global templateTests

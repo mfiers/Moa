@@ -18,7 +18,7 @@ import textwrap
 import moa.ui
 import moa.utils
 import moa.template
-
+2
 from moa.sysConf import sysConf
 
 def defineCommands(data):
@@ -28,7 +28,8 @@ def defineCommands(data):
     data['commands']['template_dump'] = {
         'desc' : 'Display the raw template description',
         'private': True,
-        'call' : dumpTemplate
+        'call' : dumpTemplate,
+        'unittest' : TEMPLATEDUMPTEST
         }
     
     data['commands']['template'] = {
@@ -48,7 +49,8 @@ def defineCommands(data):
     data['commands']['refresh'] = {
         'desc' : 'Reload the template',
         'call' : refresh,
-        'needsJob' : True
+        'needsJob' : True,
+        'unittest' : REFRESHTEST
         }
 
     data['commands']['template_set'] = {
@@ -157,7 +159,7 @@ def dumpTemplate(job):
     Show the raw template data.
     """
     template = _getTemplateFromData(job)
-    print template.pretty
+    print template.pretty()
 
 LISTTEST = '''
 moa list | grep -q "map"
@@ -166,4 +168,17 @@ moa list | grep -q "map"
 TEMPLATETEST = '''
 moa simple -t test -- echo
 moa template | grep -q "simple"
+'''
+
+TEMPLATEDUMPTEST = '''
+moa simple -t test -- echo
+out=`moa template_dump`
+[[ "$out" =~ "author" ]]
+[[ "$out" =~ "backend" ]]
+[[ "$out" =~ "'name': 'simple'" ]]
+'''
+
+REFRESHTEST = '''
+moa simple -t test -- echo
+
 '''
