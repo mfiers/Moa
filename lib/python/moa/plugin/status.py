@@ -253,16 +253,18 @@ moa status | grep -qi "not a Moa job"
 moa simple --np -t test
 moa status | grep -qi "template: simple"
 moa status | grep -qi "Status: waiting"
-moa run >/dev/null 2>/dev/null || true
+moa run || true
 echo a
 moa status | grep -qi "Status: error"
 echo b
-moa set process="sleep 0.5"
+moa set process="sleep 0.1"
 echo c
 moa run
 moa status | grep -qi "Status: success"
-moa run --bg >/dev/null
+moa set process="sleep 10"
+echo d
+moa run --bg
 echo c
-moa kill >/dev/null
+moa kill
 moa status | grep -qi "Status: interrupted"
 '''
