@@ -61,6 +61,19 @@ def getDescription(cwd):
         html,err = p.communicate()
         return html
         
+def getReport(cwd):
+    dfile = os.path.join(cwd, 'moa.report')
+    if not os.path.exists(dfile):
+        return ""
+    else:
+        report = open(dfile).read()
+        #convert from jinja-markdown to html!
+        p = subprocess.Popen("pandoc -f markdown -t html".split(),
+                  stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        p.stdin.write(report)
+        html,err = p.communicate()
+        return html
+        
 def getBreadCrumbs():
     ## Prepare breadcrumbs
     dataRoot = getDataRoot()
@@ -100,6 +113,8 @@ d['dataRoot'] = getDataRoot()
 d['webRoot'] = getWebRoot()
 d['blocks']  = getBreadCrumbs()
 d['jobDescription'] = getDescription(moacwd)
+d['jobReport'] = getReport(moacwd)
+
 #Fire off a generic page without any information if this is not a Moa dir
 sys.stderr.write("getting a job for %s" % moacwd)
 job = moa.job.Job(moacwd)

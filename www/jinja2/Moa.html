@@ -7,6 +7,10 @@
 
 {% block tabs %}
 <ul> 
+
+  {% if jobReport %}
+  <li><a href="#jobReport">Report</a></li> 
+  {% endif %}
   {% if jobDescription %}
   <li><a href="#jobDescription">Description</a></li> 
   {% endif %}
@@ -14,6 +18,12 @@
   <li><a href="#templateInfoTab">Job info</a></li> 
   <li><a href="#fileSets">IO</a></li> 
 </ul> 
+ 
+{% if jobReport %}
+<div id='jobReport'>    
+  {{ jobReport }}
+</div>
+{% endif %}
 
 {% if jobDescription %}
 <div id='jobDescription'>    
