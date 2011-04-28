@@ -1,3 +1,14 @@
+Moa 0.10.8 / 2011-04-28
+==========================
+
+  * recognize & display moa.report files (as markdown)
+  * template for fastqc - qc of fastq files and additional reporting
+  * moved local template provider default directory to ~/.config/moa
+  * removed usage of snippets in templates - not good for reproducibility
+  * run fileset preparation before running 'moa files' command
+  * downloads both genbank & fasta now
+  * bugfixes
+
 Moa 0.10.7 / 2011-04-27
 =======================
 
