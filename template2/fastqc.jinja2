@@ -1,0 +1,73 @@
+### run2
+
+mkdir -p {{output_dir}}
+fastqc {{ input }} --outdir={{ output_dir }}
+
+### report
+#!/usr/bin/env python
+
+import os
+
+fields = [x for x in """
+Basic Statistics
+Per base sequence quality
+Per sequence quality scores
+Per base sequence content
+Per base GC content
+Per sequence GC content
+Per base N content
+Sequence Length Distribution
+Sequence Duplication Levels
+Overrepresented sequences
+Kmer Content
+""".split("\n") if x]
+
+data = {}
+
+for name in os.listdir('{{output_dir}}'):
+    report_path = os.path.join('{{output_dir}}', name)
+    if name[-7:] != '_fastqc': continue
+    if not os.path.isdir(name): continue
+    rid = name[:-7]
+    summary_file = os.path.join(report_path, 'summary.txt')
+    stats = []
+    with open(summary_file) as F:
+        data[rid] = [x.split()[0] for x in F.read().split("\n") if x.strip()]
+
+
+kys = data.keys()
+kys.sort()
+with open('moa.report', 'w') as F:
+    F.write("FastQC report\n=============\n\n")
+    F.write("<table>\n")
+    F.write("<tr><td></td>")
+    for i in range(len(fields)):
+        F.write("<th>%s</th>" % (i+1))
+    F.write('</tr>')
+                
+
+    for k in kys:
+        F.write("<tr>")
+        F.write("<th style='border-right: 1px solid black; padding-right: 10px;'>\n")
+        F.write("%s</a></th>\n" % k)
+        for i, s in enumerate(data[k]):
+            if s == 'PASS':
+                F.write("<td><a style='color:green' ")
+            elif s == 'FAIL':
+                F.write("<td><a style='color:red' ")
+            else:
+                F.write("<td><a style='color:gold' ")
+            F.write("href='%s_fastqc/fastqc_report.html#M%d'>%s</a></td>\n" % (k,i, s ))
+
+        F.write("</tr>\n")
+    F.write("</table>\n")
+
+    F.write("<table>\n")
+    F.write("<tr><th colspan='4'>Column descriptions</th></tr><tr>\n")
+    for i, f in enumerate(fields):
+        if not i % 2:
+            F.write('</tr>\n<tr>')
+        F.write("<th style='padding: 5px'>%s</th><td style='padding: 5px'>%s</td>" % (i+1, f))
+    F.write("</tr></table>\n")
+
+

@@ -1,0 +1,33 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    delegate:
+    - run2
+    - report
+  run2:
+    help: 'Run Fastqc'
+    mode: map
+  report:
+    help: Generate a simple fastqc report
+    mode: simple
+creation_date: Tue Mar 29 16:34:19 2011
+description: Run FastQC on a set a fastq files - quality assessment
+filesets:
+  input:
+    category: input
+    help: fastqc input files'
+    optional: false
+    pattern: '*/*.fq'
+    type: set
+moa_id: fastqc
+creation_date: Thu, 28 Apr 2011 09:27:17 +1200
+modification_date: Thu, 28 Apr 2011 09:27:05 +1200
+name: fastqc
+parameters:
+  output_dir:
+    type: dir
+    help: output directory for the fastQC report
+    optional: true
+    default: .
+title: Run FastQC for fastq QC
