@@ -72,15 +72,21 @@ def configShow(job):
         if job.template.parameters[p].private == True:
             continue
         
+        isLocal = job.conf.is_local(p)
+        
         if job.conf.setInJobConf(p):
-            moa.ui.fprint("{{bold}}%s\t%s{{reset}}" % (
-                p, job.conf[p]), f='jinja')
+            if not isLocal:
+                moa.ui.fprint("%s\t{{bold}}{{magenta}}%s{{reset}}\t(recursively defined)" % (
+                        p, job.conf[p]), f='jinja')
+            else:
+                moa.ui.fprint("%s\t{{bold}}%s{{reset}}" % (
+                        p, job.conf[p]), f='jinja')
         else:
             if job.template.parameters[p].optional:
-                moa.ui.fprint("{{blue}}%s\t%s{{reset}}" % (
+                moa.ui.fprint("%s\t{{blue}}%s{{reset}}" % (
                     p, job.conf[p]), f='jinja')
             else:
-                moa.ui.fprint("{{red}}%s\t%s{{reset}}" % (
+                moa.ui.fprint("%s\t{{red}}{{bold}}\t(undefined) %s{{reset}}" % (
                     p, job.conf[p]), f='jinja')
 
 def _unsetCallback(wd, vars):

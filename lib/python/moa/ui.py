@@ -45,6 +45,8 @@ FORMAT_CODES_ANSI = {
     'green'     : chr(27) + "[32m",
     'yellow'    : chr(27) + "[33m",
     'blue'      : chr(27) + "[34m",
+    'magenta'   : chr(27) + "[35m",
+    'cyan'      : chr(27) + "[36m",
     'white'     : chr(27) + "[37m",
 
     'bred'      : chr(27) + "[41m",

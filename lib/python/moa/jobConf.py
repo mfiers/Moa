@@ -1,3 +1,4 @@
+
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
 # 
@@ -78,7 +79,8 @@ class JobConf(object):
         self.localConf.save(self.jobConfFile, self.doNotSave)
 
     def setInJobConf(self, key):
-        if self.jobConf.has_key(key):
+        c = self._get_conf(key)
+        if c.has_key(key):
             return True
         else:
             return False
@@ -101,7 +103,13 @@ class JobConf(object):
             return self.jobConf
         else:
             return self.localConf
-        
+
+    def is_local(self, key):
+        if self.localConf.has_key(key):
+            return True
+        else:
+            return False
+
     def has_key(self, key):
         c = self._get_conf(key)
         if c.has_key(key):
