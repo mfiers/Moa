@@ -1,7 +1,8 @@
 ### run2
 
 mkdir -p {{output_dir}}
-fastqc {{ input }} --outdir={{ output_dir }}
+fastqc {{ input }} --outdir=`basename {{ touch }}`
+touch {{ touch }}
 
 ### report
 #!/usr/bin/env python

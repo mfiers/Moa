@@ -81,12 +81,13 @@ def log(m):
 if options.list == '-':
     rawIds = sys.stdin.read().split()
 else:
-    rawIds = open(options.list).read().strip().split("\n")
+    rawIds = open(options.list, 'U').readlines()
 
-ids = [x.split()[0] for x in rawIds]
+ids = [x.split()[0].replace('>', '') for x in rawIds]
 idsInfo = dict([(x.split()[0],x) for x in rawIds])
 
 log("read %d ids" % len(ids))
+log("first three ids: %s" % (" ".join(ids[:3])))
         
 import string
 def rc(sequence):
@@ -103,7 +104,14 @@ for seqId, header, seq in fastareader(options.fasta):
 
     if cre: testId = cre.search("%s %s" % (seqId, header)).groups()[0]
     else: testId = seqId
-    if not testId in ids: continue
+
+    if not testId in ids: 
+        continue
+    else:
+        #remove the testId from ids - we don't want to see
+        #sequences twice.
+        ids.remove(testId)
+    
 
     if 'antisense' in idsInfo[testId]:
         seq = rc(seq)

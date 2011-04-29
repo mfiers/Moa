@@ -20,9 +20,17 @@ filesets:
     optional: false
     pattern: '*/*.fq'
     type: set
+  output:
+    category: output
+    help: touch files - track if a file has been processed - do not touch this
+      unless you know what you're doing.
+    type: map
+    source: input
+    pattern: ./*.touch
+    optional: true
 moa_id: fastqc
 creation_date: Thu, 28 Apr 2011 09:27:17 +1200
-modification_date: Thu, 28 Apr 2011 09:27:05 +1200
+modification_date: Thu, 28 Apr 2011 14:19:04 +1200
 name: fastqc
 parameters:
   output_dir:
