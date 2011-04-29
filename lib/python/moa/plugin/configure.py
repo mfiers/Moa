@@ -86,8 +86,8 @@ def configShow(job):
                 moa.ui.fprint("%s\t{{blue}}%s{{reset}}" % (
                     p, job.conf[p]), f='jinja')
             else:
-                moa.ui.fprint("%s\t{{red}}{{bold}}\t(undefined) %s{{reset}}" % (
-                    p, job.conf[p]), f='jinja')
+                moa.ui.fprint("%s\t{{red}}{{bold}}\t(undefined){{reset}}" % (
+                    p), f='jinja')
 
 def _unsetCallback(wd, vars):
     """
