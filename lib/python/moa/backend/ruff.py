@@ -193,15 +193,20 @@ class Ruff(moa.backend.BaseBackend):
         rc = 0
         if cmode == 'map':
 
+            #this is because we're possibly reusing the executor
+            #function in multiple ruffus calls. In all cases it's to
+            #be interpreted as a new, fresh call - so, remove all
+            #metadata that might have stuck from the last time
+            if hasattr(executor, 'pipeline_task'):
+                del executor.pipeline_task
+                
             if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
                 moa.ui.exitError("no in or output files")
                 sys.exit()
-            
 
-            #late decoration - see if that works :/
+            l.debug("decorating executor")
             executor2 = ruffus.files(generate_data_map)(executor)
-            
-            l.info("Start run (with %d thread(s))" %
+            l.debug("Start run (with %d thread(s))" %
                    sysConf.options.threads)
 
             try:
@@ -220,9 +225,11 @@ class Ruff(moa.backend.BaseBackend):
                     einfo = e[0][1].split('->')[0].split('=')[1].strip()
                     einfo = einfo.replace('[', '').replace(']', '')
                     moa.ui.warn("Caught an error processing: %s" % einfo)
+                    raise
                 except:
                     moa.ui.warn("Caught an error: %s" % str(e))
-                rc = 1                
+                rc = 1
+
         elif cmode == 'reduce':
             pass
         elif cmode == 'simple':
@@ -235,8 +242,21 @@ class Ruff(moa.backend.BaseBackend):
             rc = moa.actor.simpleRunner(
                 self.job.wd, [tf.name],
                 silent=silent)
+
         return rc
 
+#A hack - @improve_name randomizes the function name upon calling so
+#it does not appear in the ruffus database of nodes
+@moa.utils.simple_decorator
+def improve_name(func):
+    def f(*args, **kwargs):
+        import random
+        f.__name__ = 'executor_%s' % random.randint(0,100000)
+        f.func_name = 'executor_%s' % random.randint(0,100000)
+        return func(*args, **kwargs)
+    return f
+
+@improve_name
 def executor(input, output, script, jobData):    
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
@@ -246,6 +266,7 @@ def executor(input, output, script, jobData):
     tf.close()
     os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
+    import logging
     for k in jobData:
         v = jobData[k]
         if isinstance(v, list):
