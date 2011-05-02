@@ -215,6 +215,7 @@ class Ruff(moa.backend.BaseBackend):
                     verbose = sysConf.options.verbose,
                     one_second_per_job=False,
                     multiprocess= sysConf.options.threads,
+                    logger = ruffus.black_hole_logger,                    
                     )
                 rc = 0
                 l.debug("Finished running (with %d thread(s))" %
