@@ -15,7 +15,9 @@ older, versions might work.
 
 - `Gnu Make <http://www.gnu.org/software/make/>`_ (3.81)
 
-- `Git <http://git-scm.com/>`_ (1.6). 
+- `Git <http://git-scm.com/>`_ (1.6). Necessary either to download the
+  Moa software from github, or, to make use of the integrated version
+  control.
 
 - `Python <http://python.org>`_ (2.6). Moa is not tested with other
    versions of Python
@@ -30,6 +32,20 @@ older, versions might work.
 - A number of support scripts & templates depend on `Biopython
   <http://biopython.org/wiki/Main_Page>`_. Consider installing it
   before starting to use Moa.
+
+- `Python-dev`: the Python development package. A number of the
+  prerequisites to be installed by easy_install try to compile C
+  libraries, and need this to be installed. Although all of them have
+  backup, python only, alteratives; from a performace perspective it
+  is probably smart to have this installed::
+
+    sudo apt-get install python-dev
+
+- `python-yaml`: Again - this is not really necessary, but might
+  improve performace. If omitted, easy_install will try to install and
+  complile it - and use a python only version if that fails::
+
+    sudo apt-get install python-dev
 
 - `Python easy_install
   <http://peak.telecommunity.com/DevCenter/EasyInstall>`_ is the
