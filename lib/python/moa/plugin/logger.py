@@ -26,7 +26,7 @@ def defineCommands(data):
         'log' : False
         }
 
-def prepare_3(data):
+def prepareCommand(data):
     moa.ui.message('Start "%s"' % sysConf.originalCommand)
     
 def prepare_background(data):
