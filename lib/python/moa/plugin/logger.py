@@ -26,6 +26,9 @@ def defineCommands(data):
         'log' : False
         }
 
+def prepare_3(data):
+    moa.ui.message('Start "%s"' % sysConf.originalCommand)
+    
 def prepare_background(data):
     data.logger.start_time = datetime.today()
 
@@ -93,13 +96,13 @@ def finish(data):
         return
     if data.originalCommand == 'run':
         if data.rc == 0:
-            moa.ui.fprint("Moa {{green}}Success{{reset}} running %s  (%s)" % (
+            moa.ui.message('{{bold}}Success{{reset}} executing "%s" (%s)' % (
                 data.originalCommand,
-                niceRunTime(str(data.runtime))), f='jinja')
+                niceRunTime(str(data.runtime))))
         else:
-            moa.ui.fprint("Moa {{red}}Error{{reset}} running %s  (%s)" % (
+            moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s  (%s)" % (
                 data.originalCommand,
-                niceRunTime(str(data.runtime))), f='jinja')
+                niceRunTime(str(data.runtime))))
         
                       
 def showLog(job):
