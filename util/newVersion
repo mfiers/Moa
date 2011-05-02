@@ -19,6 +19,17 @@
 # 
 
 VERSION=$1
+if [[ -z $VERSION ]]; then
+    VERSION=`cat VERSION`
+    echo "upgrading old version $VERSION"
+    minor=`echo $VERSION | sed "s/^.*\.\(.*\)$/\1/"`
+    major=`echo $VERSION | sed "s/^\(.*\)\..*$/\1/"`
+    let newminor=$minor+1
+    VERSION="$major.$newminor"
+fi
+
+echo "Setting version to $VERSION"
+
 echo $VERSION > VERSION
 
 tmp="/tmp/changelog"

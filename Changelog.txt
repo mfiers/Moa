@@ -1,3 +1,17 @@
+Moa 0.10.9 / 2011-05-03
+==========================
+
+  * fixed all unittests
+  * removed ruffus logging
+  * improved docs
+  * cleaning up
+  * removed a bug that prevented running ruffus twice (in the case of
+    -r) - refreshing ruffus before each run
+  * improved output
+  * more ansii colors
+  * moa show now shows if a variable is defined by a parent
+    (recursively) [#19 state:resolved]
+
 Moa 0.10.8 / 2011-04-28
 ==========================
 
