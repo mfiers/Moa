@@ -209,9 +209,12 @@ def run_recursive(wd):
     """
     plugins.run('prepare_recursive')
     for path, dirs, files in os.walk(wd):
+        dirs.sort() #make sure the dirs are sorted
         if '.moa' in dirs:
             moa.ui.message("Executing 'moa' in %s" % (path))
             run_3(path)
+        else:
+            moa.ui.message("skipping %s" % path)
         #remove all '.' directories -
         drem = [ x for x in dirs if x[0] == '.' ]
         [ dirs.remove(t) for t in drem]
