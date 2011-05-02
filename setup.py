@@ -60,9 +60,6 @@ for dirpath, dirnames, filenames in os.walk('.'):
 
 data_files.append(['etc/', ['./etc/config']])
 
-import pprint
-pprint.pprint (data_files)
-
 setup(name='moa',
       version=version,
       description='Moa - lightweight bioinformatics pipelines',
@@ -78,7 +75,7 @@ setup(name='moa',
           'GitPython>0.3',
           'pyyaml>3',
           'ruffus>=2.2',
-          'Yaco>=0.1.6',
+          'Yaco>=0.1.7',
           'fist>=0.1.2'
           ],
       classifiers = [
