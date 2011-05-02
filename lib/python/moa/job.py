@@ -241,7 +241,7 @@ class Job(object):
 
         #run through all commands...
         for execNow in execList:
-            l.info("Executing %s" % execNow)
+            l.debug("Executing %s" % execNow)
             sysConf.plugins.run("pre%s" % execNow.capitalize())
 
             rc = self.backend.execute(
