@@ -210,7 +210,7 @@ def run_recursive(wd):
     plugins.run('prepare_recursive')
     for path, dirs, files in os.walk(wd):
         if '.moa' in dirs:
-            moa.ui.message("Executing 'moa' in %s" % (path))
+            moa.ui.message("Executing '%s' in %s" % (" ".join(sys.argv), path))
             run_3(path)
         #remove all '.' directories -
         drem = [ x for x in dirs if x[0] == '.' ]
