@@ -230,6 +230,11 @@ class Ruff(moa.backend.BaseBackend):
                 except:
                     moa.ui.warn("Caught an error: %s" % str(e))
                 rc = 1
+                
+            #empty the ruffus node name cache
+            #make sure it keeps on running
+            for k in executor.pipeline_task._name_to_node.keys():
+                del executor.pipeline_task._name_to_node[k]
 
         elif cmode == 'reduce':
             pass
@@ -252,9 +257,19 @@ class Ruff(moa.backend.BaseBackend):
 def improve_name(func):
     def f(*args, **kwargs):
         import random
-        f.__name__ = 'executor_%s' % random.randint(0,100000)
-        f.func_name = 'executor_%s' % random.randint(0,100000)
+        nn = 'executor_%s' % random.randint(0,100000)
+        f.__name__ = nn
+        f.func_name = nn
+        func.__name__ = nn
+        func.func_name = nn
         return func(*args, **kwargs)
+
+    import random
+    nn = 'executor_%s' % random.randint(0,100000)
+    f.__name__ = nn
+    f.func_name = nn
+    func.__name__ = nn
+    func.func_name = nn
     return f
 
 @improve_name
