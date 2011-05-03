@@ -138,20 +138,22 @@ class Ruff(moa.backend.BaseBackend):
         for fsid in self.job.data.prerequisites:
             prereqs.extend(self.job.data.filesets[fsid]['files'])
                 
-        #determine which files are 'others'
+        #determine which files are 'others' - i.e. those files that
+        #are necessary, but do not force a rebuild if updated
         others = []
         for fsid in self.job.data.others:
             others.extend(self.job.data.filesets[fsid]['files'])
                     
         def generate_data_map():
             """
-            Process & generate the data for a map operation
+            Generator for a map operation -
+
+            this function generates each pair of in & output files
+            that constitute a single job.
             """
-            rv = []
-  
-         
-                
-            #determine number the number of files
+                  
+            #determine number the number of files - make sure that each
+            #job has the same number of in & output files
             noFiles = 0
             in_out_files = self.job.data.outputs + self.job.data.inputs
             for i, k in enumerate(in_out_files):
@@ -160,7 +162,7 @@ class Ruff(moa.backend.BaseBackend):
                 else:
                     assert(len(self.job.data.filesets[k].files) == noFiles)
 
-            #rearrange files
+            #rearrange the files for yielding
             for i in range(noFiles):
                 outputs = [self.job.data.filesets[x].files[i] 
                            for x in self.job.data.outputs]
@@ -168,14 +170,12 @@ class Ruff(moa.backend.BaseBackend):
                            for x in self.job.data.inputs]
                 
                 l.debug('pushing job with inputs %s' % ", ".join(inputs[:10]))
-                
-                
-                fsDict = dict([(x, self.job.data.filesets[x]['files'][i]) 
+                                
+                fsDict = dict([(x, self.job.data.filesets[x]['files'][i])
                                for x in self.job.data.inputs + self.job.data.outputs])
                 
                 jobData = {}
                 jobData.update(self.job.conf)
-                jobData['snippets'] = self.snippets.get_data()
                 jobData['wd'] = self.job.wd
                 jobData['silent'] = silent
                 jobData.update(fsDict)
@@ -184,32 +184,34 @@ class Ruff(moa.backend.BaseBackend):
 
                 yield([inputs + prereqs], outputs, script, jobData)
 
-
         if self.job.template.commands.has_key(command):
             cmode = self.job.template.commands[command].mode
         else:
             cmode = 'simple'
             
         rc = 0
-        if cmode == 'map':
 
-            #this is because we're possibly reusing the executor
-            #function in multiple ruffus calls. In all cases it's to
-            #be interpreted as a new, fresh call - so, remove all
-            #metadata that might have stuck from the last time
-            if hasattr(executor, 'pipeline_task'):
-                del executor.pipeline_task
-                
+        #this is because we're possibly reusing the executor
+        #function in multiple ruffus calls. In all cases it's to
+        #be interpreted as a new, fresh call - so, remove all
+        #metadata that might have stuck from the last time
+        if hasattr(executor, 'pipeline_task'):
+            del executor.pipeline_task
+
+        if cmode == 'map':
+            #if there are no & output files complain:
             if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
                 moa.ui.exitError("no in or output files")
-                sys.exit()
 
+            #here we're telling ruffus to proceed using the in & output files
+            #we're generating
             l.debug("decorating executor")
             executor2 = ruffus.files(generate_data_map)(executor)
             l.debug("Start run (with %d thread(s))" %
                    sysConf.options.threads)
-
+            
             try:
+                #Run!
                 ruffus.pipeline_run(
                     [executor2],
                     verbose = sysConf.options.verbose,
@@ -222,22 +224,74 @@ class Ruff(moa.backend.BaseBackend):
                    sysConf.options.threads)
 
             except ruffus.ruffus_exceptions.RethrownJobError, e:
+                #any error thrown somewhere in the pipeline will be
+                #caught here.
                 try:
+                    #try to get some structured info & output that.
                     einfo = e[0][1].split('->')[0].split('=')[1].strip()
                     einfo = einfo.replace('[', '').replace(']', '')
                     moa.ui.warn("Caught an error processing: %s" % einfo)
                     raise
                 except:
                     moa.ui.warn("Caught an error: %s" % str(e))
+                    raise
                 rc = 1
-                
-            #empty the ruffus node name cache
-            #make sure it keeps on running
-            for k in executor.pipeline_task._name_to_node.keys():
-                del executor.pipeline_task._name_to_node[k]
-
+                 
         elif cmode == 'reduce':
-            pass
+            inputs = []
+            for x in self.job.data.inputs:
+                inputs.extend(self.job.data.filesets[x].files)
+            outputs = []
+            for x in self.job.data.outputs:
+                outputs.extend(self.job.data.filesets[x].files)
+            if len(outputs) != 1:
+                moa.ui.exitError("invalid number of outputfiles for a reduce job")
+                
+            fsInDict = dict(
+                [(x, self.job.data.filesets[x]['files'])
+                 for x in self.job.data.inputs])
+            fsOutDict = dict(
+                [(x, self.job.data.filesets[x]['files'][0])
+                 for x in self.job.data.outputs])
+
+            jobData = {}
+            jobData.update(self.job.conf)
+            jobData['wd'] = self.job.wd
+            jobData['input']
+            jobData['silent'] = silent
+            jobData.update(fsInDict)
+            jobData.update(fsOutDict)
+            script = self.commands.render(command, jobData)
+            l.debug("Executing %s" %  script)
+            executor2 = ruffus.files(
+                [inputs + prereqs], outputs, script, jobData
+                )(executor)
+            l.debug("Start reduce run")
+            try:
+                #Run!
+                ruffus.pipeline_run(
+                    [executor2],
+                    one_second_per_job=False,
+                    verbose = sysConf.options.verbose,
+                    logger = ruffus.black_hole_logger,                    
+                    )
+                rc = 0
+                l.debug("Finished running (with %d thread(s))" %
+                        sysConf.options.threads)
+            except ruffus.ruffus_exceptions.RethrownJobError, e:
+               #any error thrown somewhere in the pipeline will be
+               #caught here.
+               try:
+                   #try to get some structured info & output that.
+                   einfo = e[0][1].split('->')[0].split('=')[1].strip()
+                   einfo = einfo.replace('[', '').replace(']', '')
+                   moa.ui.warn("Caught an error processing: %s" % einfo)
+                   raise
+               except:
+                   moa.ui.warn("Caught an error: %s" % str(e))
+                   raise
+               rc = 1
+ 
         elif cmode == 'simple':
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
@@ -249,6 +303,11 @@ class Ruff(moa.backend.BaseBackend):
                 self.job.wd, [tf.name],
                 silent=silent)
 
+        #empty the ruffus node name cache needs to be empty -
+        #otherwise ruffus might think that we're rerunning jobs
+        if hasattr(executor, 'pipeline_task'):
+            for k in executor.pipeline_task._name_to_node.keys():
+                del executor.pipeline_task._name_to_node[k]
         return rc
 
 #A hack - @improve_name randomizes the function name upon calling so

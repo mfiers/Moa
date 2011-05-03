@@ -1,7 +1,7 @@
 ### run
 	echo run bowtie_build
-	bowtie-build {{ extra_params }} {{ input }} {{ ebwt_outfile_base }}
-	touch {{ ebwt_outfile_base }}
+	bowtie-build {{ extra_params }} {{ input|join(',') }} {{ output }}
+	touch {{ output }}
 
 ### clean
 	rm *.ebwt {{ ebwt_outfile_base }}

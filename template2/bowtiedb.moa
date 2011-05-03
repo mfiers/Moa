@@ -7,7 +7,7 @@ commands:
     mode: simple
   run:
     help: Create the bowtie database
-    mode: map
+    mode: reduce
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bowtie index from a reference sequence
 filesets:
@@ -17,6 +17,11 @@ filesets:
     optional: false
     pattern: '*/*.fasta'
     type: set
+  output:
+    category: output
+    type: single
+    help: database name to create
+    pattern: db
 moa_id: bowtiedb
 modification_date: Wed Dec 09 07:56:48 2010
 name: bowtiedb
@@ -26,12 +31,6 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  ebwt_outfile_base:
-    category: ''
-    default: db_index
-    help: write Ebwt data to files with this dir/basename
-    optional: true
-    type: string
   extra_params:
     category: ''
     default: ''

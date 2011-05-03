@@ -96,7 +96,7 @@ def prepare_3(data):
         elif fs.type == 'single':
             job.template.parameters[fsid] = {
                 'category' : fs.get('category', 'input'),
-                'default' : fs.get('default', ''),
+                'default' : fs.get('pattern', ''),
                 'optional' : fs.get('optional', True),
                 'help' : fs.help,
                 'type' : 'file'
@@ -148,10 +148,11 @@ def preparefilesets(data):
         job.data.filesets[fsid] = fs
 
         #Resolve filesets - first the NON-map sets
-        if fs.type == 'set' or fs.type == 'single':
+        if fs.type == 'set':
             files = fist.fistFileset(job.conf[fsid])
             files.resolve()
-            
+        elif fs.type == 'single':
+            files = fist.fistSingle(job.conf[fsid])
         elif fs.type == 'map':
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")
