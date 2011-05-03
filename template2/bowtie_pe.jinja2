@@ -1,12 +1,10 @@
 ### run
 echo start bowtie pe														
-bowtie -S {{ extra_params }}           	    \
-    -I {{ min_insertsize }}             	\
-    -X {{ max_insertsize }}             	\
-    {{ ebwt_base }}                     	\
-    -1 {{ fq_forward_input }}           	\
-    -2 {{ fq_reverse_input }} | samtools view -bS - > {{ output }}
-echo fin bowtie pe
+bowtie -S {{ extra_params }}                          \
+    -I {{ min_insertsize }} -X {{ max_insertsize }}   \
+    {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }} \
+    | samtools view -bS - > {{ output }}
+
 
 ### clean
 

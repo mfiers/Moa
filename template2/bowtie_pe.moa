@@ -24,6 +24,12 @@ filesets:
     pattern: '*/*_2.fq'
     source: fq_forward_input
     type: map
+  db:
+    category: prerequisite
+    help: The (basename of the) bowtie database to use.
+    optional: false
+    pattern: ../20.bowtiedb/db
+    type: single
   output:
     category: output
     help: Bam output file
@@ -39,11 +45,6 @@ parameter_category_order:
 - system
 - advanced
 parameters:
-  ebwt_base:
-    category: ''
-    help: The (basename of the) bowtie database to use.
-    optional: false
-    type: string
   extra_params:
     default: ''
     help: extra parameters to feed to bowtie

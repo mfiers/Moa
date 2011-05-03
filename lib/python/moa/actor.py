@@ -31,9 +31,12 @@ def simpleRunner(wd, cl, silent=False):
     stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
     outDir = os.path.join(wd, '.moa', 'out', stst)
     if not os.path.exists(outDir):
-        os.makedirs(outDir)
-    SOUT = open(os.path.join(outDir, 'stdout'), 'w')
-    SERR = open(os.path.join(outDir, 'stderr'), 'w')    
+        try:
+            os.makedirs(outDir)
+        except OSError:
+            pass
+    SOUT = open(os.path.join(outDir, 'stdout'), 'a')
+    SERR = open(os.path.join(outDir, 'stderr'), 'a')    
     l.debug("executing %s" % " ".join(cl))
 
 

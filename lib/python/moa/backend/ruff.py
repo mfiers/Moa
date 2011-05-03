@@ -9,6 +9,7 @@ import os
 import re
 import sys
 import stat
+import random
 import tempfile
 import subprocess
 
@@ -131,7 +132,8 @@ class Ruff(moa.backend.BaseBackend):
         """
 
         if not self.commands.has_key(command):
-            moa.ui.exitError("Unknown command %s" % command)
+            rc = -1
+            return rc
 
         #determine which files are prerequisites
         prereqs = []
@@ -315,7 +317,6 @@ class Ruff(moa.backend.BaseBackend):
 @moa.utils.simple_decorator
 def improve_name(func):
     def f(*args, **kwargs):
-        import random
         nn = 'executor_%s' % random.randint(0,100000)
         f.__name__ = nn
         f.func_name = nn
@@ -331,7 +332,7 @@ def improve_name(func):
     func.func_name = nn
     return f
 
-@improve_name
+#@improve_name
 def executor(input, output, script, jobData):    
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
