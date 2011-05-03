@@ -214,7 +214,9 @@ def run_recursive(wd):
             moa.ui.message("Executing '%s' in %s" % (" ".join(sys.argv), path))
             run_3(path)
         else:
-            moa.ui.message("skipping %s" % path)
+            # moa.ui.message("skipping %s" % path)
+            pass
+            
         #remove all '.' directories -
         drem = [ x for x in dirs if x[0] == '.' ]
         [ dirs.remove(t) for t in drem]
