@@ -231,36 +231,36 @@ class Job(object):
         self.prepare()
 
         ### Run plugin initialization step 3 - just before execution
-        sysConf.plugins.run('prepare_3')
-        sysConf.plugins.run("pre_command")
+        sysConf.pluginHandler.run('prepare_3')
+        sysConf.pluginHandler.run("pre_command")
 
         #run a prep step if the original command is not in the
         #execlist
         if command not in execList:
-            sysConf.plugins.run("pre%s" % command.capitalize())
+            sysConf.pluginHandler.run("pre%s" % command.capitalize())
 
         #run through all commands...
         for execNow in execList:
             l.debug("Executing %s" % execNow)
-            sysConf.plugins.run("pre%s" % execNow.capitalize())
+            sysConf.pluginHandler.run("pre%s" % execNow.capitalize())
 
             rc = self.backend.execute(
                 execNow, verbose = verbose, silent=silent)
             sysConf.rc = rc
 
             if rc != 0:
-                sysConf.plugins.run('postError')
+                sysConf.pluginHandler.run('postError')
                 break
             
-            sysConf.plugins.run("post%s" % execNow.capitalize(), reverse=True)
+            sysConf.pluginHandler.run("post%s" % execNow.capitalize(), reverse=True)
 
         #likewise if the command is not in the execlist - run a
         #post process 
         if command not in execList:
-            sysConf.plugins.run("post%s" % command.capitalize(), reverse=True)
+            sysConf.pluginHandler.run("post%s" % command.capitalize(), reverse=True)
 
-        sysConf.plugins.run("post_command", reverse=True)
-        sysConf.plugins.run("finish", reverse=True)
+        sysConf.pluginHandler.run("post_command", reverse=True)
+        sysConf.pluginHandler.run("finish", reverse=True)
 
         return rc
 

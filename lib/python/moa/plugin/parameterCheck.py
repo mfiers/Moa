@@ -13,6 +13,7 @@
 import os
 import sys
 import moa.ui
+from moa.sysConf import sysConf
 
 def defineCommands(data):
     """
@@ -67,7 +68,8 @@ def test_ui(data):
         errorMessage(message, detail)
     
     if messages and not options.force:
-        sys.exit(-1)    
+        sysConf.pluginHandler.run('postError')
+        moa.ui.exitError("exitting")
     
 def test(data):
     job = data['job']

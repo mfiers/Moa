@@ -13,13 +13,13 @@ commandline
 
 import UserDict
 import moa.logger as l
-
+from moa.sysConf import sysConf
 import Yaco
 
 ## Load & handle plugins
-class PluginHandler(UserDict.DictMixin):
+class PluginHandler():
 
-    def __init__(self, sysConf):
+    def __init__(self):
         """
         Must be called with a global 'system configuration' object
         (Yaco)
@@ -28,8 +28,7 @@ class PluginHandler(UserDict.DictMixin):
         ## Determine what plugins are loaded
         self.sysConf = sysConf
         self.pluginList = sysConf.getPlugins()
-        self.plugins = {}
-        self.sysConf.plugins = self
+        #self.sysConf.plugins = self
         
         l.debug("Plugins %s" % ", ".join(self.pluginList))
         ## load the plugins as seperate modules. A plugin does not need to
@@ -45,7 +44,7 @@ class PluginHandler(UserDict.DictMixin):
             pyModule = 'moa.plugin.%s' % plugin
             try:
                 _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
-                self.plugins[plugin] = _m
+                sysConf.plugins[plugin]['module'] = _m
                 l.debug("Successfully Loaded module %s" % pyModule)
             except ImportError, e:
                 if not str(e) == "No module named %s" % plugin:
@@ -54,30 +53,35 @@ class PluginHandler(UserDict.DictMixin):
             
     def register(self, **kwargs):
         """
-        Keep track of a dictionary of data that might be used
-        by any of the plugins - this seems cleaner than relying
-        on using globals
+        Keep track of a dictionary of data that might be used by any
+        of the plugins - this seems cleaner than relying on using
+        globals. - or actually - we're relying on one global now -
+        called sysConf.
+
+        Think this is outdated -it is just as easy to manipulate
+        sysConf directly.
         """
         for k in kwargs:
             self.sysConf[k] = kwargs[k]
             
     def run(self, command, reverse=False):
         rv = {}
-        toRun = self.pluginList
+        runOrder = self.pluginList
         if reverse:
-            toRun.reverse()
-        for p in toRun:
-            if not command in dir(self[p]):
+            runOrder.reverse()
+        for p in runOrder:
+            m = sysConf.plugins[p].module
+            if not hasattr(m, command):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
-            rv['p'] = getattr(self[p], command)(self.sysConf)
+            rv['p'] = getattr(m, command)(sysConf)
         return rv
             
     def runCallback(self, job, command):
         """
         Run a command callback 
         """
-        commandInfo = self.sysConf.commands[command]
+        commandInfo = sysConf.commands[command]
         commandInfo['call'](job)
 
     def getAttr(self, attribute):
@@ -86,19 +90,8 @@ class PluginHandler(UserDict.DictMixin):
         requested attribute
         """
         for p in self.pluginList:
-            a = getattr(self[p], attribute, None)
+            a = getattr(sysConf.plugins[p], attribute, None)
             if a: yield p, a
-        
-    # Implement the basic functions for a dict
-    #
-    def __getitem__(self, item):
-        return self.plugins[item]
-
-    def __setitem__(self, item, value):
-        self.plugins[item] = value
-
-    def keys(self):
-        return self.plugins.keys()
 
 #Should I create a global placeholder for this moa run??
 #moaPlugins = Plugins()

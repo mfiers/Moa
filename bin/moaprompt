@@ -148,12 +148,12 @@ if os.path.exists('.moa/log'):
             F.seek(0)
             lines = F.read().strip().split('\n')
 
-    ll = []
 
+    ll = []
     for l in range(len(lines), 0, -1):
         ll = lines[l-1].split("\t", 5)
         if len(ll) != 6: continue
-        if ll[-1] == 'run': break
+        if ll[1] == 'run': break
 
     if len(ll) != 6:
         data['time'] = '(error parsing log)'

@@ -66,11 +66,11 @@ if '-v' in sys.argv: moa.logger.setVerbose()
 
 sysConf.rc = 0
 ## Initialze the plugins
-plugins = moa.plugin.PluginHandler(sysConf)
-
+pluginHandler = moa.plugin.PluginHandler()
+sysConf.pluginHandler = pluginHandler
 ## Command definitions
 sysConf.commands = moa.commands.Commands()
-plugins.run('defineCommands')
+pluginHandler.run('defineCommands')
 
 
 ## defining a usage message
@@ -134,9 +134,9 @@ parser.add_option(
 parser.add_option("-r", "--recursive", dest="recursive",
                   help="Perfom action recursively", action='store_true')
 
-## See if the plugins have anything to add to the optparse instance:
+## See if the pluginHandler have anything to add to the optparse instance:
 sysConf.parser = parser
-plugins.run('defineOptions')
+pluginHandler.run('defineOptions')
     
 def run_3(wd):
     """
@@ -186,11 +186,11 @@ def run_3(wd):
         l.debug("using a callback for moa %s" % command)
 
         ### Run plugin initialization step 3 - just before execution
-        sysConf.plugins.run('prepare_3')
-        plugins.run("pre%s" % command.capitalize())
-        plugins.runCallback(job, command)
-        plugins.run("post%s" % command.capitalize())
-        sysConf.plugins.run('finish')
+        pluginHandler.run('prepare_3')
+        pluginHandler.run("pre%s" % command.capitalize())
+        pluginHandler.runCallback(job, command)
+        pluginHandler.run("post%s" % command.capitalize())
+        pluginHandler.run('finish')
 
     elif not job.isMoa():
         moa.ui.exitError("Unknown command, not in a Moa dir")
@@ -207,7 +207,7 @@ def run_recursive(wd):
     """
     Run through the subdirs (depth first) and execute all moa jobs
     """
-    plugins.run('prepare_recursive')
+    pluginHandler.run('prepare_recursive')
     for path, dirs, files in os.walk(wd):
         dirs.sort() #make sure the dirs are sorted
         if '.moa' in dirs:
@@ -220,7 +220,7 @@ def run_recursive(wd):
         #remove all '.' directories -
         drem = [ x for x in dirs if x[0] == '.' ]
         [ dirs.remove(t) for t in drem]
-    plugins.run('post_recursive')
+    pluginHandler.run('post_recursive')
 
     
 def run_2():
@@ -238,7 +238,7 @@ def run_2():
     'global'
     """
     
-    plugins.run('prepare_recursion')
+    pluginHandler.run('prepare_recursion')
 
     wd = os.getcwd()
     if not '-r' in sys.argv:
@@ -265,7 +265,7 @@ def run_2():
             run_recursive(wd)
         else:
             run_3(wd)
-    plugins.run('post_recursion')
+    pluginHandler.run('post_recursion')
 
 
 def run_1():
@@ -275,7 +275,7 @@ def run_1():
     if --bg is defined: fork & exit.
 
     """
-    plugins.run('prepare_background')
+    pluginHandler.run('prepare_background')
     
     #quick check: are we're backgrounding:
     if '--bg' in sys.argv:
@@ -284,14 +284,14 @@ def run_1():
         if child != 0:
             # This is the parent thread - exit now - all
             sysConf.childPid = child
-            plugins.run("background_exit")
+            pluginHandler.run("background_exit")
             moa.ui.message("starting background run")
             sys.exit(0)
 
     #go to the next stage!
     run_2()
 
-    plugins.run('post_background')
+    pluginHandler.run('post_background')
 
 ## Main dispatcher
 if __name__ == "__main__":
@@ -318,12 +318,12 @@ if __name__ == "__main__":
             run_1()
     except KeyboardInterrupt:
         sysConf.rc = -1
-        plugins.run("post_interrupt")
+        pluginHandler.run("post_interrupt")
         moa.ui.warn("Interrupted")
         sys.exit(-1)
     except Exception, e:
         sysConf.rc = -1
-        plugins.run("post_error")
+        pluginHandler.run("post_error")
         moa.ui.warn("Encountered a run error?")
         raise
 

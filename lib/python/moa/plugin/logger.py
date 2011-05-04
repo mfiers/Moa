@@ -65,44 +65,51 @@ def niceRunTime(d):
         return "%d sec" % seconds
 
 def postInterrupt(data):
-    return postCommand(data)
+    _writeLog(data)
 
-def finish(data):
-    data.logger.end_time = datetime.today()
-    data.logger.run_time = data.logger.end_time - data.logger.start_time
-    runtime = data.logger.end_time - data.logger.start_time
-    data.runtime = str(runtime)
-    logFile = os.path.join(data.job.confDir, 'log')
-    if not os.path.exists(data.job.confDir):
+def postError(data):
+    _writeLog(data)
+
+def _writeLog(data=None):
+    
+    sysConf.logger.end_time = datetime.today()
+    sysConf.logger.run_time = sysConf.logger.end_time - sysConf.logger.start_time
+    runtime = sysConf.logger.end_time - sysConf.logger.start_time
+    sysConf.runtime = str(runtime)
+    logFile = os.path.join(sysConf.job.confDir, 'log')
+    if not os.path.exists(sysConf.job.confDir):
         return
     commandInfo = {}
-    if data.originalCommand in data.commands.keys():
-        commandInfo = data.commands[data.originalCommand]
-    if commandInfo.get('log', True):
-        l.debug("Logging %s" % data.originalCommand)
-        command = " ".join(" ".join(sys.argv).split())
-        with open(logFile, 'a') as F:
-            F.write("%s\n" % "\t".join([
-                str(data.rc),
-                ",".join(data.executeCommand),
-                data.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                data.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-                str(data.runtime), command
-                ]))
+    if sysConf.originalCommand in sysConf.commands.keys():
+        commandInfo = sysConf.commands[sysConf.originalCommand]
 
+    l.debug("Logging %s" % sysConf.originalCommand)
+    command = " ".join(" ".join(sys.argv).split())
+
+    with open(logFile, 'a') as F:
+        F.write("%s\n" % "\t".join([
+            str(sysConf.rc),
+            ",".join(sysConf.executeCommand),
+            sysConf.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+            sysConf.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
+            str(sysConf.runtime), command
+            ]))
+
+def finish(data):
+    _writeLog(data)
     #and - probably not the location to do this, but print something to screen
     #as well
-    if data.options.background:
+    if sysConf.options.background:
         return
-    if data.originalCommand == 'run':
-        if data.rc == 0:
+    if sysConf.originalCommand == 'run':
+        if sysConf.rc == 0:
             moa.ui.message('{{bold}}Success{{reset}} executing "%s" (%s)' % (
-                data.originalCommand,
-                niceRunTime(str(data.runtime))))
+                sysConf.originalCommand,
+                niceRunTime(str(sysConf.runtime))))
         else:
             moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s  (%s)" % (
-                data.originalCommand,
-                niceRunTime(str(data.runtime))))
+                sysConf.originalCommand,
+                niceRunTime(str(sysConf.runtime))))
         
                       
 def showLog(job):

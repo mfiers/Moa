@@ -45,15 +45,16 @@ class SysConf(Yaco.Yaco):
 
     
     def getPlugins(self):
-        rv = self.get('plugins', [])
-        for p in self.get('plugins_extra', []):
-            if p in rv: continue
-            rv.append(p)
-        return rv
+        tmprv = []
+        for p in self.plugins:
+            if self.plugins[p].get('enabled', False):
+                tmprv.append((self.plugins[p].get('order', 100), p))
+        tmprv.sort()
+        return [x[1] for x in tmprv]
 
 #This function is not necessary??? or is it??
-def getPlugins():
-    return sysConf.getPlugins()
+#def getPlugins():
+#    return sysConf.getPlugins()
 
 if sysConf == None:
     sysConf = SysConf()

@@ -253,8 +253,9 @@ moa status | grep -qi "not a Moa job"
 moa simple --np -t test
 moa status | grep -qi "template: simple"
 moa status | grep -qi "Status: waiting"
-moa run || true
+moa run 2>/dev/null || true
 echo a
+moa show
 moa status | grep -qi "Status: error"
 echo b
 moa set process="sleep 0.1"

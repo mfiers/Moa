@@ -103,7 +103,7 @@ def createSimple(job):
     params = [('process', command)]
 
     #make sure the correct hooks are called
-    sysConf.plugins.run("preNew")
+    sysConf.pluginHandler.run("preNew")
 
     moa.job.newJob(
         wd, template='simple',
@@ -111,7 +111,7 @@ def createSimple(job):
         parameters=params)
 
     #make sure the correct hooks are called
-    sysConf.plugins.run("postNew")
+    sysConf.pluginHandler.run("postNew")
 
 
 
