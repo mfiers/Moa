@@ -1,0 +1,34 @@
+### run
+
+if [[ {{sequence_name}} == "from_dir" ]]; then
+	seqName=`basename $PWD | sed "s/[0-9]*\.//"`
+else
+	seqName={{sequence_name}}
+fi
+
+if [[ -z "${seqName}" ]]; then
+	seqName='out'
+fi
+
+base="http://www.ncbi.nlm.nih.gov/entrez/eutils"
+wget "${base}/esearch.fcgi?term={{query}}&db={{db}}&retmax=1000000&usehistory=y" \
+	-O query.xml
+
+webEnv=`xml_grep --cond "WebEnv" query.xml --text_only`
+queryKey=`xml_grep --cond "QueryKey" query.xml --text_only`
+
+wget "${base}/efetch.fcgi?db={{db}}&WebEnv=${webEnv}&query_key=${queryKey}&report=gb" -O $seqName.gb
+
+if [[ {{rename_sequence}} == "True" ]]; then
+	cat $seqName.gb \
+		| seqret -filter \
+		-osdbname2 '{{sequence_name}} original_id' \
+		> $seqName.fasta
+else
+	cat $seqName.gb | seqret -filter \
+		> $seqName.fasta
+fi
+
+### clean
+
+rm  *.fasta query.xml fasta.tmp *.gb .moa/lock 2>/dev/null
