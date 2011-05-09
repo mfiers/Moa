@@ -1,4 +1,3 @@
-
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
 # 
@@ -49,23 +48,28 @@ class JobConf(object):
         #: displayed by default)
         self.private = []
 
-        #create a list of conf files to load:
-        listToLoad = []
+        #load the local conf separately - 
         if os.path.exists(self.jobConfFile):
-            listToLoad.append(self.jobConfFile)
             self.localConf.load(self.jobConfFile)
-            
+
+        #create a list of conf files to load:
+        listToLoad = []        
         parsePath = self.job.wd
-        while parsePath:
-            parent = os.path.dirname(parsePath)
-            thisConfig = os.path.join(parent, '.moa', 'config')
+        lookAt = '.'
+        while True:
+            abspath = os.path.abspath(lookAt)
+
+            # not expecting a .moa in the root and don't need to go
+            # higher up
+            if abspath == '/': break 
+
+            thisConfig = os.path.join(abspath, '.moa', 'config')
             if os.path.isfile(thisConfig):
-                listToLoad.insert(0,  thisConfig)
-            parsePath = parent
-            if parent == '/': break
+                listToLoad.insert(0,  (lookAt, thisConfig))
+            lookAt = '../' + lookAt
             
-        for cf in listToLoad:
-            self.jobConf.load(cf)
+        for delta, confFile in listToLoad:
+            self.load(confFile, delta)
 
         #this is a temp addition - private was accidentaly
         #added to the jobconf in a number of jobs - shouldn't
@@ -74,6 +78,29 @@ class JobConf(object):
             del self.jobConf['private']
 
         
+    def load(self, confFile, delta=None):
+        """
+        Load a configuration file
+
+        :param delta: if a value appears to be a relative path,
+           try to correct for this. Currently this only works
+           for files that exist. i.e. 
+        
+        """
+        y = Yaco.Yaco()
+        y.load(confFile)
+        for k, v in y.items():
+            #find potential relative links
+            if not isinstance(v, str): continue
+            if not v: continue
+            if not (v[:2] == './' or v[:3] == '../'):
+                continue
+            correctedPath = os.path.normpath(delta + '/' + v)
+            if os.path.exists(correctedPath):
+                y[k] = correctedPath
+
+        self.jobConf.update(y)
+
     def save(self):
         self.job.checkConfDir()
         self.localConf.save(self.jobConfFile, self.doNotSave)
