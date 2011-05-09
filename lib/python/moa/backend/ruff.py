@@ -235,7 +235,7 @@ class Ruff(moa.backend.BaseBackend):
                     moa.ui.warn("Caught an error processing: %s" % einfo)
                     raise
                 except:
-                    moa.ui.warn("Caught an error: %s" % str(e))
+                    moa.ui.warn("Caught an error: \n%s" % str(e))
                     raise
                 rc = 1
                  
