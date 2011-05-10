@@ -47,7 +47,7 @@ class SysConf(Yaco.Yaco):
     def getPlugins(self):
         tmprv = []
         for p in self.plugins:
-            if self.plugins[p].get('enabled', False):
+            if self.plugins[p].get('enabled', True):
                 tmprv.append((self.plugins[p].get('order', 100), p))
         tmprv.sort()
         return [x[1] for x in tmprv]

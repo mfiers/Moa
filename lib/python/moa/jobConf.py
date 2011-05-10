@@ -15,6 +15,7 @@ moa job configuration
 import re
 import os
 import sys
+import glob
 
 import Yaco
  
@@ -89,6 +90,9 @@ class JobConf(object):
         """
         y = Yaco.Yaco()
         y.load(confFile)
+
+        #find relative links & see if they need to be adjusted
+        #
         for k, v in y.items():
             #find potential relative links
             if not isinstance(v, str): continue
@@ -97,6 +101,8 @@ class JobConf(object):
                 continue
             correctedPath = os.path.normpath(delta + '/' + v)
             if os.path.exists(correctedPath):
+                y[k] = correctedPath
+            elif glob.glob(correctedPath):
                 y[k] = correctedPath
 
         self.jobConf.update(y)

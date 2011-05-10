@@ -19,6 +19,7 @@ import datetime
 import moa.ui
 import moa.utils
 import moa.logger as l
+from moa.sysConf import sysConf
 
 def prepare_3(data):
     job = data['job']
@@ -78,6 +79,7 @@ def blog(job):
             break
 
     message = "\n".join(txt)
+    sysConf.job.data.blog.message = message
     with open('moa.description', "a") as F:
         now = datetime.datetime.now()
         F.write("\n")

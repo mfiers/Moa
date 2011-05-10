@@ -13,6 +13,7 @@ Print info on Moa jobs and Moa
 """
 
 import os
+import re
 import glob
 
 import moa.ui
@@ -72,6 +73,7 @@ def defineCommands(data):
 def tree(job):
     wd = job.wd
     filt = sysConf.args[1:]
+    findMoaId = re.compile("^name: (\S*)$", re.M)
     for path, dirs, files in os.walk(job.wd):
         rpath = path.replace(wd, '')[1:]
 
@@ -97,6 +99,17 @@ def tree(job):
             moa.ui.fprint('(..) %s./%s' % ('  ' * lev, rpath), f='jinja')
             continue
         tag = '{{green}}M{{reset}}'
+        
+        templateFile = os.path.join(path, '.moa', 'template')
+        templateName = ""
+        if os.path.exists(templateFile):
+            templ = open(templateFile).read()
+            findmid = findMoaId.search(templ)
+            if findmid: 
+                templateName = findmid.groups()[0]
+            
+        
+        
         statusFile = os.path.join(path, '.moa', 'status')
         if not os.path.exists(statusFile):
             status = '{{bold}}{{black}}?{{reset}}'
@@ -108,8 +121,12 @@ def tree(job):
                 'error' : '{{red}}E{{reset}}',
                 'interrupted' : '{{blue}}I{{reset}}'
                 }.get(message, '{{green}}?{{reset}}')
-        moa.ui.fprint("(%s%s) %s./%s" % ( tag, status, '  ' * lev, rpath),
-                      f = 'jinja')
+        if templateName:
+            moa.ui.fprint("(%s%s) %s./%s {{blue}}(%s){{reset}}" % ( tag, status, '  ' * lev, rpath, templateName),
+                          f = 'jinja')
+        else:
+            moa.ui.fprint("(%s%s) %s./%s" % ( tag, status, '  ' * lev, rpath),
+                          f = 'jinja')
     
 
 

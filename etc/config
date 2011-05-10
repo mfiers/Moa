@@ -1,51 +1,35 @@
 plugins:
   fileset:
-    enabled: true
     order: 1
   doc:
-    enabled: true
     order: 10
   configure:
-    enabled: true
     order: 10
   newjob:
-    enabled: true
     order: 10
   logger:
-    enabled: true
     order: 10
   test:
-    enabled: true
     order: 10
   lock:
-    enabled: true
     order: 10
   adhoc:
-    enabled: true
     order: 10
   help:
-    enabled: true
     order: 10
   status:
-    enabled: true
     order: 10
   template:
-    enabled: true
     order: 10
   info:
-    enabled: true
     order: 10
   parameterCheck:
-    enabled: true
     order: 10
   moautil:
-    enabled: true
     order: 10
   moaGit:
-    enabled: true
     order: 10
   extraCommands:
-    enabled: true
     order: 10
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
