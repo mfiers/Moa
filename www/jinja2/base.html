@@ -67,6 +67,16 @@ Content-type: text/html
 
   <div class="moaMessage"></div>
 
+{% if debugMessage %}
+  <div class="moaDebugMessage">
+	<h2>Debug</h2>
+	<pre>
+	  message:
+	  {{debugMessage}}
+	</pre>
+  </div>
+{% endif %}
+
   <div class="moaLogo">
     <img id="moaLogoImage" src="/moa/html/images/moa_logo_{{ status }}.png" />
   </div>

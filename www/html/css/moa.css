@@ -28,7 +28,19 @@ a:active { color: #FE5D44; }
 .moaBreadCrumbs .moaBreadCrumb a:hover { color: #A31E39; }
 .moaBreadCrumbs .moaBreadCrumb a:active { color: #A31E39; }
 
-
+.moaDebugMessage {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+	width: 600px;
+	top: 5px;
+	color: white;
+	padding: 5px;
+	opacity: .2;
+	border: 2px solid #C7BE35;
+	background: #99366C;
+	z-index: 100;
+}
 .moaHeader {
 	clear: both;
 	padding: 0px;

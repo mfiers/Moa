@@ -118,7 +118,9 @@ d['jobReport'] = getReport(moacwd)
 #Fire off a generic page without any information if this is not a Moa dir
 sys.stderr.write("getting a job for %s" % moacwd)
 job = moa.job.Job(moacwd)
+
 sys.stderr.write("found a job? %s %s" % (job, job.template.name))
+sys.stderr.write(str(job.conf.pretty()))
 if job.template.name == 'nojob':
     pageTemplate = jenv.get_template('notMoa.html')
     print pageTemplate.render(**d)
