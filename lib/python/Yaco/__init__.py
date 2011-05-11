@@ -274,7 +274,7 @@ class Yaco(dict):
         for k in self.keys():
             if k in _priv:
                 continue
-            if k[0] == '_':
+            if isinstance(k, str) and k and k[0] == '_':
                 continue
             val = self[k]
             if isinstance(val, Yaco):
