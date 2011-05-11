@@ -72,10 +72,13 @@ def templateHelp(job):
         if not template._categories.has_key(cat):
             template._categories[cat] = []
         template._categories[cat].append(pn)
-    if not template.has_key('parameter_category_order'):
-        template.parameter_category_order = template._categories.keys()
-        template.parameter_category_order.sort()
-        
+
+    #if not template.has_key('parameter_category_order'):
+    template.parameter_category_order = template._categories.keys()
+    template.parameter_category_order.sort()
+
+    print template._categories
+
     global JENV
     JENV = jinja2.Environment(loader=jinja2.FileSystemLoader(
         os.path.join(MOABASE, 'lib', 'jinja2')))
