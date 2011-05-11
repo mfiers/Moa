@@ -18,7 +18,7 @@
 .SH PARAMETERS
 (* denotes a mandatory parameter)
 {% for cat in parameter_category_order -%}
-{% if cat -%}
+{% if cat %}
 .SS {{ cat|capitalize }} parameters
 {% endif -%}
 {% for pn in _categories[cat] -%}
