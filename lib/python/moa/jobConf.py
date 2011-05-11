@@ -38,7 +38,7 @@ class JobConf(object):
         self.jobConf = Yaco.Yaco()
         self.localConf = Yaco.Yaco()
         self.jobConfFile = os.path.join(self.job.confDir, 'config')
-        
+
         #: these fields are not to be saved
         self.doNotSave = []
         
@@ -57,6 +57,8 @@ class JobConf(object):
         listToLoad = []        
         parsePath = self.job.wd
         lookAt = '.'
+        #to be safe - cwd to the directory
+        os.chdir(self.job.wd)
         while True:
             abspath = os.path.abspath(lookAt)
 
@@ -69,7 +71,9 @@ class JobConf(object):
                 listToLoad.insert(0,  (lookAt, thisConfig))
             lookAt = '../' + lookAt
             
+        #sys.stderr.write("%s" % listToLoad)
         for delta, confFile in listToLoad:
+            #sys.stderr.write("loading %s %s" % (delta, confFile))
             self.load(confFile, delta)
 
         #this is a temp addition - private was accidentaly
@@ -78,7 +82,10 @@ class JobConf(object):
         if self.jobConf.has_key('private'):
             del self.jobConf['private']
 
-        
+
+    def pretty(self):
+        return self.jobConf.pretty()
+
     def load(self, confFile, delta=None):
         """
         Load a configuration file
