@@ -74,6 +74,9 @@ def tree(job):
     wd = job.wd
     filt = sysConf.args[1:]
     findMoaId = re.compile("^name: (\S*)$", re.M)
+
+    output = []
+
     for path, dirs, files in os.walk(job.wd):
         rpath = path.replace(wd, '')[1:]
 
@@ -95,10 +98,13 @@ def tree(job):
         if not rpath: lev = 0
         else: lev = rpath.count('/') + 1
 
+        thisPath = "%s./%s" %  ('  ' * lev, rpath)
+
         if not isMoa:
-            moa.ui.fprint('(..) %s./%s' % ('  ' * lev, rpath), f='jinja')
+            output.append(( '.', thisPath, ''))
             continue
-        tag = '{{green}}M{{reset}}'
+        
+        tag = '.'
         
         templateFile = os.path.join(path, '.moa', 'template')
         templateName = ""
@@ -106,28 +112,27 @@ def tree(job):
             templ = open(templateFile).read()
             findmid = findMoaId.search(templ)
             if findmid: 
-                templateName = findmid.groups()[0]
-            
-        
+                templateName = "{{blue}}%s{{reset}}" % findmid.groups()[0]
         
         statusFile = os.path.join(path, '.moa', 'status')
         if not os.path.exists(statusFile):
-            status = '{{bold}}{{black}}?{{reset}}'
+            tag = '{{bold}}{{black}}?{{reset}}'
         else:
             with open(statusFile) as F:
                 message = F.read().strip()            
-            status = {
-                'success' : '{{green}}O{{reset}}',
-                'error' : '{{red}}E{{reset}}',
-                'interrupted' : '{{blue}}I{{reset}}'
+            tag = {
+                'success' : '{{green}}o{{reset}}',
+                'error' : '{{red}}e{{reset}}',
+                'interrupted' : '{{blue}}i{{reset}}',
+                'running' : '{{cyan}}r{{reset}}'
                 }.get(message, '{{green}}?{{reset}}')
-        if templateName:
-            moa.ui.fprint("(%s%s) %s./%s {{blue}}(%s){{reset}}" % ( tag, status, '  ' * lev, rpath, templateName),
-                          f = 'jinja')
-        else:
-            moa.ui.fprint("(%s%s) %s./%s" % ( tag, status, '  ' * lev, rpath),
-                          f = 'jinja')
-    
+        output.append((tag, thisPath, templateName))
+    maxTemplateLen = max([len(x[2]) for x in output])
+    for s,p,t in output:
+        moa.ui.fprint(
+            ("%%s %%-%ds | %%s"  % maxTemplateLen) % (s,t,p), f='jinja')
+        
+                      
 
 
 def getOut(job):
