@@ -35,25 +35,11 @@ from moa.sysConf import sysConf
 ##
 ################################################################################
 
-FORMAT_CODES_ANSI = {
-    'reset'     : chr(27) + "[0m",
-    'bold'      : chr(27) + "[1m",
-    'underline' : chr(27) + "[4m",
+FORMAT_CODES_ANSI = {}
+
+for c in sysConf.ansi:
+    FORMAT_CODES_ANSI[c] = chr(27) + "["  + sysConf.ansi[c] + "m"
     
-    'black'     : chr(27) + "[30m",
-    'red'       : chr(27) + "[31m",
-    'green'     : chr(27) + "[32m",
-    'yellow'    : chr(27) + "[33m",
-    'blue'      : chr(27) + "[34m",
-    'magenta'   : chr(27) + "[35m",
-    'cyan'      : chr(27) + "[36m",
-    'white'     : chr(27) + "[37m",
-
-    'bred'      : chr(27) + "[41m",
-    'bgreen'    : chr(27) + "[42m",
-    'byellow'   : chr(27) + "[42m",
-    }
-
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
  
 def exitError(message):

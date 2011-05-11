@@ -39,6 +39,29 @@ default_shell: '/bin/bash -e'
 plugin_settings:
   moaGit:
     warnings: False
+ansi:
+  reset: '0'
+  bold: '1'
+  black: '30'
+  red: '38;5;160'
+  green: '38;5;28'
+  yellow: '38;5;214'
+  blue: '38;5;19'
+  magenta: '38;5;165'
+  purple: '38;5;56'
+  cyan: '38;5;32'
+  gray: '38;5;240'
+  white: '37'
+  bblack: '48;5;232'
+  bred: '48;5;160'
+  bgreen: '48;5;28'
+  byellow: '48;5;214'
+  bblue: '48;5;21'
+  bpurple: '48;5;56'
+  bmagenta: '48;5;165'
+  bcyan: '48;5;32'
+  bgray: '48;5;240'
+  bwhite: '48;5;255'    
 template:
   providers:
     core:
