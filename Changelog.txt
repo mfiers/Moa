@@ -1,3 +1,15 @@
+Moa 0.10.10 / 2011-05-10
+==========================
+
+  * jinja2 version of the ncbi template
+  * recursively defined variables are adapted if they appear to be 
+    a relative path
+  * rearranged plugin management
+  * many small fixes improving recursive & multithreaded operation
+  * implementation of ruff.reduce
+  * moved bowtiedb template to a reduce type operation
+  * clear ruffus node log - make sure it starts fresh for each job
+
 Moa 0.10.9 / 2011-05-03
 ==========================
 
