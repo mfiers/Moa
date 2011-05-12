@@ -11,19 +11,26 @@
 
 Use twitter to send a message upon job completion
 """
+
 import os
 import time
 import twitter
 from moa.sysConf import sysConf
 
-api = twitter.Api(username='__moa__', password='moabird')
-
 def postRun(job):
     """
     Send a tweet out upon completing the default run
     """
+    #this is a pain :(
+    api = twitter.Api(
+        consumer_key =  sysConf.plugins.twit.consumer_key,
+        consumer_secret =  sysConf.plugins.twit.consumer_secret,
+        access_token_key = sysConf.plugins.twit.access_token_key,
+        access_token_secret = sysConf.plugins.twit.access_token_secret,
+        base_url='http://twitter.com')
+
     api.PostUpdate('Finished %s in %s on %s' % (
-        (" ".join(sysConf.args),
-         os.path.basename(sysConf.wd),
-         time.ctime())))
+            (" ".join(sysConf.args),
+             os.path.basename(sysConf.job.wd),
+             time.ctime())))
 
