@@ -24,26 +24,26 @@ example:
 
 ::
 
-    moa new blast -t "run a demo"
+    moa new blast -t "demo run"
     moa set db=/data/blast/db/nt
-    moa set input_dir=../sequences/
+    moa set input=../sequences/*.fasta
     moa set moa_postprocess='grep polymerase gff/*gff > pol.gff'
     moa run
 
-In the first line, a new BLAST job (titled "run a demo") is created in
-the current directory. What really happens is that Moa associates the
-`blast` template to the current directory. The `blast` template
-(obviously) knows how to execute a [BLAST]_ job, but needs at least
-two variables defined, as demonstrated in lines two and three. The
-fourth line demonstrates a specific Moa is executed and 'blasts' the
-input sequences (in ``../sequences``) against the database in
-``/data/blast/db/nt``. BLAST output files (XML) are generated and
-converted to GFF (GFF conversion is an extra, not part of the BLAST
-suite). The one to last statement is probably most remarkable; it is a
-single (shell) commmand that will be executed after BLAST is executed
-(there is a corresponding ``moa_preprocess``). This shell comamand
-filters all BLAST hits that have the word "polymerase" in their
-description into a separater GFF file.
+In the first line, a new BLAST job (titled "demo run") is created in
+the current directory. What really happens is that Moa copies the
+`blast` template to the current directory. The `blast` template knows
+how to execute a [BLAST]_ job, but needs at least two variables
+defined, defined in the next two lines. `moa run` executes the
+analysis and 'blasts' the input sequences (in ``../sequences``)
+against the database in ``/data/blast/db/nt``. BLAST output files
+(XML) are generated and converted to GFF (GFF conversion is an extra,
+not part of the BLAST suite). The one to last statement is probably
+most remarkable; it is a single (shell) commmand that will be executed
+after BLAST is executed (there is a corresponding
+``moa_preprocess``). This shell comamand filters all BLAST hits that
+have the word "polymerase" in their description into a separater GFF
+file.
 
 Moa employs `GNU make <http://www.gnu.org/software/make>`_ to describe
 its building blocks. GNU Make is originally developed for software
