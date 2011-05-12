@@ -56,20 +56,25 @@ class JobConf(object):
         #create a list of conf files to load:
         listToLoad = []        
         parsePath = self.job.wd
-        lookAt = '.'
-        #to be safe - cwd to the directory
-        os.chdir(self.job.wd)
+        if not parsePath[-1] == '/':
+            parsePath += '/'
+        lookAt = parsePath
+
         while True:
+
             abspath = os.path.abspath(lookAt)
 
             # not expecting a .moa in the root and don't need to go
             # higher up
             if abspath == '/': break 
 
+            #see if there is a moa job & config file - if so, add it to the list
             thisConfig = os.path.join(abspath, '.moa', 'config')
             if os.path.isfile(thisConfig):
                 listToLoad.insert(0,  (lookAt, thisConfig))
-            lookAt = '../' + lookAt
+
+            #look at: one directory up
+            lookAt = lookAt + '../'
             
         #sys.stderr.write("%s" % listToLoad)
         for delta, confFile in listToLoad:
