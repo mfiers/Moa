@@ -136,6 +136,7 @@ def _getStatus(job, silent=False):
     return "error"
 
 def _setStatus(job, status):
+    sysConf.job.status = status
     statusFile = os.path.join(job.wd, '.moa', 'status')
     if LLOG: print 'writing status %s' % status
     with open(statusFile, 'w') as F:
