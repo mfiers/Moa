@@ -37,6 +37,7 @@ def niceRunTime(d):
     Nice representation of the run time
     d is time duration string    
     """
+    d = str(d)
     if ',' in d:
         days, time = d.split(',')
     else:
@@ -74,8 +75,8 @@ def _writeLog(data=None):
     
     sysConf.logger.end_time = datetime.today()
     sysConf.logger.run_time = sysConf.logger.end_time - sysConf.logger.start_time
-    runtime = sysConf.logger.end_time - sysConf.logger.start_time
-    sysConf.runtime = str(runtime)
+    runtime = sysConf.logger.end_time - sysConf.logger.start_time    
+    sysConf.logger.niceRunTime = niceRunTime(runtime)
     logFile = os.path.join(sysConf.job.confDir, 'log')
     if not os.path.exists(sysConf.job.confDir):
         return
@@ -92,11 +93,13 @@ def _writeLog(data=None):
             ",".join(sysConf.executeCommand),
             sysConf.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
             sysConf.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-            str(sysConf.runtime), command
+            str(sysConf.logger.run_time), command
             ]))
 
-def finish(data):
+def postRun(data):
     _writeLog(data)
+
+def finish(data):
     #and - probably not the location to do this, but print something to screen
     #as well
     if sysConf.options.background:
@@ -105,11 +108,11 @@ def finish(data):
         if sysConf.rc == 0:
             moa.ui.message('{{bold}}Success{{reset}} executing "%s" (%s)' % (
                 sysConf.originalCommand,
-                niceRunTime(str(sysConf.runtime))))
+                niceRunTime(str(sysConf.logger.run_time))))
         else:
             moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s  (%s)" % (
                 sysConf.originalCommand,
-                niceRunTime(str(sysConf.runtime))))
+                niceRunTime(str(sysConf.logger.run_time))))
         
                       
 def showLog(job):
