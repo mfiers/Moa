@@ -20,6 +20,7 @@ import datetime
 import Yaco
 
 import moa.ui
+import moa.exceptions
 
 from moa.sysConf import sysConf
 
@@ -91,8 +92,12 @@ class Providers(object):
         return rv
 
     def installTemplate(self, wd, tName, pName=None):
-        p = self.findProvider(tName, pName)
 
+        p = self.findProvider(tName, pName)
+        
+        if not p:
+            raise moa.exceptions.InvalidTemplate()
+        
         p.installTemplate(wd, tName)
         
         meta = p.getMeta()
