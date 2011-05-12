@@ -21,7 +21,7 @@ Yaco objects allowing similar access (`a.key.subkey`). Lists are
 objects allowing access allong the lines of `a.key[3].subkey`."""
 
 setup(name='Yaco',
-      version='0.1.7',
+      version='0.1.8',
       description=DESCRIPTION,
       author='Mark Fiers',
       author_email='mark.fiers42@gmail.com',
