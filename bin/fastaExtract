@@ -84,7 +84,7 @@ else:
     rawIds = open(options.list, 'U').readlines()
 
 ids = [x.split()[0].replace('>', '') for x in rawIds]
-idsInfo = dict([(x.split()[0],x) for x in rawIds])
+idsInfo = dict([(x.split()[0].replace('>', ''),x) for x in rawIds])
 
 log("read %d ids" % len(ids))
 log("first three ids: %s" % (" ".join(ids[:3])))
@@ -110,8 +110,7 @@ for seqId, header, seq in fastareader(options.fasta):
     else:
         #remove the testId from ids - we don't want to see
         #sequences twice.
-        ids.remove(testId)
-    
+        ids.remove(testId) 
 
     if 'antisense' in idsInfo[testId]:
         seq = rc(seq)
