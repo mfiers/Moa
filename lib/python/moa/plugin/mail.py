@@ -62,10 +62,10 @@ def postRun(job):
     data = Yaco.Yaco()
 
     sysConf.job.absPath = os.path.abspath(sysConf.job.wd)
-    
+
+    status = sysConf.job.get('status', 'unknown')
     subject = "Moa job '%s' finished (%s) in '%s'" % (
-        sysConf.job.conf.title,
-        sysConf.job.status,
+        sysConf.job.conf.title, status,
         sysConf.job.absPath)
 
 
