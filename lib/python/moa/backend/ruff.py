@@ -175,7 +175,7 @@ class Ruff(moa.backend.BaseBackend):
                                 
                 fsDict = dict([(x, self.job.data.filesets[x]['files'][i])
                                for x in self.job.data.inputs + self.job.data.outputs])
-                
+
                 jobData = {}
                 jobData.update(self.job.conf)
                 jobData['wd'] = self.job.wd
@@ -295,6 +295,11 @@ class Ruff(moa.backend.BaseBackend):
                rc = 1
  
         elif cmode == 'simple':
+
+            #this is not good - i'm dumping the job in the job.conf
+            #object here - need to figure out a better way to do this
+            data = self.job.conf
+            data['job'] = self.job
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
             script = self.commands.render(command, self.job.conf)
