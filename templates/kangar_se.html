@@ -1,0 +1,260 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>kangar_se &mdash; Moa v0.10.11 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.10.11',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
+    <link rel="up" title="Templates" href="index.html" />
+    <link rel="next" title="kangax" href="kangax.html" />
+    <link rel="prev" title="kangar_pe" href="kangar_pe.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="kangax.html" title="kangax"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="kangar_pe.html" title="kangar_pe"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="kangar-se">
+<h1>kangar_se<a class="headerlink" href="#kangar-se" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div>use kangar to pre process raw fq single end reads</div></blockquote>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>clean</strong></dt>
+<dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template.</dd>
+<dt><strong>run</strong></dt>
+<dd>run kangar</dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>fq_input</strong></dt>
+<dd>fastq input files - forward - containing the 5&#8217; end</dd>
+<dt><strong>output_log</strong></dt>
+<dd><p class="first">output log file</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.log.txt</cite></div>
+</div>
+</dd>
+<dt><strong>rds_output</strong></dt>
+<dd><p class="first">output rds file</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.rds</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>extra_params</strong></dt>
+<dd><p class="first">any extra parameters</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>string</cite></div>
+<div class="line"><em>default</em>: ``</div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>help</strong></dt>
+<dd><p class="first">print this help and exit</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>mode</strong></dt>
+<dd><p class="first">processing mode  0 - single end create, 1 - paired end create, 2 - output statistics 3 - dump as fasta</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>0</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>quality</strong></dt>
+<dd><p class="first">fastq quality scoring- 0 - sanger, 1m - Illumina 1.3+, 2 - Solexa &lt; 1.3, 3 - Ignore quality</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>3</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>reads_num</strong></dt>
+<dd><p class="first">limit number of reads (or dumps) in each input file to this many, 0 if no limit</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>0</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>rm_duplicates</strong></dt>
+<dd><p class="first">remove duplicate reads retaining only one</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>trim3</strong></dt>
+<dd><p class="first">trim this number of bases from 3&#8217; end of sequence</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>0</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>trim5</strong></dt>
+<dd><p class="first">trim this number of bases from 5&#8217; end of sequence</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>integer</cite></div>
+<div class="line"><em>default</em>: <cite>0</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+<dt><strong>version</strong></dt>
+<dd><p class="first">print version information and exit</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>boolean</cite></div>
+<div class="line"><em>default</em>: <cite>False</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Backend</strong></dt>
+<dd>ruff</dd>
+<dt><strong>Author</strong></dt>
+<dd>Mark Fiers, Yogini Idnani</dd>
+<dt><strong>Creation date</strong></dt>
+<dd>Wed Nov 10 07:56:48 2010</dd>
+<dt><strong>Modification date</strong></dt>
+<dd>unknown</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">kangar_se</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#filesets">Filesets</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="kangar_pe.html"
+                        title="previous chapter">kangar_pe</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="kangax.html"
+                        title="next chapter">kangax</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/kangar_se.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="kangax.html" title="kangax"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="kangar_pe.html" title="kangar_pe"
+             >previous</a> |</li>
+        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Templates</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, 2011, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

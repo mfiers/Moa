@@ -1,0 +1,76 @@
+f2b
+------------------------------------------------
+
+**Convert fasta to bfa**
+
+
+    Converts a FASTA file to MAQ format for use with a BFA a maq_fasta2bfa index from a reference sequence
+
+
+
+Commands
+~~~~~~~~
+
+**clean**
+  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
+**run**
+  *no help defined*
+
+Filesets
+~~~~~~~~
+
+
+
+
+**bfa**::
+    {}
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**input**::
+    input FASTA files
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+Parameters
+~~~~~~~~~~
+
+
+
+Other
+~~~~~
+
+**Backend**
+  gnumake
+**Author**
+  Mark Fiers
+**Creation date**
+  Wed Nov 10 07:56:48 2010
+**Modification date**
+  Wed Nov 10 07:56:48 2010
+
+
+

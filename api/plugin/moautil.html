@@ -1,0 +1,176 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>moautil - Some extra utilities - copy/move jobs &mdash; Moa v0.10.11 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.10.11',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.11 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="newjob - Instantiate new jobs" href="newjob.html" />
+    <link rel="prev" title="moaGit - maintain a git repository with job information" href="moaGit.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="newjob.html" title="newjob - Instantiate new jobs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="moaGit.html" title="moaGit - maintain a git repository with job information"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-moa.plugin.moautil"></span><div class="section" id="moautil-some-extra-utilities-copy-move-jobs">
+<h1><strong>moautil</strong> - Some extra utilities - copy/move jobs<a class="headerlink" href="#moautil-some-extra-utilities-copy-move-jobs" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="moa.plugin.moautil.archive">
+<tt class="descclassname">moa.plugin.moautil.</tt><tt class="descname">archive</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.moautil.archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Archive a job, or tree with jobs for later execution.</p>
+<p>This command stores only those files that are necessary for
+execution of this job, that is: templates &amp; configuration. In &amp;
+output files, and any other file are ignored. An exception to this
+are all files that start with &#8216;moa.&#8217;</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa archive</pre>
+</div>
+<p>or</p>
+<blockquote>
+<div>moa archive -r</div></blockquote>
+<p>The latter archives all jobs in subdirs of the current directory.</p>
+<p>Note that only those directories that contain a moa job are
+included into the archive.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.moautil.moacp">
+<tt class="descclassname">moa.plugin.moautil.</tt><tt class="descname">moacp</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.moautil.moacp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy a moa job, or a tree with jobs.</p>
+<p>moa cp copies only those files defining a job: the template files
+and the job configuration. Additionaly, all files in the moa
+directory that start with <cite>moa.</cite> (for example <cite>moa.description</cite>
+are copied as well. Data and log files are not copied!</p>
+<p>The command has two modes of operation. The first is:</p>
+<div class="highlight-python"><pre>moa cp 10.from 20.to</pre>
+</div>
+<p>copies the moa job in 10.from to a newly created 20.to
+directory. If the <cite>20.to</cite> directory already exists, a new
+directory is created in <cite>20.to/10.from</cite>. As an shortcut one can
+use:</p>
+<div class="highlight-python"><pre>moa cp 10.from 20</pre>
+</div>
+<p>in which case the job will be copied to the <cite>20.from</cite> directory.</p>
+<p>If the source (<cite>10.from</cite>) directory is not a Moa job, the command
+exits with an error.</p>
+<p>The second mode of operation is recursive copying:</p>
+<div class="highlight-python"><pre>moa cp -r 10.from 20.to</pre>
+</div>
+<p>in which case all subdirectories under 10.from are traversed and
+copied - if a directory contains a Moa job.</p>
+<p>::TODO..  Warn for changing file &amp; dir links</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.moautil.moaren">
+<tt class="descclassname">moa.plugin.moautil.</tt><tt class="descname">moaren</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.moautil.moaren" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renumber or rename a moa job..</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="moaGit.html"
+                        title="previous chapter"><strong>moaGit</strong> - maintain a git repository with job information</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="newjob.html"
+                        title="next chapter"><strong>newjob</strong> - Instantiate new jobs</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/plugin/moautil.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="newjob.html" title="newjob - Instantiate new jobs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="moaGit.html" title="moaGit - maintain a git repository with job information"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, 2011, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

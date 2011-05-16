@@ -1,0 +1,143 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>logger - Log Moa activity &mdash; Moa v0.10.11 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.10.11',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.11 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="logo - Print a big, in your face, moa logo" href="logo.html" />
+    <link rel="prev" title="lock - Lock/Unlock moa jobs" href="lock.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="logo.html" title="logo - Print a big, in your face, moa logo"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="lock.html" title="lock - Lock/Unlock moa jobs"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-moa.plugin.logger"></span><div class="section" id="logger-log-moa-activity">
+<h1><strong>logger</strong> - Log Moa activity<a class="headerlink" href="#logger-log-moa-activity" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="moa.plugin.logger.niceRunTime">
+<tt class="descclassname">moa.plugin.logger.</tt><tt class="descname">niceRunTime</tt><big>(</big><em>d</em><big>)</big><a class="headerlink" href="#moa.plugin.logger.niceRunTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nice representation of the run time
+d is time duration string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.logger.showLog">
+<tt class="descclassname">moa.plugin.logger.</tt><tt class="descname">showLog</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.logger.showLog" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa log</strong> - show a log of the most recent moa calls</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa log [LINES]</pre>
+</div>
+<p>Shows a log of moa commands executed. Only commands with an impact
+on the pipeline are logged, such as <cite>moa run</cite> &amp; <cite>moa set</cite>. The
+number of log entries to display can be controlled with the
+optional LINES parameter.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="lock.html"
+                        title="previous chapter"><strong>lock</strong> - Lock/Unlock moa jobs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="logo.html"
+                        title="next chapter"><strong>logo</strong> - Print a big, in your face, moa logo</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/plugin/logger.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="logo.html" title="logo - Print a big, in your face, moa logo"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="lock.html" title="lock - Lock/Unlock moa jobs"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, 2011, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
