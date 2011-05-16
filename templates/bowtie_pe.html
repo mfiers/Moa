@@ -54,59 +54,55 @@
             
   <div class="section" id="bowtie-pe">
 <h1>bowtie_pe<a class="headerlink" href="#bowtie-pe" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Run BOWTIE on an set of input files (query) vs a database index.</dd>
-</dl>
+<blockquote>
+<div>Run BOWTIE on an set of input files (query) vs a database index.</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>clean</strong></dt>
-<dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template</dd>
+<dd>Remove all job data, not the Moa job itself</dd>
+<dt><strong>report</strong></dt>
+<dd>Create a report on the results</dd>
 <dt><strong>run</strong></dt>
-<dd><em>no help defined</em></dd>
+<dd><p class="first"><em>no help defined</em></p>
+<p class="last"><strong>run</strong> delegates execution to: <strong>run2, report</strong></p>
+</dd>
+<dt><strong>run2</strong></dt>
+<dd>Execute bowtie in paired-end mode</dd>
 </dl>
 </div>
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>fq_forward_input</strong>::</dt>
-<dd><blockquote class="first">
-<div>fastq input files directory - forward</div></blockquote>
+<dt><strong>db</strong></dt>
+<dd><p class="first">The (basename of the) bowtie database to use.</p>
 <div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>type</em>: <cite>single</cite></div>
+<div class="line"><em>category</em>: <cite>prerequisite</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>../20.bowtiedb/db</cite></div>
 </div>
 </dd>
-<dt><strong>fq_reverse_input</strong>::</dt>
-<dd><blockquote class="first">
-<div>fastq input files directory - reverse</div></blockquote>
+<dt><strong>fq_forward_input</strong></dt>
+<dd>fastq input files directory - forward</dd>
+<dt><strong>fq_reverse_input</strong></dt>
+<dd><p class="first">fastq input files directory - reverse</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>*/*_2.fq</cite></div>
 </div>
 </dd>
-<dt><strong>output</strong>::</dt>
-<dd><blockquote class="first">
-<div>Bam output file</div></blockquote>
+<dt><strong>output</strong></dt>
+<dd><p class="first">Bam output file</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.bam</cite></div>
 </div>
 </dd>
 </dl>
@@ -114,82 +110,50 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>ebwt_base</strong>::</dt>
-<dd><blockquote class="first">
-<div>The (basename of the) bowtie database to use.</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: <cite>{}</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-<dt><strong>extra_params</strong>::</dt>
-<dd><blockquote class="first">
-<div>extra parameters to feed to bowtie</div></blockquote>
+<dt><strong>extra_params</strong></dt>
+<dd><p class="first">extra parameters to feed to bowtie</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>input_format</strong>::</dt>
-<dd><blockquote class="first">
-<div>Format of the input files</div></blockquote>
+<dt><strong>input_format</strong></dt>
+<dd><p class="first">Format of the input files</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>fastq</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_insertsize</strong>::</dt>
-<dd><blockquote class="first">
-<div>Maximum allowed insertsize</div></blockquote>
+<dt><strong>max_insertsize</strong></dt>
+<dd><p class="first">Maximum allowed insertsize</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>250</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>min_insertsize</strong>::</dt>
-<dd><blockquote class="first">
-<div>Minimum allowed insertsize</div></blockquote>
+<dt><strong>min_insertsize</strong></dt>
+<dd><p class="first">Minimum allowed insertsize</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>output_format</strong>::</dt>
-<dd><blockquote class="first">
-<div>Format of the output file</div></blockquote>
+<dt><strong>output_format</strong></dt>
+<dd><p class="first">Format of the output file</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>bam</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -218,7 +182,7 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>

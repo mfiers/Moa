@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>clean_fasta &mdash; Moa v0.10.11 documentation</title>
+    <title>cleanFasta &mdash; Moa v0.10.11 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -52,13 +52,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="clean-fasta">
-<h1>clean_fasta<a class="headerlink" href="#clean-fasta" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="cleanfasta">
+<h1>cleanFasta<a class="headerlink" href="#cleanfasta" title="Permalink to this headline">¶</a></h1>
 <p><strong>clean Fasta</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Convert files to unix format and convert all characters that are not an A,C,G,T or N to N.</dd>
-</dl>
+<blockquote>
+<div>Convert files to unix format and convert all characters that are not an A,C,G,T or N to N.</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -71,55 +69,34 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>cf_input_dir</strong>::</dt>
-<dd><blockquote class="first">
-<div>Directory with the sequences to run cleanfasta on</div></blockquote>
+<dt><strong>cf_input_dir</strong></dt>
+<dd><p class="first">Directory with the sequences to run cleanfasta on</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>cf_input_extension</strong>::</dt>
-<dd><blockquote class="first">
-<div>input file extension</div></blockquote>
+<dt><strong>cf_input_extension</strong></dt>
+<dd><p class="first">input file extension</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>fasta</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>sed_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
+</dl>
+<p><strong>sed_command</strong></p>
+<blockquote>
+<div><div class="line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>/^&gt;/!s/[^ACGTNacgtn]/N/g</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
-</dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
+</div></blockquote>
 </div>
-</dd>
-</dl>
-</div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>gnumake</dd>
@@ -144,10 +121,10 @@
             </a></p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">clean_fasta</a><ul>
+<li><a class="reference internal" href="#">cleanFasta</a><ul>
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>

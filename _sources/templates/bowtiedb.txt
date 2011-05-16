@@ -3,8 +3,9 @@ bowtiedb
 
 **Bowtie index builder**
 
-::
+
     Builds a bowtie index from a reference sequence
+
 
 
 Commands
@@ -12,32 +13,32 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   Create the bowtie database
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
+**input**
+  Input fasta file for the bowtie database
 
 
-**input**::
-    Input fasta file for the bowtie database
 
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
 
+
+**output**
+  database name to create
+
+
+  | *type*: `single`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *pattern*: `db`
 
 
 
@@ -48,26 +49,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**ebwt_outfile_base**::
-    write Ebwt data to files with this dir/basename
-
-  | *type*: `string`
-  | *default*: `db_index`
-  | *optional*: `True`
-
-
-
-**extra_params**::
-    any option parameters
+**extra_params**
+  any option parameters
 
   | *type*: `string`
   | *default*: ``
@@ -75,17 +58,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -95,6 +69,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Dec 09 07:56:48 2010
-
-
-

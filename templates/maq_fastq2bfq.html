@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fq2bq &mdash; Moa v0.10.11 documentation</title>
+    <title>maq_fastq2bfq &mdash; Moa v0.10.11 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -23,8 +23,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="maqpair" href="maq_match_pair.html" />
-    <link rel="prev" title="f2b" href="maq_fasta2bfa.html" /> 
+    <link rel="next" title="maq_match_pair" href="maq_match_pair.html" />
+    <link rel="prev" title="maq_fasta2bfa" href="maq_fasta2bfa.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="maq_match_pair.html" title="maqpair"
+          <a href="maq_match_pair.html" title="maq_match_pair"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="maq_fasta2bfa.html" title="f2b"
+          <a href="maq_fasta2bfa.html" title="maq_fasta2bfa"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
@@ -52,13 +52,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="fq2bq">
-<h1>fq2bq<a class="headerlink" href="#fq2bq" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="maq-fastq2bfq">
+<h1>maq_fastq2bfq<a class="headerlink" href="#maq-fastq2bfq" title="Permalink to this headline">¶</a></h1>
 <p><strong>Convert FASTQ to BFQ</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Converts a FASTQ file to MAQ BFQ format.</dd>
-</dl>
+<blockquote>
+<div>Converts a FASTQ file to MAQ BFQ format.</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -70,60 +68,26 @@
 </div>
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt><strong>bfq</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
+<p><strong>bfq</strong></p>
+<blockquote>
+<div><div class="line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./bfq/*.bfq</cite></div>
 </div>
-</dd>
-<dt><strong>input</strong>::</dt>
-<dd><blockquote class="first">
-<div>input FASTA files</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
+</div></blockquote>
+<dl class="docutils">
+<dt><strong>input</strong></dt>
+<dd>input FASTA files</dd>
 </dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
-</dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-</dl>
-</div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>gnumake</dd>
@@ -148,21 +112,21 @@
             </a></p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">fq2bq</a><ul>
+<li><a class="reference internal" href="#">maq_fastq2bfq</a><ul>
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="maq_fasta2bfa.html"
-                        title="previous chapter">f2b</a></p>
+                        title="previous chapter">maq_fasta2bfa</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="maq_match_pair.html"
-                        title="next chapter">maqpair</a></p>
+                        title="next chapter">maq_match_pair</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/templates/maq_fastq2bfq.txt"
@@ -195,10 +159,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="maq_match_pair.html" title="maqpair"
+          <a href="maq_match_pair.html" title="maq_match_pair"
              >next</a> |</li>
         <li class="right" >
-          <a href="maq_fasta2bfa.html" title="f2b"
+          <a href="maq_fasta2bfa.html" title="maq_fasta2bfa"
              >previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 

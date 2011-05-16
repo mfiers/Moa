@@ -24,7 +24,7 @@
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="fastx_qual_stats" href="fastx_qual_stats.html" />
-    <link rel="prev" title="fasta2gff" href="fasta2gff.html" /> 
+    <link rel="prev" title="fastqc" href="fastqc.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="fastx_qual_stats.html" title="fastx_qual_stats"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="fasta2gff.html" title="fasta2gff"
+          <a href="fastqc.html" title="fastqc"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
@@ -54,10 +54,8 @@
             
   <div class="section" id="fastx-clipper">
 <h1>fastx_clipper<a class="headerlink" href="#fastx-clipper" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>::</dt>
-<dd>run fastx_clipper</dd>
-</dl>
+<blockquote>
+<div>run fastx_clipper</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -70,148 +68,105 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>input</strong>::</dt>
-<dd><blockquote class="first">
-<div>fastq input files directory</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>output</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
+<dt><strong>input</strong></dt>
+<dd>fastq input files directory</dd>
+</dl>
+<p><strong>output</strong></p>
+<blockquote>
+<div><div class="line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.fq</cite></div>
 </div>
-</dd>
-</dl>
+</div></blockquote>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>adaptor</strong>::</dt>
-<dd><blockquote class="first">
-<div>ADAPTER string. default is CCTTAAGG (dummy adapter).</div></blockquote>
+<dt><strong>adaptor</strong></dt>
+<dd><p class="first">ADAPTER string. default is CCTTAAGG (dummy adapter).</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>CCTTAAGG</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>adaptor_and_bases</strong>::</dt>
-<dd><blockquote class="first">
-<div>Keep the adapter and N bases after it.</div></blockquote>
+<dt><strong>adaptor_and_bases</strong></dt>
+<dd><p class="first">Keep the adapter and N bases after it.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>0</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>compress_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>Compress output with GZIP.</div></blockquote>
+<dt><strong>compress_output</strong></dt>
+<dd><p class="first">Compress output with GZIP.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>debug_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>DEBUG output.</div></blockquote>
+<dt><strong>debug_output</strong></dt>
+<dd><p class="first">DEBUG output.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>help</strong>::</dt>
-<dd><blockquote class="first">
-<div>help screen</div></blockquote>
+<dt><strong>help</strong></dt>
+<dd><p class="first">help screen</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>keep_unknown_nuc_seq</strong>::</dt>
-<dd><blockquote class="first">
-<div>keep sequences with unknown (N) nucleotides. default is to discard such sequences.</div></blockquote>
+<dt><strong>keep_unknown_nuc_seq</strong></dt>
+<dd><p class="first">keep sequences with unknown (N) nucleotides. default is to discard such sequences.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>out_adaptor_only_seq</strong>::</dt>
-<dd><blockquote class="first">
-<div>Report Adapter-Only sequences.</div></blockquote>
+<dt><strong>out_adaptor_only_seq</strong></dt>
+<dd><p class="first">Report Adapter-Only sequences.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>rm_clipped_seq</strong>::</dt>
-<dd><blockquote class="first">
-<div>Discard clipped sequences (i.e. - keep only sequences which did not contained the adapter).</div></blockquote>
+<dt><strong>rm_clipped_seq</strong></dt>
+<dd><p class="first">Discard clipped sequences (i.e. - keep only sequences which did not contained the adapter).</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>rm_non_clipped_seq</strong>::</dt>
-<dd><blockquote class="first">
-<div>Discard non-clipped sequences (i.e. - keep only sequences which contained the adapter).</div></blockquote>
+<dt><strong>rm_non_clipped_seq</strong></dt>
+<dd><p class="first">Discard non-clipped sequences (i.e. - keep only sequences which contained the adapter).</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>rm_short_seq</strong>::</dt>
-<dd><blockquote class="first">
-<div>discard sequences shorter than N nucleotides. default is 5.</div></blockquote>
+<dt><strong>rm_short_seq</strong></dt>
+<dd><p class="first">discard sequences shorter than N nucleotides. default is 5.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>5</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-<dt><strong>verbose</strong>::</dt>
-<dd><blockquote class="first">
-<div>Verbose - report number of sequences. If [-o] is specified,  report will be printed to STDOUT. If [-o] is not specified (and output goes to STDOUT), report will be printed to STDERR.</div></blockquote>
+<dt><strong>verbose</strong></dt>
+<dd><p class="first">Verbose - report number of sequences. If [-o] is specified,  report will be printed to STDOUT. If [-o] is not specified (and output goes to STDOUT), report will be printed to STDERR.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -220,8 +175,8 @@
 </dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -230,7 +185,7 @@
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Dec 06 17:06:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1291933989.51</dd>
+<dd>unknown</dd>
 </dl>
 </div>
 </div>
@@ -250,14 +205,14 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="fasta2gff.html"
-                        title="previous chapter">fasta2gff</a></p>
+  <p class="topless"><a href="fastqc.html"
+                        title="previous chapter">fastqc</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="fastx_qual_stats.html"
                         title="next chapter">fastx_qual_stats</a></p>
@@ -296,7 +251,7 @@
           <a href="fastx_qual_stats.html" title="fastx_qual_stats"
              >next</a> |</li>
         <li class="right" >
-          <a href="fasta2gff.html" title="fasta2gff"
+          <a href="fastqc.html" title="fastqc"
              >previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 

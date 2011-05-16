@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>gsmap &mdash; Moa v0.10.11 documentation</title>
+    <title>gsMapper &mdash; Moa v0.10.11 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -52,13 +52,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="gsmap">
-<h1>gsmap<a class="headerlink" href="#gsmap" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="gsmapper">
+<h1>gsMapper<a class="headerlink" href="#gsmapper" title="Permalink to this headline">¶</a></h1>
 <p><strong>GSMapper</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Run the Roche GS Reference mapper</dd>
-</dl>
+<blockquote>
+<div>Run the Roche GS Reference mapper</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -71,82 +69,58 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>annotation</strong>::</dt>
-<dd><blockquote class="first">
-<div>Gene annotation file in the UCSC GenePred format</div></blockquote>
+<dt><strong>annotation</strong></dt>
+<dd><p class="first">Gene annotation file in the UCSC GenePred format</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>min_overlap_ident</strong>::</dt>
-<dd><blockquote class="first">
-<div>Minimum identity length in the assembly step</div></blockquote>
+<dt><strong>min_overlap_ident</strong></dt>
+<dd><p class="first">Minimum identity length in the assembly step</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>90</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>min_overlap_len</strong>::</dt>
-<dd><blockquote class="first">
-<div>Minimum overlap length in the assembly step</div></blockquote>
+<dt><strong>min_overlap_len</strong></dt>
+<dd><p class="first">Minimum overlap length in the assembly step</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>40</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>name</strong>::</dt>
-<dd><blockquote class="first">
-<div>Name identifying this mapping in the output gff</div></blockquote>
+<dt><strong>name</strong></dt>
+<dd><p class="first">Name identifying this mapping in the output gff</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>reference_fasta</strong>::</dt>
-<dd><blockquote class="first">
-<div>A multifasta file with the reference sequence(s)with the library id.</div></blockquote>
+<dt><strong>reference_fasta</strong></dt>
+<dd><p class="first">A multifasta file with the reference sequence(s)with the library id.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>sfffile</strong>::</dt>
-<dd><blockquote class="first">
-<div>SFF files with reads to map against the reference sequences</div></blockquote>
+<dt><strong>sfffile</strong></dt>
+<dd><p class="first">SFF files with reads to map against the reference sequences</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>gnumake</dd>
@@ -171,10 +145,10 @@
             </a></p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">gsmap</a><ul>
+<li><a class="reference internal" href="#">gsMapper</a><ul>
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>

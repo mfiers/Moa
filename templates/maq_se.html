@@ -54,10 +54,8 @@
             
   <div class="section" id="maq-se">
 <h1>maq_se<a class="headerlink" href="#maq-se" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Generate alignments in SAM format given single end reads using Maq.</dd>
-</dl>
+<blockquote>
+<div>Generate alignments in SAM format given single end reads using Maq.</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -70,82 +68,47 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>bam_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>bam alignment output file</div></blockquote>
+<dt><strong>bam_output</strong></dt>
+<dd><p class="first">bam alignment output file</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.bam</cite></div>
 </div>
 </dd>
-<dt><strong>bfa_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>BFA Index name</div></blockquote>
+<dt><strong>bfa_output</strong></dt>
+<dd><p class="first">BFA Index name</p>
 <div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>type</em>: <cite>single</cite></div>
 <div class="line"><em>category</em>: <cite>other</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>{}</cite></div>
 </div>
 </dd>
-<dt><strong>bfq_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>bfq files - forward files</div></blockquote>
+<dt><strong>bfq_output</strong></dt>
+<dd><p class="first">bfq files - forward files</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.bfq</cite></div>
 </div>
 </dd>
-<dt><strong>fa_input</strong>::</dt>
-<dd><blockquote class="first">
-<div>directory with reference fasta file name</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>prerequisite</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>fq_input</strong>::</dt>
-<dd><blockquote class="first">
-<div>fastq input files</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>map_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>maq map output files</div></blockquote>
+<dt><strong>fa_input</strong></dt>
+<dd>directory with reference fasta file name</dd>
+<dt><strong>fq_input</strong></dt>
+<dd>fastq input files</dd>
+<dt><strong>map_output</strong></dt>
+<dd><p class="first">maq map output files</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.map</cite></div>
 </div>
 </dd>
 </dl>
@@ -153,90 +116,64 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>disable_sw</strong>::</dt>
-<dd><blockquote class="first">
-<div>disable Smith-Waterman alignment</div></blockquote>
+<dt><strong>disable_sw</strong></dt>
+<dd><p class="first">disable Smith-Waterman alignment</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>extra_parameters</strong>::</dt>
-<dd><blockquote class="first">
-<div>other parameters</div></blockquote>
+<dt><strong>extra_parameters</strong></dt>
+<dd><p class="first">other parameters</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>match_in_colorspace</strong>::</dt>
-<dd><blockquote class="first">
-<div>match in the colorspace</div></blockquote>
+<dt><strong>match_in_colorspace</strong></dt>
+<dd><p class="first">match in the colorspace</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_mismatch_qual_sum</strong>::</dt>
-<dd><blockquote class="first">
-<div>maximum allowed sum of qualities of mismatches</div></blockquote>
+<dt><strong>max_mismatch_qual_sum</strong></dt>
+<dd><p class="first">maximum allowed sum of qualities of mismatches</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>70</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>max_num_hits_out</strong>::</dt>
-<dd><blockquote class="first">
-<div>number of mismatches in the first 24bp</div></blockquote>
+<dt><strong>max_num_hits_out</strong></dt>
+<dd><p class="first">number of mismatches in the first 24bp</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>250</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>num_mismatch_24bp</strong>::</dt>
-<dd><blockquote class="first">
-<div>number of mismatches in the first 24bp</div></blockquote>
+<dt><strong>num_mismatch_24bp</strong></dt>
+<dd><p class="first">number of mismatches in the first 24bp</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>read_ref_diff_rate</strong>::</dt>
-<dd><blockquote class="first">
-<div>rate of difference between reads and references</div></blockquote>
+<dt><strong>read_ref_diff_rate</strong></dt>
+<dd><p class="first">rate of difference between reads and references</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.001</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-<dt><strong>trim_all_reads</strong>::</dt>
-<dd><blockquote class="first">
-<div>trim all reads (usually not recommended)</div></blockquote>
+<dt><strong>trim_all_reads</strong></dt>
+<dd><p class="first">trim all reads (usually not recommended)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -245,8 +182,8 @@
 </dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -255,7 +192,7 @@
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Dec 02 17:06:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1297380110.93</dd>
+<dd>unknown</dd>
 </dl>
 </div>
 </div>
@@ -275,7 +212,7 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>

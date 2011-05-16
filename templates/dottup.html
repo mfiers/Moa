@@ -23,8 +23,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="dotself" href="dottupSelf.html" />
-    <link rel="prev" title="crunch" href="crunch.html" /> 
+    <link rel="next" title="empty" href="empty.html" />
+    <link rel="prev" title="concatenate" href="concatenate.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dottupSelf.html" title="dotself"
+          <a href="empty.html" title="empty"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="crunch.html" title="crunch"
+          <a href="concatenate.html" title="concatenate"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
@@ -55,10 +55,8 @@
   <div class="section" id="dottup">
 <h1>dottup<a class="headerlink" href="#dottup" title="Permalink to this headline">¶</a></h1>
 <p><strong>EMBOSS Dottup</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Use dottup (from EMBOSS) to compare two sets of sequences</dd>
-</dl>
+<blockquote>
+<div>Use dottup (from EMBOSS) to compare two sets of sequences</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -71,54 +69,32 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>input_dir_a</strong>::</dt>
-<dd><blockquote class="first">
-<div>This set is compared to the sequences in input_dir_b.</div></blockquote>
+<dt><strong>input_dir_a</strong></dt>
+<dd><p class="first">This set is compared to the sequences in input_dir_b.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>input_dir_b</strong>::</dt>
-<dd><blockquote class="first">
-<div>The set to compare against</div></blockquote>
+<dt><strong>input_dir_b</strong></dt>
+<dd><p class="first">The set to compare against</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>input_extension</strong>::</dt>
-<dd><blockquote class="first">
-<div>Extension of the dottup input files</div></blockquote>
+<dt><strong>input_extension</strong></dt>
+<dd><p class="first">Extension of the dottup input files</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>fasta</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-<dt><strong>wordsize</strong>::</dt>
-<dd><blockquote class="first">
-<div>Wordsize used to discover similarities between sequences</div></blockquote>
+<dt><strong>wordsize</strong></dt>
+<dd><p class="first">Wordsize used to discover similarities between sequences</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>8</cite></div>
@@ -127,8 +103,8 @@
 </dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>gnumake</dd>
@@ -156,17 +132,17 @@
 <li><a class="reference internal" href="#">dottup</a><ul>
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="crunch.html"
-                        title="previous chapter">crunch</a></p>
+  <p class="topless"><a href="concatenate.html"
+                        title="previous chapter">concatenate</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="dottupSelf.html"
-                        title="next chapter">dotself</a></p>
+  <p class="topless"><a href="empty.html"
+                        title="next chapter">empty</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/templates/dottup.txt"
@@ -199,10 +175,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="dottupSelf.html" title="dotself"
+          <a href="empty.html" title="empty"
              >next</a> |</li>
         <li class="right" >
-          <a href="crunch.html" title="crunch"
+          <a href="concatenate.html" title="concatenate"
              >previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 

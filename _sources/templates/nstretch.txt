@@ -3,8 +3,9 @@ nstretch
 
 **Nstretch**
 
-::
+
     Run NSTRETCH on an set of input files
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**input_dir**::
-    input dir with the fasta files
+**input_dir**
+  input dir with the fasta files
 
   | *type*: `directory`
   | *default*: ``
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**input_extension**::
-    extension of the input files
+**input_extension**
+  extension of the input files
 
   | *type*: `string`
   | *default*: `fasta`
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**len**::
-    minimal number of Ns before its reported (default 10)
+**len**
+  minimal number of Ns before its reported (default 10)
 
   | *type*: `integer`
   | *default*: `10`
@@ -62,17 +52,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -82,6 +63,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

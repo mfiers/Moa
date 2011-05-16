@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="nstretch" href="nstretch.html" />
+    <link rel="next" title="newjobtest" href="newjobtest.html" />
     <link rel="prev" title="ncbi" href="ncbi.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="nstretch.html" title="nstretch"
+          <a href="newjobtest.html" title="newjobtest"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ncbi.html" title="ncbi"
@@ -55,10 +55,8 @@
   <div class="section" id="newbler">
 <h1>newbler<a class="headerlink" href="#newbler" title="Permalink to this headline">¶</a></h1>
 <p><strong>Newbler</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Run a simple, out of the box, newbler assembly. As an extra feature, this template automatically creates uniquely named links to the two main output fasta files (454AllContigs.fna, 454LargeContigs.fna). This is convenient for subsequence gather steps. The links are named after the directory.</dd>
-</dl>
+<blockquote>
+<div>Run a simple, out of the box, newbler assembly. As an extra feature, this template automatically creates uniquely named links to the two main output fasta files (454AllContigs.fna, 454LargeContigs.fna). This is convenient for subsequence gather steps. The links are named after the directory.</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -71,91 +69,57 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>input</strong>::</dt>
-<dd><blockquote class="first">
-<div>input SFF files</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
+<dt><strong>input</strong></dt>
+<dd>input SFF files</dd>
 </dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>largecontig_cutoff</strong>::</dt>
-<dd><blockquote class="first">
-<div>min length of a contig in 454LargeContigs.fna</div></blockquote>
+<dt><strong>largecontig_cutoff</strong></dt>
+<dd><p class="first">min length of a contig in 454LargeContigs.fna</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>library_name</strong>::</dt>
-<dd><blockquote class="first">
-<div>A library identifier for this assembly. This is used to create an extra fasta file, named using this variable, that contain the generated contigs with their ids prepended with the library id.</div></blockquote>
+<dt><strong>library_name</strong></dt>
+<dd><p class="first">A library identifier for this assembly. This is used to create an extra fasta file, named using this variable, that contain the generated contigs with their ids prepended with the library id.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>$(shell echo `basename $(CURDIR)</cite> | sed &#8220;s/[ ////]//g&#8221; )`</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>mid_configuration</strong>::</dt>
-<dd><blockquote class="first">
-<div>Mid configuration file to use</div></blockquote>
+<dt><strong>mid_configuration</strong></dt>
+<dd><p class="first">Mid configuration file to use</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>mids</strong>::</dt>
-<dd><blockquote class="first">
-<div>mids to use for this assembly</div></blockquote>
+<dt><strong>mids</strong></dt>
+<dd><p class="first">mids to use for this assembly</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>min_identity</strong>::</dt>
-<dd><blockquote class="first">
-<div>Minimal overalp identity used during assembly</div></blockquote>
+<dt><strong>min_identity</strong></dt>
+<dd><p class="first">Minimal overalp identity used during assembly</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>gnumake</dd>
@@ -184,7 +148,7 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
@@ -193,8 +157,8 @@
   <p class="topless"><a href="ncbi.html"
                         title="previous chapter">ncbi</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="nstretch.html"
-                        title="next chapter">nstretch</a></p>
+  <p class="topless"><a href="newjobtest.html"
+                        title="next chapter">newjobtest</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/templates/newbler.txt"
@@ -227,7 +191,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="nstretch.html" title="nstretch"
+          <a href="newjobtest.html" title="newjobtest"
              >next</a> |</li>
         <li class="right" >
           <a href="ncbi.html" title="ncbi"

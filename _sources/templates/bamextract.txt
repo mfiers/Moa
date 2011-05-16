@@ -3,8 +3,9 @@ bamextract
 
 **Bamextract**
 
-::
+
     Extract one sequence from a bam file
+
 
 
 Commands
@@ -12,22 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**bam_input**::
-    BAM input file
+**bam_input**
+  BAM input file
 
   | *type*: `file`
   | *default*: ``
@@ -35,17 +34,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**fasta_file**::
-    Fasta file with the reference sequence data
+**fasta_file**
+  Fasta file with the reference sequence data
 
   | *type*: `file`
   | *default*: ``
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**gff_file**::
-    GFF annotation file to extract data from
+**gff_file**
+  GFF annotation file to extract data from
 
   | *type*: `file`
   | *default*: ``
@@ -62,8 +52,8 @@ Parameters
 
 
 
-**haplotypes**::
-    No of haplotypes in the sample
+**haplotypes**
+  No of haplotypes in the sample
 
   | *type*: `integer`
   | *default*: `2`
@@ -71,8 +61,8 @@ Parameters
 
 
 
-**seq_id**::
-    List of sequence ids to extract
+**seq_id**
+  List of sequence ids to extract
 
   | *type*: `string`
   | *default*: ``
@@ -80,17 +70,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -100,6 +81,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

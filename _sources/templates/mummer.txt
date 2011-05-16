@@ -3,8 +3,9 @@ mummer
 
 **mummer**
 
-::
+
     Run mummer between two sequences
+
 
 
 Commands
@@ -12,48 +13,26 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**mum_input_a**::
-    Set 1 input fasta files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**mum_input_a**
+  Set 1 input fasta files
 
 
 
 
 
-
-
-**mum_input_b**::
-    Set 1 input fasta files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**mum_input_b**
+  Set 1 input fasta files
 
 
 
@@ -65,17 +44,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**mum_breaklen**::
-    Set the distance an alignment extension will attempt to extend poor scoring regions before giving up (default 200)
+**mum_breaklen**
+  Set the distance an alignment extension will attempt to extend poor scoring regions before giving up (default 200)
 
   | *type*: `integer`
   | *default*: `200`
@@ -83,8 +53,8 @@ Parameters
 
 
 
-**mum_matchmode**::
-    use all matching fragments (max) or only unique matchers (mum)
+**mum_matchmode**
+  use all matching fragments (max) or only unique matchers (mum)
 
   | *type*: `set`
   | *default*: `mum`
@@ -92,8 +62,8 @@ Parameters
 
 
 
-**mum_plot_raw**::
-    plot an alternative visualization where mummer does not attempt to put the sequences in the correct order
+**mum_plot_raw**
+  plot an alternative visualization where mummer does not attempt to put the sequences in the correct order
 
   | *type*: `set`
   | *default*: `F`
@@ -101,8 +71,8 @@ Parameters
 
 
 
-**mum_self**::
-    mummer against self
+**mum_self**
+  mummer against self
 
   | *type*: `set`
   | *default*: `T`
@@ -110,17 +80,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -130,6 +91,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

@@ -3,8 +3,9 @@ varscan
 
 **Varscan**
 
-::
+
     Run VARSCAN to detect snps
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**extra_params**::
-    location of varscan.pl, defaults to /usr/lib/perl5/site_perl/5.8.8/varscan.pl
+**extra_params**
+  location of varscan.pl, defaults to /usr/lib/perl5/site_perl/5.8.8/varscan.pl
 
   | *type*: `string`
   | *default*: ``
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**input_file**::
-    Varscan input alignments file
+**input_file**
+  Varscan input alignments file
 
   | *type*: `file`
   | *default*: ``
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**output_name**::
-    Base name of the output files
+**output_name**
+  Base name of the output files
 
   | *type*: `string`
   | *default*: `out`
@@ -62,8 +52,8 @@ Parameters
 
 
 
-**perl_file**::
-    the varscan (perl) executable
+**perl_file**
+  the varscan (perl) executable
 
   | *type*: `file`
   | *default*: ``
@@ -71,17 +61,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -91,6 +72,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

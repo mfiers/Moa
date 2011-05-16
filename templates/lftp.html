@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="f2b" href="maq_fasta2bfa.html" />
+    <link rel="next" title="map" href="map.html" />
     <link rel="prev" title="kangax" href="kangax.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="maq_fasta2bfa.html" title="f2b"
+          <a href="map.html" title="map"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="kangax.html" title="kangax"
@@ -55,10 +55,8 @@
   <div class="section" id="lftp">
 <h1>lftp<a class="headerlink" href="#lftp" title="Permalink to this headline">¶</a></h1>
 <p><strong>lftp</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Use LFTP to download files. This template has two modi, one is set lftp_mode to mirror data, in which case both lftp_url and lftp_pattern (default <a href="#id1"><span class="problematic" id="id2">*</span></a>) are used. The other modus is lftp_mode=get, when one file defined by lftp_url is downloaded. In the mirror mode it is possible to download only those files that are newer as the files already downloaded by using the lftp_timestamp parameter</dd>
-</dl>
+<blockquote>
+<div>Use LFTP to download files. This template has two modi, one is set lftp_mode to mirror data, in which case both lftp_url and lftp_pattern (default <a href="#id1"><span class="problematic" id="id2">*</span></a>) are used. The other modus is lftp_mode=get, when one file defined by lftp_url is downloaded. In the mirror mode it is possible to download only those files that are newer as the files already downloaded by using the lftp_timestamp parameter</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -71,126 +69,96 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>dos2unix</strong>::</dt>
-<dd><blockquote class="first">
-<div>Run dos2unix to prevent problems with possible dos text files</div></blockquote>
+<dt><strong>dos2unix</strong></dt>
+<dd><p class="first">Run dos2unix to prevent problems with possible dos text files</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>get_name</strong>::</dt>
-<dd><blockquote class="first">
-<div>target name of the file to download</div></blockquote>
+<dt><strong>get_name</strong></dt>
+<dd><p class="first">target name of the file to download</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>lftp_output_dir</strong>::</dt>
-<dd><blockquote class="first">
-<div>subdir to create &amp; write all output to. If not defined, data will be downloaded to directory containing the Makefile</div></blockquote>
+<dt><strong>lftp_output_dir</strong></dt>
+<dd><p class="first">subdir to create &amp; write all output to. If not defined, data will be downloaded to directory containing the Makefile</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: <cite>.</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
 </div>
 </dd>
-<dt><strong>lock</strong>::</dt>
-<dd><blockquote class="first">
-<div>Lock this job after running. This means that you will have to manually unlock the job before lftp actually reruns. This is a good choice if your downloading large datasets or have a slow connection</div></blockquote>
+<dt><strong>lock</strong></dt>
+<dd><p class="first">Lock this job after running. This means that you will have to manually unlock the job before lftp actually reruns. This is a good choice if your downloading large datasets or have a slow connection</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>T</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>mode</strong>::</dt>
-<dd><blockquote class="first">
-<div>Mode of operation - mirror or get. Mirror enables timestamping. Get just gets a single file. If using get, consider setting depend_lftp_timestamp to F. When using get, the full url should be in lftp_url. lftp_pattern is ignored. Defaults to mirror.</div></blockquote>
+<dt><strong>mode</strong></dt>
+<dd><p class="first">Mode of operation - mirror or get. Mirror enables timestamping. Get just gets a single file. If using get, consider setting depend_lftp_timestamp to F. When using get, the full url should be in lftp_url. lftp_pattern is ignored. Defaults to mirror.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>get</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>noclean</strong>::</dt>
-<dd><blockquote class="first">
-<div>set of files not to be deleted by the powerclean</div></blockquote>
+<dt><strong>noclean</strong></dt>
+<dd><p class="first">set of files not to be deleted by the powerclean</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>moa.mk Makefile</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>pass</strong>::</dt>
-<dd><blockquote class="first">
-<div>password for the remote site, note that this can be defined on the commandline using: make lftp_pass=PASSWORD</div></blockquote>
+<dt><strong>pass</strong></dt>
+<dd><p class="first">password for the remote site, note that this can be defined on the commandline using: make lftp_pass=PASSWORD</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>password</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>pattern</strong>::</dt>
-<dd><blockquote class="first">
-<div>glob pattern to download</div></blockquote>
+<dt><strong>pattern</strong></dt>
+<dd><p class="first">glob pattern to download</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>&#8216;*&#8217;</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>powerclean</strong>::</dt>
-<dd><blockquote class="first">
-<div>Do brute force cleaning (T/F). Remove all files, except moa.mk &amp; Makefile when calling make clean. Defaults to F.</div></blockquote>
+<dt><strong>powerclean</strong></dt>
+<dd><p class="first">Do brute force cleaning (T/F). Remove all files, except moa.mk &amp; Makefile when calling make clean. Defaults to F.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>timestamp</strong>::</dt>
-<dd><blockquote class="first">
-<div>Depend on lftp to decide if a file needs updating, else a touchfile is created that you need to delete or touch before updating (T/<em>F</em>)</div></blockquote>
+<dt><strong>timestamp</strong></dt>
+<dd><p class="first">Depend on lftp to decide if a file needs updating, else a touchfile is created that you need to delete or touch before updating (T/<em>F</em>)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
+<dt><strong>url</strong></dt>
+<dd><p class="first">The base url to download from</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>url</strong>::</dt>
-<dd><blockquote class="first">
-<div>The base url to download from</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>user</strong>::</dt>
-<dd><blockquote class="first">
-<div>username for the remote site</div></blockquote>
+<dt><strong>user</strong></dt>
+<dd><p class="first">username for the remote site</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -199,8 +167,8 @@
 </dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>gnumake</dd>
@@ -228,7 +196,7 @@
 <li><a class="reference internal" href="#">lftp</a><ul>
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
@@ -237,8 +205,8 @@
   <p class="topless"><a href="kangax.html"
                         title="previous chapter">kangax</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="maq_fasta2bfa.html"
-                        title="next chapter">f2b</a></p>
+  <p class="topless"><a href="map.html"
+                        title="next chapter">map</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/templates/lftp.txt"
@@ -271,7 +239,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="maq_fasta2bfa.html" title="f2b"
+          <a href="map.html" title="map"
              >next</a> |</li>
         <li class="right" >
           <a href="kangax.html" title="kangax"

@@ -3,8 +3,9 @@ bartab
 
 **Bartab**
 
-::
+
     BARTAB - a tool to process sff files
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   .. to be written ..
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**extra_parameters**::
-    extra parameters to feed bartab
+**extra_parameters**
+  extra parameters to feed bartab
 
   | *type*: `string`
   | *default*: ``
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**forward_primer**::
-    remove forward primer
+**forward_primer**
+  remove forward primer
 
   | *type*: `string`
   | *default*: ``
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**in**::
-    input file for bartab
+**in**
+  input file for bartab
 
   | *type*: `file`
   | *default*: ``
@@ -62,8 +52,8 @@ Parameters
 
 
 
-**map**::
-    A file mapping barcodes to metadata
+**map**
+  A file mapping barcodes to metadata
 
   | *type*: `file`
   | *default*: ``
@@ -71,8 +61,8 @@ Parameters
 
 
 
-**min_length**::
-    minimun acceptable sequence length
+**min_length**
+  minimun acceptable sequence length
 
   | *type*: `integer`
   | *default*: `50`
@@ -80,8 +70,8 @@ Parameters
 
 
 
-**out**::
-    base output name
+**out**
+  base output name
 
   | *type*: `integer`
   | *default*: `bartab`
@@ -89,8 +79,8 @@ Parameters
 
 
 
-**qin**::
-    Quality scores for the input fasta file
+**qin**
+  Quality scores for the input fasta file
 
   | *type*: `file`
   | *default*: ``
@@ -98,8 +88,8 @@ Parameters
 
 
 
-**reverse_primer**::
-    remove reverse primer
+**reverse_primer**
+  remove reverse primer
 
   | *type*: `string`
   | *default*: ``
@@ -107,17 +97,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**trim**::
-    Trim barcode
+**trim**
+  Trim barcode
 
   | *type*: `set`
   | *default*: `T`
@@ -125,8 +106,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -136,6 +117,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

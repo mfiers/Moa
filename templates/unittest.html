@@ -24,7 +24,7 @@
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="varscan" href="varscan.html" />
-    <link rel="prev" title="traverse" href="traverse.html" /> 
+    <link rel="prev" title="statsidx" href="statsidx.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,7 +40,7 @@
           <a href="varscan.html" title="varscan"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="traverse.html" title="traverse"
+          <a href="statsidx.html" title="statsidx"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
@@ -54,10 +54,8 @@
             
   <div class="section" id="unittest">
 <h1>unittest<a class="headerlink" href="#unittest" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Template used in testing - has no other purpose</dd>
-</dl>
+<blockquote>
+<div>Template used in testing - has no other purpose</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -66,7 +64,9 @@
 <dt><strong>prepare</strong></dt>
 <dd>prepare for the unittest</dd>
 <dt><strong>run</strong></dt>
-<dd>Prepare &amp; Run</dd>
+<dd><p class="first">Prepare &amp; Run</p>
+<p class="last"><strong>run</strong> delegates execution to: <strong>prepare, run2</strong></p>
+</dd>
 <dt><strong>run2</strong></dt>
 <dd>actually run</dd>
 </dl>
@@ -74,43 +74,26 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>input_1</strong>::</dt>
-<dd><blockquote class="first">
-<div>Input file set 1</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>input_2</strong>::</dt>
-<dd><blockquote class="first">
-<div>Input file set 2</div></blockquote>
+<dt><strong>input_1</strong></dt>
+<dd>Input file set 1</dd>
+<dt><strong>input_2</strong></dt>
+<dd><p class="first">Input file set 2</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input_1</cite></div>
 <div class="line"><em>category</em>: <cite>input</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>in2/*_2.txt</cite></div>
 </div>
 </dd>
-<dt><strong>output</strong>::</dt>
-<dd><blockquote class="first">
-<div>output files</div></blockquote>
+<dt><strong>output</strong></dt>
+<dd><p class="first">output files</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input_1</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.out</cite></div>
 </div>
 </dd>
 </dl>
@@ -118,37 +101,18 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>test_string</strong>::</dt>
-<dd><blockquote class="first">
-<div>Test string values</div></blockquote>
+<dt><strong>test_string</strong></dt>
+<dd><p class="first">Test string values</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>{}</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: <cite>unittesting</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -157,7 +121,7 @@
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Nov 25 17:06:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1291933991.17</dd>
+<dd>unknown</dd>
 </dl>
 </div>
 </div>
@@ -177,14 +141,14 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="traverse.html"
-                        title="previous chapter">traverse</a></p>
+  <p class="topless"><a href="statsidx.html"
+                        title="previous chapter">statsidx</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="varscan.html"
                         title="next chapter">varscan</a></p>
@@ -223,7 +187,7 @@
           <a href="varscan.html" title="varscan"
              >next</a> |</li>
         <li class="right" >
-          <a href="traverse.html" title="traverse"
+          <a href="statsidx.html" title="statsidx"
              >previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 

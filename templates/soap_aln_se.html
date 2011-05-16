@@ -54,10 +54,8 @@
             
   <div class="section" id="soap-aln-se">
 <h1>soap_aln_se<a class="headerlink" href="#soap-aln-se" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Use SOAP to align a set of fastq reads against a db</dd>
-</dl>
+<blockquote>
+<div>Use SOAP to align a set of fastq reads against a db</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -69,185 +67,128 @@
 </div>
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<p><strong>bam_output</strong></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.bam</cite></div>
+</div>
+</div></blockquote>
 <dl class="docutils">
-<dt><strong>bam_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>fq_input</cite></div>
-<div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>fa_input</strong>::</dt>
-<dd><blockquote class="first">
-<div>directory with reference fasta file name</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>prerequisite</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>fq_input</strong>::</dt>
-<dd><blockquote class="first">
-<div>Fastq input file</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>soap_output</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>fq_input</cite></div>
-<div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
+<dt><strong>fa_input</strong></dt>
+<dd>directory with reference fasta file name</dd>
+<dt><strong>fq_input</strong></dt>
+<dd>Fastq input file</dd>
 </dl>
+<p><strong>soap_output</strong></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>fq_input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.soap</cite></div>
+</div>
+</div></blockquote>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>db_index_files</strong>::</dt>
-<dd><blockquote class="first">
-<div>Prefix name for reference index [<a href="#id1"><span class="problematic" id="id2">*</span></a>.index]</div></blockquote>
+<dt><strong>db_index_files</strong></dt>
+<dd><p class="first">Prefix name for reference index [<a href="#id1"><span class="problematic" id="id2">*</span></a>.index]</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 </div>
 </dd>
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>edge_bp_no_gaps</strong>::</dt>
-<dd><blockquote class="first">
-<div>will not allow gap exist inside n-bp edge of a read</div></blockquote>
+<dt><strong>edge_bp_no_gaps</strong></dt>
+<dd><p class="first">will not allow gap exist inside n-bp edge of a read</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>5</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gap_size</strong>::</dt>
-<dd><blockquote class="first">
-<div>one continuous gap size allowed on a read</div></blockquote>
+<dt><strong>gap_size</strong></dt>
+<dd><p class="first">one continuous gap size allowed on a read</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>0</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>how_report_hits</strong>::</dt>
-<dd><blockquote class="first">
-<div>How  to  report repeat hits, 0=none; 1=random one; 2=all</div></blockquote>
+<dt><strong>how_report_hits</strong></dt>
+<dd><p class="first">How  to  report repeat hits, 0=none; 1=random one; 2=all</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>long_read_seed_len</strong>::</dt>
-<dd><blockquote class="first">
-<div>For  long  reads  with  high  error rate at 3&#8217;-end, those can&#8217;t align whole length, then  first  align  5&#8217;  INT  bp subsequence as a seed, [256] use whole length of the read</div></blockquote>
+<dt><strong>long_read_seed_len</strong></dt>
+<dd><p class="first">For  long  reads  with  high  error rate at 3&#8217;-end, those can&#8217;t align whole length, then  first  align  5&#8217;  INT  bp subsequence as a seed, [256] use whole length of the read</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>256</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>match_mode</strong>::</dt>
-<dd><blockquote class="first">
-<div>Match mode for each read or the seed part of read,  which shouldn&#8217;t contain more than 2 mismaches, 0 exact match only 1 1 mismatch match only 2 2 mismatch match only 3 [gap] (coming soon) 4 find the best hits</div></blockquote>
+<dt><strong>match_mode</strong></dt>
+<dd><p class="first">Match mode for each read or the seed part of read,  which shouldn&#8217;t contain more than 2 mismaches, 0 exact match only 1 1 mismatch match only 2 2 mismatch match only 3 [gap] (coming soon) 4 find the best hits</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>4</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>mismatches_per_read</strong>::</dt>
-<dd><blockquote class="first">
-<div>Totally allowed mismatches in one read</div></blockquote>
+<dt><strong>mismatches_per_read</strong></dt>
+<dd><p class="first">Totally allowed mismatches in one read</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>6</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>out_read_id</strong>::</dt>
-<dd><blockquote class="first">
-<div>Output reads id instead of reads name</div></blockquote>
+<dt><strong>out_read_id</strong></dt>
+<dd><p class="first">Output reads id instead of reads name</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>out_unmapped_reads_file</strong>::</dt>
-<dd><blockquote class="first">
-<div>Output file name for unmapped reads</div></blockquote>
+<dt><strong>out_unmapped_reads_file</strong></dt>
+<dd><p class="first">Output file name for unmapped reads</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>unmapped_reads.txt</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>rm_low_qual_reads</strong>::</dt>
-<dd><blockquote class="first">
-<div>Filter low quality reads contain more INT bp Ns</div></blockquote>
+<dt><strong>rm_low_qual_reads</strong></dt>
+<dd><p class="first">Filter low quality reads contain more INT bp Ns</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>5</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>thread_num</strong>::</dt>
-<dd><blockquote class="first">
-<div>Multithreads, n threads</div></blockquote>
+<dt><strong>thread_num</strong></dt>
+<dd><p class="first">Multithreads, n threads</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -256,7 +197,7 @@
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Nov 29 07:56:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1297380110.93</dd>
+<dd>unknown</dd>
 </dl>
 </div>
 </div>
@@ -276,7 +217,7 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>

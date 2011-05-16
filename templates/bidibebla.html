@@ -55,10 +55,8 @@
   <div class="section" id="bidibebla">
 <h1>bidibebla<a class="headerlink" href="#bidibebla" title="Permalink to this headline">¶</a></h1>
 <p><strong>Bidirectional best BLAST hit</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Discover the bidirectional best blast hit between two sets of sequences</dd>
-</dl>
+<blockquote>
+<div>Discover the bidirectional best blast hit between two sets of sequences</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -71,43 +69,25 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>input</strong>::</dt>
-<dd><blockquote class="first">
-<div>Fasta input files</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>output</strong>::</dt>
-<dd><blockquote class="first">
-<div>Lists of bidirectional best blasts</div></blockquote>
+<dt><strong>input</strong></dt>
+<dd>Fasta input files</dd>
+<dt><strong>output</strong></dt>
+<dd><p class="first">Lists of bidirectional best blasts</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>*/*.list</cite></div>
 </div>
 </dd>
-<dt><strong>reference</strong>::</dt>
-<dd><blockquote class="first">
-<div>Reference fasta file to compare against</div></blockquote>
+<dt><strong>reference</strong></dt>
+<dd><p class="first">Reference fasta file to compare against</p>
 <div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>type</em>: <cite>single</cite></div>
 <div class="line"><em>category</em>: <cite>prerequisite</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>*/*.fasta</cite></div>
 </div>
 </dd>
 </dl>
@@ -115,55 +95,34 @@
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>eval</strong>::</dt>
-<dd><blockquote class="first">
-<div>e value cutoff</div></blockquote>
+<dt><strong>eval</strong></dt>
+<dd><p class="first">e value cutoff</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>1e-10</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>nothreads</strong>::</dt>
-<dd><blockquote class="first">
-<div>Threads to run blast with with</div></blockquote>
+<dt><strong>nothreads</strong></dt>
+<dd><p class="first">Threads to run blast with with</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>4</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>protein</strong>::</dt>
-<dd><blockquote class="first">
-<div>Is this a protein set</div></blockquote>
+<dt><strong>protein</strong></dt>
+<dd><p class="first">Is this a protein set</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -172,7 +131,7 @@
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Nov 10 07:56:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1291933988.45</dd>
+<dd>unknown</dd>
 </dl>
 </div>
 </div>
@@ -192,7 +151,7 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>

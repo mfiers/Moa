@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="scaf" href="scaffolder.html" />
+    <link rel="next" title="scaffolder" href="scaffolder.html" />
     <link rel="prev" title="sam2bam" href="sam2bam.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="scaffolder.html" title="scaf"
+          <a href="scaffolder.html" title="scaffolder"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="sam2bam.html" title="sam2bam"
@@ -54,10 +54,8 @@
             
   <div class="section" id="samtools-pileup">
 <h1>samtools_pileup<a class="headerlink" href="#samtools-pileup" title="Permalink to this headline">¶</a></h1>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Print the alignment in the pileup format.</dd>
-</dl>
+<blockquote>
+<div>Print the alignment in the pileup format.</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -70,219 +68,164 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>fasta</strong>::</dt>
-<dd><blockquote class="first">
-<div>reference fasta file</div></blockquote>
+<dt><strong>fasta</strong></dt>
+<dd><p class="first">reference fasta file</p>
 <div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>type</em>: <cite>single</cite></div>
 <div class="line"><em>category</em>: <cite>prerequisite</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>*/*.fasta</cite></div>
 </div>
 </dd>
-<dt><strong>input</strong>::</dt>
-<dd><blockquote class="first">
-<div>bam or sam files</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>output</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>input</cite></div>
-<div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>output_bam</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>input</cite></div>
-<div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
+<dt><strong>input</strong></dt>
+<dd>bam or sam files</dd>
 </dl>
+<p><strong>output</strong></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.pileup</cite></div>
+</div>
+</div></blockquote>
+<p><strong>output_bam</strong></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>./*.sorted</cite></div>
+</div>
+</div></blockquote>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>cap_mapQ_at</strong>::</dt>
-<dd><blockquote class="first">
-<div>cap mapping quality at INT</div></blockquote>
+<dt><strong>cap_mapQ_at</strong></dt>
+<dd><p class="first">cap mapping quality at INT</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>60</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>extra_params</strong>::</dt>
-<dd><blockquote class="first">
-<div>any extra parameters</div></blockquote>
+<dt><strong>extra_params</strong></dt>
+<dd><p class="first">any extra parameters</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>filter_read_bits</strong>::</dt>
-<dd><blockquote class="first">
-<div>filtering reads with bits in INT</div></blockquote>
+<dt><strong>filter_read_bits</strong></dt>
+<dd><p class="first">filtering reads with bits in INT</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1796</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>input_is_SAM</strong>::</dt>
-<dd><blockquote class="first">
-<div>the input is in SAM</div></blockquote>
+<dt><strong>input_is_SAM</strong></dt>
+<dd><p class="first">the input is in SAM</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>num_haplotypes</strong>::</dt>
-<dd><blockquote class="first">
-<div>number of haplotypes in the sample (for -c/-g)</div></blockquote>
+<dt><strong>num_haplotypes</strong></dt>
+<dd><p class="first">number of haplotypes in the sample (for -c/-g)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>out_2nd_best</strong>::</dt>
-<dd><blockquote class="first">
-<div>output the 2nd best call and quality</div></blockquote>
+<dt><strong>out_2nd_best</strong></dt>
+<dd><p class="first">output the 2nd best call and quality</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>out_GLFv3_format</strong>::</dt>
-<dd><blockquote class="first">
-<div>output in the GLFv3 format (suppressing -c/-i/-s)</div></blockquote>
+<dt><strong>out_GLFv3_format</strong></dt>
+<dd><p class="first">output in the GLFv3 format (suppressing -c/-i/-s)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>out_maq_consensus</strong>::</dt>
-<dd><blockquote class="first">
-<div>output the maq consensus sequence</div></blockquote>
+<dt><strong>out_maq_consensus</strong></dt>
+<dd><p class="first">output the maq consensus sequence</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>phred_prob_indel</strong>::</dt>
-<dd><blockquote class="first">
-<div>phred prob. of an indel in sequencing/prep. (for -c/-g)</div></blockquote>
+<dt><strong>phred_prob_indel</strong></dt>
+<dd><p class="first">phred prob. of an indel in sequencing/prep. (for -c/-g)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>40</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>print_variants_only</strong>::</dt>
-<dd><blockquote class="first">
-<div>print variants only (for -c)</div></blockquote>
+<dt><strong>print_variants_only</strong></dt>
+<dd><p class="first">print variants only (for -c)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>prior_diff_haplotypes</strong>::</dt>
-<dd><blockquote class="first">
-<div>phred prob. of an indel in sequencing/prep. (for -c/-g)</div></blockquote>
+<dt><strong>prior_diff_haplotypes</strong></dt>
+<dd><p class="first">phred prob. of an indel in sequencing/prep. (for -c/-g)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.001</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>prior_indel_haplotypes</strong>::</dt>
-<dd><blockquote class="first">
-<div>number of haplotypes in the sample (for -c/-g)</div></blockquote>
+<dt><strong>prior_indel_haplotypes</strong></dt>
+<dd><p class="first">number of haplotypes in the sample (for -c/-g)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.00015</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>show_lines_indels</strong>::</dt>
-<dd><blockquote class="first">
-<div>only show lines/consensus with indels</div></blockquote>
+<dt><strong>show_lines_indels</strong></dt>
+<dd><p class="first">only show lines/consensus with indels</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>simple_pileup_format</strong>::</dt>
-<dd><blockquote class="first">
-<div>simple (yet incomplete) pileup format</div></blockquote>
+<dt><strong>simple_pileup_format</strong></dt>
+<dd><p class="first">simple (yet incomplete) pileup format</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>theta_maq_model</strong>::</dt>
-<dd><blockquote class="first">
-<div>number of haplotypes in the sample (for -c/-g)</div></blockquote>
+<dt><strong>theta_maq_model</strong></dt>
+<dd><p class="first">number of haplotypes in the sample (for -c/-g)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.85</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-<dt><strong>use_SOAPsnp_model</strong>::</dt>
-<dd><blockquote class="first">
-<div>use the SOAPsnp model for SNP calling</div></blockquote>
+<dt><strong>use_SOAPsnp_model</strong></dt>
+<dd><p class="first">use the SOAPsnp model for SNP calling</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -291,8 +234,8 @@
 </dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -301,7 +244,7 @@
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Dec 15 17:06:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1297380110.93</dd>
+<dd>unknown</dd>
 </dl>
 </div>
 </div>
@@ -321,7 +264,7 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
@@ -331,7 +274,7 @@
                         title="previous chapter">sam2bam</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="scaffolder.html"
-                        title="next chapter">scaf</a></p>
+                        title="next chapter">scaffolder</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/templates/samtools_pileup.txt"
@@ -364,7 +307,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="scaffolder.html" title="scaf"
+          <a href="scaffolder.html" title="scaffolder"
              >next</a> |</li>
         <li class="right" >
           <a href="sam2bam.html" title="sam2bam"

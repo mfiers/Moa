@@ -3,8 +3,9 @@ concatenate
 
 **Concatenate**
 
-::
+
     Concatenate a set of fasta files into one.
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**input_dir**::
-    Directory with the input data
+**input_dir**
+  Directory with the input data
 
   | *type*: `directory`
   | *default*: ``
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**input_extension**::
-    Extension of the input files
+**input_extension**
+  Extension of the input files
 
   | *type*: `string`
   | *default*: `fasta`
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**name**::
-    name of the file, the outputfile will become ./name.fasta
+**name**
+  name of the file, the outputfile will become ./name.fasta
 
   | *type*: `string`
   | *default*: ``
@@ -62,17 +52,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -82,6 +63,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

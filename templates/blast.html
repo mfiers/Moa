@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="blast" href="blastSingle.html" />
+    <link rel="next" title="blastdb" href="blastdb.html" />
     <link rel="prev" title="bidibebla" href="bidibebla.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="blastSingle.html" title="blast"
+          <a href="blastdb.html" title="blastdb"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="bidibebla.html" title="bidibebla"
@@ -55,21 +55,21 @@
   <div class="section" id="blast">
 <h1>blast<a class="headerlink" href="#blast" title="Permalink to this headline">¶</a></h1>
 <p><strong>Basic Local Alignment Tool</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>Wraps BLAST [[Alt90]], probably the most popular similarity search tool in bioinformatics.</dd>
-</dl>
+<blockquote>
+<div>Wraps BLAST [[Alt90]], probably the most popular similarity search tool in bioinformatics.</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>blast_report</strong></dt>
-<dd>Generate a text BLAST report.</dd>
 <dt><strong>clean</strong></dt>
 <dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template.</dd>
 <dt><strong>prepare</strong></dt>
 <dd><em>no help defined</em></dd>
+<dt><strong>report</strong></dt>
+<dd>Generate a text BLAST report.</dd>
 <dt><strong>run</strong></dt>
-<dd>Running BLAST takes an input directory, determines what sequences are present and executes BLAST on each of these. Moa BLAST is configured to create XML output (as opposed to the standard text based output) in the out directory. The output XML is subsequently converted to GFF3 by the custom blast2gff script (using BioPython). Additionally, a simple text report is created.</dd>
+<dd><p class="first">Running BLAST takes an input directory, determines what sequences are present and executes BLAST on each of these.  Moa BLAST is configured to create XML output (as opposed to the standard text based output) in the out directory. The output XML is subsequently converted to GFF3 by the custom blast2gff script (using BioPython). Additionally, a simple text report is created.</p>
+<p class="last"><strong>run</strong> delegates execution to: <strong>prepare, run2, report</strong></p>
+</dd>
 <dt><strong>run2</strong></dt>
 <dd><em>no help defined</em></dd>
 </dl>
@@ -77,139 +77,94 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>db</strong>::</dt>
-<dd><blockquote class="first">
-<div>Blast database</div></blockquote>
+<dt><strong>db</strong></dt>
+<dd><p class="first">Blast database</p>
 <div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>type</em>: <cite>single</cite></div>
 <div class="line"><em>category</em>: <cite>prerequisite</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
+<div class="line"><em>pattern</em>: <cite>*/*</cite></div>
 </div>
 </dd>
-<dt><strong>input</strong>::</dt>
-<dd><blockquote class="first">
-<div>Directory with the input files for BLAST, in Fasta format</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>outgff</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>input</cite></div>
-<div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>output</strong>::</dt>
-<dd><blockquote class="first">
-<div>{}</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>input</cite></div>
-<div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
+<dt><strong>input</strong></dt>
+<dd>Directory with the input files for BLAST, in Fasta format</dd>
 </dl>
+<p><strong>outgff</strong></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+<div class="line"><em>pattern</em>: <cite>gff/*.gff</cite></div>
+</div>
+</div></blockquote>
+<p><strong>output</strong></p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>output</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+<div class="line"><em>pattern</em>: <cite>out/*.out</cite></div>
+</div>
+</div></blockquote>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>eval</strong>::</dt>
-<dd><blockquote class="first">
-<div>e value cutoff</div></blockquote>
+<dt><strong>eval</strong></dt>
+<dd><p class="first">e value cutoff</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>1e-10</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gff_blasthit</strong>::</dt>
-<dd><blockquote class="first">
-<div>(T,**F**) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.</div></blockquote>
+<dt><strong>gff_blasthit</strong></dt>
+<dd><p class="first">(T,**F**) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>gff_source</strong>::</dt>
-<dd><blockquote class="first">
-<div>source field to use in the gff</div></blockquote>
+<dt><strong>gff_source</strong></dt>
+<dd><p class="first">source field to use in the gff</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>BLAST</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>nohits</strong>::</dt>
-<dd><blockquote class="first">
-<div>number of hits to report</div></blockquote>
+<dt><strong>nohits</strong></dt>
+<dd><p class="first">number of hits to report</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>50</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>nothreads</strong>::</dt>
-<dd><blockquote class="first">
-<div>threads to run blast with (note the overlap with the Make -j parameter)</div></blockquote>
+<dt><strong>nothreads</strong></dt>
+<dd><p class="first">threads to run blast with (note the overlap with the Make -j parameter)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>program</strong>::</dt>
-<dd><blockquote class="first">
-<div>blast program to use (default: blastn)</div></blockquote>
+<dt><strong>program</strong></dt>
+<dd><p class="first">blast program to use (default: blastn)</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>blastn</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>ruff</dd>
@@ -238,7 +193,7 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
@@ -247,8 +202,8 @@
   <p class="topless"><a href="bidibebla.html"
                         title="previous chapter">bidibebla</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="blastSingle.html"
-                        title="next chapter">blast</a></p>
+  <p class="topless"><a href="blastdb.html"
+                        title="next chapter">blastdb</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/templates/blast.txt"
@@ -281,7 +236,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="blastSingle.html" title="blast"
+          <a href="blastdb.html" title="blastdb"
              >next</a> |</li>
         <li class="right" >
           <a href="bidibebla.html" title="bidibebla"

@@ -3,8 +3,9 @@ bwa_sampe
 
 
 
-::
+
     Generate alignments in SAM format given paired end reads
+
 
 
 Commands
@@ -12,100 +13,72 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself
-
-
+  
+  
 **run**
   run bwa sampe
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**fq_forward_input**::
-    fastq input files directory - forward
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**fq_forward_input**
+  fastq input files directory - forward
 
 
 
 
 
+**fq_reverse_input**
+  fastq input files directory - reverse
 
-
-**fq_reverse_input**::
-    fastq input files directory - reverse
 
   | *type*: `map`
   | *source*: `fq_forward_input`
   | *category*: `input`
   | *optional*: `True`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `*/*_2.fq`
 
 
 
 
+**output_bam**
+  
 
-
-
-**output_bam**::
-    {}
 
   | *type*: `map`
   | *source*: `fq_forward_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.bam`
 
 
 
 
+**sai_forward_input**
+  sai input files - forward
 
-
-
-**sai_forward_input**::
-    sai input files - forward
 
   | *type*: `map`
   | *source*: `fq_forward_input`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `sai`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `*/*_1.sai`
 
 
 
 
+**sai_reverse_input**
+  sai input files - reverse files
 
-
-
-**sai_reverse_input**::
-    sai input files - reverse files
 
   | *type*: `map`
   | *source*: `sai_forward_input`
   | *category*: `input`
   | *optional*: `True`
-  | *extension*: `sai`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `*/*_2.sai`
 
 
 
@@ -116,8 +89,8 @@ Parameters
 
 
 
-**db**::
-    bwa database to align against
+**db**
+  bwa database to align against
 
   | *type*: `string`
   | *default*: ``
@@ -125,17 +98,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**disable_insert_size**::
-    disable insert size estimate (force -s)
+**disable_insert_size**
+  disable insert size estimate (force -s)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -143,8 +107,8 @@ Parameters
 
 
 
-**disable_SW**::
-    disable Smith-Waterman for the unmapped mate
+**disable_SW**
+  disable Smith-Waterman for the unmapped mate
 
   | *type*: `boolean`
   | *default*: `False`
@@ -152,8 +116,8 @@ Parameters
 
 
 
-**max_aln_out**::
-    maximum hits to output for paired reads
+**max_aln_out**
+  maximum hits to output for paired reads
 
   | *type*: `integer`
   | *default*: `3`
@@ -161,8 +125,8 @@ Parameters
 
 
 
-**max_insert_size**::
-    maximum insert size
+**max_insert_size**
+  maximum insert size
 
   | *type*: `integer`
   | *default*: `500`
@@ -170,8 +134,8 @@ Parameters
 
 
 
-**max_occ_read**::
-    maximum occurrences for one end
+**max_occ_read**
+  maximum occurrences for one end
 
   | *type*: `integer`
   | *default*: `100000`
@@ -179,8 +143,8 @@ Parameters
 
 
 
-**max_out_discordant_pairs**::
-    maximum hits to output for discordant pairs
+**max_out_discordant_pairs**
+  maximum hits to output for discordant pairs
 
   | *type*: `integer`
   | *default*: `10`
@@ -188,8 +152,8 @@ Parameters
 
 
 
-**preload_index**::
-    preload index into memory (for base-space reads only)
+**preload_index**
+  preload index into memory (for base-space reads only)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -197,8 +161,8 @@ Parameters
 
 
 
-**prior_chimeric_rate**::
-    prior of chimeric rate (lower bound)
+**prior_chimeric_rate**
+  prior of chimeric rate (lower bound)
 
   | *type*: `integer`
   | *default*: `1e-05`
@@ -206,17 +170,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -225,7 +180,4 @@ Other
 **Creation date**
   Wed Nov 25 17:06:48 2010
 **Modification date**
-  1297380110.93
-
-
-
+  unknown

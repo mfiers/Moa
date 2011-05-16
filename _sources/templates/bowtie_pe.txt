@@ -3,75 +3,78 @@ bowtie_pe
 
 
 
-::
+
     Run BOWTIE on an set of input files (query) vs a database index.
+
 
 
 Commands
 ~~~~~~~~
 
 **clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template
-
-
+  Remove all job data, not the Moa job itself
+  
+  
+**report**
+  Create a report on the results
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
+  **run** delegates execution to: **run2, report**
+  
+**run2**
+  Execute bowtie in paired-end mode
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
+**db**
+  The (basename of the) bowtie database to use.
 
 
-**fq_forward_input**::
-    fastq input files directory - forward
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
+  | *type*: `single`
+  | *category*: `prerequisite`
   | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `../20.bowtiedb/db`
+
+
+
+
+**fq_forward_input**
+  fastq input files directory - forward
 
 
 
 
 
+**fq_reverse_input**
+  fastq input files directory - reverse
 
-
-**fq_reverse_input**::
-    fastq input files directory - reverse
 
   | *type*: `map`
   | *source*: `fq_forward_input`
   | *category*: `input`
   | *optional*: `True`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `*/*_2.fq`
 
 
 
 
+**output**
+  Bam output file
 
-
-
-**output**::
-    Bam output file
 
   | *type*: `map`
   | *source*: `fq_forward_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.bam`
 
 
 
@@ -82,26 +85,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**ebwt_base**::
-    The (basename of the) bowtie database to use.
-
-  | *type*: `string`
-  | *default*: `{}`
-  | *optional*: `False`
-
-
-
-**extra_params**::
-    extra parameters to feed to bowtie
+**extra_params**
+  extra parameters to feed to bowtie
 
   | *type*: `string`
   | *default*: ``
@@ -109,8 +94,8 @@ Parameters
 
 
 
-**input_format**::
-    Format of the input files
+**input_format**
+  Format of the input files
 
   | *type*: `set`
   | *default*: `fastq`
@@ -118,8 +103,8 @@ Parameters
 
 
 
-**max_insertsize**::
-    Maximum allowed insertsize
+**max_insertsize**
+  Maximum allowed insertsize
 
   | *type*: `integer`
   | *default*: `250`
@@ -127,8 +112,8 @@ Parameters
 
 
 
-**min_insertsize**::
-    Minimum allowed insertsize
+**min_insertsize**
+  Minimum allowed insertsize
 
   | *type*: `integer`
   | *default*: `1`
@@ -136,8 +121,8 @@ Parameters
 
 
 
-**output_format**::
-    Format of the output file
+**output_format**
+  Format of the output file
 
   | *type*: `set`
   | *default*: `bam`
@@ -145,17 +130,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -165,6 +141,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

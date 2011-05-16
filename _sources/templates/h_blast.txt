@@ -3,8 +3,9 @@ h_blast
 
 **Hadoop Blast**
 
-::
+
     Runs BLAST on a hadoop cluster
+
 
 
 Commands
@@ -12,22 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   Similar to a normal blast, but now running on an hadoop cluster
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**db**::
-    Location of the blast database
+**db**
+  Location of the blast database
 
   | *type*: `file`
   | *default*: ``
@@ -35,17 +34,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**eval**::
-    e value cutoff
+**eval**
+  e value cutoff
 
   | *type*: `float`
   | *default*: `1e-10`
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**hadoop_base**::
-    location of the hadoop installation
+**hadoop_base**
+  location of the hadoop installation
 
   | *type*: `directory`
   | *default*: ``
@@ -62,8 +52,8 @@ Parameters
 
 
 
-**hdfs_base**::
-    htfs://SERVER:PORT for the hdfs filesystem, defaults to "hdfs://localhost:9000"
+**hdfs_base**
+  htfs://SERVER:PORT for the hdfs filesystem, defaults to "hdfs://localhost:9000"
 
   | *type*: `string`
   | *default*: `hdfs://localhost:9000`
@@ -71,8 +61,8 @@ Parameters
 
 
 
-**input_dir**::
-    location of the hadoop installation
+**input_dir**
+  location of the hadoop installation
 
   | *type*: `directory`
   | *default*: ``
@@ -80,8 +70,8 @@ Parameters
 
 
 
-**input_extension**::
-    input file extension
+**input_extension**
+  input file extension
 
   | *type*: `string`
   | *default*: `fasta`
@@ -89,8 +79,8 @@ Parameters
 
 
 
-**nohits**::
-    number of hits to report
+**nohits**
+  number of hits to report
 
   | *type*: `integer`
   | *default*: `50`
@@ -98,8 +88,8 @@ Parameters
 
 
 
-**nothreads**::
-    threads to run blast with (note the overlap with the Make -j parameter)
+**nothreads**
+  threads to run blast with (note the overlap with the Make -j parameter)
 
   | *type*: `integer`
   | *default*: `1`
@@ -107,8 +97,8 @@ Parameters
 
 
 
-**program**::
-    blast program to use (default: blastn)
+**program**
+  blast program to use (default: blastn)
 
   | *type*: `set`
   | *default*: `blastn`
@@ -116,17 +106,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -136,6 +117,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

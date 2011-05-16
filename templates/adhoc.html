@@ -23,8 +23,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="adhoc2" href="adhoc2.html" />
-    <link rel="prev" title="crunch" href="act_crunch.html" /> 
+    <link rel="next" title="bamextract" href="bamextract.html" />
+    <link rel="prev" title="Templates" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,10 +37,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="adhoc2.html" title="adhoc2"
+          <a href="bamextract.html" title="bamextract"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="act_crunch.html" title="crunch"
+          <a href="index.html" title="Templates"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
@@ -55,10 +55,8 @@
   <div class="section" id="adhoc">
 <h1>adhoc<a class="headerlink" href="#adhoc" title="Permalink to this headline">¶</a></h1>
 <p><strong>Execute an ad hoc analysis</strong></p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>The <cite>adhoc</cite> template assists in running one-liners - possibly on a set of input files</dd>
-</dl>
+<blockquote>
+<div>The <cite>adhoc</cite> template assists in running one-liners - possibly on a set of input files</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
@@ -71,81 +69,48 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>input</strong>::</dt>
-<dd><blockquote class="first">
-<div>Input files for adhoc</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
+<dt><strong>input</strong></dt>
+<dd>Input files for adhoc</dd>
 </dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>default_command</strong>::</dt>
-<dd><blockquote class="first">
-<div>command to run for this template</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>{}</cite></div>
-<div class="line"><em>default</em>: <cite>run</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>mode</strong>::</dt>
+<dt><strong>mode</strong></dt>
 <dd><blockquote class="first">
 <div>operation mode: <em>seq</em>, sequential: process the input files one by one; <em>par</em>, parallel: process the input files in parallel (use with <cite>-j</cite>); <em>all</em>: process all input files at once (use <cite>$^</cite> in <cite>adhoc_process</cite>) and <em>simple</em>: Ignore input files, just execute <cite>adhoc_process</cite> once.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
-<div class="line"><em>default</em>: <cite>seq</cite></div>
+<div class="line"><em>default</em>: <cite>simple</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>name_sed</strong>::</dt>
-<dd><blockquote class="first">
-<div>A sed expression which can be used to derive the output file name for each input file (excluding the path). The sed expression is executed for each input file name, and the result is available as $t in the $(adhoc_process) statement. Make sure that you use single quotes when specifying this on the command line</div></blockquote>
+<dt><strong>name_sed</strong></dt>
+<dd><p class="first">A sed expression which can be used to derive the output file name for each input file (excluding the path). The sed expression is executed for each input file name, and the result is available as $t in the $(adhoc_process) statement. Make sure that you use single quotes when specifying this on the command line</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>s/a/a/</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>output_dir</strong>::</dt>
-<dd><blockquote class="first">
-<div>Output subdirectory</div></blockquote>
+<dt><strong>output_dir</strong></dt>
+<dd><p class="first">Output subdirectory</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: <cite>.</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>process</strong>::</dt>
-<dd><blockquote class="first">
-<div>Command to execute for each input file. The path to the input file is available as $&lt; and the output file as $t. (it is not mandatory to use both parameters, for example &#8220;cat $&lt; &gt; output&#8221; would concatenate all files into one big file</div></blockquote>
+<dt><strong>process</strong></dt>
+<dd><p class="first">Command to execute for each input file. The path to the input file is available as $&lt; and the output file as $t. (it is not mandatory to use both parameters, for example &#8220;cat $&lt; &gt; output&#8221; would concatenate all files into one big file</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>echo &#8220;needs a sensbile command&#8221;</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
-<dt><strong>title</strong>::</dt>
-<dd><blockquote class="first">
-<div>A name for this job</div></blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>touch</strong>::</dt>
-<dd><blockquote class="first">
-<div>use touch files to track if input files have changed.</div></blockquote>
+<dt><strong>touch</strong></dt>
+<dd><p class="first">use touch files to track if input files have changed.</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>T</cite></div>
@@ -154,8 +119,8 @@
 </dd>
 </dl>
 </div>
-<div class="section" id="other">
-<h2>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="miscellaneous">
+<h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
 <dd>gnumake</dd>
@@ -184,17 +149,17 @@
 <li><a class="reference internal" href="#commands">Commands</a></li>
 <li><a class="reference internal" href="#filesets">Filesets</a></li>
 <li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#other">Other</a></li>
+<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="act_crunch.html"
-                        title="previous chapter">crunch</a></p>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Templates</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="adhoc2.html"
-                        title="next chapter">adhoc2</a></p>
+  <p class="topless"><a href="bamextract.html"
+                        title="next chapter">bamextract</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/templates/adhoc.txt"
@@ -227,10 +192,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="adhoc2.html" title="adhoc2"
+          <a href="bamextract.html" title="bamextract"
              >next</a> |</li>
         <li class="right" >
-          <a href="act_crunch.html" title="crunch"
+          <a href="index.html" title="Templates"
              >previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 

@@ -3,8 +3,9 @@ clustalgroup
 
 **clustalw**
 
-::
+
     Run clustalw on two sets of sequences
+
 
 
 Commands
@@ -12,22 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   run clustalw
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**cwg_input_dir**::
-    This set of sequences to run clustalw on
+**cwg_input_dir**
+  This set of sequences to run clustalw on
 
   | *type*: `directory`
   | *default*: ``
@@ -35,8 +34,8 @@ Parameters
 
 
 
-**cwg_input_extension**::
-    Input file extension
+**cwg_input_extension**
+  Input file extension
 
   | *type*: `string`
   | *default*: `fasta`
@@ -44,26 +43,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -73,6 +54,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

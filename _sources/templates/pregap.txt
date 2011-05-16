@@ -3,8 +3,9 @@ pregap
 
 **Pregap**
 
-::
+
     Run Pregap. Note that running phrap could be a part of this.
+
 
 
 Commands
@@ -12,22 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**cloning_vector**::
-    File containing the cloning vector
+**cloning_vector**
+  File containing the cloning vector
 
   | *type*: `file`
   | *default*: ``
@@ -35,17 +34,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**ecoli_screenseq**::
-    File containing ecoli screen sequences
+**ecoli_screenseq**
+  File containing ecoli screen sequences
 
   | *type*: `file`
   | *default*: ``
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**input_dir**::
-    Directory with the input data
+**input_dir**
+  Directory with the input data
 
   | *type*: `string`
   | *default*: ``
@@ -62,8 +52,8 @@ Parameters
 
 
 
-**input_pattern**::
-    file name pattern
+**input_pattern**
+  file name pattern
 
   | *type*: `string`
   | *default*: ``
@@ -71,8 +61,8 @@ Parameters
 
 
 
-**quality_value_clip**::
-    quality cutoff
+**quality_value_clip**
+  quality cutoff
 
   | *type*: `integer`
   | *default*: `10`
@@ -80,8 +70,8 @@ Parameters
 
 
 
-**repeat_masker_lib**::
-    File with a repeatmasker library
+**repeat_masker_lib**
+  File with a repeatmasker library
 
   | *type*: `file`
   | *default*: ``
@@ -89,8 +79,8 @@ Parameters
 
 
 
-**sequencing_vector**::
-    File containing the sequencing vector
+**sequencing_vector**
+  File containing the sequencing vector
 
   | *type*: `file`
   | *default*: ``
@@ -98,8 +88,8 @@ Parameters
 
 
 
-**template**::
-    the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.
+**template**
+  the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.
 
   | *type*: `file`
   | *default*: `./files/pregap.config.`
@@ -107,17 +97,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**vector_primerfile**::
-    File with the vector primers
+**vector_primerfile**
+  File with the vector primers
 
   | *type*: `file`
   | *default*: ``
@@ -125,8 +106,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -136,6 +117,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

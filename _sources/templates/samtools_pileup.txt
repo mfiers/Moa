@@ -3,8 +3,9 @@ samtools_pileup
 
 
 
-::
+
     Print the alignment in the pileup format.
+
 
 
 Commands
@@ -12,83 +13,58 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself
-
-
+  
+  
 **run**
   run samtools pileup command
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
+**fasta**
+  reference fasta file
 
 
-**fasta**::
-    reference fasta file
-
-  | *type*: `map`
-  | *source*: `{}`
+  | *type*: `single`
   | *category*: `prerequisite`
   | *optional*: `True`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `*/*.fasta`
+
+
+
+
+**input**
+  bam or sam files
 
 
 
 
 
+**output**
+  
 
-
-**input**::
-    bam or sam files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
-**output**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.pileup`
 
 
 
 
+**output_bam**
+  
 
-
-
-**output_bam**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.sorted`
 
 
 
@@ -99,8 +75,8 @@ Parameters
 
 
 
-**cap_mapQ_at**::
-    cap mapping quality at INT
+**cap_mapQ_at**
+  cap mapping quality at INT
 
   | *type*: `integer`
   | *default*: `60`
@@ -108,17 +84,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**extra_params**::
-    any extra parameters
+**extra_params**
+  any extra parameters
 
   | *type*: `string`
   | *default*: ``
@@ -126,8 +93,8 @@ Parameters
 
 
 
-**filter_read_bits**::
-    filtering reads with bits in INT
+**filter_read_bits**
+  filtering reads with bits in INT
 
   | *type*: `integer`
   | *default*: `1796`
@@ -135,8 +102,8 @@ Parameters
 
 
 
-**input_is_SAM**::
-    the input is in SAM
+**input_is_SAM**
+  the input is in SAM
 
   | *type*: `boolean`
   | *default*: `False`
@@ -144,8 +111,8 @@ Parameters
 
 
 
-**num_haplotypes**::
-    number of haplotypes in the sample (for -c/-g)
+**num_haplotypes**
+  number of haplotypes in the sample (for -c/-g)
 
   | *type*: `integer`
   | *default*: `2`
@@ -153,8 +120,8 @@ Parameters
 
 
 
-**out_2nd_best**::
-    output the 2nd best call and quality
+**out_2nd_best**
+  output the 2nd best call and quality
 
   | *type*: `boolean`
   | *default*: `False`
@@ -162,8 +129,8 @@ Parameters
 
 
 
-**out_GLFv3_format**::
-    output in the GLFv3 format (suppressing -c/-i/-s)
+**out_GLFv3_format**
+  output in the GLFv3 format (suppressing -c/-i/-s)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -171,8 +138,8 @@ Parameters
 
 
 
-**out_maq_consensus**::
-    output the maq consensus sequence
+**out_maq_consensus**
+  output the maq consensus sequence
 
   | *type*: `boolean`
   | *default*: `False`
@@ -180,8 +147,8 @@ Parameters
 
 
 
-**phred_prob_indel**::
-    phred prob. of an indel in sequencing/prep. (for -c/-g)
+**phred_prob_indel**
+  phred prob. of an indel in sequencing/prep. (for -c/-g)
 
   | *type*: `integer`
   | *default*: `40`
@@ -189,8 +156,8 @@ Parameters
 
 
 
-**print_variants_only**::
-    print variants only (for -c)
+**print_variants_only**
+  print variants only (for -c)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -198,8 +165,8 @@ Parameters
 
 
 
-**prior_diff_haplotypes**::
-    phred prob. of an indel in sequencing/prep. (for -c/-g)
+**prior_diff_haplotypes**
+  phred prob. of an indel in sequencing/prep. (for -c/-g)
 
   | *type*: `float`
   | *default*: `0.001`
@@ -207,8 +174,8 @@ Parameters
 
 
 
-**prior_indel_haplotypes**::
-    number of haplotypes in the sample (for -c/-g)
+**prior_indel_haplotypes**
+  number of haplotypes in the sample (for -c/-g)
 
   | *type*: `float`
   | *default*: `0.00015`
@@ -216,8 +183,8 @@ Parameters
 
 
 
-**show_lines_indels**::
-    only show lines/consensus with indels
+**show_lines_indels**
+  only show lines/consensus with indels
 
   | *type*: `boolean`
   | *default*: `False`
@@ -225,8 +192,8 @@ Parameters
 
 
 
-**simple_pileup_format**::
-    simple (yet incomplete) pileup format
+**simple_pileup_format**
+  simple (yet incomplete) pileup format
 
   | *type*: `boolean`
   | *default*: `False`
@@ -234,8 +201,8 @@ Parameters
 
 
 
-**theta_maq_model**::
-    number of haplotypes in the sample (for -c/-g)
+**theta_maq_model**
+  number of haplotypes in the sample (for -c/-g)
 
   | *type*: `float`
   | *default*: `0.85`
@@ -243,17 +210,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**use_SOAPsnp_model**::
-    use the SOAPsnp model for SNP calling
+**use_SOAPsnp_model**
+  use the SOAPsnp model for SNP calling
 
   | *type*: `boolean`
   | *default*: `False`
@@ -261,8 +219,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -271,7 +229,4 @@ Other
 **Creation date**
   Wed Dec 15 17:06:48 2010
 **Modification date**
-  1297380110.93
-
-
-
+  unknown
