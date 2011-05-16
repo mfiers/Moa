@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
@@ -31,8 +33,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="Yaco.html" title="Yaco"
              accesskey="P">previous</a> |</li>
@@ -46,30 +48,32 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="fist">
-<span id="module-fist"></span><h1>fist<a class="headerlink" href="#fist" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-fist"></span><div class="section" id="fist">
+<h1>fist<a class="headerlink" href="#fist" title="Permalink to this headline">¶</a></h1>
 <p><strong>Fi</strong>le<strong>s</strong>e<strong>t</strong>s</p>
 <p>Handle &amp; manipulate sets of files</p>
 <p>This module aims at providing classes to handle and manipulate sets of
 files. Two simple examples are a simple set containing one file
-(<a title="fist.fistSingle" class="reference internal" href="#fist.fistSingle"><tt class="xref docutils literal"><span class="pre">fist.fistSingle</span></tt></a>) or a <cite>glob</cite> based set of files
-(<a title="fist.fistFileset" class="reference internal" href="#fist.fistFileset"><tt class="xref docutils literal"><span class="pre">fist.fistFileset</span></tt></a>). A more complicated example is
-<a title="fist.fistMapset" class="reference internal" href="#fist.fistMapset"><tt class="xref docutils literal"><span class="pre">fistMapset</span></tt></a> that maps another fileset based on a pattern.</p>
+(<a class="reference internal" href="#fist.fistSingle" title="fist.fistSingle"><tt class="xref py py-class docutils literal"><span class="pre">fist.fistSingle</span></tt></a>) or a <cite>glob</cite> based set of files
+(<a class="reference internal" href="#fist.fistFileset" title="fist.fistFileset"><tt class="xref py py-class docutils literal"><span class="pre">fist.fistFileset</span></tt></a>). A more complicated example is
+<a class="reference internal" href="#fist.fistMapset" title="fist.fistMapset"><tt class="xref py py-class docutils literal"><span class="pre">fistMapset</span></tt></a> that maps another fileset based on a pattern.</p>
 <p>Each fileset inherits from <cite>list</cite> - hence fist filesets behave as
 lists.</p>
 <p>Future work should allow the definition of remote filesets (for
 example over http or ssh).</p>
 <p>Each fist class is istantiated with a url defining the file(set). In
-the case of <a title="fist.fistFileset" class="reference internal" href="#fist.fistFileset"><tt class="xref docutils literal"><span class="pre">fist.fistFileset</span></tt></a> this url contains a globbing
+the case of <a class="reference internal" href="#fist.fistFileset" title="fist.fistFileset"><tt class="xref py py-class docutils literal"><span class="pre">fist.fistFileset</span></tt></a> this url contains a globbing
 characters:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">fs</span> <span class="o">=</span> <span class="n">fist</span><span class="o">.</span><span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;/tmp/*&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fs</span> <span class="o">=</span> <span class="n">fist</span><span class="o">.</span><span class="n">fistFileset</span><span class="p">(</span><span class="s">&#39;/tmp/*,txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>this fs returns a list with all files in <cite>/tmp</cite></p>
+<p>This fileset object contains a list with all <cite>*.txt</cite> files in
+<cite>/tmp</cite>. Subsequently it is possible to map this set</p>
 <dl class="class">
 <dt id="fist.fistCore">
 <em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistCore</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistCore" title="Permalink to this definition">¶</a></dt>
-<dd>Core class for all fist classes</dd></dl>
+<dd><p>Core class for all fist classes</p>
+</dd></dl>
 
 <dl class="class">
 <dt id="fist.fistFileset">
@@ -180,12 +184,14 @@ example:</p>
 <dl class="method">
 <dt id="fist.fistMapset.resolve">
 <tt class="descname">resolve</tt><big>(</big><em>mapFrom</em><big>)</big><a class="headerlink" href="#fist.fistMapset.resolve" title="Permalink to this definition">¶</a></dt>
-<dd>Resolve the mapped set based on a input fileSet</dd></dl>
+<dd><p>Resolve the mapped set based on a input fileSet</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="fist.fistMapset.resolver">
 <tt class="descname">resolver</tt><big>(</big><em>mapFrom</em>, <em>list</em><big>)</big><a class="headerlink" href="#fist.fistMapset.resolver" title="Permalink to this definition">¶</a></dt>
-<dd>map all files in the incoming list</dd></dl>
+<dd><p>map all files in the incoming list</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -196,7 +202,8 @@ example:</p>
 <dl class="method">
 <dt id="fist.fistSingle.init">
 <tt class="descname">init</tt><big>(</big><big>)</big><a class="headerlink" href="#fist.fistSingle.init" title="Permalink to this definition">¶</a></dt>
-<dd>Assuming the url is a single file</dd></dl>
+<dd><p>Assuming the url is a single file</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -211,27 +218,27 @@ example:</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="Yaco.html"
-                                  title="previous chapter">Yaco</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/api/fist.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Yaco.html"
+                        title="previous chapter">Yaco</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/fist.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -243,7 +250,7 @@ example:</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="Yaco.html" title="Yaco"
@@ -253,9 +260,9 @@ example:</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

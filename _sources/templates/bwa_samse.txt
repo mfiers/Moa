@@ -44,25 +44,8 @@ Filesets
 
 
 
-**output**::
-    {}
-
-  | *type*: `map`
-  | *source*: `fq_input`
-  | *category*: `output`
-  | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
 **output_bam**::
-    {}
+    output bam file
 
   | *type*: `map`
   | *source*: `fq_input`
@@ -145,7 +128,7 @@ Other
 **Creation date**
   Wed Nov 25 17:06:48 2010
 **Modification date**
-  1291933989.07
+  1297380110.93
 
 
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,24 +6,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Help &mdash; Moa v0.10.1 documentation</title>
+    <title>help - generate help &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../../index.html" />
     <link rel="up" title="moa.plugin" href="index.html" />
-    <link rel="next" title="Job information" href="info.html" />
-    <link rel="prev" title="filesets" href="fileset.html" /> 
+    <link rel="next" title="info - Job information" href="info.html" />
+    <link rel="prev" title="fileset - define sets of in&amp;output files" href="fileset.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,13 +34,13 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="info.html" title="Job information"
+          <a href="info.html" title="info - Job information"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="fileset.html" title="filesets"
+          <a href="fileset.html" title="fileset - define sets of in&amp;output files"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -51,23 +53,24 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="help">
-<span id="module-moa.plugin.help"></span><h1>Help<a class="headerlink" href="#help" title="Permalink to this headline">¶</a></h1>
-<p>Generate help</p>
+  <span class="target" id="module-moa.plugin.help"></span><div class="section" id="help-generate-help">
+<h1><strong>help</strong> - generate help<a class="headerlink" href="#help-generate-help" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="moa.plugin.help.pager">
 <tt class="descclassname">moa.plugin.help.</tt><tt class="descname">pager</tt><big>(</big><em>template</em>, <em>templateData</em><big>)</big><a class="headerlink" href="#moa.plugin.help.pager" title="Permalink to this definition">¶</a></dt>
-<dd>render the template &amp; send it to the pager</dd></dl>
+<dd><p>render the template &amp; send it to the pager</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="moa.plugin.help.templateHelp">
-<tt class="descclassname">moa.plugin.help.</tt><tt class="descname">templateHelp</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.help.templateHelp" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.plugin.help.</tt><tt class="descname">templateHelp</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.help.templateHelp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="moa.plugin.help.welcome">
-<tt class="descclassname">moa.plugin.help.</tt><tt class="descname">welcome</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.help.welcome" title="Permalink to this definition">¶</a></dt>
-<dd>print a welcome message</dd></dl>
+<tt class="descclassname">moa.plugin.help.</tt><tt class="descname">welcome</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.help.welcome" title="Permalink to this definition">¶</a></dt>
+<dd><p>print a welcome message</p>
+</dd></dl>
 
 </div>
 
@@ -80,30 +83,30 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="fileset.html"
-                                  title="previous chapter">filesets</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="info.html"
-                                  title="next chapter">Job information</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../../_sources/api/plugin/help.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="fileset.html"
+                        title="previous chapter"><strong>fileset</strong> - define sets of in&amp;output files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="info.html"
+                        title="next chapter"><strong>info</strong> - Job information</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/plugin/help.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -115,13 +118,13 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
+          <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="info.html" title="Job information"
+          <a href="info.html" title="info - Job information"
              >next</a> |</li>
         <li class="right" >
-          <a href="fileset.html" title="filesets"
+          <a href="fileset.html" title="fileset - define sets of in&amp;output files"
              >previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -129,9 +132,9 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

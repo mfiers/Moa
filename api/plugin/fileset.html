@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,24 +6,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>filesets &mdash; Moa v0.10.1 documentation</title>
+    <title>fileset - define sets of in&amp;output files &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../../index.html" />
     <link rel="up" title="moa.plugin" href="index.html" />
-    <link rel="next" title="Help" href="help.html" />
-    <link rel="prev" title="configure - Configure jobs" href="configure.html" /> 
+    <link rel="next" title="help - generate help" href="help.html" />
+    <link rel="prev" title="extraCommands - Pre &amp; Post commands" href="extraCommands.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,13 +34,13 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="help.html" title="Help"
+          <a href="help.html" title="help - generate help"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="configure.html" title="configure - Configure jobs"
+          <a href="extraCommands.html" title="extraCommands - Pre &amp; Post commands"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -51,29 +53,41 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="filesets">
-<span id="module-moa.plugin.fileset"></span><h1>filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h1>
-<p>Define sets of files for Moa</p>
+  <span class="target" id="module-moa.plugin.fileset"></span><div class="section" id="fileset-define-sets-of-in-output-files">
+<h1><strong>fileset</strong> - define sets of in&amp;output files<a class="headerlink" href="#fileset-define-sets-of-in-output-files" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="moa.plugin.fileset.defineCommands">
 <tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">defineCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.defineCommands" title="Permalink to this definition">¶</a></dt>
-<dd>Set the moa commands for this plugin</dd></dl>
+<dd><p>Set the moa commands for this plugin</p>
+</dd></dl>
 
 <dl class="function">
-<dt id="moa.plugin.fileset.preCommand">
-<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">preCommand</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.preCommand" title="Permalink to this definition">¶</a></dt>
-<dd>Run before execution of any command (backend or plugin)</dd></dl>
+<dt id="moa.plugin.fileset.preFiles">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">preFiles</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.preFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run before execution of any command (backend or plugin)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.fileset.pre_command">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">pre_command</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.pre_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run before execution of any command (backend or plugin)</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="moa.plugin.fileset.preparefilesets">
 <tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">preparefilesets</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.preparefilesets" title="Permalink to this definition">¶</a></dt>
-<dd>prepare all filesets</dd></dl>
+<dd><p>prepare all filesets</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="moa.plugin.fileset.showFiles">
-<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">showFiles</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.showFiles" title="Permalink to this definition">¶</a></dt>
-<dd><p>files</p>
-<p>Show an overview of the files found for this job</p>
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">showFiles</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.showFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa files</strong> - Display discovered &amp; inferred files for this job</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa files</pre>
+</div>
+<p>Display a list of all files discovered (for input &amp; prerequisite
+type filesets) and inferred from these for map type filesets.</p>
 </dd></dl>
 
 </div>
@@ -87,30 +101,30 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="configure.html"
-                                  title="previous chapter"><strong>configure</strong> - Configure jobs</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="help.html"
-                                  title="next chapter">Help</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../../_sources/api/plugin/fileset.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="extraCommands.html"
+                        title="previous chapter"><strong>extraCommands</strong> - Pre &amp; Post commands</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="help.html"
+                        title="next chapter"><strong>help</strong> - generate help</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/plugin/fileset.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -122,13 +136,13 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
+          <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="help.html" title="Help"
+          <a href="help.html" title="help - generate help"
              >next</a> |</li>
         <li class="right" >
-          <a href="configure.html" title="configure - Configure jobs"
+          <a href="extraCommands.html" title="extraCommands - Pre &amp; Post commands"
              >previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -136,9 +150,9 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

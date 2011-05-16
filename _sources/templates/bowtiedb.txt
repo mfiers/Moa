@@ -66,6 +66,15 @@ Parameters
 
 
 
+**extra_params**::
+    any option parameters
+
+  | *type*: `string`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
 **title**::
     A name for this job
 

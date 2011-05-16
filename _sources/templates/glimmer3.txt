@@ -21,6 +21,28 @@ Commands
 
 
 
+Filesets
+~~~~~~~~
+
+
+
+
+**input**::
+    Directory with the input files for Glimmer3
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
 Parameters
 ~~~~~~~~~~
 
@@ -49,24 +71,6 @@ Parameters
 
   | *type*: `string`
   | *default*: `glimmer3`
-  | *optional*: `True`
-
-
-
-**input_dir**::
-    Input directory with the sequences to run glimmer3 on
-
-  | *type*: `directory`
-  | *default*: ``
-  | *optional*: `True`
-
-
-
-**input_extension**::
-    input file extension. Defaults to fasta
-
-  | *type*: `string`
-  | *default*: `fasta`
   | *optional*: `True`
 
 

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
@@ -32,8 +34,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="commands.html" title="moa.commands"
              accesskey="N">next</a> |</li>
@@ -50,70 +52,36 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="moa-actor">
-<span id="module-moa.actor"></span><h1>moa.actor<a class="headerlink" href="#moa-actor" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-moa.actor"></span><div class="section" id="moa-actor">
+<h1>moa.actor<a class="headerlink" href="#moa-actor" title="Permalink to this headline">¶</a></h1>
 <p>&#8216;Simple&#8217; wrapper around subprocess to execute code</p>
-<dl class="class">
-<dt id="moa.actor.Actor">
-<em class="property">class </em><tt class="descclassname">moa.actor.</tt><tt class="descname">Actor</tt><big>(</big><em>wd</em><big>)</big><a class="headerlink" href="#moa.actor.Actor" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class that standardizes a number of operations around execution
-in the Moa context.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>wd</em> (String) &#8211; Working directory</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="moa.actor.Actor.run">
-<tt class="descname">run</tt><big>(</big><em>cl</em><big>)</big><a class="headerlink" href="#moa.actor.Actor.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Actually run</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>cl</em> (list of strings) &#8211; The command to execute, for example: <cite>[&#8216;ls&#8217;, &#8216;/tmp&#8217;]</cite></td>
-</tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">return code of the job</td>
-</tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">integer</td>
-</tr>
-</tbody>
-</table>
+<dl class="function">
+<dt id="moa.actor.getLastStderr">
+<tt class="descclassname">moa.actor.</tt><tt class="descname">getLastStderr</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.actor.getLastStderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the last stderr</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="moa.actor.Actor.setEnv">
-<tt class="descname">setEnv</tt><big>(</big><em>d</em><big>)</big><a class="headerlink" href="#moa.actor.Actor.setEnv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Setup the environment</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>d</em> (dict) &#8211; The data to transfer to the environment</td>
-</tr>
-</tbody>
-</table>
+<dl class="function">
+<dt id="moa.actor.getLastStdout">
+<tt class="descclassname">moa.actor.</tt><tt class="descname">getLastStdout</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.actor.getLastStdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the last stdout</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="moa.actor.Actor.setErr">
-<tt class="descname">setErr</tt><big>(</big><em>to</em><big>)</big><a class="headerlink" href="#moa.actor.Actor.setErr" title="Permalink to this definition">¶</a></dt>
-<dd>Determine where to send the stderr. Three possibilities:
-* file (depends on setSaveName)
-* pipe (can be retrieved from the actor.err string)
-* stderr (print to stderr)</dd></dl>
+<dl class="function">
+<dt id="moa.actor.getRecentOutDir">
+<tt class="descclassname">moa.actor.</tt><tt class="descname">getRecentOutDir</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.actor.getRecentOutDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the most recent output directory</p>
+</dd></dl>
 
-<dl class="method">
-<dt id="moa.actor.Actor.setOut">
-<tt class="descname">setOut</tt><big>(</big><em>to</em><big>)</big><a class="headerlink" href="#moa.actor.Actor.setOut" title="Permalink to this definition">¶</a></dt>
-<dd>Determine where to send the output. Three possibilities:
-* file (depends on setSaveName)
-* pipe (can be retrieved from the actor.out string)
-* stdout (print to stdout)</dd></dl>
-
+<dl class="function">
+<dt id="moa.actor.simpleRunner">
+<tt class="descclassname">moa.actor.</tt><tt class="descname">simpleRunner</tt><big>(</big><em>wd</em>, <em>cl</em>, <em>silent=False</em><big>)</big><a class="headerlink" href="#moa.actor.simpleRunner" title="Permalink to this definition">¶</a></dt>
+<dd><ul class="simple">
+<li>put env in the environment</li>
+<li>Execute the commandline (in cl)</li>
+<li>store stdout &amp; stderr in log files</li>
+<li>return the rc</li>
+</ul>
 </dd></dl>
 
 </div>
@@ -127,30 +95,30 @@ in the Moa context.</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="index.html"
-                                  title="previous chapter">Moa API</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="commands.html"
-                                  title="next chapter">moa.commands</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/api/actor.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Moa API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="commands.html"
+                        title="next chapter">moa.commands</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/actor.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -162,7 +130,7 @@ in the Moa context.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="commands.html" title="moa.commands"
@@ -175,9 +143,9 @@ in the Moa context.</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

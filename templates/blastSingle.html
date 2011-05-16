@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
@@ -32,8 +34,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="blastdb.html" title="blastdb"
              accesskey="N">next</a> |</li>
@@ -73,7 +75,7 @@
 <dl class="docutils">
 <dt><strong>blast_gff_blasthit</strong>::</dt>
 <dd><blockquote class="first">
-(T,**F**) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.</blockquote>
+<div>(T,**F**) - export an extra blasthit feature to the created gff, grouping all hsp (match) features.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>F</cite></div>
@@ -82,7 +84,7 @@
 </dd>
 <dt><strong>db</strong>::</dt>
 <dd><blockquote class="first">
-Location of the blast database. You can either define the blast db parameter as used by blast, or any of the blast database files, in which case the extension will be removed before use</blockquote>
+<div>Location of the blast database. You can either define the blast db parameter as used by blast, or any of the blast database files, in which case the extension will be removed before use</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -91,7 +93,7 @@ Location of the blast database. You can either define the blast db parameter as 
 </dd>
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -100,7 +102,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>eval</strong>::</dt>
 <dd><blockquote class="first">
-e value cutoff</blockquote>
+<div>e value cutoff</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>1e-10</cite></div>
@@ -109,7 +111,7 @@ e value cutoff</blockquote>
 </dd>
 <dt><strong>gff_source</strong>::</dt>
 <dd><blockquote class="first">
-source field to use in the gff</blockquote>
+<div>source field to use in the gff</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>BLAST</cite></div>
@@ -118,7 +120,7 @@ source field to use in the gff</blockquote>
 </dd>
 <dt><strong>input_dir</strong>::</dt>
 <dd><blockquote class="first">
-Directory with the BLAST input files</blockquote>
+<div>Directory with the BLAST input files</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>directory</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -127,7 +129,7 @@ Directory with the BLAST input files</blockquote>
 </dd>
 <dt><strong>input_extension</strong>::</dt>
 <dd><blockquote class="first">
-file extension for the files in blast_input_dir</blockquote>
+<div>file extension for the files in blast_input_dir</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>fasta</cite></div>
@@ -136,7 +138,7 @@ file extension for the files in blast_input_dir</blockquote>
 </dd>
 <dt><strong>input_file</strong>::</dt>
 <dd><blockquote class="first">
-Input fasta file to BLAST</blockquote>
+<div>Input fasta file to BLAST</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -145,7 +147,7 @@ Input fasta file to BLAST</blockquote>
 </dd>
 <dt><strong>input_glob</strong>::</dt>
 <dd><blockquote class="first">
-glob to select a subset of files from blast_input_dir</blockquote>
+<div>glob to select a subset of files from blast_input_dir</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>*</cite></div>
@@ -154,7 +156,7 @@ glob to select a subset of files from blast_input_dir</blockquote>
 </dd>
 <dt><strong>input_limit</strong>::</dt>
 <dd><blockquote class="first">
-Number of files to use, if not defined: all files</blockquote>
+<div>Number of files to use, if not defined: all files</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -163,7 +165,7 @@ Number of files to use, if not defined: all files</blockquote>
 </dd>
 <dt><strong>input_sort</strong>::</dt>
 <dd><blockquote class="first">
-Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t - time, tr - time reverse</blockquote>
+<div>Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t - time, tr - time reverse</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>u</cite></div>
@@ -172,7 +174,7 @@ Sort order. Choose from: u - unsorted, s - size, sr - size reverse, t - time, tr
 </dd>
 <dt><strong>nohits</strong>::</dt>
 <dd><blockquote class="first">
-number of hits to report</blockquote>
+<div>number of hits to report</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>50</cite></div>
@@ -181,7 +183,7 @@ number of hits to report</blockquote>
 </dd>
 <dt><strong>nothreads</strong>::</dt>
 <dd><blockquote class="first">
-threads to run blast with (note the overlap with the Make -j parameter)</blockquote>
+<div>threads to run blast with (note the overlap with the Make -j parameter)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2</cite></div>
@@ -190,7 +192,7 @@ threads to run blast with (note the overlap with the Make -j parameter)</blockqu
 </dd>
 <dt><strong>program</strong>::</dt>
 <dd><blockquote class="first">
-blast program to use (default: blastn)</blockquote>
+<div>blast program to use (default: blastn)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>blastn</cite></div>
@@ -199,7 +201,7 @@ blast program to use (default: blastn)</blockquote>
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -232,40 +234,40 @@ A name for this job</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">blast</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">blast</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="blast.html"
-                                  title="previous chapter">blast</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="blastdb.html"
-                                  title="next chapter">blastdb</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/blastSingle.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="blast.html"
+                        title="previous chapter">blast</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="blastdb.html"
+                        title="next chapter">blastdb</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/blastSingle.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -277,7 +279,7 @@ A name for this job</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="blastdb.html" title="blastdb"
@@ -290,9 +292,9 @@ A name for this job</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

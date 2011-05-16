@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
@@ -32,8 +34,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="scaffolder.html" title="scaf"
              accesskey="N">next</a> |</li>
@@ -68,9 +70,22 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
+<dt><strong>fasta</strong>::</dt>
+<dd><blockquote class="first">
+<div>reference fasta file</div></blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>category</em>: <cite>prerequisite</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
 <dt><strong>input</strong>::</dt>
 <dd><blockquote class="first">
-bam or sam files</blockquote>
+<div>bam or sam files</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>{}</cite></div>
@@ -83,7 +98,7 @@ bam or sam files</blockquote>
 </dd>
 <dt><strong>output</strong>::</dt>
 <dd><blockquote class="first">
-{}</blockquote>
+<div>{}</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
@@ -96,7 +111,7 @@ bam or sam files</blockquote>
 </dd>
 <dt><strong>output_bam</strong>::</dt>
 <dd><blockquote class="first">
-{}</blockquote>
+<div>{}</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
@@ -114,7 +129,7 @@ bam or sam files</blockquote>
 <dl class="docutils">
 <dt><strong>cap_mapQ_at</strong>::</dt>
 <dd><blockquote class="first">
-cap mapping quality at INT</blockquote>
+<div>cap mapping quality at INT</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>60</cite></div>
@@ -123,7 +138,7 @@ cap mapping quality at INT</blockquote>
 </dd>
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -132,7 +147,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>extra_params</strong>::</dt>
 <dd><blockquote class="first">
-any extra parameters</blockquote>
+<div>any extra parameters</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -141,7 +156,7 @@ any extra parameters</blockquote>
 </dd>
 <dt><strong>filter_read_bits</strong>::</dt>
 <dd><blockquote class="first">
-filtering reads with bits in INT</blockquote>
+<div>filtering reads with bits in INT</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1796</cite></div>
@@ -150,7 +165,7 @@ filtering reads with bits in INT</blockquote>
 </dd>
 <dt><strong>input_is_SAM</strong>::</dt>
 <dd><blockquote class="first">
-the input is in SAM</blockquote>
+<div>the input is in SAM</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -159,7 +174,7 @@ the input is in SAM</blockquote>
 </dd>
 <dt><strong>num_haplotypes</strong>::</dt>
 <dd><blockquote class="first">
-number of haplotypes in the sample (for -c/-g)</blockquote>
+<div>number of haplotypes in the sample (for -c/-g)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2</cite></div>
@@ -168,7 +183,7 @@ number of haplotypes in the sample (for -c/-g)</blockquote>
 </dd>
 <dt><strong>out_2nd_best</strong>::</dt>
 <dd><blockquote class="first">
-output the 2nd best call and quality</blockquote>
+<div>output the 2nd best call and quality</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -177,7 +192,7 @@ output the 2nd best call and quality</blockquote>
 </dd>
 <dt><strong>out_GLFv3_format</strong>::</dt>
 <dd><blockquote class="first">
-output in the GLFv3 format (suppressing -c/-i/-s)</blockquote>
+<div>output in the GLFv3 format (suppressing -c/-i/-s)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -186,7 +201,7 @@ output in the GLFv3 format (suppressing -c/-i/-s)</blockquote>
 </dd>
 <dt><strong>out_maq_consensus</strong>::</dt>
 <dd><blockquote class="first">
-output the maq consensus sequence</blockquote>
+<div>output the maq consensus sequence</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -195,7 +210,7 @@ output the maq consensus sequence</blockquote>
 </dd>
 <dt><strong>phred_prob_indel</strong>::</dt>
 <dd><blockquote class="first">
-phred prob. of an indel in sequencing/prep. (for -c/-g)</blockquote>
+<div>phred prob. of an indel in sequencing/prep. (for -c/-g)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>40</cite></div>
@@ -204,7 +219,7 @@ phred prob. of an indel in sequencing/prep. (for -c/-g)</blockquote>
 </dd>
 <dt><strong>print_variants_only</strong>::</dt>
 <dd><blockquote class="first">
-print variants only (for -c)</blockquote>
+<div>print variants only (for -c)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -213,7 +228,7 @@ print variants only (for -c)</blockquote>
 </dd>
 <dt><strong>prior_diff_haplotypes</strong>::</dt>
 <dd><blockquote class="first">
-phred prob. of an indel in sequencing/prep. (for -c/-g)</blockquote>
+<div>phred prob. of an indel in sequencing/prep. (for -c/-g)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.001</cite></div>
@@ -222,7 +237,7 @@ phred prob. of an indel in sequencing/prep. (for -c/-g)</blockquote>
 </dd>
 <dt><strong>prior_indel_haplotypes</strong>::</dt>
 <dd><blockquote class="first">
-number of haplotypes in the sample (for -c/-g)</blockquote>
+<div>number of haplotypes in the sample (for -c/-g)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.00015</cite></div>
@@ -231,7 +246,7 @@ number of haplotypes in the sample (for -c/-g)</blockquote>
 </dd>
 <dt><strong>show_lines_indels</strong>::</dt>
 <dd><blockquote class="first">
-only show lines/consensus with indels</blockquote>
+<div>only show lines/consensus with indels</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -240,7 +255,7 @@ only show lines/consensus with indels</blockquote>
 </dd>
 <dt><strong>simple_pileup_format</strong>::</dt>
 <dd><blockquote class="first">
-simple (yet incomplete) pileup format</blockquote>
+<div>simple (yet incomplete) pileup format</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -249,7 +264,7 @@ simple (yet incomplete) pileup format</blockquote>
 </dd>
 <dt><strong>theta_maq_model</strong>::</dt>
 <dd><blockquote class="first">
-number of haplotypes in the sample (for -c/-g)</blockquote>
+<div>number of haplotypes in the sample (for -c/-g)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.85</cite></div>
@@ -258,7 +273,7 @@ number of haplotypes in the sample (for -c/-g)</blockquote>
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -267,7 +282,7 @@ A name for this job</blockquote>
 </dd>
 <dt><strong>use_SOAPsnp_model</strong>::</dt>
 <dd><blockquote class="first">
-use the SOAPsnp model for SNP calling</blockquote>
+<div>use the SOAPsnp model for SNP calling</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -286,7 +301,7 @@ use the SOAPsnp model for SNP calling</blockquote>
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Dec 15 17:06:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1295223801.82</dd>
+<dd>1297380110.93</dd>
 </dl>
 </div>
 </div>
@@ -300,41 +315,41 @@ use the SOAPsnp model for SNP calling</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">samtools_pileup</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#filesets">Filesets</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">samtools_pileup</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#filesets">Filesets</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="sam2bam.html"
-                                  title="previous chapter">sam2bam</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="scaffolder.html"
-                                  title="next chapter">scaf</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/samtools_pileup.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sam2bam.html"
+                        title="previous chapter">sam2bam</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="scaffolder.html"
+                        title="next chapter">scaf</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/samtools_pileup.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -346,7 +361,7 @@ use the SOAPsnp model for SNP calling</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="scaffolder.html" title="scaf"
@@ -359,9 +374,9 @@ use the SOAPsnp model for SNP calling</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

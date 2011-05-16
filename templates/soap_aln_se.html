@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,16 +13,17 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="<no title>" href="soap_aln_unpaired.html" />
+    <link rel="next" title="soapdb" href="soapdb.html" />
     <link rel="prev" title="soap_aln_pe" href="soap_aln_pe.html" /> 
   </head>
   <body>
@@ -32,10 +34,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="soap_aln_unpaired.html" title="<no title>"
+          <a href="soapdb.html" title="soapdb"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="soap_aln_pe.html" title="soap_aln_pe"
@@ -68,22 +70,9 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>fq_input</strong>::</dt>
+<dt><strong>bam_output</strong>::</dt>
 <dd><blockquote class="first">
-Fastq input file</blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>sam_output</strong>::</dt>
-<dd><blockquote class="first">
-{}</blockquote>
+<div>{}</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_input</cite></div>
@@ -94,9 +83,35 @@ Fastq input file</blockquote>
 <div class="line"><em>dir</em>: <cite>{}</cite></div>
 </div>
 </dd>
+<dt><strong>fa_input</strong>::</dt>
+<dd><blockquote class="first">
+<div>directory with reference fasta file name</div></blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>category</em>: <cite>prerequisite</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+<dt><strong>fq_input</strong>::</dt>
+<dd><blockquote class="first">
+<div>Fastq input file</div></blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
 <dt><strong>soap_output</strong>::</dt>
 <dd><blockquote class="first">
-{}</blockquote>
+<div>{}</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_input</cite></div>
@@ -114,7 +129,7 @@ Fastq input file</blockquote>
 <dl class="docutils">
 <dt><strong>db_index_files</strong>::</dt>
 <dd><blockquote class="first">
-Prefix name for reference index [<a href="#id1"><span class="problematic" id="id2">*</span></a>.index]</blockquote>
+<div>Prefix name for reference index [<a href="#id1"><span class="problematic" id="id2">*</span></a>.index]</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -123,7 +138,7 @@ Prefix name for reference index [<a href="#id1"><span class="problematic" id="id
 </dd>
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -132,7 +147,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>edge_bp_no_gaps</strong>::</dt>
 <dd><blockquote class="first">
-will not allow gap exist inside n-bp edge of a read</blockquote>
+<div>will not allow gap exist inside n-bp edge of a read</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>5</cite></div>
@@ -141,7 +156,7 @@ will not allow gap exist inside n-bp edge of a read</blockquote>
 </dd>
 <dt><strong>gap_size</strong>::</dt>
 <dd><blockquote class="first">
-one continuous gap size allowed on a read</blockquote>
+<div>one continuous gap size allowed on a read</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>0</cite></div>
@@ -150,7 +165,7 @@ one continuous gap size allowed on a read</blockquote>
 </dd>
 <dt><strong>how_report_hits</strong>::</dt>
 <dd><blockquote class="first">
-How  to  report repeat hits, 0=none; 1=random one; 2=all</blockquote>
+<div>How  to  report repeat hits, 0=none; 1=random one; 2=all</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
@@ -159,7 +174,7 @@ How  to  report repeat hits, 0=none; 1=random one; 2=all</blockquote>
 </dd>
 <dt><strong>long_read_seed_len</strong>::</dt>
 <dd><blockquote class="first">
-For  long  reads  with  high  error rate at 3&#8217;-end, those can&#8217;t align whole length, then  first  align  5&#8217;  INT  bp subsequence as a seed, [256] use whole length of the read</blockquote>
+<div>For  long  reads  with  high  error rate at 3&#8217;-end, those can&#8217;t align whole length, then  first  align  5&#8217;  INT  bp subsequence as a seed, [256] use whole length of the read</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>256</cite></div>
@@ -168,7 +183,7 @@ For  long  reads  with  high  error rate at 3&#8217;-end, those can&#8217;t alig
 </dd>
 <dt><strong>match_mode</strong>::</dt>
 <dd><blockquote class="first">
-Match mode for each read or the seed part of read,  which shouldn&#8217;t contain more than 2 mismaches, 0 exact match only 1 1 mismatch match only 2 2 mismatch match only 3 [gap] (coming soon) 4 find the best hits</blockquote>
+<div>Match mode for each read or the seed part of read,  which shouldn&#8217;t contain more than 2 mismaches, 0 exact match only 1 1 mismatch match only 2 2 mismatch match only 3 [gap] (coming soon) 4 find the best hits</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>4</cite></div>
@@ -177,7 +192,7 @@ Match mode for each read or the seed part of read,  which shouldn&#8217;t contai
 </dd>
 <dt><strong>mismatches_per_read</strong>::</dt>
 <dd><blockquote class="first">
-Totally allowed mismatches in one read</blockquote>
+<div>Totally allowed mismatches in one read</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>6</cite></div>
@@ -186,7 +201,7 @@ Totally allowed mismatches in one read</blockquote>
 </dd>
 <dt><strong>out_read_id</strong>::</dt>
 <dd><blockquote class="first">
-Output reads id instead of reads name</blockquote>
+<div>Output reads id instead of reads name</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -195,7 +210,7 @@ Output reads id instead of reads name</blockquote>
 </dd>
 <dt><strong>out_unmapped_reads_file</strong>::</dt>
 <dd><blockquote class="first">
-Output file name for unmapped reads</blockquote>
+<div>Output file name for unmapped reads</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>unmapped_reads.txt</cite></div>
@@ -204,7 +219,7 @@ Output file name for unmapped reads</blockquote>
 </dd>
 <dt><strong>rm_low_qual_reads</strong>::</dt>
 <dd><blockquote class="first">
-Filter low quality reads contain more INT bp Ns</blockquote>
+<div>Filter low quality reads contain more INT bp Ns</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>5</cite></div>
@@ -213,7 +228,7 @@ Filter low quality reads contain more INT bp Ns</blockquote>
 </dd>
 <dt><strong>thread_num</strong>::</dt>
 <dd><blockquote class="first">
-Multithreads, n threads</blockquote>
+<div>Multithreads, n threads</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
@@ -222,7 +237,7 @@ Multithreads, n threads</blockquote>
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -241,7 +256,7 @@ A name for this job</blockquote>
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Nov 29 07:56:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1291933991.07</dd>
+<dd>1297380110.93</dd>
 </dl>
 </div>
 </div>
@@ -255,41 +270,41 @@ A name for this job</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">soap_aln_se</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#filesets">Filesets</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">soap_aln_se</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#filesets">Filesets</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="soap_aln_pe.html"
-                                  title="previous chapter">soap_aln_pe</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="soap_aln_unpaired.html"
-                                  title="next chapter">&lt;no title&gt;</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/soap_aln_se.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="soap_aln_pe.html"
+                        title="previous chapter">soap_aln_pe</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="soapdb.html"
+                        title="next chapter">soapdb</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/soap_aln_se.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -301,10 +316,10 @@ A name for this job</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="soap_aln_unpaired.html" title="<no title>"
+          <a href="soapdb.html" title="soapdb"
              >next</a> |</li>
         <li class="right" >
           <a href="soap_aln_pe.html" title="soap_aln_pe"
@@ -314,9 +329,9 @@ A name for this job</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

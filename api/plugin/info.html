@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,24 +6,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Job information &mdash; Moa v0.10.1 documentation</title>
+    <title>info - Job information &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../../index.html" />
     <link rel="up" title="moa.plugin" href="index.html" />
-    <link rel="next" title="logo - Print the moa logo" href="logo.html" />
-    <link rel="prev" title="Help" href="help.html" /> 
+    <link rel="next" title="lock - Lock/Unlock moa jobs" href="lock.html" />
+    <link rel="prev" title="help - generate help" href="help.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,13 +34,13 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="logo.html" title="logo - Print the moa logo"
+          <a href="lock.html" title="lock - Lock/Unlock moa jobs"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="help.html" title="Help"
+          <a href="help.html" title="help - generate help"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -51,17 +53,18 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="job-information">
-<span id="module-moa.plugin.info"></span><h1>Job information<a class="headerlink" href="#job-information" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-moa.plugin.info"></span><div class="section" id="info-job-information">
+<h1><strong>info</strong> - Job information<a class="headerlink" href="#info-job-information" title="Permalink to this headline">¶</a></h1>
 <p>Print info on Moa jobs and Moa</p>
 <dl class="function">
 <dt id="moa.plugin.info.defineCommands">
 <tt class="descclassname">moa.plugin.info.</tt><tt class="descname">defineCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.defineCommands" title="Permalink to this definition">¶</a></dt>
-<dd>Set the moa commands for this plugin</dd></dl>
+<dd><p>Set the moa commands for this plugin</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="moa.plugin.info.rawCommands">
-<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">rawCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.rawCommands" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">rawCommands</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.info.rawCommands" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>(private)</em> <strong>moa raw_commands</strong> - Print a list of all known commands</p>
 <p>Usage:</p>
 <div class="highlight-python"><pre>moa raw_commands</pre>
@@ -73,7 +76,7 @@ by software interacting with Moa.</p>
 
 <dl class="function">
 <dt id="moa.plugin.info.rawParameters">
-<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">rawParameters</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.rawParameters" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">rawParameters</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.info.rawParameters" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>(private)</em> <strong>moa raw_parameters</strong> - Print out a list of all known parameters</p>
 <p>Usage:</p>
 <div class="highlight-python"><pre>moa raw_parameters</pre>
@@ -83,7 +86,7 @@ by software interacting with Moa.</p>
 
 <dl class="function">
 <dt id="moa.plugin.info.status">
-<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">status</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.status" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">status</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.info.status" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>moa status</strong> - print out a short status status message</p>
 <p>Usage:</p>
 <div class="highlight-python"><pre>moa status</pre>
@@ -92,8 +95,9 @@ by software interacting with Moa.</p>
 
 <dl class="function">
 <dt id="moa.plugin.info.version">
-<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">version</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.info.version" title="Permalink to this definition">¶</a></dt>
-<dd><strong>moa version</strong> - Print the moa version number</dd></dl>
+<tt class="descclassname">moa.plugin.info.</tt><tt class="descname">version</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.info.version" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>moa version</strong> - Print the moa version number</p>
+</dd></dl>
 
 </div>
 
@@ -106,30 +110,30 @@ by software interacting with Moa.</p>
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="help.html"
-                                  title="previous chapter">Help</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="logo.html"
-                                  title="next chapter"><strong>logo</strong> - Print the moa logo</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../../_sources/api/plugin/info.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="help.html"
+                        title="previous chapter"><strong>help</strong> - generate help</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="lock.html"
+                        title="next chapter"><strong>lock</strong> - Lock/Unlock moa jobs</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/plugin/info.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -141,13 +145,13 @@ by software interacting with Moa.</p>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
+          <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="logo.html" title="logo - Print the moa logo"
+          <a href="lock.html" title="lock - Lock/Unlock moa jobs"
              >next</a> |</li>
         <li class="right" >
-          <a href="help.html" title="Help"
+          <a href="help.html" title="help - generate help"
              >previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -155,9 +159,9 @@ by software interacting with Moa.</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

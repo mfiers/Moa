@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,16 +13,17 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="bowtiedb" href="bowtiedb.html" />
+    <link rel="next" title="bowtie_se" href="bowtie_se.html" />
     <link rel="prev" title="bowtie" href="bowtie.html" /> 
   </head>
   <body>
@@ -32,10 +34,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="bowtiedb.html" title="bowtiedb"
+          <a href="bowtie_se.html" title="bowtie_se"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="bowtie.html" title="bowtie"
@@ -70,7 +72,7 @@
 <dl class="docutils">
 <dt><strong>fq_forward_input</strong>::</dt>
 <dd><blockquote class="first">
-fastq input files directory - forward</blockquote>
+<div>fastq input files directory - forward</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>{}</cite></div>
@@ -83,7 +85,7 @@ fastq input files directory - forward</blockquote>
 </dd>
 <dt><strong>fq_reverse_input</strong>::</dt>
 <dd><blockquote class="first">
-fastq input files directory - reverse</blockquote>
+<div>fastq input files directory - reverse</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
@@ -96,7 +98,7 @@ fastq input files directory - reverse</blockquote>
 </dd>
 <dt><strong>output</strong>::</dt>
 <dd><blockquote class="first">
-Bam output file</blockquote>
+<div>Bam output file</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_forward_input</cite></div>
@@ -114,7 +116,7 @@ Bam output file</blockquote>
 <dl class="docutils">
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -123,7 +125,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>ebwt_base</strong>::</dt>
 <dd><blockquote class="first">
-The (basename of the) bowtie database to use.</blockquote>
+<div>The (basename of the) bowtie database to use.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>{}</cite></div>
@@ -132,7 +134,7 @@ The (basename of the) bowtie database to use.</blockquote>
 </dd>
 <dt><strong>extra_params</strong>::</dt>
 <dd><blockquote class="first">
-extra parameters to feed to bowtie</blockquote>
+<div>extra parameters to feed to bowtie</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -141,7 +143,7 @@ extra parameters to feed to bowtie</blockquote>
 </dd>
 <dt><strong>input_format</strong>::</dt>
 <dd><blockquote class="first">
-Format of the input files</blockquote>
+<div>Format of the input files</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>fastq</cite></div>
@@ -150,16 +152,16 @@ Format of the input files</blockquote>
 </dd>
 <dt><strong>max_insertsize</strong>::</dt>
 <dd><blockquote class="first">
-Maximum allowed insertsize</blockquote>
+<div>Maximum allowed insertsize</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
-<div class="line"><em>default</em>: <cite>500</cite></div>
+<div class="line"><em>default</em>: <cite>250</cite></div>
 <div class="line"><em>optional</em>: <cite>True</cite></div>
 </div>
 </dd>
 <dt><strong>min_insertsize</strong>::</dt>
 <dd><blockquote class="first">
-Minimum allowed insertsize</blockquote>
+<div>Minimum allowed insertsize</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1</cite></div>
@@ -168,7 +170,7 @@ Minimum allowed insertsize</blockquote>
 </dd>
 <dt><strong>output_format</strong>::</dt>
 <dd><blockquote class="first">
-Format of the output file</blockquote>
+<div>Format of the output file</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>bam</cite></div>
@@ -177,7 +179,7 @@ Format of the output file</blockquote>
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -210,41 +212,41 @@ A name for this job</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">bowtie_pe</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#filesets">Filesets</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">bowtie_pe</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#filesets">Filesets</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="bowtie.html"
-                                  title="previous chapter">bowtie</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="bowtiedb.html"
-                                  title="next chapter">bowtiedb</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/bowtie_pe.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="bowtie.html"
+                        title="previous chapter">bowtie</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="bowtie_se.html"
+                        title="next chapter">bowtie_se</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/bowtie_pe.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -256,10 +258,10 @@ A name for this job</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="bowtiedb.html" title="bowtiedb"
+          <a href="bowtie_se.html" title="bowtie_se"
              >next</a> |</li>
         <li class="right" >
           <a href="bowtie.html" title="bowtie"
@@ -269,9 +271,9 @@ A name for this job</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

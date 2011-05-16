@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
@@ -32,8 +34,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="glimmer3.html" title="glimmer3"
              accesskey="N">next</a> |</li>
@@ -71,7 +73,7 @@
 <dl class="docutils">
 <dt><strong>gff</strong>::</dt>
 <dd><blockquote class="first">
-{}</blockquote>
+<div>{}</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
@@ -84,7 +86,7 @@
 </dd>
 <dt><strong>input</strong>::</dt>
 <dd><blockquote class="first">
-Input files for getorf</blockquote>
+<div>Input files for getorf</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>{}</cite></div>
@@ -97,7 +99,7 @@ Input files for getorf</blockquote>
 </dd>
 <dt><strong>output</strong>::</dt>
 <dd><blockquote class="first">
-{}</blockquote>
+<div>{}</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>input</cite></div>
@@ -115,7 +117,7 @@ Input files for getorf</blockquote>
 <dl class="docutils">
 <dt><strong>circular</strong>::</dt>
 <dd><blockquote class="first">
-Is the sequence linear?</blockquote>
+<div>Is the sequence linear?</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>N</cite></div>
@@ -124,7 +126,7 @@ Is the sequence linear?</blockquote>
 </dd>
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -133,7 +135,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>find</strong>::</dt>
 <dd><blockquote class="first">
-What to output? 0: Translation between stop codons, 1: Translation between start &amp; stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide sequence between start and stop codons. Default: 3</blockquote>
+<div>What to output? 0: Translation between stop codons, 1: Translation between start &amp; stop codon, 2: Nucleotide sequence between stop codons; 3: Nucleotide sequence between start and stop codons. Default: 3</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>3</cite></div>
@@ -142,7 +144,7 @@ What to output? 0: Translation between stop codons, 1: Translation between start
 </dd>
 <dt><strong>gff_source</strong>::</dt>
 <dd><blockquote class="first">
-source field to use in the gff.</blockquote>
+<div>source field to use in the gff.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: <cite>getorf</cite></div>
@@ -151,7 +153,7 @@ source field to use in the gff.</blockquote>
 </dd>
 <dt><strong>maxsize</strong>::</dt>
 <dd><blockquote class="first">
-maximal nucleotide size of the predicted ORF.</blockquote>
+<div>maximal nucleotide size of the predicted ORF.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>1000000</cite></div>
@@ -160,7 +162,7 @@ maximal nucleotide size of the predicted ORF.</blockquote>
 </dd>
 <dt><strong>minsize</strong>::</dt>
 <dd><blockquote class="first">
-minimal nucleotide size of the predicted ORF.</blockquote>
+<div>minimal nucleotide size of the predicted ORF.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>30</cite></div>
@@ -169,7 +171,7 @@ minimal nucleotide size of the predicted ORF.</blockquote>
 </dd>
 <dt><strong>table</strong>::</dt>
 <dd><blockquote class="first">
-Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.</blockquote>
+<div>Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 2 Vertebrate Mitochondrial; 3 Yeast Mitochondrial; 4 Mold, Protozoan, Coelenterate Mitochondrial and Mycoplasma/Spiroplasma; 5 Invertebrate Mitochondrial; 6 Ciliate Macronuclear and Dasycladacean; 9 Echinoderm Mitochondrial; 10 Euplotid Nuclear; 11 Bacterial; 12 Alternative Yeast Nuclear; 13 Ascidian Mitochondrial; 14 Flatworm Mitochondrial; 15 Blepharisma Macronuclear; 16 Chlorophycean Mitochondrial; 21 Trematode Mitochondrial; 22 Scenedesmus obliquus; 23 Thraustochytrium Mitochondrial.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>11</cite></div>
@@ -178,7 +180,7 @@ Genetic code to use: 0 Standard; 1 Standard with alternative initiation codons; 
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -211,41 +213,41 @@ A name for this job</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">getorf</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#filesets">Filesets</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">getorf</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#filesets">Filesets</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="genemarks.html"
-                                  title="previous chapter">genemarks</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="glimmer3.html"
-                                  title="next chapter">glimmer3</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/getorf.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="genemarks.html"
+                        title="previous chapter">genemarks</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="glimmer3.html"
+                        title="next chapter">glimmer3</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/getorf.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -257,7 +259,7 @@ A name for this job</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="glimmer3.html" title="glimmer3"
@@ -270,9 +272,9 @@ A name for this job</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

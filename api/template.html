@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
@@ -32,8 +34,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="ui.html" title="moa.ui"
              accesskey="N">next</a> |</li>
@@ -50,19 +52,36 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="moa-template">
-<span id="module-moa.template"></span><h1>moa.template<a class="headerlink" href="#moa-template" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-moa.template"></span><div class="section" id="moa-template">
+<h1>moa.template<a class="headerlink" href="#moa-template" title="Permalink to this headline">¶</a></h1>
 <p>Store information on a template. This module is also responsible for
 retrieving template information.</p>
 <dl class="exception">
 <dt id="moa.template.InvalidTemplate">
 <em class="property">exception </em><tt class="descclassname">moa.template.</tt><tt class="descname">InvalidTemplate</tt><a class="headerlink" href="#moa.template.InvalidTemplate" title="Permalink to this definition">¶</a></dt>
-<dd>Invalid Template</dd></dl>
+<dd><p>Invalid Template</p>
+</dd></dl>
 
 <dl class="class">
 <dt id="moa.template.Template">
-<em class="property">class </em><tt class="descclassname">moa.template.</tt><tt class="descname">Template</tt><big>(</big><em>name=None</em><big>)</big><a class="headerlink" href="#moa.template.Template" title="Permalink to this definition">¶</a></dt>
-<dd>Template extends Yaco</dd></dl>
+<em class="property">class </em><tt class="descclassname">moa.template.</tt><tt class="descname">Template</tt><big>(</big><em>templateFile</em><big>)</big><a class="headerlink" href="#moa.template.Template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Template extends Yaco</p>
+<dl class="method">
+<dt id="moa.template.Template.getRaw">
+<tt class="descname">getRaw</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.template.Template.getRaw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a Yaco representation of the yaml-template, without any
+of this Template processing. This is really useful when
+processing a template that needs to be written back to disk</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">moa.job</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">moa</span><span class="o">.</span><span class="n">job</span><span class="o">.</span><span class="n">newTestJob</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">raw</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">getRaw</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">Yaco</span><span class="o">.</span><span class="n">Yaco</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;parameters&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="function">
 <dt id="moa.template.check">
@@ -72,11 +91,11 @@ retrieving template information.</p>
 <dd><p class="first">order = self.parameter_category_order
 for pn in self.parameters,keys():</p>
 <blockquote>
-<p>p = self.parameters[pn]
+<div><p>p = self.parameters[pn]
 if not p.category in order:</p>
 <blockquote>
-order.append(p.category)</blockquote>
-</blockquote>
+<div>order.append(p.category)</div></blockquote>
+</div></blockquote>
 <p class="last">l.critical(&#8220;%s&#8221; % order)
 return order</p>
 </dd>
@@ -87,6 +106,39 @@ return order</p>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">check</span><span class="p">(</span><span class="s">&#39;nonexistingtemplate&#39;</span><span class="p">)</span>
 <span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.template.getTemplateFile">
+<tt class="descclassname">moa.template.</tt><tt class="descname">getTemplateFile</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#moa.template.getTemplateFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a base filename for a template</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">getTemplateFile</span><span class="p">(</span><span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">moa</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">getMoaBase</span><span class="p">(),</span> <span class="s">&#39;template2&#39;</span><span class="p">,</span> <span class="s">&#39;adhoc.moa&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">=</span> <span class="n">getTemplateFile</span><span class="p">(</span><span class="s">&#39;not.existing&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="nc">InvalidTemplate</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.template.initTemplate">
+<tt class="descclassname">moa.template.</tt><tt class="descname">initTemplate</tt><big>(</big><em>wd</em>, <em>name</em><big>)</big><a class="headerlink" href="#moa.template.initTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the template - this means - try to figure out where the
+template came from &amp; copy the template files into
+<cite>job/.moa/template</cite> &amp; <cite>job/.moa/template.d/extra</cite>.</p>
+<p>Currently all templates come from the moa repository. In the
+future, multiple sources must be possible</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">initTemplate</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templateFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adhocFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template.d&#39;</span><span class="p">,</span> <span class="s">&#39;adhoc.mk&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">templateFile</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">adhocFile</span><span class="p">))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -126,6 +178,28 @@ corresponding description.</p>
 &#64;rtype: generator</p>
 </dd></dl>
 
+<dl class="function">
+<dt id="moa.template.refresh">
+<tt class="descclassname">moa.template.</tt><tt class="descname">refresh</tt><big>(</big><em>wd</em>, <em>default=None</em><big>)</big><a class="headerlink" href="#moa.template.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refresh the template - try to find out what the template is from 
+{{wd}}/.moa/template.d/source. If that doesn&#8217;t work, revert to the 
+default template. If default is not specified - exit with an error</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">initTemplate</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templateFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">adhocFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template.d&#39;</span><span class="p">,</span> <span class="s">&#39;adhoc.mk&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">adhocFile</span><span class="p">)</span>    
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">templateFile</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">templateFile</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">adhocFile</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">refresh</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">templateFile</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">adhocFile</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 
 
@@ -137,30 +211,30 @@ corresponding description.</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="sysConf.html"
-                                  title="previous chapter">moa.sysConf</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="ui.html"
-                                  title="next chapter">moa.ui</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/api/template.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sysConf.html"
+                        title="previous chapter">moa.sysConf</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ui.html"
+                        title="next chapter">moa.ui</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/template.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -172,7 +246,7 @@ corresponding description.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="ui.html" title="moa.ui"
@@ -185,9 +259,9 @@ corresponding description.</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on Apr 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

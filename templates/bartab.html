@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,16 +13,17 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
-    <link rel="next" title="bidibebla" href="bidibebla.html" />
+    <link rel="next" title="bfast_aln" href="bfast_aln.html" />
     <link rel="prev" title="bamextract" href="bamextract.html" /> 
   </head>
   <body>
@@ -32,10 +34,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="bidibebla.html" title="bidibebla"
+          <a href="bfast_aln.html" title="bfast_aln"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="bamextract.html" title="bamextract"
@@ -71,7 +73,7 @@
 <dl class="docutils">
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -80,7 +82,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>extra_parameters</strong>::</dt>
 <dd><blockquote class="first">
-extra parameters to feed bartab</blockquote>
+<div>extra parameters to feed bartab</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -89,7 +91,7 @@ extra parameters to feed bartab</blockquote>
 </dd>
 <dt><strong>forward_primer</strong>::</dt>
 <dd><blockquote class="first">
-remove forward primer</blockquote>
+<div>remove forward primer</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -98,7 +100,7 @@ remove forward primer</blockquote>
 </dd>
 <dt><strong>in</strong>::</dt>
 <dd><blockquote class="first">
-input file for bartab</blockquote>
+<div>input file for bartab</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -107,7 +109,7 @@ input file for bartab</blockquote>
 </dd>
 <dt><strong>map</strong>::</dt>
 <dd><blockquote class="first">
-A file mapping barcodes to metadata</blockquote>
+<div>A file mapping barcodes to metadata</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -116,7 +118,7 @@ A file mapping barcodes to metadata</blockquote>
 </dd>
 <dt><strong>min_length</strong>::</dt>
 <dd><blockquote class="first">
-minimun acceptable sequence length</blockquote>
+<div>minimun acceptable sequence length</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>50</cite></div>
@@ -125,7 +127,7 @@ minimun acceptable sequence length</blockquote>
 </dd>
 <dt><strong>out</strong>::</dt>
 <dd><blockquote class="first">
-base output name</blockquote>
+<div>base output name</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>bartab</cite></div>
@@ -134,7 +136,7 @@ base output name</blockquote>
 </dd>
 <dt><strong>qin</strong>::</dt>
 <dd><blockquote class="first">
-Quality scores for the input fasta file</blockquote>
+<div>Quality scores for the input fasta file</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -143,7 +145,7 @@ Quality scores for the input fasta file</blockquote>
 </dd>
 <dt><strong>reverse_primer</strong>::</dt>
 <dd><blockquote class="first">
-remove reverse primer</blockquote>
+<div>remove reverse primer</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -152,7 +154,7 @@ remove reverse primer</blockquote>
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -161,7 +163,7 @@ A name for this job</blockquote>
 </dd>
 <dt><strong>trim</strong>::</dt>
 <dd><blockquote class="first">
-Trim barcode</blockquote>
+<div>Trim barcode</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>set</cite></div>
 <div class="line"><em>default</em>: <cite>T</cite></div>
@@ -194,40 +196,40 @@ Trim barcode</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">bartab</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">bartab</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="bamextract.html"
-                                  title="previous chapter">bamextract</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="bidibebla.html"
-                                  title="next chapter">bidibebla</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/bartab.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="bamextract.html"
+                        title="previous chapter">bamextract</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="bfast_aln.html"
+                        title="next chapter">bfast_aln</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/bartab.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -239,10 +241,10 @@ Trim barcode</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="bidibebla.html" title="bidibebla"
+          <a href="bfast_aln.html" title="bfast_aln"
              >next</a> |</li>
         <li class="right" >
           <a href="bamextract.html" title="bamextract"
@@ -252,9 +254,9 @@ Trim barcode</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

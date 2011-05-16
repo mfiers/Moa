@@ -21,6 +21,28 @@ Commands
 
 
 
+Filesets
+~~~~~~~~
+
+
+
+
+**input_fasta**::
+    input fasta file for the SOAP database
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `input`
+  | *optional*: `False`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
 Parameters
 ~~~~~~~~~~
 
@@ -32,15 +54,6 @@ Parameters
   | *type*: `{}`
   | *default*: `run`
   | *optional*: `True`
-
-
-
-**input_fasta**::
-    input fasta file for the database
-
-  | *type*: `file`
-  | *default*: `{}`
-  | *optional*: `False`
 
 
 
@@ -57,7 +70,7 @@ Other
 ~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers, Yogini Idnani
 **Creation date**

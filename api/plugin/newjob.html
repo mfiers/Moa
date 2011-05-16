@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -5,24 +6,25 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Instantiate new jobs &mdash; Moa v0.10.1 documentation</title>
+    <title>newjob - Instantiate new jobs &mdash; Moa v0.10.1 documentation</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../../index.html" />
     <link rel="up" title="moa.plugin" href="index.html" />
-    <link rel="next" title="Manipulate templates" href="template.html" />
-    <link rel="prev" title="logo - Print the moa logo" href="logo.html" /> 
+    <link rel="next" title="Pack - saves pipelines, or parts of pipelines for reuse" href="pack.html" />
+    <link rel="prev" title="moautil - Some extra utilities - copy/move jobs" href="moautil.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,13 +34,13 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="template.html" title="Manipulate templates"
+          <a href="pack.html" title="Pack - saves pipelines, or parts of pipelines for reuse"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="logo.html" title="logo - Print the moa logo"
+          <a href="moautil.html" title="moautil - Some extra utilities - copy/move jobs"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -51,11 +53,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="instantiate-new-jobs">
-<span id="module-moa.plugin.newjob"></span><h1>Instantiate new jobs<a class="headerlink" href="#instantiate-new-jobs" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-moa.plugin.newjob"></span><div class="section" id="newjob-instantiate-new-jobs">
+<h1><strong>newjob</strong> - Instantiate new jobs<a class="headerlink" href="#newjob-instantiate-new-jobs" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="moa.plugin.newjob.newJob">
-<tt class="descclassname">moa.plugin.newjob.</tt><tt class="descname">newJob</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.newjob.newJob" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.plugin.newjob.</tt><tt class="descname">newJob</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.newjob.newJob" title="Permalink to this definition">¶</a></dt>
 <dd><p><strong>moa new</strong></p>
 <p>Usage:</p>
 <div class="highlight-python"><pre>moa new TEMPLATE_NAME -t 'a descriptive title'</pre>
@@ -73,30 +75,30 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="logo.html"
-                                  title="previous chapter"><strong>logo</strong> - Print the moa logo</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="template.html"
-                                  title="next chapter">Manipulate templates</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../../_sources/api/plugin/newjob.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="moautil.html"
+                        title="previous chapter"><strong>moautil</strong> - Some extra utilities - copy/move jobs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pack.html"
+                        title="next chapter"><strong>Pack</strong> - saves pipelines, or parts of pipelines for reuse</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/plugin/newjob.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -108,13 +110,13 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
+          <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="template.html" title="Manipulate templates"
+          <a href="pack.html" title="Pack - saves pipelines, or parts of pipelines for reuse"
              >next</a> |</li>
         <li class="right" >
-          <a href="logo.html" title="logo - Print the moa logo"
+          <a href="moautil.html" title="moautil - Some extra utilities - copy/move jobs"
              >previous</a> |</li>
         <li><a href="../../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
@@ -122,9 +124,9 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
@@ -32,8 +34,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="moatest.html" title="moatest"
              accesskey="N">next</a> |</li>
@@ -68,14 +70,27 @@
 <div class="section" id="filesets">
 <h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>bfa_output</strong>::</dt>
+<dt><strong>bam_output</strong>::</dt>
 <dd><blockquote class="first">
-directory with output</blockquote>
+<div>bam alignment output file</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>fa_input</cite></div>
+<div class="line"><em>source</em>: <cite>fq_input</cite></div>
 <div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
+<div class="line"><em>extension</em>: <cite>{}</cite></div>
+<div class="line"><em>glob</em>: <cite>{}</cite></div>
+<div class="line"><em>dir</em>: <cite>{}</cite></div>
+</div>
+</dd>
+<dt><strong>bfa_output</strong>::</dt>
+<dd><blockquote class="first">
+<div>BFA Index name</div></blockquote>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>map</cite></div>
+<div class="line"><em>source</em>: <cite>{}</cite></div>
+<div class="line"><em>category</em>: <cite>other</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
 <div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
 <div class="line"><em>dir</em>: <cite>{}</cite></div>
@@ -83,7 +98,7 @@ directory with output</blockquote>
 </dd>
 <dt><strong>bfq_output</strong>::</dt>
 <dd><blockquote class="first">
-{}</blockquote>
+<div>bfq files - forward files</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_input</cite></div>
@@ -96,11 +111,11 @@ directory with output</blockquote>
 </dd>
 <dt><strong>fa_input</strong>::</dt>
 <dd><blockquote class="first">
-directory with reference fasta file name</blockquote>
+<div>directory with reference fasta file name</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>{}</cite></div>
-<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>category</em>: <cite>prerequisite</cite></div>
 <div class="line"><em>optional</em>: <cite>False</cite></div>
 <div class="line"><em>extension</em>: <cite>{}</cite></div>
 <div class="line"><em>glob</em>: <cite>{}</cite></div>
@@ -109,7 +124,7 @@ directory with reference fasta file name</blockquote>
 </dd>
 <dt><strong>fq_input</strong>::</dt>
 <dd><blockquote class="first">
-fastq input files</blockquote>
+<div>fastq input files</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>{}</cite></div>
@@ -122,20 +137,7 @@ fastq input files</blockquote>
 </dd>
 <dt><strong>map_output</strong>::</dt>
 <dd><blockquote class="first">
-{}</blockquote>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>map</cite></div>
-<div class="line"><em>source</em>: <cite>fq_input</cite></div>
-<div class="line"><em>category</em>: <cite>output</cite></div>
-<div class="line"><em>optional</em>: <cite>{}</cite></div>
-<div class="line"><em>extension</em>: <cite>{}</cite></div>
-<div class="line"><em>glob</em>: <cite>{}</cite></div>
-<div class="line"><em>dir</em>: <cite>{}</cite></div>
-</div>
-</dd>
-<dt><strong>sam_output</strong>::</dt>
-<dd><blockquote class="first">
-{}</blockquote>
+<div>maq map output files</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>map</cite></div>
 <div class="line"><em>source</em>: <cite>fq_input</cite></div>
@@ -153,7 +155,7 @@ fastq input files</blockquote>
 <dl class="docutils">
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -162,7 +164,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>disable_sw</strong>::</dt>
 <dd><blockquote class="first">
-disable Smith-Waterman alignment</blockquote>
+<div>disable Smith-Waterman alignment</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -171,7 +173,7 @@ disable Smith-Waterman alignment</blockquote>
 </dd>
 <dt><strong>extra_parameters</strong>::</dt>
 <dd><blockquote class="first">
-other parameters</blockquote>
+<div>other parameters</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -180,7 +182,7 @@ other parameters</blockquote>
 </dd>
 <dt><strong>match_in_colorspace</strong>::</dt>
 <dd><blockquote class="first">
-match in the colorspace</blockquote>
+<div>match in the colorspace</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -189,7 +191,7 @@ match in the colorspace</blockquote>
 </dd>
 <dt><strong>max_mismatch_qual_sum</strong>::</dt>
 <dd><blockquote class="first">
-maximum allowed sum of qualities of mismatches</blockquote>
+<div>maximum allowed sum of qualities of mismatches</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>70</cite></div>
@@ -198,7 +200,7 @@ maximum allowed sum of qualities of mismatches</blockquote>
 </dd>
 <dt><strong>max_num_hits_out</strong>::</dt>
 <dd><blockquote class="first">
-number of mismatches in the first 24bp</blockquote>
+<div>number of mismatches in the first 24bp</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>250</cite></div>
@@ -207,7 +209,7 @@ number of mismatches in the first 24bp</blockquote>
 </dd>
 <dt><strong>num_mismatch_24bp</strong>::</dt>
 <dd><blockquote class="first">
-number of mismatches in the first 24bp</blockquote>
+<div>number of mismatches in the first 24bp</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>2</cite></div>
@@ -216,7 +218,7 @@ number of mismatches in the first 24bp</blockquote>
 </dd>
 <dt><strong>read_ref_diff_rate</strong>::</dt>
 <dd><blockquote class="first">
-rate of difference between reads and references</blockquote>
+<div>rate of difference between reads and references</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>float</cite></div>
 <div class="line"><em>default</em>: <cite>0.001</cite></div>
@@ -225,7 +227,7 @@ rate of difference between reads and references</blockquote>
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -234,7 +236,7 @@ A name for this job</blockquote>
 </dd>
 <dt><strong>trim_all_reads</strong>::</dt>
 <dd><blockquote class="first">
-trim all reads (usually not recommended)</blockquote>
+<div>trim all reads (usually not recommended)</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>boolean</cite></div>
 <div class="line"><em>default</em>: <cite>False</cite></div>
@@ -253,7 +255,7 @@ trim all reads (usually not recommended)</blockquote>
 <dt><strong>Creation date</strong></dt>
 <dd>Wed Dec 02 17:06:48 2010</dd>
 <dt><strong>Modification date</strong></dt>
-<dd>1291933990.31</dd>
+<dd>1297380110.93</dd>
 </dl>
 </div>
 </div>
@@ -267,41 +269,41 @@ trim all reads (usually not recommended)</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">maq_se</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#filesets">Filesets</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">maq_se</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#filesets">Filesets</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="maq_pe.html"
-                                  title="previous chapter">maq_pe</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="moatest.html"
-                                  title="next chapter">moatest</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/maq_se.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="maq_pe.html"
+                        title="previous chapter">maq_pe</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="moatest.html"
+                        title="next chapter">moatest</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/maq_se.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -313,7 +315,7 @@ trim all reads (usually not recommended)</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="moatest.html" title="moatest"
@@ -326,9 +328,9 @@ trim all reads (usually not recommended)</blockquote>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

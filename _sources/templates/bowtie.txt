@@ -27,23 +27,6 @@ Filesets
 
 
 
-**db**::
-    The (basename of the) bowtie database to use.
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `prerequisite`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
 **input**::
     Fasta/fastq input files for bowtie
 
@@ -79,6 +62,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**db**::
+    The (basename of the) bowtie database to use.
+
+  | *type*: `string`
+  | *default*: `{}`
+  | *optional*: `False`
 
 
 

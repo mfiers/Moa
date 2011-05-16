@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
@@ -32,8 +34,8 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="jobConf.html" title="moa.jobConf"
              accesskey="N">next</a> |</li>
@@ -50,11 +52,11 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="moa-job">
-<span id="module-moa.job"></span><h1>moa.job<a class="headerlink" href="#moa-job" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-moa.job"></span><div class="section" id="moa-job">
+<h1>moa.job<a class="headerlink" href="#moa-job" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="moa.job.Job">
-<em class="property">class </em><tt class="descclassname">moa.job.</tt><tt class="descname">Job</tt><big>(</big><em>wd</em>, <em>template=None</em><big>)</big><a class="headerlink" href="#moa.job.Job" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">moa.job.</tt><tt class="descname">Job</tt><big>(</big><em>wd</em><big>)</big><a class="headerlink" href="#moa.job.Job" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class defining a single job</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Job</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
@@ -67,10 +69,10 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><em>wd</em> &#8211; The directory containing the job</li>
-<li><em>template</em> &#8211; The template a job should have. If undefined,
+<li><strong>wd</strong> &#8211; The directory containing the job</li>
+<li><strong>template</strong> &#8211; The template a job should have. If undefined,
 read the template from <cite>./.moa/template</cite></li>
-<li><em>options</em> &#8211; Additional options to feed to this job</li>
+<li><strong>options</strong> &#8211; Additional options to feed to this job</li>
 </ul>
 </td>
 </tr>
@@ -78,20 +80,20 @@ read the template from <cite>./.moa/template</cite></li>
 </table>
 <dl class="method">
 <dt id="moa.job.Job.checkCommands">
-<tt class="descname">checkCommands</tt><big>(</big><em>commands</em><big>)</big><a class="headerlink" href="#moa.job.Job.checkCommands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check commands, and rearrange if there are delegates.</p>
+<tt class="descname">checkCommands</tt><big>(</big><em>command</em><big>)</big><a class="headerlink" href="#moa.job.Job.checkCommands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check command, and rearrange if there are delegates.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">delegate</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run2&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">([</span><span class="s">&#39;run2&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;run2&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">([</span><span class="s">&#39;run&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run2&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">([</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">(</span><span class="s">&#39;run2&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;run2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">(</span><span class="s">&#39;run&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">,</span> <span class="s">&#39;run2&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">checkCommands</span><span class="p">(</span><span class="s">&#39;prepare&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s">&#39;prepare&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameter:</th><td class="field-body"><em>commands</em> (list of strings) &#8211; The list of commands to check</td>
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>commands</strong> (<em>list of strings</em>) &#8211; The list of commands to check</td>
 </tr>
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">The checked list of commands</td>
 </tr>
@@ -120,23 +122,29 @@ read the template from <cite>./.moa/template</cite></li>
 <dl class="method">
 <dt id="moa.job.Job.defineOptions">
 <tt class="descname">defineOptions</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#moa.job.Job.defineOptions" title="Permalink to this definition">¶</a></dt>
-<dd>Set command line options</dd></dl>
+<dd><p>Set command line options - deferred to the backends</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">optparse</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">defineOptions</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="moa.job.Job.execute">
-<tt class="descname">execute</tt><big>(</big><em>command</em>, <em>verbose=False</em>, <em>background=False</em><big>)</big><a class="headerlink" href="#moa.job.Job.execute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">execute</tt><big>(</big><em>command</em>, <em>verbose=False</em>, <em>silent=False</em><big>)</big><a class="headerlink" href="#moa.job.Job.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute <cite>command</cite> in the context of this job. Execution is
 alwasy deferred to the backend</p>
+<p>#Note: Uncertain how to test verbose &amp; silent</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><em>command</em> (string) &#8211; the command to execute</li>
-<li><em>verbose</em> (Boolean) &#8211; output lots of data</li>
-<li><em>background</em> (Boolean) &#8211; Run this job in the background? If <cite>True</cite>,
-fork and have the parent return immediately. The child
-finishes. If <cite>False</cite>, wait for the job to finish</li>
+<li><strong>command</strong> (<em>string</em>) &#8211; the command to execute</li>
+<li><strong>verbose</strong> (<em>Boolean</em>) &#8211; output lots of data</li>
+<li><strong>silent</strong> (<em>Boolean</em>) &#8211; output nothing</li>
 </ul>
 </td>
 </tr>
@@ -145,18 +153,9 @@ finishes. If <cite>False</cite>, wait for the job to finish</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="moa.job.Job.getActor">
-<tt class="descname">getActor</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.getActor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an actor (<a title="moa.actor.Actor" class="reference external" href="actor.html#moa.actor.Actor"><tt class="xref docutils literal"><span class="pre">moa.actor.Actor</span></tt></a>), a wrapper for python&#8217;s subprocess.</p>
-<p>An actor is meant to handle the execution of out-of-python tools</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">instance of <a title="moa.actor.Actor" class="reference external" href="actor.html#moa.actor.Actor"><tt class="xref docutils literal"><span class="pre">moa.actor.Actor</span></tt></a></td>
-</tr>
-</tbody>
-</table>
+<dt id="moa.job.Job.getFiles">
+<tt class="descname">getFiles</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.getFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all moa files - i.e. all files crucial to this job.</p>
 </dd></dl>
 
 <dl class="method">
@@ -170,6 +169,7 @@ finishes. If <cite>False</cite>, wait for the job to finish</li>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">hasCommand</span><span class="p">(</span><span class="s">&#39;run&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">hasCommand</span><span class="p">(</span><span class="s">&#39;run2&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="n">job</span><span class="o">.</span><span class="n">hasCommand</span><span class="p">(</span><span class="s">&#39;dummy&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -177,39 +177,72 @@ finishes. If <cite>False</cite>, wait for the job to finish</li>
 <dl class="method">
 <dt id="moa.job.Job.initialize">
 <tt class="descname">initialize</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.initialize" title="Permalink to this definition">¶</a></dt>
-<dd>Initialize a new job in the current wd</dd></dl>
+<dd><p>Initialize a new job in the current wd</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="moa.job.Job.isMoa">
 <tt class="descname">isMoa</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.isMoa" title="Permalink to this definition">¶</a></dt>
-<dd>Check if this is a Moa directory - Currently, this needs to be overridden</dd></dl>
+<dd><p>Check if this is a Moa directory - Currently, this needs to be overridden
+#weird; uncertain if this ever gets called</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="moa.job.Job.loadBackend">
 <tt class="descname">loadBackend</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.loadBackend" title="Permalink to this definition">¶</a></dt>
-<dd>load the backend</dd></dl>
+<dd><p>load the backend</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="moa.job.Job.loadTemplate">
 <tt class="descname">loadTemplate</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.loadTemplate" title="Permalink to this definition">¶</a></dt>
-<dd>Load the template for this job, based on what configuration 
-can be found</dd></dl>
+<dd><p>Load the template for this job, based on what configuration 
+can be found</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="moa.job.Job.prepare">
 <tt class="descname">prepare</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.prepare" title="Permalink to this definition">¶</a></dt>
-<dd>Prepare this job</dd></dl>
+<dd><p>Give this job a chance to prepare for execution - deferred to
+the backend.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">prepare</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.refreshTemplate">
+<tt class="descname">refreshTemplate</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.refreshTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reload the template into the local .moa/template.d directory</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">templateFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">confDir</span><span class="p">,</span> <span class="s">&#39;template.d&#39;</span><span class="p">,</span> <span class="s">&#39;unittest.jinja2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">templateFile</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">templateFile</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">templateFile</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">refreshTemplate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">templateFile</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
 
 <dl class="method">
 <dt id="moa.job.Job.setTemplate">
-<tt class="descname">setTemplate</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#moa.job.Job.setTemplate" title="Permalink to this definition">¶</a></dt>
-<dd>Set a new template for this job</dd></dl>
+<tt class="descname">setTemplate</tt><big>(</big><em>name</em>, <em>provider=None</em><big>)</big><a class="headerlink" href="#moa.job.Job.setTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a new template for this job</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">setTemplate</span><span class="p">(</span><span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">afile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">confDir</span><span class="p">,</span> <span class="s">&#39;template.d&#39;</span><span class="p">,</span> <span class="s">&#39;adhoc.mk&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">afile</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </dd></dl>
 
 <dl class="function">
 <dt id="moa.job.newJob">
-<tt class="descclassname">moa.job.</tt><tt class="descname">newJob</tt><big>(</big><em>wd</em>, <em>template</em>, <em>title</em>, <em>parameters=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#moa.job.newJob" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.job.</tt><tt class="descname">newJob</tt><big>(</big><em>wd</em>, <em>template</em>, <em>title</em>, <em>parameters=</em><span class="optional">[</span><span class="optional">]</span>, <em>provider=None</em><big>)</big><a class="headerlink" href="#moa.job.newJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new job in the wd and return the proper job object
 currently only makefile jobs are supported - later we&#8217;ll scan the
 template, and instantiate the proper job type</p>
@@ -225,14 +258,14 @@ template, and instantiate the proper job type</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><em>wd</em> &#8211; Directory to create this job in, note that this
+<li><strong>wd</strong> &#8211; Directory to create this job in, note that this
 directory must already exists</li>
-<li><em>template</em> (String) &#8211; Template name for this job</li>
-<li><em>parameters</em> (list of (key, value) tuples) &#8211; A list of parameters to set for this job</li>
+<li><strong>template</strong> (<em>String</em>) &#8211; Template name for this job</li>
+<li><strong>parameters</strong> (<em>list of (key, value) tuples</em>) &#8211; A list of parameters to set for this job</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">instance of <a title="moa.job.Job" class="reference internal" href="#moa.job.Job"><tt class="xref docutils literal"><span class="pre">moa.job.Job</span></tt></a></p>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">instance of <a class="reference internal" href="#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></p>
 </td>
 </tr>
 </tbody>
@@ -241,13 +274,14 @@ directory must already exists</li>
 
 <dl class="function">
 <dt id="moa.job.newTestJob">
-<tt class="descclassname">moa.job.</tt><tt class="descname">newTestJob</tt><big>(</big><em>template</em>, <em>title='Test job'</em><big>)</big><a class="headerlink" href="#moa.job.newTestJob" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.job.</tt><tt class="descname">newTestJob</tt><big>(</big><em>template</em>, <em>title='Test job'</em>, <em>provider=None</em><big>)</big><a class="headerlink" href="#moa.job.newTestJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>for testing purposes - creates a temporary directory and uses that to
 instantiate a job. This function returns the job object created</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="n">template</span> <span class="o">=</span> <span class="s">&#39;adhoc&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#39;test title&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">Job</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="s">&#39;test title&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;.moa&#39;</span><span class="p">,</span> <span class="s">&#39;template&#39;</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;adhoc&#39;</span><span class="p">)</span>
 </pre></div>
@@ -258,7 +292,7 @@ instantiate a job. This function returns the job object created</p>
 <tbody valign="top">
 <tr class="field"><th class="field-name">Returns:</th><td class="field-body">the created job</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">instance of <a title="moa.job.Job" class="reference internal" href="#moa.job.Job"><tt class="xref docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
+<tr class="field"><th class="field-name">Return type:</th><td class="field-body">instance of <a class="reference internal" href="#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -275,30 +309,30 @@ instantiate a job. This function returns the job object created</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="commands.html"
-                                  title="previous chapter">moa.commands</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="jobConf.html"
-                                  title="next chapter">moa.jobConf</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/api/job.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="commands.html"
+                        title="previous chapter">moa.commands</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="jobConf.html"
+                        title="next chapter">moa.jobConf</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/job.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -310,7 +344,7 @@ instantiate a job. This function returns the job object created</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="jobConf.html" title="moa.jobConf"
@@ -323,9 +357,9 @@ instantiate a job. This function returns the job object created</p>
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

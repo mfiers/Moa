@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,16 +13,17 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../../index.html" />
     <link rel="up" title="Moa API" href="../index.html" />
-    <link rel="next" title="adhoc - create Jobs on the fly" href="adhoc.html" />
+    <link rel="next" title="adhoc - create jobs from adhoc bash code" href="adhoc.html" />
     <link rel="prev" title="Ruff" href="../backend/ruff.html" /> 
   </head>
   <body>
@@ -32,10 +34,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
-          <a href="adhoc.html" title="adhoc - create Jobs on the fly"
+          <a href="adhoc.html" title="adhoc - create jobs from adhoc bash code"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../backend/ruff.html" title="Ruff"
@@ -52,17 +54,29 @@
             
   <div class="section" id="moa-plugin">
 <h1>moa.plugin<a class="headerlink" href="#moa-plugin" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference external" href="adhoc.html"><strong>adhoc</strong> - create Jobs on the fly</a></li>
-<li class="toctree-l1"><a class="reference external" href="configure.html"><strong>configure</strong> - Configure jobs</a></li>
-<li class="toctree-l1"><a class="reference external" href="fileset.html">filesets</a></li>
-<li class="toctree-l1"><a class="reference external" href="help.html">Help</a></li>
-<li class="toctree-l1"><a class="reference external" href="info.html">Job information</a></li>
-<li class="toctree-l1"><a class="reference external" href="logo.html"><strong>logo</strong> - Print the moa logo</a></li>
-<li class="toctree-l1"><a class="reference external" href="newjob.html">Instantiate new jobs</a></li>
-<li class="toctree-l1"><a class="reference external" href="template.html">Manipulate templates</a></li>
-<li class="toctree-l1"><a class="reference external" href="twit.html"><strong>twit</strong> - Tweet results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adhoc.html"><strong>adhoc</strong> - create jobs from adhoc bash code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configure.html"><strong>configure</strong> - Configure jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="extraCommands.html"><strong>extraCommands</strong> - Pre &amp; Post commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fileset.html"><strong>fileset</strong> - define sets of in&amp;output files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help.html"><strong>help</strong> - generate help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info.html"><strong>info</strong> - Job information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lock.html"><strong>lock</strong> - Lock/Unlock moa jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html"><strong>logger</strong> - Log Moa activity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logo.html"><strong>logo</strong> - Print a big, in your face, moa logo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moaGit.html"><strong>moaGit</strong> - maintain a git repository with job information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moautil.html"><strong>moautil</strong> - Some extra utilities - copy/move jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="newjob.html"><strong>newjob</strong> - Instantiate new jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pack.html"><strong>Pack</strong> - saves pipelines, or parts of pipelines for reuse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameterCheck.html"><strong>parameterCheck</strong> - check parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="prompt.html"><strong>prompt</strong> - Moa BASH prompt enhancer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="status.html"><strong>status</strong> - Job Status</a></li>
+<li class="toctree-l1"><a class="reference internal" href="template.html"><strong>template</strong> - information on templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test.html"><strong>test</strong> - Run unittests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="twit.html"><strong>twit</strong> - Tweet results</a></li>
 </ul>
+</div>
 </div>
 
 
@@ -74,30 +88,30 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="../backend/ruff.html"
-                                  title="previous chapter">Ruff</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="adhoc.html"
-                                  title="next chapter"><strong>adhoc</strong> - create Jobs on the fly</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../../_sources/api/plugin/index.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../backend/ruff.html"
+                        title="previous chapter">Ruff</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="adhoc.html"
+                        title="next chapter"><strong>adhoc</strong> - create jobs from adhoc bash code</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/plugin/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -109,10 +123,10 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../modindex.html" title="Global Module Index"
+          <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="adhoc.html" title="adhoc - create Jobs on the fly"
+          <a href="adhoc.html" title="adhoc - create jobs from adhoc bash code"
              >next</a> |</li>
         <li class="right" >
           <a href="../backend/ruff.html" title="Ruff"
@@ -122,9 +136,9 @@
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

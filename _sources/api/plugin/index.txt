@@ -6,10 +6,21 @@ moa.plugin
 
    adhoc
    configure
+   extraCommands
    fileset
    help
    info
+   lock
+   logger
    logo
+   moaGit
+   moautil
    newjob
+   pack
+   parameterCheck
+   prompt
+   status
    template
+   test
    twit
+   

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,12 +13,13 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="index.html" />
     <link rel="next" title="Installation" href="install.html" />
@@ -31,8 +33,8 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installation"
              accesskey="N">next</a> |</li>
@@ -62,42 +64,31 @@ scripts to organize and automate their work. This approach has obvious
 advantages, most importantly flexibility. Potential downsides to
 scripting are that a project easily becomes disorganized and
 untrackable unless measures are taken.</p>
-<p><em>Moa aims to assist in organizing, automating and maintaining a command
-line bioinformatics project without loss of flexibility.</em></p>
+<p><strong>*Moa</strong> to assist in organizing, automating and maintaining a command
+line bioinformatics project without loss of flexibility.*</p>
 <p>The best way to understand how Moa aims to achieve this is by a simple
-example:</p>
-<div class="highlight-python"><pre>moa new blast -t "run a demo"
+example, imagine you would like to run a BLAST analysis:</p>
+<div class="highlight-python"><pre>moa new blast -t "demo run"
 moa set db=/data/blast/db/nt
-moa set input_dir=../sequences/
+moa set input=../sequences/*.fasta
 moa set moa_postprocess='grep polymerase gff/*gff &gt; pol.gff'
 moa run</pre>
 </div>
-<p>In the first line, a new BLAST job (titled &#8220;run a demo&#8221;) is created in
-the current directory. What really happens is that Moa associates the
-<cite>blast</cite> template to the current directory. The <cite>blast</cite> template
-(obviously) knows how to execute a <a class="reference internal" href="#blast">[BLAST]</a> job, but needs at least
-two variables defined, as demonstrated in lines two and three. The
-fourth line demonstrates a specific Moa is executed and &#8216;blasts&#8217; the
-input sequences (in <tt class="docutils literal"><span class="pre">../sequences</span></tt>) against the database in
+<p>In the first line, a new BLAST job (titled &#8220;demo run&#8221;) is created in
+the current directory. What really happens is that Moa copies the
+<cite>blast</cite> template to the current directory. The <cite>blast</cite> template knows
+how to execute a <a class="reference internal" href="#blast">[BLAST]</a> job, but needs at least two variables
+defined, defined in the next two lines. <cite>moa run</cite> executes the
+analysis and &#8216;blasts&#8217; the input sequences (in
+<tt class="docutils literal"><span class="pre">../sequences/*.fasta</span></tt>) against the database in
 <tt class="docutils literal"><span class="pre">/data/blast/db/nt</span></tt>. BLAST output files (XML) are generated and
-converted to GFF (GFF conversion is an extra, not part of the BLAST
-suite). The one to last statement is probably most remarkable; it is a
-single (shell) commmand that will be executed after BLAST is executed
-(there is a corresponding <tt class="docutils literal"><span class="pre">moa_preprocess</span></tt>). This shell comamand
-filters all BLAST hits that have the word &#8220;polymerase&#8221; in their
-description into a separater GFF file.</p>
-<p>Moa employs <a class="reference external" href="http://www.gnu.org/software/make">GNU make</a> to describe
-its building blocks. GNU Make is originally developed for software
-compilation. Compilation usually involves the execution of many
-interdependent compilation and linker steps. GNU make is able to
-compile large software projects with tens of thousands of source files
-based on a Makefile that describes how a target file is to be
-created. GNU Make is flexible enough to be used with practically any
-programming language. Moreover, GNU Make can be used to automate any
-series of commands as long as they can be executed from the command
-line. It is therefore not only possible, but an excellent idea (not
-mine), to use Gnu Make in bioinformatics projects (see <a class="reference external" href="http://biowiki.org/MakefileManifesto">biowiki</a>, <a class="reference external" href="http://archive.nodalpoint.org/2007/03/18/a_pipeline_is_a_makefile">nodalpoint</a>
-or <a class="reference external" href="http://skam.sourceforge.net/">biomake</a>)</p>
+converted to GFF (GFF conversion is an extra of the template, not part
+of the BLAST suite). The one to last statement is probably most
+typical of the flexibility provided by Moa; it is a single shell
+commmand that will be executed after BLAST is executed (there is a
+corresponding <tt class="docutils literal"><span class="pre">moa_preprocess</span></tt>). This shell comamand filters all
+BLAST hits that have the word &#8220;polymerase&#8221; in their description into a
+separater GFF file.</p>
 <p>Moa aims to do the following things:</p>
 <ul>
 <li><p class="first"><em>Organize a project</em>: Each Moa job must be located in its own
@@ -171,7 +162,7 @@ moa new -t 'download a potato BAC' ncbi</pre>
 <a class="reference external" href="http://www.ncbi.nlm.nih.gov">NCBI</a> by using the &#8220;ncbi&#8221; template.
 Once a Moa job is instantiated you can run <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">help</span></tt> to get some
 information on how to use this template</p>
-<p><img alt="moa help" src="_images/screenshot_moa_help.png" /> Note that if you want help on how to use the moa itself,
+<p><img alt="moa help" src="_images/screenshot_moa_help3.png" /> Note that if you want help on how to use the moa itself,
 you should use <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">--help</span></tt></p>
 <p>Before you can get the data from NCBI, you will have to tell Moa
 what you want to download. This is easy if you know the Genbank
@@ -224,38 +215,38 @@ what other templates are available, try <tt class="docutils literal"><span class
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">Introduction</a><ul>
-<li><a class="reference external" href="#example-session">Example session</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#example-session">Example session</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="index.html"
-                                  title="previous chapter">Welcome to the Moa documentation!</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="install.html"
-                                  title="next chapter">Installation</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="_sources/intro.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to the Moa documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installation</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/intro.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -267,7 +258,7 @@ what other templates are available, try <tt class="docutils literal"><span class
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="modindex.html" title="Global Module Index"
+          <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installation"
@@ -279,9 +270,9 @@ what other templates are available, try <tt class="docutils literal"><span class
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

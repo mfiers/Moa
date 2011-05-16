@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -12,17 +13,18 @@
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
         VERSION:     '0.10.1',
-        COLLAPSE_MODINDEX: false,
+        COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Moa v0.10.1 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="project" href="project.html" />
-    <link rel="prev" title="nstretch" href="nstretch.html" /> 
+    <link rel="prev" title="orthomcl" href="orthomcl.html" /> 
   </head>
   <body>
     <div class="related">
@@ -32,13 +34,13 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
-             accesskey="M">modules</a> |</li>
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="project.html" title="project"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="nstretch.html" title="nstretch"
+          <a href="orthomcl.html" title="orthomcl"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
@@ -71,7 +73,7 @@
 <dl class="docutils">
 <dt><strong>cloning_vector</strong>::</dt>
 <dd><blockquote class="first">
-File containing the cloning vector</blockquote>
+<div>File containing the cloning vector</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -80,7 +82,7 @@ File containing the cloning vector</blockquote>
 </dd>
 <dt><strong>default_command</strong>::</dt>
 <dd><blockquote class="first">
-command to run for this template</blockquote>
+<div>command to run for this template</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>{}</cite></div>
 <div class="line"><em>default</em>: <cite>run</cite></div>
@@ -89,7 +91,7 @@ command to run for this template</blockquote>
 </dd>
 <dt><strong>ecoli_screenseq</strong>::</dt>
 <dd><blockquote class="first">
-File containing ecoli screen sequences</blockquote>
+<div>File containing ecoli screen sequences</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -98,7 +100,7 @@ File containing ecoli screen sequences</blockquote>
 </dd>
 <dt><strong>input_dir</strong>::</dt>
 <dd><blockquote class="first">
-Directory with the input data</blockquote>
+<div>Directory with the input data</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -107,7 +109,7 @@ Directory with the input data</blockquote>
 </dd>
 <dt><strong>input_pattern</strong>::</dt>
 <dd><blockquote class="first">
-file name pattern</blockquote>
+<div>file name pattern</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -116,7 +118,7 @@ file name pattern</blockquote>
 </dd>
 <dt><strong>quality_value_clip</strong>::</dt>
 <dd><blockquote class="first">
-quality cutoff</blockquote>
+<div>quality cutoff</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
 <div class="line"><em>default</em>: <cite>10</cite></div>
@@ -125,7 +127,7 @@ quality cutoff</blockquote>
 </dd>
 <dt><strong>repeat_masker_lib</strong>::</dt>
 <dd><blockquote class="first">
-File with a repeatmasker library</blockquote>
+<div>File with a repeatmasker library</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -134,7 +136,7 @@ File with a repeatmasker library</blockquote>
 </dd>
 <dt><strong>sequencing_vector</strong>::</dt>
 <dd><blockquote class="first">
-File containing the sequencing vector</blockquote>
+<div>File containing the sequencing vector</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -143,7 +145,7 @@ File containing the sequencing vector</blockquote>
 </dd>
 <dt><strong>template</strong>::</dt>
 <dd><blockquote class="first">
-the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.</blockquote>
+<div>the template pregap config file to use. if not defined, Moa tries ./files/pregap.config.</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: <cite>./files/pregap.config.</cite></div>
@@ -152,7 +154,7 @@ the template pregap config file to use. if not defined, Moa tries ./files/pregap
 </dd>
 <dt><strong>title</strong>::</dt>
 <dd><blockquote class="first">
-A name for this job</blockquote>
+<div>A name for this job</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>string</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -161,7 +163,7 @@ A name for this job</blockquote>
 </dd>
 <dt><strong>vector_primerfile</strong>::</dt>
 <dd><blockquote class="first">
-File with the vector primers</blockquote>
+<div>File with the vector primers</div></blockquote>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>file</cite></div>
 <div class="line"><em>default</em>: ``</div>
@@ -194,40 +196,40 @@ File with the vector primers</blockquote>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-            <h3><a href="../index.html">Table Of Contents</a></h3>
-            <ul>
-<li><a class="reference external" href="#">pregap</a><ul>
-<li><a class="reference external" href="#commands">Commands</a></li>
-<li><a class="reference external" href="#parameters">Parameters</a></li>
-<li><a class="reference external" href="#other">Other</a></li>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pregap</a><ul>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
 </ul>
 </li>
 </ul>
 
-            <h4>Previous topic</h4>
-            <p class="topless"><a href="nstretch.html"
-                                  title="previous chapter">nstretch</a></p>
-            <h4>Next topic</h4>
-            <p class="topless"><a href="project.html"
-                                  title="next chapter">project</a></p>
-            <h3>This Page</h3>
-            <ul class="this-page-menu">
-              <li><a href="../_sources/templates/pregap.txt"
-                     rel="nofollow">Show Source</a></li>
-            </ul>
-          <div id="searchbox" style="display: none">
-            <h3>Quick search</h3>
-              <form class="search" action="../search.html" method="get">
-                <input type="text" name="q" size="18" />
-                <input type="submit" value="Go" />
-                <input type="hidden" name="check_keywords" value="yes" />
-                <input type="hidden" name="area" value="default" />
-              </form>
-              <p class="searchtip" style="font-size: 90%">
-              Enter search terms or a module, class or function name.
-              </p>
-          </div>
-          <script type="text/javascript">$('#searchbox').show(0);</script>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="orthomcl.html"
+                        title="previous chapter">orthomcl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="project.html"
+                        title="next chapter">project</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/templates/pregap.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -239,22 +241,22 @@ File with the vector primers</blockquote>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../modindex.html" title="Global Module Index"
+          <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="project.html" title="project"
              >next</a> |</li>
         <li class="right" >
-          <a href="nstretch.html" title="nstretch"
+          <a href="orthomcl.html" title="orthomcl"
              >previous</a> |</li>
         <li><a href="../index.html">Moa v0.10.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-      &copy; Copyright 2010, Mark Fiers.
-      Last updated on Jan 18, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 0.6.6.
+        &copy; Copyright 2010, Mark Fiers.
+      Last updated on May 16, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
 </html>

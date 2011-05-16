@@ -27,12 +27,29 @@ Filesets
 
 
 
-**bfa_output**::
-    directory with output
+**bam_output**::
+    bam alignment output file
 
   | *type*: `map`
-  | *source*: `fa_input`
+  | *source*: `fq_forward_input`
   | *category*: `output`
+  | *optional*: `{}`
+  | *extension*: `{}`
+  | *glob*: `{}`
+  | *dir*: `{}`
+
+
+
+
+
+
+
+**bfa_output**::
+    BFA Index name
+
+  | *type*: `map`
+  | *source*: `{}`
+  | *category*: `other`
   | *optional*: `{}`
   | *extension*: `{}`
   | *glob*: `{}`
@@ -51,9 +68,9 @@ Filesets
   | *source*: `fq_forward_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `bfq`
+  | *extension*: `{}`
   | *glob*: `{}`
-  | *dir*: `.`
+  | *dir*: `{}`
 
 
 
@@ -65,7 +82,7 @@ Filesets
     bfq files - reverse files
 
   | *type*: `map`
-  | *source*: `bfq_forward_output`
+  | *source*: `fq_forward_input`
   | *category*: `output`
   | *optional*: `{}`
   | *extension*: `{}`
@@ -83,7 +100,7 @@ Filesets
 
   | *type*: `map`
   | *source*: `{}`
-  | *category*: `input`
+  | *category*: `prerequisite`
   | *optional*: `False`
   | *extension*: `{}`
   | *glob*: `{}`
@@ -130,24 +147,7 @@ Filesets
 
 
 **map_output**::
-    {}
-
-  | *type*: `map`
-  | *source*: `fq_forward_input`
-  | *category*: `output`
-  | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
-**sam_output**::
-    {}
+    maq map output files
 
   | *type*: `map`
   | *source*: `fq_forward_input`
@@ -181,6 +181,15 @@ Parameters
 
   | *type*: `boolean`
   | *default*: `False`
+  | *optional*: `True`
+
+
+
+**extra_parameters**::
+    Any extra parameters
+
+  | *type*: `string`
+  | *default*: ``
   | *optional*: `True`
 
 
@@ -294,7 +303,7 @@ Other
 **Creation date**
   Wed Dec 03 17:06:48 2010
 **Modification date**
-  1291933990.24
+  1297380110.93
 
 
 
