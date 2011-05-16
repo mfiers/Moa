@@ -13,7 +13,12 @@ samtools index {{ output }}
 
 ### report
 
-samtools idxstats {{ job.data.filesets.output.files }}
+echo "#Bowtie mapping stats" > report.md
+for f in {{ job.data.filesets.output.files }}; do
+    echo "## `basename $f`" >> report.md
+    echo "                Sequence     Mapped   Unmapped" >> report.md
+    samtools idxstats $f 2>&1 | awk '{printf("    %20s %10d %10d\n", $1,$2,$3)}' >> report.md
+done
 
 ### clean
 
