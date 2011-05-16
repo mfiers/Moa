@@ -83,8 +83,8 @@ if options.list == '-':
 else:
     rawIds = open(options.list, 'U').readlines()
 
-ids = [x.split()[0].replace('>', '') for x in rawIds]
-idsInfo = dict([(x.split()[0].replace('>', ''),x) for x in rawIds])
+ids = [x.split()[0].replace('>', '') for x in rawIds if x.strip()]
+idsInfo = dict([(x.split()[0].replace('>', ''),x) for x in rawIds if x.strip()])
 
 log("read %d ids" % len(ids))
 log("first three ids: %s" % (" ".join(ids[:3])))
