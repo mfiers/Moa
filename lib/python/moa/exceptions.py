@@ -5,6 +5,10 @@
 # 
 # Licensed under the GPL license (see 'COPYING')
 # 
+
+class InvalidTemplate(Exception):
+    pass
+
 class CannotGetAFileLock(Exception):
     """Cannot get a file lock"""
     def __init__(self, f):

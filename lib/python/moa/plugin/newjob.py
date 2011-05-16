@@ -84,9 +84,13 @@ def newJob(job):
     provider = None
     if ':' in template:
         provider, template = template.split(':')
+
+    try:
+        job = moa.job.newJob(wd, template=template, title = options.title,
+                             provider=provider)
+    except moa.exceptions.InvalidTemplate:
+        moa.ui.exitError("Invalid template: %s" % template)
         
-    job = moa.job.newJob(wd, template=template, title = options.title,
-                         provider=provider)
     job.conf['title'] = title
     
     for p in params:

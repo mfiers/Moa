@@ -1,3 +1,14 @@
+Moa 0.10.11 / 2011-05-12
+==========================
+
+  * produce a graceful message on trying to instantiate an unknown template
+  * working on docs
+  * store status in sysConf
+  * allow jobs to be instantiated from other locations as pwd
+  * plugin to send mail after competing a job
+  * improved tree display
+  * define ansi colors in the config file
+
 Moa 0.10.10 / 2011-05-10
 ==========================
 

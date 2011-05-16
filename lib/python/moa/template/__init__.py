@@ -28,9 +28,6 @@ from moa.template.template import Template
 
 PROVIDERS = provider.Providers()
 
-class InvalidTemplate(Exception):
-    """ Invalid Template """
-    pass
 
 def getMoaFile(name):
     return PROVIDERS.getTemplate(name)
@@ -56,6 +53,7 @@ def installTemplate(wd, tName, provider=None):
     >>> assert(os.path.exists(adhocFile))
     """
     PROVIDERS.installTemplate(wd, tName, provider)
+        
              
 def initTemplate(*args, **kwargs):
     """
