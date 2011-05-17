@@ -71,11 +71,21 @@ following modules to be installed:
 - `Yaco <http://mfiers.github.com/Moa/api/Yaco.html>`_
 - `fist <http://mfiers.github.com/Moa/api/fist.html>`_
 
-
 These can be installed using 
 install Moa::
 
     easy_install-2.6 moa
+
+Not part of the list of prerequisites are the following moduels, which
+you'll only need if you are planning to run the web interface:
+
+- `ElementTree <http://effbot.org/zone/element-index.htm>`_
+- `Markdown <http://freewisdom.org/projects/python-markdown/>`_
+
+Note - these can be installed using easy_install::
+
+    $ sudo easy_install-2.6 ElementTree
+    $ sudo easy_install-2.6 Markdown
 
 
 Bioinformatics tools
