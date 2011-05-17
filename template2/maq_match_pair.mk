@@ -21,7 +21,7 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_id = maqpair
+moa_id = maq_match_pair
 
 #variables
 
@@ -31,32 +31,32 @@ endif
 
 ##### Derived variables for this run
 
-forward_files = $(wildcard $(maqpair_read_dir)/*$(maqpair_forward_suffix))
-maqpair_outfiles = $(addsuffix .out,\
-		$(patsubst %$(maqpair_forward_suffix),%,$(notdir $(forward_files))))
+forward_files = $(wildcard $(maq_match_pair_read_dir)/*$(maq_match_pair_forward_suffix))
+maq_match_pair_outfiles = $(addsuffix .out,\
+		$(patsubst %$(maq_match_pair_forward_suffix),%,$(notdir $(forward_files))))
 
 test:
 	@echo $(forward_files)
 	$e echo
-	@echo $(maqpair_outfiles)
+	@echo $(maq_match_pair_outfiles)
 
-.PHONY: maqpair_prepare
-maqpair_prepare:
+.PHONY: maq_match_pair_prepare
+maq_match_pair_prepare:
 
-.PHONY: maqpair_post
-maqpair_post:
+.PHONY: maq_match_pair_post
+maq_match_pair_post:
 
-maqpair: $(maqpair_outfiles)
+maq_match_pair: $(maq_match_pair_outfiles)
 
-$(maqpair_outfiles): %.out : \
-	$(maqpair_reference) \
-	$(maqpair_read_dir)/%$(maqpair_forward_suffix) \
-	$(maqpair_read_dir)/%$(maqpair_reverse_suffix)
-	$e maq map -A $(maqpair_RF_maxdist) -a $(maqpair_maxdist) $@ $?
+$(maq_match_pair_outfiles): %.out : \
+	$(maq_match_pair_reference) \
+	$(maq_match_pair_read_dir)/%$(maq_match_pair_forward_suffix) \
+	$(maq_match_pair_read_dir)/%$(maq_match_pair_reverse_suffix)
+	$e maq map -A $(maq_match_pair_RF_maxdist) -a $(maq_match_pair_maxdist) $@ $?
 
-bfq/%.bfq: $(maqpair_input_dir)/%.$(maqpair_input_extension)
+bfq/%.bfq: $(maq_match_pair_input_dir)/%.$(maq_match_pair_input_extension)
 	maq fastq2bfq $< $@
 
-maqpair_clean:
+maq_match_pair_clean:
 	$e -rm -rf *.out
 

@@ -12,7 +12,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Scaffold a set of input files based on a blast against a reference sequence.
   This software is written around bambus
 filesets: {}
-moa_id: scaf
+moa_id: scaffolder
 modification_date: Wed Nov 10 07:56:48 2010
 name: scaffolder
 parameter_category_order:

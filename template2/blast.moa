@@ -1,7 +1,7 @@
 author: Mark Fiers
 backend: ruff
 commands:
-  blast_report:
+  report:
     help: Generate a text BLAST report.
     mode: simple
   clean:
@@ -14,13 +14,14 @@ commands:
     delegate:
     - prepare
     - run2
-    - blast_report
-    help: Running BLAST takes an input directory, determines what 
-      sequences are present and executes BLAST on each of these. 
-      Moa BLAST is configured to create XML output
-      (as opposed to the standard text based output) in the out directory. The output
-      XML is subsequently converted to GFF3 by the custom blast2gff script (using
-      BioPython). Additionally, a simple text report is created.
+    - report
+    help: Running BLAST takes an input directory, determines what
+      sequences are present and executes BLAST on each of these.  Moa
+      BLAST is configured to create XML output (as opposed to the
+      standard text based output) in the out directory. The output XML
+      is subsequently converted to GFF3 by the custom blast2gff script
+      (using BioPython). Additionally, a simple text report is
+      created.
     mode: map
   run2:
     mode: map

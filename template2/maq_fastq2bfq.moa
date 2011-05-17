@@ -22,7 +22,7 @@ filesets:
     optional: false
     pattern: '*/*.fastq'
     type: set
-moa_id: fq2bq
+moa_id: maq_fastq2bfq
 modification_date: Wed Nov 10 07:56:48 2010
 name: maq_fastq2bfq
 parameter_category_order:

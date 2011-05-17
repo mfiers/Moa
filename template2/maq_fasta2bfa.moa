@@ -23,7 +23,7 @@ filesets:
     optional: false
     pattern: '*/*.fasta'
     type: set
-moa_id: f2b
+moa_id: maq_fasta2bfa
 modification_date: Wed Nov 10 07:56:48 2010
 name: maq_fasta2bfa
 parameter_category_order:

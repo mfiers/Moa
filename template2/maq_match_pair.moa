@@ -11,7 +11,7 @@ commands:
 creation_date: Wed Nov 10 07:56:48 2010
 description: Map paired ends to a reference sequence using MAQ
 filesets: {}
-moa_id: maqpair
+moa_id: maq_match_pair
 modification_date: Wed Nov 10 07:56:48 2010
 name: maq_match_pair
 parameter_category_order:

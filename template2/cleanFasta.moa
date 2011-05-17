@@ -12,7 +12,7 @@ creation_date: Wed Nov 10 07:56:48 2010
 description: Convert files to unix format and convert all characters that are not
   an A,C,G,T or N to N.
 filesets: {}
-moa_id: clean_fasta
+moa_id: cleanFasta
 modification_date: Wed Nov 10 07:56:48 2010
 name: cleanFasta
 parameter_category_order:

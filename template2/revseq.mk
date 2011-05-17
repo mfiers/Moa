@@ -21,7 +21,7 @@
 #include moabasepre
 include $(MOABASE)/lib/gnumake/prepare.mk
 
-moa_id = getorf
+moa_id = revseq
 
 #########################################################################
 # Prerequisite testing
@@ -32,52 +32,25 @@ moa_id = getorf
 ################################################################################
 #include moabase
 include $(MOABASE)/lib/gnumake/core.mk
-getorf_gff_source ?= moa
-getorf_input_extension ?= fasta
-getorf_find ?= 0
+revseq_gff_source ?= moa
+revseq_input_extension ?= fasta
+revseq_find ?= 0
 
 #prepare lists of out & gff files
 
-#echo Main target for getorf
-.PHONY: getorf
-getorf: $(getorf_gff_files)
-	@echo "Done getorfing!"
+#echo Main target for revseq
+.PHONY: revseq
+revseq: $(revseq_gff_files)
+	@echo "Done revseqing!"
 
-#prepare for getorf - i.e. create directories
-.PHONY: getorf_prepare
-getorf_prepare:	
+#prepare for revseq - i.e. create directories
+.PHONY: revseq_prepare
+revseq_prepare:	
 	-mkdir out 
 	-mkdir gff
 
-.PHONY: getorf_post
-getorf_post:
-
-# Convert to GFF (forward)
-gff/%.gff: out/%.out
-	@echo "Create gff $@ from $< - forward genes"
-	cat $< 																		\
-		| grep "^>" 															\
-		| grep -v "REVERSE SENSE"		 										\
-		| sed 's/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\].*/\1\t$(getorf_gff_source)\tCDS\t\3\t\4\t.\t+\t.\tID=\1.getorf.\2;Name=\1.getorf.\2/'	\
-		> $@
-	@echo "Create gff $@ from $< - reverse genes"
-	cat $< 																		\
-		| grep "^>" 															\
-		| grep "REVERSE SENSE"		 											\
-		| sed 's/>\(.*\).getorf.\([0-9]*\) \[\([0-9]*\) - \([0-9]*\)\].*/\1\t$(getorf_gff_source)\tCDS\t\4\t\3\t.\t-\t.\tID=\1.getorf.\2;Name=\1.getorf.\2/'	\
-		>> $@
-
-# create getorf/*xml - run GETORF 
-out/%.out: $(getorf_input_dir)/%.$(getorf_input_extension)
-	@echo "Processing getorf $*"
-	@echo "Creating out.orf $@ from $<"
-	@echo "Params $(getorf_program) $(getorf_db)"
-	cat $< | getorf -filter -table $(getorf_table) 						\
-		-minsize $(getorf_minsize) -maxsize $(getorf_maxsize) 			\
-		-circular $(getorf_circular) -find $(getorf_find) 				\
-			| sed "s/>$*_\([0-9]*\)/>$*.getorf.\1/" 						\
-			>  $@
-	fastaSplitter -f $@ -o fasta
+.PHONY: revseq_post
+revseq_post:
 
 getorf_clean:
 	-rm -rf ./gff/

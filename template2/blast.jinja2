@@ -16,7 +16,7 @@ mkdir gff || true > /dev/null
     cat {{ output }} | blast2gff -b {{ gff_blasthit }}  \
         -s {{ gff_source }} -d query > {{ outgff }}
 
-### blast_report
+### report
     blastReport out/ -o blast_report
 
 ### unittest

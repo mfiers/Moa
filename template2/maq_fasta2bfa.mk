@@ -21,7 +21,7 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_id = f2b
+moa_id = maq_fasta2bfa
 
 #variables
 
@@ -32,29 +32,29 @@ endif
 ##### Derived variables for this run
 
 test:
-	@echo $(f2b_input_files)
+	@echo $(maq_fasta2bfa_input_files)
 	$e echo
 	$e echo
-	@echo $(f2b_bfa_files)
+	@echo $(maq_fasta2bfa_bfa_files)
 
-.PHONY: f2b_prepare
-f2b_prepare:
+.PHONY: maq_fasta2bfa_prepare
+maq_fasta2bfa_prepare:
 	-mkdir bfa
 
-.PHONY: f2b_post
-f2b_post:
+.PHONY: maq_fasta2bfa_post
+maq_fasta2bfa_post:
 
-f2b: $(f2b_bfa_files)
+maq_fasta2bfa: $(maq_fasta2bfa_bfa_files)
 
-bfa/%.bfa: $(f2b_input_dir)/%.$(f2b_input_extension)
+bfa/%.bfa: $(maq_fasta2bfa_input_dir)/%.$(maq_fasta2bfa_input_extension)
 	maq fasta2bfa $< $@
 
 comma:=,
 #one of the database files
-$(f2b_name).1.ebwt: $(maq_fasta2bfa_input_files)
+$(maq_fasta2bfa_name).1.ebwt: $(maq_fasta2bfa_input_files)
 	$e -rm -f $(maq_fasta2bfa_name).*.ebwt	
 	$e maq_fasta2bfa-build $(call merge,$(comma),$^) $(maq_fasta2bfa_name)
 
-f2b_clean:
+maq_fasta2bfa_clean:
 	$e -rm -rf bfa
 

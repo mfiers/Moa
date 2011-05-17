@@ -18,27 +18,27 @@
 #
 
 include $(MOABASE)/lib/gnumake/prepare.mk
-moa_id = gsmap
+moa_id = gsMapper
 
 #variables
-gsmap_sfffile_cardinality = many
+gsMapper_sfffile_cardinality = many
 
 ################################################################################
 ## Include MOABASE
 include $(MOABASE)/lib/gnumake/core.mk################################################################################
 
-.PHONY: gsmap_prepare
-gsmap_prepare:
+.PHONY: gsMapper_prepare
+gsMapper_prepare:
 
-.PHONY: gsmap_post
-gsmap_post:
+.PHONY: gsMapper_post
+gsMapper_post:
 
-.PHONY: gsmap
-gsmap: out.gff
+.PHONY: gsMapper
+gsMapper: out.gff
 
 out.gff: out/454HCDiffs.txt 
-	$e awk '/>/ {print $$1"\tgsMapper\tPolymorphism\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsmap_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out.gff
-	$e awk '/>/ {print $$1"\tgsMapper\tSNP_$(gsmap_name)\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsmap_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out2.gff
+	$e awk '/>/ {print $$1"\tgsMapperper\tPolymorphism\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsMapper_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out.gff
+	$e awk '/>/ {print $$1"\tgsMapperper\tSNP_$(gsMapper_name)\t"$$2"\t"$$3"\t.\t.\t.\tName SNP_$(gsMapper_name)_"$$5" ; Reference "$$4" ; variant "$$5}' $< |  tail -n +3  | cut -c 2- > out2.gff
 
 ################################################################################
 ## A python scriptlet that adapts the HCDIF FILE
@@ -77,28 +77,28 @@ endef
 improved.HCDiffs: reads.index
 	$(call exec_python, PYTHON_ADAPT_HCDIF)
 
-reads.index: $(gsmap_sfffile)
-	$e for x in $(gsmap_sfffile); do				\
+reads.index: $(gsMapper_sfffile)
+	$e for x in $(gsMapper_sfffile); do				\
 		bn=`basename $$x .sff`;					\
 		sffinfo -a $$x | sed "s/$$/ $$bn/";		\
 	done > reads.index
 
-ifdef gsmap_annotation
+ifdef gsMapper_annotation
 	$(warning HHIHIH)
-  annotCL= -annot $(gsmap_annotation)
+  annotCL= -annot $(gsMapper_annotation)
 else
   annotCl=
 endif
 
-out/454HCDiffs.txt: $(gsmap_reference_fasta) $(gsmap_sfffile)
+out/454HCDiffs.txt: $(gsMapper_reference_fasta) $(gsMapper_sfffile)
 	$e runMapping \
 		-o out -ace -fd $(annotCL) \
-		-mi $(gsmap_min_overlap_ident) \
-		-ml $(gsmap_min_overlap_len) \
-		$(gsmap_reference_fasta) \
-		$(gsmap_sfffile)
+		-mi $(gsMapper_min_overlap_ident) \
+		-ml $(gsMapper_min_overlap_len) \
+		$(gsMapper_reference_fasta) \
+		$(gsMapper_sfffile)
 
-gsmap_clean:
+gsMapper_clean:
 	$e -rm -rf out
 	$e -rm -f reads.index
 	$e -rm -f improved.HCDiffs

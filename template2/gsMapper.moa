@@ -11,7 +11,7 @@ commands:
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run the Roche GS Reference mapper
 filesets: {}
-moa_id: gsmap
+moa_id: gsMapper
 modification_date: Wed Nov 10 07:56:48 2010
 name: gsMapper
 parameter_category_order:

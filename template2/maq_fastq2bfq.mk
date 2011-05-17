@@ -21,7 +21,7 @@ ifndef dont_include_moabase
 	include $(shell echo $$MOABASE)/template/moa/prepare.mk
 endif
 
-moa_id = fq2bq
+moa_id = maq_fastq2bfq
 
 #variables
 
@@ -31,26 +31,26 @@ endif
 
 ##### Derived variables for this run
 
-#$(call moa_fileset_init,fq2bq_input)
+#$(call moa_fileset_init,maq_fastq2bfq_input)
 
 test:
-	@echo $(fq2bq_input_files)
+	@echo $(maq_fastq2bfq_input_files)
 	$e echo
 	$e echo
-	@echo $(fq2bq_bfq_files)
+	@echo $(maq_fastq2bfq_bfq_files)
 
-.PHONY: fq2bq_prepare
-fq2bq_prepare:
+.PHONY: maq_fastq2bfq_prepare
+maq_fastq2bfq_prepare:
 	-mkdir bfq
 
-.PHONY: fq2bq_post
-fq2bq_post:
+.PHONY: maq_fastq2bfq_post
+maq_fastq2bfq_post:
 
-fq2bq: $(fq2bq_bfq_files)
+maq_fastq2bfq: $(maq_fastq2bfq_bfq_files)
 
-bfq/%.bfq: $(fq2bq_input_dir)/%.$(fq2bq_input_extension)
+bfq/%.bfq: $(maq_fastq2bfq_input_dir)/%.$(maq_fastq2bfq_input_extension)
 	maq fastq2bfq $< $@
 
-fq2bq_clean:
+maq_fastq2bfq_clean:
 	$e -rm -rf bfa
 

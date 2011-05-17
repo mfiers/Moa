@@ -16,28 +16,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
-moa_id = scaf
+moa_id = scaffolder
 
 #variables
 
 include $(MOABASE)/lib/gnumake/core.mk
 ##### Derived variables for this run
 
-.PHONY: scaf_prepare
-scaf_prepare:
+.PHONY: scaffolder_prepare
+scaffolder_prepare:
 
-.PHONY: scaf_post
-scaf_post:
+.PHONY: scaffolder_post
+scaffolder_post:
 
-.PHONY: scaf
-scaf: $(scaf_prefix).png
+.PHONY: scaffolder
+scaffolder: $(scaffolder_prefix).png
 
-$(scaf_prefix).png: $(scaf_input_file) $(scaf_reference_file)
+$(scaffolder_prefix).png: $(scaffolder_input_file) $(scaffolder_reference_file)
 	scaffolder $(minv) \
-		-i $< -r $(scaf_reference_file) -p $(scaf_prefix)
+		-i $< -r $(scaffolder_reference_file) -p $(scaffolder_prefix)
 
-scaf_clean:
-	rm -f $(scaf_prefix).*
+scaffolder_clean:
+	rm -f $(scaffolder_prefix).*
 	rm -f goBambus.*
 	rm -f formatdb.log
 
