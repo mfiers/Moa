@@ -80,7 +80,7 @@ def blog(job):
 
     message = "\n".join(txt)
     sysConf.job.data.blog.message = message
-    with open('moa.description', "a") as F:
+    with open('Changelog.md', "a") as F:
         now = datetime.datetime.now()
         F.write("\n")
         header = "%s - %s writes::" % (
