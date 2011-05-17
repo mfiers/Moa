@@ -4,6 +4,7 @@ import os
 import sys
 import site
 import subprocess
+import markdown
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -15,6 +16,7 @@ if not os.environ.has_key('MOABASE'):
 
 
 MOABASE = os.environ['MOABASE']
+sys.stderr.write("Moabase: " + MOABASE)
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 
 import moa.job
@@ -61,19 +63,6 @@ def getDescription(cwd):
         html,err = p.communicate()
         return html
         
-def getReport(cwd):
-    dfile = os.path.join(cwd, 'moa.report')
-    if not os.path.exists(dfile):
-        return ""
-    else:
-        report = open(dfile).read()
-        #convert from jinja-markdown to html!
-        p = subprocess.Popen("pandoc -f markdown -t html".split(),
-                  stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        p.stdin.write(report)
-        html,err = p.communicate()
-        return html
-        
 def getBreadCrumbs():
     ## Prepare breadcrumbs
     dataRoot = getDataRoot()
@@ -112,11 +101,33 @@ d['status'] = 'notmoa'
 d['dataRoot'] = getDataRoot()
 d['webRoot'] = getWebRoot()
 d['blocks']  = getBreadCrumbs()
+
+## displayable files:
+possible_files = [
+    'readme', 'changelog', 'report',
+    'Readme', 'Changelog', 'Report',
+    'README', 'CHANGELOG', 'REPORT'
+    ]
+
+d['files'] = {}
+
+all_files = os.listdir(moacwd)
+for name in possible_files:
+    for ext in ['', '.txt', '.md']:
+        fname = name + ext
+        if fname in all_files:
+            with open(os.path.join(moacwd, fname)) as F:
+                fdata = F.read()
+            if ext == '.md':
+                d['files'][name.capitalize()] = markdown.markdown(fdata)
+            else:
+                d['files'][name.capitalize()] = '<pre>%s</pre>' % fdata
+
+
+d['debugMessage'] = str(d['files'])
 d['jobDescription'] = getDescription(moacwd)
-d['jobReport'] = getReport(moacwd)
 
 #Fire off a generic page without any information if this is not a Moa dir
-sys.stderr.write("getting a job for %s" % moacwd)
 job = moa.job.Job(moacwd)
 
 sys.stderr.write("found a job? %s %s" % (job, job.template.name))
