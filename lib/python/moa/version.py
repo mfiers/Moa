@@ -12,9 +12,17 @@ import shutil
 
 import moa.logger as l
 import moa.job
+import moa.ui
 
 ## Quick fix - see if this is an old style moa job
 def fixOld(wd):
+
+    if os.path.exists(os.path.join(wd, 'moa.description')):
+        moa.ui.warn("Moving moa.description to Readme.md")
+        shutil.move(
+            os.path.join(wd, 'moa.description'),
+            os.path.join(wd, 'Readme.md'))
+
     makefile = os.path.join(wd,'Makefile')
     if not os.path.exists(makefile): return False
     
