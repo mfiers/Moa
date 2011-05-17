@@ -35,7 +35,7 @@ $(document).ready(function()
 	     });
 
     // initialize tabs
-    //$("#tabs").tabs();
+    // $("#tabs").tabs();
 	$("#tabs").tabs(
         { cookie : { expires : 1 } 
 	    });
