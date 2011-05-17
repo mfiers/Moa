@@ -114,7 +114,9 @@ class Job(object):
             '.moa/template',
             '.moa/template.d/*',
             '.moa/config',
-            'moa.*'
+            'moa.*',
+            'Readme', 'README', 'Readme.*',
+            'Changelog', 'CHANGELOG', 'Changelog.*',
             ]
         
         self.loadTemplate()
