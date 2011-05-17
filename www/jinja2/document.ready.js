@@ -35,10 +35,10 @@ $(document).ready(function()
 	     });
 
     // initialize tabs
-    $("#tabs").tabs();
-	//#    $("#tabs").tabs({
-	//			cookie : { expires : 3 } 
-	//		});
+    //$("#tabs").tabs();
+	$("#tabs").tabs(
+        { cookie : { expires : 1 } 
+	    });
     $(".moaTemplate")
         .click(
             function() { 
