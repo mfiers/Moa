@@ -106,11 +106,21 @@ Content-type: text/html
   <div id="tabs"> 
     {% block tabs %}
 	<ul> 
+      {% for f in files %}
+      <li><a href="#{{f}}">{{f}}</a></li>
+      {% endfor %}
 	  {% if jobDescription %}
 	  <li><a href="#jobDescription">Description</a></li> 
 	  {% endif %}
 	  <li><a href="#fileBrowser">File browser</a></li> 
 	</ul> 
+
+
+    {% for f in files %}
+    <div id="{{f}}">
+      {{ files[f] }}
+    </div>
+    {% endfor %}
 
 	{% if jobDescription %}
 	<div id='jobDescription'>    
