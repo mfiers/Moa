@@ -3,8 +3,9 @@ bfast_db
 
 
 
-::
+
     Generate db index files for aligning reads with bfast
+
 
 
 Commands
@@ -12,31 +13,19 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself
-
-
+  
+  
 **run**
   run bfast fasta2brg and index commands
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**fa_input**::
-    fasta input file
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**fa_input**
+  fasta input file
 
 
 
@@ -48,8 +37,8 @@ Parameters
 
 
 
-**algorithm_colour_space**::
-    true -> colour space, false -> NT space
+**algorithm_colour_space**
+  true -> colour space, false -> NT space
 
   | *type*: `boolean`
   | *default*: `False`
@@ -57,17 +46,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**depth**::
-    The depth of the splitting(d). The index will be split into 4^d parts.
+**depth**
+  The depth of the splitting(d). The index will be split into 4^d parts.
 
   | *type*: `integer`
   | *default*: `0`
@@ -75,8 +55,8 @@ Parameters
 
 
 
-**extra_params**::
-    Any extra parameters
+**extra_params**
+  Any extra parameters
 
   | *type*: `string`
   | *default*: ``
@@ -84,8 +64,8 @@ Parameters
 
 
 
-**hash_width**::
-    The hash width for the index (recommended from manual = 14)
+**hash_width**
+  The hash width for the index (recommended from manual = 14)
 
   | *type*: `integer`
   | *default*: `{}`
@@ -93,8 +73,8 @@ Parameters
 
 
 
-**index_num**::
-    Specifies this is the ith index you are creating
+**index_num**
+  Specifies this is the ith index you are creating
 
   | *type*: `integer`
   | *default*: `1`
@@ -102,8 +82,8 @@ Parameters
 
 
 
-**mask**::
-    The mask or spaced seed to use.
+**mask**
+  The mask or spaced seed to use.
 
   | *type*: `string`
   | *default*: `{}`
@@ -111,8 +91,8 @@ Parameters
 
 
 
-**print_params**::
-    print program parameters
+**print_params**
+  print program parameters
 
   | *type*: `boolean`
   | *default*: `False`
@@ -120,8 +100,8 @@ Parameters
 
 
 
-**thread_num**::
-    Specifies the number of threads to use
+**thread_num**
+  Specifies the number of threads to use
 
   | *type*: `integer`
   | *default*: `1`
@@ -129,8 +109,8 @@ Parameters
 
 
 
-**timing_information**::
-    specifies output timing information
+**timing_information**
+  specifies output timing information
 
   | *type*: `boolean`
   | *default*: `True`
@@ -138,17 +118,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**usage_summary**::
-    Display usage summary (help)
+**usage_summary**
+  Display usage summary (help)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -156,8 +127,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -166,7 +137,4 @@ Other
 **Creation date**
   Wed Feb 15 10:06:48 2011
 **Modification date**
-  1298158302.28
-
-
-
+  unknown

@@ -3,8 +3,9 @@ kangax
 
 
 
-::
+
     use kangax to create the suffix array lookup database for the reference genome
+
 
 
 Commands
@@ -12,66 +13,46 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   run kangax
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**input_fasta**::
-    Fasta input file
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**input_fasta**
+  Fasta input file
 
 
 
 
 
+**output_log**
+  output log file
 
-
-**output_log**::
-    output log file
 
   | *type*: `map`
   | *source*: `input_fasta`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.log.txt`
 
 
 
 
+**output_sfx**
+  output suffix array lookup
 
-
-
-**output_sfx**::
-    output suffix array lookup
 
   | *type*: `map`
   | *source*: `input_fasta`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.sfx`
 
 
 
@@ -82,8 +63,8 @@ Parameters
 
 
 
-**block_seq_len**::
-    generated suffix blocks to hold at most this length (MB) concatenated sequences
+**block_seq_len**
+  generated suffix blocks to hold at most this length (MB) concatenated sequences
 
   | *type*: `integer`
   | *default*: `3300`
@@ -91,8 +72,8 @@ Parameters
 
 
 
-**color_space**::
-    generate for colorspace (SOLiD)
+**color_space**
+  generate for colorspace (SOLiD)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -100,17 +81,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**extra_params**::
-    any extra parameters
+**extra_params**
+  any extra parameters
 
   | *type*: `string`
   | *default*: ``
@@ -118,8 +90,8 @@ Parameters
 
 
 
-**help**::
-    print this help and exit
+**help**
+  print this help and exit
 
   | *type*: `boolean`
   | *default*: `False`
@@ -127,8 +99,8 @@ Parameters
 
 
 
-**reference_species**::
-    reference species
+**reference_species**
+  reference species
 
   | *type*: `string`
   | *default*: ``
@@ -136,8 +108,8 @@ Parameters
 
 
 
-**target_dep**::
-    generate target file only if missing or older than any independent source files
+**target_dep**
+  generate target file only if missing or older than any independent source files
 
   | *type*: `boolean`
   | *default*: `False`
@@ -145,17 +117,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**version**::
-    print version information and exit
+**version**
+  print version information and exit
 
   | *type*: `boolean`
   | *default*: `False`
@@ -163,8 +126,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -173,7 +136,4 @@ Other
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
-  1298158302.29
-
-
-
+  unknown

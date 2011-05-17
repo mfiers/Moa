@@ -3,8 +3,9 @@ moatest
 
 **Unittest template**
 
-::
+
     Not to be used - is used by unitmoatests
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   Do nothing - no need to call this.
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**test_opt**::
-    test variable
+**test_opt**
+  test variable
 
   | *type*: `string`
   | *default*: `konijntje`
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**txt**::
-    test variable
+**txt**
+  test variable
 
   | *type*: `string`
   | *default*: ``
@@ -53,8 +43,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -64,6 +54,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

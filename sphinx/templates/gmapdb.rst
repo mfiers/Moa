@@ -3,8 +3,9 @@ gmapdb
 
 **gmapdb index builder**
 
-::
+
     Builds gmapdb index from a reference sequence
+
 
 
 Commands
@@ -12,32 +13,25 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
+**input**
+  The reference sequence to build a gmap database with.
 
 
-**input**::
-    The reference sequence to build a gmap database with.
-
-  | *type*: `map`
-  | *source*: `{}`
+  | *type*: `single`
   | *category*: `input`
   | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `*/*.fasta`
 
 
 
@@ -48,17 +42,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**name**::
-    Name of the gmap index to create
+**name**
+  Name of the gmap index to create
 
   | *type*: `string`
   | *default*: `gmapdb`
@@ -66,17 +51,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -86,6 +62,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

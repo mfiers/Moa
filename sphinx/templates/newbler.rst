@@ -3,8 +3,9 @@ newbler
 
 **Newbler**
 
-::
+
     Run a simple, out of the box, newbler assembly. As an extra feature, this template automatically creates uniquely named links to the two main output fasta files (454AllContigs.fna, 454LargeContigs.fna). This is convenient for subsequence gather steps. The links are named after the directory.
+
 
 
 Commands
@@ -12,31 +13,19 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**input**::
-    input SFF files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**input**
+  input SFF files
 
 
 
@@ -48,17 +37,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**largecontig_cutoff**::
-    min length of a contig in 454LargeContigs.fna
+**largecontig_cutoff**
+  min length of a contig in 454LargeContigs.fna
 
   | *type*: `integer`
   | *default*: ``
@@ -66,8 +46,8 @@ Parameters
 
 
 
-**library_name**::
-    A library identifier for this assembly. This is used to create an extra fasta file, named using this variable, that contain the generated contigs with their ids prepended with the library id.
+**library_name**
+  A library identifier for this assembly. This is used to create an extra fasta file, named using this variable, that contain the generated contigs with their ids prepended with the library id.
 
   | *type*: `string`
   | *default*: `$(shell echo `basename $(CURDIR)` | sed "s/[ \///\/]//g" )`
@@ -75,8 +55,8 @@ Parameters
 
 
 
-**mid_configuration**::
-    Mid configuration file to use
+**mid_configuration**
+  Mid configuration file to use
 
   | *type*: `file`
   | *default*: ``
@@ -84,8 +64,8 @@ Parameters
 
 
 
-**mids**::
-    mids to use for this assembly
+**mids**
+  mids to use for this assembly
 
   | *type*: `string`
   | *default*: ``
@@ -93,8 +73,8 @@ Parameters
 
 
 
-**min_identity**::
-    Minimal overalp identity used during assembly
+**min_identity**
+  Minimal overalp identity used during assembly
 
   | *type*: `integer`
   | *default*: ``
@@ -102,17 +82,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -122,6 +93,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

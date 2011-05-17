@@ -3,8 +3,9 @@ sffinfo
 
 **sffinfo**
 
-::
+
     Roche sffinfor tool - extract information from sff files
+
 
 
 Commands
@@ -12,100 +13,72 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   Use the Roche sffinfo tool to extract reads, quality scores, flowgrams and accession ids from one or more sff files
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
+**accession**
+  
 
-
-**accession**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.acc`
 
 
 
 
+**flowgram**
+  
 
-
-
-**flowgram**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.flow`
+
+
+
+
+**input**
+  Sff input files
 
 
 
 
 
+**quality**
+  
 
-
-**input**::
-    Sff input files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
-**quality**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.qual`
 
 
 
 
+**sequence**
+  
 
-
-
-**sequence**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.reads`
 
 
 
@@ -116,8 +89,8 @@ Parameters
 
 
 
-**accessions**::
-    Output the accessions
+**accessions**
+  Output the accessions
 
   | *type*: `set`
   | *default*: `T`
@@ -125,17 +98,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**flowgrams**::
-    output the flowgrams
+**flowgrams**
+  output the flowgrams
 
   | *type*: `set`
   | *default*: `F`
@@ -143,8 +107,8 @@ Parameters
 
 
 
-**quality**::
-    Output quality scores
+**quality**
+  Output quality scores
 
   | *type*: `set`
   | *default*: `T`
@@ -152,8 +116,8 @@ Parameters
 
 
 
-**sequences**::
-    Output the sequences
+**sequences**
+  Output the sequences
 
   | *type*: `set`
   | *default*: `T`
@@ -161,17 +125,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**untrimmed**::
-    output untrimmed sequences & qualities
+**untrimmed**
+  output untrimmed sequences & qualities
 
   | *type*: `set`
   | *default*: `F`
@@ -179,8 +134,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -190,6 +145,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

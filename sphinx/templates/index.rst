@@ -6,17 +6,13 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   act_crunch
    adhoc
-   adhoc2
-   adhoc_one
    bamextract
    bartab
    bfast_aln
    bfast_db
    bidibebla
    blast
-   blastSingle
    blastdb
    blat
    bowtie
@@ -32,15 +28,12 @@ Contents:
    clustalpair
    clustalw
    concatenate
-   create.gbrowse.db
-   crunch
    dottup
-   dottupSelf
    empty
    fasta2gff
+   fastqc
    fastx_clipper
    fastx_qual_stats
-   gap4export
    gather
    genemarks
    getorf
@@ -54,6 +47,7 @@ Contents:
    kangar_se
    kangax
    lftp
+   map
    maq_fasta2bfa
    maq_fastq2bfq
    maq_match_pair
@@ -63,23 +57,22 @@ Contents:
    mummer
    ncbi
    newbler
+   newjobtest
    nstretch
    orthomcl
    pregap
+   primersearch
    project
    r
-   repeatmasker
-   revseq
-   revseq
    sam2bam
    samtools_pileup
    scaffolder
    sffinfo
+   simple
    soap_aln_pe
    soap_aln_se
    soapdb
    statsidx
-   traverse
    unittest
    varscan
    vmatch

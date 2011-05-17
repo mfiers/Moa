@@ -3,8 +3,9 @@ orthomcl
 
 **Bwa index builder**
 
-::
+
     Run orhthomcl on a set of input fasta files
+
 
 
 Commands
@@ -12,31 +13,21 @@ Commands
 
 **clean**
   Remove all job data
-
-
+  
+  
 **run**
   Run orthomcl
-
-
-
-
+  
+  
+  **run** delegates execution to: **prep_1**
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**input**::
-    Directory with the input fasta files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**input**
+  Directory with the input fasta files
 
 
 
@@ -48,8 +39,8 @@ Parameters
 
 
 
-**db**::
-    DB name
+**db**
+  DB name
 
   | *type*: `string`
   | *default*: `orthomcl`
@@ -57,17 +48,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**host**::
-    DB host
+**host**
+  DB host
 
   | *type*: `string`
   | *default*: `localhost`
@@ -75,8 +57,8 @@ Parameters
 
 
 
-**login**::
-    DB login
+**login**
+  DB login
 
   | *type*: `string`
   | *default*: `{}`
@@ -84,8 +66,8 @@ Parameters
 
 
 
-**pass**::
-    DB password
+**pass**
+  DB password
 
   | *type*: `string`
   | *default*: `{}`
@@ -93,8 +75,8 @@ Parameters
 
 
 
-**port**::
-    DB port
+**port**
+  DB port
 
   | *type*: `string`
   | *default*: `3306`
@@ -102,8 +84,8 @@ Parameters
 
 
 
-**prefix**::
-    prefix for separating tables & output fields
+**prefix**
+  prefix for separating tables & output fields
 
   | *type*: `string`
   | *default*: `run1`
@@ -111,17 +93,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -131,6 +104,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

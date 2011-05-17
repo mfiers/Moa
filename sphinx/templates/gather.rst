@@ -3,8 +3,9 @@ gather
 
 **gather files**
 
-::
+
     gather a set of files and create hardlinks to. Hardlinks have as advantage that updates are noticed via the timestamp. Hence, make recognizes them.
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   gather files
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**g_input_dir**::
-    list of directories with the input files
+**g_input_dir**
+  list of directories with the input files
 
   | *type*: `directory`
   | *default*: ``
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**g_input_pattern**::
-    glob pattern to download
+**g_input_pattern**
+  glob pattern to download
 
   | *type*: `string`
   | *default*: `*`
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**g_limit**::
-    limit the number of files gathered (with the most recent files first, defaults to 1mln)
+**g_limit**
+  limit the number of files gathered (with the most recent files first, defaults to 1mln)
 
   | *type*: `integer`
   | *default*: `1000000`
@@ -62,8 +52,8 @@ Parameters
 
 
 
-**g_name_sed**::
-    SED expression to be executed on each file name - allows you to change file names
+**g_name_sed**
+  SED expression to be executed on each file name - allows you to change file names
 
   | *type*: `string`
   | *default*: `s/a/a/`
@@ -71,8 +61,8 @@ Parameters
 
 
 
-**g_output_dir**::
-    Output subdirectory, defaults to .
+**g_output_dir**
+  Output subdirectory, defaults to .
 
   | *type*: `directory`
   | *default*: `.`
@@ -80,8 +70,8 @@ Parameters
 
 
 
-**g_parallel**::
-    allow parallel execution (T) or not (**F**). If for example concatenating to one single file, you should not have multiple threads.
+**g_parallel**
+  allow parallel execution (T) or not (**F**). If for example concatenating to one single file, you should not have multiple threads.
 
   | *type*: `set`
   | *default*: `F`
@@ -89,8 +79,8 @@ Parameters
 
 
 
-**g_powerclean**::
-    Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile when calling make clean. Defaults to F.
+**g_powerclean**
+  Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile when calling make clean. Defaults to F.
 
   | *type*: `set`
   | *default*: `F`
@@ -98,8 +88,8 @@ Parameters
 
 
 
-**g_process**::
-    Command to process the files. If undefined, hardlink the files.
+**g_process**
+  Command to process the files. If undefined, hardlink the files.
 
   | *type*: `string`
   | *default*: `ln -f $$< $$(g_target)`
@@ -107,17 +97,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -127,6 +108,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

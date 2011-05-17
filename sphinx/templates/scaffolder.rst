@@ -1,10 +1,11 @@
-scaf
+scaffolder
 ------------------------------------------------
 
 **Scaffolder**
 
-::
+
     Scaffold a set of input files based on a blast against a reference sequence. This software is written around bambus
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**input_file**::
-    input file with the sequences to scaffold
+**input_file**
+  input file with the sequences to scaffold
 
   | *type*: `file`
   | *default*: ``
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**prefix**::
-    prefix for scaffolding output files
+**prefix**
+  prefix for scaffolding output files
 
   | *type*: `string`
   | *default*: `scaffolds`
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**reference_file**::
-    blast database of the reference set
+**reference_file**
+  blast database of the reference set
 
   | *type*: `file`
   | *default*: ``
@@ -62,17 +52,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -82,6 +63,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

@@ -3,8 +3,9 @@ gmap
 
 **Gmap**
 
-::
+
     Run GMAP on an set of input files (query) vs a database index.
+
 
 
 Commands
@@ -12,117 +13,85 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
+**align**
+  
 
-
-**align**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./align/*.align`
 
 
 
 
+**genepred**
+  
 
-
-
-**genepred**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./genepred/*.genepred`
 
 
 
 
+**gff**
+  
 
-
-
-**gff**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./gff/*.gff`
 
 
 
 
+**gff_invert**
+  
 
-
-
-**gff_invert**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./gff/*.invert.gff`
+
+
+
+
+**input**
+  Sequences to map
 
 
 
 
 
+**raw**
+  
 
-
-**input**::
-    Sequences to map
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
-**raw**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./raw/*.raw`
 
 
 
@@ -133,8 +102,8 @@ Parameters
 
 
 
-**db**::
-    Gmap db
+**db**
+  Gmap db
 
   | *type*: `file`
   | *default*: ``
@@ -142,17 +111,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**extra_parameters**::
-    extra parameters to feed to gmap
+**extra_parameters**
+  extra parameters to feed to gmap
 
   | *type*: `string`
   | *default*: ``
@@ -160,8 +120,8 @@ Parameters
 
 
 
-**gff_source**::
-    Source field to use in the output GFF
+**gff_source**
+  Source field to use in the output GFF
 
   | *type*: `string`
   | *default*: `gmap`
@@ -169,8 +129,8 @@ Parameters
 
 
 
-**invert_gff**::
-    Invert the GFF (T/*F*)
+**invert_gff**
+  Invert the GFF (T/*F*)
 
   | *type*: `set`
   | *default*: `T`
@@ -178,17 +138,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -198,6 +149,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

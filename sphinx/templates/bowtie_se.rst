@@ -3,8 +3,9 @@ bowtie_se
 
 
 
-::
+
     Run BOWTIE on an set of input files (query) vs a database index.
+
 
 
 Commands
@@ -12,49 +13,33 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template
-
-
+  
+  
 **run**
   *no help defined*
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**fq_input**::
-    fastq input files directory
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**fq_input**
+  fastq input files directory
 
 
 
 
 
+**output**
+  Bam output file
 
-
-**output**::
-    Bam output file
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.bam`
 
 
 
@@ -65,17 +50,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**ebwt_base**::
-    The (basename of the) bowtie database to use.
+**ebwt_base**
+  The (basename of the) bowtie database to use.
 
   | *type*: `string`
   | *default*: `{}`
@@ -83,8 +59,8 @@ Parameters
 
 
 
-**extra_params**::
-    extra parameters to feed to bowtie
+**extra_params**
+  extra parameters to feed to bowtie
 
   | *type*: `string`
   | *default*: ``
@@ -92,8 +68,8 @@ Parameters
 
 
 
-**input_format**::
-    Format of the input files
+**input_format**
+  Format of the input files
 
   | *type*: `set`
   | *default*: `fastq`
@@ -101,8 +77,8 @@ Parameters
 
 
 
-**output_format**::
-    Format of the output file
+**output_format**
+  Format of the output file
 
   | *type*: `set`
   | *default*: `bam`
@@ -110,17 +86,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -130,6 +97,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

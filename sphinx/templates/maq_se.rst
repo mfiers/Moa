@@ -3,8 +3,9 @@ maq_se
 
 
 
-::
+
     Generate alignments in SAM format given single end reads using Maq.
+
 
 
 Commands
@@ -12,117 +13,78 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself
-
-
+  
+  
 **run**
   run maq's fasta2bfa, fastq2bfq and map.
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
+**bam_output**
+  bam alignment output file
 
-
-**bam_output**::
-    bam alignment output file
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.bam`
 
 
 
 
+**bfa_output**
+  BFA Index name
 
 
-
-**bfa_output**::
-    BFA Index name
-
-  | *type*: `map`
-  | *source*: `{}`
+  | *type*: `single`
   | *category*: `other`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `{}`
 
 
 
 
+**bfq_output**
+  bfq files - forward files
 
-
-
-**bfq_output**::
-    bfq files - forward files
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.bfq`
+
+
+
+
+**fa_input**
+  directory with reference fasta file name
 
 
 
 
 
-
-
-**fa_input**::
-    directory with reference fasta file name
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `prerequisite`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**fq_input**
+  fastq input files
 
 
 
 
 
+**map_output**
+  maq map output files
 
-
-**fq_input**::
-    fastq input files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
-
-
-
-
-
-
-**map_output**::
-    maq map output files
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.map`
 
 
 
@@ -133,17 +95,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**disable_sw**::
-    disable Smith-Waterman alignment
+**disable_sw**
+  disable Smith-Waterman alignment
 
   | *type*: `boolean`
   | *default*: `False`
@@ -151,8 +104,8 @@ Parameters
 
 
 
-**extra_parameters**::
-    other parameters
+**extra_parameters**
+  other parameters
 
   | *type*: `string`
   | *default*: ``
@@ -160,8 +113,8 @@ Parameters
 
 
 
-**match_in_colorspace**::
-    match in the colorspace
+**match_in_colorspace**
+  match in the colorspace
 
   | *type*: `boolean`
   | *default*: `False`
@@ -169,8 +122,8 @@ Parameters
 
 
 
-**max_mismatch_qual_sum**::
-    maximum allowed sum of qualities of mismatches
+**max_mismatch_qual_sum**
+  maximum allowed sum of qualities of mismatches
 
   | *type*: `integer`
   | *default*: `70`
@@ -178,8 +131,8 @@ Parameters
 
 
 
-**max_num_hits_out**::
-    number of mismatches in the first 24bp
+**max_num_hits_out**
+  number of mismatches in the first 24bp
 
   | *type*: `integer`
   | *default*: `250`
@@ -187,8 +140,8 @@ Parameters
 
 
 
-**num_mismatch_24bp**::
-    number of mismatches in the first 24bp
+**num_mismatch_24bp**
+  number of mismatches in the first 24bp
 
   | *type*: `integer`
   | *default*: `2`
@@ -196,8 +149,8 @@ Parameters
 
 
 
-**read_ref_diff_rate**::
-    rate of difference between reads and references
+**read_ref_diff_rate**
+  rate of difference between reads and references
 
   | *type*: `float`
   | *default*: `0.001`
@@ -205,17 +158,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**trim_all_reads**::
-    trim all reads (usually not recommended)
+**trim_all_reads**
+  trim all reads (usually not recommended)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -223,8 +167,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -233,7 +177,4 @@ Other
 **Creation date**
   Wed Dec 02 17:06:48 2010
 **Modification date**
-  1297380110.93
-
-
-
+  unknown

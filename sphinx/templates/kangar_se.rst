@@ -3,8 +3,9 @@ kangar_se
 
 
 
-::
+
     use kangar to pre process raw fq single end reads
+
 
 
 Commands
@@ -12,66 +13,46 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   run kangar
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**fq_input**::
-    fastq input files - forward - containing the 5' end
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**fq_input**
+  fastq input files - forward - containing the 5' end
 
 
 
 
 
+**output_log**
+  output log file
 
-
-**output_log**::
-    output log file
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.log.txt`
 
 
 
 
+**rds_output**
+  output rds file
 
-
-
-**rds_output**::
-    output rds file
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `True`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.rds`
 
 
 
@@ -82,17 +63,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**extra_params**::
-    any extra parameters
+**extra_params**
+  any extra parameters
 
   | *type*: `string`
   | *default*: ``
@@ -100,8 +72,8 @@ Parameters
 
 
 
-**help**::
-    print this help and exit
+**help**
+  print this help and exit
 
   | *type*: `boolean`
   | *default*: `False`
@@ -109,8 +81,8 @@ Parameters
 
 
 
-**mode**::
-    processing mode  0 - single end create, 1 - paired end create, 2 - output statistics 3 - dump as fasta
+**mode**
+  processing mode  0 - single end create, 1 - paired end create, 2 - output statistics 3 - dump as fasta
 
   | *type*: `integer`
   | *default*: `0`
@@ -118,8 +90,8 @@ Parameters
 
 
 
-**quality**::
-    fastq quality scoring- 0 - sanger, 1m - Illumina 1.3+, 2 - Solexa < 1.3, 3 - Ignore quality
+**quality**
+  fastq quality scoring- 0 - sanger, 1m - Illumina 1.3+, 2 - Solexa < 1.3, 3 - Ignore quality
 
   | *type*: `integer`
   | *default*: `3`
@@ -127,8 +99,8 @@ Parameters
 
 
 
-**reads_num**::
-    limit number of reads (or dumps) in each input file to this many, 0 if no limit
+**reads_num**
+  limit number of reads (or dumps) in each input file to this many, 0 if no limit
 
   | *type*: `integer`
   | *default*: `0`
@@ -136,8 +108,8 @@ Parameters
 
 
 
-**rm_duplicates**::
-    remove duplicate reads retaining only one
+**rm_duplicates**
+  remove duplicate reads retaining only one
 
   | *type*: `boolean`
   | *default*: `False`
@@ -145,17 +117,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**trim3**::
-    trim this number of bases from 3' end of sequence
+**trim3**
+  trim this number of bases from 3' end of sequence
 
   | *type*: `integer`
   | *default*: `0`
@@ -163,8 +126,8 @@ Parameters
 
 
 
-**trim5**::
-    trim this number of bases from 5' end of sequence
+**trim5**
+  trim this number of bases from 5' end of sequence
 
   | *type*: `integer`
   | *default*: `0`
@@ -172,8 +135,8 @@ Parameters
 
 
 
-**version**::
-    print version information and exit
+**version**
+  print version information and exit
 
   | *type*: `boolean`
   | *default*: `False`
@@ -181,8 +144,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -191,7 +154,4 @@ Other
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
-  1298158302.29
-
-
-
+  unknown

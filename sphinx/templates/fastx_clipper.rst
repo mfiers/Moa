@@ -3,8 +3,9 @@ fastx_clipper
 
 
 
-::
+
     run fastx_clipper
+
 
 
 Commands
@@ -12,49 +13,33 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself
-
-
+  
+  
 **run**
   run fastx_clipper
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**input**::
-    fastq input files directory
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**input**
+  fastq input files directory
 
 
 
 
 
+**output**
+  
 
-
-**output**::
-    {}
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.fq`
 
 
 
@@ -65,8 +50,8 @@ Parameters
 
 
 
-**adaptor**::
-    ADAPTER string. default is CCTTAAGG (dummy adapter).
+**adaptor**
+  ADAPTER string. default is CCTTAAGG (dummy adapter).
 
   | *type*: `string`
   | *default*: `CCTTAAGG`
@@ -74,8 +59,8 @@ Parameters
 
 
 
-**adaptor_and_bases**::
-    Keep the adapter and N bases after it.
+**adaptor_and_bases**
+  Keep the adapter and N bases after it.
 
   | *type*: `integer`
   | *default*: `0`
@@ -83,8 +68,8 @@ Parameters
 
 
 
-**compress_output**::
-    Compress output with GZIP.
+**compress_output**
+  Compress output with GZIP.
 
   | *type*: `boolean`
   | *default*: `False`
@@ -92,8 +77,8 @@ Parameters
 
 
 
-**debug_output**::
-    DEBUG output.
+**debug_output**
+  DEBUG output.
 
   | *type*: `boolean`
   | *default*: `False`
@@ -101,17 +86,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**help**::
-    help screen
+**help**
+  help screen
 
   | *type*: `boolean`
   | *default*: `False`
@@ -119,8 +95,8 @@ Parameters
 
 
 
-**keep_unknown_nuc_seq**::
-    keep sequences with unknown (N) nucleotides. default is to discard such sequences.
+**keep_unknown_nuc_seq**
+  keep sequences with unknown (N) nucleotides. default is to discard such sequences.
 
   | *type*: `boolean`
   | *default*: `False`
@@ -128,8 +104,8 @@ Parameters
 
 
 
-**out_adaptor_only_seq**::
-    Report Adapter-Only sequences.
+**out_adaptor_only_seq**
+  Report Adapter-Only sequences.
 
   | *type*: `boolean`
   | *default*: `False`
@@ -137,8 +113,8 @@ Parameters
 
 
 
-**rm_clipped_seq**::
-    Discard clipped sequences (i.e. - keep only sequences which did not contained the adapter).
+**rm_clipped_seq**
+  Discard clipped sequences (i.e. - keep only sequences which did not contained the adapter).
 
   | *type*: `boolean`
   | *default*: `False`
@@ -146,8 +122,8 @@ Parameters
 
 
 
-**rm_non_clipped_seq**::
-    Discard non-clipped sequences (i.e. - keep only sequences which contained the adapter).
+**rm_non_clipped_seq**
+  Discard non-clipped sequences (i.e. - keep only sequences which contained the adapter).
 
   | *type*: `boolean`
   | *default*: `False`
@@ -155,8 +131,8 @@ Parameters
 
 
 
-**rm_short_seq**::
-    discard sequences shorter than N nucleotides. default is 5.
+**rm_short_seq**
+  discard sequences shorter than N nucleotides. default is 5.
 
   | *type*: `integer`
   | *default*: `5`
@@ -164,17 +140,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**verbose**::
-    Verbose - report number of sequences. If [-o] is specified,  report will be printed to STDOUT. If [-o] is not specified (and output goes to STDOUT), report will be printed to STDERR.
+**verbose**
+  Verbose - report number of sequences. If [-o] is specified,  report will be printed to STDOUT. If [-o] is not specified (and output goes to STDOUT), report will be printed to STDERR.
 
   | *type*: `boolean`
   | *default*: `False`
@@ -182,8 +149,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -192,7 +159,4 @@ Other
 **Creation date**
   Wed Dec 06 17:06:48 2010
 **Modification date**
-  1291933989.51
-
-
-
+  unknown

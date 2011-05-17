@@ -3,8 +3,9 @@ lftp
 
 **lftp**
 
-::
+
     Use LFTP to download files. This template has two modi, one is set lftp_mode to mirror data, in which case both lftp_url and lftp_pattern (default *) are used. The other modus is lftp_mode=get, when one file defined by lftp_url is downloaded. In the mirror mode it is possible to download only those files that are newer as the files already downloaded by using the lftp_timestamp parameter
+
 
 
 Commands
@@ -12,31 +13,20 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-
-
+  
+  
 **run**
   execute the download
-
-
-
-
+  
+  
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**dos2unix**::
-    Run dos2unix to prevent problems with possible dos text files
+**dos2unix**
+  Run dos2unix to prevent problems with possible dos text files
 
   | *type*: `set`
   | *default*: `F`
@@ -44,8 +34,8 @@ Parameters
 
 
 
-**get_name**::
-    target name of the file to download
+**get_name**
+  target name of the file to download
 
   | *type*: `string`
   | *default*: ``
@@ -53,8 +43,8 @@ Parameters
 
 
 
-**lftp_output_dir**::
-    subdir to create & write all output to. If not defined, data will be downloaded to directory containing the Makefile
+**lftp_output_dir**
+  subdir to create & write all output to. If not defined, data will be downloaded to directory containing the Makefile
 
   | *type*: `directory`
   | *default*: `.`
@@ -62,8 +52,8 @@ Parameters
 
 
 
-**lock**::
-    Lock this job after running. This means that you will have to manually unlock the job before lftp actually reruns. This is a good choice if your downloading large datasets or have a slow connection
+**lock**
+  Lock this job after running. This means that you will have to manually unlock the job before lftp actually reruns. This is a good choice if your downloading large datasets or have a slow connection
 
   | *type*: `set`
   | *default*: `T`
@@ -71,8 +61,8 @@ Parameters
 
 
 
-**mode**::
-    Mode of operation - mirror or get. Mirror enables timestamping. Get just gets a single file. If using get, consider setting depend_lftp_timestamp to F. When using get, the full url should be in lftp_url. lftp_pattern is ignored. Defaults to mirror.
+**mode**
+  Mode of operation - mirror or get. Mirror enables timestamping. Get just gets a single file. If using get, consider setting depend_lftp_timestamp to F. When using get, the full url should be in lftp_url. lftp_pattern is ignored. Defaults to mirror.
 
   | *type*: `set`
   | *default*: `get`
@@ -80,8 +70,8 @@ Parameters
 
 
 
-**noclean**::
-    set of files not to be deleted by the powerclean
+**noclean**
+  set of files not to be deleted by the powerclean
 
   | *type*: `string`
   | *default*: `moa.mk Makefile`
@@ -89,8 +79,8 @@ Parameters
 
 
 
-**pass**::
-    password for the remote site, note that this can be defined on the commandline using: make lftp_pass=PASSWORD
+**pass**
+  password for the remote site, note that this can be defined on the commandline using: make lftp_pass=PASSWORD
 
   | *type*: `password`
   | *default*: ``
@@ -98,8 +88,8 @@ Parameters
 
 
 
-**pattern**::
-    glob pattern to download
+**pattern**
+  glob pattern to download
 
   | *type*: `string`
   | *default*: `'*'`
@@ -107,8 +97,8 @@ Parameters
 
 
 
-**powerclean**::
-    Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile when calling make clean. Defaults to F.
+**powerclean**
+  Do brute force cleaning (T/F). Remove all files, except moa.mk & Makefile when calling make clean. Defaults to F.
 
   | *type*: `set`
   | *default*: `F`
@@ -116,8 +106,8 @@ Parameters
 
 
 
-**timestamp**::
-    Depend on lftp to decide if a file needs updating, else a touchfile is created that you need to delete or touch before updating (T/*F*)
+**timestamp**
+  Depend on lftp to decide if a file needs updating, else a touchfile is created that you need to delete or touch before updating (T/*F*)
 
   | *type*: `set`
   | *default*: `F`
@@ -125,8 +115,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
+**url**
+  The base url to download from
 
   | *type*: `string`
   | *default*: ``
@@ -134,8 +124,8 @@ Parameters
 
 
 
-**url**::
-    The base url to download from
+**user**
+  username for the remote site
 
   | *type*: `string`
   | *default*: ``
@@ -143,17 +133,8 @@ Parameters
 
 
 
-**user**::
-    username for the remote site
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `True`
-
-
-
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   gnumake
@@ -163,6 +144,3 @@ Other
   Wed Nov 10 07:56:48 2010
 **Modification date**
   Wed Nov 10 07:56:48 2010
-
-
-

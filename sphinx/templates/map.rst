@@ -1,20 +1,16 @@
-sam2bam
+map
 ------------------------------------------------
 
-**Convert SAM to BAM using samtools**
+**Execute a "map" ad-hoc analysis**
 
 
-    Converts a FASTQ file to MAQ BFQ format.
+    Execute one command, on a number of input files.
 
 
 
 Commands
 ~~~~~~~~
 
-**clean**
-  Remove all job data, not the Moa job itself, note that this must be implemented by the template.
-  
-  
 **run**
   *no help defined*
   
@@ -25,21 +21,21 @@ Filesets
 
 
 **input**
-  input SAM files
+  "map" input files
 
 
 
 
 
 **output**
-  
+  "map" output files
 
 
   | *type*: `map`
   | *source*: `input`
   | *category*: `output`
-  | *optional*: `{}`
-  | *pattern*: `./*.bam`
+  | *optional*: `True`
+  | *pattern*: `./*`
 
 
 
@@ -50,14 +46,23 @@ Parameters
 
 
 
+**process**
+  The command to execute
+
+  | *type*: `string`
+  | *default*: `True`
+  | *optional*: `False`
+
+
+
 miscellaneous
 ~~~~~~~~~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**
-  Wed Nov 10 07:56:48 2010
+  Tue Mar 29 16:34:19 2011
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  Wed Mar 30 06:02:01 2011

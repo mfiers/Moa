@@ -3,8 +3,9 @@ bfast_aln
 
 
 
-::
+
     Generate bam format alignments using bfast
+
 
 
 Commands
@@ -12,83 +13,53 @@ Commands
 
 **clean**
   Remove all job data, not the Moa job itself
-
-
+  
+  
 **run**
   run bfast match, localalign, postprocess commands
-
-
-
-
+  
+  
 
 Filesets
 ~~~~~~~~
 
 
-
-
-**fa_input**::
-    fasta input file
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `prerequisite`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**fa_input**
+  fasta input file
 
 
 
 
 
-
-
-**fq_input**::
-    fastq input files
-
-  | *type*: `map`
-  | *source*: `{}`
-  | *category*: `input`
-  | *optional*: `False`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+**fq_input**
+  fastq input files
 
 
 
 
 
+**output_aln**
+  
 
-
-**output_aln**::
-    {}
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
+  | *pattern*: `./*.aln`
 
 
 
 
+**output_bam**
+  
 
-
-
-**output_bam**::
-    {}
 
   | *type*: `map`
   | *source*: `fq_input`
   | *category*: `output`
   | *optional*: `{}`
-  | *extension*: `{}`
-  | *glob*: `{}`
-  | *dir*: `{}`
-
+  | *pattern*: `./*.bam`
 
 
 
@@ -99,8 +70,8 @@ Parameters
 
 
 
-**algorithm_colour_space**::
-    true -> colour space, false -> NT space
+**algorithm_colour_space**
+  true -> colour space, false -> NT space
 
   | *type*: `boolean`
   | *default*: `False`
@@ -108,8 +79,8 @@ Parameters
 
 
 
-**avg_mism_qual**::
-    Specifies the average mismatch quality
+**avg_mism_qual**
+  Specifies the average mismatch quality
 
   | *type*: `integer`
   | *default*: `10`
@@ -117,17 +88,8 @@ Parameters
 
 
 
-**default_command**::
-    command to run for this template
-
-  | *type*: `{}`
-  | *default*: `run`
-  | *optional*: `True`
-
-
-
-**extra_params_localalign**::
-    Any extra parameters for the localalign command
+**extra_params_localalign**
+  Any extra parameters for the localalign command
 
   | *type*: `string`
   | *default*: ``
@@ -135,8 +97,8 @@ Parameters
 
 
 
-**extra_params_match**::
-    Any extra parameters for the match command
+**extra_params_match**
+  Any extra parameters for the match command
 
   | *type*: `string`
   | *default*: ``
@@ -144,8 +106,8 @@ Parameters
 
 
 
-**extra_params_postprocess**::
-    Any extra parameters for the postprocess command
+**extra_params_postprocess**
+  Any extra parameters for the postprocess command
 
   | *type*: `string`
   | *default*: ``
@@ -153,8 +115,8 @@ Parameters
 
 
 
-**min_mapping_qual**::
-    Specifies to remove low mapping quality alignments
+**min_mapping_qual**
+  Specifies to remove low mapping quality alignments
 
   | *type*: `integer`
   | *default*: `-2147483648`
@@ -162,8 +124,8 @@ Parameters
 
 
 
-**min_norm_score**::
-    Specifies to remove low (alignment) scoring alignments
+**min_norm_score**
+  Specifies to remove low (alignment) scoring alignments
 
   | *type*: `integer`
   | *default*: `-2147483648`
@@ -171,8 +133,8 @@ Parameters
 
 
 
-**output_format**::
-    0 - BAF, 1 - SAM
+**output_format**
+  0 - BAF, 1 - SAM
 
   | *type*: `integer`
   | *default*: `1`
@@ -180,8 +142,8 @@ Parameters
 
 
 
-**paired_opp_strands**::
-    Specifies that paired reads are on opposite strands
+**paired_opp_strands**
+  Specifies that paired reads are on opposite strands
 
   | *type*: `boolean`
   | *default*: `False`
@@ -189,8 +151,8 @@ Parameters
 
 
 
-**pairing_std_dev**::
-    Specifies the pairing distance standard deviation to examine when recuing
+**pairing_std_dev**
+  Specifies the pairing distance standard deviation to examine when recuing
 
   | *type*: `float`
   | *default*: `2.0`
@@ -198,8 +160,8 @@ Parameters
 
 
 
-**print_params**::
-    print program parameters
+**print_params**
+  print program parameters
 
   | *type*: `boolean`
   | *default*: `False`
@@ -207,8 +169,8 @@ Parameters
 
 
 
-**thread_num**::
-    Specifies the number of threads to use
+**thread_num**
+  Specifies the number of threads to use
 
   | *type*: `integer`
   | *default*: `1`
@@ -216,8 +178,8 @@ Parameters
 
 
 
-**timing_information**::
-    specifies output timing information
+**timing_information**
+  specifies output timing information
 
   | *type*: `boolean`
   | *default*: `True`
@@ -225,17 +187,8 @@ Parameters
 
 
 
-**title**::
-    A name for this job
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**ungapped_aln**::
-    Do ungapped local alignment
+**ungapped_aln**
+  Do ungapped local alignment
 
   | *type*: `boolean`
   | *default*: `False`
@@ -243,8 +196,8 @@ Parameters
 
 
 
-**ungapped_pairing_rescue**::
-    Specifies that ungapped pairing rescue should be performed
+**ungapped_pairing_rescue**
+  Specifies that ungapped pairing rescue should be performed
 
   | *type*: `boolean`
   | *default*: `False`
@@ -252,8 +205,8 @@ Parameters
 
 
 
-**unpaired_reads**::
-    True value specifies that pairing should not be performed
+**unpaired_reads**
+  True value specifies that pairing should not be performed
 
   | *type*: `boolean`
   | *default*: `False`
@@ -261,8 +214,8 @@ Parameters
 
 
 
-**usage_summary**::
-    Display usage summary (help)
+**usage_summary**
+  Display usage summary (help)
 
   | *type*: `boolean`
   | *default*: `False`
@@ -270,8 +223,8 @@ Parameters
 
 
 
-**which_strand**::
-    0 - consider both strands, 1 - forwards strand only, 2 - reverse strand only
+**which_strand**
+  0 - consider both strands, 1 - forwards strand only, 2 - reverse strand only
 
   | *type*: `integer`
   | *default*: `0`
@@ -279,8 +232,8 @@ Parameters
 
 
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   ruff
@@ -289,7 +242,4 @@ Other
 **Creation date**
   Wed Feb 15 10:06:48 2011
 **Modification date**
-  1298158302.28
-
-
-
+  unknown
