@@ -1,11 +1,8 @@
-.. Moa documentation master file, created by
-   sphinx-quickstart on Sun Nov 21 10:51:41 2010.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
+Welcome to Moa!
+===============
 
-Welcome to the Moa documentation!
-=================================
+*lightweight workflows for bioinformatics*
 
 Contents:
 
@@ -22,6 +19,12 @@ Contents:
    templates/index
    api/index
 
+More information
+================
+
+* Browse the `Moa source <https://github.com/mfiers/Moa>`_ at `Github
+  <https://github.com/mfiers/Moa>`_.
+* Download a `pdf version of the manual <_static/MoaManual.pdf>`_.
 
 Indices and tables
 ==================

@@ -3,8 +3,9 @@
 
 {% if title %}**{{ title }}**{% endif %}
 {% if description %}
-::
+
     {{ description }}
+
 {% endif %}
 
 Commands
@@ -12,39 +13,37 @@ Commands
 {% for cname, cdata in commands|dictsort %}
 **{{ cname }}**
   {% if cdata.help %}{{ cdata.help }}{% else %}*no help defined*{% endif %}
+  
+  {% if cdata.delegate %}
+  **{{ cname }}** delegates execution to: **{{ cdata.delegate|join(', ') }}**
+  {% endif %}
 
-{% endfor %}
-
-{% if filesets %}
+{%- endfor %}
+{%- if filesets %}
 
 Filesets
 ~~~~~~~~
 {% for fsid, fs in filesets|dictsort %}
 
+**{{ fsid }}**
+  {% if fs.help %}{{ fs.help }}{% endif %}
+
 {% if fs.type == 'input' %}
-
-**{{ fsid }}**::
-    {{ fs.help }}
-
   | *type*: `input`
   | *category*: `{{ fs.category }}`
-  | *optional*: `{{ fs.optional }}`
-  | *extension*: `{{ fs.extension }}`
-  | *glob*: `{{ fs.glob }}`
-
-{% else %}
-
-**{{ fsid }}**::
-    {{ fs.help }}
-
+  | *optional*: `{{ fs.optional|default(True) }}`
+  | *pattern*: `{{ fs.pattern }}`
+{% elif fs.type == 'single' %}
+  | *type*: `single`
+  | *category*: `{{ fs.category }}`
+  | *optional*: `{{ fs.optional|default(True) }}`
+  | *pattern*: `{{ fs.pattern }}`
+{% elif fs.type == 'map' %}
   | *type*: `map`
   | *source*: `{{ fs.source }}`
   | *category*: `{{ fs.category }}`
-  | *optional*: `{{ fs.optional }}`
-  | *extension*: `{{ fs.extension }}`
-  | *glob*: `{{ fs.glob }}`
-  | *dir*: `{{ fs.dir }}`
-
+  | *optional*: `{{ fs.optional|default(True) }}`
+  | *pattern*: `{{ fs.pattern }}`
 {% endif %}
 
 {% endfor %}
@@ -55,8 +54,8 @@ Parameters
 
 {% for pid, p in parameters|dictsort %}
 
-**{{ pid }}**::
-    {{ p.help }}
+**{{ pid }}**
+  {% if p.help %}{{ p.help }}{% endif %}
 
   | *type*: `{{ p.type }}`
   | *default*: `{{ p.default }}`
@@ -64,8 +63,8 @@ Parameters
 
 {% endfor %}
 
-Other
-~~~~~
+miscellaneous
+~~~~~~~~~~~~~
 
 **Backend**
   {{ backend }}
@@ -74,8 +73,5 @@ Other
 **Creation date**
   {{ creation_date }}
 **Modification date**
-  {{ modification_date }}
-
-
-
+  {{ modification_date|default('unknown') }}
 

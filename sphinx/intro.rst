@@ -1,13 +1,13 @@
-**NOTE: both the software and the manual are under development. Things might change.**
+**NOTE: both the software and the manual are under development. Things
+  might change.**
 
 Introduction
 ============
 
-A bioinformatics project commonly consists of a number of separate
-steps that chain (3\ :sup:`rd` party) tools together. To finetune the
-behaviour of of such an analysis pipeline, a number of custom steps
-are often necessary. Particularly when such projects get bigger, it
-becomes vital to organize, automate and store analysis pipelines.
+A bioinformatics project commonly consists of a great number of
+separate steps that chain (3\ :sup:`rd` party) tools together with
+custom scripts. Such projects need to be organized properly,
+particularly when projects grow bigger.
 
 There are many different ways to organize bioinformatics
 projects. Many bioinformaticians use the command line or tailor made
@@ -16,49 +16,86 @@ advantages, most importantly flexibility. Potential downsides to
 scripting are that a project easily becomes disorganized and
 untrackable unless measures are taken.
 
-*Moa aims to assist in organizing, automating and maintaining a command
-line bioinformatics project without loss of flexibility.*
+***Moa** aims to assist in organizing, automating and maintaining a
+command line bioinformatics project without loss of flexibility.*
 
-The best way to understand how Moa aims to achieve this is by a simple
-example:
+The best way to understand how Moa can help you to achieve this is by
+an example. Running Moa typically starts with creating a directory to
+hold an analysis job, or workflow::
 
-::
+    mkdir 10.blast
+    cd 10.blast
+
+
+An important feature of Moa is that each separate analysis step is
+contained within a separate directory. Two Moa jobs never share a
+directory. This forces the Moa user to break a workflow down to atomic
+parts, which is typically beneficial to the organization and coherence
+of a workflow. The order of steps is easily ordered by prefixing
+directory names with a number. Note that these prefixes are not
+enforced by Moa; any alphabetical organization suffices. Once a
+directory is created, a Moa job can be created::
 
     moa new blast -t "demo run"
-    moa set db=/data/blast/db/nt
-    moa set input=../sequences/*.fasta
-    moa set moa_postprocess='grep polymerase gff/*gff > pol.gff'
+
+All interaction with Moa is done through a single command: `moa`. It
+is, at all times, possible to get help on the use of the `moa` command
+by invoking `moa --help`. The command above creates a `BLAST` job
+title "demo run" in the current directory. All Moa related files are
+stored in a (hidden) subdirectory names `.moa` (have a look). 
+
+A Moa job consists, amongst others, of a configuration file and a
+number of template files. All template files are copied into the local
+`.moa` directory. This ensures consistency of a workflow, even if the
+templates are updated (`moa refresh` updates a template to the latest
+version).
+
+Obviously, telling a job to do a BLAST analysis is not enough, some
+variables will need to be set::
+
+    moa set db=/data/blast/db/nr
+
+Note that Moa does not give you a response. You can check the current
+job configuration using `moa show`, which would at this moment result
+in something resembling::
+
+    db      /data/blast/db/nr
+    eval    1e-10
+    gff_blasthit    F
+    gff_source      BLAST
+    input           (undefined)
+    nohits  50
+    nothreads       2
+    outgff  gff/*.gff
+    output  out/*.out
+    postcommand
+    precommand
+    program blastn
+    project
+    title   demo run
+
+Note the variable `db` and `title`, which were set earlier, amongs a
+list of other variables. We will set two more variables::
+
+    moa set program=blastp
+    moa set input=/data/00.seq/*.fasta
+    
+The last statement defines the input files to blast. Once all is set
+you can actually run the BLAST analysis with::
+
     moa run
 
-In the first line, a new BLAST job (titled "demo run") is created in
-the current directory. What really happens is that Moa copies the
-`blast` template to the current directory. The `blast` template knows
-how to execute a [BLAST]_ job, but needs at least two variables
-defined, defined in the next two lines. `moa run` executes the
-analysis and 'blasts' the input sequences (in ``../sequences``)
-against the database in ``/data/blast/db/nt``. BLAST output files
-(XML) are generated and converted to GFF (GFF conversion is an extra,
-not part of the BLAST suite). The one to last statement is probably
-most remarkable; it is a single (shell) commmand that will be executed
-after BLAST is executed (there is a corresponding
-``moa_preprocess``). This shell comamand filters all BLAST hits that
-have the word "polymerase" in their description into a separater GFF
-file.
+Now Moa performs the BLAST analysis on the input files
 
-Moa employs `GNU make <http://www.gnu.org/software/make>`_ to describe
-its building blocks. GNU Make is originally developed for software
-compilation. Compilation usually involves the execution of many
-interdependent compilation and linker steps. GNU make is able to
-compile large software projects with tens of thousands of source files
-based on a Makefile that describes how a target file is to be
-created. GNU Make is flexible enough to be used with practically any
-programming language. Moreover, GNU Make can be used to automate any
-series of commands as long as they can be executed from the command
-line. It is therefore not only possible, but an excellent idea (not
-mine), to use Gnu Make in bioinformatics projects (see `biowiki
-<http://biowiki.org/MakefileManifesto>`_, `nodalpoint
-<http://archive.nodalpoint.org/2007/03/18/a_pipeline_is_a_makefile>`_
-or `biomake <http://skam.sourceforge.net/>`_)
+``/data/blast/db/nt``. BLAST output files (XML) are generated and
+converted to GFF (GFF conversion is an extra of the template, not part
+of the BLAST suite). The one to last statement is probably most
+typical of the flexibility provided by Moa; it is a single shell
+commmand that will be executed after BLAST is executed (there is a
+corresponding ``moa_preprocess``). This shell comamand filters all
+BLAST hits that have the word "polymerase" in their description into a
+separater GFF file.
+
 
 Moa aims to do the following things:
 

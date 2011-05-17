@@ -33,7 +33,8 @@ def getMoaFile(name):
     return PROVIDERS.getTemplate(name)
     
 def templateList():
-    return PROVIDERS.templateList()
+    x =  PROVIDERS.templateList()
+    return x
 
 def installTemplate(wd, tName, provider=None):
     """

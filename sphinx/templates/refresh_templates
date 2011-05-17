@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import yaml
 import moa.utils
 import moa.template
@@ -17,15 +18,19 @@ jTi = jTemplate(open(jTemplateIndexFile).read())
 
 os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'templates'))
 
-allTempates = []
-for tfile, tname in moa.template.listAll():
-    template = moa.template.Template(tfile)
-
-    allTempates.append(tname)
+_allTemplates = []
+for tfile in moa.template.templateList():
+    print tfile
+    template = moa.template.getMoaFile(tfile)
+    tname = template.moa_id
+    assert(template.moa_id == tfile)
+    
+    
+    _allTemplates.append(tname)
     with open('%s.rst' % tname, 'w') as F:
         F.write(jT.render(template))
 
-allTempates.sort()
+_allTemplates.sort()
 with open('index.rst', 'w') as F:
-    F.write(jTi.render({'templates' : allTempates}))
+    F.write(jTi.render({'templates' : _allTemplates}))
 

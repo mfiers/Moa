@@ -30,7 +30,10 @@ help:
 clean:
 	-rm -rf $(BUILDDIR)/*
 
-html:
+prepare:
+	cd templates && rm -r *.rst && ./refresh_templates
+
+html: prepare pdf
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -65,7 +68,12 @@ qthelp:
 	@echo "To view the help file:"
 	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/Moa.qhc"
 
-latex:
+pdf: latex
+	cd _build/latex && $(MAKE) all-pdf
+	@echo "Copying PDF file"
+	cp _build/latex/*.pdf _static
+
+latex: prepare
 	$(SPHINXBUILD) -b latex $(ALLSPHINXOPTS) $(BUILDDIR)/latex
 	@echo
 	@echo "Build finished; the LaTeX files are in $(BUILDDIR)/latex."
