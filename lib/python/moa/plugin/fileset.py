@@ -11,6 +11,7 @@
 """
 
 import os
+import sys
 
 import fist
 
@@ -108,6 +109,7 @@ def prepare_3(data):
         if not fs.category in ['input', 'prerequisite']:
             job.conf.doNotCheck.append('%s' % fsid)
 
+
 def preFiles(data):
     """
     Run before execution of any command (backend or plugin)
@@ -130,6 +132,9 @@ def preparefilesets(data):
     job = data['job']
     job.data.filesets = {}
 
+    #sys.stderr.write("*" * 80)
+    #sys.stderr.write("%s" % job.template['filesets'])
+    
     if not job.template.has_key('filesets'):
         return
 
@@ -138,6 +143,9 @@ def preparefilesets(data):
     import copy
     allSets = copy.copy(fileSets)
     allSets.sort()
+
+    #sys.stderr.write("*" * 80)
+    #sys.stderr.write("%s" % allSets)
     while True:
             
         if len(fileSets) == 0: break
@@ -172,9 +180,12 @@ def preparefilesets(data):
         l.debug("Recovered %d files for fileset %s" % (len(files), fsid))
 
         job.data.filesets[fsid].files = files
-        with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
-            F.write("\n".join(files) + "\n")
-            
+        try:
+            with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
+                F.write("\n".join(files) + "\n")
+        except:
+            moa.ui.warn("Unable to write FOF for filesets %s" % fsid)
+            moa.ui.warn("This might results in trouble")
             
     #rearrange the files for use by the job
     job.data.inputs = []
