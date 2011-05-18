@@ -18,7 +18,7 @@
   {% endif %}
   <li><a href="#fileBrowser">File browser</a></li> 
   <li><a href="#templateInfoTab">Job info</a></li> 
-  <li><a href="#fileSets">IO</a></li> 
+  <li><a href="#fileSets">In & Output</a></li> 
 </ul> 
 
 {% for f in files %}
@@ -53,7 +53,7 @@
 		{{k}}
 	  </td>
 	  <td class='moaParameterValue' >
-		{{ job.conf[k]  }}
+		{{ job.conf[k] }}
 	  </td>
 	  </td>
     </tr>
@@ -83,7 +83,74 @@
 
 <div id="fileSets">
   <h3>Filesets</h3>
-  <i>to be implemented</i>
+  
+  <!-- first handle the in/output filesets -->
+  {% for msid in job.data.mappedSets.keys()|sort %}  
+  {% set ms = job.data.mappedSets[msid] %}
+  
+  <!--<h4>{{msid}} {% for x in ms.maps|sort %} / {{ x }}{% endfor %}</h4>-->
+  {% if ms.fs.type == 'set' %}
+  <table style="cellpadding: 4px;">
+    <tr>
+      <td></td>
+      <td><b>{{ msid }}</b></b></td>
+      {% for x in ms.maps|sort %}
+        <td><b> {{ x }}</b></td>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td><b>Category</b></td>
+      <td>{{ ms.fs.category }}</td>
+      {% for x in ms.maps|sort %}
+        <td> {{ ms.maps[x].category }}</b></td>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td><b>Optional</b></td>
+      <td>{{ ms.fs.optional }}</td>
+      {% for x in ms.maps|sort %}
+        <td> {{ ms.maps[x].get("optional", True) }}</td>
+      {% endfor %}
+    </tr> 
+    <tr>
+      <td><b>Type</b></td>
+      <td>{{ ms.fs.type }}</td>
+      {% for x in ms.maps|sort %}
+      <td>
+          {{ ms.maps[x].type }}
+      </td>
+      {% endfor %}
+     </tr>
+     <tr>
+      <td><b>Help</b></td>
+      <td>{{ ms.fs.help }}</td>
+      {% for x in ms.maps|sort %}
+      <td>
+          {{ ms.maps[x].help }}
+      </td>
+      {% endfor %}
+     </tr>
+    <tr>
+      <td><b>Files</b></td>
+    </tr>
+    {% for i in ms.lifs %}
+    {% set outer_loop=loop %}
+    <tr>
+      <td><b>{{ loop.index }} </b></td>
+      <td>{{i}}</td>
+      {% for x in ms.maps|sort %}
+      <td>
+        {{ ms.maps[x].lifs[outer_loop.index0] }}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+
+ </table>
+  {% endif %}
+ {% else %}
+ <b>No filesets defined</b>
+  {% endfor %}
 </div>
 
 {% endblock %}
