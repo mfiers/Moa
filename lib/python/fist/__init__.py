@@ -36,7 +36,7 @@ import re
 import glob
 import urlparse
 
-DEBUG=True
+DEBUG=False
 
 if DEBUG:
     import logging
