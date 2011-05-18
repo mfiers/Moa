@@ -76,9 +76,7 @@ class JobConf(object):
             #look at: one directory up
             lookAt = lookAt + '../'
             
-        #sys.stderr.write("%s" % listToLoad)
         for delta, confFile in listToLoad:
-            #sys.stderr.write("loading %s %s" % (delta, confFile))
             self.load(confFile, delta)
 
         #this is a temp addition - private was accidentaly
@@ -103,8 +101,11 @@ class JobConf(object):
         y = Yaco.Yaco()
         y.load(confFile)
 
+        if not delta:
+            self.jobConf.update(y)
+            return
+
         #find relative links & see if they need to be adjusted
-        #
         for k, v in y.items():
             #find potential relative links
             if not isinstance(v, str): continue
@@ -112,10 +113,11 @@ class JobConf(object):
             if not (v[:2] == './' or v[:3] == '../'):
                 continue
             correctedPath = os.path.normpath(delta + '/' + v)
+            relPath = os.path.relpath(correctedPath)
             if os.path.exists(correctedPath):
-                y[k] = correctedPath
+                y[k] = relPath
             elif glob.glob(correctedPath):
-                y[k] = correctedPath
+                y[k] = relPath
 
         self.jobConf.update(y)
 
