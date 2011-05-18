@@ -3,6 +3,7 @@
 import os
 import sys
 import site
+import shutil
 import subprocess
 import markdown
 
@@ -14,12 +15,16 @@ import cgitb; cgitb.enable()  # for troubleshooting
 if not os.environ.has_key('MOABASE'):
     raise Exception("MOABASE is undefined")
 
-
 MOABASE = os.environ['MOABASE']
-sys.stderr.write("Moabase: " + MOABASE)
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 
+#load moa libs
 import moa.job
+import moa.plugin
+from moa.sysConf import sysConf
+pluginHandler = moa.plugin.PluginHandler()
+sysConf.pluginHandler = pluginHandler
+
 
 #initialize the jinja environment
 jenv = Environment(
@@ -52,17 +57,14 @@ def getLocalDir():
 
 def getDescription(cwd):
     dfile = os.path.join(cwd, 'moa.description')
-    if not os.path.exists(dfile):
-        return ""
-    else:
-        description = open(dfile).read()
-        #convert from jinja-markdown to html!
-        p = subprocess.Popen("pandoc -f markdown -t html".split(),
-                  stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        p.stdin.write(description)
-        html,err = p.communicate()
-        return html
-        
+    if os.path.exists(dfile):
+        try:
+            shutil.move(
+                dfile,
+                os.path.join(cwd, 'Readme.md'))
+        except:
+            pass
+
 def getBreadCrumbs():
     ## Prepare breadcrumbs
     dataRoot = getDataRoot()
@@ -93,6 +95,7 @@ def getBreadCrumbs():
         blocks[-1]['notLast'] = False
     return blocks
 
+
 d = {'MOABASE' : MOABASE}
 moacwd = getLocalDir()
 d['requestUri'] = os.environ.get('REQUEST_URI')
@@ -109,6 +112,9 @@ possible_files = [
     'README', 'CHANGELOG', 'REPORT'
     ]
 
+#see if there is a description if so - move it to Readme.md (if we have the rights)
+getDescription(moacwd)
+
 d['files'] = {}
 
 all_files = os.listdir(moacwd)
@@ -123,12 +129,69 @@ for name in possible_files:
             else:
                 d['files'][name.capitalize()] = '<pre>%s</pre>' % fdata
 
+def prepFileList(fileList):
+    ## perform some file magic
+    dar = getDataRoot()
+    wer = getWebRoot()
+    rv = []
+    for f in fileList:
+        fup = os.path.abspath(f)
+        if os.path.exists(fup):
+            linkClass = 'moaFileExists'
+        else:
+            linkClass = 'moaFileAbsent'
+            
+        if fup.find(dar) == 0:
+            fullurl = fup.replace(dar, wer)
+            dirurl = os.path.dirname(fup).replace(dar,wer)
+            link = '<a class="%s" href="%s#fileBrowser">%s</a>' % (
+                linkClass, dirurl, os.path.basename(f))
+            if linkClass == 'moaFileExists':
+                link += ' <span style="font-size: 60%%;">(<a href="%s">dl</a>)</span>' % (fullurl)
+            rv.append(link)
+        else:
+            rv.append("%s %s" % (fup, dar))
+            
+    return rv
+    
+def prepFilesets(job):
+    fss = job.data.filesets
+    job.data.mappedSets = {}
+    
+    #first find the 'sets & singletons'
+    for fsid in fss.keys():
+        fs = fss[fsid]
+        if fs.type == 'set':
+            job.data.mappedSets[fsid] = {
+                'type': 'group',
+                'fs' : fs,
+                'lifs': prepFileList(fs.files),
+                'maps' : {}}
+        elif fs.type == 'single':
+            job.data.mappedSets[fsid] = {
+                'type': 'single',
+                'lifs': prepFileList(fs.files),
+                'fs' : fs }
 
-d['debugMessage'] = str(d['files'])
-d['jobDescription'] = getDescription(moacwd)
+            
+    #now find the maps that map to the other sets
+    for fsid in fss.keys():
+        fs = fss[fsid]
+        if fs.type == 'map':
+            source = fs.source
+            fs['lifs'] = prepFileList(fs.files)
+            job.data.mappedSets[source]['maps'][fsid] = fs
 
 #Fire off a generic page without any information if this is not a Moa dir
 job = moa.job.Job(moacwd)
+sysConf.job = job
+
+#make sure that some preparatory functions are executed
+pluginHandler.run('prepare_3')
+pluginHandler.run('preFiles')
+
+#prepare Filesets for display by the template
+prepFilesets(job)
 
 sys.stderr.write("found a job? %s %s" % (job, job.template.name))
 sys.stderr.write(str(job.conf.pretty()))
