@@ -28,6 +28,13 @@ a:active { color: #FE5D44; }
 .moaBreadCrumbs .moaBreadCrumb a:hover { color: #A31E39; }
 .moaBreadCrumbs .moaBreadCrumb a:active { color: #A31E39; }
 
+.moaFileExists {
+    background-color: #99FF99;
+}
+
+.moaFileAbsent {
+    background-color: #FF9966;
+}
 .moaDebugMessage {
 	position: absolute;
 	right: 5px;
