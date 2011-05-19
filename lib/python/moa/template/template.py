@@ -58,21 +58,33 @@ class Template(Yaco.Yaco):
 
         self.filesets = {}
 
-        #try to load the template!!        
-        if os.path.isfile(self.templateFile):
+        #try to load the template!!
+        noTemplate = False
+        if not os.path.isfile(self.templateFile):
+            noTemplate = True
+        elif not os.access(self.templateFile, os.R_OK):
+            noTemplate = True
+        else:
             _tempTemplate = open(self.templateFile).read().strip()
             if len(_tempTemplate) < 50 and \
                    not "\n" in _tempTemplate:
-                #this must be an old style template name- try to load the template
-                moa.template.installTemplate(
-                    os.path.dirname(os.path.dirname(templateFile)),
-                    _tempTemplate)
-                
-            self.load(self.templateFile)
-        else:
+                if os.access(self.templateFile, os.W_OK):
+                    #this must be an old style template name- try to load the template
+                    moa.template.installTemplate(
+                        os.path.dirname(os.path.dirname(templateFile)),
+                        _tempTemplate)
+                else:
+                    noTemplate = True
+
+
+
+        if noTemplate:
             self.name = 'nojob'
             self.backend = 'nojob'
             self.parameters = {}
+        else:
+            self.load(self.templateFile)
+
             
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         if not self.name == 'nojob' and not self.modification_date:
