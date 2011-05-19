@@ -1,0 +1,35 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: 'Run hagfish'
+    delegate:
+      - run2
+      - combine
+      - report
+  run2:
+    mode: map
+  report:
+    mode: simple
+  combine:
+    mode: simple
+creation_date: Tue Mar 29 16:34:19 2011
+description: Run the preparatory steps for hagfish
+filesets:
+  input:
+    category: input
+    help: '"hagfish" input files'
+    optional: false
+    pattern: '*/*.bam'
+    type: set
+  output:
+    category: output
+    help: '"hagfish" output files'
+    optional: true
+    pattern: ./touch/*.touch
+    source: input
+    type: map
+moa_id: hagfish
+modification_date: Thu, 19 May 2011 20:49:04 +1200
+name: hagfish
+title: Run hagfish_extract & hagfish_combine

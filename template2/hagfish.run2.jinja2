@@ -1,0 +1,4 @@
+#!/bin/bash
+mkdir -p `dirname {{ output }}`
+hagfish_extract -v {{ input }}
+touch {{ output }}
