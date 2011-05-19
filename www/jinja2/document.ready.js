@@ -3,16 +3,19 @@ $(document).ready(function()
     //Remove the load-in-progress window
     $("#loadInProgress").detach();
 
+    //find the table with the file informationv
+    var ftable=$("th:contains('Last modified')").parent().parent().parent().detach();
+    console.log(ftable);
     //Remove the header
-    var fr = $("table:last > tbody > tr:first").detach();
-	$("table:last > tbody > tr:first").detach();
-	$("table:last tbody tr td:nth-child(5)").detach();
-	//console.log($("table:last > tbody > tr > td:last").detach());
+    var fr = ftable.find("tbody > tr:first").detach();
+	ftable.find("tbody > tr:first").detach();
+	ftable.find("tbody tr td:nth-child(5)").detach();
     //And insert it again as a proper thead
-    $("table:last").prepend($('<thead></thead>').append(fr));
-
+    ftable.prepend($('<thead></thead>').append(fr));
+    console.log(ftable.html())
     //and now pick up the complete table and put it in the correct div
-    $("#fileBrowser").prepend($("table:last").css('width', '95%').detach());
+    //ftable.detach();
+    $("#fileBrowser").prepend(ftable.css('width', '95%'));
 
     //add a few triggers 
 
