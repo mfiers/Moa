@@ -25,6 +25,7 @@ Content-type: text/html
 
   <!-- A small template for a row with file information -->
   <script type="text/html" id="fileBlock">
+
      <% for ( var i = 0; i < fileSet.length; i++ ) { %>
        <div class="fileBlock">
          <div class="fileBlockName">
@@ -56,6 +57,9 @@ Content-type: text/html
 </head>
 <body>
 
+  <!-- 
+     Show a loading in progress dialog
+  -->
   {% block loadInProgress %}
   <div id="loadInProgress">
     <img id="moaProgress" src="/moa/html/images/moa_progress.gif">
@@ -65,8 +69,10 @@ Content-type: text/html
   </div>
   {% endblock %}
 
+  <!-- div for a message to the user -->
   <div class="moaMessage"></div>
 
+  <!-- Debug window -->
 {% if debugMessage %}
   <div class="moaDebugMessage">
 	<h2>Debug</h2>
