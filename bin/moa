@@ -257,7 +257,7 @@ def run_2():
         if len(tas) > 0: command = tas[0]
 
         if command in sysConf.commands:
-            recurseMode = sysConf.commands[command].get('recursive', 'none')
+            recurseMode = sysConf.commands[command].get('recursive', 'global')
         else:
             recurseMode = 'global'
             
