@@ -18,7 +18,7 @@ if not os.environ.has_key('MOABASE'):
 MOABASE = os.environ['MOABASE']
 site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 
-#load moa libs
+#load moa libs & plugins
 import moa.job
 import moa.plugin
 from moa.sysConf import sysConf
@@ -96,14 +96,17 @@ def getBreadCrumbs():
     return blocks
 
 
-d = {'MOABASE' : MOABASE}
+sysConf.MOABASE = MOABASE
 moacwd = getLocalDir()
-d['requestUri'] = os.environ.get('REQUEST_URI')
-d['moacwd'] = moacwd
-d['status'] = 'notmoa'
-d['dataRoot'] = getDataRoot()
-d['webRoot'] = getWebRoot()
-d['blocks']  = getBreadCrumbs()
+
+sysConf.www.webRoot = getWebRoot()
+sysConf.www.dataRoot = getDataRoot()
+sysConf.requestUri = os.environ.get('REQUEST_URI')
+sysConf.moacwd = moacwd
+sysConf.status = 'notmoa'
+sysConf.dataRoot = getDataRoot()
+sysConf.webRoot = getWebRoot()
+sysConf.blocks  = getBreadCrumbs()
 
 ## displayable files:
 possible_files = [
@@ -115,7 +118,7 @@ possible_files = [
 #see if there is a description if so - move it to Readme.md (if we have the rights)
 getDescription(moacwd)
 
-d['files'] = {}
+sysConf.files = {}
 
 all_files = os.listdir(moacwd)
 for name in possible_files:
@@ -125,83 +128,24 @@ for name in possible_files:
             with open(os.path.join(moacwd, fname)) as F:
                 fdata = F.read()
             if ext == '.md':
-                d['files'][name.capitalize()] = markdown.markdown(fdata)
+                sysConf.files[name.capitalize()] = markdown.markdown(fdata)
             else:
-                d['files'][name.capitalize()] = '<pre>%s</pre>' % fdata
-
-def prepFileList(fileList):
-    ## perform some file magic
-    dar = getDataRoot()
-    wer = getWebRoot()
-    rv = []
-    for f in fileList:
-        fup = os.path.abspath(f)
-        if os.path.exists(fup):
-            linkClass = 'moaFileExists'
-        else:
-            linkClass = 'moaFileAbsent'
-            
-        if fup.find(dar) == 0:
-            fullurl = fup.replace(dar, wer)
-            dirurl = os.path.dirname(fup).replace(dar,wer)
-            link = '<a class="%s" href="%s#fileBrowser">%s</a>' % (
-                linkClass, dirurl, os.path.basename(f))
-            if linkClass == 'moaFileExists':
-                link += ' <span style="font-size: 60%%;">(<a href="%s">dl</a>)</span>' % (fullurl)
-            rv.append(link)
-        else:
-            rv.append("%s %s" % (fup, dar))
-            
-    return rv
+                sysConf.files[name.capitalize()] = '<pre>%s</pre>' % fdata
     
-def prepFilesets(job):
-    fss = job.data.filesets
-    job.data.mappedSets = {}
-    
-    #first find the 'sets & singletons'
-    for fsid in fss.keys():
-        fs = fss[fsid]
-        if fs.type == 'set':
-            job.data.mappedSets[fsid] = {
-                'type': 'group',
-                'fs' : fs,
-                'lifs': prepFileList(fs.files),
-                'maps' : {}}
-        elif fs.type == 'single':
-            job.data.mappedSets[fsid] = {
-                'type': 'single',
-                'lifs': prepFileList(fs.files),
-                'fs' : fs }
-
-            
-    #now find the maps that map to the other sets
-    for fsid in fss.keys():
-        fs = fss[fsid]
-        if fs.type == 'map':
-            source = fs.source
-            fs['lifs'] = prepFileList(fs.files)
-            job.data.mappedSets[source]['maps'][fsid] = fs
-
-#Fire off a generic page without any information if this is not a Moa dir
+#instantiate job
 job = moa.job.Job(moacwd)
 sysConf.job = job
 
-#make sure that some preparatory functions are executed
+#make sure that some preparatory calls are executed
 pluginHandler.run('prepare_3')
 pluginHandler.run('preFiles')
+pluginHandler.run('prepareWWW')
 
-#prepare Filesets for display by the template
-prepFilesets(job)
-
-sys.stderr.write("found a job? %s %s" % (job, job.template.name))
-sys.stderr.write(str(job.conf.pretty()))
 if job.template.name == 'nojob':
     pageTemplate = jenv.get_template('notMoa.html')
-    print pageTemplate.render(**d)
+    print pageTemplate.render(sysConf)
     sys.exit()
-
-#ok, this must be a moa directory: gather information
-d['job'] = job
-d['status'] = 'moa'
-pageTemplate = jenv.get_template('Moa.html')
-print pageTemplate.render(**d)
+else:
+    sysConf.status = 'moa'
+    pageTemplate = jenv.get_template('Moa.html')
+    print pageTemplate.render(sysConf)
