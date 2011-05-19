@@ -21,6 +21,65 @@ import moa.logger as l
 
 from moa.sysConf import sysConf
 
+def _prepFileList(fileList):
+    """
+    Prepare a list of files for display 
+    """
+    ## perform some file magic
+    dar = sysConf.www.dataRoot
+    wer = sysConf.www.webRoot
+    rv = []
+    for f in fileList:
+        fup = os.path.abspath(f)
+        if os.path.exists(fup):
+            linkClass = 'moaFileExists'
+        else:
+            linkClass = 'moaFileAbsent'
+            
+        if fup.find(dar) == 0:
+            fullurl = fup.replace(dar, wer)
+            dirurl = os.path.dirname(fup).replace(dar,wer)
+            link = '<a class="%s" href="%s#fileBrowser">%s</a>' % (
+                linkClass, dirurl, os.path.basename(f))
+            if linkClass == 'moaFileExists':
+                link += ' <span style="font-size: 60%%;">(<a href="%s">dl</a>)</span>' % (fullurl)
+            rv.append(link)
+        else:
+            rv.append("%s %s" % (fup, dar))
+    return rv
+
+
+def prepareWWW(data):
+    job = sysConf.job
+    job.data.mappedSets = {}
+    fss = job.data.filesets
+    #first find the 'sets & singletons'
+    for fsid in fss.keys():
+        fs = fss[fsid]
+        if fs.type == 'set':
+            job.data.mappedSets[fsid] = {
+                'type': 'group',
+                'fs' : fs,
+                'lifs': _prepFileList(fs.files),
+                'maps' : {}}
+        elif fs.type == 'single':
+            job.data.mappedSets[fsid] = {
+                'type': 'single',
+                'lifs': _prepFileList(fs.files),
+                'fs' : fs }
+
+            
+    #now find the maps that map to the other sets
+    for fsid in fss.keys():
+        fs = fss[fsid]
+        if fs.type == 'map':
+            source = fs.source
+            fs['lifs'] = _prepFileList(fs.files)
+            job.data.mappedSets[source]['maps'][fsid] = fs
+
+
+
+
 def defineCommands(data):
     """
     Set the moa commands for this plugin
@@ -47,12 +106,13 @@ def showFiles(job):
     for fsid in filesets:
         files = job.data.filesets[fsid].files
         if len(files) == 0:
-            moa.ui.fprint('* Fileset: %%(bold)s%-20s%%(reset)s: %%(bold)s%%(red)sNo files found%%(reset)s' % 
-                          fsid)
+            moa.ui.fprint(
+                ('* Fileset: %%(bold)s%-20s%%(reset)s: ' +
+                 '%%(bold)s%%(red)sNo files found%%(reset)s') % fsid )
         else:
-            moa.ui.fprint(('* Fileset: %%(bold)s%-20s%%(reset)s '
-                           '(%-6s: '
-                           '%%(green)s%%(bold)s%d%%(reset)s file(s) found'
+            moa.ui.fprint(('* Fileset: %%(bold)s%-20s%%(reset)s ' 
+                           + '(%-6s: '
+                           + '%%(green)s%%(bold)s%d%%(reset)s file(s) found'
                            ' (%s)') % 
                           (fsid, job.template.filesets[fsid].type + ')', len(files), str(job.template.filesets[fsid].pattern)))
             for f in files[:3]:
