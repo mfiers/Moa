@@ -5,14 +5,12 @@ $(document).ready(function()
 
     //find the table with the file informationv
     var ftable=$("th:contains('Last modified')").parent().parent().parent().detach();
-    console.log(ftable);
     //Remove the header
     var fr = ftable.find("tbody > tr:first").detach();
 	ftable.find("tbody > tr:first").detach();
 	ftable.find("tbody tr td:nth-child(5)").detach();
     //And insert it again as a proper thead
     ftable.prepend($('<thead></thead>').append(fr));
-    console.log(ftable.html())
     //and now pick up the complete table and put it in the correct div
     //ftable.detach();
     $("#fileBrowser").prepend(ftable.css('width', '95%'));
