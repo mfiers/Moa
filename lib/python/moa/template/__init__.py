@@ -15,6 +15,7 @@ retrieving template information.
 """
 
 import os
+import shutil
 import datetime
 
 import Yaco
@@ -85,18 +86,23 @@ def refresh(wd):
     """
     meta = Yaco.Yaco()
     metaFile = os.path.join(wd, '.moa', 'template.d', 'meta')
+    l.debug("loading metafile from %s" % metaFile)
     try:
         meta.load(metaFile)
     except (IOError):
         oldMetaFile = os.path.join(wd, '.moa', 'template.d', 'source')
         if os.path.exists(oldMetaFile):
-            shutilmove(oldMetaFile, metaFile)
+            shutil.move(oldMetaFile, metaFile)
             meta.load(metaFile)
         else:
             l.critical("no template to refresh found in %s" % wd)
             pass
 
-    if not meta.name:
+    if not meta.name and meta.source:
+        #old style 
+        meta.name = meta.source
+        
+    if not meta.name:        
         moa.ui.exitError("Cannot refresh this job")
 
     l.debug("install template in %s" % wd)
