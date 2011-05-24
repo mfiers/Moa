@@ -4,9 +4,9 @@ echo start bowtie pe
 #should I check for the extension? Or just assume it's '.bam'??
 #outExt=`echo "{{output}}" | awk -F . '{print $NF}'`
 
-bowtie -S {{ extra_params }}                                      \
-    -I {{ min_insertsize }} -X {{ max_insertsize }}               \
-    {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }}  \
+bowtie -S {{ extra_params }} --{{orientation}}                                  \
+    -I {{ min_insertsize }} -X {{ max_insertsize }}                             \
+    {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }}                \
     | samtools view -bS - | samtools sort - `basename {{ output }} .bam`
 
 samtools index {{ output }}
