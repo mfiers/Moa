@@ -3,7 +3,7 @@ backend: ruff
 commands:
   run:
     help: ''
-    mode: simple
+    mode: map
 creation_date: Tue Mar 29 16:34:19 2011
 description: Execute one command, No in or output files are tracked by Moa.
 moa_id: simple

@@ -9,6 +9,9 @@ commands:
       - report
   run2:
     mode: map
+  clean:
+    mode: simple
+    help: remove all Hagfish files
   report:
     mode: simple
   combine:
@@ -29,6 +32,19 @@ filesets:
     pattern: ./touch/*.touch
     source: input
     type: map
+parameters:
+  min_ok:
+    default: 0
+    help: Minimal acceptable insert size for an aligned pair. If omitted,
+      hagfish will make an estimate
+    optional: true
+    type: int
+  max_ok:
+    default: 0
+    help: Maximal acceptable insert size for an aligned pair. If omitted,
+      hagfish will make an estimate
+    optional: true
+    type: int
 moa_id: hagfish
 modification_date: Thu, 19 May 2011 20:49:04 +1200
 name: hagfish

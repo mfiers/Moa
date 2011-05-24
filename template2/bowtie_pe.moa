@@ -56,6 +56,10 @@ parameters:
     help: extra parameters to feed to bowtie
     optional: true
     type: string
+  orientation:
+    default: 'fr'
+    help: orientation of the reads, allowed values are fr, rf, ff
+    optional: true
   input_format:
     allowed:
     - fastq
