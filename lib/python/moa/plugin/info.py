@@ -15,6 +15,7 @@ Print info on Moa jobs and Moa
 import os
 import re
 import glob
+import optparse
 
 import moa.ui
 import moa.utils
@@ -70,6 +71,16 @@ def defineCommands(data):
         }
 
 
+def defineOptions(data):
+    parserG = optparse.OptionGroup(
+        sysConf.parser, 'Moa Tree')
+    parserG.add_option('--ts', action='store_true',
+                       dest='sparseTree', 
+                       help = 'Hide all non moa jobs directories')
+    
+    data.parser.add_option_group(parserG)
+
+
 def tree(job):
     wd = job.wd
     filt = sysConf.args[1:]
@@ -101,7 +112,8 @@ def tree(job):
         thisPath = "%s./%s" %  ('  ' * lev, rpath)
 
         if not isMoa:
-            output.append(( '.', thisPath, ''))
+            if not sysConf.options.sparseTree:
+                output.append(( '.', thisPath, ''))
             continue
         
         tag = '.'
@@ -113,7 +125,7 @@ def tree(job):
             findmid = findMoaId.search(templ)
             if findmid: 
                 templateName = "{{blue}}%s{{reset}}" % findmid.groups()[0]
-        
+                
         statusFile = os.path.join(path, '.moa', 'status')
         if not os.path.exists(statusFile):
             tag = '{{bold}}{{black}}?{{reset}}'
@@ -127,7 +139,9 @@ def tree(job):
                 'running' : '{{cyan}}r{{reset}}'
                 }.get(message, '{{green}}?{{reset}}')
         output.append((tag, thisPath, templateName))
-    maxTemplateLen = max([len(x[2]) for x in output])
+
+    remFor = re.compile('\{\{.*?\}\}')
+    maxTemplateLen = max([len(remFor.sub("", x[2])) for x in output])
     for s,p,t in output:
         moa.ui.fprint(
             ("%%s %%-%ds | %%s"  % maxTemplateLen) % (s,t,p), f='jinja')
