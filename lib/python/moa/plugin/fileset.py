@@ -88,7 +88,16 @@ def defineCommands(data):
         'desc' : 'Show an overview of the files for this job',
         'call' : showFiles,
         }
-    
+
+def _preformatFile(f):
+    """
+    Check if a file exists
+    """
+    if os.path.isfile(f):
+        return "{{green}}%s{{reset}}" % f
+    else:
+        return "{{red}}%s{{reset}}" % f
+        
 def showFiles(job):
     """
     **moa files** - Display discovered & inferred files for this job
@@ -103,22 +112,66 @@ def showFiles(job):
     """
     filesets = job.template.filesets.keys()
     filesets.sort()
+    #first print singletons
+    fsets = []
+    fmaps = []
     for fsid in filesets:
+        templateInfo = job.template.filesets[fsid]
         files = job.data.filesets[fsid].files
+
+        if templateInfo.type == 'set':
+            fsets.append(fsid)
+            continue
+        elif templateInfo.type == 'map':
+            fmaps.append(fsid)
+            continue
         if len(files) == 0:
             moa.ui.fprint(
-                ('* Fileset: %%(bold)s%-20s%%(reset)s: ' +
-                 '%%(bold)s%%(red)sNo files found%%(reset)s') % fsid )
-        else:
-            moa.ui.fprint(('* Fileset: %%(bold)s%-20s%%(reset)s ' 
-                           + '(%-6s: '
-                           + '%%(green)s%%(bold)s%d%%(reset)s file(s) found'
-                           ' (%s)') % 
-                          (fsid, job.template.filesets[fsid].type + ')', len(files), str(job.template.filesets[fsid].pattern)))
-            for f in files[:3]:
-                moa.ui.fprint('    %(blue)s' + f + '%(reset)s')
-            if len(files) > 3:
-                moa.ui.fprint('       ... and %d more' % (len(files)-3))
+                ('* Fileset: %%(bold)s%-20s%%(reset)s (single): ' +
+                 '%%(bold)s%%(red)sNo file found%%(reset)s') % fsid )
+        elif len(files) == 1:
+            moa.ui.fprint(
+                '* Fileset: {{bold}}%-20s{{reset}} (single)\n' % fsid,
+                f='jinja')
+            moa.ui.fprint('   ' + _preformatFile(files[0]), f='jinja')
+
+    if len(fsets + fmaps) == 0:
+        return
+    
+    #rearrange the files into logical sets
+    nofiles = len(job.data.filesets[(fsets + fmaps)[0]].files) 
+    moa.ui.fprint("")
+   
+    for i in range(min(5, nofiles)):
+        thisSet = []
+        for j, fsid in enumerate((fsets + fmaps)):
+            files = job.data.filesets[fsid].files
+            templateInfo = job.template.filesets[fsid]
+            thisSet.append((templateInfo.category,
+                            templateInfo.type,
+                            fsid,
+                            files[i]))
+            if j == 0:
+                moa.ui.fprint("  {{bold}}%3d{{reset}}:" % i, f='jinja', newline=False)
+            else:
+                moa.ui.fprint("      ", f='jinja', newline=False)
+            cat = templateInfo.category
+            if cat == 'input':
+                moa.ui.fprint("{{green}}inp{{reset}}", f='jinja', newline=False)
+            elif cat == 'output':
+                moa.ui.fprint("{{blue}}out{{reset}}", f='jinja', newline=False)
+            else:
+                moa.ui.fprint("{{red}}%s{{reset}}" % cat[:3], f='jinja', newline=False)
+            moa.ui.fprint(" {{gray}}%-5s{{reset}}" % templateInfo.type, f='jinja', newline=False)
+            moa.ui.fprint(" {{bold}}%-20s{{reset}} " % fsid, f='jinja', newline=False)
+            moa.ui.fprint(_preformatFile(files[i]), f='jinja', newline=False)
+            moa.ui.fprint("")
+        moa.ui.fprint("")
+
+        #for f in files[:3]:
+        #        moa.ui.fprint('    %(blue)s' + f + '%(reset)s')
+        #    if len(files) > 3:
+        #        moa.ui.fprint('       ... and %d more' % (len(files)-3))
     
     
 def prepare_3(data):
