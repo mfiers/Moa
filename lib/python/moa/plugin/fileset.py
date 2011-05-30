@@ -274,6 +274,7 @@ def preparefilesets(data):
             files.resolve()
         elif fs.type == 'single':
             files = fist.fistSingle(job.conf[fsid])
+            files.resolve()
         elif fs.type == 'map':
             if not fs.source:
                 moa.ui.exitError("Map fileset must have a source!")
@@ -291,7 +292,6 @@ def preparefilesets(data):
                     fs.type, fsid))
             
         l.debug("Recovered %d files for fileset %s" % (len(files), fsid))
-
         job.data.filesets[fsid].files = files
         try:
             with open(os.path.join(job.wd, '.moa', '%s.fof' % fsid), 'w') as F:
