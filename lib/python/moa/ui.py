@@ -61,6 +61,7 @@ def fprint(message, **kwargs):
 def fformat(message, f='text', newline = True, ansi = None):
     if f == 'text':
         l.debug("deprecated use of text formatter")
+
     if ansi == True:
         codes = FORMAT_CODES_ANSI
     elif ansi == False:
@@ -73,6 +74,8 @@ def fformat(message, f='text', newline = True, ansi = None):
 
     rt = ""
 
+    if f == None:
+        rt += message
     if f == 'text':
         rt += message % codes
     elif f == 'jinja':
