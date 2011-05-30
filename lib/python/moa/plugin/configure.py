@@ -15,6 +15,7 @@ import os
 
 import moa.ui
 import moa.utils
+import textwrap
 import moa.logger as l
 from moa.sysConf import sysConf
 
@@ -62,7 +63,7 @@ def configShow(job):
     """
     job = sysConf['job']
     moa.utils.moaDirOrExit(job)
-    
+
     keys = job.conf.keys()
     keys.sort()
 
@@ -103,11 +104,19 @@ def configShow(job):
                 outvals.append(moa.ui.fformat('{{red}}{{bold}}(undefined){{reset}}', f='j'))
 
     maxKeylen = max([len(x) for x in outkeys]) + 1
+
+    termx, termy = moa.utils.getTerminalSize()
+
+    wrapInit = termx - (maxKeylen + 5)
+    spacer = ' ' * (maxKeylen + 5)
     for i, key in enumerate(outkeys):
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
         moa.ui.fprint(" " + outflags[i] + " ", f='jinja', newline=False)
-        moa.ui.fprint(outvals[i], f=None)
-
+        for j, ll in enumerate(textwrap.wrap(outvals[i], wrapInit)):
+            if j == 0:
+                moa.ui.fprint(ll, f=None)
+            else:
+                moa.ui.fprint(spacer + ll, f=None)
 def _unsetCallback(wd, vars):
     """
     Does the actual unset of variables `vars` in folder `wd`:
