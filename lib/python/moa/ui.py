@@ -74,11 +74,11 @@ def fformat(message, f='text', newline = True, ansi = None):
 
     rt = ""
 
-    if f == None:
+    if not f:
         rt += message
-    if f == 'text':
+    elif f[0].lower() == 't':
         rt += message % codes
-    elif f == 'jinja':
+    elif f[0].lower() == 'j':
         template = jinja2.Template(message)
         rt += template.render(**codes)
     if newline:
