@@ -20,7 +20,7 @@ filesets:
     optional: false
     pattern: '*/*.fq'
     type: set
-  output:
+  touch:
     category: output
     help: touch files - track if a file has been processed - do not touch this
       unless you know what you're doing.

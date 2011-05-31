@@ -15,6 +15,7 @@ import os
 
 import moa.ui
 import moa.utils
+import textwrap
 import moa.logger as l
 from moa.sysConf import sysConf
 
@@ -62,33 +63,60 @@ def configShow(job):
     """
     job = sysConf['job']
     moa.utils.moaDirOrExit(job)
-    
+
     keys = job.conf.keys()
     keys.sort()
 
+    outkeys = []
+    outvals = []
+    outflags = []
+
     for p in keys:
         if p[:4] == 'moa_': continue
-        
+
         if job.template.parameters[p].private == True:
             continue
-        
-        isLocal = job.conf.is_local(p)
-        
-        if job.conf.setInJobConf(p):
-            if not isLocal:
-                moa.ui.fprint("%s\t{{bold}}{{magenta}}%s{{reset}}\t(recursively defined)" % (
-                        p, job.conf[p]), f='jinja')
-            else:
-                moa.ui.fprint("%s\t{{bold}}%s{{reset}}" % (
-                        p, job.conf[p]), f='jinja')
-        else:
-            if job.template.parameters[p].optional:
-                moa.ui.fprint("%s\t{{blue}}%s{{reset}}" % (
-                    p, job.conf[p]), f='jinja')
-            else:
-                moa.ui.fprint("%s\t{{red}}{{bold}}\t(undefined){{reset}}" % (
-                    p), f='jinja')
 
+        outkeys.append(p)
+
+        #is this variable defined?
+        if job.conf.setInJobConf(p):
+            #yes: locally?
+            if job.conf.is_local(p):
+                outflags.append('{{green}}L{{reset}}')
+            else:
+                outflags.append('{{magenta}}R{{reset}}')
+            outvals.append(job.conf[p])
+        else:
+            #not defined - does it need to be??            
+            if job.template.parameters[p].optional:
+                #no - optional
+                outflags.append('{{blue}}o{{reset}}')
+                val = job.conf[p]
+                if val:
+                    outvals.append(val)
+                else:
+                    outvals.append(moa.ui.fformat('{{gray}}(undefined){{reset}}', f='j'))
+
+            else:
+                #wow - not optional
+                outflags.append('{{bold}}{{red}}E{{reset}}')
+                outvals.append(moa.ui.fformat('{{red}}{{bold}}(undefined){{reset}}', f='j'))
+
+    maxKeylen = max([len(x) for x in outkeys]) + 1
+
+    termx, termy = moa.utils.getTerminalSize()
+
+    wrapInit = termx - (maxKeylen + 5)
+    spacer = ' ' * (maxKeylen + 5)
+    for i, key in enumerate(outkeys):
+        moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
+        moa.ui.fprint(" " + outflags[i] + " ", f='jinja', newline=False)
+        for j, ll in enumerate(textwrap.wrap(str(outvals[i]), wrapInit)):
+            if j == 0:
+                moa.ui.fprint(ll, f=None)
+            else:
+                moa.ui.fprint(spacer + ll, f=None)
 def _unsetCallback(wd, vars):
     """
     Does the actual unset of variables `vars` in folder `wd`:

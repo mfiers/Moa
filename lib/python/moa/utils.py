@@ -17,6 +17,9 @@ import os
 import sys
 import time
 import glob
+import fcntl
+import struct
+import termios
 import errno
 import readline
 import traceback
@@ -27,6 +30,28 @@ import pkg_resources
 
 import moa.utils
 import moa.logger as l
+
+def getTerminalSize():
+    def ioctl_GWINSZ(fd):
+        try:
+            cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
+        except:
+            return None
+        return cr
+    cr = ioctl_GWINSZ(0) or ioctl_GWINSZ(1) or ioctl_GWINSZ(2)
+    if not cr:
+        try:
+            fd = os.open(os.ctermid(), os.O_RDONLY)
+            cr = ioctl_GWINSZ(fd)
+            os.close(fd)
+        except:
+            pass
+    if not cr:
+        try:
+            cr = (env['LINES'], env['COLUMNS'])
+        except:
+            cr = (25, 80)
+    return int(cr[1]), int(cr[0])
 
 
 def resourceExists(what):

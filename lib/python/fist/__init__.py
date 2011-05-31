@@ -47,7 +47,7 @@ class fistCore(list):
     Core class for all fist classes
     """
     def __init__(self, url):
-        self.url = url
+        self.url = url.strip()
         self.init()
         self.resolved = False
 
