@@ -40,7 +40,8 @@ import moa.template
 
 import Yaco
 
-sysConf = moa.sysConf.sysConf
+sysConf = None
+#sysConf = moa.sysConf.sysConf
 
 def defineCommands(data):
     data['commands']['unittest'] = {

@@ -4,10 +4,13 @@
 Introduction
 ============
 
-A bioinformatics project commonly consists of a great number of
-separate steps that chain (3\ :sup:`rd` party) tools together with
-custom scripts. Such projects need to be organized properly,
-particularly when projects grow bigger.
+These days, generating massive amounts of data is an everyday element
+of biological research; and almost all projects have a bioinformatics
+components. Such embedded bioinformatics work commonly consists of
+chaining a number of 3\ :sup:`rd` party tools together, often with
+some data manipulation in between the steps. It is important to have
+such projects properly organized, particularly when a projects grows
+bigger.
 
 There are many different ways to organize bioinformatics
 projects. Many bioinformaticians use the command line or tailor made

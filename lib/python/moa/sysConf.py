@@ -20,6 +20,7 @@ import Yaco
  
 import moa.logger as l
 import moa.utils
+import moa.plugin
 
 sysConf = None
 
@@ -36,7 +37,14 @@ class SysConf(Yaco.Yaco):
         l.debug("Loading system config: %s" % USERCONFIGFILE)
         if os.path.exists(USERCONFIGFILE):
             self.load(USERCONFIGFILE)
-              
+
+        #prepare the plugins
+        self.pluginHandler = moa.plugin.PluginHandler(self.getPlugins())
+
+    def initialize(self):
+        self.pluginHandler.initialize()
+        
+        
     def getVersion(self):
         """
         Return the version number of this Moa instance
