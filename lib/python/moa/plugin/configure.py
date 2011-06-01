@@ -19,11 +19,11 @@ import textwrap
 import moa.logger as l
 from moa.sysConf import sysConf
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
-    data['commands']['set'] = {
+    sysConf['commands']['set'] = {
         'desc' : 'Set, change or remove variables',
         'usage' : 'moa set [KEY] [KEY=VALUE]',
         'call' : configSet,
@@ -33,7 +33,7 @@ def defineCommands(data):
         'unittest' : TESTSET
         }
     
-    data['commands']['unset'] = {
+    sysConf['commands']['unset'] = {
         'desc' : 'Remove a variable',
         'call' : configUnset,
         'usage' : 'moa unset KEY',
@@ -43,7 +43,7 @@ def defineCommands(data):
         'unittest' : TESTUNSET
         }
 
-    data['commands']['show'] = {
+    sysConf['commands']['show'] = {
         'desc' : 'Show configured variables',
         'call' : configShow,
         'usage' : 'moa show',

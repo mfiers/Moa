@@ -21,22 +21,22 @@ import moa.logger as l
 import moa.ui
 from moa.sysConf import sysConf
 
-def defineCommands(data):
-    data['commands']['cp'] = {
+def hook_defineCommands():
+    sysConf['commands']['cp'] = {
         'desc' : 'Copy a moa job',
         'call' : moacp,
         'needsJob' : False,
         'recursive' : 'local',
         'unittest' : COPYTEST}
 
-    data['commands']['ren'] = {
+    sysConf['commands']['ren'] = {
         'desc' : 'Rename/renumber a job',
         'call' : moaren,
         'needsJob' : False,
         'recursive' : 'none',
         'unittest' : RENTEST}
 
-    data['commands']['archive'] = {
+    sysConf['commands']['archive'] = {
         'desc' : 'Archive a job, ',
         'needsJob' : True,
         'recursive' : 'local',

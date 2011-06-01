@@ -20,7 +20,7 @@ def preRun(data):
     Print the logo just before a moa run
     """
     
-    job = data['job']
+    job = sysConf['job']
     #don't print a logo during a no-job run
     if job.template.name == 'nojob':
         return
@@ -29,7 +29,7 @@ def preRun(data):
     #adjust the logo for term width
     TERMHEIGHT, TERMWIDTH = map(int, os.popen('stty size', 'r').read().split())
     MOABASE = moa.utils.getMoaBase()
-    version = data['sysConf'].getVersion()
+    version = sysConf['sysConf'].getVersion()
     logoFile = os.path.join(MOABASE, 'share', 'logo', 'moa.logo.txt')
     logo = open(logoFile).read()
     logo = logo.replace('###', 't' * (TERMWIDTH - 64))

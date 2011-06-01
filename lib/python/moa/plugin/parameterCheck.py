@@ -15,11 +15,11 @@ import sys
 import moa.ui
 from moa.sysConf import sysConf
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Define the parameters test commands
     """
-    data['commands']['test'] = {
+    sysConf['commands']['test'] = {
         'desc' : 'Test the currennt configuration',
         'call' : test_ui,
         }
@@ -61,7 +61,7 @@ def promptSnippet(data):
     
 def test_ui(data):
     
-    options = data['options']
+    options = sysConf['options']
     messages = test(data)
     
     for message, detail in messages:
@@ -72,7 +72,7 @@ def test_ui(data):
         moa.ui.exitError("exitting")
     
 def test(data):
-    job = data['job']
+    job = sysConf['job']
     if not job.isMoa():
         moa.utils.moaDirOrExit(job)
         

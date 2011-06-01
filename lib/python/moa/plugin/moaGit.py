@@ -20,24 +20,24 @@ from moa.sysConf import sysConf
 import moa.logger as l
 import moa.plugin.newjob
 
-def defineCommands(data):
-    data['commands']['history'] = {
+def hook_defineCommands():
+    sysConf['commands']['history'] = {
         'desc' : 'display a version control log',
         'call': gitlog
         }
-    data['commands']['tag'] = {
+    sysConf['commands']['tag'] = {
         'desc' : 'Tag the current version',
         'call': tag
         }
     
-def defineOptions(data):
+def hook_defineOptions():
     parserG = optparse.OptionGroup(
-        data['parser'], 'Version control (Git)')
+        sysConf['parser'], 'Version control (Git)')
     parserG.add_option('--m', action='store',
                        dest='gitMessage', 
                       help = 'Commit message for git')
     
-    data.parser.add_option_group(parserG)
+    sysConf.parser.add_option_group(parserG)
 
 def _getRepo(job):
     """
@@ -76,15 +76,15 @@ def postSet(data):
     """
     Execute just after setting a parameter
     """
-    job = data.job
+    job = sysConf.job
     _commit(job, 'moa set %s in %s' % (
-        " ".join(data['newargs']), job.wd))
+        " ".join(sysConf['newargs']), job.wd))
     
 def postNew(data):
     """
     To be executed just after the 'moa new' command
     """    
-    job = data.job
+    job = sysConf.job
     _commit(job, "created job %s in %s" % (job.template.name, job.wd))
 
 def gitlog(job):

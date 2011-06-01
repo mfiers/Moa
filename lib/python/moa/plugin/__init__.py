@@ -56,9 +56,13 @@ class PluginHandler():
             runOrder.reverse()
         for p in runOrder:
             m = self.plugins[p].module
-            if not hasattr(m, command):
+            if hasattr(m, command):
+                l.warning("plugin %s has what looks like an invalid hook (%s) definition" % (
+                    p, command))
+            if not hasattr(m, 'hook_' + command):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
+
             rv['p'] = getattr(m, "hook_" + command)()
         return rv
             

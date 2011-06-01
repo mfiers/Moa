@@ -20,14 +20,15 @@ import moa.ui
 import moa.job
 import moa.logger as l
 import moa.plugin
+from moa.sysConf import sysConf
 
-def defineCommands(data):
-    data['commands']['unlock'] = { 
+def hook_defineCommands():
+    sysConf['commands']['unlock'] = { 
         'desc' : 'Unlock this job',
         'call' : unlock,
         'unittest' : UNLOCKTEST
         }
-    data['commands']['lock'] = { 
+    sysConf['commands']['lock'] = { 
         'desc' : 'Lock this job - prevent execution',
         'call' : lock,
         'unittest' : LOCKTEST

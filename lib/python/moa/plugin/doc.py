@@ -22,7 +22,7 @@ import moa.logger as l
 from moa.sysConf import sysConf
 
 def prepare_3(data):
-    job = data['job']
+    job = sysConf['job']
 
     job.template.parameters.title = {
         'optional' : False,
@@ -38,11 +38,11 @@ def prepare_3(data):
         'type' : 'string'
         }
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
-    data['commands']['blog'] = {
+    sysConf['commands']['blog'] = {
         'desc' : 'record a short note',
         'usage' : 'moa blog',
         'call' : blog,

@@ -29,15 +29,15 @@ MOABASE = moa.utils.getMoaBase()
 
 JENV = None
     
-def defineCommands(data):
-    data['commands']['help'] = {
+def hook_defineCommands():
+    sysConf['commands']['help'] = {
         'desc' : 'Display help for a template',
         'call' : templateHelp,
         'needsJob' : True,
         'unittest' : TESTHELP
         }
     
-    data['commands']['welcome'] = {
+    sysConf['commands']['welcome'] = {
         'desc' : 'Display a welcome text',
         'call' : welcome,
         'private' : True,

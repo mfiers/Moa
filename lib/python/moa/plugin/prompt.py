@@ -19,13 +19,13 @@ import moa.ui
 
 order = 10
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
     pass
 
-    # data['commands']['prompt'] = {
+    # sysConf['commands']['prompt'] = {
     #     'desc' : 'Show the state of the current job',
     #     'private' : True,
     #     'call' : prompt,
@@ -41,11 +41,11 @@ def timeOutHandler(signum, frame):
 #def preRun(data):
 #    "A little trick to set the gnu screen title"
 #    if 'screen' in os.environ.get('TERM', '').lower():
-#        sys.stdout.write(chr(27) + 'kmoa ' + data.job.template.name + chr(27) + '\\')
+#        sys.stdout.write(chr(27) + 'kmoa ' + sysConf.job.template.name + chr(27) + '\\')
 
         
 def prompt(data):
-    job = data['job']
+    job = sysConf['job']
     template = job.template.name
 
     #set a signal to prevent this routine from running for more 
@@ -56,7 +56,7 @@ def prompt(data):
     #see if the parameter check is available & loaded
     rv = {}
     try:
-        rv = data['plugins'].run('promptSnippet')
+        rv = sysConf['plugins'].run('promptSnippet')
     except TimeOutException:
         pass
     signal.setitimer(signal.ITIMER_REAL, 0)

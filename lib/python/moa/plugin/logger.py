@@ -19,8 +19,8 @@ import moa.logger as l
 import moa.plugin
 from moa.sysConf import sysConf
 
-def defineCommands(data):
-    data['commands']['log'] = { 
+def hook_defineCommands():
+    sysConf['commands']['log'] = { 
         'desc' : 'Show the logs for this job',
         'call' : showLog,
         'log' : False
@@ -30,7 +30,7 @@ def prepareCommand(data):
     moa.ui.message('Start "%s"' % sysConf.originalCommand)
     
 def prepare_3(data):
-    data.logger.start_time = datetime.today()
+    sysConf.logger.start_time = datetime.today()
 
 def niceRunTime(d):
     """

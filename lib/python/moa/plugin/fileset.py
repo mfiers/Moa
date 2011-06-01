@@ -80,11 +80,11 @@ def prepareWWW(data):
 
 
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
-    data['commands']['files'] = {
+    sysConf['commands']['files'] = {
         'desc' : 'Show an overview of the files for this job',
         'call' : showFiles,
         }
@@ -242,7 +242,7 @@ def preparefilesets(data):
     """
     prepare all filesets 
     """
-    job = data['job']
+    job = sysConf['job']
     job.data.filesets = {}
 
     #sys.stderr.write("*" * 80)

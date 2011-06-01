@@ -17,7 +17,7 @@ import moa.logger as l
 import jinja2
 
 def prepare_3(data):
-    job = data['job']
+    job = sysConf['job']
 
     job.template.parameters.precommand = {
         'category' : 'advanced',
@@ -52,7 +52,7 @@ def preRun(data):
     """
     If defined, execute the precommand
     """
-    job = data['job']
+    job = sysConf['job']
     precommand = str(job.conf['precommand'])
     if precommand:
         l.debug("Executing precommand %s" % precommand)
@@ -62,7 +62,7 @@ def postRun(data):
     """
     If defined, execute the postCommand
     """
-    job = data['job']
+    job = sysConf['job']
     postcommand = str(job.conf['postcommand'])
     if postcommand:
         l.debug("Executing postcommand %s" % postcommand)

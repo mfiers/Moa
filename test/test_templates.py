@@ -17,6 +17,7 @@ sysConf.pluginHandler = pluginHandler
 def load_tests(loader, tests, ignore):
     tests.addTests(templateTestSuite())
     return tests
+    
 
 def templateTestSuite():
     suite = unittest.TestSuite()

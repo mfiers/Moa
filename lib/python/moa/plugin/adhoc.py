@@ -21,37 +21,37 @@ import moa.plugin
 
 from moa.sysConf import sysConf
 
-def defineCommands(data):
-    data['commands']['adhoc'] = { 
+def hook_defineCommands():
+    sysConf['commands']['adhoc'] = { 
         'desc' : 'Create an adhoc analysis',
         'call' : createAdhoc,
         'needsJob' : False,
         'usage' : 'moa adhoc -t "title" -- echo "do something"'        
         }
-    data['commands']['simple'] = { 
+    sysConf['commands']['simple'] = { 
         'desc' : 'Create a "simple" adhoc analysis',
         'call' : createSimple,
         'needsJob' : False,
         'usage' : 'moa simple -t "title" -- echo "do something"',
         'unittest' : SIMPLETEST
         }
-    data['commands']['map'] = { 
+    sysConf['commands']['map'] = { 
         'desc' : 'Create a "map" adhoc analysis',
         'call' : createMap,
         'needsJob' : False,
         'usage' : 'moa map -t "title" -- echo "do something"',
         'unittest' : MAPTEST
         }
-    data['commands']['!'] = { 
+    sysConf['commands']['!'] = { 
         'desc' : 'Moa-fy the last (bash) command issued',
         'call' : exclamate,
         'needsJob' : False,        
         'usage' : 'moa !'
         }
 
-def defineOptions(data):
+def hook_defineOptions():
     parserN = optparse.OptionGroup(
-        data['parser'], "Moa adhoc, simple & map")
+        sysConf['parser'], "Moa adhoc, simple & map")
     try:
         parserN.add_option("-t", "--title", dest="title", help="Job title")
     except  optparse.OptionConflictError:
@@ -66,7 +66,7 @@ def defineOptions(data):
     parserN.add_option("-m", "--mode",
                        dest="mode",
                        help="Adhoc mode to run (omit for moa to guess)")
-    data['parser'].add_option_group(parserN)
+    sysConf['parser'].add_option_group(parserN)
 
 
 def createSimple(job):

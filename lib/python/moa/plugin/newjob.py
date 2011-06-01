@@ -19,8 +19,8 @@ import moa.plugin
 import moa.ui
 from moa.sysConf import sysConf
 
-def defineCommands(data):
-    data['commands']['new'] = {
+def hook_defineCommands():
+    sysConf['commands']['new'] = {
         'desc' : "Create a new Moa job",
         'call' : newJob,
         'needsJob' : False,
@@ -28,12 +28,12 @@ def defineCommands(data):
         }
     
 
-def defineOptions(data):
+def hook_defineOptions():
     try:
-        parserN = optparse.OptionGroup(data['parser'], "moa new")
-        data['parser'].set_defaults(title="")
+        parserN = optparse.OptionGroup(sysConf['parser'], "moa new")
+        sysConf['parser'].set_defaults(title="")
         parserN.add_option("-t", "--title", dest="title", help="Job title")
-        data['parser'].add_option_group(parserN)
+        sysConf['parser'].add_option_group(parserN)
     except optparse.OptionConflictError:
         pass
 

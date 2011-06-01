@@ -21,49 +21,49 @@ import moa.template
 2
 from moa.sysConf import sysConf
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
-    data['commands']['template_dump'] = {
+    sysConf['commands']['template_dump'] = {
         'desc' : 'Display the raw template description',
         'private': True,
         'call' : dumpTemplate,
         'unittest' : TEMPLATEDUMPTEST
         }
     
-    data['commands']['template'] = {
+    sysConf['commands']['template'] = {
         'desc' : 'Display the template name',
         'private' : True,
         'call' : template,
         'unittest' : TEMPLATETEST,
         }
     
-    data['commands']['list'] = {
+    sysConf['commands']['list'] = {
         'desc' : 'Print a list of all known templates',
         'call' : listTemplates,
         'needsJob' : False,
         'unittest' : LISTTEST,
         }
 
-    data['commands']['refresh'] = {
+    sysConf['commands']['refresh'] = {
         'desc' : 'Reload the template',
         'call' : refresh,
         'needsJob' : True,
         'unittest' : REFRESHTEST
         }
 
-    data['commands']['template_set'] = {
+    sysConf['commands']['template_set'] = {
         'desc' : 'Set a template parameters',
         'private': True,
         'call' : templateSet,
         }
     
-def defineOptions(data):
-    parserN = optparse.OptionGroup(data['parser'], "moa list")
+def hook_defineOptions():
+    parserN = optparse.OptionGroup(sysConf['parser'], "moa list")
     parserN.add_option("-l", "--long", dest="listlong", action='store_true',
                        help="Show a description for moa list")
-    data['parser'].add_option_group(parserN)
+    sysConf['parser'].add_option_group(parserN)
 
 def refresh(job):
     """
@@ -156,7 +156,7 @@ def dumpTemplate(job):
 
        moa template_dump [TEMPLATE_NAME]
 
-    Show the raw template data.
+    Show the raw template sysConf.
     """
     template = _getTemplateFromData(job)
     print template.pretty()

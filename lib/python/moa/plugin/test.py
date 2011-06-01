@@ -40,27 +40,27 @@ import moa.template
 
 import Yaco
 
-sysConf = None
-#sysConf = moa.sysConf.sysConf
+#sysConf = None
+sysConf = moa.sysConf.sysConf
 
-def defineCommands(data):
-    data['commands']['unittest'] = {
+def hook_defineCommands():
+    sysConf['commands']['unittest'] = {
         'desc' : 'Run Moa unittests',
         'call' : runTests,
         'needsJob' : False,
         'loglevel' : 1
         }
 
-def defineOptions(data):
+def hook_defineOptions():
     try:
-        parserN = optparse.OptionGroup(data['parser'], "moa unittest")
+        parserN = optparse.OptionGroup(sysConf['parser'], "moa unittest")
         parserN.add_option("-j", dest="threads",
                            help="No threads to use", default=1,
                            type="int")
         parserN.add_option("--uv", dest="showOutput",
                            help="Show test output", default=False,
                            action='store_true')
-        data['parser'].add_option_group(parserN)
+        sysConf['parser'].add_option_group(parserN)
     except optparse.OptionConflictError:
         pass
 

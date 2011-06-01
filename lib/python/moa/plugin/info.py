@@ -23,12 +23,12 @@ import moa.actor
 import moa.template
 from moa.sysConf import sysConf
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
 
-    data['commands']['raw_commands'] = {
+    sysConf['commands']['raw_commands'] = {
         'private' : True,
         'log' : False,
         'needsJob' : True,
@@ -36,34 +36,34 @@ def defineCommands(data):
         'unittest' : TESTRAWCOMMANDS
         }
     
-    data['commands']['raw_parameters'] = {
+    sysConf['commands']['raw_parameters'] = {
         'private' : True,
         'log' : False,
         'needsJob' : True,
         'call' : rawParameters,
         }
-    data['commands']['version'] = {
+    sysConf['commands']['version'] = {
         'desc' : 'Print the moa version',
         'call' : version,
         'log' : False,
         'needsJob' : False,
         'unittest' : TESTVERSION
         }
-    data['commands']['out'] = {
+    sysConf['commands']['out'] = {
         'desc' : 'Returns stdout of the last moa run',
         'call' : getOut,
         'needsJob' : True,
         'log' : False,
         'unittest' : TESTOUT
         }
-    data['commands']['err'] = {
+    sysConf['commands']['err'] = {
         'desc' : 'Returns stderr of the last moa run',
         'call' : getErr,
         'needsJob' : True,
         'log' : False,
         'unittest' : TESTERR
         }
-    data['commands']['tree'] = {
+    sysConf['commands']['tree'] = {
         'desc' : 'display a directory tree',
         'call' : tree,
         'needsJob' : False,
@@ -71,14 +71,14 @@ def defineCommands(data):
         }
 
 
-def defineOptions(data):
+def hook_defineOptions():
     parserG = optparse.OptionGroup(
         sysConf.parser, 'Moa Tree')
     parserG.add_option('--ts', action='store_true',
                        dest='sparseTree', 
                        help = 'Hide all non moa jobs directories')
     
-    data.parser.add_option_group(parserG)
+    sysConf.parser.add_option_group(parserG)
 
 
 def tree(job):

@@ -29,11 +29,11 @@ from moa.sysConf import sysConf
 LLOG = False
 STATUS = 'unknown'
 
-def defineCommands(data):
+def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
-    data['commands']['status'] = {
+    sysConf['commands']['status'] = {
         'desc' : 'Show the state of the current job',
         'log' : False,
         'needsJob' : True,
@@ -41,7 +41,7 @@ def defineCommands(data):
         'unittest' : STATUSTEST
         }
 
-    data['commands']['kill'] = {
+    sysConf['commands']['kill'] = {
         'desc' : 'Kill a job',
         'log' : True,
         'needsJob' : True,
@@ -49,13 +49,13 @@ def defineCommands(data):
         'unittest' : KILLTEST,
         }
     
-    data['commands']['pause'] = {
+    sysConf['commands']['pause'] = {
         'desc' : 'Pause a job',
         'log' : True,
         'needsJob' : True,
         'call' : pause,
         }
-    data['commands']['resume'] = {
+    sysConf['commands']['resume'] = {
         'desc' : 'Resume a job',
         'log' : True,
         'needsJob' : True,
@@ -166,7 +166,7 @@ def _getPid(job):
 #    """
 #3    Rewrite the pid file to contain the child pid id
 #3    """
-#    _setPid(data.job, data.childPid)
+#    _setPid(data.job, sysConf.childPid)
 #    if LLOG: print 'local parent exit'
 
 def kill(job):
@@ -193,25 +193,25 @@ def preRun(data):
     if status in ['running', 'paused']:
         moa.ui.exitError("Already running")
 
-    if data.job.isMoa():
+    if sysConf.job.isMoa():
         _setPid(data.job, os.getpid())
         _setStatus(data.job, 'running')
 
 def postRun(data):
     status = 'success'
-    if data.rc != 0:
+    if sysConf.rc != 0:
         status = 'error'
-    if data.job.isMoa():
+    if sysConf.job.isMoa():
         _setStatus(data.job, status)
         _removePid(data.job)
 
 def postInterrupt(data):
-    if data.job.isMoa():
+    if sysConf.job.isMoa():
         _setStatus(data.job, 'interrupted')
         _removePid(data.job)
 
 def postError(data):
-    if data.job.isMoa():
+    if sysConf.job.isMoa():
         _setStatus(data.job, 'error')
         _removePid(data.job)
 
