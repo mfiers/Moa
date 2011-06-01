@@ -1,0 +1,6 @@
+class: core
+installed: '2011-06-01T16:45:04.946705'
+name: map
+priority: 10
+provider: core
+provider_type: core

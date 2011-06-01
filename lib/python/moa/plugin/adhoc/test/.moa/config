@@ -1,0 +1,2 @@
+process: echo {{ output }}; cp {{input}} {{ output }}
+title: test
