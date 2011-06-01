@@ -34,8 +34,8 @@ def hook_defineCommands():
         'unittest' : LOCKTEST
         }
     
-def preRun(data):
-    if os.path.exists(os.path.join(data.job.confDir, 'lock')):
+def hook_preRun():
+    if os.path.exists(os.path.join(sysConf.job.confDir, 'lock')):
         moa.ui.fprint(("This {{bold}}{{green}}Moa{{reset}} job is "
                        "{{bold}}{{red}}locked{{reset}} "
                        "(try 'moa unlock')"), f='jinja')

@@ -16,7 +16,9 @@ import os
 import moa.logger as l
 import jinja2
 
-def prepare_3(data):
+from moa.sysConf import sysConf
+
+def hook_prepare_3():
     job = sysConf['job']
 
     job.template.parameters.precommand = {
@@ -48,7 +50,7 @@ def executeExtraCommand(command, job):
     template = jinja2.Template(command)
     os.system(template.render(jobData))
 
-def preRun(data):
+def hook_preRun():
     """
     If defined, execute the precommand
     """
@@ -58,7 +60,7 @@ def preRun(data):
         l.debug("Executing precommand %s" % precommand)
         executeExtraCommand(precommand, job)
 
-def postRun(data):
+def hook_postRun():
     """
     If defined, execute the postCommand
     """

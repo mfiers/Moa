@@ -15,7 +15,7 @@ import moa.utils
 
 order = 10
 
-def preRun(data):
+def hook_preRun():
     """
     Print the logo just before a moa run
     """

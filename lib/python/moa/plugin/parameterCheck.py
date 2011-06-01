@@ -21,7 +21,7 @@ def hook_defineCommands():
     """
     sysConf['commands']['test'] = {
         'desc' : 'Test the currennt configuration',
-        'call' : test_ui,
+        'call' : test_ui
         }
 
     
@@ -44,25 +44,25 @@ def _isFloat(s):
     except ValueError:
         return False
     
-def preRun(data):
-    test_ui(data)
+def hook_preRun():
+    test_ui()
 
-def promptSnippet(data):
+def hook_promptSnippet():
     """
     Function used by the prompt plugin to generate snippets for inlusion 
     in the prompt
     """  
-    m = test(data)
+    m = test()
     if m: 
         return "{{red}}X{{reset}}"
     else:
         return "{{green}}o{{reset}}"
     
     
-def test_ui(data):
+def test_ui():
     
     options = sysConf['options']
-    messages = test(data)
+    messages = test()
     
     for message, detail in messages:
         errorMessage(message, detail)
@@ -71,7 +71,7 @@ def test_ui(data):
         sysConf.pluginHandler.run('postError')
         moa.ui.exitError("exitting")
     
-def test(data):
+def test():
     job = sysConf['job']
     if not job.isMoa():
         moa.utils.moaDirOrExit(job)

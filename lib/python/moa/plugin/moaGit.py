@@ -72,7 +72,7 @@ def tag(job):
     l.info('tagging with "%s"' % tagname)
     repo.create_tag(tagname, message=message)
 
-def postSet(data):
+def hook_postSet():
     """
     Execute just after setting a parameter
     """
@@ -80,7 +80,7 @@ def postSet(data):
     _commit(job, 'moa set %s in %s' % (
         " ".join(sysConf['newargs']), job.wd))
     
-def postNew(data):
+def hook_postNew():
     """
     To be executed just after the 'moa new' command
     """    

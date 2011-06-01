@@ -162,7 +162,7 @@ def _getPid(job):
     with open(pidFile) as F:
         return int(F.read())
 
-#def background_exit(data):
+#def hook_background_exit():
 #    """
 #3    Rewrite the pid file to contain the child pid id
 #3    """
@@ -188,32 +188,32 @@ def kill(job):
     _setStatus(job, 'interrupted')
     
     
-def preRun(data): 
-    status = _getStatus(data.job)
+def hook_preRun(): 
+    status = _getStatus(sysConf.job)
     if status in ['running', 'paused']:
         moa.ui.exitError("Already running")
 
     if sysConf.job.isMoa():
-        _setPid(data.job, os.getpid())
-        _setStatus(data.job, 'running')
+        _setPid(sysConf.job, os.getpid())
+        _setStatus(sysConf.job, 'running')
 
-def postRun(data):
+def hook_postRun():
     status = 'success'
     if sysConf.rc != 0:
         status = 'error'
     if sysConf.job.isMoa():
-        _setStatus(data.job, status)
-        _removePid(data.job)
+        _setStatus(sysConf.job, status)
+        _removePid(sysConf.job)
 
-def postInterrupt(data):
+def hook_postInterrupt():
     if sysConf.job.isMoa():
-        _setStatus(data.job, 'interrupted')
-        _removePid(data.job)
+        _setStatus(sysConf.job, 'interrupted')
+        _removePid(sysConf.job)
 
-def postError(data):
+def hook_postError():
     if sysConf.job.isMoa():
-        _setStatus(data.job, 'error')
-        _removePid(data.job)
+        _setStatus(sysConf.job, 'error')
+        _removePid(sysConf.job)
 
 
 

@@ -39,7 +39,8 @@ class SysConf(Yaco.Yaco):
             self.load(USERCONFIGFILE)
 
         #prepare the plugins
-        self.pluginHandler = moa.plugin.PluginHandler(self.getPlugins())
+        self.pluginHandler = moa.plugin.PluginHandler(
+            self, self.getPlugins())
 
     def initialize(self):
         self.pluginHandler.initialize()

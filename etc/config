@@ -1,36 +1,20 @@
 plugins:
-  fileset:
-    order: 1
-  doc:
-    order: 10
-  configure:
-    order: 10
-  newjob:
-    order: 10
-  logger:
-    order: 10
-  test:
-    order: 10
-  lock:
-    order: 10
-  adhoc:
-    order: 10
-  help:
-    order: 10
-  status:
-    order: 10
-  template:
-    order: 10
-  info:
-    order: 10
-  parameterCheck:
-    order: 10
-  moautil:
-    order: 10
-  moaGit:
-    order: 10
-  extraCommands:
-    order: 10
+  fileset: {}
+  doc: {}
+  configure: {}
+  newjob: {}
+  logger: {}
+  test: {}
+  lock: {}
+  adhoc: {}
+  help: {}
+  status: {}
+  template: {}
+  info: {}
+  parameterCheck: {}
+  moautil: {}
+  moaGit: {}
+  extraCommands: {}
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True
@@ -66,8 +50,8 @@ template:
   providers:
     core:
       class: core
-      priority: 1
+      priority: 10
     local:
       class: local
-      priority: 2
+      priority: 5
       directory: ' ~/.config/moa/template/'

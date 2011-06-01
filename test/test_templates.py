@@ -10,14 +10,11 @@ import moa.backend.ruff.test
 #import moa.backend.gnumake.test
 
 from moa.sysConf import sysConf
-
-pluginHandler = moa.plugin.PluginHandler()
-sysConf.pluginHandler = pluginHandler
+sysConf.initialize()
 
 def load_tests(loader, tests, ignore):
     tests.addTests(templateTestSuite())
     return tests
-    
 
 def templateTestSuite():
     suite = unittest.TestSuite()

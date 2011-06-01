@@ -25,9 +25,9 @@ import moa.logger as l
 from moa.sysConf import sysConf
 import moa.plugin.logger
 
-def postError(data):
+def hook_postError():
     postRun(data)
-def postInterrupt(data):
+def hook_postInterrupt():
     postRun(data)
 
 MESSAGE = """

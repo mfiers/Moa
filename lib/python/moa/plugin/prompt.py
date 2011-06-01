@@ -38,13 +38,13 @@ class TimeOutException(Exception):
 def timeOutHandler(signum, frame):
     raise TimeOutException()
 
-#def preRun(data):
+#def hook_preRun():
 #    "A little trick to set the gnu screen title"
 #    if 'screen' in os.environ.get('TERM', '').lower():
 #        sys.stdout.write(chr(27) + 'kmoa ' + sysConf.job.template.name + chr(27) + '\\')
 
         
-def prompt(data):
+def hook_prompt():
     job = sysConf['job']
     template = job.template.name
 

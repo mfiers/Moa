@@ -13,19 +13,19 @@ commandline
 
 import UserDict
 import moa.logger as l
-#from moa.sysConf import sysConf
 import Yaco
 
 ## Load & handle plugins
 class PluginHandler():
 
-    def __init__(self, pluginList):
+    def __init__(self, sysConf, pluginList):
         """
         Manage the plugins
         """
 
         self.plugins = {}
         self.pluginList = pluginList
+        self.sysConf = sysConf
         
     def initialize(self):
         """
@@ -70,7 +70,7 @@ class PluginHandler():
         """
         Run a command callback 
         """
-        commandInfo = sysConf.commands[command]
+        commandInfo = self.sysConf.commands[command]
         commandInfo['call'](job)
 
     def getAttr(self, attribute):

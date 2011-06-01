@@ -49,7 +49,7 @@ def _prepFileList(fileList):
     return rv
 
 
-def prepareWWW(data):
+def hook_prepareWWW():
     job = sysConf.job
     job.data.mappedSets = {}
     fss = job.data.filesets
@@ -174,7 +174,7 @@ def showFiles(job):
         #        moa.ui.fprint('       ... and %d more' % (len(files)-3))
     
     
-def prepare_3(data):
+def hook_prepare_3():
 
     job = sysConf.job
 
@@ -223,7 +223,7 @@ def prepare_3(data):
             job.conf.doNotCheck.append('%s' % fsid)
 
 
-def preFiles(data):
+def hook_preFiles():
     """
     Run before execution of any command (backend or plugin)
     """
@@ -231,14 +231,14 @@ def preFiles(data):
     preparefilesets(data)
 
 
-def pre_command(data):
+def hook_pre_command():
     """
     Run before execution of any command (backend or plugin)
     """
     l.debug("preparing input files")
-    preparefilesets(data)
+    preparefilesets()
 
-def preparefilesets(data):
+def preparefilesets():
     """
     prepare all filesets 
     """

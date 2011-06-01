@@ -21,7 +21,7 @@ import moa.utils
 import moa.logger as l
 from moa.sysConf import sysConf
 
-def prepare_3(data):
+def hook_prepare_3():
     job = sysConf['job']
 
     job.template.parameters.title = {

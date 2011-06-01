@@ -26,10 +26,10 @@ def hook_defineCommands():
         'log' : False
         }
 
-def prepareCommand(data):
+def hook_prepareCommand():
     moa.ui.message('Start "%s"' % sysConf.originalCommand)
     
-def prepare_3(data):
+def hook_prepare_3():
     sysConf.logger.start_time = datetime.today()
 
 def niceRunTime(d):
@@ -65,13 +65,13 @@ def niceRunTime(d):
     else:
         return "%d sec" % seconds
 
-def postInterrupt(data):
-    _writeLog(data)
+def hook_postInterrupt():
+    _writeLog()
 
-def postError(data):
-    _writeLog(data)
+def hook_postError():
+    _writeLog()
 
-def _writeLog(data=None):
+def _writeLog():
     
     sysConf.logger.end_time = datetime.today()
     sysConf.logger.run_time = sysConf.logger.end_time - sysConf.logger.start_time
@@ -96,10 +96,10 @@ def _writeLog(data=None):
             str(sysConf.logger.run_time), command
             ]))
 
-def postRun(data):
-    _writeLog(data)
+def hook_postRun():
+    _writeLog()
 
-def finish(data):
+def hook_finish():
     #and - probably not the location to do this, but print something to screen
     #as well
     if sysConf.options.background:
