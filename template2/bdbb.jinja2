@@ -1,0 +1,89 @@
+### run
+
+mkdir -p run
+cd run
+
+if [[ ! -f "input_a" ]]; then
+   echo "creating db A from {{ input_a }}"
+   formatdb -p {{ protein }} -n input_a -i {{ input_a }}
+   touch input_a
+fi
+
+if [[ ! -f "input_b" ]]; then
+   echo "creating db B from {{ input_b }}"
+   formatdb -p {{ protein }} -n input_b -i {{ input_b }}
+   touch input_b
+fi
+
+{% if protein == "T" %} 
+blast_program=blastp 
+{% elif tblastx %} 
+blast_program=tblastx
+{% else %} 
+blast_program=blastn
+{% endif %}
+
+if [[ ! -f a_vs_b.out  ]]; then
+   echo "blasting A vs B"
+   blastall -i {{ input_a }} -d input_b -e {{ eval }}    \
+     -p ${blast_program}                                 \
+       -m 8 -v 1 -b 1 -a {{ nothreads }} -o a_vs_b.out
+fi
+
+if [[ ! -f b_vs_a.out  ]]; then
+   echo "blasting B vs A"
+   blastall -i {{ input_b }} -d input_a -e {{ eval }}    \
+     -p ${blast_program}                                 \
+       -m 8 -v 1 -b 1 -a {{ nothreads }} -o b_vs_a.out
+fi
+
+
+echo "Merging the blast output"
+
+sort -k 1,2 -u a_vs_b.out \
+     | awk '{print $1 "___" $2 " " $11}' \
+     | sort                              \
+     > a_vs_b.int
+
+sort -k 1,2 -u b_vs_a.out \
+     | awk '{print $2 "___" $1 " " $11}' \
+     | sort                              \
+     > b_vs_a.int
+
+# proper join - find only those sets that have a 
+# bidirectional best blast
+join a_vs_b.int b_vs_a.int > bdbb.set
+
+#identify the leftovers :)
+join -a 1 a_vs_b.int b_vs_a.int         \
+     | awk '{ if (NF == 2) print $0}'   \
+     > bdbb.a.set
+
+join -a 2 a_vs_b.int b_vs_a.int         \
+     | awk '{ if (NF == 2) print $0}'   \
+     > bdbb.b.set
+
+cat bdbb.a.set bdbb.b.set               \
+    | sed "s/___/ /"                    \
+    > ../uni.hits
+
+cat bdbb.set                            \
+    | sed 's/___/ /'                    \
+    > ../bi.hits
+
+cd ..
+
+cat uni.hits | cut -d' ' -f 1 > uni.a.set
+cat uni.hits | cut -d' ' -f 2 > uni.b.set
+cat bi.hits  | cut -d' ' -f 1 > bi.a.set
+cat bi.hits  | cut -d' ' -f 2 > bi.b.set
+
+{% if extract %}
+   fastaExtract -f {{ input_a }} -l uni.a.set > uni.a.fasta
+   fastaExtract -f {{ input_b }} -l uni.b.set > uni.b.fasta
+   fastaExtract -f {{ input_a }} -l bi.a.set > bi.a.fasta
+   fastaExtract -f {{ input_b }} -l bi.b.set > bi.b.fasta
+{% endif %}
+### clean
+rm -rf *.out input_* error.log formatdb.log
+
