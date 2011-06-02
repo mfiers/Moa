@@ -1,0 +1,6 @@
+### run
+
+wget {% if user %} --user={{ user }} {% endif %} 		\
+	 {% if pass %} --password={{ pass }} {% endif %} 	\
+	 --no-check-certificate								\
+	'{{ url }}'

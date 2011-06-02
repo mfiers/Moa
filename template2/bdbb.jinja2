@@ -1,21 +1,20 @@
 ### run
 
 mkdir -p run
-cd run
 
-if [[ ! -f "input_a" ]]; then
+if [[ ! -f "run/input_a" ]]; then
    echo "creating db A from {{ input_a }}"
-   formatdb -p {{ protein }} -n input_a -i {{ input_a }}
-   touch input_a
+   formatdb -p {{ protein }} -n run/input_a -i {{ input_a }}
+   touch run/input_a
 fi
 
-if [[ ! -f "input_b" ]]; then
+if [[ ! -f "run/input_b" ]]; then
    echo "creating db B from {{ input_b }}"
-   formatdb -p {{ protein }} -n input_b -i {{ input_b }}
-   touch input_b
+   formatdb -p {{ protein }} -n run/input_b -i {{ input_b }}
+   touch run/input_b
 fi
 
-{% if protein == "T" %} 
+{% if protein %} 
 blast_program=blastp 
 {% elif tblastx %} 
 blast_program=tblastx
@@ -24,18 +23,21 @@ blast_program=blastn
 {% endif %}
 
 if [[ ! -f a_vs_b.out  ]]; then
-   echo "blasting A vs B"
-   blastall -i {{ input_a }} -d input_b -e {{ eval }}    \
+   echo "blasting ($blast_program) A vs B"
+   blastall -i {{ input_a }} -d run/input_b -e {{ eval }}    \
      -p ${blast_program}                                 \
-       -m 8 -v 1 -b 1 -a {{ nothreads }} -o a_vs_b.out
+     -m 8 -v 1 -b 1 -a {{ nothreads }} -o run/a_vs_b.out
 fi
 
 if [[ ! -f b_vs_a.out  ]]; then
-   echo "blasting B vs A"
-   blastall -i {{ input_b }} -d input_a -e {{ eval }}    \
+   echo "blasting ($blast_program) A vs B"
+   blastall -i {{ input_b }} -d run/input_a -e {{ eval }}    \
      -p ${blast_program}                                 \
-       -m 8 -v 1 -b 1 -a {{ nothreads }} -o b_vs_a.out
+       -m 8 -v 1 -b 1 -a {{ nothreads }} -o run/b_vs_a.out
 fi
+
+cd run
+
 
 
 echo "Merging the blast output"
