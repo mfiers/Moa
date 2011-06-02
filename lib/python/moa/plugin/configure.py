@@ -120,7 +120,7 @@ def configShow(job):
             if j == 0:
                 moa.ui.fprint(ll, f=None)
             else:
-                moa.ui.fprint(spacer + ll, f=Nonve)
+                moa.ui.fprint(spacer + ll, f=None)
         if rendered[key] and rendered[key] != outvals[i]:
             for j, ll in enumerate(textwrap.wrap(str(rendered[key]), wrapInit)):
                 moa.ui.fprint(spacerR + ll + closeR)
