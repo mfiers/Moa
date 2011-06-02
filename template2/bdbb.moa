@@ -1,0 +1,62 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: generate a list of bidirectional best blast hits between two
+      databases of sequences
+    mode: simple
+creation_date: Wed Nov 10 07:56:48 2010
+description: Discover the bidirectional best blast hit between two sets of sequences
+filesets:
+  input_a:
+    category: input
+    help: First multi fasta input set
+    optional: false
+    pattern: '*/*.fasta'
+    type: single
+  input_b:
+    category: input
+    help: Second multi fasta input set
+    optional: false
+    pattern: '*/*.fasta'
+    type: single
+  output:
+    category: output
+    help: List of bidirectional best blasts hits
+    optional: true
+    pattern: '*/*.list'
+    source: input_a
+    type: map
+moa_id: bdbb
+name: bdbb
+parameters:
+  eval:
+    default: 1e-10
+    help: e value cutoff
+    optional: true
+    type: float
+  nothreads:
+    default: '4'
+    help: Threads to run blast with with
+    optional: true
+    type: integer
+  protein:
+    default: false
+    help: Is this a protein set
+    optional: true
+    type: boolean
+  extract:
+    default: false
+    help: Extract the identified sequences from the input fasta files
+    optional: true
+    type: boolean
+  tblastx:
+    default: F
+    help: If this is a nucleotide set, use tblastx?? (otherwise use blastn)
+    optional: true
+    type: boolean
+title: Bidirectional best BLAST hit

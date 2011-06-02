@@ -18,7 +18,12 @@ import sys
 import glob
 
 import Yaco
- 
+
+from jinja2 import Template as jTemplate
+from jinja2 import Environment as jEnv
+from jinja2 import StrictUndefined
+import jinja2.exceptions
+
 import moa.logger as l
 import moa.utils
 
@@ -49,6 +54,9 @@ class JobConf(object):
         #: displayed by default)
         self.private = []
 
+        #set a number of private variables to be used in variable expansion
+        self.setMetavars()
+        
         #load the local conf separately - 
         if os.path.exists(self.jobConfFile):
             self.localConf.load(self.jobConfFile)
@@ -86,6 +94,73 @@ class JobConf(object):
             del self.jobConf['private']
 
 
+    def setPrivateVar(self, k, v):
+        self.private.append(k)
+        self.jobConf[k] = v
+        
+    def setMetavars(self):
+        self.setPrivateVar('wd', self.job.wd)
+        dirparts = self.job.wd.split(os.path.sep)
+        #print dirparts
+        self.setPrivateVar('dir', dirparts[-1])
+        i = 1                
+        while dirparts:
+            p = dirparts.pop()
+            if not p:
+                break
+            self.setPrivateVar('dir%d' % i, p)
+            i += 1
+            
+    def render(self):
+        rv = {}
+        toExpand = []
+
+        
+        # first get the vars that do not need expanding and remember
+        # vars that do need jinja2 rendering
+        for k in self.keys():
+            v = self[k]
+            if isinstance(v, str) and \
+               ('{{' in str(v) or '{%' in v):
+                toExpand.append(k)
+            else:
+                rv[k] = v
+
+
+        # expand the needed jinja vars
+        env = jEnv(undefined=StrictUndefined)
+        statesSeen = []
+        while toExpand:
+            key = toExpand.pop(0)
+            #create the template
+            jt = env.from_string(self[key])
+            try:
+                nw = jt.render(rv)
+            except jinja2.exceptions.UndefinedError:
+                # not (yet?) possible
+                if len(toExpand) == 0:
+                    moa.ui.error("unsolvable configuration - cannot expand '%s'" % key)
+                    break
+                toExpand.append(key)
+                continue
+            rv[key] = nw
+
+        return rv
+
+    def isPrivate(self, k):
+        """
+        Is this a private variable?
+
+        can be locally defined or in the template definition
+        """
+        if k in self.private:
+            return True
+        
+        if self.job.template.parameters[k].private:
+            return True
+        
+        return False
+        
     def pretty(self):
         return self.jobConf.pretty()
 

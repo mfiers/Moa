@@ -46,7 +46,7 @@ parameters:
     default: .
     help: subdir to create & write all output to. If not defined, data will be downloaded
       to directory containing the Makefile
-    mandatory: false
+    optional: true
     type: directory
     value: .
   lock:

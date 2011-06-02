@@ -1,0 +1,39 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: Download
+    mode: simple
+creation_date: Thu, 02 Jun 2011 10:22:31 +1200
+description: Use WGET to download files. This template has two modi,
+  one is set wget_mode to mirror data, in which case both wget_url and
+  wget_pattern (default *) are used.  The other modus is
+  wget_mode=get, when one file defined by wget_url is downloaded.  In
+  the mirror mode it is possible to download only those files that are
+  newer as the files already downloaded by using the wget_timestamp
+  parameter
+filesets: {}
+moa_id: wget
+modification_date: Thu, 02 Jun 2011 10:22:53 +1200
+name: wget
+parameter_category_order:
+- ''
+- system
+- advanced
+parameters:
+  user:
+    default: ''
+    help: Username for the remote site
+    optional: true
+    type: string    
+  pass:
+    default: ''    
+    help: Password for the remote site (note - this is not very safe,
+      the password will be stored in plan text
+    optional: true
+    type: password
+  url:
+    help: The url of the file to download
+    optional: false
+    type: string
+title: wget

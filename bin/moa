@@ -71,7 +71,6 @@ sysConf.rc = 0
 sysConf.commands = moa.commands.Commands()
 sysConf.pluginHandler.run('defineCommands')
 
-
 ## defining a usage message
 USAGE = "Usage: {{bold}}{{green}}%prog {{blue}}[options] COMMAND ARGUMENTS{{reset}}\n\n"
 moaCommandNames = sysConf.commands.keys()
@@ -152,7 +151,7 @@ def run_3(wd):
     #create a job object
     job = moa.job.Job(wd)
     sysConf.job = job
-
+    
     ## Aks the job & backend if they want to add to the options
     try:
         job.defineOptions(parser)

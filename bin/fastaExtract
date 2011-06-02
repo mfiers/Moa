@@ -64,6 +64,9 @@ parser.add_option('-f', '--fasta', dest='fasta',
 parser.add_option('-o', '--order', dest='order', action='store_true',
     help = 'keep the order of the list')
 
+parser.add_option('-r', '--rename', dest='rename', action='store_true',
+    help = 'Rename the sequences - requires a id file with two columns')
+
 parser.add_option('-R', '--regex', dest='regex',
                    help='regular expression to extract the identifier ' + \
                       'from the fasta headers')
@@ -86,6 +89,10 @@ else:
 ids = [x.split()[0].replace('>', '') for x in rawIds if x.strip()]
 idsInfo = dict([(x.split()[0].replace('>', ''),x) for x in rawIds if x.strip()])
 
+if options.rename:
+    newIds = [x.split()[1] for x in rawIds if x.strip()]
+
+
 log("read %d ids" % len(ids))
 log("first three ids: %s" % (" ".join(ids[:3])))
         
@@ -94,6 +101,7 @@ def rc(sequence):
     return sequence.upper().translate(string.maketrans("ATCG", "TAGC"))[::-1]
 
 output = {}
+idsSeen = []
 
 i = 0
 cre = None
@@ -105,31 +113,44 @@ for seqId, header, seq in fastareader(options.fasta):
     if cre: testId = cre.search("%s %s" % (seqId, header)).groups()[0]
     else: testId = seqId
 
+    
     if not testId in ids: 
         continue
-    else:
-        #remove the testId from ids - we don't want to see
-        #sequences twice.
-        ids.remove(testId) 
+
+    if testId in idsSeen:
+        continue
+    
+    #remember the index id - for later use
+    idListIndex = ids.index(testId)
+
+    #remember that we've seen this id - prevent reprocessing
+    idsSeen.append(testId)
 
     if 'antisense' in idsInfo[testId]:
         seq = rc(seq)
         header += " reverse complement"
 
+    #see if the sequence needs to be renamed 
+    if options.rename:
+        newId = newIds[idListIndex]
+        header += " original_id=%s" % testId
+    else:
+        newId = testId
+            
     if options.order:
-        output[seqId] = (header, seq)
+        output[seqId] = (newId, header, seq)
     else:
         i += 1
-        print ">%s %s" % (seqId, header)
+        print ">%s %s" % (newId, header)
         while seq:       
             print "%s" % seq[:80]
             seq = seq[80:]
 
 if options.order:
     for seqId in ids:
-        header, seq = output[seqId]
+        newId, header, seq = output[seqId]
         i += 1
-        print ">%s %s" % (seqId, header)
+        print ">%s %s" % (newId, header)
         while seq:       
             print "%s" % seq[:80]
             seq = seq[80:]

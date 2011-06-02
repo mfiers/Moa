@@ -77,7 +77,8 @@ def test():
         moa.utils.moaDirOrExit(job)
         
     messages = []
-    for p in job.conf.keys():
+    rconf = job.conf.render()
+    for p in rconf.keys():
         if p in job.conf.doNotCheck:
             continue
         
@@ -85,27 +86,27 @@ def test():
             continue
         
         pt = job.template.parameters[p]
-        if not pt.optional and not job.conf[p]:
+        if not pt.optional and not rconf[p]:
             messages.append(("Undefined variable", p))
         elif pt.type == 'file' \
                and job.conf[p] \
-               and not os.path.isfile(job.conf[p]):
+               and not os.path.isfile(rconf[p]):
             messages.append(("Not a file",
-                             "%s=%s " % (p, job.conf[p])))
+                             "%s=%s " % (p, rconf[p])))
         elif pt.type == 'directory' \
                and job.conf[p] \
-               and not os.path.isdir(job.conf[p]):
+               and not os.path.isdir(rconf[p]):
             messages.append(("Not a directory",
-                             "%s=%s " % ( p, job.conf[p])))
+                             "%s=%s " % ( p, rconf[p])))
         elif pt.type == 'integer' \
                and job.conf[p] \
-               and not _isInteger(job.conf[p]):
+               and not _isInteger(rconf[p]):
             messages.append(("Not an integer",
-                             "%s=%s " % (p, job.conf[p])))
+                             "%s=%s " % (p, rconf.conf[p])))
         elif pt.type == 'float' \
                and job.conf[p] \
-               and not _isFloat(job.conf[p]):
+               and not _isFloat(rconf[p]):
             messages.append(("Not a float",
-                             "%s=%s " % (p, job.conf[p])))
+                             "%s=%s " % (p, rconf[p])))
             
     return messages
