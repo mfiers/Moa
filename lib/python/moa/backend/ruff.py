@@ -196,7 +196,7 @@ class Ruff(moa.backend.BaseBackend):
                                for x in self.job.data.inputs + self.job.data.outputs])
 
                 jobData = {}
-                jobData.update(self.job.conf)
+                jobData.update(self.job.conf.render())
                 jobData['wd'] = self.job.wd
                 jobData['silent'] = silent
                 jobData.update(fsDict)
@@ -276,7 +276,7 @@ class Ruff(moa.backend.BaseBackend):
                  for x in self.job.data.outputs])
 
             jobData = {}
-            jobData.update(self.job.conf)
+            jobData.update(self.job.conf.render())
             jobData['wd'] = self.job.wd
             jobData['input']
             jobData['silent'] = silent
