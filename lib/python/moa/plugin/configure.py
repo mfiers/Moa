@@ -71,10 +71,13 @@ def configShow(job):
     outvals = []
     outflags = []
 
+    rendered = job.conf.render()
+    
     for p in keys:
         if p[:4] == 'moa_': continue
 
-        if job.template.parameters[p].private == True:
+        #see if this private in the template defintion
+        if job.conf.isPrivate(p):
             continue
 
         outkeys.append(p)
@@ -97,7 +100,6 @@ def configShow(job):
                     outvals.append(val)
                 else:
                     outvals.append(moa.ui.fformat('{{gray}}(undefined){{reset}}', f='j'))
-
             else:
                 #wow - not optional
                 outflags.append('{{bold}}{{red}}E{{reset}}')
@@ -109,6 +111,8 @@ def configShow(job):
 
     wrapInit = termx - (maxKeylen + 5)
     spacer = ' ' * (maxKeylen + 5)
+    spacerR = ' ' * (maxKeylen + 1) + moa.ui.fformat('{{gray}}r ', newline=False, f='j')
+    closeR = moa.ui.fformat('{{reset}}', newline=False, f='j'q)
     for i, key in enumerate(outkeys):
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
         moa.ui.fprint(" " + outflags[i] + " ", f='jinja', newline=False)
@@ -116,7 +120,11 @@ def configShow(job):
             if j == 0:
                 moa.ui.fprint(ll, f=None)
             else:
-                moa.ui.fprint(spacer + ll, f=None)
+                moa.ui.fprint(spacer + ll, f=Nonve)
+        if rendered[key] and rendered[key] != outvals[i]:
+            for j, ll in enumerate(textwrap.wrap(str(rendered[key]), wrapInit)):
+                moa.ui.fprint(spacerR + ll + closeR)
+            
 def _unsetCallback(wd, vars):
     """
     Does the actual unset of variables `vars` in folder `wd`:
