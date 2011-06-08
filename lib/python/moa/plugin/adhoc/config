@@ -1,0 +1,7 @@
+commands:
+  adhoc:
+    desc: Create an adhoc analysis
+    call: 'moa.plugin.adhoc.createAdhoc'
+    needsJob: False
+    usage: 'moa adhoc -t "title" -- echo "do something"'
+    
