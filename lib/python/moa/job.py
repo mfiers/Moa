@@ -15,6 +15,7 @@ import os
 import glob
 import tempfile
 
+import lockfile
 import Yaco
 
 import moa.utils
@@ -222,7 +223,7 @@ class Job(object):
 
         ## Ask the job if it's is ok with
         ## the command provided (might want to change order, or insert
-        ## stuff
+        ## stuff..
         execList = self.checkCommands(command)
         sysConf.executeCommand = execList
 
@@ -278,8 +279,29 @@ class Job(object):
         >>> job.prepare()
         
         """
+        #organize a job id..
+        jobIdFile = os.path.join(self.confDir, 'last_job_id')
+        sysConf.jobId = 1
+        lock = lockfile.FileLock(jobIdFile)
+        with lock:
+            old_id = 0
+            if os.path.exists(jobIdFile):
+                with open(jobIdFile) as F:
+                    _o = F.read().strip()
+                    try:
+                        old_id = int(_o)
+                    except:
+                        pass
+            sysConf.jobId = old_id + 1
+            with open(jobIdFile, 'w') as F:
+                F.write("%s" % sysConf.jobId)
+
+        l.info("Acquired job id %s" % sysConf.jobId)        
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
+
+    #def getLogFolder(self):
+    #
         
     def defineOptions(self, parser):
         """
