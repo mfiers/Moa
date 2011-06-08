@@ -19,8 +19,9 @@ import datetime
 import subprocess
 
 import moa.logger as l
+from moa.sysConf import sysConf
 
-def simpleRunner(wd, cl, silent=False):
+def simpleRunner(wd, cl):
     """
     - put env in the environment
     - Execute the commandline (in cl)
@@ -40,7 +41,8 @@ def simpleRunner(wd, cl, silent=False):
     l.debug("executing %s" % " ".join(cl))
 
 
-    if silent:
+    l.critical(str(sysConf.options.silent))
+    if sysConf.options.silent or sysConf.force_silent:
         p = subprocess.Popen(cl, cwd = wd, stdout=SOUT, stderr=SERR)
         p.communicate()
         return p.returncode

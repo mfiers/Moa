@@ -323,9 +323,7 @@ class Ruff(moa.backend.BaseBackend):
             tf.write(script + "\n")
             tf.close()
             os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            rc = moa.actor.simpleRunner(
-                self.job.wd, [tf.name],
-                silent=silent)
+            rc = moa.actor.simpleRunner(self.job.wd, [tf.name])
 
         #empty the ruffus node name cache needs to be empty -
         #otherwise ruffus might think that we're rerunning jobs
@@ -374,7 +372,7 @@ def executor(input, output, script, jobData):
         else:
             os.putenv(k, str(v))
 
-    rc = moa.actor.simpleRunner(jobData['wd'],  [tf.name], silent=jobData['silent'])
+    rc = moa.actor.simpleRunner(jobData['wd'],  [tf.name])
     if rc != 0:
         raise ruffus.JobSignalledBreak
     l.debug("Executing %s" % tf.name)

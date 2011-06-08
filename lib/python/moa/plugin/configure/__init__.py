@@ -112,7 +112,7 @@ def configShow(job):
     wrapInit = termx - (maxKeylen + 5)
     spacer = ' ' * (maxKeylen + 5)
     spacerR = ' ' * (maxKeylen + 1) + moa.ui.fformat('{{gray}}r ', newline=False, f='j')
-    closeR = moa.ui.fformat('{{reset}}', newline=False, f='j'q)
+    closeR = moa.ui.fformat('{{reset}}', newline=False, f='j')
     for i, key in enumerate(outkeys):
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
         moa.ui.fprint(" " + outflags[i] + " ", f='jinja', newline=False)
@@ -180,7 +180,7 @@ def configSet(job):
     for a in args:
         if not '=' in a:
             old = job.conf[a]
-            val = moa.ui.askUser("%s:\n$ " % a, old)
+            val = moa.ui.askUser("%s:\n> " % a, old)
             job.conf[a] = val
         else:
             key,val = a.split('=',1)

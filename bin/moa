@@ -221,7 +221,7 @@ def run_recursive(wd):
     sysConf.pluginHandler.run('post_recursive')
 
     
-def run_2():
+def run_2(force_silent=False):
     """
     Are we going to do a recursive run?: check if -r is in the arguments...
 
@@ -234,6 +234,7 @@ def run_2():
 
     non plugin callbacks (commands handled by the backends) are always
     'global'
+
     """
     
     sysConf.pluginHandler.run('prepare_recursion')
@@ -274,10 +275,10 @@ def run_1():
 
     """
     sysConf.pluginHandler.run('prepare_background')
-    
+    sysConf.force_silent=False
     #quick check: are we're backgrounding:
     if '--bg' in sys.argv:
-        sysConf.options.silent = True
+        sysConf.force_silent=True
         child = os.fork()
         if child != 0:
             # This is the parent thread - exit now - all

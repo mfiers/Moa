@@ -33,14 +33,14 @@ def hook_defineCommands():
         'call' : createSimple,
         'needsJob' : False,
         'usage' : 'moa simple -t "title" -- echo "do something"',
-        'unittest' : SIMPLETEST
+#        'unittest' : SIMPLETEST
         }
     sysConf['commands']['map'] = { 
         'desc' : 'Create a "map" adhoc analysis',
         'call' : createMap,
         'needsJob' : False,
         'usage' : 'moa map -t "title" -- echo "do something"',
-        'unittest' : MAPTEST
+#        'unittest' : MAPTEST
         }
     sysConf['commands']['!'] = { 
         'desc' : 'Moa-fy the last (bash) command issued',
@@ -380,36 +380,3 @@ def createAdhoc(job):
                          title = options.title,
                          parameters=params)
 
-
-SIMPLETEST = '''
-moa simple --np -t test -- echo "something"
-out=`moa run`
-[[ "$out" =~ "something" ]] || (echo "invalid output" && false )
-'''
-
-MAPTEST = '''
-for x in `seq -w 1 20`; do
-   touch test.$x
-done
-moa map --np -t test
-moa set process="echo {{ output }}; cp {{input}} {{ output }}"
-moa set input="./test.*"  output="./out.*"
-output=`moa run 2>&1`
-# out.01 should be in the output (since it was processed)
-[[ "$output" =~ "out.01" ]] || (echo "invalid output 1" && false )
-output=`moa run 2>&1`
-# out.01 should not be in the output (it was already processed last time)
-[[ ! "$output" =~ "out.01" ]] || ( \
-    echo "invalid output 2";
-    echo $output
-    ls
-    false
-)
-touch test.01
-output=`moa run 2>&1`
-# out.01 should be in the output (it was touched since the last process)
-[[ "$output" =~ "out.01" ]] || (echo "invalid output 3" && false )
-# but out.02 not
-[[ ! "$output" =~ "out.02" ]]  ||  (echo "invalid output 4" && false ) 
-#echo $output
-'''
