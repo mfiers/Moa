@@ -30,7 +30,6 @@ def hook_defineCommands():
         'needsJob' : True,
         'recursive' : 'global',
         'log' : True,
-        'unittest' : TESTSET
         }
     
     sysConf['commands']['unset'] = {
@@ -40,7 +39,6 @@ def hook_defineCommands():
         'recursive' : 'global',
         'needsJob' : True,
         'log' : True,
-        'unittest' : TESTUNSET
         }
 
     sysConf['commands']['show'] = {
@@ -49,8 +47,8 @@ def hook_defineCommands():
         'usage' : 'moa show',
         'needsJob' : True,
         'log' : False,
-        'unittest' : TESTSHOW
         }
+
 
 def configShow(job):
     """
@@ -188,47 +186,4 @@ def configSet(job):
     job.conf.save()
 
 
-##### TESTSCRIPTS
 
-TESTSHOW = """
-moa simple -t test -- echo
-moa set process='echo blabla'
-moa show | grep -q 'echo blabla'
-moa show | grep -q 'title\ttest'
-"""
-TESTUNSET = """
-moa simple -t test -- echo
-moa show | grep -Pq 'title\ttest'
-moa unset title
-moa show | grep -Pqv 'title\ttest'
-# recursive unset
-moa set aaa=bbb
-moa show | grep -Pq 'aaa\tbbb'
-mkdir 10.sub
-cd 10.sub
-moa simple -t sub -- echo
-moa set aaa=bbb
-moa show | grep -Pq 'aaa\tbbb'
-cd ..
-moa unset -r aaa
-moa show | grep -Pqv 'aaa\tbbb'
-cd 10.sub
-moa show | grep -Pqv 'aaa\tbbb'
-"""
-
-TESTSET = """
-moa simple -t test -- echo
-moa show | grep -Pq 'title\ttest'
-moa show | grep -Pqv 'title\totherwise'
-moa set title=otherwise
-moa show | grep -Pqv 'title\ttest'
-moa show | grep -Pq 'title\totherwise'
-moa set dummy=bla
-moa show | grep -Pq 'dummy\tbla'
-#now try recursive loading of variables
-mkdir 10.subdir
-cd 10.subdir
-moa simple -t subtest -- echo
-moa show | grep -Pq 'dummy\tbla'
-moa show | grep -Pqv 'title\ttest'
-"""

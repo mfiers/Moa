@@ -1,4 +1,0 @@
-input: ./test.*
-output: ./out.*
-process: echo {{ output }}; cp {{input}} {{ output }}
-title: test
