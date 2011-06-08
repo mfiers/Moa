@@ -70,6 +70,8 @@ following modules to be installed:
 - `gitpython <http://gitorious.org/git-python>`_
 - `Yaco <http://mfiers.github.com/Moa/api/Yaco.html>`_
 - `fist <http://mfiers.github.com/Moa/api/fist.html>`_
+- `unittest2 http://pypi.python.org/pypi/unittest2`_
+- `lockfile http://pypi.python.org/pypi/lockfile`_
 
 These can be installed using 
 install Moa::
