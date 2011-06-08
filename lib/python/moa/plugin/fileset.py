@@ -177,7 +177,7 @@ def showFiles(job):
 def prepare_3(data):
 
     job = sysConf.job
-
+    renderedJobConf = job.conf.render()
     if not job.template.has_key('filesets'):
         return
 
@@ -244,6 +244,7 @@ def preparefilesets(data):
     """
     job = data['job']
     job.data.filesets = {}
+    renJobConf = job.conf.render()
 
     #sys.stderr.write("*" * 80)
     #sys.stderr.write("%s" % job.template['filesets'])
@@ -270,10 +271,10 @@ def preparefilesets(data):
 
         #Resolve filesets - first the NON-map sets
         if fs.type == 'set':
-            files = fist.fistFileset(job.conf[fsid])
+            files = fist.fistFileset(renJobConf[fsid])
             files.resolve()
         elif fs.type == 'single':
-            files = fist.fistSingle(job.conf[fsid])
+            files = fist.fistSingle(renJobConf[fsid])
             files.resolve()
         elif fs.type == 'map':
             if not fs.source:
@@ -285,7 +286,7 @@ def preparefilesets(data):
                 fileSets.append(fsid)
                 continue
             source = job.data.filesets[fs.source].files
-            files = fist.fistMapset(job.conf[fsid])
+            files = fist.fistMapset(renJobConf[fsid])
             files.resolve(source)
         else:
             moa.ui.exitError("Invalid data set type %s for data set %s" % (
