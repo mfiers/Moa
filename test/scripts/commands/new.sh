@@ -34,4 +34,5 @@ moa set process='echo qwerqwer'
 moa show
 out=`moa run 2>/dev/null`
 [[ "$out" =~ 'qwerqwer' ]]
+
 rm -rf $tmpdir
