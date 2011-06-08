@@ -1,0 +1,34 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: ''
+    mode: reduce
+creation_date: Tue Mar 29 16:34:19 2011
+description: Execute one command, on a number of input files.
+filesets:
+  input:
+    category: input
+    help: '"reduce" input files'
+    optional: false
+    pattern: '*/*'
+    type: set
+  output:
+    category: output
+    help: '"reduce" output files'
+    optional: true
+    pattern: ./*
+    source: input
+    type: single
+moa_id: reduce
+modification_date: Wed Mar 30 06:02:01 2011
+name: reduce
+parameters:
+  process:
+    category: ''
+    default: true
+    help: The command to execute
+    optional: false
+    type: string
+    prevent_expansion: true
+title: Execute a "reduce" ad-hoc analysis
