@@ -29,19 +29,19 @@ def simpleRunner(wd, cl):
     - return the rc
     """
     
-    stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
-    outDir = os.path.join(wd, '.moa', 'out', stst)
+    #stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
+    #outDir = os.path.join(wd, '.moa', 'out', stst)
+    outDir = os.path.join(wd, '.moa', 'log.latest')
     if not os.path.exists(outDir):
         try:
             os.makedirs(outDir)
         except OSError:
             pass
+        
     SOUT = open(os.path.join(outDir, 'stdout'), 'a')
     SERR = open(os.path.join(outDir, 'stderr'), 'a')    
     l.debug("executing %s" % " ".join(cl))
-
-
-    l.critical(str(sysConf.options.silent))
+    
     if sysConf.options.silent or sysConf.force_silent:
         p = subprocess.Popen(cl, cwd = wd, stdout=SOUT, stderr=SERR)
         p.communicate()
@@ -80,6 +80,7 @@ def simpleRunner(wd, cl):
             pass
 
         sys.stdout.flush(); sys.stderr.flush()
+        
     #make sure that nothing is left
     o = p.stdout.read(); e = p.stderr.read()
     sys.stdout.write(o); sys.stderr.write(e)
@@ -89,17 +90,19 @@ def simpleRunner(wd, cl):
     #return returncode
     return p.returncode
 
+
 def getRecentOutDir(job):
     """
     Return the most recent output directory
     """
-    baseDir = os.path.join(job.confDir, 'out')
+    baseDir = os.path.join(job.confDir, 'log.latest')
     if not os.path.exists(baseDir):
-        return []
-    subDirs = [os.path.join(baseDir, x) for x in os.listdir(baseDir)]
-    subDirs = filter(os.path.isdir, subDirs)
-    subDirs.sort(key=lambda x: os.path.getmtime(x))
-    return subDirs[-1]
+        return None
+    #subDirs = [os.path.join(baseDir, x) for x in os.listdir(baseDir)]
+    #subDirs = filter(os.path.isdir, subDirs)
+    #subDirs.sort(key=lambda x: os.path.getmtime(x))
+    return baseDir
+
 
 def getLastStdout(job):
     """

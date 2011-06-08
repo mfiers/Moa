@@ -295,6 +295,16 @@ class Job(object):
             sysConf.jobId = old_id + 1
             with open(jobIdFile, 'w') as F:
                 F.write("%s" % sysConf.jobId)
+        #create a new folder for logging
+        logDir = os.path.join(self.confDir, 'log.d', '%d' % sysConf.jobId)
+        if not os.path.exists(logDir):
+            os.makedirs(logDir)
+        
+        #and a shortcut to that folder
+        latestDir = os.path.join(self.confDir, 'log.latest')
+        if os.path.exists(latestDir):
+            os.remove(os.path.join(self.confDir, 'log.latest'))
+        os.symlink('log.d/%d' % sysConf.jobId, latestDir)
 
         l.info("Acquired job id %s" % sysConf.jobId)        
         if self.backend and getattr(self.backend, 'prepare', None):
@@ -372,7 +382,8 @@ class Job(object):
             l.critical("Error loading backend %s" % backendName)
             raise
             
-        self.backend = getattr(module, backendName.capitalize())(self)
+        #self.backend = getattr(module, backendName.capitalize())(self)
+        self.backend = getattr(module, 'load')(self)
         self.initialize()
 
         

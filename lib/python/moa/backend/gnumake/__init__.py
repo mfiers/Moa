@@ -15,6 +15,13 @@ import moa.sysConf
 import moa.logger as l
 from moa.sysConf import sysConf
 
+
+def load(job):
+    """
+    Create & return the GnuMake backend
+    """
+    return Gnumake(job)
+
 class Gnumake(moa.backend.BaseBackend):
 
 
@@ -120,7 +127,7 @@ class Gnumake(moa.backend.BaseBackend):
 
         l.debug("executing %s" % " ".join(cl))
 
-        return moa.actor.simpleRunner(self.job.wd, cl, silent=silent)
+        return moa.actor.simpleRunner(self.job.wd, cl)
 
     def defineOptions(self, parser):
         g = parser.add_option_group('Gnu Make Backend')
