@@ -48,7 +48,7 @@ Parameters
 
   | *type*: `directory`
   | *default*: `.`
-  | *optional*: `{}`
+  | *optional*: `True`
 
 
 

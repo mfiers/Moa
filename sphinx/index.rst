@@ -13,6 +13,7 @@ Contents:
    intro
    install
    using
+   configuration
    filesets
    write_template
    commands/index

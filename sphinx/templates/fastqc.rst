@@ -37,7 +37,7 @@ Filesets
 
 
 
-**output**
+**touch**
   touch files - track if a file has been processed - do not touch this unless you know what you're doing.
 
 

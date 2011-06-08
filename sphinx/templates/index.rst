@@ -9,9 +9,9 @@ Contents:
    adhoc
    bamextract
    bartab
+   bdbb
    bfast_aln
    bfast_db
-   bidibebla
    blast
    blastdb
    blat
@@ -42,6 +42,7 @@ Contents:
    gmapdb
    gsMapper
    h_blast
+   hagfish
    kanga
    kangar_pe
    kangar_se
@@ -79,4 +80,5 @@ Contents:
    vmatchdb
    vpcr
    vpcr_list
+   wget
    

@@ -121,6 +121,15 @@ Parameters
 
 
 
+**orientation**
+  orientation of the reads, allowed values are fr, rf, ff
+
+  | *type*: `{}`
+  | *default*: `fr`
+  | *optional*: `True`
+
+
+
 **output_format**
   Format of the output file
 
