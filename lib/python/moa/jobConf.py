@@ -16,6 +16,7 @@ import re
 import os
 import sys
 import glob
+import copy
 
 import Yaco
 
@@ -101,7 +102,6 @@ class JobConf(object):
     def setMetavars(self):
         self.setPrivateVar('wd', self.job.wd)
         dirparts = self.job.wd.split(os.path.sep)
-        #print dirparts
         self.setPrivateVar('dir', dirparts[-1])
         i = 1                
         while dirparts:
@@ -114,19 +114,21 @@ class JobConf(object):
     def render(self):
         rv = {}
         toExpand = []
-
         
         # first get the vars that do not need expanding and remember
         # vars that do need jinja2 rendering
         for k in self.keys():
             v = self[k]
-            if isinstance(v, str) and \
+            templateInfo = self.job.template.parameters[k]
+            if templateInfo.get('prevent_expansion', False):                
+                rv[k] = v
+            elif isinstance(v, str) and \
                ('{{' in str(v) or '{%' in v):
                 toExpand.append(k)
             else:
                 rv[k] = v
 
-
+        
         # expand the needed jinja vars
         env = jEnv(undefined=StrictUndefined)
         statesSeen = []
@@ -189,10 +191,12 @@ class JobConf(object):
                 continue
             correctedPath = os.path.normpath(delta + '/' + v)
             relPath = os.path.relpath(correctedPath)
-            if os.path.exists(correctedPath):
-                y[k] = relPath
-            elif glob.glob(correctedPath):
-                y[k] = relPath
+            
+            #if os.path.exists(correctedPath):
+            #    y[k] = relPath
+            #elif glob.glob(correctedPath):
+            #    y[k] = relPath
+            y[k] = relPath
 
         self.jobConf.update(y)
 
