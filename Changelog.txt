@@ -1,3 +1,22 @@
+Moa 0.10.12 / 2011-05-31
+==========================
+
+  * Improved templates
+  * Forcing bin/moa to python2.6
+  * Resolving maps to single filesets (fist)
+  * Improved moa show, moa files, moa tree output
+  * Improved the output of moa files
+  * started moving web code to the plugins
+  * Allowing seperate template files for commands
+  * Template dealing with hagfish
+  * plugin defined commands that have no recursive mode are automatically "global" from now on
+  * Reporting to report.md (not moa.report)
+  * tabs now remember their last state (using cookies) (www)
+  * blog to Readme.md
+  * Recognize readme & changelog (but not report) as moa specific files
+  * work on the docs
+  * Allow simple jobs to access job data
+
 Moa 0.10.11 / 2011-05-12
 ==========================
 
