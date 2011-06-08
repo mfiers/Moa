@@ -142,7 +142,8 @@ class Ruff(moa.backend.BaseBackend):
                      help="Reexecute all targets (corresponds to make -B) ")
 
     def execute(self, command,
-                verbose=False, silent=False,
+                verbose=False,
+                silent=False,
                 renderTemplate = True):
         """
         Execute a command
@@ -314,10 +315,7 @@ class Ruff(moa.backend.BaseBackend):
                rc = 1
  
         elif cmode == 'simple':
-
-            #this is not good - i'm dumping the job in the job.conf
-            #object here - need to figure out a better way to do this
-            data = self.job.conf
+            data = self.job.conf.render()
             data['job'] = self.job
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
