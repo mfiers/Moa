@@ -21,4 +21,5 @@ parameters:
     help: The command to execute
     optional: false
     type: string
+    prevent_expansion: true
 title: Execute a "simple" ad hoc analysis

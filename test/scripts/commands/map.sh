@@ -17,9 +17,16 @@ moa set input="./test.*"  output="./out.*"
 
 output=`moa run 2>&1`
 
+echo "output:"
+echo $output
+
 # out.01 should be in the output (since it was processed)
 [[ "$output" =~ "out.01" ]] || (echo "invalid output 1" && false )
 output=`moa run 2>&1`
+
+echo "output:"
+echo $output
+
 # out.01 should not be in the output (it was already processed last time)
 [[ ! "$output" =~ "out.01" ]] || ( \
     echo "invalid output 2";

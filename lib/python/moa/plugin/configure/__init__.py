@@ -114,6 +114,8 @@ def configShow(job):
     for i, key in enumerate(outkeys):
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
         moa.ui.fprint(" " + outflags[i] + " ", f='jinja', newline=False)
+        if len(str(outvals[i])) == 0:
+            print
         for j, ll in enumerate(textwrap.wrap(str(outvals[i]), wrapInit)):
             if j == 0:
                 moa.ui.fprint(ll, f=None)

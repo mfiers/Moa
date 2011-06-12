@@ -124,6 +124,8 @@ class Ruff(moa.backend.BaseBackend):
                 jobData['wd'] = self.job.wd
                 jobData['silent'] = silent
                 jobData.update(fsDict)
+                #import pprint
+                #pprint.pprint(jobData)
                 script = self.commands.render(command, jobData)
                 l.debug("Executing %s" %  script)
 
@@ -168,19 +170,23 @@ class Ruff(moa.backend.BaseBackend):
                 l.debug("Finished running (with %d thread(s))" %
                    sysConf.options.threads)
 
-            except ruffus.ruffus_exceptions.RethrownJobError, e:
+            except ruffus.ruffus_exceptions.RethrownJobError as e:
                 #any error thrown somewhere in the pipeline will be
                 #caught here.
+                l.debug("CAUGHT A RUFFUS ERROR!")
+                l.debug(str(e))
+                startOfError = "{{gray}}" + re.sub(r'\s+', " ", str(e))[:72].strip() + "...{{reset}}"
+                moa.ui.error("Caught a Ruffus error")
+                moa.ui.error(startOfError)
+
                 try:
                     #try to get some structured info & output that.
                     einfo = e[0][1].split('->')[0].split('=')[1].strip()
                     einfo = einfo.replace('[', '').replace(']', '')
-                    moa.ui.warn("Caught an error processing: %s" % einfo)
-                    raise
+                    moa.ui.error("While  processing: %s" % einfo)
                 except:
-                    moa.ui.warn("Caught an error: \n%s" % str(e))
-                    raise
-                rc = 1
+                    pass
+                moa.ui.exitError("Quitting")
                  
         elif cmode == 'reduce':
             inputs = []
@@ -202,7 +208,6 @@ class Ruff(moa.backend.BaseBackend):
             jobData = {}
             jobData.update(self.job.conf.render())
             jobData['wd'] = self.job.wd
-            jobData['input']
             jobData['silent'] = silent
             jobData.update(fsInDict)
             jobData.update(fsOutDict)

@@ -33,14 +33,18 @@ def hook_defineCommands():
         'call' : createSimple,
         'needsJob' : False,
         'usage' : 'moa simple -t "title" -- echo "do something"',
-#        'unittest' : SIMPLETEST
         }
     sysConf['commands']['map'] = { 
         'desc' : 'Create a "map" adhoc analysis',
         'call' : createMap,
         'needsJob' : False,
         'usage' : 'moa map -t "title" -- echo "do something"',
-#        'unittest' : MAPTEST
+        }
+    sysConf['commands']['reduce'] = { 
+        'desc' : 'Create a "reduce" adhoc analysis',
+        'call' : createReduce,
+        'needsJob' : False,
+        'usage' : 'moa reduce -t "title" -- echo "do something"',
         }
     sysConf['commands']['!'] = { 
         'desc' : 'Moa-fy the last (bash) command issued',
@@ -229,6 +233,64 @@ def createMap(job):
         
     moa.job.newJob(
         wd, template='map',
+        title = options.title,
+        parameters=params)
+
+
+def createReduce(job):
+    """
+    Create a 'reduce' adhoc job.
+
+    There are a number of ways this command can be used::
+
+        $ moa reduce -t 'a title' -- echo 'define a command'
+
+    Anything after `--` will be the executable command. If omitted,
+    Moa will query the user for a command.
+
+    Moa will also query the user for input & output files. An example
+    session::
+
+        $ moa map -t 'something intelligent'
+        process:
+        > echo 'processing {{ input }} {{ output }}'
+        input:
+        > ../10.input/*.txt
+        output:
+        > ./*.out
+
+    Assuming you have a number of text files in the `../10/input/`
+    directory, you will see, upon running::
+
+       processing ../10.input/test.01.txt ./test.01.out
+       processing ../10.input/test.02.txt ./test.02.out
+       processing ../10.input/test.03.txt ./test.03.out
+       ...
+
+    """
+    wd = job.wd
+    options = sysConf.options
+    args = sysConf.args
+    
+    if not options.force and \
+           os.path.exists(os.path.join(wd, '.moa', 'template')):
+        moa.ui.exitError("Job already exists, use -f to override")
+
+    command = " ".join(args[1:]
+                       ).strip()
+    params = []
+    if not command and not options.noprompt:
+        command=moa.ui.askUser('process:\n> ', '')
+        params.append(('process', command))
+
+    if not options.noprompt:
+        input=moa.ui.askUser('input:\n> ', '')
+        output=moa.ui.askUser('output:\n> ', './output')
+        params.append(('input', input))
+        params.append(('output', output))
+        
+    moa.job.newJob(
+        wd, template='reduce',
         title = options.title,
         parameters=params)
 

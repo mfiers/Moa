@@ -3,26 +3,26 @@ backend: ruff
 commands:
   run:
     help: ''
-    mode: map
+    mode: reduce
 creation_date: Tue Mar 29 16:34:19 2011
 description: Execute one command, on a number of input files.
 filesets:
   input:
     category: input
-    help: '"map" input files'
+    help: '"reduce" input files'
     optional: false
     pattern: '*/*'
     type: set
   output:
     category: output
-    help: '"map" output files'
+    help: '"reduce" output files'
     optional: true
     pattern: ./*
     source: input
-    type: map
-moa_id: map
+    type: single
+moa_id: reduce
 modification_date: Wed Mar 30 06:02:01 2011
-name: map
+name: reduce
 parameters:
   process:
     category: ''
@@ -31,4 +31,4 @@ parameters:
     optional: false
     type: string
     prevent_expansion: true
-title: Execute a "map" ad-hoc analysis
+title: Execute a "reduce" ad-hoc analysis

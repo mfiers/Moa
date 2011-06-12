@@ -16,6 +16,7 @@ class templateTest(unittest.TestCase):
             # hence, only if it is called by RuffSuite()
             return
 
+        l.critical("testing %s" % self.job.template.name)
         templateName = self.job.template.name
         sysConf.job = self.job
 
