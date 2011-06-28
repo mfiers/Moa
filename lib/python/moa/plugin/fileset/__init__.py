@@ -30,6 +30,9 @@ def _prepFileList(fileList):
     wer = sysConf.www.webRoot
     rv = []
     for f in fileList:
+        #if f[0] == '.':
+        #    f = os.path.join(sysConf.job.wd, f)
+            
         fup = os.path.abspath(f)
         if os.path.exists(fup):
             linkClass = 'moaFileExists'
@@ -40,12 +43,12 @@ def _prepFileList(fileList):
             fullurl = fup.replace(dar, wer)
             dirurl = os.path.dirname(fup).replace(dar,wer)
             link = '<a class="%s" href="%s#fileBrowser">%s</a>' % (
-                linkClass, dirurl, os.path.basename(f))
+                linkClass, dirurl, os.path.basename(fup))  
             if linkClass == 'moaFileExists':
                 link += ' <span style="font-size: 60%%;">(<a href="%s">dl</a>)</span>' % (fullurl)
             rv.append(link)
         else:
-            rv.append("%s %s" % (fup, dar))
+            rv.append("%s" % (f)) #os.path.basename(f)))
     return rv
 
 
@@ -228,7 +231,7 @@ def hook_preFiles():
     Run before execution of any command (backend or plugin)
     """
     l.debug("preparing input files")
-    preparefilesets(data)
+    preparefilesets()
 
 
 def hook_pre_command():
