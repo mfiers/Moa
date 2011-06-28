@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+
+import os
+import re
+import sys
+import subprocess
+
+F = open("report.md", "w")
+F.write("#Bowtie mapping stats\n\n")
+
+stats = {}
+
+gap='http://chart.apis.google.com/chart?chbh=10,0,0&chs=100x20&cht=bhs&chco=4D89F9,E8EFFD&chds=0,%(max)d&chd=t:%(val)d|%(max)d&chdlp=l'
+
+bamfiles = "{{ job.data.filesets.output['files']|join(' ') }}".split()
+
+#bamfiles = []
+fields = []
+
+if len(bamfiles) == 0:
+    print "No bamfiles found"
+    sys.exit(0)
+
+for bamfile in bamfiles:
+    print 'gathering stats on', bamfile
+
+    reportFile = bamfile.replace('.bam', '.report')
+
+    stats[bamfile] = []
+    fields = []
+    
+    with open(reportFile) as G:
+        for line in G.readlines():
+            if not line.strip(): continue
+            no, fld = line.strip().split(" ", 1)
+            fldparser = re.match('(\+ \d+)?\s*(.*?)\s*(\(.*)?$', fld)             
+            if fldparser:
+                fld = fldparser.groups()[1]
+            fields.append(fld.split('(', 1)[0].strip())
+            stats[bamfile].append(int(no))
+        print line
+fieldset1 = [0, 1, 2, 3, 4, 7, 8, 9]
+
+#write the header for set 1
+F.write("## Read stats")
+F.write("<table><tr><td></td>")
+for i in fieldset1:
+    F.write("<td style='vertical-align: top; border-right: 1px dotted black;'>")
+    F.write("<small>%s</small></td>\n" % fields[i])
+F.write("</tr>\n")
+
+
+#now the rows:
+for bamfile in bamfiles:
+    F.write("<tr><td style='vertical-align: top; border-right: 1px dotted black;'><b><small>")
+    F.write("%s</small></b></td>\n" % os.path.basename(bamfile).replace('.bam', ''))
+
+    for i in fieldset1:
+        F.write("<td style='vertical-align: top; border-right: 1px dotted black;'>\n")
+        F.write('<img src="')
+        F.write(gap % {'max' : stats[bamfile][fieldset1[0]], 'val' : stats[bamfile][i]})
+        F.write('">\n')
+        F.write("<br><span style='font-size:50%%'>%d</span>" %  stats[bamfile][i])
+        F.write('  </td>')
+    F.write("</tr>")
+
+F.write("</table>")
+
+F.close()    
