@@ -22,8 +22,8 @@ site.addsitedir(os.path.join(os.environ['MOABASE'], 'lib', 'python'))
 import moa.job
 import moa.plugin
 from moa.sysConf import sysConf
-pluginHandler = moa.plugin.PluginHandler()
-sysConf.pluginHandler = pluginHandler
+
+sysConf.initialize()
 
 
 #initialize the jinja environment
@@ -98,7 +98,7 @@ def getBreadCrumbs():
 
 sysConf.MOABASE = MOABASE
 moacwd = getLocalDir()
-
+os.chdir(moacwd)
 sysConf.www.webRoot = getWebRoot()
 sysConf.www.dataRoot = getDataRoot()
 sysConf.requestUri = os.environ.get('REQUEST_URI')
@@ -136,10 +136,11 @@ for name in possible_files:
 job = moa.job.Job(moacwd)
 sysConf.job = job
 
+
 #make sure that some preparatory calls are executed
-pluginHandler.run('prepare_3')
-pluginHandler.run('preFiles')
-pluginHandler.run('prepareWWW')
+sysConf.pluginHandler.run('prepare_3')
+sysConf.pluginHandler.run('preFiles')
+sysConf.pluginHandler.run('prepareWWW')
 
 if job.template.name == 'nojob':
     pageTemplate = jenv.get_template('notMoa.html')
