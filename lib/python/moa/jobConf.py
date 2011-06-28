@@ -44,7 +44,8 @@ class JobConf(object):
         self.jobConf = Yaco.Yaco()
         self.localConf = Yaco.Yaco()
         self.jobConfFile = os.path.join(self.job.confDir, 'config')
-
+        self._rendered = {}
+        
         #: these fields are not to be saved
         self.doNotSave = []
         
@@ -111,9 +112,11 @@ class JobConf(object):
             self.setPrivateVar('dir%d' % i, p)
             i += 1
             
-    def render(self):
+    def render(self, force=False):
         rv = {}
         toExpand = []
+        #3if not force and self._rendered:
+        #    return self._rendered
         
         # first get the vars that do not need expanding and remember
         # vars that do need jinja2 rendering
@@ -141,12 +144,14 @@ class JobConf(object):
             except jinja2.exceptions.UndefinedError:
                 # not (yet?) possible
                 if len(toExpand) == 0:
-                    moa.ui.error("unsolvable configuration - cannot expand '%s'" % key)
+                    l.debug("unsolvable configuration - cannot expand '%s'" % key)
+                    rv[key] = self[key]
                     break
                 toExpand.append(key)
                 continue
             rv[key] = nw
 
+        self._rendered = rv
         return rv
 
     def isPrivate(self, k):
@@ -294,8 +299,9 @@ class JobConf(object):
         self.localConf[key] = value
 
     def __setattr__(self, key, value):
-        if key in ['job', 'jobConf', 'jobConfFile', 'localConf',
-                   'doNotCheck', 'doNotSave', 'private']:
+        if key[0] == '_' or \
+               key in ['job', 'jobConf', 'jobConfFile', 'localConf',
+                       'doNotCheck', 'doNotSave', 'private']:
             object.__setattr__(self, key, value)
         elif key[:4] == '_JC_':
             object.__setattr__(self, key, value)
@@ -303,8 +309,9 @@ class JobConf(object):
             return self.__setitem__(key, value)
         
     def __getattr__(self, key):
-        if key in ['job', 'jobConf', 'jobConfFile', 'localConf',
-                   'doNotCheck', 'doNotSave', 'private']:
+        if key[0] == '_' or \
+               key in ['job', 'jobConf', 'jobConfFile', 'localConf',
+                       'doNotCheck', 'doNotSave', 'private']:
             object.__getattr__(self, key)
         elif key[:4] == '_JC_':
             object.__getattr__(self, key)
