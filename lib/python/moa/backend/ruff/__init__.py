@@ -247,7 +247,7 @@ class Ruff(moa.backend.BaseBackend):
             data['job'] = self.job
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
-            script = self.commands.render(command, self.job.conf)
+            script = self.commands.render(command, data)
             tf.write(script + "\n")
             tf.close()
             os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
