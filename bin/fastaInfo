@@ -257,7 +257,7 @@ for what in args:
     statAdd(data, 'over100k', len(np.where(d>=1e5)[0]), what, storeStats)
     statAdd(data, 'over1m', len(np.where(d>=1e6)[0]), what, storeStats)
 
-    hist, edges = np.histogram(d, binsteps, new=True)
+    hist, edges = np.histogram(d, binsteps)
     exportHist[what] = hist
     exportHistBin[what] = edges
 
