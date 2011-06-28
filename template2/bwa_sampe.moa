@@ -54,57 +54,43 @@ parameter_category_order:
 - advanced
 parameters:
   db:
-    allowed: []
-    category: ''
-    default: ''
     help: bwa database to align against
     optional: false
     type: string
   disable_SW:
-    category: ''
     default: false
     help: disable Smith-Waterman for the unmapped mate
     optional: true
     type: boolean
   disable_insert_size:
-    category: ''
     default: false
     help: disable insert size estimate (force -s)
     optional: true
     type: boolean
   max_aln_out:
-    category: ''
     default: 3
     help: maximum hits to output for paired reads
     optional: true
     type: integer
   max_insert_size:
-    category: ''
     default: 500
     help: maximum insert size
     optional: true
     type: integer
   max_occ_read:
-    category: ''
-    default: 100000
     help: maximum occurrences for one end
     optional: true
     type: integer
   max_out_discordant_pairs:
-    category: ''
-    default: 10
     help: maximum hits to output for discordant pairs
     optional: true
     type: integer
   preload_index:
-    category: ''
     default: false
     help: preload index into memory (for base-space reads only)
     optional: true
     type: boolean
   prior_chimeric_rate:
-    category: ''
-    default: 1.0000000000000001e-05
     help: prior of chimeric rate (lower bound)
     optional: true
     type: integer

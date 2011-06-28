@@ -1,17 +1,18 @@
 ### run
 
 echo running bwa_sampe
-bwa sampe -a {{max_insert_size}}                        \
-    -o {{max_occ_read}}                                 \
-    -n {{max_aln_out}}                                  \
-    -N {{max_out_discordant_pairs}}                     \
-    -c {{prior_chimeric_rate}}                          \
-    {% if preload_index %} -P {% endif %}				\
-    {% if disable_SW %} -s {% endif %}					\
-    {% if disable_insert_size %}, -A {% endif %} 		\
-    {{ db }}                                            \
-    {{ sai_forward_input }} {{ sai_reverse_input }}     \
-    {{ fq_forward_input }} {{ fq_reverse_input }}       \
+bwa sampe \
+    {% if max_insert_size %} -a {{max_insert_size}} {% endif %} \
+    {% if max_occ_read %} -o {{max_occ_read}} {% endif %} \
+    {% if max_aln_out %} -n {{max_aln_out}} {% endif %} \
+    {% if max_out_discordant_pairs %} -N {{max_out_discordant_pairs}} {% endif %} \
+    {% if prior_chimeric_rate %} -c {{prior_chimeric_rate}} {% endif %} \
+    {% if preload_index %} -P {% endif %} \
+    {% if disable_SW %} -s {% endif %} \
+    {% if disable_insert_size %} -A {% endif %} \
+    {{ db }} \
+    {{ sai_forward_input }} {{ sai_reverse_input }} \
+    {{ fq_forward_input }} {{ fq_reverse_input }} \
        | samtools view -bhS - | samtools sort - `basename {{ output_bam }} .bam`
 
 

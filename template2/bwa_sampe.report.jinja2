@@ -1,0 +1,14 @@
+#!/bin/bash -ev
+
+for x in *.bam
+do
+    samtools flagstat $x > `basename $x .bam`.report
+done
+
+echo "Samtools report" > report.txt
+for x in *.report
+do
+    cat $x
+    echo
+done >> report.txt
+    

@@ -1,12 +1,21 @@
 ### run
+
+outbase=`basename {{ output }} .bam`
 														
-bowtie -S {{ extra_params }}           	    \
-    {{ ebwt_base }}                     	\
-    {{ fq_input }} | samtools view -bS - > {{ output }}
+bowtie -S {{ extra_params }} --un ${outbase}.unmapped.fq		\
+	--un ${outbase}.unmapped.fq									\
+    {{ ebwt_base }} {{ fq_input }}								\
+	| samtools view -bS - ${outbase}.unsorted.bam
+
+samtools sort ${outbase}.unsorted.bam ${outbase}
+samtools index ${outbase}.bam
+samtools flagstat ${outbase}.bam  > ${outbase}.report
 
 ### clean
 
 rm *.bam
+rm *.bam.bai
+rm *.report
 
 ### unittest
 

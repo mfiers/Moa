@@ -35,12 +35,16 @@ b=2
 test_2:
 	echo 'x' $(if $(call seq,$(a),$(b)),Equal,Not so)
 
+vpcr.out: vpcr.sam
+	samtools view -S -f 67 vpcr.sam \
+		| awk '{if ($$4 < $$8) print $$1,$$3,"+",$$4,$$9,$$8; else print $$1, $$3,"-",$$8,-1*$$9,$$4; }' \
+		> vpcr.out
 
-vpcr.out: vpcr_input
-	bowtie --all -f --chunkmbs 256 -y  -I 10 -X 1000 \
+vpcr.sam: vpcr_input
+	bowtie --all -f -S --chunkmbs 256 -y  -I 10 -X 1000 \
 		-v 3 --fr -I $(vpcr_list_insert_min) -X $(vpcr_list_insert_max)		\
 		 $(vpcr_list_bowtie_db) -1 forward.fasta -2 reverse.fasta			\
-			> vpcr.out
+			> vpcr.sam
 
 .PHONY: vpcr_input
 vpcr_input: $(vpcr_list_primer_list)
@@ -48,5 +52,4 @@ vpcr_input: $(vpcr_list_primer_list)
 	cat $< | grep -v '#' | awk '{print ">" $$1 "\n" $$3}' > reverse.fasta
 
 vpcr_list_clean:
-	rm -f *.fasta
-	rm -f vpcr.out
+	rm -f *.fasta vpcr.out vpcr.sam

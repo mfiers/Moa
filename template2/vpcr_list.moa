@@ -13,7 +13,7 @@ description: Virtual PCR, based on Bowtie
 filesets: {}
 moa_id: vpcr_list
 modification_date: Wed Nov 10 07:56:48 2010
-name: Vpcr with a list of primers
+name: vpcr_list
 parameter_category_order:
 - ''
 - system
