@@ -69,7 +69,7 @@ def test_ui():
     
     if messages and not options.force:
         sysConf.pluginHandler.run('postError')
-        moa.ui.exitError("exitting")
+        sys.exit(-1)
     
 def test():
     job = sysConf['job']

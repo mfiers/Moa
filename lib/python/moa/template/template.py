@@ -55,7 +55,16 @@ class Template(Yaco.Yaco):
             'optional' : True,
             'private' : True,
             }
-
+        
+        self.parameters.jobid = {
+            'help' : 'Identifier for this job - Should unique in the' +
+               'context of this workflow',
+            'optional' : True,
+            'recursive' : False,
+            'type' : 'string',
+            'default' : 'unset'
+            }
+        
         self.filesets = {}
 
         #try to load the template!!

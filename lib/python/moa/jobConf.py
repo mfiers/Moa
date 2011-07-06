@@ -95,6 +95,21 @@ class JobConf(object):
         if self.jobConf.has_key('private'):
             del self.jobConf['private']
 
+        self._checkJobId()
+
+
+    def _checkJobId(self):
+        """
+        See if the job id is set - if not set it to a reasonable
+        initial value
+        """
+        jobid = self['jobid']
+        if jobid != 'unset': return
+        name = os.path.basename(os.getcwd())
+        name = re.sub("^[0-9]*\.*", "", name)
+        moa.ui.message("Setting job id to '%s'" % name)
+        self['jobid'] = name
+        self.save()
 
     def setPrivateVar(self, k, v):
         self.private.append(k)
@@ -104,20 +119,23 @@ class JobConf(object):
         self.setPrivateVar('wd', self.job.wd)
         dirparts = self.job.wd.split(os.path.sep)
         self.setPrivateVar('dir', dirparts[-1])
+        self.setPrivateVar('_', dirparts[-1])
         i = 1                
         while dirparts:
             p = dirparts.pop()
             if not p:
                 break
             self.setPrivateVar('dir%d' % i, p)
+            self.setPrivateVar('_%d' % i, p)
+            if i <= 3:
+                self.setPrivateVar('_' * i, p)
+
             i += 1
-            
+
     def render(self, force=False):
         rv = {}
         toExpand = []
-        #3if not force and self._rendered:
-        #    return self._rendered
-        
+                
         # first get the vars that do not need expanding and remember
         # vars that do need jinja2 rendering
         for k in self.keys():
@@ -131,7 +149,6 @@ class JobConf(object):
             else:
                 rv[k] = v
 
-        
         # expand the needed jinja vars
         env = jEnv(undefined=StrictUndefined)
         statesSeen = []
@@ -186,9 +203,16 @@ class JobConf(object):
         if not delta:
             self.jobConf.update(y)
             return
-
+        
+        normdelta = os.path.normpath(delta)
+        
+        if y.has_key('jobid'):
+            self.setPrivateVar('_%s' % y['jobid'], normdelta)
+        
         #find relative links & see if they need to be adjusted
         for k, v in y.items():
+            
+            
             #find potential relative links
             if not isinstance(v, str): continue
             if not v: continue

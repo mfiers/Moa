@@ -16,8 +16,18 @@ import os
 import moa.ui
 import moa.utils
 import textwrap
+import optparse
 import moa.logger as l
 from moa.sysConf import sysConf
+
+
+def hook_defineOptions():
+    parserG = optparse.OptionGroup(
+        sysConf.parser, 'Moa Show')
+    parserG.add_option('-p', action='store_true',
+                       dest='showPrivate', 
+                       help = 'Show private variables')
+    sysConf.parser.add_option_group(parserG)
 
 def hook_defineCommands():
     """
@@ -72,16 +82,27 @@ def configShow(job):
     rendered = job.conf.render()
     
     for p in keys:
-        if p[:4] == 'moa_': continue
+
+        isPrivate = False
+        
+        if p[:4] == 'moa_':
+            if not sysConf.options.showPrivate:
+                continue
 
         #see if this private in the template defintion
         if job.conf.isPrivate(p):
-            continue
+            if sysConf.options.showPrivate:
+                isPrivate = True
+            else:
+                continue
 
         outkeys.append(p)
 
         #is this variable defined?
-        if job.conf.setInJobConf(p):
+        if isPrivate:
+            outflags.append('{{red}}p{{reset}}')
+            outvals.append(job.conf[p])
+        elif job.conf.setInJobConf(p):
             #yes: locally?
             if job.conf.is_local(p):
                 outflags.append('{{green}}L{{reset}}')
@@ -97,11 +118,15 @@ def configShow(job):
                 if val:
                     outvals.append(val)
                 else:
-                    outvals.append(moa.ui.fformat('{{gray}}(undefined){{reset}}', f='j'))
+                    outvals.append(
+                        moa.ui.fformat(
+                            '{{gray}}(undefined){{reset}}', f='j'))
             else:
                 #wow - not optional
                 outflags.append('{{bold}}{{red}}E{{reset}}')
-                outvals.append(moa.ui.fformat('{{red}}{{bold}}(undefined){{reset}}', f='j'))
+                outvals.append(
+                    moa.ui.fformat(
+                        '{{red}}{{bold}}(undefined){{reset}}', f='j'))
 
     maxKeylen = max([len(x) for x in outkeys]) + 1
 
