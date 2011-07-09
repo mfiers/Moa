@@ -1,0 +1,26 @@
+### clean
+
+#this is rather a drastic approach - delete all subdirs - except __sync_source
+
+echo ${AMISURE}
+
+if [[ "${AMISURE}" != "yes" ]]
+then
+	echo "This is a drastic operation"
+	echo 'please run with env var "AMISURE" to "yes":'
+	echo
+	echo '$ AMISURE=yes moa clean'
+	echo 
+	exit 0
+fi
+echo "I am sure!"
+for f in *
+do
+	if [[ "$f" == "__sync_source" ]]
+	then
+		continue
+	fi
+
+	rm -rf $f
+done
+
