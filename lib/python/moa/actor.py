@@ -21,7 +21,7 @@ import subprocess
 import moa.logger as l
 from moa.sysConf import sysConf
 
-def simpleRunner(wd, cl):
+def simpleRunner(wd, cl, conf={}):
     """
     - put env in the environment
     - Execute the commandline (in cl)
@@ -38,6 +38,20 @@ def simpleRunner(wd, cl):
         except OSError:
             pass
         
+
+    #dump the configuration in the environment
+    for k in conf:
+        # to prevent collusion, prepend all env variables
+        # with 'moa_'
+        outk = 'moa_' + k
+        v = conf[k]
+        if isinstance(v, list):
+            os.putenv(outk, " ".join(v))
+        elif isinstance(v, dict):
+            continue
+        else:
+            os.putenv(outk, str(v))
+
     SOUT = open(os.path.join(outDir, 'stdout'), 'a')
     SERR = open(os.path.join(outDir, 'stderr'), 'a')    
     l.debug("executing %s" % " ".join(cl))
