@@ -56,22 +56,32 @@ class RuffCommands(Yaco.Yaco):
                     'args' : spl[1:] }
             
         # then load new style -looking for files called
-        # {{moa_id}}.command.jinja2
+        # {{moa_id}}.command.*
 
         #to be implemented
-        glb = "%s/template.d/%s.*.jinja2" % (
+        glb = "%s/template.d/%s.*" % (
             self._confDir, self._moaid)
+
+        finare = re.compile(r'.*/' 
+                            + self._moaid 
+                            + r'\.(\w+)\.(\w+)')
+
         for f in glob.glob(glb):
-            cname = f.rsplit('/',1)[-1]\
-                    .replace('%s.' % self._moaid, '')\
-                    .replace('.jinja2', '')
+            findName = finare.match(f)
+            if not findName: 
+                #this could be the .jinja or .moa file
+                continue
+            cname, cext = findName.groups()
             with open(f) as F:
                 raw = F.read()
+            cargs = []
+            if cext != 'jinja':
+                cargs.append('noexpand')
             self[cname] = {
                 'script' : raw,
-                'args' : []}
-        
-            
+                'ext' : cext,
+                'args' : cargs}
+                    
     def  render(self, command, data):
 
         if not self.has_key(command):
