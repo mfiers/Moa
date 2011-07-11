@@ -26,6 +26,7 @@ from jinja2 import StrictUndefined
 import jinja2.exceptions
 
 import moa.logger as l
+import moa.ui
 import moa.utils
 
 class JobConf(object):
@@ -230,9 +231,12 @@ class JobConf(object):
         self.jobConf.update(y)
 
     def save(self):
-        self.job.checkConfDir()
-        self.localConf.save(self.jobConfFile, self.doNotSave)
-
+        try:
+            self.job.checkConfDir()
+            self.localConf.save(self.jobConfFile, self.doNotSave)
+        except OSError:
+            moa.ui.error("Error saving config file")
+            
     def setInJobConf(self, key):
         c = self._get_conf(key)
         if c.has_key(key):
