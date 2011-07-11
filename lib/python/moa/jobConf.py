@@ -108,7 +108,7 @@ class JobConf(object):
         if jobid != 'unset': return
         name = os.path.basename(os.getcwd())
         name = re.sub("^[0-9]*\.*", "", name)
-        moa.ui.message("Setting job id to '%s'" % name)
+        l.debug("Setting job id to '%s'" % name)
         self['jobid'] = name
         self.save()
 
