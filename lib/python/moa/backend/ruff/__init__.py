@@ -119,7 +119,7 @@ class Ruff(moa.backend.BaseBackend):
                 fsDict = dict([(x, self.job.data.filesets[x]['files'][i])
                                for x in self.job.data.inputs + self.job.data.outputs])
 
-                jobData = {}
+                jobData = self.job.data.simple()
                 jobData.update(self.job.conf.render())
                 jobData['wd'] = self.job.wd
                 jobData['silent'] = silent
@@ -144,7 +144,7 @@ class Ruff(moa.backend.BaseBackend):
         #metadata that might have stuck from the last time
         if hasattr(executor, 'pipeline_task'):
             del executor.pipeline_task
-
+            
         if cmode == 'map':
             #if there are no & output files complain:
             if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
@@ -205,7 +205,7 @@ class Ruff(moa.backend.BaseBackend):
                 [(x, self.job.data.filesets[x]['files'][0])
                  for x in self.job.data.outputs])
 
-            jobData = {}
+            jobData = self.job.data.simple()
             jobData.update(self.job.conf.render())
             jobData['wd'] = self.job.wd
             jobData['silent'] = silent
@@ -243,7 +243,8 @@ class Ruff(moa.backend.BaseBackend):
                rc = 1
  
         elif cmode == 'simple':
-            data = self.job.conf.render()
+            data = self.job.data.simple()
+            data.update(self.job.conf.render())
             data['job'] = self.job
             tf = tempfile.NamedTemporaryFile( 
                 delete = False, prefix='moa', mode='w')
