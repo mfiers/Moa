@@ -236,6 +236,8 @@ class JobConf(object):
             self.localConf.save(self.jobConfFile, self.doNotSave)
         except OSError:
             moa.ui.error("Error saving config file")
+        except IOError:
+            moa.ui.error("Error saving config file")
             
     def setInJobConf(self, key):
         c = self._get_conf(key)
