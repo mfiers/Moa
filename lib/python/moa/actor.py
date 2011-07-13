@@ -21,8 +21,23 @@ import subprocess
 import moa.logger as l
 from moa.sysConf import sysConf
 
+
+def getRunner():
+
+    
+    return simpleRunner
+
+def sgeRunner(wd, cl, conf={}):
+    """
+    Run using SGE
+    """
+    
+
 def simpleRunner(wd, cl, conf={}):
     """
+    Don't think - just run - here & now
+
+    what does this function do?
     - put env in the environment
     - Execute the commandline (in cl)
     - store stdout & stderr in log files

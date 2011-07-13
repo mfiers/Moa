@@ -124,8 +124,7 @@ class Ruff(moa.backend.BaseBackend):
                 jobData['wd'] = self.job.wd
                 jobData['silent'] = silent
                 jobData.update(fsDict)
-                #import pprint
-                #pprint.pprint(jobData)
+                #print jobData.pretty()
                 script = self.commands.render(command, jobData)
                 l.debug("Executing %s" %  script)
 
@@ -252,7 +251,8 @@ class Ruff(moa.backend.BaseBackend):
             tf.write(script + "\n")
             tf.close()
             os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            rc = moa.actor.simpleRunner(self.job.wd, [tf.name], data)
+            runner = moa.actor.getRunner()
+            rc = runner(self.job.wd, [tf.name], data)
 
         #empty the ruffus node name cache needs to be empty -
         #otherwise ruffus might think that we're rerunning jobs
@@ -301,7 +301,8 @@ def executor(input, output, script, jobData):
         else:
             os.putenv(k, str(v))
 
-    rc = moa.actor.simpleRunner(jobData['wd'],  [tf.name], jobData)
+    runner = moa.actor.getRunner()
+    rc = runner(jobData['wd'],  [tf.name], jobData)
     if rc != 0:
         raise ruffus.JobSignalledBreak
     l.debug("Executing %s" % tf.name)
