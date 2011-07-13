@@ -62,8 +62,7 @@ class PluginHandler():
             if not hasattr(m, 'hook_' + command):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
-
-            rv['p'] = getattr(m, "hook_" + command)()
+            rv[p] = getattr(m, "hook_" + command)()
         return rv
             
     def runCallback(self, job, command):
