@@ -1,31 +1,50 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import yaml
 
 #walk through the input directories
 dirlist = []
 templateId = ""
 
-source = os.environ.get('moa_source')
-if not source:
-    print "source directory is not defined"
-    sys.exit(-1)
-if not os.path.isdir(source):
-    print "Source is not a directory" 
+def errex(message):
+    print message
     sys.exit(-1)
 
+source = os.environ.get('moa_source')
+original = os.environ.get('moa_original', "")
+
+if not source:
+    errex("source directory is not defined")
+
+if not os.path.isdir(source):
+    errex("Source is not a directory")
+
 print "Source directory: %s" % source
+
+lastAccessTime = 0
+lastAccessDir = None
 
 for indir in os.listdir('.'):
     if indir[0] == '.': continue
     if not os.path.isdir(indir):
         print "Ignoring %s (not a dir)" % indir
         continue
+
     templateFile = os.path.join(indir, '.moa', 'template')
     if not os.path.isfile(templateFile):
-        print "Invalid moa directory %s" % indir
-        sys.exit(-1)
+        errex("Invalid moa directory %s" % indir)
+
+    confFile = os.path.join(indir, '.moa', 'config')
+
+    #read timestamp
+    tist = os.path.getmtime(confFile)
+    #print tist, lastAccessTime, tist > lastAccessTime
+    if tist > lastAccessTime:
+        lastAccessTime = tist
+        lastAccessDir = indir
+
     with open(templateFile) as F:
         template = yaml.load(F)
         if not templateId:
@@ -40,15 +59,23 @@ for indir in os.listdir('.'):
 
 print "Found %d directories" % len(dirlist),
 print "With the '%s' template" % templateId
+print "Last accessed is '%s'" % lastAccessDir
 
-if len(dirlist) == 0:
-    print "Zero directories found - cannot sync"
+if not original: 
+    original = lastAccessDir
+
+print "Using '%s' as original" % original
+
+if not os.path.exists(original):
+    print "No original found - cannot sync"
     print "set up at least one moa directory to work from"
+    print "or correct original"
     sys.exit(-1)
 
-copySource = dirlist[0]
 
 print "start parsing the source directory"
+originalConf = os.path.join(original, '.moa', 'config')
+
 for indir in os.listdir(source):
     sourceDir = os.path.join(source, indir)
     basename = os.path.basename(indir)
@@ -56,10 +83,14 @@ for indir in os.listdir(source):
     if not os.path.isdir(sourceDir):
         print "ignoring source %s (not a directory)" % indir
         continue
-    if basename in dirlist:
-        print "ignoring source %s (already present)" % basename
+    if not basename in dirlist:
+        cl = 'moa cp %s %s' % (original, basename)
+        print 'Executing %s' % cl
+        os.system(cl)
+    else:
+        targetConf = os.path.join(basename, '.moa', 'config')
+        cl = 'cp %s %s' % (originalConf, targetConf)
+        print "Copying configuration from %s to %s" % (original, basename)
+        os.system(cl)
         continue
 
-    cl = 'moa cp %s %s' % (copySource, basename)
-    print 'Executing %s' % cl
-    os.system(cl)
