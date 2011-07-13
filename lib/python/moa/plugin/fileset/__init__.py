@@ -80,9 +80,6 @@ def hook_prepareWWW():
             fs['lifs'] = _prepFileList(fs.files)
             job.data.mappedSets[source]['maps'][fsid] = fs
 
-
-
-
 def hook_defineCommands():
     """
     Set the moa commands for this plugin
@@ -320,6 +317,9 @@ def preparefilesets():
             job.data.prerequisites.append(fsid)
         if fs.category == 'other':
             job.data.others.append(fsid)
+
+        #add a shortcut - easier access alter
+        job.data['%s_files' % fsid] = job.data.filesets[fsid].files
 
     for fsid in job.data.filesets.keys():
         fs = job.data.filesets[fsid]
