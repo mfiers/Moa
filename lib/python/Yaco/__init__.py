@@ -177,6 +177,38 @@ class Yaco(dict):
     def __delitem__(self, name):
         return super(Yaco, self).__delitem__(name)
 
+
+    def simple(self):
+        """
+        return a simplified representation of this
+        Yaco struct - remove Yaco from the equation - and
+        all object reference. Leave only bool, float, str, 
+        lists, tuples and dicts
+
+        >>> x = Yaco()
+        >>> x.y.z = 1
+        >>> assert(isinstance(x.y, Yaco))
+        >>> s = x.simple()
+        >>> assert(s['y']['z'] == 1)
+        >>> assert(isinstance(s['y'], dict))
+        >>> assert(not isinstance(s['y'], Yaco))
+        """
+
+        def _returnSimple(item):
+            if isinstance(item, (str, bool, int, float)):
+                return item
+            elif isinstance(item, list):
+                return [_returnSimple(x) for x in item]
+            elif isinstance(item, tuple):
+                return (_returnSimple(x) for x in item)
+            elif isinstance(item, dict):
+                return dict([(k, _returnSimple(item[k]))
+                             for k in item])
+            else:
+                return str(item)
+
+        return _returnSimple(self)
+            
     def _list_parser(self, old_list):
         """
         Recursively parse a list & replace all dicts with Yaco objects
