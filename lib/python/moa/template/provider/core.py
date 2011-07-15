@@ -52,6 +52,8 @@ class Core(provider.ProviderBase):
         for f in moa.utils.listResource(self.TEMPLATEBASE):
             if f[-4:] != '.moa':
                 continue
+            if f[0] == '.': 
+                continue
             name = f.replace(".moa", "")
             r.append(f[:-4])
         return r
