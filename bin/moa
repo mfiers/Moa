@@ -47,17 +47,20 @@ import sys
 import optparse
 import textwrap
 
-#moa specific libs
+# the system configuration is available as a global for the
+# rest of the system
+
+from moa.sysConf import sysConf
+sysConf.initialize()
+
+# moa specific libs
 import moa.job
 import moa.utils
+import moa.actor
 import moa.version
 import moa.plugin
 import moa.commands
 
-#the system configuration is available as a global from the
-#sysConf module
-from moa.sysConf import sysConf
-sysConf.initialize()
 
 ## Initialize the logger
 import moa.logger as l
@@ -142,6 +145,9 @@ def run_3(wd):
     or the job itself
     """
 
+    #finally we have a directory to run in - see if this job want to
+    #be executed..
+
     #make sure we're in the correct wd for the rest of the invocation
     os.chdir(wd)
 
@@ -151,6 +157,8 @@ def run_3(wd):
     #create a job object
     job = moa.job.Job(wd)
     sysConf.job = job
+
+    doRun = sysConf.pluginHandler.run('check_run')
     
     ## Aks the job & backend if they want to add to the options
     try:
@@ -187,8 +195,8 @@ def run_3(wd):
         sysConf.pluginHandler.run('prepare_3')
         sysConf.pluginHandler.run("pre%s" % command.capitalize())
         sysConf.pluginHandler.runCallback(job, command)
-        sysConf.pluginHandler.run("post%s" % command.capitalize())
-        sysConf.pluginHandler.run('finish')
+        sysConf.pluginHandler.run("post%s" % command.capitalize(), reverse=True)
+        sysConf.pluginHandler.run('finish', reverse=True)
 
     elif not job.isMoa():
         moa.ui.exitError("Unknown command, not in a Moa dir")
@@ -264,6 +272,7 @@ def run_2(force_silent=False):
             run_recursive(wd)
         else:
             run_3(wd)
+
     sysConf.pluginHandler.run('post_recursion')
 
 
@@ -319,7 +328,11 @@ if __name__ == "__main__":
         sysConf.rc = -1
         sysConf.pluginHandler.run("post_interrupt")
         moa.ui.warn("Interrupted")
-        sys.exit(-1)
+        print sysConf.options
+        if sysConf.options.verbose:
+            raise
+        else:
+            sys.exit(-1)
     except Exception, e:
         sysConf.rc = -1
         sysConf.pluginHandler.run("post_error")
