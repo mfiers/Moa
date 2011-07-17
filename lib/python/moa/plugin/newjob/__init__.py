@@ -29,10 +29,7 @@ def hook_defineCommands():
 
 def hook_defineOptions():
     try:
-        parserN = optparse.OptionGroup(sysConf['parser'], "moa new")
-        sysConf['parser'].set_defaults(title="")
-        parserN.add_option("-t", "--title", dest="title", help="Job title")
-        sysConf['parser'].add_option_group(parserN)
+        sysConf.parser.add_option("-t", dest="title", help="Job title")
     except optparse.OptionConflictError:
         pass
 
