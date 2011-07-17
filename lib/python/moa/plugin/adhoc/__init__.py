@@ -54,23 +54,17 @@ def hook_defineCommands():
         }
 
 def hook_defineOptions():
-    parserN = optparse.OptionGroup(
-        sysConf['parser'], "Moa adhoc, simple & map")
     try:
-        parserN.add_option("-t", "--title", dest="title", help="Job title")
+        sysConf.parser.add_option("-t", "--title", dest="title", help="Job title")
     except  optparse.OptionConflictError:
         pass
 
     try:
-        parserN.add_option("--np", dest="noprompt", action='store_true',
-                           help="Do not prompt for process, input or output")        
+        sysConf.parser.add_option("--np", dest="noprompt", action='store_true',
+                                  help="Do not prompt for process, input or output")        
     except optparse.OptionConflictError:
         pass # this options are probably already defined in the newjob plugin
 
-    parserN.add_option("-m", "--mode",
-                       dest="mode",
-                       help="Adhoc mode to run (omit for moa to guess)")
-    sysConf['parser'].add_option_group(parserN)
 
 
 def createSimple(job):
