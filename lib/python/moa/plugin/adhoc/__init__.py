@@ -55,7 +55,7 @@ def hook_defineCommands():
 
 def hook_defineOptions():
     try:
-        sysConf.parser.add_option("-t", "--title", dest="title", help="Job title")
+        sysConf.parser.add_option("-t", dest="title", help="Job title")
     except  optparse.OptionConflictError:
         pass
 
