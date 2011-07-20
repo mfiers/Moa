@@ -328,7 +328,6 @@ if __name__ == "__main__":
         sysConf.rc = -1
         sysConf.pluginHandler.run("post_interrupt")
         moa.ui.warn("Interrupted")
-        print sysConf.options
         if sysConf.options.verbose:
             raise
         else:
