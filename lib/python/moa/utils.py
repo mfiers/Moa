@@ -53,7 +53,6 @@ def getTerminalSize():
             cr = (25, 80)
     return int(cr[1]), int(cr[0])
 
-
 def resourceExists(what):
     return pkg_resources.resource_exists(
         __name__, os.path.join('..', what)) \
