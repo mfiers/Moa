@@ -1,0 +1,226 @@
+#!/usr/bin/env python
+# 
+# Copyright 2009 Mark Fiers, Plant & Food Research
+# 
+# This file is part of Moa - http://github.com/mfiers/Moa
+# 
+# Moa is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+# 
+# Moa is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+# License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with Moa.  If not, see <http://www.gnu.org/licenses/>.
+# 
+"""
+Efficient extraction of sequences from a multifasta file
+"""
+
+import re
+import os
+import sys
+import time
+import copy
+import string
+import optparse
+
+def fastareader(f):
+    """
+    Take a filename (`f`), open and read it. 
+
+    This Function yields tuples:
+
+        (seq-id, rest-of-header, sequence)
+
+    """
+    F = open(f)
+    id, header, seq = "", "", []
+
+    while True:
+        l = F.readline()
+        if not l: break
+        
+        l = l.strip()
+        if not l: continue
+
+        if l[0] == '>':
+            if id  and seq:
+                yield id, header, "".join(seq)
+            seq = []
+            id = l[1:].split()[0]
+            header = " ".join(l[1:].split()[1:])
+                        
+        else:
+            seq.append("".join(l.split()).lower())
+
+    if id and seq:
+        yield id, header, "".join(seq)
+
+    F.close()
+
+## get & parse command line options
+parser = optparse.OptionParser()
+
+parser.add_option('-l', '--list', dest='list',
+    help = 'list of ids to extract')
+
+parser.add_option('-f', '--fasta', dest='fasta',
+    help = 'fasta file to extract from')
+
+parser.add_option('-L', '--linker', dest='linker', 
+                  default='NNCTAGTCTAGACTAGNN',
+                  help=('linker sequence to merge (use N100 to define a ' +
+                        'stretch of 100 Ns, defaults to a short linker with a ' +
+                        'stop codong in all 6 frames'))
+
+parser.add_option('-g', '--gapconvert', dest='gapConvert', action='store_true',
+                  help='convert gaps (poly-N-stretches) to the linker sequence')
+
+parser.add_option('-s', '--source', dest='source', default='mumscaff',
+                   help='GFF source (default mumscaff)')
+
+parser.add_option('-i', '--mergeid', dest='mergeid', 
+                   help='Identifier of the merged sequence')
+
+parser.add_option('-b', '--base', dest='base', default='out',
+                   help='basename of the output')
+
+(options, args) = parser.parse_args()
+
+if not options.list:
+    raise "Must define a list!"
+if not options.fasta:
+    raise "Must define a fasta file!"
+
+def g(*a):
+    sys.stderr.write("%s\n" % "\t".join(map(str, a)))
+
+# determine what IDs to read
+if options.list == '-':
+    rawIds = sys.stdin.read().split()
+else:
+    rawIds = open(options.list, 'U').readlines()
+
+rawIds2 =  [x.split()[0].replace('>', '') for x in rawIds if x.strip()]
+ids = [x.replace('*','') for x in rawIds2]
+revcomp = set([x[1:] for x in rawIds2 if x[0] == '*'])
+
+g("read %d ids" % len(ids))
+g("first three ids: %s" % (" ".join(ids[:3])))
+        
+def rc(sequence):
+    return sequence.upper().translate(string.maketrans("ATCGN", "TAGCN"))[::-1]
+
+output = {}
+idsSeen = []
+
+i = 0
+cre = None
+
+linker = options.linker
+
+outId = options.mergeid
+reN = re.match(r"N(\d+)", linker)
+
+if reN:
+    noN = int(reN.groups()[0])
+    linker = 'N' * noN
+    g("using %d N's as linker" % noN)
+else:
+    g("using %s as linker" % linker)
+    
+if not outId:
+    outId = os.path.basename(options.fasta)\
+        .replace('.fasta', '')\
+        .replace('.fna', '')\
+        .replace('.fa', '')
+g("generating a merged sequence with id", outId)
+    
+i = 0
+for seqId, header, seq in fastareader(options.fasta):
+
+    if (not seqId in ids): continue
+    
+    #remember the index id - for later use
+    idListIndex = ids.index(seqId)
+
+    if seqId in revcomp: seq = rc(seq)
+
+    i += 1
+    if i < 5:
+        g('output', seqId, header)
+    elif i == 5:
+        g('.. suppressing further output ..')
+
+    output[seqId] = (seqId, header, seq)
+
+g("start sequence output")
+gffc = []
+
+reGC = None
+if options.gapConvert:
+    reGC = re.compile("N{6,}", re.I)
+
+
+with open('%s.gff' % outId, 'w') as G:
+    G.write("##gff-version 3\n")
+    allseq = []
+    i = 0
+    cp = 1
+    for seqId in ids:
+        _i, header, seq = output[seqId]
+
+        if i > 0:
+            cp += len(linker) #correct for linker sequence
+        i += 1
+        
+        
+        if options.gapConvert:
+            def _replacer(o):
+                return options.linker
+
+            seq = reGC.sub(_replacer, seq)
+            
+        G.write(
+            "%s\n" %
+            "\t".join(map(str, [
+                        outId, options.source, 'scaffold', 
+                        cp, cp+len(seq)-1, '.',
+                        '-' if seqId in revcomp else '+',
+                        '.', "ID=%s" % seqId])))
+
+        i = 0
+        while True:
+            i = seq.find(options.linker, i)
+            if i == -1: break
+            G.write(
+                "%s\n" %
+                "\t".join(map(str, [
+                            outId, options.source, 'gap', 
+                        i, i+len(options.linker)-1, '.',
+                        ',', '.', "ID=%s_linker_%s" % (seqId,i)])))
+
+
+            i += len(options.linker)
+
+        cp += len(seq)
+        allseq.append(seq)
+
+with open('%s.fasta' % outId, 'w') as F:
+    F.write(">%s\n" % outId)
+    seq = linker.join(allseq)
+    g("Collected all sequence (%d nt)" % len(seq))
+    g("Seq start&end", seq[:20], seq[-20:])
+    i = 0
+    while i < len(seq):
+        F.write("%s\n" % seq[i:i+80])
+        i += 80
+
+g("written %s.fasta" % outId)
+
+
