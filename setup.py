@@ -85,7 +85,9 @@ setup(name='moa',
           'Yaco>=0.1.7',
           'fist>=0.1.2',
           'unittest2>=0.5',
-          'lockfile>=0.9'
+          'lockfile>=0.9',
+          'markdown',
+          'mdGraph',
           ],
       classifiers = [
           'Development Status :: 4 - Beta',
