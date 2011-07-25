@@ -12,8 +12,12 @@ def errex(message):
     print message
     sys.exit(-1)
 
-source = os.environ.get('moa_source')
+source = os.environ.get('moa_source').strip()
 original = os.environ.get('moa_original', "")
+ignore = os.environ.get('moa_ignore').strip().split()
+
+print "source based on %s" % source
+print "ignoring", ignore
 
 if not source:
     errex("source directory is not defined")
@@ -31,7 +35,11 @@ for indir in os.listdir('.'):
     if not os.path.isdir(indir):
         print "Ignoring %s (not a dir)" % indir
         continue
-
+    
+    if indir in ignore:
+        print "Ignoring %s (in ignore list)" % indir
+        continue
+        
     templateFile = os.path.join(indir, '.moa', 'template')
     if not os.path.isfile(templateFile):
         errex("Invalid moa directory %s" % indir)
@@ -79,6 +87,11 @@ originalConf = os.path.join(original, '.moa', 'config')
 for indir in os.listdir(source):
     sourceDir = os.path.join(source, indir)
     basename = os.path.basename(indir)
+
+    if basename in ignore:
+        print "ignoring %s (in ignore list)" % basename
+        continue
+
     if basename[0] == '.': continue
     if not os.path.isdir(sourceDir):
         print "ignoring source %s (not a directory)" % indir
