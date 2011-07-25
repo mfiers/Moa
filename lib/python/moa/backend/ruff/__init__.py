@@ -36,8 +36,7 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 def load(job):
     """
     Load the backend
-    """
-    
+    """    
     return Ruff(job)
 
 class Ruff(moa.backend.BaseBackend):
