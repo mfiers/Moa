@@ -133,6 +133,17 @@ class JobConf(object):
 
             i += 1
 
+    def interpret(self, value):
+        env = jEnv(undefined=StrictUndefined)
+        renconf = self.render()
+        templ = env.from_string(value)        
+        try:
+            return templ.render(self.render())
+        except jinja2.exceptions.UndefinedError:
+            return value
+        except jinja2.exceptions.TemplateSyntaxError:
+            return value
+        
     def render(self, force=False):
         rv = {}
         toExpand = []
@@ -156,7 +167,12 @@ class JobConf(object):
         while toExpand:
             key = toExpand.pop(0)
             #create the template
-            jt = env.from_string(self[key])
+            try:
+                jt = env.from_string(self[key])
+            except jinja2.exceptions.TemplateSyntaxError:
+                rv[key] = self[key]
+                continue
+
             try:
                 nw = jt.render(rv)
             except jinja2.exceptions.UndefinedError:
@@ -167,6 +183,10 @@ class JobConf(object):
                     break
                 toExpand.append(key)
                 continue
+            except jinja2.exceptions.TemplateSyntaxError:
+                #ignore this one - cannot be improved
+                rv[key] = self[key]
+
             rv[key] = nw
 
         self._rendered = rv
@@ -175,8 +195,8 @@ class JobConf(object):
     def isPrivate(self, k):
         """
         Is this a private variable?
-
         can be locally defined or in the template definition
+
         """
         if k in self.private:
             return True
