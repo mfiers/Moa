@@ -18,16 +18,26 @@
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
 # 
 """
-Extract a set of sequences from a multifasta file
+Efficient extraction of sequences from a multifasta file
 """
 
 import re
+import os
 import sys
 import time
 import copy
+import string
 import optparse
 
 def fastareader(f):
+    """
+    Take a filename (`f`), open and read it. 
+
+    This Function yields tuples:
+
+        (seq-id, rest-of-header, sequence)
+
+    """
     F = open(f)
     id, header, seq = "", "", []
 
@@ -53,6 +63,7 @@ def fastareader(f):
 
     F.close()
 
+## get & parse command line options
 parser = optparse.OptionParser()
 
 parser.add_option('-l', '--list', dest='list',
@@ -78,25 +89,29 @@ if not options.list:
 if not options.fasta:
     raise "Must define a fasta file!"
 
-def log(m):
-    sys.stderr.write("fastaextractor: %s\n" % m)
+def g(*a):
+    sys.stderr.write("%s\n" % "\t".join(map(str, a)))
 
+# determine what IDs to read
 if options.list == '-':
     rawIds = sys.stdin.read().split()
 else:
     rawIds = open(options.list, 'U').readlines()
 
-ids = [x.split()[0].replace('>', '') for x in rawIds if x.strip()]
-idsInfo = dict([(x.split()[0].replace('>', ''),x) for x in rawIds if x.strip()])
+rawIds2 =  [x.split()[0].replace('>', '') for x in rawIds if x.strip()]
+ids = [x.replace('*','') for x in rawIds2]
+revcomp = set([x[1:] for x in rawIds2 if x[0] == '*'])
 
 if options.rename:
     newIds = [x.split()[1] for x in rawIds if x.strip()]
 
+g(rawIds[:5])
+g(ids[:5])
+g(list(revcomp)[:5])
 
-log("read %d ids" % len(ids))
-log("first three ids: %s" % (" ".join(ids[:3])))
+g("read %d ids" % len(ids))
+g("first three ids: %s" % (" ".join(ids[:3])))
         
-import string
 def rc(sequence):
     return sequence.upper().translate(string.maketrans("ATCG", "TAGC"))[::-1]
 
@@ -105,30 +120,45 @@ idsSeen = []
 
 i = 0
 cre = None
+
+def out(s):
+    print s
+
 if options.regex:
     cre = re.compile(options.regex)
     
+i = 0
 for seqId, header, seq in fastareader(options.fasta):
 
     if cre: testId = cre.search("%s %s" % (seqId, header)).groups()[0]
     else: testId = seqId
 
-    
-    if not testId in ids: 
+    if (not testId in ids):
         continue
-
+    
     if testId in idsSeen:
         continue
-    
+
     #remember the index id - for later use
     idListIndex = ids.index(testId)
 
     #remember that we've seen this id - prevent reprocessing
     idsSeen.append(testId)
 
-    if 'antisense' in idsInfo[testId]:
+    if testId in revcomp:
+        #g(testId, 'revcomp', list(revcomp)[:5])
         seq = rc(seq)
         header += " reverse complement"
+    else:
+        pass
+        #g(testId, 'forward', list(revcomp)[:5])
+
+    i += 1
+
+    if i < 5:
+        g('output', testId, header)
+    elif i == 5:
+        g('suppressing further output')
 
     #see if the sequence needs to be renamed 
     if options.rename:
@@ -140,7 +170,6 @@ for seqId, header, seq in fastareader(options.fasta):
     if options.order:
         output[seqId] = (newId, header, seq)
     else:
-        i += 1
         print ">%s %s" % (newId, header)
         while seq:       
             print "%s" % seq[:80]
@@ -148,13 +177,19 @@ for seqId, header, seq in fastareader(options.fasta):
 
 if options.order:
     for seqId in ids:
-        newId, header, seq = output[seqId]
+        if seqId in output:
+            newId, header, seq = output[seqId]
+        elif '*' + seqId in output:
+            newId, header, seq = output[seqId]
+        else:
+            sys.stderr.write("unknown id %s\n"% seqId)
+            sys.exit(-1)
         i += 1
         print ">%s %s" % (newId, header)
         while seq:       
             print "%s" % seq[:80]
             seq = seq[80:]
 
-log("written %d sequences" % i)
+g("written %d sequences" % i)
 
 
