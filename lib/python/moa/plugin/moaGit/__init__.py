@@ -30,15 +30,6 @@ def hook_defineCommands():
         'call': tag
         }
     
-def hook_defineOptions():
-    parserG = optparse.OptionGroup(
-        sysConf['parser'], 'Version control (Git)')
-    parserG.add_option('--m', action='store',
-                       dest='gitMessage', 
-                      help = 'Commit message for git')
-    
-    sysConf.parser.add_option_group(parserG)
-
 def _getRepo(job):
     """
     Return the git repository object
@@ -68,7 +59,7 @@ def tag(job):
         return
 
     tagname = sysConf.args[1]
-    message = sysConf.options.gitMessage
+    message = sysConf.options.message
     l.info('tagging with "%s"' % tagname)
     repo.create_tag(tagname, message=message)
 
