@@ -24,14 +24,14 @@ filesets:
     category: output
     help: '"fastainfo" raw output files'
     optional: true
-    pattern: ./*.out
+    pattern: stats/*.out
     source: input
     type: map
   stats:
     category: output
     help: '"fastainfo" collect stat files'
     optional: true
-    pattern: ./*.stat
+    pattern: stats/*.stat
     source: input
     type: map
 moa_id: fastainfo

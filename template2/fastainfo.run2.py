@@ -8,12 +8,20 @@ def errex(message):
     print message
     sys.exit(-1)
 
+
 source = os.environ.get('moa_source')
 original = os.environ.get('moa_original', "")
 
 infile = os.environ.get("moa_input", None)
 outfile = os.environ.get("moa_output", None)
 statfile = os.environ.get("moa_stats", None)
+
+statdir = os.path.dirname(statfile)
+if not os.path.isdir(statdir):
+    os.makedirs(statdir)
+outdir = os.path.dirname(outfile)
+if not os.path.isdir(outdir):
+    os.makedirs(outdir)
 
 if not infile:
     errex("no input file found")
@@ -97,6 +105,7 @@ for k in 'len gcfrac non nfrac'.split():
 
     d.sort()
     ts['max'] = max(d)
+    ts['sum'] = sum(d)
     ts['min'] = min(d)
     ts['median'] = d[int(len(d)/2)]
     ts['n'] = len(d)
