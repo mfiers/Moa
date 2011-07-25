@@ -31,7 +31,7 @@ $(document).ready(function()
     $("#fileBrowser table").dataTable(
          {
 	 	    "sPaginationType": "full_numbers",
-             "iDisplayLength": 18,
+             "iDisplayLength": 36,
              "sDom": '<fp<"clear">>rt<"bottom"lp<"clear">>'
 	     });
 
