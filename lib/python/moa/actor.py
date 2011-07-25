@@ -18,20 +18,23 @@ import fcntl
 import datetime
 import subprocess
 
+import moa.ui
 import moa.logger as l
 from moa.sysConf import sysConf
 
 
-def getRunner():
-
-    
-    return simpleRunner
+def getRunner():    
+    actorId = getattr(sysConf.options, 'actorId', 'default')
+    if not actorId: actorId = 'default'
+    if not sysConf.actor.actors.has_key(actorId):
+        moa.ui.exitError("Invalid actor id: %s" % actorId)
+    moa.ui.message("Actor: %s" % actorId)
+    return sysConf.actor.actors[actorId]
 
 def sgeRunner(wd, cl, conf={}):
     """
     Run using SGE
     """
-    
 
 def simpleRunner(wd, cl, conf={}):
     """
@@ -140,7 +143,11 @@ def getLastStdout(job):
     outDir = getRecentOutDir(job)
     if not outDir:
         return None
-    with open(os.path.join(outDir, 'stdout')) as F:
+    outFile = os.path.join(outDir, 'stdout')
+    if os.path.exists(outFile):
+        return None
+    print outFile
+    with open(outFile) as F:
         return F.read().strip()
 
 def getLastStderr(job):
@@ -150,5 +157,14 @@ def getLastStderr(job):
     outDir = getRecentOutDir(job)
     if not outDir:
         return None
-    with open(os.path.join(outDir, 'stderr')) as F:
+    errFile = os.path.join(outDir, 'stderr')
+    if not os.path.exists(errFile):
+        return None
+    with open(errFile) as F:
         return F.read().strip()
+
+#set up some actor data in the sysConf
+sysConf.actor = {}
+sysConf.actor.actors = {
+    'default' : simpleRunner
+    }
