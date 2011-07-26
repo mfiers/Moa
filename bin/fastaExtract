@@ -72,6 +72,10 @@ parser.add_option('-l', '--list', dest='list',
 parser.add_option('-f', '--fasta', dest='fasta',
     help = 'fasta file to extract from')
 
+parser.add_option('-t', '--to', dest='to',
+    help = 'write to this file (stdout if undefined)')
+
+
 parser.add_option('-o', '--order', dest='order', action='store_true',
     help = 'keep the order of the list')
 
@@ -121,8 +125,12 @@ idsSeen = []
 i = 0
 cre = None
 
+OUTHANDLE = sys.stdout
+if options.to:
+    OUTHANDLE = open(options.to, 'w')
+
 def out(s):
-    print s
+    OUTHANDLE.write("%s\n" % s)
 
 if options.regex:
     cre = re.compile(options.regex)
@@ -170,9 +178,9 @@ for seqId, header, seq in fastareader(options.fasta):
     if options.order:
         output[seqId] = (newId, header, seq)
     else:
-        print ">%s %s" % (newId, header)
-        while seq:       
-            print "%s" % seq[:80]
+        out(">%s %s" % (newId, header))
+        while seq:
+            out("%s" % seq[:80])
             seq = seq[80:]
 
 if options.order:
@@ -185,9 +193,9 @@ if options.order:
             sys.stderr.write("unknown id %s\n"% seqId)
             sys.exit(-1)
         i += 1
-        print ">%s %s" % (newId, header)
+        out(">%s %s" % (newId, header))
         while seq:       
-            print "%s" % seq[:80]
+            out("%s" % seq[:80])
             seq = seq[80:]
 
 g("written %d sequences" % i)
