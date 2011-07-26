@@ -144,9 +144,8 @@ def getLastStdout(job):
     if not outDir:
         return None
     outFile = os.path.join(outDir, 'stdout')
-    if os.path.exists(outFile):
+    if not os.path.exists(outFile):
         return None
-    print outFile
     with open(outFile) as F:
         return F.read().strip()
 
