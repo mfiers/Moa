@@ -87,8 +87,9 @@ class Gnumake(moa.backend.BaseBackend):
         #and the self.job configuration
         confDict = {}
         moaId = self.job.template.moa_id
-        for k in self.job.conf.keys():
-            v = self.job.conf[k]
+        jobConf = self.job.conf.render()
+        for k in jobConf.keys():
+            v = jobConf[k]
             if isinstance(v, dict):
                 continue
             if isinstance(v, list) or \
