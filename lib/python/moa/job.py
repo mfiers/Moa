@@ -215,7 +215,6 @@ class Job(object):
         :type silent: Boolean        
 
         """
-
         rc = 0
         
         if not self.backend:
@@ -263,13 +262,12 @@ class Job(object):
             sysConf.pluginHandler.run("post%s" % command.capitalize(), reverse=True)
 
         sysConf.pluginHandler.run("post_command", reverse=True)
+
+        self.finish()
         sysConf.pluginHandler.run("finish", reverse=True)
 
         return rc
 
-    
-
-                    
     def prepare(self):
         """
         Give this job a chance to prepare for execution - deferred to
@@ -306,13 +304,15 @@ class Job(object):
             os.remove(os.path.join(self.confDir, 'log.latest'))
         os.symlink('log.d/%d' % sysConf.jobId, latestDir)
 
-        l.info("Acquired job id %s" % sysConf.jobId)        
+        l.info("Acquired job id %s" % sysConf.jobId)
+
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
 
-    #def getLogFolder(self):
-    #
-        
+    def finish(self):
+        if self.backend and getattr(self.backend, 'finish', None):
+            self.backend.finish()
+
     def defineOptions(self, parser):
         """
         Set command line options - deferred to the backends
