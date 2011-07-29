@@ -2,15 +2,10 @@ author: Mark Fiers
 backend: ruff
 commands:
   run:
-    delegate:
-    - run2
-    - report
-  run2:
     mode: map
     help: 'generate info on each of the input sequences'
-  report:
-    help: 'create a report'
-    mode: simple
+  finish:
+    help: create a report
 creation_date: Mon, 11 Jul 2011 15:15:20
 description: gather info on a set of input files
 filesets:
