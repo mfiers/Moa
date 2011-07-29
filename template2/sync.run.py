@@ -93,9 +93,9 @@ for indir in os.listdir(source):
         continue
 
     if basename[0] == '.': continue
-    if not os.path.isdir(sourceDir):
-        print "ignoring source %s (not a directory)" % indir
-        continue
+    #if not os.path.isdir(sourceDir):
+    #    print "ignoring source %s (not a directory)" % indir
+    #    continue
     if not basename in dirlist:
         cl = 'moa cp %s %s' % (original, basename)
         print 'Executing %s' % cl
