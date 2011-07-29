@@ -45,7 +45,8 @@ class PluginHandler():
                 if not str(e) == "No module named %s" % plugin:
                     raise
                 #l.debug("No python plugin module found for %s" % plugin)
-            
+        
+    
     def run(self, command, reverse=False):
         """
         Executing a plugin hook
@@ -65,12 +66,23 @@ class PluginHandler():
             rv[p] = getattr(m, "hook_" + command)()
         return rv
             
-    def runCallback(self, job, command):
+    def execute(self, command):
         """
         Run a command callback 
         """
+        self.run('prepare_3')
+        self.run("pre%s" % command.capitalize())
+
         commandInfo = self.sysConf.commands[command]
-        commandInfo['call'](job)
+
+        if not commandInfo.has_key('call'):
+            raise Exception("Invalid command - no callback %s" % command) 
+
+        commandInfo['call'](self.sysConf.job)
+        
+        self.run("post%s" % command.capitalize(), reverse=True)
+        self.run('finish', reverse=True)
+
 
     def getAttr(self, attribute):
         """
