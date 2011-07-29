@@ -144,7 +144,8 @@ class JobConf(object):
         except jinja2.exceptions.TemplateSyntaxError:
             return value
         
-    def render(self, force=False):
+    def render(self, force=False, showPrivate=True):
+
         rv = {}
         toExpand = []
                 
@@ -190,7 +191,15 @@ class JobConf(object):
             rv[key] = nw
 
         self._rendered = rv
-        return rv
+
+        if showPrivate:
+            return rv
+        else:
+            ov = {}
+            for k in rv.keys():
+                if not self.isPrivate(k):
+                    ov[k] = rv[k]
+            return ov
 
     def isPrivate(self, k):
         """
