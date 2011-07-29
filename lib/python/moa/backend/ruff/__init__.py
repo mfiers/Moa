@@ -27,6 +27,7 @@ import moa.logger as l
 from moa.sysConf import sysConf
 
 from moa.backend.ruff.commands import RuffCommands
+from moa.backend.ruff.simple import RuffSimpleJob
 
 import Yaco
 
@@ -51,6 +52,30 @@ class Ruff(moa.backend.BaseBackend):
         self.commands = RuffCommands(
             self.job.confDir, self.job.template.moa_id)
 
+    def prepare(self):
+        """
+        Run template prepare step - that is if there is a 
+        prepare command defined.
+        """
+        if not 'prepare' in self.commands:
+            l.debug("No prepare step found in this Ruffus job")
+            return
+        else:
+            prepJob = RuffSimpleJob('prepare')
+            prepJob.go()
+
+    def finish(self):
+        """
+        Run template finish step - that is if there is a 
+        prepare command defined.
+        """
+        if not 'finish' in self.commands:
+            l.debug("No finish step defined by the template")
+            return
+        else:
+            prepJob = RuffSimpleJob('finish')
+            prepJob.go()
+        
     def hasCommand(self, command):
         return command in self.commands.keys()
     
@@ -60,10 +85,12 @@ class Ruff(moa.backend.BaseBackend):
         g.add_option("-j", dest="threads", type='int',
                      help="threads to use when running Ruffus")
 
-        g.add_option("-B", dest="remake", action='store_true',
-                     help="Reexecute all targets (corresponds to make -B) ")
+        #TODO:
+        #g.add_option("-B", dest="remake", action='store_true',
+        #             help="Reexecute all targets (corresponds to make -B) ")
 
-    def execute(self, command,
+    def execute(self, 
+                command,
                 verbose=False,
                 silent=False,
                 renderTemplate = True):
@@ -77,7 +104,7 @@ class Ruff(moa.backend.BaseBackend):
             rc = -1
             return rc
 
-        #determine which files are prerequisites
+        ## determine which files are prerequisites
         prereqs = []
         for fsid in self.job.data.prerequisites:
             prereqs.extend(self.job.data.filesets[fsid]['files'])
@@ -123,7 +150,6 @@ class Ruff(moa.backend.BaseBackend):
                 jobData['wd'] = self.job.wd
                 jobData['silent'] = silent
                 jobData.update(fsDict)
-                #print jobData.pretty()
                 script = self.commands.render(command, jobData)
                 l.debug("Executing %s" %  script)
 
