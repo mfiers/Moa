@@ -199,16 +199,13 @@ class Job(object):
             os.mkdir(self.confDir)
 
             
-    def execute(self, command, verbose=False, silent=False):
+    def execute(self, verbose=False, silent=False):
         """
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
 
         #Note: Uncertain how to test verbose & silent
 
-        
-        :param command: the command to execute
-        :type command: string
         :param verbose: output lots of data
         :type verbose: Boolean        
         :param silent: output nothing
@@ -220,53 +217,34 @@ class Job(object):
         if not self.backend:
             l.critical("No backend loaded - cannot execute %s" % command)
 
-        ## Ask the job if it's is ok with
-        ## the command provided (might want to change order, or insert
-        ## stuff..
-        execList = self.checkCommands(command)
-        sysConf.executeCommand = execList
+        #for backwards compatibility - these should go:
+        sysConf.command = 'run'
+        sysConf.executeCommand = ['run']
 
-        l.debug("Run moa commands: %s" % ",".join(execList))
-        l.debug("with args %s" % sysConf.newargs)
 
         ### Start job initialization
         self.prepare()
 
         ### Run plugin initialization step 3 - just before execution
         sysConf.pluginHandler.run('prepare_3')
-        sysConf.pluginHandler.run("pre_command")
+        sysConf.pluginHandler.run("pre_command") #move these to 'preRun'
 
-        #run a prep step if the original command is not in the
-        #execlist
-        if command not in execList:
-            sysConf.pluginHandler.run("pre%s" % command.capitalize())
+        l.debug("Executing moa run")
+        sysConf.pluginHandler.run("preRun")
+        sysConf.rc = self.backend.execute('run', verbose = verbose, silent=silent)
+        
+        if sysConf.rc != 0:
+            #do not bother with the following steps - end this run
+            return sysConf.rc
 
-        #run through all commands...
-        for execNow in execList:
-            l.debug("Executing %s" % execNow)
-            sysConf.pluginHandler.run("pre%s" % execNow.capitalize())
 
-            rc = self.backend.execute(
-                execNow, verbose = verbose, silent=silent)
-            sysConf.rc = rc
 
-            if rc != 0:
-                sysConf.pluginHandler.run('postError')
-                break
-            
-            sysConf.pluginHandler.run("post%s" % execNow.capitalize(), reverse=True)
-
-        #likewise if the command is not in the execlist - run a
-        #post process 
-        if command not in execList:
-            sysConf.pluginHandler.run("post%s" % command.capitalize(), reverse=True)
-
-        sysConf.pluginHandler.run("post_command", reverse=True)
-
+        sysConf.pluginHandler.run("postRun", reverse=True)
+        sysConf.pluginHandler.run("post_command", reverse=True) #make these postRun 
         self.finish()
         sysConf.pluginHandler.run("finish", reverse=True)
 
-        return rc
+        return sysConf.rc
 
     def prepare(self):
         """

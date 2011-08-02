@@ -311,7 +311,7 @@ class JobConf(object):
     def update(self, data):
         self.localConf.update(data)
         
-    def get(self, key, default):
+    def get(self, key, default=None):
         c = self._get_conf(key)
         v = c.__getitem__(key)
         if v: 

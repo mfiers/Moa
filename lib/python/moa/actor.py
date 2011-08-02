@@ -28,15 +28,10 @@ def getRunner():
     if not actorId: actorId = 'default'
     if not sysConf.actor.actors.has_key(actorId):
         moa.ui.exitError("Invalid actor id: %s" % actorId)
-    moa.ui.message("Actor: %s" % actorId)
+    l.debug("Actor: %s" % actorId)
     return sysConf.actor.actors[actorId]
 
-def sgeRunner(wd, cl, conf={}):
-    """
-    Run using SGE
-    """
-
-def simpleRunner(wd, cl, conf={}):
+def simpleRunner(wd, cl, conf={}, **kwargs):
     """
     Don't think - just run - here & now
 
@@ -47,6 +42,7 @@ def simpleRunner(wd, cl, conf={}):
     - return the rc
     """
     
+
     #stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
     #outDir = os.path.join(wd, '.moa', 'out', stst)
     outDir = os.path.join(wd, '.moa', 'log.latest')
@@ -55,7 +51,6 @@ def simpleRunner(wd, cl, conf={}):
             os.makedirs(outDir)
         except OSError:
             pass
-        
 
     #dump the configuration in the environment
     for k in conf:

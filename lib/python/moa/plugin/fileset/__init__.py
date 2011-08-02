@@ -110,6 +110,7 @@ def showFiles(job):
     type filesets) and inferred from these for map type filesets.
     
     """
+    
     filesets = job.template.filesets.keys()
     filesets.sort()
     #first print singletons
@@ -242,6 +243,7 @@ def preparefilesets():
     """
     prepare all filesets 
     """
+    l.debug("Preparing filesets")
     job = sysConf['job']
     job.data.filesets = {}
     renJobConf = job.conf.render()
@@ -264,7 +266,6 @@ def preparefilesets():
             
         if len(fileSets) == 0: break
         fsid = fileSets.pop(0)
-
         fs = job.template.filesets[fsid]
                 
         job.data.filesets[fsid] = fs

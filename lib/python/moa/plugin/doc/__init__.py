@@ -38,6 +38,12 @@ def hook_prepare_3():
         'type' : 'string'
         }
 
+def hook_defineOptions():
+    sysConf.parser.add_option(
+        '-m', action='store',
+        dest='message', help = 'Message accompanying this operations - ' + 
+        'used for git & changelogs ')
+
 def hook_defineCommands():
     """
     Set the moa commands for this plugin
@@ -50,6 +56,45 @@ def hook_defineCommands():
         'log' : True
         }
 
+#def chl(job):
+#    """
+#    Record or display Changelogs
+#    """
+#    message = sysConf.options.message
+    
+
+def _readFromuser(job, header, fileName):
+    """
+    gather Blog or Changelog information
+    """
+    moa.utils.moaDirOrExit(job)
+    print sysConf.args
+
+    txt = []
+    print header, "..."
+    while True:
+        try:
+            line = raw_input("")
+            txt.append(line)
+        except (EOFError, KeyboardInterrupt):
+            break
+
+    sysConf.job.data.blog.message = message
+
+    try:
+        with open(fileName) as F:
+            oldFile = F.read()
+    except IOError:
+        oldFile = ""
+
+    with open(fileName, "w") as F:
+        now = datetime.datetime.now()
+        header = "**%s - %s writes**" % (
+            now.strftime("On %A, %d %b %Y %H:%M"), getpass.getuser()) 
+        F.write("%s\n\n" %  header)
+        F.write("\n    ".join(message.split("\n")))
+        F.write("\n-----\n")
+        F.write(oldFile)
 
 def blog(job):
     """
@@ -68,24 +113,11 @@ def blog(job):
 
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
     """
-    moa.utils.moaDirOrExit(job)
-
-    txt = []
-    while True:
-        try:
-            line = raw_input("")
-            txt.append(line)
-        except (EOFError, KeyboardInterrupt):
-            break
-
-    message = "\n".join(txt)
-    sysConf.job.data.blog.message = message
-    with open('Changelog.md', "a") as F:
-        now = datetime.datetime.now()
-        F.write("\n")
-        header = "%s - %s writes::" % (
-            now.isoformat(" "), getpass.getuser()) 
-        F.write("%s\n" %  header)
-        F.write("%s\n" % ("=" * len(header)))
-        F.write(message)
-        F.write("\n")
+    pass
+    #_readFromuser(
+    #    job, 
+    #    header="enter your blog message (ctrl-d on an empty line to finish)",
+    #    "blog.md")
+                  
+    
+ 
