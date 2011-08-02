@@ -38,8 +38,6 @@ fi
 
 cd run
 
-
-
 echo "Merging the blast output"
 
 sort -k 1,2 -u a_vs_b.out \
@@ -86,6 +84,7 @@ cat bi.hits  | cut -d' ' -f 2 > bi.b.set
    fastaExtract -f {{ input_a }} -l bi.a.set > bi.a.fasta
    fastaExtract -f {{ input_b }} -l bi.b.set > bi.b.fasta
 {% endif %}
+
 ### clean
 rm -rf *.out input_* error.log formatdb.log
 

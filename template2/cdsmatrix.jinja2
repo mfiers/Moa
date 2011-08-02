@@ -1,0 +1,38 @@
+### run
+
+mkdir -p db
+
+ib=`basename {{input}} .fasta`
+rb=`basename {{reference}} .fasta`
+
+if [[ "{{reference}}" == "{{input}}" ]]
+then
+	echo "Skipping blast vs self"
+	exit 0
+fi
+
+ib=`basename {{input}} .fasta`
+rb=`basename {{reference}} .fasta`
+if [[ ! -f "{{ output }}" ]]
+then
+	echo "Creating blast db from {{ input }}"
+	makeblastdb -in {{ input }} -dbtype nucl -title $ib \
+		-out db/$ib
+	echo "Running blast $rb against $ib"
+	blastn -db db/${ib} -query {{ reference }} -outfmt 6     \
+		-num_alignments 1 -num_descriptions 1 -num_threads 8 \
+		-out ${output}
+fi
+
+if [[ ! -f "{{ table }}" ]]
+then
+	sort {{ output }} | awk '{if ($12 >= {{ cutoff }}) print $1 "," $12}' > {{ table }}
+fi
+
+### finish
+
+grep ">" {{ reference }} | cut -c2- | cut -f 1 -d' ' > test
+
+### clean
+rm -rf db
+rm -f {{ output_files|join(" ") }}

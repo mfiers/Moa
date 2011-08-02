@@ -8,13 +8,7 @@ commands:
     help: Remove all job data, not the Moa job itself, note that this must be implemented
       by the template.
     mode: simple
-  prepare:
-    mode: simple
   run:
-    delegate:
-    - prepare
-    - run2
-    - report
     help: Running BLAST takes an input directory, determines what
       sequences are present and executes BLAST on each of these.  Moa
       BLAST is configured to create XML output (as opposed to the
@@ -22,8 +16,6 @@ commands:
       is subsequently converted to GFF3 by the custom blast2gff script
       (using BioPython). Additionally, a simple text report is
       created.
-    mode: map
-  run2:
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Wraps BLAST [[Alt90]], probably the most popular similarity search tool

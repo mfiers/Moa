@@ -2,7 +2,7 @@ author: Mark Fiers
 backend: ruff
 commands:
   run:
-    help: ''
+    help: 'Sync!'
     mode: simple
 creation_date: Thu, 30 Jun 2011 21:26:19 
 description: Create this directory in sync with another directory

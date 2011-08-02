@@ -92,6 +92,7 @@ fi
 mkdir -p `dirname {{ output }}`
 mkdir -p `dirname {{ cds }}`
 mkdir -p `dirname {{ gff }}`
+mkdir -p `dirname {{ pep }}`
 
 startuse=`start-codon-distrib -3 train/all.seq train/run1.coords`
 
@@ -114,6 +115,16 @@ cat {{ output }}.predict \
          | extract -t {{ input }} -              \
          | sed "s/orf\([0-9]*\)/$b.g\1/"      \
          > {{ cds }}
+
+echo "convert {{ output }} to {{ cds }}"
+cat {{ output }}.predict \
+         | grep -v "^>"                          \
+         | extract -t {{ input }} -              \
+         | sed "s/orf\([0-9]*\)/$b.g\1/"      \
+         > {{ cds }}
+
+echo "convert {{ cds }} to {{ pep }}"
+transeq -sequence {{ cds }} -outseq {{ pep }} -table 11
 
 echo "convert {{output}} to {{gff}}"
 cat {{ output }}.predict   \

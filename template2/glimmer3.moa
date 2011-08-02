@@ -41,6 +41,13 @@ filesets:
     pattern: 'cds/*.fasta'
     type: map
     source: input
+  pep:
+    category: output
+    help: peptide output files from glimmer3
+    optional: true
+    pattern: 'pep/*.fasta'
+    type: map
+    source: input
 moa_id: glimmer3
 modification_date: Wed Nov 10 07:56:48 2010
 name: glimmer3

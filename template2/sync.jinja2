@@ -1,12 +1,12 @@
 ### clean
 
-#this is rather a drastic approach - delete all subdirs - except __sync_source
+#this is rather drastic - delete all subdirs
 
 echo ${AMISURE}
 
 if [[ "${AMISURE}" != "yes" ]]
 then
-	echo "This is a drastic operation"
+	echo "This is a drastic, ireversible, operation"
 	echo 'please run with env var "AMISURE" to "yes":'
 	echo
 	echo '$ AMISURE=yes moa clean'

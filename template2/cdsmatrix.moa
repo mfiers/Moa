@@ -1,0 +1,47 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: Generate a matrix of CDS's
+    mode: map
+creation_date: Wed Nov 10 07:56:48 2010
+description: Predicts (prokaryotic) using glimmer3.
+filesets:
+  reference:
+    category: prerequisite
+    type: single
+    help: reference multi fasta file
+    pattern: '*/*.fasta'
+  input:
+    category: input
+    help: Directory with the cds files for Glimmer3
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+  output:
+    category: output
+    help: Output blast files
+    optional: true
+    pattern: './*.out'
+    type: map
+    source: input
+  table:
+    category: output
+    help: table files
+    optional: true
+    pattern: './*.tab'
+    type: map
+    source: input
+moa_id: cdsmatrix
+modification_date: Thu, 21 Jul 2011 20:31:10 +1200
+name: cdsmatrix
+parameters:
+  cutoff:
+    help: score cutoff value - disregards hits below this score
+    optional: true
+    default: 100
+title: CdsMatrix

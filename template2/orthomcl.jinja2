@@ -1,0 +1,52 @@
+### run
+
+mkdir -p log
+
+echo '------------------------------------------------------------'
+echo 'Preparing config file'
+echo '------------------------------------------------------------'
+
+echo "dbVendor=mysql " > orthomcl.config
+echo "dbConnectString=dbi:mysql:{{db}}:{{host}}:{{port}}" >> orthomcl.config
+echo "dbLogin={{login}}" >> orthomcl.config
+echo "dbPassword={{pass}}" >> orthomcl.config
+echo "similarSequencesTable={{prefix}}_SimilarSequences" >> orthomcl.config
+echo "orthologTable={{prefix}}_Ortholog" >> orthomcl.config
+echo "inParalogTable={{prefix}}_InParalog" >> orthomcl.config
+echo "coOrthologTable={{prefix}}_CoOrtholog" >> orthomcl.config
+echo "interTaxonMatchView={{prefix}}_InterTaxonMatch" >> orthomcl.config
+echo "percentMatchCutoff=50" >> orthomcl.config
+echo "evalueExponentCutoff=-5" >> orthomcl.config
+echo "oracleIndexTblSpc=NONE" >> orthomcl.config
+
+echo '------------------------------------------------------------'
+echo 'Install orthomcl schema'
+echo '------------------------------------------------------------'
+
+orthomclInstallSchema orthomcl.config log/installSchema.log 2>/dev/null \
+	|| (echo "probably the database was already installed")
+
+if [[ ! -f "goodProteins.fasta" ]]
+then
+	echo '------------------------------------------------------------'
+	echo 'Preparing combined fasta file'
+	echo '------------------------------------------------------------'
+	orthomclFilterFasta {{ input_dir }} 10 20 
+fi
+
+
+
+if [[ ! -f "goodProteins.fasta.phr" ]] 
+then
+	echo '------------------------------------------------------------'
+	echo 'Create a blast database'
+	echo '------------------------------------------------------------'
+	makeblastdb -in goodProteins.fasta -dbtype prot
+fi
+
+if [[ ! -f "blast.all.vs.all" ]]
+then
+	blastp -db goodProteins.fasta -query goodProteins.fasta -seg yes \
+		-outfmt 6 -num_threads {{ num_threads }} -num_descriptions 99999999  \
+		-num_alignments 99999999 -evalue {{ eval }} -out blast.all.vs.all
+fi
