@@ -19,7 +19,7 @@ mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True
 default_command: status
-default_shell: '/bin/bash -ev'
+default_shell: '/bin/bash -e'
 plugin_settings:
   moaGit:
     warnings: False
@@ -53,5 +53,5 @@ template:
       priority: 10
     local:
       class: local
-      priority: 5
+      priority: 6
       directory: ' ~/.config/moa/template/'

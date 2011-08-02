@@ -47,7 +47,7 @@
   <i>{{job.template.description }}</i>  
   <h3>Parameters</h3>
   <table class='moaParameters'>
-    {% for k in job.conf.keys() %}
+    {% for k in job.conf.render(showPrivate=False) %}
     <tr>
       <td class='moaParameterHeader'>
 		{{k}}
