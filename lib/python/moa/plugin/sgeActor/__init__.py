@@ -83,7 +83,7 @@ def sgeRunner(wd, cl, conf={}, **kwargs):
     qcl.append('-V')
     qcl.extend(cl)
 
-    print " ".join(qcl)qsta
+    print " ".join(qcl)
     #dump the configuration in the environment
     for k in conf:
         # to prevent collusion, prepend all env variables
