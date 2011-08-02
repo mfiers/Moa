@@ -212,7 +212,6 @@ def run_3(wd):
             job.finish()
         else:
             job.execute(
-                command,
                 verbose = sysConf.options.verbose,
                 silent = sysConf.options.silent)
     else:
