@@ -107,7 +107,7 @@ class JobConf(object):
         jobid = self['jobid']
         if jobid != 'unset': return
         name = os.path.basename(os.getcwd())
-        name = re.sub("^[0-9]*\.*", "", name)
+        name = re.sub("^[0-9]+\.+", "", name)
         l.debug("Setting job id to '%s'" % name)
         self['jobid'] = name
         self.save()
@@ -124,10 +124,13 @@ class JobConf(object):
         i = 1                
         while dirparts:
             p = dirparts.pop()
-            if not p:
-                break
+            clean_p = re.sub("^[0-9]+\.+", "", p)
+
+            #print i, clean_p, p
+            if not p: break
             self.setPrivateVar('dir%d' % i, p)
             self.setPrivateVar('_%d' % i, p)
+            self.setPrivateVar('_%s' % clean_p, p)
             if i <= 3:
                 self.setPrivateVar('_' * i, p)
 
@@ -246,6 +249,7 @@ class JobConf(object):
             #check if this needs to be editted or not
             parType = self.job.template.parameters.get(k, {}).get('type')
             isFileSet = k in self.job.template.filesets.keys()
+
             if not (parType == 'file' or parType == 'directory' or isFileSet):
                 continue
 
@@ -257,11 +261,7 @@ class JobConf(object):
 
             correctedPath = os.path.normpath(delta + '/' + v)
             relPath = os.path.relpath(correctedPath)
-            
-            #if os.path.exists(correctedPath):
-            #    y[k] = relPath
-            #elif glob.glob(correctedPath):
-            #    y[k] = relPath
+
             y[k] = relPath
 
         self.jobConf.update(y)
