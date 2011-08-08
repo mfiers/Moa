@@ -226,7 +226,7 @@ class JobConf(object):
            try to correct for this. Currently this only works
            for files that exist. i.e. 
         
-        """
+        """        
         y = Yaco.Yaco()
         y.load(confFile)
 
@@ -235,19 +235,26 @@ class JobConf(object):
             return
         
         normdelta = os.path.normpath(delta)
-        
+
         if y.has_key('jobid'):
             self.setPrivateVar('_%s' % y['jobid'], normdelta)
         
+        #print self.job.template.parameters.keys()
         #find relative links & see if they need to be adjusted
         for k, v in y.items():
             
-            
+            #check if this needs to be editted or not
+            parType = self.job.template.parameters.get(k, {}).get('type')
+            isFileSet = k in self.job.template.filesets.keys()
+            if not (parType == 'file' or parType == 'directory' or isFileSet):
+                continue
+
             #find potential relative links
             if not isinstance(v, str): continue
             if not v: continue
             if not (v[:2] == './' or v[:3] == '../'):
                 continue
+
             correctedPath = os.path.normpath(delta + '/' + v)
             relPath = os.path.relpath(correctedPath)
             
