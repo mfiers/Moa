@@ -203,20 +203,22 @@ def run_3(wd):
         l.debug("running plugin callback for %s" % command)
         sysConf.pluginHandler.execute(command)
 
-    elif command in ['prepare', 'run', 'finish']:
+    else:
         if not job.isMoa():
             moa.ui.exitError("Must run 'moa %s' in a Moa dir" % command)
-        if command == 'prepare':
-            job.prepare()
-        elif command == 'finish':
-            job.finish()
-        else:
+
+        if command == 'run':
             job.execute(
                 verbose = sysConf.options.verbose,
                 silent = sysConf.options.silent)
-    else:
-        #No callback, defer this to the backend
-        moa.ui.exitError("Unknown command '%s'" % command)
+        elif command == 'prepare':
+            job.prepare()
+        elif command == 'finish':
+            job.finish()
+        elif job.hasCommand(command):
+            job.simpleExecute(command)
+        else:            
+            moa.ui.exitError("Unknown command '%s'" % command)
 
 
 

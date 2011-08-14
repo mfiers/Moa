@@ -58,24 +58,14 @@ class Ruff(moa.backend.BaseBackend):
         Run template prepare step - that is if there is a 
         prepare command defined.
         """
-        if not 'prepare' in self.commands:
-            l.debug("No prepare step found in this Ruffus job")
-            return
-        else:
-            prepJob = RuffSimpleJob('prepare')
-            prepJob.go()
+        pass
 
     def finish(self):
         """
         Run template finish step - that is if there is a 
         prepare command defined.
         """
-        if not 'finish' in self.commands:
-            l.debug("No finish step defined by the template")
-            return
-        else:
-            prepJob = RuffSimpleJob('finish')
-            prepJob.go()
+        pass
         
     def hasCommand(self, command):
         return command in self.commands.keys()
@@ -90,13 +80,23 @@ class Ruff(moa.backend.BaseBackend):
         #g.add_option("-B", dest="remake", action='store_true',
         #             help="Reexecute all targets (corresponds to make -B) ")
 
+
+    def simpleExecute(self, command):
+        """
+        Run a 'simple' template command
+        """
+        if not self.commands.has_key(command):
+            return -1
+        j = RuffSimpleJob(command)
+        return j.go()
+
     def execute(self, 
                 command,
                 verbose=False,
                 silent=False,
                 renderTemplate = True):
         """
-        Execute a command
+        Execute the 'run' template command
 
         :param renderTemplate: Jinja-render the template
         """

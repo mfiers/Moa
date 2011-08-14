@@ -147,7 +147,6 @@ class Job(object):
 
         >>> job = newTestJob('unittest')
         >>> assert(job.hasCommand('run'))
-        >>> assert(job.hasCommand('run2'))
         >>> assert(not job.hasCommand('dummy'))
 
         """
@@ -198,6 +197,13 @@ class Job(object):
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
 
+    def simpleExecute(self, command):
+        """
+        Just 'execute' a template call 
+        """
+        sysConf.pluginHandler.run('prepare_3')
+        sysConf.pluginHandler.run('pre_command')
+        return self.backend.simpleExecute(command)
             
     def execute(self, verbose=False, silent=False):
         """
@@ -236,8 +242,6 @@ class Job(object):
         if sysConf.rc != 0:
             #do not bother with the following steps - end this run
             return sysConf.rc
-
-
 
         sysConf.pluginHandler.run("postRun", reverse=True)
         sysConf.pluginHandler.run("post_command", reverse=True) #make these postRun 
@@ -284,10 +288,12 @@ class Job(object):
 
         l.info("Acquired job id %s" % sysConf.jobId)
 
+        self.simpleExecute('prepare')
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
 
     def finish(self):
+        self.simpleExecute('finish')
         if self.backend and getattr(self.backend, 'finish', None):
             self.backend.finish()
 

@@ -116,6 +116,7 @@ class RuffMapJob(RuffBaseJob):
                     fips =  sysConf.job.data.inputs[0]
                     ffn =  os.path.basename(fsDict[fips])
                     runid = ffn + '.' + runid
+                runid = 'r' + runid
                 thisJobData['runid'] = runid
                 thisJobData['command'] = 'run'
 

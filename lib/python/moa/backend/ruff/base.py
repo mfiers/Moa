@@ -36,6 +36,7 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 class RuffBaseJob(object):
 
     def __init__(self, command):
+
         job = sysConf.job
 
         self.command = command
