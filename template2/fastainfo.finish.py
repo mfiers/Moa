@@ -3,12 +3,16 @@
 import os
 import sys
 import yaml
+import pprint
+import moa.script
+
+args = moa.script.getArgs()
 
 def errex(message):
     print message
     sys.exit(-1)
 
-statfiles = os.environ.get('moa_stats_files').split()
+statfiles = args['stats_files']
 
 data = {}
 for sf in statfiles:
@@ -78,16 +82,20 @@ with open('report.md', 'w') as F:
     F.write("!# chs=1000x200\n\n")
 
     #write most important stats to a table
-    F.write('| %15s | Tot.Seq.len | Contigs | Longest.Cnt | N50       |\n' % 'Id')
-    F.write('|%s|-------------|---------|-------------|-----------|\n' % ('-' * 17))
+    F.write('| %15s ' % 'Id')
+    F.write('| Tot.Seq.len | Contigs | Longest.Cnt | N50       |')
+    F.write('Seqlen-Ns  | Tot no Ns  |\n')
+    F.write('|%s|-------------|---------|-------------|' % ('-' * 17))
+    F.write('-----------|------------|------------|\n') 
 
-            
     for k in kys:
-        F.write("| %15s |%12.3g |%8g |%12.3g |%10.3g |\n" % (
+        F.write("| %15s |%12.3g |%8g |%12.3g |%10.3g | %10.3g | %10.3g |\n" % (
             k[:15],
             data[k]['data']['len']['sum'],
             data[k]['data']['len']['n'],
             data[k]['data']['len']['max'],
             data[k]['data']['len']['n50'],
+            data[k]['data']['len']['sum'] - data[k]['data']['non']['sum'],
+            data[k]['data']['non']['sum'],
             ))
         

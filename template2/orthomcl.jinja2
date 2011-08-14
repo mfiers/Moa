@@ -24,7 +24,8 @@ echo 'Install orthomcl schema'
 echo '------------------------------------------------------------'
 
 orthomclInstallSchema orthomcl.config log/installSchema.log 2>/dev/null \
-	|| (echo "probably the database was already installed")
+	|| (echo "Error running orthomclInstallSchema - ignoring this."; \
+	    echo "maybe the db was already installed?" )
 
 if [[ ! -f "goodProteins.fasta" ]]
 then
@@ -49,4 +50,60 @@ then
 	blastp -db goodProteins.fasta -query goodProteins.fasta -seg yes \
 		-outfmt 6 -num_threads {{ num_threads }} -num_descriptions 99999999  \
 		-num_alignments 99999999 -evalue {{ eval }} -out blast.all.vs.all
+fi
+
+echo '------------------------------------------------------------'
+echo 'Running orthomcl Blast Parser'
+echo '------------------------------------------------------------'
+
+if [[ ! -f "similarSequences.txt" ]]
+then
+	orthomclBlastParser blast.all.vs.all {{ input_dir }} >> similarSequences.txt
+fi
+
+echo '------------------------------------------------------------'
+echo 'Load blast into the database'
+echo '------------------------------------------------------------'
+
+if [[ ! -f "loadBlast" ]]
+then
+	orthomclLoadBlast orthomcl.config similarSequences.txt
+	touch loadBlast
+fi
+
+echo '------------------------------------------------------------'
+echo 'Determine orthoMcl pairs'
+echo '------------------------------------------------------------'
+
+if [[ ! -f 'mclPairs' ]]
+then
+	orthomclPairs orthomcl.config log/pairs.log cleanup=yes
+	touch mclPairs
+fi
+
+echo '------------------------------------------------------------'
+echo 'OrthoMclDumpPairs'
+echo '------------------------------------------------------------'
+
+if [[ ! -f 'mclInput' ]]
+then
+	orthomclDumpPairsFiles orthomcl.config
+fi
+
+echo '------------------------------------------------------------'
+echo 'Run MCL'
+echo '------------------------------------------------------------'
+
+if [[ ! -f 'mclOutput.{{ mcl_i }}' ]]
+then
+	mcl mclInput --abc -I {{ mcl_i }} -o mclOutput.{{ mcl_i }}
+fi
+
+echo '------------------------------------------------------------'
+echo 'Convert MCL output to groups.{{ mcl_i }}.txt'
+echo '------------------------------------------------------------'
+
+if [[ ! -f "groups.{{ mcl_i }}.txt" ]]
+then
+	orthomclMclToGroups {{ group_prefix }} 0 < mclOutput.{{ mcl_i }} > groups.{{ mcl_i }}.txt
 fi

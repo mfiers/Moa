@@ -10,19 +10,23 @@ then
 		-b {{ breaklen }} --prefix={{base}} \
 		{{ input }} {{ reference }}
 fi
+
 if [[ ! -f "{{base}}.coords" ]]
 then
 	show-coords -rcl {{base}}.delta > {{base}}.coords
 fi
+
 if [[ ! -f "{{base}}.png" ]]
 then
-	mummerplot -R {{input}}  -Q {{ reference }} --layout --large 		\
+	echo mummerplot -R {{input}}  -Q {{ reference }} --layout --large \
+		--color -t png -p {{base}} {{base}}.delta
+	mummerplot -R {{input}}  -Q {{ reference }} --layout --large \
 		--color -t png -p {{base}} {{base}}.delta
 fi
 
-cat {{base}}.gp | sed -e 's/^ \"\([^\"]*\)\" [0-9]*\, \\$/QQQ\1/' | grep "^QQQ" | sed "s/^QQQ//" \
-	> {{base}}.scaffold.list
+#cat {{base}}.gp | sed -e 's/^ \"\([^\"]*\)\" [0-9]*\, \\$/QQQ\1/' | grep "^QQQ" | sed "s/^QQQ//" \
+#	> {{base}}.scaffold.list
 
-fastaExtract -l {{base}}.scaffold.list -f {{ input }} -o > {{base}}.scaffold.fasta
-fastaExtractMerge -l {{base}}.scaffold.list -f {{ input }} -s {{ gff_source }} \
-	-L {{ linker }} -b {{base}} -g
+#fastaExtract -l {{base}}.scaffold.list -f {{ input }} -o > {{base}}.scaffold.fasta
+#fastaExtractMerge -l {{base}}.scaffold.list -f {{ input }} -s {{ gff_source }} \
+#	-L {{ linker }} -b {{base}} -g

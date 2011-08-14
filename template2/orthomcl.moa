@@ -14,6 +14,11 @@ parameters:
     help: 'Input directory with compliant (read the manual) fasta files'
     optional: false
     type: string
+  mcl_i:
+    help: 'mcl -i value'
+    optional: true
+    type: float
+    default: 1.5
   vendor:
     help: 'Db vendor'
     optional: true
@@ -43,10 +48,15 @@ parameters:
     type: string
     default: 
   prefix:
-    help: 'Prefix for the table names created by OrthoMCL'
+    help: 'OrthoMCL prefix for the database tables'
     optional: true
     type: string
     default: ortho
+  group_prefix:
+    help: 'OrthoMCL prefix for group names'
+    optional: true
+    type: string
+    default: 'g_'
   num_threads:
     help: 'Number of threads to use'
     optional: true
