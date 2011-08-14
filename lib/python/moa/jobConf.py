@@ -123,14 +123,16 @@ class JobConf(object):
         self.setPrivateVar('_', dirparts[-1])
         i = 1                
         while dirparts:
+            cp = os.path.sep.join(dirparts)
             p = dirparts.pop()
-            clean_p = re.sub("^[0-9]+\.+", "", p)
-
-            #print i, clean_p, p
+            clean_p = re.sub("^[0-9]+\.+", "", p).replace('.', '_')
+            
+            #print i, clean_p, p, cp
             if not p: break
             self.setPrivateVar('dir%d' % i, p)
             self.setPrivateVar('_%d' % i, p)
-            self.setPrivateVar('_%s' % clean_p, p)
+            self.setPrivateVar('_%s' % clean_p, cp)
+
             if i <= 3:
                 self.setPrivateVar('_' * i, p)
 
@@ -139,9 +141,11 @@ class JobConf(object):
     def interpret(self, value):
         env = jEnv(undefined=StrictUndefined)
         renconf = self.render()
+
         templ = env.from_string(value)        
         try:
-            return templ.render(self.render())
+            rv = templ.render(renconf)
+            return rv
         except jinja2.exceptions.UndefinedError:
             return value
         except jinja2.exceptions.TemplateSyntaxError:
