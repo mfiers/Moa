@@ -28,6 +28,7 @@ from moa.sysConf import sysConf
 
 from moa.backend.ruff.commands import RuffCommands
 from moa.backend.ruff.simple import RuffSimpleJob
+from moa.backend.ruff.reduce import RuffReduceJob
 from moa.backend.ruff.map import RuffMapJob
 
 import Yaco
@@ -81,14 +82,16 @@ class Ruff(moa.backend.BaseBackend):
         #             help="Reexecute all targets (corresponds to make -B) ")
 
 
-    def simpleExecute(self, command):
+    def simpleExecute(self, commandList):
         """
         Run a 'simple' template command
         """
-        if not self.commands.has_key(command):
-            return -1
-        j = RuffSimpleJob(command)
-        return j.go()
+        for command in commandList:
+            if not self.commands.has_key(command):
+                return -1
+            l.debug('executing %s' % command)
+            j = RuffSimpleJob(command)
+            return j.go()
 
     def execute(self, 
                 command,
@@ -121,58 +124,10 @@ class Ruff(moa.backend.BaseBackend):
             j.go()
             
         elif cmode == 'reduce':
-            inputs = []
-            for x in self.job.data.inputs:
-                inputs.extend(self.job.data.filesets[x].files)
-            outputs = []
-            for x in self.job.data.outputs:
-                outputs.extend(self.job.data.filesets[x].files)
-            if len(outputs) != 1:
-                moa.ui.exitError("invalid number of outputfiles for a reduce job")
-                
-            fsInDict = dict(
-                [(x, self.job.data.filesets[x]['files'])
-                 for x in self.job.data.inputs])
-            fsOutDict = dict(
-                [(x, self.job.data.filesets[x]['files'][0])
-                 for x in self.job.data.outputs])
 
-            jobData = self.job.data.simple()
-            jobData.update(self.job.conf.render())
-            jobData['wd'] = self.job.wd
-            jobData['silent'] = silent
-            jobData.update(fsInDict)
-            jobData.update(fsOutDict)
-            script = self.commands.render(command, jobData)
-            l.debug("Executing %s" %  script)
-            executor2 = ruffus.files(
-                [inputs + prereqs], outputs, script, jobData
-                )(executor)
-            l.debug("Start reduce run")
-            try:
-                #Run!
-                ruffus.pipeline_run(
-                    [executor2],
-                    one_second_per_job=False,
-                    verbose = sysConf.options.verbose,
-                    logger = ruffus.black_hole_logger,                    
-                    )
-                rc = 0
-                l.debug("Finished running (with %d thread(s))" %
-                        sysConf.options.threads)
-            except ruffus.ruffus_exceptions.RethrownJobError, e:
-               #any error thrown somewhere in the pipeline will be
-               #caught here.
-               try:
-                   #try to get some structured info & output that.
-                   einfo = e[0][1].split('->')[0].split('=')[1].strip()
-                   einfo = einfo.replace('[', '').replace(']', '')
-                   moa.ui.warn("Caught an error processing: %s" % einfo)
-                   raise
-               except:
-                   moa.ui.warn("Caught an error: %s" % str(e))
-                   raise
-               rc = 1
+            j = RuffReduceJob('run')
+            j.go()
+
  
         elif cmode == 'simple':
             j = RuffSimpleJob('run')
