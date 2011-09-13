@@ -2,12 +2,12 @@ author: Mark Fiers
 backend: ruff
 commands:
   run:
-    delegate:
-    - run2
-    - report
-  run2:
+    mode: map
+  finish: 
     help: 'Run Fastqc'
     mode: map
+    delegate:
+    - report
   report:
     help: Generate a simple fastqc report
     mode: simple
