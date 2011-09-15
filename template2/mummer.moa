@@ -6,7 +6,7 @@ commands:
       by the template.
     mode: simple
   run:
-    help: ''
+    help: 'Run mummer'
     mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run mummer between two sequences
@@ -59,4 +59,16 @@ parameters:
     default: NNNNNNCTAGCTAGCATGNNNNNN
     optional: true
     help: linker sequence for the merged output sequence
+  organism:
+    optional: true
+    default: ''
+    help: Organism name - used in the AGP file
+  taxid:
+    optional: true
+    default: ''
+    help: Taxonomy id - used in the AGP file
+  genomecenter:
+    optional: true
+    default: pflnz
+    help: genome center - used in the AGP file
 title: mummer

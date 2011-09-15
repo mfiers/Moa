@@ -24,9 +24,24 @@ then
 		--color -t png -p {{base}} {{base}}.delta
 fi
 
-#cat {{base}}.gp | sed -e 's/^ \"\([^\"]*\)\" [0-9]*\, \\$/QQQ\1/' | grep "^QQQ" | sed "s/^QQQ//" \
-#	> {{base}}.scaffold.list
 
-#fastaExtract -l {{base}}.scaffold.list -f {{ input }} -o > {{base}}.scaffold.fasta
-#fastaExtractMerge -l {{base}}.scaffold.list -f {{ input }} -s {{ gff_source }} \
-#	-L {{ linker }} -b {{base}} -g
+cut -d'|' -f7 {{ base }}.coords | cut -f 1 | sed 1,5d | sort  | uniq > {{base}}.mapped
+
+cat {{base}}.gp | sed -e 's/^ \"\([^\"]*\)\" [0-9]*\, \\$/QQQ\1/' | grep "^QQQ" | sed "s/^QQQ//" \
+	> {{base}}.scaffold.list
+
+fastaExtract -l {{base}}.scaffold.list -f {{ input }} -o > {{base}}.scaffold.fasta
+
+echo fastaExtractMerge -l {{base}}.scaffold.list -f {{ input }}    \
+    -s {{ gff_source }} -L {{ linker }} -b {{base}}           \
+    {% if organism %} -o {{ organism }} {% endif %}           \
+    {% if genomecenter %}-c {{ genomecenter }}{%endif%}       \
+    {% if taxid %}-t {{ taxid }} {% endif %}                  \
+    -g -m {{base}}.mapped
+
+fastaExtractMerge -l {{base}}.scaffold.list -f {{ input }}    \
+    -s {{ gff_source }} -L {{ linker }} -b {{base}}           \
+    {% if organism %} -o {{ organism }} {% endif %}           \
+    {% if genomecenter %}-c {{ genomecenter }}{%endif%}       \
+    {% if taxid %}-t {{ taxid }} {% endif %}                  \
+    -g -m {{base}}.mapped

@@ -3,15 +3,28 @@ echo Start bowtie pe
 
 outbase=`basename {{ output }} .bam`
 
+echo bowtie -S {{ extra_params }} --{{orientation}}                             \
+    -I {{ min_insertsize }} -X {{ max_insertsize }}                             \
+	--un ${outbase}.unmapped.fq													\
+    {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }}                \
+    \| samtools view -bS - > ${outbase}.unsorted
+
 bowtie -S {{ extra_params }} --{{orientation}}                                  \
     -I {{ min_insertsize }} -X {{ max_insertsize }}                             \
 	--un ${outbase}.unmapped.fq													\
     {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }}                \
-    | samtools view -bS - > ${outbase}.unsorted.bam
+    | samtools view -bS - > ${outbase}.unsorted
 
-samtools sort ${outbase}.unsorted.bam ${outbase}
+samtools sort ${outbase}.unsorted ${outbase}
 samtools index ${outbase}.bam
 samtools flagstat ${outbase}.bam  > ${outbase}.report
+
+### fix
+
+for x in *.unsorted.bam
+do
+    mv $x `basename $x .bam`
+done
 
 ### clean
 

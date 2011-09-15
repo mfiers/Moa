@@ -61,12 +61,21 @@ def sgeRunner(wd, cl, conf={}, **kwargs):
     qcl.append('-o')
     qcl.append(outfile)
 
+
+    lastJids = []
+    if len(sysConf.job.data.sge.get('jidlist', [])) > 1:
+        lastJids = sysConf.job.data.sge.get('jidlist')[-1]
+    
+    print command, lastJids
+
+
     if command == 'run':
         prep_jids = sysConf.job.data.sge.jids.get('prepare', [])
         #hold until the 'prepare' jobs are done
         if prep_jids: 
             qcl.append('-hold_jid')
             qcl.append(','.join(map(str, prep_jids)))
+
     elif command == 'finish':
         run_jids = sysConf.job.data.sge.jids.get('run', [])
         #hold until the 'prepare' jobs are done
