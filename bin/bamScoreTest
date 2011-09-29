@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+import sys
+import subprocess as sp
+
+
+bamfile = sys.argv[1]
+cl = "samtools view %s" % bamfile
+
+P = sp.Popen(cl.split(), stdout=sp.PIPE)
+
+i = 0
+scores = []
+for line in P.stdout:
+	s = map(ord, list(line.split("\t")[10]))
+	i += 1
+	scores.extend(s)
+	if i > 1000: break
+
+mins = min(scores)
+maxs = max(scores)
+
+print mins,  maxs
