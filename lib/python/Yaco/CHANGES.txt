@@ -10,4 +10,7 @@ v0.1.6, 2011-01-31 -- Many small inprovements
     and replace those with Yaco objects. Allows the following
     syntax: x.a.b[3].c = 1
   
-  
+v0.1.9, 2011-06-11 -- 'simple' export
+   
+   * export Yaco structure as a simple python object
+     based on python 'primitives'

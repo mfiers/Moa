@@ -14,19 +14,32 @@ base="http://www.ncbi.nlm.nih.gov/entrez/eutils"
 wget "${base}/esearch.fcgi?term={{query}}&db={{db}}&retmax=1000000&usehistory=y" \
 	-O query.xml
 
+
 webEnv=`xml_grep --cond "WebEnv" query.xml --text_only`
 queryKey=`xml_grep --cond "QueryKey" query.xml --text_only`
 
-wget "${base}/efetch.fcgi?db={{db}}&WebEnv=${webEnv}&query_key=${queryKey}&report=gb" -O $seqName.gb
-
-if [[ {{rename_sequence}} == "True" ]]; then
-	cat $seqName.gb \
-		| seqret -filter \
-		-osdbname2 "$seqName original_id" \
-		> $seqName.fasta
+if [[ -z "$webEnv" ]]
+then
+	echo "trying to get ids from the query.xml file"
+	for id in `xml_grep --cond "Id" query.xml --text_only`
+	do
+		echo "downloading $id"
+	done
+	wget "${base}/efetch.fcgi?db={{db}}&id=${id}&rettype=gb" -O ${id}.gb
+	cat ${id}.gb | seqret -filter > ${id}.fasta
 else
-	cat $seqName.gb | seqret -filter \
-		> $seqName.fasta
+	echo "WebEnv $webEnv"
+	echo "QueryKey $queryKey"
+	wget "${base}/efetch.fcgi?db={{db}}&WebEnv=${webEnv}&query_key=${queryKey}&report=gb" -O $seqName.gb
+	if [[ {{rename_sequence}} == "True" ]]; then
+		cat $seqName.gb \
+			| seqret -filter \
+			-osdbname2 "$seqName original_id" \
+			> $seqName.fasta
+	else
+		cat $seqName.gb | seqret -filter \
+			> $seqName.fasta
+	fi
 fi
 
 ### clean

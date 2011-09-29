@@ -18,17 +18,31 @@ import fcntl
 import datetime
 import subprocess
 
+import moa.ui
 import moa.logger as l
 from moa.sysConf import sysConf
 
-def simpleRunner(wd, cl):
+
+def getRunner():    
+    actorId = getattr(sysConf.options, 'actorId', 'default')
+    if not actorId: actorId = 'default'
+    if not sysConf.actor.actors.has_key(actorId):
+        moa.ui.exitError("Invalid actor id: %s" % actorId)
+    l.debug("Actor: %s" % actorId)
+    return sysConf.actor.actors[actorId]
+
+def simpleRunner(wd, cl, conf={}, **kwargs):
     """
+    Don't think - just run - here & now
+
+    what does this function do?
     - put env in the environment
     - Execute the commandline (in cl)
     - store stdout & stderr in log files
     - return the rc
     """
     
+
     #stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
     #outDir = os.path.join(wd, '.moa', 'out', stst)
     outDir = os.path.join(wd, '.moa', 'log.latest')
@@ -37,7 +51,20 @@ def simpleRunner(wd, cl):
             os.makedirs(outDir)
         except OSError:
             pass
-        
+
+    #dump the configuration in the environment
+    for k in conf:
+        # to prevent collusion, prepend all env variables
+        # with 'moa_'
+        outk = 'moa_' + k
+        v = conf[k]
+        if isinstance(v, list):
+            os.putenv(outk, " ".join(v))
+        elif isinstance(v, dict):
+            continue
+        else:
+            os.putenv(outk, str(v))
+
     SOUT = open(os.path.join(outDir, 'stdout'), 'a')
     SERR = open(os.path.join(outDir, 'stderr'), 'a')    
     l.debug("executing %s" % " ".join(cl))
@@ -111,7 +138,10 @@ def getLastStdout(job):
     outDir = getRecentOutDir(job)
     if not outDir:
         return None
-    with open(os.path.join(outDir, 'stdout')) as F:
+    outFile = os.path.join(outDir, 'stdout')
+    if not os.path.exists(outFile):
+        return None
+    with open(outFile) as F:
         return F.read().strip()
 
 def getLastStderr(job):
@@ -121,5 +151,14 @@ def getLastStderr(job):
     outDir = getRecentOutDir(job)
     if not outDir:
         return None
-    with open(os.path.join(outDir, 'stderr')) as F:
+    errFile = os.path.join(outDir, 'stderr')
+    if not os.path.exists(errFile):
+        return None
+    with open(errFile) as F:
         return F.read().strip()
+
+#set up some actor data in the sysConf
+sysConf.actor = {}
+sysConf.actor.actors = {
+    'default' : simpleRunner
+    }

@@ -5,15 +5,12 @@ commands:
     help: Remove all job data, not the Moa job itself
     mode: simple
   run:
-    delegate:
-      - run2
-      - report
-  run2:
     help: 'Execute bowtie in paired-end mode'
     mode: map
+  finish:
+    help: finish up
   report:
     help: 'Create a report on the results'
-    mode: simple    
 creation_date: Wed Nov 10 07:56:48 2010
 description: Run BOWTIE on an set of input files (query) vs a database index.
 filesets:

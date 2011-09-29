@@ -317,6 +317,41 @@ img#moaProgress {
     padding: 4px;
 }
 
+/* generic table */
+table
+{ 
+    font-size: 11px;
+    color: #404040;
+    border: 1px #6699CC solid;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    margin-top: 0px;
+}
+
+
+table th
+{ 
+    border-bottom: 2px solid #6699CC;
+    text-align: center;
+    font-family: Verdana;
+    font-weight: bold;
+    font-size: 11px;
+    color: #404040;
+}
+
+
+table td
+{ 
+    border-bottom: 1px dotted #6699CC;
+    font-family: Verdana, sans-serif, Arial;
+    font-weight: normal;
+    font-size: 11px;
+    color: #404040;
+    text-align: left;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
 
 /*file table */
 .moaPgFilelist {

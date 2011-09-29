@@ -91,14 +91,88 @@ def fformat(message, f='text', newline = True, ansi = None):
 ##
 ## readline enabled user prompt
 ##
-################################################################################
+#########################################################################
 
+## See if we can do intelligent things with job variables
+def untangle(txt):    
+    return sysConf.job.conf.interpret(txt)
+
+    
 ## Handle moa directories
+_FSCOMPLETECACHE = {}
+
 def fsCompleter(text, state):
-    if os.path.isdir(text) and not text[-1] == '/': text += '/'
-    pos = glob.glob(text + '*')
+    def g(*a):
+        with open('/tmp/fscomp.log', 'a') as F:        
+            F.write("\t".join(map(str, a)) + "\n")
+
+    g("txt", text)
+    g("sta", state)
+
+    if text in _FSCOMPLETECACHE.keys():
+        try:
+            #rv = _FSCOMPLETECACHE[text]
+            #g(str(rv))
+            rv = _FSCOMPLETECACHE[text][state]
+            g('from cache', rv)
+            return rv
+        except:
+            g('cache problem')
+            import traceback
+            E = traceback.format_exc()
+            g(E)
+            return None
+
+    #see what we should complete
+    if '{{' in text:
+        #remove spaces within jinja codes
+        text2 = re.sub(r'{{\s*(\w*?)\s*}}', r'{{\1}}', text)
+    else: text2 = text
+
+    if ' ' in text2:
+        addPrefix = True
+        prefix, ctext = text2.rsplit(' ', 1)
+    else:
+        addPrefix = False
+        prefix, ctext = "", text2
+
+    g('prefix', prefix)
+    g('ctext', ctext)
+
+    if '{{' in ctext:
+        #jinja untangle
+        cutext = untangle(ctext)
+    else:
+        cutext = ctext
+
+    detangle = False
+    if cutext != ctext:
+        detangle = True
+
+    g('cutext', cutext)
+    if os.path.isdir(cutext) and not cutext[-1] == '/': 
+        sep = '/'
+    else: sep = ''
+
+    #get all possibilities
+    pos = glob.glob(cutext + sep + '*')
+
+    np = []
+    for i, p in enumerate(pos):
+        if os.path.isdir(p) and not p[-1] == '/':
+            p += '/'
+        if addPrefix:
+            p = prefix + ' ' + p
+        if detangle:
+            p = p.replace(cutext, ctext)
+        np.append(p)
+    g('pos', np)
+
+    _FSCOMPLETECACHE[text] = np
+
     try:
-        return pos[state]
+        rv = np[state]
+        return rv
     except IndexError:
         return None
     
@@ -107,9 +181,7 @@ def askUser(prompt, d):
     def startup_hook():
         readline.insert_text('%s' % d)
   
-    readline.set_completer_delims("\n `~!@#$%^&*()-=+[{]}\|;:'\",<>?")
-    #readline.set_pre_input_hook(_rl_set_hook)
-
+    readline.set_completer_delims("\n`~!@#$%^&*()-=+[]\|;:'\",<>?")
     readline.set_startup_hook(startup_hook)
 
     readline.set_completer(fsCompleter)

@@ -47,17 +47,20 @@ import sys
 import optparse
 import textwrap
 
-#moa specific libs
+# the system configuration is available as a global for the
+# rest of the system
+
+from moa.sysConf import sysConf
+sysConf.initialize()
+
+# moa specific libs
 import moa.job
 import moa.utils
+import moa.actor
 import moa.version
 import moa.plugin
 import moa.commands
 
-#the system configuration is available as a global from the
-#sysConf module
-from moa.sysConf import sysConf
-sysConf.initialize()
 
 ## Initialize the logger
 import moa.logger as l
@@ -138,9 +141,22 @@ sysConf.pluginHandler.run('defineOptions')
     
 def run_3(wd):
     """
-    instantiate the job & prepare & run - either defer to a callback
-    or the job itself
+    instantiate the job, prepare and run.
+
+    Running means that either a plugin callback is called or the main
+    job is executed. Main job execution consists of three steps:
+    
+    - prepare
+    - run
+    - finish
+
+    prepare, run, finish should probably not be overridden by plugin
+    callbacks. It is possible to run prepare & finish separately.
+
     """
+
+    #finally we have a directory to run in - see if this job want to
+    #be executed..
 
     #make sure we're in the correct wd for the rest of the invocation
     os.chdir(wd)
@@ -151,6 +167,10 @@ def run_3(wd):
     #create a job object
     job = moa.job.Job(wd)
     sysConf.job = job
+
+    #check if we should run this job..
+    #TODO - 
+    doRun = sysConf.pluginHandler.run('check_run')
     
     ## Aks the job & backend if they want to add to the options
     try:
@@ -158,46 +178,47 @@ def run_3(wd):
     except optparse.OptionConflictError:
         pass
     
-    ## Parse the options
+    ## Only now the full set of options is parsed 
     sysConf.options, sysConf.args = parser.parse_args()
 
     ## Proper setting of verbosity - after parsing of the command line
     if sysConf.options.verbose:
         moa.logger.setVerbose()
-
+    
     ## Determine command to run:
     if len(sysConf.args) > 0:
         command = sysConf.args[0]
         newargs = sysConf.args[1:]
     else:
-        command = 'status'
+        #default command
+        command = sysConf.default_command
         newargs = []
 
     sysConf.newargs = newargs
     sysConf.originalCommand = command        
 
-    #see if it is all callback
+    #see if this is all callback
     if command in sysConf.commands:
-        if not sysConf.commands[command].has_key('call'):
-            moa.ui.exitError("Invalid command - no callback %s" % command) 
 
-        l.debug("using a callback for moa %s" % command)
+        l.debug("running plugin callback for %s" % command)
+        sysConf.pluginHandler.execute(command)
 
-        ### Run plugin initialization step 3 - just before execution
-        sysConf.pluginHandler.run('prepare_3')
-        sysConf.pluginHandler.run("pre%s" % command.capitalize())
-        sysConf.pluginHandler.runCallback(job, command)
-        sysConf.pluginHandler.run("post%s" % command.capitalize())
-        sysConf.pluginHandler.run('finish')
-
-    elif not job.isMoa():
-        moa.ui.exitError("Unknown command, not in a Moa dir")
     else:
-        #No callback, defer this to the backend
-        job.execute(command,
-                    verbose = sysConf.options.verbose,
-                    silent = sysConf.options.silent)
+        if not job.isMoa():
+            moa.ui.exitError("Must run 'moa %s' in a Moa dir" % command)
 
+        if command == 'run':
+            job.execute(
+                verbose = sysConf.options.verbose,
+                silent = sysConf.options.silent)
+        elif command == 'prepare':
+            job.prepare()
+        elif command == 'finish':
+            job.finish()
+        elif job.hasCommand(command):
+            job.simpleExecute(command)
+        else:            
+            moa.ui.exitError("Unknown command '%s'" % command)
 
 
 
@@ -216,7 +237,7 @@ def run_recursive(wd):
             pass
             
         #remove all '.' directories -
-        drem = [ x for x in dirs if x[0] == '.' ]
+        drem = [ x for x in dirs if x[0] in ['.', '_'] ]
         [ dirs.remove(t) for t in drem]
     sysConf.pluginHandler.run('post_recursive')
 
@@ -262,8 +283,11 @@ def run_2(force_silent=False):
             
         if recurseMode == 'global':
             run_recursive(wd)
+        elif recurseMode == 'none':
+            moa.ui.exitError("Recursive execution is not allowed")
         else:
             run_3(wd)
+
     sysConf.pluginHandler.run('post_recursion')
 
 
@@ -319,7 +343,10 @@ if __name__ == "__main__":
         sysConf.rc = -1
         sysConf.pluginHandler.run("post_interrupt")
         moa.ui.warn("Interrupted")
-        sys.exit(-1)
+        if sysConf.options.verbose:
+            raise
+        else:
+            sys.exit(-2)
     except Exception, e:
         sysConf.rc = -1
         sysConf.pluginHandler.run("post_error")

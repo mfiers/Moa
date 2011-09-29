@@ -1,5 +1,12 @@
-### prep_1
-echo "dbVendor=mysql " >> orthomcl.config
+### run
+
+mkdir -p log
+
+echo '------------------------------------------------------------'
+echo 'Preparing config file'
+echo '------------------------------------------------------------'
+
+echo "dbVendor=mysql " > orthomcl.config
 echo "dbConnectString=dbi:mysql:{{db}}:{{host}}:{{port}}" >> orthomcl.config
 echo "dbLogin={{login}}" >> orthomcl.config
 echo "dbPassword={{pass}}" >> orthomcl.config
@@ -12,15 +19,91 @@ echo "percentMatchCutoff=50" >> orthomcl.config
 echo "evalueExponentCutoff=-5" >> orthomcl.config
 echo "oracleIndexTblSpc=NONE" >> orthomcl.config
 
-echo "Installing schema"
-orthomclInstallSchema orthomcl.config
+echo '------------------------------------------------------------'
+echo 'Install orthomcl schema'
+echo '------------------------------------------------------------'
 
-mkdir compliantFasta
-cd compliantFasta
-{{
-cd ..
+orthomclInstallSchema orthomcl.config log/installSchema.log 2>/dev/null \
+	|| (echo "Error running orthomclInstallSchema - ignoring this."; \
+	    echo "maybe the db was already installed?" )
 
-### clean
+if [[ ! -f "goodProteins.fasta" ]]
+then
+	echo '------------------------------------------------------------'
+	echo 'Preparing combined fasta file'
+	echo '------------------------------------------------------------'
+	orthomclFilterFasta {{ input_dir }} 10 20 
+fi
 
-rm orthomcl.config
-rm -rf compliantFasta
+
+
+if [[ ! -f "goodProteins.fasta.phr" ]] 
+then
+	echo '------------------------------------------------------------'
+	echo 'Create a blast database'
+	echo '------------------------------------------------------------'
+	makeblastdb -in goodProteins.fasta -dbtype prot
+fi
+
+if [[ ! -f "blast.all.vs.all" ]]
+then
+	blastp -db goodProteins.fasta -query goodProteins.fasta -seg yes \
+		-outfmt 6 -num_threads {{ num_threads }} -num_descriptions 99999999  \
+		-num_alignments 99999999 -evalue {{ eval }} -out blast.all.vs.all
+fi
+
+echo '------------------------------------------------------------'
+echo 'Running orthomcl Blast Parser'
+echo '------------------------------------------------------------'
+
+if [[ ! -f "similarSequences.txt" ]]
+then
+	orthomclBlastParser blast.all.vs.all {{ input_dir }} >> similarSequences.txt
+fi
+
+echo '------------------------------------------------------------'
+echo 'Load blast into the database'
+echo '------------------------------------------------------------'
+
+if [[ ! -f "loadBlast" ]]
+then
+	orthomclLoadBlast orthomcl.config similarSequences.txt
+	touch loadBlast
+fi
+
+echo '------------------------------------------------------------'
+echo 'Determine orthoMcl pairs'
+echo '------------------------------------------------------------'
+
+if [[ ! -f 'mclPairs' ]]
+then
+	orthomclPairs orthomcl.config log/pairs.log cleanup=yes
+	touch mclPairs
+fi
+
+echo '------------------------------------------------------------'
+echo 'OrthoMclDumpPairs'
+echo '------------------------------------------------------------'
+
+if [[ ! -f 'mclInput' ]]
+then
+	orthomclDumpPairsFiles orthomcl.config
+fi
+
+echo '------------------------------------------------------------'
+echo 'Run MCL'
+echo '------------------------------------------------------------'
+
+if [[ ! -f 'mclOutput.{{ mcl_i }}' ]]
+then
+	mcl mclInput --abc -I {{ mcl_i }} -o mclOutput.{{ mcl_i }}
+fi
+
+echo '------------------------------------------------------------'
+echo 'Convert MCL output to groups.{{ mcl_i }}.txt'
+echo '------------------------------------------------------------'
+
+if [[ ! -f "groups.{{ mcl_i }}.txt" ]]
+then
+	orthomclMclToGroups {{ group_prefix }} 0 < mclOutput.{{ mcl_i }} > groups.{{ mcl_i }}.txt
+fi

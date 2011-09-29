@@ -1,53 +1,71 @@
 author: Mark Fiers
 backend: ruff
 commands:
-  clean:
-    help: Remove all job data
-    mode: simple
   run:
-    delegate:
-    - prep_1
-    help: Run orthomcl
+    help: ''
     mode: simple
-creation_date: Wed Nov 10 07:56:48 2010
-description: Run orhthomcl on a set of input fasta files
-filesets:
-  input:
-    category: input
-    help: Directory with the input fasta files
-    optional: false
-    pattern: '*/*.fasta'
-    type: set
+creation_date: Tue Mar 29 16:34:19 2011
+description: Execute one command, No in or output files are tracked by Moa.
 moa_id: orthomcl
-modification_date: Wed Nov 10 07:56:48 2010
+modification_date: Wed Mar 30 06:02:01 2011
 name: orthomcl
 parameters:
-  db:
-    default: orthomcl
-    help: DB name
-    optional: true
-    type: string
-  host:
-    default: localhost
-    help: DB host
-    optional: true
-    type: string
-  login:
-    help: DB login
+  input_dir:
+    help: 'Input directory with compliant (read the manual) fasta files'
     optional: false
     type: string
-  pass:
-    help: DB password
+  mcl_i:
+    help: 'mcl -i value'
+    optional: true
+    type: float
+    default: 1.5
+  vendor:
+    help: 'Db vendor'
+    optional: true
+    type: string
+    default: mysql
+  db:
+    help: 'Db name'
     optional: false
     type: string
   port:
+    help: 'Db port'
+    optional: true
+    type: integer
     default: 3306
-    help: DB port
+  host:
+    help: 'Db Host'
     optional: true
+    type: localhost
+  login:
+    help: 'Db username'
+    optional: false
     type: string
+    default: 
+  pass:
+    help: 'Db password'
+    optional: false
+    type: string
+    default: 
   prefix:
-    default: run1
-    help: prefix for separating tables & output fields
+    help: 'OrthoMCL prefix for the database tables'
     optional: true
     type: string
-title: Bwa index builder
+    default: ortho
+  group_prefix:
+    help: 'OrthoMCL prefix for group names'
+    optional: true
+    type: string
+    default: 'g_'
+  num_threads:
+    help: 'Number of threads to use'
+    optional: true
+    type: integer
+    default: 4
+  eval:
+    help: 'Evalue cutoff for blast to use'
+    optional: true
+    type: string
+    default: 1e-5
+
+title: Run OrthoMCL

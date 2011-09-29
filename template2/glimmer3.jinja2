@@ -1,0 +1,143 @@
+### prepare
+
+mkdir -p train
+
+echo '----------------------------------'
+echo 'start training'
+cd train
+
+
+echo '----------------------------------'
+echo 'concatenate sequences'
+echo
+infiles='{{ input_files|join(' ') }}'
+if [[ ! -f all.seq ]]
+then
+    echo '>train' >> all.seq
+    for i in $infiles
+    do
+        cat $i | grep -v '>' >> all.seq
+        echo 'NNNNNNCTAGCTAGCATGNNNNNN' >> all.seq
+    done
+fi
+
+echo '----------------------------------'
+echo 'Long orfs'
+echo
+if [[ ! -f "long.orfs" ]]
+then
+    long-orfs -l -n -t 1.15   \
+		-Z {{ stop_codons }}  \
+		all.seq long.orfs
+fi
+
+echo '----------------------------------'
+echo 'extract training set'
+echo
+if [[ ! -f "train1.set" ]]
+then
+    extract -t all.seq long.orfs > train1.set
+fi
+
+echo '----------------------------------'
+echo 'build first training model'
+echo
+if [[ ! -f "train1.icm" ]]
+then
+    build-icm -r train1.icm < train1.set
+fi
+
+echo '----------------------------------'
+echo 'run first glimmer run'
+echo
+
+if [[ ! -f "run1.predict" ]]
+then
+    glimmer3                  \
+        -o{{max_overlap}}     \
+        -g{{gene_len}}        \
+        -t{{treshold}}        \
+		-Z {{ stop_codons }}  \
+        all.seq train1.icm    \
+        run1
+fi
+
+echo '----------------------------------'
+echo 'extract coords from the  first glimmer run'
+echo
+
+if [[ ! -f "run1.coords" ]]
+then
+    cat run1.predict | grep -v "^>" > run1.coords
+fi
+
+echo '----------------------------------'
+echo 'create a second train set'
+echo
+if [[ ! -f "upstream.train.set" ]]
+then
+    upstream-coords.awk 25 0 run1.coords | extract all.seq - > upstream.train.set
+fi
+
+echo '----------------------------------'
+echo 'run elph to create analyze motifs'
+echo
+if [[ ! -f "upstream.motif" ]]
+then
+    elph upstream.train.set LEN=6 | get-motif-counts.awk > upstream.motif
+fi
+
+### run
+
+mkdir -p `dirname {{ output }}`
+mkdir -p `dirname {{ cds }}`
+mkdir -p `dirname {{ gff }}`
+mkdir -p `dirname {{ pep }}`
+
+startuse=`start-codon-distrib -3 train/all.seq train/run1.coords`
+
+if [[ ! -f {{ output }}.predict ]]
+then
+	glimmer3 -o{{max_overlap}} -g{{gene_len}} -t{{treshold}}    \
+		-b ./train/upstream.motif -P ${startuse} {{ input }}    \
+		-Z {{ stop_codons }}  \
+		./train/train1.icm {{ output }}
+fi
+
+b=`head -1 {{ output }}.predict | cut -c2- | cut -f 1 -d' '`
+
+echo 'basename $b'
+
+
+echo "convert {{ output }} to {{ cds }}"
+cat {{ output }}.predict \
+         | grep -v "^>"                          \
+         | extract -t {{ input }} -              \
+         | sed "s/orf\([0-9]*\)/$b.g\1/"      \
+         > {{ cds }}
+
+echo "convert {{ output }} to {{ cds }}"
+cat {{ output }}.predict \
+         | grep -v "^>"                          \
+         | extract -t {{ input }} -              \
+         | sed "s/orf\([0-9]*\)/$b.g\1/"      \
+         > {{ cds }}
+
+echo "convert {{ cds }} to {{ pep }}"
+transeq -sequence {{ cds }} -outseq {{ pep }} -table 11
+
+echo "convert {{output}} to {{gff}}"
+cat {{ output }}.predict   \
+     | grep -v "^>" \
+     | sed "s/orf\([0-9]*\)/${b}.g3.g\1/" \
+     | awk ' { \
+          printf "'${b}'\t{{gff_source}}\tCDS\t";                        \
+             if ($4 > 0) {                                                  \
+                 printf "%s\t%s\t%s\t+\t%s", $2, $3, $5, substr($4,2,1); \
+             } else {                                                        \
+                 printf "%s\t%s\t%s\t-\t%s", $3, $2, $5, substr($4,2,1); 
+             } \
+             printf "\tID=%s;Name=%s\n", $1, $1; \
+         } ' \
+     > {{ gff }}
+

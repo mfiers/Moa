@@ -41,6 +41,7 @@ def hook_prepare_3():
         'optional' : True,
         'help' : 'A single command to be executed before the main run' + \
                  'starts',
+        'recursive' : False,
         'type' : 'string'
         }
     
@@ -49,6 +50,7 @@ def hook_prepare_3():
         'optional' : True,
         'help' : 'A single command to be executed after the main run ' + \
                  'starts',
+        'recursive' : False,
         'type' : 'string'
         }
 

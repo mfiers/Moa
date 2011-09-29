@@ -27,6 +27,7 @@ sysConf = None
 USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
                           '.config', 'moa', 'config')
 
+
 class SysConf(Yaco.Yaco):
     
     def __init__(self):

@@ -26,6 +26,7 @@ from jinja2 import StrictUndefined
 import jinja2.exceptions
 
 import moa.logger as l
+import moa.ui
 import moa.utils
 
 class JobConf(object):
@@ -106,8 +107,8 @@ class JobConf(object):
         jobid = self['jobid']
         if jobid != 'unset': return
         name = os.path.basename(os.getcwd())
-        name = re.sub("^[0-9]*\.*", "", name)
-        moa.ui.message("Setting job id to '%s'" % name)
+        name = re.sub("^[0-9]+\.+", "", name)
+        l.debug("Setting job id to '%s'" % name)
         self['jobid'] = name
         self.save()
 
@@ -122,17 +123,36 @@ class JobConf(object):
         self.setPrivateVar('_', dirparts[-1])
         i = 1                
         while dirparts:
+            cp = os.path.sep.join(dirparts)
             p = dirparts.pop()
-            if not p:
-                break
+            clean_p = re.sub("^[0-9]+\.+", "", p).replace('.', '_')
+            
+            #print i, clean_p, p, cp
+            if not p: break
             self.setPrivateVar('dir%d' % i, p)
             self.setPrivateVar('_%d' % i, p)
+            self.setPrivateVar('_%s' % clean_p, cp)
+
             if i <= 3:
                 self.setPrivateVar('_' * i, p)
 
             i += 1
 
-    def render(self, force=False):
+    def interpret(self, value):
+        env = jEnv(undefined=StrictUndefined)
+        renconf = self.render()
+
+        templ = env.from_string(value)        
+        try:
+            rv = templ.render(renconf)
+            return rv
+        except jinja2.exceptions.UndefinedError:
+            return value
+        except jinja2.exceptions.TemplateSyntaxError:
+            return value
+        
+    def render(self, force=False, showPrivate=True):
+
         rv = {}
         toExpand = []
                 
@@ -155,7 +175,12 @@ class JobConf(object):
         while toExpand:
             key = toExpand.pop(0)
             #create the template
-            jt = env.from_string(self[key])
+            try:
+                jt = env.from_string(self[key])
+            except jinja2.exceptions.TemplateSyntaxError:
+                rv[key] = self[key]
+                continue
+
             try:
                 nw = jt.render(rv)
             except jinja2.exceptions.UndefinedError:
@@ -166,16 +191,28 @@ class JobConf(object):
                     break
                 toExpand.append(key)
                 continue
+            except jinja2.exceptions.TemplateSyntaxError:
+                #ignore this one - cannot be improved
+                rv[key] = self[key]
+
             rv[key] = nw
 
         self._rendered = rv
-        return rv
+
+        if showPrivate:
+            return rv
+        else:
+            ov = {}
+            for k in rv.keys():
+                if not self.isPrivate(k):
+                    ov[k] = rv[k]
+            return ov
 
     def isPrivate(self, k):
         """
         Is this a private variable?
-
         can be locally defined or in the template definition
+
         """
         if k in self.private:
             return True
@@ -196,7 +233,7 @@ class JobConf(object):
            try to correct for this. Currently this only works
            for files that exist. i.e. 
         
-        """
+        """        
         y = Yaco.Yaco()
         y.load(confFile)
 
@@ -205,34 +242,43 @@ class JobConf(object):
             return
         
         normdelta = os.path.normpath(delta)
-        
+
         if y.has_key('jobid'):
             self.setPrivateVar('_%s' % y['jobid'], normdelta)
         
+        #print self.job.template.parameters.keys()
         #find relative links & see if they need to be adjusted
         for k, v in y.items():
             
-            
+            #check if this needs to be editted or not
+            parType = self.job.template.parameters.get(k, {}).get('type')
+            isFileSet = k in self.job.template.filesets.keys()
+
+            if not (parType == 'file' or parType == 'directory' or isFileSet):
+                continue
+
             #find potential relative links
             if not isinstance(v, str): continue
             if not v: continue
             if not (v[:2] == './' or v[:3] == '../'):
                 continue
+
             correctedPath = os.path.normpath(delta + '/' + v)
             relPath = os.path.relpath(correctedPath)
-            
-            #if os.path.exists(correctedPath):
-            #    y[k] = relPath
-            #elif glob.glob(correctedPath):
-            #    y[k] = relPath
+
             y[k] = relPath
 
         self.jobConf.update(y)
 
     def save(self):
-        self.job.checkConfDir()
-        self.localConf.save(self.jobConfFile, self.doNotSave)
-
+        try:
+            self.job.checkConfDir()
+            self.localConf.save(self.jobConfFile, self.doNotSave)
+        except OSError:
+            moa.ui.error("Error saving config file")
+        except IOError:
+            moa.ui.error("Error saving config file")
+            
     def setInJobConf(self, key):
         c = self._get_conf(key)
         if c.has_key(key):
@@ -276,7 +322,7 @@ class JobConf(object):
     def update(self, data):
         self.localConf.update(data)
         
-    def get(self, key, default):
+    def get(self, key, default=None):
         c = self._get_conf(key)
         v = c.__getitem__(key)
         if v: 

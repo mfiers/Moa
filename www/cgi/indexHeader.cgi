@@ -128,7 +128,8 @@ for name in possible_files:
             with open(os.path.join(moacwd, fname)) as F:
                 fdata = F.read()
             if ext == '.md':
-                sysConf.files[name.capitalize()] = markdown.markdown(fdata)
+                sysConf.files[name.capitalize()] = markdown.markdown(
+                    fdata, extensions=['mdGraph', 'tables', 'footnotes'])
             else:
                 sysConf.files[name.capitalize()] = '<pre>%s</pre>' % fdata
     

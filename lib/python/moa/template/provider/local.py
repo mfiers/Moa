@@ -67,6 +67,8 @@ class Local(provider.ProviderBase):
         for f in os.listdir(self.directory):
             if f[-4:] != '.moa':
                 continue
+            if f[0] == '.': 
+                continue
             name = f.replace(".moa", "")
             r.append(f[:-4])
         return r

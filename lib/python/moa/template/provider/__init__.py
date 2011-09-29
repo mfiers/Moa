@@ -80,12 +80,13 @@ class Providers(object):
         
         if not provider:
             moa.ui.exitError("Cannot find provider for template %s.%s" % (
-                provider.name, tName))
+                provider, tName))
         return provider.getTemplate(tName)
 
     def templateList(self):
         rv = set()
         for pName in self.order:
+            print self.providers[pName].templateList()
             rv.update(set(self.providers[pName].templateList()))
         rv = list(rv)
         rv.sort()

@@ -2,6 +2,7 @@
 import unittest2 as unittest
 from moa.sysConf import sysConf
 import moa.job
+import moa.logger as l
 
 class templateTest(unittest.TestCase):
     """
@@ -16,7 +17,7 @@ class templateTest(unittest.TestCase):
             # hence, only if it is called by RuffSuite()
             return
 
-        l.critical("testing %s" % self.job.template.name)
+        l.debug("testing %s" % self.job.template.name)
         templateName = self.job.template.name
         sysConf.job = self.job
 

@@ -27,6 +27,8 @@ import moa.logger as l
 from moa.sysConf import sysConf
 
 from moa.backend.ruff.commands import RuffCommands
+from moa.backend.ruff.simple import RuffSimpleJob
+from moa.backend.ruff.map import RuffMapJob
 
 import Yaco
 
@@ -36,8 +38,7 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 def load(job):
     """
     Load the backend
-    """
-    
+    """    
     return Ruff(job)
 
 class Ruff(moa.backend.BaseBackend):
@@ -52,6 +53,20 @@ class Ruff(moa.backend.BaseBackend):
         self.commands = RuffCommands(
             self.job.confDir, self.job.template.moa_id)
 
+    def prepare(self):
+        """
+        Run template prepare step - that is if there is a 
+        prepare command defined.
+        """
+        pass
+
+    def finish(self):
+        """
+        Run template finish step - that is if there is a 
+        prepare command defined.
+        """
+        pass
+        
     def hasCommand(self, command):
         return command in self.commands.keys()
     
@@ -61,75 +76,38 @@ class Ruff(moa.backend.BaseBackend):
         g.add_option("-j", dest="threads", type='int',
                      help="threads to use when running Ruffus")
 
-        g.add_option("-B", dest="remake", action='store_true',
-                     help="Reexecute all targets (corresponds to make -B) ")
+        #TODO:
+        #g.add_option("-B", dest="remake", action='store_true',
+        #             help="Reexecute all targets (corresponds to make -B) ")
 
-    def execute(self, command,
+
+    def simpleExecute(self, command):
+        """
+        Run a 'simple' template command
+        """
+        if not self.commands.has_key(command):
+            return -1
+        j = RuffSimpleJob(command)
+        return j.go()
+
+    def execute(self, 
+                command,
                 verbose=False,
                 silent=False,
                 renderTemplate = True):
         """
-        Execute a command
+        Execute the 'run' template command
 
         :param renderTemplate: Jinja-render the template
         """
 
+        if command != 'run':
+            moa.ui.exitError("Not 'run'ning???")
+
+        #should have 'run'...
         if not self.commands.has_key(command):
-            rc = -1
-            return rc
+            return -1
 
-        #determine which files are prerequisites
-        prereqs = []
-        for fsid in self.job.data.prerequisites:
-            prereqs.extend(self.job.data.filesets[fsid]['files'])
-                
-        #determine which files are 'others' - i.e. those files that
-        #are necessary, but do not force a rebuild if updated
-        others = []
-        for fsid in self.job.data.others:
-            others.extend(self.job.data.filesets[fsid]['files'])
-                    
-        def generate_data_map():
-            """
-            Generator for a map operation -
-
-            this function generates each pair of in & output files
-            that constitute a single job.
-            """
-                  
-            #determine number the number of files - make sure that each
-            #job has the same number of in & output files
-            noFiles = 0
-            in_out_files = self.job.data.outputs + self.job.data.inputs
-            for i, k in enumerate(in_out_files):
-                if i == 0:
-                    noFiles = len(self.job.data.filesets[k].files)
-                else:
-                    assert(len(self.job.data.filesets[k].files) == noFiles)
-
-            #rearrange the files for yielding
-            for i in range(noFiles):
-                outputs = [self.job.data.filesets[x].files[i] 
-                           for x in self.job.data.outputs]
-                inputs =  [self.job.data.filesets[x].files[i] 
-                           for x in self.job.data.inputs]
-                
-                l.debug('pushing job with inputs %s' % ", ".join(inputs[:10]))
-                                
-                fsDict = dict([(x, self.job.data.filesets[x]['files'][i])
-                               for x in self.job.data.inputs + self.job.data.outputs])
-
-                jobData = {}
-                jobData.update(self.job.conf.render())
-                jobData['wd'] = self.job.wd
-                jobData['silent'] = silent
-                jobData.update(fsDict)
-                #import pprint
-                #pprint.pprint(jobData)
-                script = self.commands.render(command, jobData)
-                l.debug("Executing %s" %  script)
-
-                yield([inputs + prereqs], outputs, script, jobData)
 
         if self.job.template.commands.has_key(command):
             cmode = self.job.template.commands[command].mode
@@ -137,57 +115,11 @@ class Ruff(moa.backend.BaseBackend):
             cmode = 'simple'
             
         rc = 0
-
-        #this is because we're possibly reusing the executor
-        #function in multiple ruffus calls. In all cases it's to
-        #be interpreted as a new, fresh call - so, remove all
-        #metadata that might have stuck from the last time
-        if hasattr(executor, 'pipeline_task'):
-            del executor.pipeline_task
-
-        if cmode == 'map':
-            #if there are no & output files complain:
-            if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
-                moa.ui.exitError("no in or output files")
-
-            #here we're telling ruffus to proceed using the in & output files
-            #we're generating
-            l.debug("decorating executor")
-            executor2 = ruffus.files(generate_data_map)(executor)
-            l.debug("Start run (with %d thread(s))" %
-                   sysConf.options.threads)
             
-            try:
-                #Run!
-                ruffus.pipeline_run(
-                    [executor2],
-                    verbose = sysConf.options.verbose,
-                    one_second_per_job=False,
-                    multiprocess= sysConf.options.threads,
-                    logger = ruffus.black_hole_logger,                    
-                    )
-                rc = 0
-                l.debug("Finished running (with %d thread(s))" %
-                   sysConf.options.threads)
-
-            except ruffus.ruffus_exceptions.RethrownJobError as e:
-                #any error thrown somewhere in the pipeline will be
-                #caught here.
-                l.debug("CAUGHT A RUFFUS ERROR!")
-                l.debug(str(e))
-                startOfError = "{{gray}}" + re.sub(r'\s+', " ", str(e))[:72].strip() + "...{{reset}}"
-                moa.ui.error("Caught a Ruffus error")
-                moa.ui.error(startOfError)
-
-                try:
-                    #try to get some structured info & output that.
-                    einfo = e[0][1].split('->')[0].split('=')[1].strip()
-                    einfo = einfo.replace('[', '').replace(']', '')
-                    moa.ui.error("While  processing: %s" % einfo)
-                except:
-                    pass
-                moa.ui.exitError("Quitting")
-                 
+        if cmode == 'map':
+            j = RuffMapJob('run')
+            j.go()
+            
         elif cmode == 'reduce':
             inputs = []
             for x in self.job.data.inputs:
@@ -205,7 +137,7 @@ class Ruff(moa.backend.BaseBackend):
                 [(x, self.job.data.filesets[x]['files'][0])
                  for x in self.job.data.outputs])
 
-            jobData = {}
+            jobData = self.job.data.simple()
             jobData.update(self.job.conf.render())
             jobData['wd'] = self.job.wd
             jobData['silent'] = silent
@@ -243,15 +175,8 @@ class Ruff(moa.backend.BaseBackend):
                rc = 1
  
         elif cmode == 'simple':
-            data = self.job.conf.render()
-            data['job'] = self.job
-            tf = tempfile.NamedTemporaryFile( 
-                delete = False, prefix='moa', mode='w')
-            script = self.commands.render(command, data)
-            tf.write(script + "\n")
-            tf.close()
-            os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-            rc = moa.actor.simpleRunner(self.job.wd, [tf.name])
+            j = RuffSimpleJob('run')
+            j.go()
 
         #empty the ruffus node name cache needs to be empty -
         #otherwise ruffus might think that we're rerunning jobs
@@ -260,27 +185,6 @@ class Ruff(moa.backend.BaseBackend):
                 del executor.pipeline_task._name_to_node[k]
         return rc
 
-#A hack - @improve_name randomizes the function name upon calling so
-#it does not appear in the ruffus database of nodes
-@moa.utils.simple_decorator
-def improve_name(func):
-    def f(*args, **kwargs):
-        nn = 'executor_%s' % random.randint(0,100000)
-        f.__name__ = nn
-        f.func_name = nn
-        func.__name__ = nn
-        func.func_name = nn
-        return func(*args, **kwargs)
-
-    import random
-    nn = 'executor_%s' % random.randint(0,100000)
-    f.__name__ = nn
-    f.func_name = nn
-    func.__name__ = nn
-    func.func_name = nn
-    return f
-
-#@improve_name
 def executor(input, output, script, jobData):    
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
@@ -300,7 +204,8 @@ def executor(input, output, script, jobData):
         else:
             os.putenv(k, str(v))
 
-    rc = moa.actor.simpleRunner(jobData['wd'],  [tf.name])
+    runner = moa.actor.getRunner()
+    rc = runner(jobData['wd'],  [tf.name], jobData)
     if rc != 0:
         raise ruffus.JobSignalledBreak
     l.debug("Executing %s" % tf.name)

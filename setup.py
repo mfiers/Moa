@@ -87,6 +87,7 @@ setup(name='moa',
           'unittest2>=0.5',
           'lockfile>=0.9',
           'mdGraph>=0.1'
+          'markdown',
           ],
       classifiers = [
           'Development Status :: 4 - Beta',

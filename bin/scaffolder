@@ -8,12 +8,8 @@ import optparse
 from xml.dom.minidom import getDOMImplementation
 from subprocess import Popen, PIPE
 
-MOABASE = os.environ["MOABASE"]
-site.addsitedir(os.path.join(MOABASE, 'lib', 'python'))
-
 ## Init the logger
-import moa.logger
-l = moa.logger.l
+import moa.logger as l
 
 parser = optparse.OptionParser()
 parser.add_option('-i', dest='inputfile',
@@ -26,11 +22,11 @@ parser.add_option('-p', dest='prefix',
 parser.add_option('-v', dest='verbose', action='store_true',
                   help='verbose output')
 parser.set_defaults(maxLinks=10)
-parser.add_option('--mh', dest='maxHits', help=(
-        'When finding links, based on BLAST vs the reference genome, limit ',
+parser.add_option('--mh', dest='maxHits', help=
+        'When finding links, based on BLAST vs the reference genome, limit ' +
         'the number of links')
-                    
-(options, args) = parser.parse_args()
+
+options, args = parser.parse_args()
 
 
 ################################################################################
@@ -284,7 +280,6 @@ def analyzeBlast():
             continue    
         for sidA in  hitset.keys():
             setA = hitset[sidA]
-            if len(setA) >
             for sidB in hitset.keys():
                 if sidA == sidB: continue
                 setB = hitset[sidB]

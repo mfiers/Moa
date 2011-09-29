@@ -1,0 +1,36 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    mode: map
+    help: 'generate info on each of the input sequences'
+  finish:
+    help: create a report
+creation_date: Mon, 11 Jul 2011 15:15:20
+description: gather info on a set of input files
+filesets:
+  input:
+    category: input
+    help: '"fastainfo" input files'
+    optional: false
+    pattern: './*.fasta'
+    type: set
+  output:
+    category: output
+    help: '"fastainfo" raw output files'
+    optional: true
+    pattern: stats/*.out
+    source: input
+    type: map
+  stats:
+    category: output
+    help: '"fastainfo" collect stat files'
+    optional: true
+    pattern: stats/*.stat
+    source: input
+    type: map
+moa_id: fastainfo
+modification_date: Mon, 11 Jul 2011 15:15:12
+name: fastainfo
+parameters: {}
+title: gather information on a set of fasta files

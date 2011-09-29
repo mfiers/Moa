@@ -80,9 +80,6 @@ def hook_prepareWWW():
             fs['lifs'] = _prepFileList(fs.files)
             job.data.mappedSets[source]['maps'][fsid] = fs
 
-
-
-
 def hook_defineCommands():
     """
     Set the moa commands for this plugin
@@ -113,6 +110,7 @@ def showFiles(job):
     type filesets) and inferred from these for map type filesets.
     
     """
+    
     filesets = job.template.filesets.keys()
     filesets.sort()
     #first print singletons
@@ -245,6 +243,7 @@ def preparefilesets():
     """
     prepare all filesets 
     """
+    l.debug("Preparing filesets")
     job = sysConf['job']
     job.data.filesets = {}
     renJobConf = job.conf.render()
@@ -267,7 +266,6 @@ def preparefilesets():
             
         if len(fileSets) == 0: break
         fsid = fileSets.pop(0)
-
         fs = job.template.filesets[fsid]
                 
         job.data.filesets[fsid] = fs
@@ -320,6 +318,9 @@ def preparefilesets():
             job.data.prerequisites.append(fsid)
         if fs.category == 'other':
             job.data.others.append(fsid)
+
+        #add a shortcut - easier access alter
+        job.data['%s_files' % fsid] = job.data.filesets[fsid].files
 
     for fsid in job.data.filesets.keys():
         fs = job.data.filesets[fsid]
