@@ -27,7 +27,7 @@ fi
 
 cut -d'|' -f7 {{ base }}.coords | cut -f 1 | sed 1,5d | sort  | uniq > {{base}}.mapped
 
-cat {{base}}.gp | sed -e 's/^ \"\([^\"]*\)\" [0-9]*\, \\$/QQQ\1/' | grep "^QQQ" | sed "s/^QQQ//" \
+sed -e '/set ytics/,$ d' {{base}}.gp | sed -e 's/^ \"\([^\"]*\)\" [0-9]*\, \\$/QQQ\1/' | grep "^QQQ" | sed "s/^QQQ//" \
 	> {{base}}.scaffold.list
 
 fastaExtract -l {{base}}.scaffold.list -f {{ input }} -o > {{base}}.scaffold.fasta
