@@ -109,10 +109,22 @@ def simpleRunner(wd, cl, conf={}, **kwargs):
         sys.stdout.flush(); sys.stderr.flush()
         
     #make sure that nothing is left
-    o = p.stdout.read(); e = p.stderr.read()
-    sys.stdout.write(o); sys.stderr.write(e)
-    SOUT.write(o); SERR.write(e)
-    sys.stdout.flush();     sys.stderr.flush()
+    try:
+        o = p.stdout.read(); 
+        sys.stdout.write(o)
+        SOUT.write(o);
+    except IOError:
+        pass
+
+    try:
+        e = p.stderr.read()
+        sys.stderr.write(e)
+        SERR.write(e)
+    except IOError:
+        pass
+
+    sys.stdout.flush()    
+    sys.stderr.flush()
 
     #return returncode
     return p.returncode
