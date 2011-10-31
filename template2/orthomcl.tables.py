@@ -21,16 +21,23 @@ if not os.path.isdir(outdir):
 
 print 'seq input dir', seqdir
 
-
 #read seqdir
 allTaxa = []
+geneCounts = []
 for f in os.listdir(seqdir):
     if f[-6:] != '.fasta':
         continue
     name = f[:-6]
     allTaxa.append(name)
+    seqFile = os.path.abspath(os.path.join(seqdir, f))
+    cl = "grep -c '^>' %s" % seqFile
+    PR = sp.Popen(cl, stdout=sp.PIPE, shell=True)
+    o, e = PR.communicate()
+    count =  int(o.strip())
+    print "found %d genes for %s" % (count, name)
+    geneCounts.append((count, name))
 
-allTaxa.sort()
+allTaxa = [x[1] for x in geneCounts]
 
 print '-- found %d taxa' % len(allTaxa)
 print ", ".join(allTaxa)

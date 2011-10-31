@@ -39,6 +39,13 @@ class Gnumake(moa.backend.BaseBackend):
         """
         return True
 
+    def simpleExecute(self, commandList):
+        """
+        Run a 'simple' template command
+        """
+        for command in commandList:
+            self.execute(command)
+
     def execute(self, command, **options):
         """
         Execute!

@@ -56,19 +56,12 @@ def hook_defineCommands():
         'log' : True
         }
 
-#def chl(job):
-#    """
-#    Record or display Changelogs
-#    """
-#    message = sysConf.options.message
-    
 
 def _readFromuser(job, header, fileName):
     """
     gather Blog or Changelog information
     """
     moa.utils.moaDirOrExit(job)
-    print sysConf.args
 
     txt = []
     print header, "..."
@@ -79,7 +72,7 @@ def _readFromuser(job, header, fileName):
         except (EOFError, KeyboardInterrupt):
             break
 
-    sysConf.job.data.blog.message = message
+    sysConf.job.data.blog.txt = "\n".join(txt)
 
     try:
         with open(fileName) as F:
@@ -92,7 +85,7 @@ def _readFromuser(job, header, fileName):
         header = "**%s - %s writes**" % (
             now.strftime("On %A, %d %b %Y %H:%M"), getpass.getuser()) 
         F.write("%s\n\n" %  header)
-        F.write("\n    ".join(message.split("\n")))
+        F.write("\n    ".join(txt))
         F.write("\n-----\n")
         F.write(oldFile)
 
@@ -113,11 +106,10 @@ def blog(job):
 
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
     """
-    pass
-    #_readFromuser(
-    #    job, 
-    #    header="enter your blog message (ctrl-d on an empty line to finish)",
-    #    "blog.md")
+    _readFromuser(
+        job, 
+        header="enter your blog message (ctrl-d on an empty line to finish)",
+        fileName="blog.md")
                   
     
  

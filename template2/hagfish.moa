@@ -3,12 +3,6 @@ backend: ruff
 commands:
   run:
     help: 'Run hagfish'
-    delegate:
-      - run2
-      - combine
-      - report
-  run2:
-    mode: map
   clean:
     mode: simple
     help: remove all Hagfish files

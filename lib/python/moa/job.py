@@ -197,13 +197,17 @@ class Job(object):
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
 
-    def simpleExecute(self, command):
+    def simpleExecute(self, commandList):
         """
         Just 'execute' a template call 
         """
         sysConf.pluginHandler.run('prepare_3')
         sysConf.pluginHandler.run('pre_command')
-        return self.backend.simpleExecute(command)
+
+        if isinstance(commandList, str):
+            commandList = [commandList]
+            
+        return self.backend.simpleExecute(commandList)
             
     def execute(self, verbose=False, silent=False):
         """
@@ -259,6 +263,7 @@ class Job(object):
         >>> job.prepare()
         
         """
+
         #organize a job id..
         jobIdFile = os.path.join(self.confDir, 'last_job_id')
         sysConf.jobId = 1
@@ -275,6 +280,7 @@ class Job(object):
             sysConf.jobId = old_id + 1
             with open(jobIdFile, 'w') as F:
                 F.write("%s" % sysConf.jobId)
+
         #create a new folder for logging
         logDir = os.path.join(self.confDir, 'log.d', '%d' % sysConf.jobId)
         if not os.path.exists(logDir):
@@ -286,16 +292,33 @@ class Job(object):
             os.remove(os.path.join(self.confDir, 'log.latest'))
         os.symlink('log.d/%d' % sysConf.jobId, latestDir)
 
-        l.info("Acquired job id %s" % sysConf.jobId)
+        l.info("Acquired job id %s" % sysConf.jobId)              
+        
+        if self.template.commands.get('prepare', {}).has_key('delegate'):
+            commandList = self.template.commands['prepare'].delegate
+        else:
+            commandList = ['prepare']
 
-        self.simpleExecute('prepare')
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
+
+        self.simpleExecute(commandList)
+
 
     def finish(self):
         self.simpleExecute('finish')
         if self.backend and getattr(self.backend, 'finish', None):
             self.backend.finish()
+
+        if self.template.commands.get('finish', {}).has_key('delegate'):
+            commandList = self.template.commands['finish'].delegate
+        else:
+            commandList = ['finish']
+            
+        if self.backend and getattr(self.backend, 'prepare', None):
+            self.backend.prepare()
+
+        self.simpleExecute(commandList)
 
     def defineOptions(self, parser):
         """

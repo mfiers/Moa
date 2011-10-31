@@ -131,7 +131,6 @@ class RuffMapJob(RuffBaseJob):
         #function in multiple ruffus calls. In all cases it's to
         #be interpreted as a new, fresh call - so, remove all
         #metadata that might have stuck from the last time
-
         if hasattr(localMapExecutor, 'pipeline_task'):
             del localMapExecutor.pipeline_task
         
@@ -177,5 +176,13 @@ class RuffMapJob(RuffBaseJob):
             except:
                 pass
             moa.ui.exitError("Quitting")
+
+
+        #empty the ruffus node name cache needs to be empty -
+        #otherwise ruffus might think that we're rerunning jobs
+        if hasattr(localMapExecutor, 'pipeline_task'):
+            for k in localMapExecutor.pipeline_task._name_to_node.keys():
+                del localMapExecutor.pipeline_task._name_to_node[k]
+
                  
 
