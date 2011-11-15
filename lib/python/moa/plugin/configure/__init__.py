@@ -100,7 +100,8 @@ def configShow(job):
                 continue
 
         if not sysConf.options.showAll: 
-            if job.template.parameters[p].optional:
+            if job.template.parameters[p].optional and \
+                   (not job.conf.setInJobConf(p)):
                 #do not show undefined optional parameters unless -a
                 #is defined on the command line
                 continue
