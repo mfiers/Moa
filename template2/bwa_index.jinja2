@@ -4,9 +4,11 @@ bwa index -p {{ prefix }} -a {{ algorithm }} \
 	{% if color_space %} -c {% endif %}			\
 	{{ input_fasta }} 
 
+touch {{ prefix }}
+
 ### clean
 
-rm -f {{prefix}}.*
+rm -f {{prefix}}*
 
 ### unittest
 
