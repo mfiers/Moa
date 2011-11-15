@@ -24,6 +24,9 @@ from moa.sysConf import sysConf
 def hook_defineOptions():
     parserG = optparse.OptionGroup(
         sysConf.parser, 'Moa Show')
+    parserG.add_option('-a', action='store_true',
+                       dest='showAll', 
+                       help = 'Show all variables, including undefined optional variables')
     parserG.add_option('-p', action='store_true',
                        dest='showPrivate', 
                        help = 'Show private variables')
@@ -96,6 +99,12 @@ def configShow(job):
             else:
                 continue
 
+        if not sysConf.options.showAll: 
+            if job.template.parameters[p].optional:
+                #do not show undefined optional parameters unless -a
+                #is defined on the command line
+                continue
+
         outkeys.append(p)
 
         #is this variable defined?
@@ -112,7 +121,6 @@ def configShow(job):
         else:
             #not defined - does it need to be??            
             if job.template.parameters[p].optional:
-                #no - optional
                 outflags.append('{{blue}}o{{reset}}')
                 val = job.conf[p]
                 if val:
@@ -122,7 +130,7 @@ def configShow(job):
                         moa.ui.fformat(
                             '{{gray}}(undefined){{reset}}', f='j'))
             else:
-                #wow - not optional
+                #wow - not optional                
                 outflags.append('{{bold}}{{red}}E{{reset}}')
                 outvals.append(
                     moa.ui.fformat(
