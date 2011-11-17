@@ -55,7 +55,7 @@ def hook_defineCommands():
         }
 
     sysConf['commands']['show'] = {
-        'desc' : 'Show configured variables',
+        'desc' : 'Show configuration',
         'call' : configShow,
         'usage' : 'moa show',
         'needsJob' : True,
