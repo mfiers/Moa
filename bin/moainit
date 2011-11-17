@@ -1,5 +1,6 @@
 #!/bin/bash
- 
+
+#make sure we're being sourced 
 if [[ "$0" =~ "moainit" ]]; then
     echo "Please *source* this file, run:"
     echo ". {PATH/}moainit.sh"
@@ -7,7 +8,7 @@ if [[ "$0" =~ "moainit" ]]; then
     exit -1;
 fi
 
-#local installation
+#Set environment variables for moa
 export MOABASE=`dirname $(dirname $(cd ${BASH_ARGV%/*} && echo $PWD/${BASH_ARGV##*/}))`
 export PATH=$MOABASE/bin:$PATH
 export PYTHONPATH=$MOABASE/lib/python:$PYTHONPATH
@@ -15,74 +16,9 @@ source $MOABASE/etc/bash_completion.d/moa
 
 ###
 ### Moa prompt stuff!
-alias moa_prompt_off='export PROMPT_COMMAND=`echo $PROMPT_COMMAND | sed "s/_moa_prompt;*//"`'
-alias moa_prompt_on='if [[ ! "$PROMPT_COMMAND" =~ "_moa_prompt" ]]; then PROMPT_COMMAND="_moa_prompt;$PROMPT_COMMAND"; fi'
-
-function _moa_prompt_2 {
- 
-    #prepare for visualization
-    local blue="\033[34m"
-    local black="\033[30m"
-    local bright="\033[1m"
-    local gray="\033[30;1m"
-    local red="\033[31m"
-    local magenta="\033[35m"
-    local green="\033[32m"
-    local bg="\033[47m"
-    local reset="\033[0m"
-
-    #get status information
-    [[ -f '.moa/status' ]] && rawstatus=$(< .moa/status)
-    case "$rawstatus" in
-    error) status="${red}Error${gray}"
-            ;;
-    success) status="${green}Success${gray}"
-            ;;
-    interrupted) status="${black}Interrupted${gray}"
-            ;;
-    *) status=$rawstatus
-    esac
-
-    #get template information
-    template=`(grep moa_id .moa/template | cut -c9-) 2>/dev/null`
-    
-    #get last run dates
-    if [[ -f '.moa/log' ]]; then
-        ll=`tail -1 .moa/log`
-        tstart=`echo ${ll} | awk '{print $3}'`
-        tstop=`echo ${ll} | awk '{print $4}'`
-        startseq=`date -d "${tstart}" +%s`
-        stopseq=`date -d "${tstop}" +%s`
-        tdiff=$(($stopseq - $startseq))
-        pstart=`echo ${tstart} | sed "s/\.[^\.]*$//" | sed "s/T/ /" `
-
-        minute_secs=60 
-        hour_secs=$((60 * minute_secs)) 
-        day_secs=$((24 * hour_secs))
-
-        # parse
-        days=$((tdiff / day_secs))
-        hours=$((tdiff % day_secs / hour_secs))
-        minutes=$((tdiff % day_secs % hour_secs / minute_secs))
-        seconds=$((tdiff % day_secs % hour_secs % minute_secs))
-        # pretty-print
-        timing=":${pstart} ("
-        if [[ ${days} > 0 ]]; then
-            timing="${timing}${days}d, ${hours}h, ${minutes}m & ${seconds}s)"
-        elif [[ ${hours} > 0 ]]; then
-            timing="${timing}${hours}h, ${minutes}m & ${seconds}s)"
-        elif [[ ${minutes} > 0 ]]; then
-            timing="${timing}${minutes}m & ${seconds}s)"
-        else
-            timing="${timing}${seconds}s)"
-        fi
-    fi
-    txtbit=":moa/${template}:$rawstatus$timing"
-    frmbit="${gray}:moa/${blue}${template}${gray}:$status$timing${reset}"
-    echo -en $bg
-    printf "%$(($COLUMNS-${#txtbit}))s" " "
-    echo -e ${frmbit}
-}
+alias moa_prompt_off='unset MOA_PROMPT'
+alias moa_prompt_on='export MOA_PROMPT=yes'
+export PROMPT_COMMAND="_moa_prompt;$PROMPT_COMMAND"
 
 function _moa_prompt {
     
@@ -102,5 +38,8 @@ function _moa_prompt {
 	#and add it to the local history if this is a mob job
     echo $lc >> .moa/history
 
-	moaprompt
+    if [[ "$MOA_PROMPT" ]]
+    then
+        moaprompt
+    fi
 }
