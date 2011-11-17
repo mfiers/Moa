@@ -22,7 +22,9 @@ import errno
 import shutil
 import readline
 import traceback
+import subprocess
 import contextlib
+
 
 import jinja2
 
@@ -96,7 +98,6 @@ def fformat(message, f='text', newline = True, ansi = None):
 ## See if we can do intelligent things with job variables
 def untangle(txt):    
     return sysConf.job.conf.interpret(txt)
-
     
 ## Handle moa directories
 _FSCOMPLETECACHE = {}
@@ -106,10 +107,10 @@ def fsCompleter(text, state):
         with open('/tmp/fscomp.log', 'a') as F:        
             F.write("\t".join(map(str, a)) + "\n")
 
-    g("txt", text)
-    g("sta", state)
+    g("text   : ", text)
+    g("state  :", state)
 
-    if text in _FSCOMPLETECACHE.keys():
+    if _FSCOMPLETECACHE and text in _FSCOMPLETECACHE.keys():
         try:
             #rv = _FSCOMPLETECACHE[text]
             #g(str(rv))
@@ -117,6 +118,7 @@ def fsCompleter(text, state):
             g('from cache', rv)
             return rv
         except:
+            g('%s' % _FSCOMPLETECACHE)
             g('cache problem')
             import traceback
             E = traceback.format_exc()
@@ -127,8 +129,12 @@ def fsCompleter(text, state):
     if '{{' in text:
         #remove spaces within jinja codes
         text2 = re.sub(r'{{\s*(\w*?)\s*}}', r'{{\1}}', text)
-    else: text2 = text
+        g("rem {{ :", text2)        
+    else:
+        text2 = text
 
+    #only trying to find a prefix for the last word of the current
+    #string: stored in 'ctext'. The rest is in 'prefix'
     if ' ' in text2:
         addPrefix = True
         prefix, ctext = text2.rsplit(' ', 1)
@@ -136,8 +142,8 @@ def fsCompleter(text, state):
         addPrefix = False
         prefix, ctext = "", text2
 
-    g('prefix', prefix)
-    g('ctext', ctext)
+    g('prefix :', prefix)
+    g('ctext  :', ctext)
 
     if '{{' in ctext:
         #jinja untangle
@@ -149,14 +155,29 @@ def fsCompleter(text, state):
     if cutext != ctext:
         detangle = True
 
-    g('cutext', cutext)
+    g('untang :', cutext)
     if os.path.isdir(cutext) and not cutext[-1] == '/': 
         sep = '/'
     else: sep = ''
 
-    #get all possibilities
-    pos = glob.glob(cutext + sep + '*')
-
+    
+    if prefix or cutext[:2] == './' or cutext[:3] == '../':
+        #try to expand path
+        #get all possibilities
+        pos = glob.glob(cutext + sep + '*')
+    else:
+        #see if there is an executable starting with this
+        #
+        #seems impossible - cannot call compgen from a script :(
+        #cl = ("compgen -c %s" % cutext).split()
+        #P = subprocess.Popen(cl, shell=False,
+        #                     stdout=subprocess.PIPE,
+        #                     stderr=subprocess.PIPE)
+        #out, err = P.communicate()
+        #print out
+        #print err
+        pos = []
+        
     np = []
     for i, p in enumerate(pos):
         if os.path.isdir(p) and not p[-1] == '/':
@@ -169,7 +190,7 @@ def fsCompleter(text, state):
     g('pos', np)
 
     _FSCOMPLETECACHE[text] = np
-
+    g(_FSCOMPLETECACHE)
     try:
         rv = np[state]
         return rv
