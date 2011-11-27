@@ -265,24 +265,24 @@ class Job(object):
         """
 
         #organize a job id..
-        jobIdFile = os.path.join(self.confDir, 'last_job_id')
-        sysConf.jobId = 1
-        lock = lockfile.FileLock(jobIdFile)
+        runIdFile = os.path.join(self.confDir, 'last_run_id')
+        sysConf.runId = 1
+        lock = lockfile.FileLock(runIdFile)
         with lock:
             old_id = 0
-            if os.path.exists(jobIdFile):
-                with open(jobIdFile) as F:
+            if os.path.exists(runIdFile):
+                with open(runIdFile) as F:
                     _o = F.read().strip()
                     try:
                         old_id = int(_o)
                     except:
                         pass
-            sysConf.jobId = old_id + 1
-            with open(jobIdFile, 'w') as F:
-                F.write("%s" % sysConf.jobId)
+            sysConf.runId = old_id + 1
+            with open(runIdFile, 'w') as F:
+                F.write("%s" % sysConf.runId)
 
         #create a new folder for logging
-        logDir = os.path.join(self.confDir, 'log.d', '%d' % sysConf.jobId)
+        logDir = os.path.join(self.confDir, 'log.d', '%d' % sysConf.runId)
         if not os.path.exists(logDir):
             os.makedirs(logDir)
         
@@ -290,9 +290,9 @@ class Job(object):
         latestDir = os.path.join(self.confDir, 'log.latest')
         if os.path.exists(latestDir):
             os.remove(os.path.join(self.confDir, 'log.latest'))
-        os.symlink('log.d/%d' % sysConf.jobId, latestDir)
+        os.symlink('log.d/%d' % sysConf.runId, latestDir)
 
-        l.info("Acquired job id %s" % sysConf.jobId)              
+        l.debug("Acquired job id %s" % sysConf.runId)              
         
         if self.template.commands.get('prepare', {}).has_key('delegate'):
             commandList = self.template.commands['prepare'].delegate
@@ -386,7 +386,7 @@ class Job(object):
         except ImportError, e:
             if str(e) == "No module named %s" % moduleName:
                 l.critical("Backend %s does not exists" % backendName)
-            l.critical("Error loading backend %s" % backendName)
+            l.critical("!! Error loading backend %s" % backendName)
             raise
             
         #self.backend = getattr(module, backendName.capitalize())(self)
