@@ -1,11 +1,11 @@
-author: Yogini Idnani, Mark Fiers
+author: Mark Fiers
 backend: ruff
 commands:
   clean:
     help: Remove all job data, not the Moa job itself
     mode: simple
   run:
-    help: 'Execute bowtie in paired-end mode'
+    help: 'Execute soapdenovo in paired-end mode'
     mode: map
   finish:
     help: finish up
@@ -76,13 +76,3 @@ parameters:
     help: Minimum allowed insertsize
     optional: true
     type: integer
-  output_format:
-    allowed:
-    - bowtie
-    - bam
-    - sam
-    category: ''
-    default: bam
-    help: Format of the output file
-    optional: true
-    type: set

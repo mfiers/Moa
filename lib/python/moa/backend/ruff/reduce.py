@@ -154,3 +154,9 @@ class RuffReduceJob(RuffBaseJob):
             moa.ui.exitError("Quitting")
                  
 
+        #empty the ruffus node name cache needs to be empty -
+        #otherwise ruffus might think that we're rerunning jobs
+        if hasattr(localMapExecutor, 'pipeline_task'):
+            for k in localMapExecutor.pipeline_task._name_to_node.keys():
+                del localMapExecutor.pipeline_task._name_to_node[k]
+

@@ -1,0 +1,60 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data
+    mode: simple
+  run:
+    help: 'Execute soapdenovo in paired-end mode'
+    mode: reduce
+creation_date: Mon, 21 Nov 2011 12:47:16
+description: Run Soapdenovo 
+filesets:
+  fq_forward:
+    category: input
+    help: fastq input files directory - forward
+    optional: false
+    pattern: '*/*_1.fq'
+    type: set
+  fq_reverse:
+    category: input
+    help: fastq input files directory - reverse
+    optional: true
+    pattern: '*/*_2.fq'
+    source: fq_forward
+    type: map
+  output:
+    category: output
+    help: soap denovo output file
+    optional: true
+    default: soap.output
+    type: single
+moa_id: soapdenovo_pe
+modification_date: Mon, 21 Nov 2011 12:47:22
+name: soapdenovo_pe
+parameters:
+  kmer:
+    default: 31
+    help: kmer size
+    optional: true
+    type: integer
+  executable:
+    default: 'SOAPdenovo-31mer'
+    help: 'which executable to use (SOAPdenovo-127mer, SOAPdenovo-31mer or SOAPdenovo-63mer)'
+    optional: true
+  avg_insert:
+    default: 200
+    help: 'library insert size'
+    type: integer
+  skip_config_file:
+    default: false
+    help: 'skip automatic config file generation - if you skip this, make sure that
+      you have a soap.config configuration file in the current directory'      
+    optional: true
+    type: boolean
+  threads:
+    default: 8
+    help: 'no threads to use'
+    optional: true
+    type: integer
+    

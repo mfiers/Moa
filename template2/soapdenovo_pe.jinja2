@@ -1,0 +1,23 @@
+### run
+if [[ "{{ skip_config_file }}" = "True" ]]
+then
+    echo "skip config file generation"
+else
+    echo "generate config file"
+    echo 'max_rd_len=150' > soap.config
+    {% for l in fq_forward %}
+       echo '[LIB]' >> soap.config
+       echo 'avg_ins={{avg_insert}}' >> soap.config
+       echo 'rank=1' >> soap.config
+       echo 'reverse_seq=0' >> soap.config
+       echo 'asm_flags=3' >> soap.config
+       echo 'q1={{ l }}' >> soap.config
+       echo 'q2={{ fq_reverse[loop.index0] }}' >> soap.config
+    {% endfor %}
+fi
+
+echo {{ executable }} all -s soap.config -K {{ kmer }} -p {{ threads }} -o output 
+
+### clean
+
+echo 'cleaner'
