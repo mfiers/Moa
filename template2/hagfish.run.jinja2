@@ -1,0 +1,4 @@
+#!/bin/bash
+mkdir -p `dirname {{ output }}`
+echo hagfish_extract -v --low {{ min_ok }} --high {{ max_ok }} {{ input }}
+#touch {{ output }}

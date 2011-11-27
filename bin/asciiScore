@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+import sys
+
+scores = []
+
+if len(sys.argv) > 1:
+    corr = int(sys.argv[1])
+else:
+    corr = 0 
+        
+
+for line in sys.stdin:
+    scores.extend(map(ord, line.strip()))
+
+maxx = 0
+for i in range(min(scores) -1, max(scores)+2):
+    cnt = scores.count(i)
+    if cnt > maxx: maxx = cnt
+
+for i in range(min(scores) -1, max(scores)+2):
+    cnt = scores.count(i)
+    noh = int(80 * (float(cnt) / maxx))
+    print '%1s %5d %8d %s' % (chr(i), i - corr, scores.count(i), 
+                          '*' * noh)

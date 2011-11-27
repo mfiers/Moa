@@ -112,13 +112,15 @@ class Ruff(moa.backend.BaseBackend):
             return -1
 
 
+
         if self.job.template.commands.has_key(command):
             cmode = self.job.template.commands[command].mode
         else:
             cmode = 'simple'
             
         rc = 0
-            
+
+                
         if cmode == 'map':
             j = RuffMapJob('run')
             j.go()
