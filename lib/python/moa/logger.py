@@ -99,8 +99,9 @@ LOGGER.addHandler(handler)
 
 LOGGER.setLevel(logging.INFO)
 
-def exitError(message):
-    LOGGER.fatal(message)
+def exitError(message=""):
+    if message:
+        LOGGER.fatal(message)
     sys.exit(-1)
 
 def setLevel(level):
