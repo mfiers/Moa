@@ -21,9 +21,12 @@ def templateTestSuite():
     for template in moa.template.templateList():
         job = moa.job.newTestJob(template)
         if job.template.backend == 'ruff':
-            tester = moa.backend.ruff.test.templateTest()
-            tester.setJob(job)
-            suite.addTest(tester)
+            continue
+        
+            #tester = moa.backend.ruff.test.templateTest()
+            #tester.setJob(job)
+            #suite.addTest(tester)
+            
     return suite
     
 if __name__ == '__main__':
