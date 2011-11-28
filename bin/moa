@@ -139,7 +139,7 @@ parser.add_option("-r", "--recursive", dest="recursive",
 sysConf.parser = parser
 sysConf.pluginHandler.run('defineOptions')
     
-def run_3(wd):
+def run_3(wd, exitOnError=True):
     """
     instantiate the job, prepare and run.
 
@@ -205,8 +205,11 @@ def run_3(wd):
 
     else:
         if not job.isMoa():
-            moa.ui.exitError("Must run 'moa %s' in a Moa dir" % command)
-
+            if exitOnError:
+                moa.ui.exitError("Must run 'moa %s' in a Moa dir" % command)
+            else:
+                return False
+            
         if command == 'run':
             job.execute(
                 verbose = sysConf.options.verbose,
@@ -218,8 +221,11 @@ def run_3(wd):
         elif job.hasCommand(command):
             job.simpleExecute(command)
         else:            
-            moa.ui.exitError("Unknown command '%s'" % command)
-
+            if exitOnError:
+                moa.ui.exitError("Unknown command '%s'" % command)
+            else:
+                moa.ui.warn("Unknown command '%s'" % command)
+                return False
 
 
 def run_recursive(wd):
@@ -231,8 +237,12 @@ def run_recursive(wd):
         dirs.sort() #make sure the dirs are sorted
         if '.moa' in dirs:
             if os.path.exists(os.path.join(path, '.moa', 'template')):
-                moa.ui.message("Executing '%s' in %s" % (" ".join(sys.argv), path))
-                run_3(path)
+                clargs = " ".join(sys.argv)
+                moa.ui.message("Executing '%s' .." % clargs)
+                moa.ui.message("  .. in %s" % (path))
+                rc = run_3(path, exitOnError=False)
+                if rc == False:
+                    moa.ui.message("Error running %s" % clargs)
             
         #remove all '.' directories -
         drem = [ x for x in dirs if x[0] in ['.', '_'] ]
