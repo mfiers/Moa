@@ -164,9 +164,8 @@ def run_3(wd, exitOnError=True):
     #see if we can update the job
     moa.version.fixOld(wd)
 
-    #create a job object
+    #create the job
     job = moa.job.Job(wd)
-    sysConf.job = job
 
     #check if we should run this job..
     #TODO - 
