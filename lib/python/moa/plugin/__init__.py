@@ -29,8 +29,9 @@ class PluginHandler():
         
     def initialize(self):
         """
-        attempt to load the python part of the plugins
+        attempt to load the python modules for each plugin
         """
+        
         ## do we have a python module??
         l.debug('Start plugin init')
         for plugin in self.pluginList:
@@ -63,6 +64,7 @@ class PluginHandler():
             if not hasattr(m, 'hook_' + command):
                 continue
             l.debug("plugin executing hook %s for %s" % (command, p))
+            #rv[p]= eval("m.hook_%s" % command)
             rv[p] = getattr(m, "hook_" + command)()
         return rv
             

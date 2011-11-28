@@ -178,7 +178,15 @@ def showFiles(job):
 def hook_prepare_3():
 
     job = sysConf.job
-    renderedJobConf = job.conf.render()
+    
+    try:
+        renderedJobConf = job.conf.render()
+    except:
+        import pprint
+        l.critical("%s" % pprint.pformat(job))
+        l.critical("%s" % pprint.pformat(job.conf))
+        raise
+        
     if not job.template.has_key('filesets'):
         return
 

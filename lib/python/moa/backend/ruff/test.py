@@ -17,7 +17,7 @@ class templateTest(unittest.TestCase):
             # hence, only if it is called by RuffSuite()
             return
 
-        l.debug("testing %s" % self.job.template.name)
+        l.critical("testing %s" % self.job.template.name)
         templateName = self.job.template.name
         sysConf.job = self.job
 
@@ -36,7 +36,7 @@ class templateTest(unittest.TestCase):
             
         self.job.prepare()
         sysConf.pluginHandler.run('prepare_3')
-        rc = self.job.execute("unittest", verbose=False, silent=True)
+        rc = self.job.execute("unittest")
         self.assertEqual(rc, 0, 'test failed for %s' %
                          templateName)
 

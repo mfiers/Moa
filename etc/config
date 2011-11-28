@@ -1,5 +1,6 @@
 plugins:
   fileset: {}
+  parameterCheck: {}
   doc: {}
   configure: {}
   newjob: {}
@@ -11,9 +12,9 @@ plugins:
   status: {}
   template: {}
   info: {}
-  parameterCheck: {}
   moautil: {}
-  moaGit: {}
+  moaGit: 
+    enabled: false
   extraCommands: {}
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc

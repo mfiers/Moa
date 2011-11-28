@@ -14,6 +14,7 @@ import os
 import sys
 import moa.ui
 from moa.sysConf import sysConf
+from moa.logger import exitError
 
 def hook_defineCommands():
     """
@@ -43,7 +44,8 @@ def _isFloat(s):
         return True
     except ValueError:
         return False
-    
+
+
 def hook_preRun():
     test_ui()
 
@@ -69,7 +71,7 @@ def test_ui():
     
     if messages and not options.force:
         sysConf.pluginHandler.run('postError')
-        sys.exit(-1)
+        exitError()
     
 def test():
     job = sysConf['job']
