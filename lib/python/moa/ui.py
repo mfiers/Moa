@@ -45,17 +45,17 @@ for c in sysConf.ansi:
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
  
 def exitError(message):
-    fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
+    fprint("Moa{{reset}}/{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
     sys.exit(-1)
 
 def error(message):
-    fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
+    fprint("Moa{{reset}}/{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
 
 def message(message):
     fprint("{{green}}Moa:{{reset}} %s" % message, f='jinja')
     
 def warn(message):
-    fprint("{{blue}}Warning:{{reset}} %s" % message, f='jinja')
+    fprint("{{green}}Moa{{reset}}/{{blue}}Warning:{{reset}} %s" % message, f='jinja')
 
 def fprint(message, **kwargs):
     sys.stdout.write(fformat(message, **kwargs))
