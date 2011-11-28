@@ -84,6 +84,9 @@ class Job(object):
     """
     Class defining a single job
 
+    Note - in the moa system, there can be only one current job - many
+    operations try to access the job in sysConf 
+
     >>> wd = tempfile.mkdtemp()
     >>> job = Job(wd)
     >>> assert(isinstance(job, Job))
@@ -106,6 +109,7 @@ class Job(object):
         self.backend = None
         self.args = []
         self.env = {}
+        
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
 
@@ -124,6 +128,9 @@ class Job(object):
 
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
+
+        # register this job as the current job in sysConf
+        sysConf.job = self
 
     def getFiles(self):
         """
@@ -264,7 +271,7 @@ class Job(object):
         
         """
 
-        #organize a job id..
+        #organize a run id..
         runIdFile = os.path.join(self.confDir, 'last_run_id')
         sysConf.runId = 1
         lock = lockfile.FileLock(runIdFile)
@@ -370,6 +377,7 @@ class Job(object):
         can be found
         """
         self.template = moa.template.Template(self.templateFile)
+        l.debug("Job loaded template %s" % self.template.name)
         self.loadBackend()
                 
     def loadBackend(self):
@@ -402,7 +410,7 @@ class Job(object):
         """
         if not os.path.exists(os.path.join(self.wd, '.moa')):
             return False
-        if self.template.name == 'noJob':
+        if str(self.template.name).lower() == 'noJob':
             return False
         return True
                               
