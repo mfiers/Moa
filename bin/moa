@@ -118,7 +118,11 @@ parser.add_option(
 
 parser.add_option(
     "-v", "--verbose", dest="verbose", action="store_true",
-    help="Verbose output")
+    help="Show debugging output")
+
+parser.add_option(
+    '-a', '--all', action='store_true', dest='showAll', 
+    help = 'Show more - depends on context')
 
 parser.add_option(
     "-s", "--silent", dest="silent", action="store_true",
@@ -169,7 +173,9 @@ def run_3(wd, exitOnError=True):
 
     #check if we should run this job..
     #TODO - 
-    doRun = sysConf.pluginHandler.run('check_run')
+    #doRun = sysConf.pluginHandler.run('check_run')
+
+    sysConf.pluginHandler.run('prepare_3')
     
     ## Aks the job & backend if they want to add to the options
     try:
