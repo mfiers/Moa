@@ -24,9 +24,6 @@ from moa.sysConf import sysConf
 def hook_defineOptions():
     parserG = optparse.OptionGroup(
         sysConf.parser, 'Moa Show')
-    parserG.add_option('-a', action='store_true',
-                       dest='showAll', 
-                       help = 'Show all variables, including undefined optional variables')
     parserG.add_option('-p', action='store_true',
                        dest='showPrivate', 
                        help = 'Show private variables')
