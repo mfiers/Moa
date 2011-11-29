@@ -18,7 +18,7 @@ import textwrap
 import moa.ui
 import moa.utils
 import moa.template
-2
+
 from moa.sysConf import sysConf
 
 def hook_defineCommands():
@@ -59,11 +59,6 @@ def hook_defineCommands():
         'call' : templateSet,
         }
     
-def hook_defineOptions():
-    parserN = optparse.OptionGroup(sysConf['parser'], "moa list")
-    parserN.add_option("-l", "--long", dest="listlong", action='store_true',
-                       help="Show a description for moa list")
-    sysConf['parser'].add_option_group(parserN)
 
 def refresh(job):
     """
@@ -124,7 +119,7 @@ def listTemplates(job):
     """
 
     for name in moa.template.templateList():
-        if sysConf.options.listlong:
+        if sysConf.options.showAll:
             ti = moa.template.getMoaFile(name)
             txt = moa.ui.fformat(
                 '{{bold}}%s{{reset}}:{{blue}} %s{{reset}}' % (name, ti.description),

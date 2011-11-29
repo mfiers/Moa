@@ -12,9 +12,11 @@
 
 import os
 import sys
+import logging
 from datetime import datetime
 
 import moa.job
+import moa.utils
 import moa.logger as l
 import moa.plugin
 from moa.sysConf import sysConf
@@ -23,7 +25,8 @@ def hook_defineCommands():
     sysConf['commands']['log'] = { 
         'desc' : 'Show the logs for this job',
         'call' : showLog,
-        'log' : False
+        'log' : False,
+        'logLevel' : logging.DEBUG,
         }
 
 def hook_prepareCommand():
@@ -65,39 +68,48 @@ def niceRunTime(d):
     else:
         return "%d sec" % seconds
 
-def hook_postInterrupt():
-    _writeLog()
+def hook_post_interrupt():
+    _writeLog('interrupted')
 
-def hook_postError():
-    _writeLog()
+def hook_post_error():
+    _writeLog('error')
 
-def _writeLog():
+def hook_postRun():
+    _writeLog('ok')
+
+def hook_preRun():
+    _writeLog('start')
+
+def _writeLog(status):
     
+    #only save logs for moa jobs
+    if not sysConf.job.isMoa():
+        return
+
     sysConf.logger.end_time = datetime.today()
     sysConf.logger.run_time = sysConf.logger.end_time - sysConf.logger.start_time
     runtime = sysConf.logger.end_time - sysConf.logger.start_time    
     sysConf.logger.niceRunTime = niceRunTime(runtime)
+
     logFile = os.path.join(sysConf.job.confDir, 'log')
-    if not os.path.exists(sysConf.job.confDir):
-        return
+
     commandInfo = {}
+    logLevel = logging.INFO
     if sysConf.originalCommand in sysConf.commands.keys():
         commandInfo = sysConf.commands[sysConf.originalCommand]
-
+        logLevel = commandInfo.get('logLevel', logging.DEBUG)
     l.debug("Logging %s" % sysConf.originalCommand)
     command = " ".join(" ".join(sys.argv).split())
 
     with open(logFile, 'a') as F:
         F.write("%s\n" % "\t".join([
-            str(sysConf.rc),
-            ",".join(sysConf.executeCommand),
+            status, sysConf.originalCommand,
+            str(logLevel),
             sysConf.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
             sysConf.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
             str(sysConf.logger.run_time), command
             ]))
 
-def hook_postRun():
-    _writeLog()
 
 def hook_finish():
     #and - probably not the location to do this, but print something to screen
@@ -135,6 +147,11 @@ def showLog(job):
         noLines = 5
         
     logFile = os.path.join(job.confDir, 'log')
+
+    moa.utils.moaDirOrExit(job)
+    if not os.path.exists(logFile):
+        moa.ui.exit("No logs found")
+   
     with open(logFile) as F:
         #read the last 2k - prevent reading the whole file
         try:
@@ -144,14 +161,29 @@ def showLog(job):
         F.readline()
         lines = F.readlines()[-1 * noLines:]
         for line in lines:
-            rc, command, start, stop, delta, command = \
-                line.split("\t")
-            lc = "%s - " % start.rsplit(':',1)[0]
-            if int(rc) == 0:
-                lc += "{{bold}}{{green}}Success {{reset}}"
-            else:
-                lc += "{{bold}}{{red}}%-8s{{reset}}" % ("Err " + str(rc))
+            ls = line.split("\t")
 
-            lc += " - %10s" % niceRunTime(delta)
-            lc += " - " + command
+            def _isInteger(_s):
+                try:
+                    int(_s)
+                    return True
+                except: return False
+                
+            if (len(ls) != 7) or (_isInteger(ls[0])) or \
+                   (not _isInteger(ls[2])):
+                continue
+            
+            status, command, logLevel, start, stop, delta, command = \
+                    line.split("\t")
+            logLevel = int(logLevel)
+            if status == 'ok':
+                lc = '{{bold}}{{green}}Success {{reset}}'
+            elif status == 'error':
+                lc = "{{bold}}{{red}}Error   {{reset}}"
+            else:
+                lc = "{{blue}}%-8s{{reset}}" % status[:7].capitalize()
+                
+            lc += "%s " % start.rsplit(':',1)[0]
+            lc += "%10s" % niceRunTime(delta)
+            lc += command
             moa.ui.fprint(lc, f='jinja')

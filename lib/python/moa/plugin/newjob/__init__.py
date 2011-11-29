@@ -28,11 +28,19 @@ def hook_defineCommands():
     
 
 def hook_defineOptions():
+
+    parserG = sysConf.parser.get_option_group('-t')
+    if parserG == None:
+        parserG = optparse.OptionGroup(sysConf.parser, 'moa new')
+        sysConf.parser.add_option_group(parserG)    
+    
     try:
-        sysConf.parser.add_option("-t", dest="title", help="Job title")
+        parserG.parser.add_option("-t", dest="title", help='define job title ' +
+        '(when creating a job)')
     except optparse.OptionConflictError:
         pass
 
+    
 def newJob(job):
     """
     **moa new**
