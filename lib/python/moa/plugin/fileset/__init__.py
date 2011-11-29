@@ -231,25 +231,27 @@ def hook_prepare_3():
         if not fs.category in ['input', 'prerequisite']:
             job.conf.doNotCheck.append('%s' % fsid)
 
+    
+    hook_preparefilesets()
 
-def hook_preFiles():
-    """
-    Run before execution of any command (backend or plugin)
-    """
-    l.debug("preparing input files")
-    preparefilesets()
+# def hook_preFiles():
+#     """
+#     Run before execution of any command (backend or plugin)
+#     """
+#     l.debug("preparing input files")
+#     preparefilesets()
 
 
-def hook_pre_command():
-    """
-    Run before execution of any command (backend or plugin)
-    """
-    l.debug("preparing input files")
-    preparefilesets()
+# def hook_pre_command():
+#     """
+#     Run before execution of any command (backend or plugin)
+#     """
+#     l.debug("preparing input files")
+#     preparefilesets()
 
-def preparefilesets():
+def hook_preparefilesets():
     """
-    prepare all filesets 
+    prepare all filesets - can be called as a plugin hook - if need be
     """
     l.debug("Preparing filesets")
     job = sysConf['job']
