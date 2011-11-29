@@ -45,7 +45,12 @@ for c in sysConf.ansi:
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
  
 def exitError(message):
+    sysConf.pluginHandler.run("post_error")
     fprint("{{green}}Moa{{reset}}:{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
+    sys.exit(-1)
+
+def exit(message):
+    fprint("{{green}}Moa{{reset}}: %s" % message, f='jinja')
     sys.exit(-1)
 
 def error(message):
