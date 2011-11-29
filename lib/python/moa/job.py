@@ -208,7 +208,6 @@ class Job(object):
         """
         Just 'execute' a template call 
         """
-        sysConf.pluginHandler.run('prepare_3')
         sysConf.pluginHandler.run('pre_command')
 
         if isinstance(commandList, str):
@@ -243,7 +242,6 @@ class Job(object):
         self.prepare()
 
         ### Run plugin initialization step 3 - just before execution
-        sysConf.pluginHandler.run('prepare_3')
         sysConf.pluginHandler.run("pre_command") #move these to 'preRun'
 
         l.debug("Executing moa run")
