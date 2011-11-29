@@ -100,6 +100,7 @@ LOGGER.addHandler(handler)
 LOGGER.setLevel(logging.INFO)
 
 def exitError(message=""):
+    l.critical("Deprecated function call - do not use logger.exitError, but moa.ui.exitError")
     if message:
         LOGGER.fatal(message)
     sys.exit(-1)
