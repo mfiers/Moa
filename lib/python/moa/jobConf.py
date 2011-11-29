@@ -31,7 +31,6 @@ import moa.utils
 
 class JobConf(object):
     """
-    
     to distinguish between attributes of this object & proper job
     configuration parameters
     """
@@ -104,6 +103,9 @@ class JobConf(object):
         See if the job id is set - if not set it to a reasonable
         initial value
         """
+        if not self.job.isMoa():
+            return
+        
         jobid = self['jobid']
         if jobid != 'unset': return
         name = os.path.basename(os.getcwd())
