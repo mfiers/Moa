@@ -12,9 +12,9 @@
 
 import os
 import sys
+
 import moa.ui
 from moa.sysConf import sysConf
-from moa.logger import exitError
 
 def hook_defineCommands():
     """
@@ -70,8 +70,7 @@ def test_ui():
         errorMessage(message, detail)
     
     if messages and not options.force:
-        sysConf.pluginHandler.run('postError')
-        exitError()
+        moa.ui.exitError()
     
 def test():
     job = sysConf['job']
