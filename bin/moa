@@ -311,6 +311,7 @@ def run_1():
     if --bg is defined: fork & exit.
 
     """
+    sysConf.pluginHandler.run('prepare_1')
     sysConf.pluginHandler.run('prepare_background')
     sysConf.force_silent=False
     #quick check: are we're backgrounding:
