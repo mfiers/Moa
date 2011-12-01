@@ -43,9 +43,7 @@ class PluginHandler():
                 self.plugins[plugin]['module'] = _m
                 l.debug("Successfully Loaded module %s" % pyModule)
             except ImportError, e:
-                if not str(e) == "No module named %s" % plugin:
-                    raise
-                #l.debug("No python plugin module found for %s" % plugin)
+                moa.ui.exitError("Plugin %s is not installed" % plugin)
         
     
     def run(self, command, reverse=False):
@@ -59,10 +57,12 @@ class PluginHandler():
         for p in runOrder:
             m = self.plugins[p].module
             if hasattr(m, command):
-                l.warning("plugin %s has what looks like an invalid hook (%s) definition" % (
+                l.warning("plugin %s has what looks like an invalid hook "
+                          "(%s) definition" % (
                     p, command))
-            if not hasattr(m, 'hook_' + command):
+            if not m.__dict__.has_key('hook_' + command):
                 continue
+
             l.debug("plugin executing hook %s for %s" % (command, p))
             #rv[p]= eval("m.hook_%s" % command)
             rv[p] = getattr(m, "hook_" + command)()
