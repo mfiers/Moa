@@ -1,4 +1,7 @@
 plugins:
+  umask:
+    umask: 0o000
+    enabled: true
   fileset: {}
   parameterCheck: {}
   doc: {}
