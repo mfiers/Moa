@@ -73,7 +73,7 @@ def hook_defineCommands():
 
 def hook_defineOptions():
     parserG = optparse.OptionGroup(
-        sysConf.parser, 'Moa Tree')
+        sysConf.parser, 'moa tree')
     parserG.add_option('--ts', action='store_true',
                        dest='sparseTree', 
                        help = 'Hide all non moa jobs directories')
