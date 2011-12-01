@@ -61,11 +61,10 @@ def hook_defineCommands():
         'needsJob' : True,
         'call' : resume,
         }
-
     
 def status(job):
     """
-    **moa status** - print out a short status status message
+    **moa status** - print out a status status message
 
     Usage::
 
@@ -84,10 +83,14 @@ def status(job):
         'running' : '{{bold}}',
         'success' : '{{green}}',
         'error' : '{{red}}{{bold}}',
-        'interrupted' : '{{blue}}'}.get(status, '')
+        'interrupted' : '{{blue}}'}.get(status, '{{bold}}')
     message += "Status: %s%s{{reset}}" % (color, status)        
     moa.ui.fprint(message, f='jinja')
-    
+
+    moa.ui.fprint("\n{{bold}}Configuration{{reset}}:", f='jinja')
+    if 'show' in sysConf.commands:
+        sysConf.pluginHandler.execute('show')
+        
         
 def _getStatus(job, silent=False):
     """
