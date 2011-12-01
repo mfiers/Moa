@@ -162,12 +162,14 @@ class RuffMapJob(RuffBaseJob):
         except ruffus.ruffus_exceptions.RethrownJobError as e:
             #any error thrown somewhere in the pipeline will be
             #caught here.
-            l.debug("CAUGHT A RUFFUS ERROR!")
+            l.debug("Caught a Ruffus error!")
             l.debug(str(e))
             startOfError = "{{gray}}" + re.sub(r'\s+', " ", str(e))[:72].strip() + "...{{reset}}"
+            endOfError = "{{gray}}..." + re.sub(r'\s+', " ", str(e)).strip()[-72:] + \
+                         "{{reset}}"
             moa.ui.error("Caught a Ruffus error")
             moa.ui.error(startOfError)
-
+            moa.ui.error(endOfError)
             try:
                 #try to get some structured info & output that.
                 einfo = e[0][1].split('->')[0].split('=')[1].strip()
