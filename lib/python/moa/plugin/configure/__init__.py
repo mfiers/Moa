@@ -23,7 +23,7 @@ from moa.sysConf import sysConf
 
 def hook_defineOptions():
     parserG = optparse.OptionGroup(
-        sysConf.parser, 'Moa Show')
+        sysConf.parser, 'moa show')
     parserG.add_option('-p', action='store_true',
                        dest='showPrivate', 
                        help = 'Show private variables')
