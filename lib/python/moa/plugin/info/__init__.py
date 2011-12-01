@@ -109,7 +109,7 @@ def tree(job):
         if not rpath: lev = 0
         else: lev = rpath.count('/') + 1
 
-        thisPath = "%s./%s" %  ('  ' * lev, rpath)
+        thisPath = "%s./%s" %  (' |' * lev, rpath)
 
         if not isMoa:
             if not sysConf.options.sparseTree:
@@ -140,11 +140,13 @@ def tree(job):
                 }.get(message, '{{green}}?{{reset}}')
         output.append((tag, thisPath, templateName))
 
+
     remFor = re.compile('\{\{.*?\}\}')
     maxTemplateLen = max([len(remFor.sub("", x[2])) for x in output])
     for s,p,t in output:
-        moa.ui.fprint(
-            ("%%s %%-%ds | %%s"  % maxTemplateLen) % (s,t,p), f='jinja')
+        moa.ui.fprint("%s %s (%s)" % (s, p, t), f='jinja')
+        #moa.ui.fprint(
+        #    ("%%s %%-%ds | %%s"  % maxTemplateLen) % (s,t,p), f='jinja')
         
                       
 
