@@ -2,22 +2,13 @@
 Ruff
 ----
 
-Ruffus/Jinja Backend
+Ruffus (and Jinja) Backend
 """
 
 import os
-import re
-import sys
-import stat
-import glob
-import random
-import tempfile
-import subprocess
 
 import ruffus
-import ruffus.ruffus_exceptions
-
-from jinja2 import Template as jTemplate
+#import ruffus.ruffus_exceptions
 
 import moa.utils
 import moa.template
@@ -142,7 +133,13 @@ class Ruff(moa.backend.BaseBackend):
                 del executor.pipeline_task._name_to_node[k]
         return rc
 
-def executor(input, output, script, jobData):    
+def executor(input, output, script, jobData):
+    """
+    Execute the script
+    """
+    import tempfile
+    import stat
+
     tf = tempfile.NamedTemporaryFile( delete = False,
                                       prefix='moa',
                                       mode='w')
@@ -151,7 +148,6 @@ def executor(input, output, script, jobData):
     tf.close()
     os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
-    import logging
     for k in jobData:
         v = jobData[k]
         if isinstance(v, list):
