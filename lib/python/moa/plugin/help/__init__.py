@@ -77,7 +77,6 @@ def templateHelp(job):
     template.parameter_category_order = template._categories.keys()
     template.parameter_category_order.sort()
 
-    print template._categories
 
     global JENV
     JENV = jinja2.Environment(loader=jinja2.FileSystemLoader(
