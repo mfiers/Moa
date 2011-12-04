@@ -22,7 +22,8 @@
 .SS {{ cat|capitalize }} parameters
 {% endif -%}
 {% for pn in _categories[cat] -%}
-{% set par = parameters[pn] %}
+{% set par = parameters[pn] -%}
+{% if not par.private -%}
 .IP {{ pn }}{% if not par.optional %}*{%- endif %}
 {{ par.help }}. 
 type: {{ par.type }},
@@ -39,9 +40,12 @@ allowed:
 {%- if par.default %}
 Default value: "{{ par.default }}"
 {%- endif -%}
-{%- endif -%}
-{% endfor -%}
-{% endfor %}
+{%- endif %}
+
+{% endif -%}
+{%- endfor -%}
+{%- endfor %}
+
 .SH SEE ALSO 
 .IP Manual
 http://mfiers.github.com/Moa/
