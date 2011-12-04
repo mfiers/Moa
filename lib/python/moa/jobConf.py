@@ -114,8 +114,17 @@ class JobConf(object):
         self['jobid'] = name
         self.save()
 
+    def setRecursiveVar(self, k, v):
+        """
+        Register a recursive variable
+        """
+
+        
     def setPrivateVar(self, k, v):
         self.private.append(k)
+        self.job.template.parameters[k].private = True
+        self.job.template.parameters[k].mandatory = False
+        #self.template.parameters[k].private = True
         self.jobConf[k] = v
         
     def setMetavars(self):
@@ -235,11 +244,19 @@ class JobConf(object):
            try to correct for this. Currently this only works
            for files that exist. i.e. 
         
-        """        
+        """
+
+        
+        if os.path.abspath(delta) == os.path.abspath(self.job.wd):
+            loadingRecursive = False
+        else:
+            loadingRecursive = True
+
         y = Yaco.Yaco()
         y.load(confFile)
 
         if not delta:
+            #loading the current directory - no fancy stuff... 
             self.jobConf.update(y)
             return
         
@@ -250,26 +267,35 @@ class JobConf(object):
         
         #print self.job.template.parameters.keys()
         #find relative links & see if they need to be adjusted
-        for k, v in y.items():
+        if loadingRecursive:
+            for k, v in y.items():
+
+                #check if this needs to be adapted or not
+                parType = self.job.template.parameters.get(k, {}).get('type')
+                isFileSet = k in self.job.template.filesets.keys()
+
+                if not (parType == 'file' or parType == 'directory' or isFileSet):
+                    continue
+
+
+                #find potential relative links
+                if not isinstance(v, str): continue
+                if not v: continue
+                if not (v[:2] == './' or v[:3] == '../'):
+                    continue
+
+                moa.ui.error("Please, no recursive definition of relative paths!")
+                moa.ui.error("This will surely end in tears!")
+                moa.ui.error("%s %s=%s" % (os.path.abspath(delta), k, v))
+
+                #correctedPath = os.path.normpath(delta + '/' + v)
+                #relPath = os.path.relpath(correctedPath)
+
+                #y[k] = relPath
+
+        if y.has_key('jobid'):
+            del y['jobid']
             
-            #check if this needs to be editted or not
-            parType = self.job.template.parameters.get(k, {}).get('type')
-            isFileSet = k in self.job.template.filesets.keys()
-
-            if not (parType == 'file' or parType == 'directory' or isFileSet):
-                continue
-
-            #find potential relative links
-            if not isinstance(v, str): continue
-            if not v: continue
-            if not (v[:2] == './' or v[:3] == '../'):
-                continue
-
-            correctedPath = os.path.normpath(delta + '/' + v)
-            relPath = os.path.relpath(correctedPath)
-
-            y[k] = relPath
-
         self.jobConf.update(y)
 
     def save(self):
