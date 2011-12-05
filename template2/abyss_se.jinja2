@@ -1,0 +1,12 @@
+### run
+# example command line
+# --------------------
+# abyss-pe -j2 k=25 n=10 name=ecoli lib='lib1 lib2' \
+#    lib1='lib1_1.fa lib1_2.fa' lib2='lib2_1.fa lib2_2.fa' \
+#    se='se1.fa se2.fa'
+
+ABYSS -k{{ kmer }} {{ input|join(' ') }} -o {{output}}
+
+### clean
+
+echo "should do some cleaning here - someday"

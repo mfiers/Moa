@@ -1,0 +1,39 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data
+    mode: simple
+  run:
+    help: 'Execute abyss se'
+    mode: reduce
+creation_date: Mon, 21 Nov 2011 12:47:16
+description: Run Abysspe 
+filesets:
+  input:
+    category: input
+    help: fastq input files directory 
+    optional: false
+    pattern: '*/*.fq'
+    type: set
+  output:
+    category: output
+    help: soap denovo output file
+    optional: true
+    default: soap.output
+    type: single
+moa_id: abyss_se
+modification_date: Mon, 21 Nov 2011 12:47:22
+name: abyss_se
+parameters:
+  kmer:
+    default: 31
+    help: kmer size
+    optional: true
+    type: integer
+  threads:
+    default: 3
+    help: 'no threads to use'
+    optional: true
+    type: integer
+    

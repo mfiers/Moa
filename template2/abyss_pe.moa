@@ -1,0 +1,51 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data
+    mode: simple
+  run:
+    help: 'Execute abysspe in paired-end mode'
+    mode: reduce
+creation_date: Mon, 21 Nov 2011 12:47:16
+description: Run Abysspe 
+filesets:
+  fq_forward:
+    category: input
+    help: fastq input files directory - forward
+    optional: false
+    pattern: '*/*_1.fq'
+    type: set
+  fq_reverse:
+    category: input
+    help: fastq input files directory - reverse
+    optional: true
+    pattern: '*/*_2.fq'
+    source: fq_forward
+    type: map
+  output:
+    category: output
+    help: soap denovo output file
+    optional: true
+    default: soap.output
+    type: single
+moa_id: abyss_pe
+modification_date: Mon, 21 Nov 2011 12:47:22
+name: abyss_pe
+parameters:
+  kmer:
+    default: 31
+    help: kmer size
+    optional: true
+    type: integer
+  joinpairs:
+    optional: true
+    default: 10
+    help: 'number of pairs needed to consider joining two contigs'
+    type: integer
+  threads:
+    default: 3
+    help: 'no threads to use'
+    optional: true
+    type: integer
+    

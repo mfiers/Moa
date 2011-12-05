@@ -1,0 +1,17 @@
+### run
+# example command line
+# --------------------
+# abyss-pe -j2 k=25 n=10 name=ecoli lib='lib1 lib2' \
+#    lib1='lib1_1.fa lib1_2.fa' lib2='lib2_1.fa lib2_2.fa' \
+#    se='se1.fa se2.fa'
+
+abyss-pe -j{{ threads }} k={{ kmer }} n={{ joinpairs }} \
+    lib="{% for l in fq_forward %}lib{{ loop.index0 }} {% endfor %}" \
+    name="{{ output }}" \
+    {% for l in fq_forward -%}
+      lib{{ loop.index0 }}="{{fq_forward[loop.index0]}} {{fq_reverse[loop.index0] }}"  {{ ' ' }}
+    {%- endfor %}
+
+### clean
+
+echo "should do some cleaning here - someday"
