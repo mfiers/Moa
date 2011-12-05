@@ -36,7 +36,10 @@ function _moa_prompt {
     [[ -d '.moa' ]] || return 0
 
 	#and add it to the local history if this is a mob job
-    echo $lc >> .moa/history
+    if [[ -w '.moa/history' ]]
+    then
+	echo $lc >> .moa/history 2>/dev/null || true
+    fi
 
     if [[ "$MOA_PROMPT" ]]
     then
