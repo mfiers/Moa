@@ -110,8 +110,9 @@ _FSCOMPLETECACHE = {}
 
 def fsCompleter(text, state):
     def g(*a):
-        with open('/tmp/fscomp.log', 'a') as F:        
-            F.write("\t".join(map(str, a)) + "\n")
+        pass
+        #with open('/tmp/fscomp.log', 'a') as F:        
+        #    F.write("\t".join(map(str, a)) + "\n")
 
     g("text   : ", text)
     g("state  :", state)
