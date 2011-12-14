@@ -11,6 +11,10 @@ hagfish
 Commands
 ~~~~~~~~
 
+**circos**
+  convert to circos histogram data
+  
+  
 **clean**
   remove all Hagfish files
   
@@ -25,12 +29,6 @@ Commands
   
 **run**
   Run hagfish
-  
-  
-  **run** delegates execution to: **run2, combine, report**
-  
-**run2**
-  *no help defined*
   
   
 
@@ -61,6 +59,15 @@ Filesets
 
 Parameters
 ~~~~~~~~~~
+
+
+
+**circosbinsize**
+  Binsize for generating circos formatted histograms
+
+  | *type*: `int`
+  | *default*: `{}`
+  | *optional*: `True`
 
 
 

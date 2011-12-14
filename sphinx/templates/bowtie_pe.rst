@@ -15,18 +15,16 @@ Commands
   Remove all job data, not the Moa job itself
   
   
+**finish**
+  finish up
+  
+  
 **report**
   Create a report on the results
   
   
 **run**
-  *no help defined*
-  
-  
-  **run** delegates execution to: **run2, report**
-  
-**run2**
-  Execute bowtie in paired-end mode
+  Execute soapdenovo in paired-end mode
   
   
 
@@ -130,22 +128,13 @@ Parameters
 
 
 
-**output_format**
-  Format of the output file
-
-  | *type*: `set`
-  | *default*: `bam`
-  | *optional*: `True`
-
-
-
 miscellaneous
 ~~~~~~~~~~~~~
 
 **Backend**
   ruff
 **Author**
-  Yogini Idnani, Mark Fiers
+  Mark Fiers
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**

@@ -33,19 +33,18 @@ older, versions might work.
   <http://biopython.org/wiki/Main_Page>`_. Consider installing it
   before starting to use Moa.
 
-- `Python-dev`: the Python development package. A number of the
-  prerequisites to be installed by easy_install try to compile C
-  libraries, and need this to be installed. Although all of them have
-  backup, python only, alteratives; from a performace perspective it
-  is probably smart to have this installed::
+- `Python-dev`: the Python development package. A few prerequisites
+  installed by easy_install try to compile C libraries, and need
+  this. Although all of them have backup, python only, alteratives;
+  from a performace perspective it is probably smart to have this
+  installed::
 
     sudo apt-get install python-dev
 
-- `python-yaml`: Again - this is not really necessary, but might
-  improve performace. If omitted, easy_install will try to install and
-  complile it - and use a python only version if that fails::
+- `python-yaml`: Again - this is not really necessary, but will
+  improve performace::
 
-    sudo apt-get install python-dev
+    sudo apt-get install python-yaml
 
 - `Python easy_install
   <http://peak.telecommunity.com/DevCenter/EasyInstall>`_ is the
@@ -78,7 +77,7 @@ install Moa::
 
     easy_install-2.6 moa
 
-Not part of the list of prerequisites are the following moduels, which
+Not part of the list of prerequisites are the following libraries, which
 you'll only need if you are planning to run the web interface:
 
 - `ElementTree <http://effbot.org/zone/element-index.htm>`_
@@ -127,6 +126,60 @@ Configuration of Moa is simple, and can be done by sourcing the
 It is probably a good idea to add this line to your ``~/.bashrc`` for
 future sessions.
 
-
 Moa should now work, try `moa --help` or, for a more extensive test:
 `moa unittest`
+
+If your default python version is NOT `python2.6` or `python2.7` there
+are a few options that you can pursue:
+
+* change the hashbang of the `moa` script
+* define an alias in your `~/.bashrc`: `alias moa='python2.6 moa'`
+* create a symlink to python2.6 in your ~/bin directory and make sure
+  that that is first in your path.
+
+Installing the web interface
+----------------------------
+
+Note - this is a little experimental - you will need to experiment a
+little to get it working. Start with installing apache2.
+
+Then - assuming that:
+* Your Moa work directory is under /home/moa/work
+* Your Moa is installed in /opt/moa Create a file in
+`/etc/apache2/conf.d/moa.conf` with the following approximate
+contents::
+
+    Alias /moa/data /home/moa/work
+    <Directory /home/moa/work>
+       Options +Indexes +FollowSymLinks
+       Order allow,deny
+       Allow from all
+
+       SetEnv MOADATAROOT /home/moa/work
+       SetEnv MOAWEBROOT /moa/data
+
+       IndexOptions FoldersFirst SuppressRules HTMLTable IconHeight=24 SuppressHTMLPreamble SuppressColumnSorting SuppressDescription
+
+       HeaderName /moa/cgi/indexHeader.cgi
+       ReadmeName /moa/html/indexFooter.html
+    </Directory>
+
+    ScriptAlias /moa/cgi/ /opt/moa/www/cgi/
+    <Directory /opt/moa/www/cgi/>
+        AddType text/html .cgi
+        Order allow,deny
+        Allow from all
+        SetEnv MOABASE /opt/moa
+    </Directory>
+
+    Alias /moa/html/ /opt/moa/www/html/
+    <Directory /opt/moa/www/html>
+        Order allow,deny
+        Allow from all
+        Options +Indexes
+    </Directory>
+
+You might want to check the shebang of
+`/opt/moa/www/cgi/indexHeader.cgi` depending on your system
+configuration. Restart apache and it should work
+

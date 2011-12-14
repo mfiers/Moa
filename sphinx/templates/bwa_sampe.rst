@@ -93,7 +93,7 @@ Parameters
   bwa database to align against
 
   | *type*: `string`
-  | *default*: ``
+  | *default*: `{}`
   | *optional*: `False`
 
 
@@ -138,7 +138,7 @@ Parameters
   maximum occurrences for one end
 
   | *type*: `integer`
-  | *default*: `100000`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -147,7 +147,7 @@ Parameters
   maximum hits to output for discordant pairs
 
   | *type*: `integer`
-  | *default*: `10`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -165,7 +165,7 @@ Parameters
   prior of chimeric rate (lower bound)
 
   | *type*: `integer`
-  | *default*: `1e-05`
+  | *default*: `{}`
   | *optional*: `True`
 
 

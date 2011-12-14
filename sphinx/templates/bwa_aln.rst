@@ -54,7 +54,7 @@ Parameters
   stop searching when there are >INT equally best hits
 
   | *type*: `integer`
-  | *default*: `30`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -72,7 +72,7 @@ Parameters
   bwa database to align against
 
   | *type*: `string`
-  | *default*: ``
+  | *default*: `{}`
   | *optional*: `False`
 
 
@@ -80,17 +80,17 @@ Parameters
 **edit_dist_missing_prob**
   max
 
-  | *type*: `integer`
-  | *default*: `0.04`
+  | *type*: `float`
+  | *default*: `{}`
   | *optional*: `True`
 
 
 
 **gap_ext_max**
-  maximum number of gap extensions, -1 for disabling long gaps
+  
 
   | *type*: `integer`
-  | *default*: `-1`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -99,7 +99,7 @@ Parameters
   gap extension penalty
 
   | *type*: `integer`
-  | *default*: `4`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -108,7 +108,7 @@ Parameters
   gap open penalty
 
   | *type*: `integer`
-  | *default*: `11`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -117,7 +117,7 @@ Parameters
   maximum number or fraction of gap opens
 
   | *type*: `integer`
-  | *default*: `1`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -126,7 +126,7 @@ Parameters
   log-scaled gap penalty for long deletions
 
   | *type*: `boolean`
-  | *default*: `False`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -135,7 +135,7 @@ Parameters
   maximum occurrences for extending a long deletion
 
   | *type*: `integer`
-  | *default*: `10`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -144,7 +144,7 @@ Parameters
   maximum entries in the queue
 
   | *type*: `integer`
-  | *default*: `2000000`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -153,7 +153,7 @@ Parameters
   mismatch penalty
 
   | *type*: `integer`
-  | *default*: `3`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -162,7 +162,7 @@ Parameters
   do not put an indel within INT bp towards the ends
 
   | *type*: `integer`
-  | *default*: `5`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -180,7 +180,7 @@ Parameters
   quality threshold for read trimming down to 35bp
 
   | *type*: `integer`
-  | *default*: `0`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -189,7 +189,7 @@ Parameters
   Seed length
 
   | *type*: `integer`
-  | *default*: `30`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -198,7 +198,7 @@ Parameters
   Maximum differences in the seed
 
   | *type*: `integer`
-  | *default*: `2`
+  | *default*: `{}`
   | *optional*: `True`
 
 
@@ -207,7 +207,7 @@ Parameters
   number of threads
 
   | *type*: `integer`
-  | *default*: `1`
+  | *default*: `{}`
   | *optional*: `True`
 
 

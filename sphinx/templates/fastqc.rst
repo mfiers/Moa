@@ -11,18 +11,18 @@ fastqc
 Commands
 ~~~~~~~~
 
+**finish**
+  Run Fastqc
+  
+  
+  **finish** delegates execution to: **report**
+  
 **report**
   Generate a simple fastqc report
   
   
 **run**
   *no help defined*
-  
-  
-  **run** delegates execution to: **run2, report**
-  
-**run2**
-  Run Fastqc
   
   
 

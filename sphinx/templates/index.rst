@@ -6,6 +6,8 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
+   abyss_pe
+   abyss_se
    adhoc
    bamextract
    bartab
@@ -23,6 +25,7 @@ Contents:
    bwa_index
    bwa_sampe
    bwa_samse
+   cdsmatrix
    cleanFasta
    clustalgroup
    clustalpair
@@ -31,6 +34,7 @@ Contents:
    dottup
    empty
    fasta2gff
+   fastainfo
    fastqc
    fastx_clipper
    fastx_qual_stats
@@ -62,22 +66,17 @@ Contents:
    nstretch
    orthomcl
    pregap
-   primersearch
    project
-   r
+   reduce
    sam2bam
    samtools_pileup
-   scaffolder
    sffinfo
    simple
-   soap_aln_pe
-   soap_aln_se
-   soapdb
+   soapdenovo_pe
    statsidx
+   sync
    unittest
    varscan
-   vmatch
-   vmatchdb
    vpcr
    vpcr_list
    wget

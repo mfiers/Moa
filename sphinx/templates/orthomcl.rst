@@ -1,38 +1,20 @@
 orthomcl
 ------------------------------------------------
 
-**Bwa index builder**
+**Run OrthoMCL**
 
 
-    Run orhthomcl on a set of input fasta files
+    Execute one command, No in or output files are tracked by Moa.
 
 
 
 Commands
 ~~~~~~~~
 
-**clean**
-  Remove all job data
-  
-  
 **run**
-  Run orthomcl
+  *no help defined*
   
   
-  **run** delegates execution to: **prep_1**
-  
-
-Filesets
-~~~~~~~~
-
-
-**input**
-  Directory with the input fasta files
-
-
-
-
-
 
 Parameters
 ~~~~~~~~~~
@@ -40,25 +22,43 @@ Parameters
 
 
 **db**
-  DB name
+  Db name
 
   | *type*: `string`
-  | *default*: `orthomcl`
+  | *default*: `{}`
+  | *optional*: `False`
+
+
+
+**eval**
+  Evalue cutoff for blast to use
+
+  | *type*: `string`
+  | *default*: `1e-5`
+  | *optional*: `True`
+
+
+
+**group_prefix**
+  OrthoMCL prefix for group names
+
+  | *type*: `string`
+  | *default*: `g_`
   | *optional*: `True`
 
 
 
 **host**
-  DB host
+  Db Host
 
-  | *type*: `string`
-  | *default*: `localhost`
+  | *type*: `localhost`
+  | *default*: `{}`
   | *optional*: `True`
 
 
 
-**login**
-  DB login
+**input_dir**
+  Input directory with compliant (read the manual) fasta files
 
   | *type*: `string`
   | *default*: `{}`
@@ -66,29 +66,65 @@ Parameters
 
 
 
-**pass**
-  DB password
+**login**
+  Db username
 
   | *type*: `string`
-  | *default*: `{}`
+  | *default*: `None`
+  | *optional*: `False`
+
+
+
+**mcl_i**
+  mcl -i value
+
+  | *type*: `float`
+  | *default*: `1.5`
+  | *optional*: `True`
+
+
+
+**num_threads**
+  Number of threads to use
+
+  | *type*: `integer`
+  | *default*: `4`
+  | *optional*: `True`
+
+
+
+**pass**
+  Db password
+
+  | *type*: `string`
+  | *default*: `None`
   | *optional*: `False`
 
 
 
 **port**
-  DB port
+  Db port
 
-  | *type*: `string`
+  | *type*: `integer`
   | *default*: `3306`
   | *optional*: `True`
 
 
 
 **prefix**
-  prefix for separating tables & output fields
+  OrthoMCL prefix for the database tables
 
   | *type*: `string`
-  | *default*: `run1`
+  | *default*: `ortho`
+  | *optional*: `True`
+
+
+
+**vendor**
+  Db vendor
+
+  | *type*: `string`
+  | *default*: `mysql`
   | *optional*: `True`
 
 
@@ -101,6 +137,6 @@ miscellaneous
 **Author**
   Mark Fiers
 **Creation date**
-  Wed Nov 10 07:56:48 2010
+  Tue Mar 29 16:34:19 2011
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  Wed Mar 30 06:02:01 2011
