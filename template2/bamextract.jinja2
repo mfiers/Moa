@@ -3,15 +3,15 @@
 cat {{ regions }} | while read id seqid start stop; 
 do
     if (( ${start} < {{flank}} ));
-    then fstart=1
+    then fstart=1  
     else fstart=$((${start}-{{flank}}))
     fi
     fstop=$((${stop}+{{flank}}))
 
-    echo samtools view -r ${seqid}:${fstart}-${fstop} {{bam}} > ${id}.bam
-    samtools view -r ${seqid}:${fstart}-${fstop} {{bam}} > ${id}.bam
+    echo samtools view -b {{bam}} ${seqid}:${fstart}-${fstop}
+    samtools view -b {{bam}} ${seqid}:${fstart}-${fstop} > ${id}.bam
+    #samtools view -b -r ${seqid}:${fstart}-${fstop}  > ${id}.bam
 
-echo ${id} ${seqid} ${fstart} ${fstop}
-echo 
+    echo 
 done
 
