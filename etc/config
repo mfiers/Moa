@@ -1,6 +1,6 @@
 plugins:
   umask:
-    umask: 0o000
+    umask: 0o002
     enabled: true
   fileset: {}
   parameterCheck: {}
