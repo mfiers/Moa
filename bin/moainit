@@ -8,6 +8,9 @@ if [[ "$0" =~ "moainit" ]]; then
     exit -1;
 fi
 
+#few shortcuts
+alias msp='moa set process'
+
 #Set environment variables for moa
 export MOABASE=`dirname $(dirname $(cd ${BASH_ARGV%/*} && echo $PWD/${BASH_ARGV##*/}))`
 export PATH=$MOABASE/bin:$PATH
