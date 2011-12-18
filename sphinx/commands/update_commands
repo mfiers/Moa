@@ -6,9 +6,19 @@ import Yaco
 
 import moa.utils
 import moa.logger as l
+import moa.commands
+
+from moa.sysConf import sysConf
+sysConf.initialize()
+
+## Command definitions
+sysConf.commands = moa.commands.Commands()
+sysConf.pluginHandler.run('defineCommands')
+
 
 from jinja2 import Template as jTemplate
 
+l.setVerbose()
 #initialize jinja template
 templateFile = os.path.join(
     moa.utils.getMoaBase(), 'lib', 'jinja2', 'command.snippet.rst.jinja2')
@@ -38,8 +48,12 @@ only.
 allCommands = {}
 
 for plugin in os.listdir(PLUGINDIR):
-    if plugin[-3:] != '.py': continue
-    if plugin[0] in ['.', '#', '_']: continue
+
+    if not os.path.isdir(os.path.join(PLUGINDIR, plugin)):
+        continue
+
+
+    l.info("processing plugin %s" % plugin)
     
     modname = 'moa.plugin.%s' % (plugin.replace('.py', ''))
     l.info("looking at module %s" % modname)
@@ -48,42 +62,43 @@ for plugin in os.listdir(PLUGINDIR):
     data = Yaco.Yaco()
     data.commands = {}
     
-    if not getattr(mod, 'defineCommands', False):
+    if not getattr(mod, 'hook_defineCommands', False):
+        l.error('cannot find hook_defineCommands in %s' % plugin)        
         continue
 
-    #F.write(".. automodule:: %s\n" % modname)
-    mod.defineCommands(data)
+    mod.hook_defineCommands()
 
     if len(data.commands) == 0: continue
 
-    for command in data.commands:
-        fi = data.commands[command]
-        l.info("Command %s" %  command)
-        func =data.commands[command].call
+for command in sysConf.commands:
+    l.info("processing command %s" % command)
 
-        #extract a longer description from the function docs
-        longdesc = ''
-        ld = []
-        if func.func_doc:
-            ld = func.func_doc.split("\n")
-            while ld and not ld[0].strip():
-                ld.pop(0)
-            if ld:
-                ws = min([len(x) - len(x.lstrip()) for x in ld if x.strip()])
-                ld = [x[ws:] for x in ld]
-                longdesc = "\n".join(ld)
-            
-        td = {
-            'name' : command,
-            'desc' : fi['desc'],
-            'needsJob' : fi.get('needsJob', True),
-            'log' : fi.get('log', True),
-            'usage' : fi.get('usage', ""),
-            'longdesc' : longdesc
-              }
-        allCommands[command] = td
-        
-allComkeys = allCommands.keys()
+    fi = sysConf.commands[command]
+    func =sysConf[command].call
+
+    #extract a longer description from the function docs
+    longdesc = ''
+    ld = []
+    if func.func_doc:
+        ld = func.func_doc.split("\n")
+        while ld and not ld[0].strip():
+            ld.pop(0)
+        if ld:
+            ws = min([len(x) - len(x.lstrip()) for x in ld if x.strip()])
+            ld = [x[ws:] for x in ld]
+            longdesc = "\n".join(ld)
+
+    td = {
+        'name' : command,
+        'desc' : fi['desc'],
+        'needsJob' : fi.get('needsJob', True),
+        'log' : fi.get('log', True),
+        'usage' : fi.get('usage', ""),
+        'longdesc' : longdesc
+          }
+    allCommands[command] = td
+
+allComkeys = sysConf.commands.keys()
 allComkeys.sort()
 for k in allComkeys:
     dt = allCommands[k]
@@ -92,7 +107,9 @@ for k in allComkeys:
     else:
         F.write(template.render(dt))
         G.write(template.render(dt))
-
+    #print template.render(dt)
+    #import pprint
+    #pprint.pprint(dt)
 F.close()
 G.close()
     #F.write("   :members: %s\n" % ",".join(commands))
