@@ -12,7 +12,8 @@
 """
 import os
 import sys
-import git 
+import git
+import glob
 import time
 import optparse
 
@@ -50,7 +51,6 @@ def _commit(job, message):
     l.debug("Found git repo: Commiting")
     repo.index.add(job.getFiles())
     repo.index.commit(message)
-
     
 def tag(job):
     repo = _getRepo(job)
@@ -76,8 +76,34 @@ def hook_postNew():
     To be executed just after the 'moa new' command
     """    
     job = sysConf.job
-    _commit(job, "created job %s in %s" % (job.template.name, job.wd))
+    _commit(job, "Created job %s in %s" % (job.template.name, job.wd))
 
+def _registerFiles(job):
+    """
+    Register the files in `job` for version control!    
+    """
+    repo = _getRepo(job)
+    index = repo.index
+    for pattern in job.data.moaFiles:
+        for ff in  glob.glob(os.path.join(job.wd, pattern)):
+            print ff
+            index.add('./' + ff)
+
+def hook_postCp():
+    """
+    after 'moa cp'
+    """
+    #need to restore this -others might want it!
+    rememberCurrentJob = sysConf.job
+    
+    for wd in sysConf.moautil.jobs_created:
+        job = moa.job.Job(wd)
+        _registerFiles(job)
+    
+    
+    
+    #_commit(job, "Copied job from %s in %s" % (job.template.name, job.wd))
+    
 def gitlog(job):
     """
     Print a log to screen
@@ -93,7 +119,6 @@ def gitlog(job):
         tags[t.commit] = t
 
     for c in repo.iter_commits():
-        #if str(c) in tags.keys()
         t = time.strftime("%d %b %Y %H:%M", time.localtime(c.authored_date))
 
         if c in tags.keys():
