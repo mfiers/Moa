@@ -90,15 +90,14 @@ class Job(object):
     >>> wd = tempfile.mkdtemp()
     >>> job = Job(wd)
     >>> assert(isinstance(job, Job))
-    >>> assert(job.template.name == 'nojob')
-    
-    :param wd: The directory containing the job
-    :param template: The template a job should have. If undefined,
-        read the template from `./.moa/template`
-    :param options: Additional options to feed to this job
+    >>> assert(job.template.name == 'nojob')    
     """
       
     def __init__(self, wd):
+        """
+        :param wd: The directory containing the job
+        :param register: Register this job in the sysConf? Usually this should be yes
+        """
 
         if wd[-1] == '/':
             wd = wd[:-1]
