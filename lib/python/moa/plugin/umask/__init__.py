@@ -15,7 +15,7 @@ import os
 from moa.sysConf import sysConf
 
 def hook_prepare_1():
-    mask = int(sysConf.plugins.umask.get('umask', '0o777'), 8)
+    mask = int(sysConf.plugins.umask.get('umask', '0o002'), 8)
     os.umask(mask)
 
     
