@@ -52,7 +52,7 @@ def hook_defineCommands():
         'desc' : 'record a short note',
         'usage' : 'moa blog',
         'call' : blog,
-        'needsJob' : True,
+        'needsJob' : False,
         'log' : True
         }
 
@@ -61,7 +61,7 @@ def _readFromuser(job, header, fileName):
     """
     gather Blog or Changelog information
     """
-    moa.utils.moaDirOrExit(job)
+    #moa.utils.moaDirOrExit(job)
 
     txt = []
     print header, "..."
