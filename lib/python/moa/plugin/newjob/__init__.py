@@ -110,3 +110,10 @@ def newJob(job):
     else:
         moa.ui.fprint("Created a Moa {{green}}{{bold}}%s{{reset}} job" % template,
                       f='jinja')
+
+def hook_git_finish_new():
+    l.debug('running git add for newjob')
+    job = sysConf.job
+    sysConf.git.commitJob(job, "Created job %s in %s" % (job.template.name, job.wd))
+
+    
