@@ -19,6 +19,7 @@ plugins:
     enabled: true
   moautil: 
     enabled: true
+    dir: ~/.config/moa/archive
   moaGit: 
     enabled: true
   extraCommands: {}
@@ -57,8 +58,15 @@ template:
   providers:
     core:
       class: core
-      priority: 10
+      priority: 100
+    archive_global:
+      class: archive_global
+      priority: 90
     local:
       class: local
-      priority: 6
-      directory: ' ~/.config/moa/template/'
+      priority: 80
+      directory: '~/.config/moa/template/'
+    archive_local:
+      class: archive
+      priority: 70
+      directory: '~/.config/moa/archive/'
