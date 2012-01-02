@@ -298,7 +298,20 @@ class JobConf(object):
             
         self.jobConf.update(y)
 
+    def isEmpty(self):
+        """
+        Check if the config is empty is empty
+        """
+        for k in self.keys():
+            if self[k]: return False
+        return True
+    
     def save(self):
+        """
+        Save the conf to disk
+        """
+        if self.isEmpty():
+            return            
         try:
             self.job.checkConfDir()
             self.localConf.save(self.jobConfFile, self.doNotSave)
