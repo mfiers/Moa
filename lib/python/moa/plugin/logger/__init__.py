@@ -72,7 +72,10 @@ def hook_post_interrupt():
     _writeLog('interrupted')
 
 def hook_post_error():
-    _writeLog('error')
+     moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s (%s)" % (
+         sysConf.originalCommand,
+         niceRunTime(str(sysConf.logger.run_time))))
+     _writeLog('error')
 
 def hook_postRun():
     _writeLog('ok')
@@ -118,18 +121,13 @@ def hook_finish():
         return
     if sysConf.originalCommand == 'run':
         if sysConf.rc == 0:
-            moa.ui.message('{{bold}}Success{{reset}} executing "%s" (%s)' % (
+            moa.ui.message('{{bold}}Succeess{{reset}} executing "%s" (%s)' % (
                 sysConf.originalCommand,
                 niceRunTime(str(sysConf.logger.run_time))))
-        else:
-            moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s  (%s)" % (
-                sysConf.originalCommand,
-                niceRunTime(str(sysConf.logger.run_time))))
-        
                       
 def showLog(job):
     """
-    **moa log** - show a log of the most recent moa calls
+    **moa lcog** - show a log of the most recent moa calls
 
     Usage::
 
@@ -184,6 +182,6 @@ def showLog(job):
                 lc = "{{blue}}%-8s{{reset}}" % status[:7].capitalize()
                 
             lc += "%s " % start.rsplit(':',1)[0]
-            lc += "%10s" % niceRunTime(delta)
+            lc += "%10s " % niceRunTime(delta)
             lc += command
             moa.ui.fprint(lc, f='jinja')
