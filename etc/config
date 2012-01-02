@@ -1,7 +1,4 @@
 plugins:
-  pack:
-    enabled: false
-    dir: '~/data/moa/'
   umask:
     umask: 0o002
     enabled: true
