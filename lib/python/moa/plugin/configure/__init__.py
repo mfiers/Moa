@@ -219,4 +219,14 @@ def configSet(job):
     job.conf.save()
 
 
+def hook_git_finish_set():
+    """
+    Execute just after setting a parameter
+    """
+    job = sysConf.job
+    sysConf.git.commitJob(job, 'moa set %s in %s' % (
+        " ".join(sysConf['newargs']), job.wd))
+    
+
+
 
