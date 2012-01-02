@@ -102,8 +102,6 @@ class Ruff(moa.backend.BaseBackend):
         if not self.commands.has_key(command):
             return -1
 
-
-
         if self.job.template.commands.has_key(command):
             cmode = self.job.template.commands[command].mode
         else:
@@ -114,23 +112,23 @@ class Ruff(moa.backend.BaseBackend):
                 
         if cmode == 'map':
             j = RuffMapJob('run')
-            j.go()
+            rc = j.go()
             
         elif cmode == 'reduce':
-
             j = RuffReduceJob('run')
-            j.go()
+            rc = j.go()
 
  
         elif cmode == 'simple':
             j = RuffSimpleJob('run')
-            j.go()
+            rc = j.go()
 
         #empty the ruffus node name cache needs to be empty -
         #otherwise ruffus might think that we're rerunning jobs
         if hasattr(executor, 'pipeline_task'):
             for k in executor.pipeline_task._name_to_node.keys():
                 del executor.pipeline_task._name_to_node[k]
+                
         return rc
 
 def executor(input, output, script, jobData):
