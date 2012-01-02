@@ -1,5 +1,11 @@
 ### run
 
+which xml_grepp || (
+      echo "Please install xml_grep";
+      echo "On ubuntu: apt-get install xml-twig-tools"
+      false
+      )
+
 if [[ {{sequence_name}} == "from_dir" ]]; then
 	seqName=`basename $PWD | sed "s/^[0-9]*\.//"`
 else
