@@ -1,8 +1,14 @@
 ### run
 
-which xml_grepp || (
+(which xml_grep > /dev/null) || (
       echo "Please install xml_grep";
       echo "On ubuntu: apt-get install xml-twig-tools"
+      false
+      ) 
+
+(which seqret > /dev/null) || (
+      echo "Please install emboss";
+      echo "On ubuntu: apt-get install emboss"
       false
       )
 
