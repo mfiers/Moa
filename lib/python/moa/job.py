@@ -76,7 +76,8 @@ def newTestJob(template, title="Test job", provider=None):
     wd = tempfile.mkdtemp()
     job = Job(wd)
     job.setTemplate(template, provider=provider)
-    job.conf.title = title
+    if title:
+        job.conf.title = title
     job.conf.save()
     return job
 
@@ -248,13 +249,13 @@ class Job(object):
         sysConf.rc = self.backend.execute('run', verbose = verbose, silent=silent)
         
         if sysConf.rc != 0:
-            #do not bother with the following steps - end this run
-            return sysConf.rc
-
-        sysConf.pluginHandler.run("postRun", reverse=True)
-        sysConf.pluginHandler.run("post_command", reverse=True) #make these postRun 
-        self.finish()
-        sysConf.pluginHandler.run("finish", reverse=True)
+            #do not bother with the following steps - call post_error
+            sysConf.pluginHandler.run("post_error")
+        else:
+            sysConf.pluginHandler.run("postRun", reverse=True)
+            sysConf.pluginHandler.run("post_command", reverse=True) #make these postRun 
+            self.finish()
+            sysConf.pluginHandler.run("finish", reverse=True)
 
         return sysConf.rc
 
