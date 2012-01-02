@@ -100,11 +100,13 @@ class Providers(object):
             raise moa.exceptions.InvalidTemplate()
         
         p.installTemplate(wd, tName)
-        
+
+        templateddir = os.path.join(wd, '.moa', 'template.d')        
+                    
         meta = p.getMeta()
         meta.name = tName
         meta.installed = datetime.datetime.now().isoformat()
-        meta.save(os.path.join(wd, '.moa', 'template.d', 'meta'))
+        p.saveMeta(meta, templateddir)
 
 
 #base class for all providers
@@ -118,7 +120,9 @@ class ProviderBase(object):
         meta.provider_type = self.__class__.__name__.lower()
         meta.provider = self.name
         return meta
-            
 
+    def saveMeta(self, meta, dir):
+        if not os.path.exists(dir):
+            os.makedirs(dir)
 
-    
+        meta.save(os.path.join(dir, 'meta'))
