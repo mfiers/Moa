@@ -29,12 +29,16 @@ function _moa_prompt {
     #based on:
     #http://stackoverflow.com/questions/945288/...
     #     ...saving-current-directory-to-bash-history
-    #
+
     local lc=$(history 1)
     lc="${lc# *[0-9]*  }"
     
 	#save the last command to a user specific location
-    echo $lc > ~/.moa.last.command
+    if [[ ! -d '~/.config/moa' ]]
+    then
+        mkdir -p ~/.config/moa
+    fi
+    echo $lc > ~/.config/moa/last.command
 
     [[ -d '.moa' ]] || return 0
 
