@@ -66,6 +66,13 @@ def _realCommit(repo, files, wd, message):
     else:
         l.debug("Skipping git add - repository is not dirty")
 
+    #now try to remove all deleted files under wd
+    repo.git.add(u="")
+    try:
+        repo.git.commit(m='"remove deleted files"')
+    except git.exc.GitCommandError:
+        pass
+    
 def _checkGitIgnore(gitignoreFile):
     """
     See if there is moa dir specific git ignore file - if not create one
