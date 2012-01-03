@@ -1,7 +1,8 @@
 ### run
 
-[[ -e {{dbname}}.?hr ]] || \
-	formatdb -i {{input}} -p {{protein}} -n {{dbname}}
+echo "Creating blast db for {{input}}"
+formatdb -i {{input}} -p {{protein}} -n {{dbname}}
+touch {{dbname}}
 
 ### clean
 
