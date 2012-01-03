@@ -105,5 +105,7 @@ for indir in os.listdir(source):
         cl = 'cp %s %s' % (originalConf, targetConf)
         print "Copying configuration from %s to %s" % (original, basename)
         os.system(cl)
+        cl = '(git rev-parse --git-dir 2>/dev/null) && cd %s && moa gitadd' % basename
+        os.system(cl)
         continue
 
