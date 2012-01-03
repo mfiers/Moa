@@ -185,6 +185,6 @@ class RuffMapJob(RuffBaseJob):
         if hasattr(localMapExecutor, 'pipeline_task'):
             for k in localMapExecutor.pipeline_task._name_to_node.keys():
                 del localMapExecutor.pipeline_task._name_to_node[k]
-
+        return rc
                  
 
