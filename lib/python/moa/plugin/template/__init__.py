@@ -68,7 +68,7 @@ def refresh(job):
     job.refreshTemplate()
 
 def hook_git_finish_refresh():
-    sysConf.git.commitJob(job, 'moa refresh (%s)' % job.wd)
+    sysConf.git.commitJob(sysConf.job, 'moa refresh (%s)' % sysConf.job.wd)
 
 def _getTemplateFromData(job):
     """
