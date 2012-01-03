@@ -8,7 +8,7 @@ commands:
   run:
     help: Takes either a set of fasta files or a single multi-fasta input file and
       creates a BLAST database.
-    mode: simple
+    mode: map
 creation_date: Wed Nov 10 07:56:48 2010
 description: ''
 filesets: {}
@@ -22,12 +22,12 @@ filesets:
     type: single
     optional: false
     pattern: '*/*.fasta'
-parameters:
   dbname:
-    default: db
-    help: Name of the BLAST database to create.
-    optional: true
-    type: string
+    category: output
+    source: input
+    type: map
+    pattern: ./db
+parameters:
   protein:
     allowed:
     - T
