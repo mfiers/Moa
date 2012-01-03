@@ -67,6 +67,9 @@ def refresh(job):
     """
     job.refreshTemplate()
 
+def hook_git_finish_refresh():
+    sysConf.git.commitJob(job, 'moa refresh (%s)' % job.wd)
+
 def _getTemplateFromData(job):
     """
     Return a relevant template, either the one specified, or the template
