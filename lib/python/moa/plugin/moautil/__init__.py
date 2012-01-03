@@ -16,6 +16,7 @@ import sys
 import glob
 import shutil
 import tarfile
+import optparse
 
 import moa.logger as l
 import moa.ui
@@ -29,9 +30,9 @@ def hook_defineCommands():
         'recursive' : 'local',
         'unittest' : COPYTEST}
 
-    sysConf['commands']['ren'] = {
-        'desc' : 'Rename/renumber a job',
-        'call' : moaren,
+    sysConf['commands']['mv'] = {
+        'desc' : 'Rename/renumber/move a job',
+        'call' : moamv,
         'needsJob' : False,
         'recursive' : 'none',
         'unittest' : RENTEST}
@@ -41,7 +42,13 @@ def hook_defineCommands():
         'needsJob' : True,
         'recursive' : 'local',
         'call' : archive }
-        
+
+def hook_defineOptions():
+    parserG = optparse.OptionGroup(sysConf.parser, 'moa archive')
+    parserG.add_option("--template", dest="archive_template",
+                              action='store_true', default=False,
+                              help='store this archive as a template')
+    sysConf.parser.add_option_group(parserG)
 
 
 def archive(job):
@@ -57,23 +64,62 @@ def archive(job):
 
         moa archive
 
-    or
+    or::
 
-        moa archive -r
+        moa archive [NAME]
 
-    The latter archives all jobs in subdirs of the current directory.
+    an archive name can be omitted when the command is issued in a
+    directory with a moa job, in which case the name is derived from
+    the `jobid` parameter
 
-    Note that only those directories that contain a moa job are
-    included into the archive.
+    It is possible to run this command recursively with the `-r`
+    parameter - in which case all (moa job containing) subdirectories
+    are included in the archive.
+
+    As an alternative application you can specify the
+    `--template`. 
     
     """
-    args = sysConf.newargs[0]
-    archiveName = sysConf.newargs[0]
-    if not archiveName[-2:] ==  'gz' :
-        archiveName += '.tar.gz'
-    l.info("archiving %s" % archiveName)
+
+    if len(sysConf.newargs) > 0:
+        archiveName = sysConf.newargs[0]
+    else:
+        archiveName = job.conf.get('jobid', None)
+        if archiveName == None:
+            moa.ui.exitError('When not in a moa job, you must define an archive name')
+
+    if sysConf.options.archive_template:    
+        if ('/' in archiveName):
+            moa.ui.exitError("You can not specify a path when using --template")
+            
+        archivePath = os.path.abspath(os.path.expanduser(
+            sysConf.plugins.moautil.get('dir', '~/.config/moa/archive')))
+        if not os.path.exists(archivePath):
+            os.makedirs(archivePath)
+    else:
+        if ('/' in archiveName):
+            archivePath, archiveName = os.path.split(archiveName)
+        else:
+            archivePath = '.'
+            
+    if archiveName[-2:] == 'gz':
+        moa.ui.exitError("Do not specify an extension for the archive")
+
+    archiveName += '.tar.gz'
+    archiveFile = os.path.join(archivePath, archiveName)
+
+    if os.path.exists(archiveFile):
+        if not sysConf.options.force:
+            moa.ui.exitError("%s exists - use -f to overwrite" %
+                             archiveFile)
+
+    if not sysConf.options.recursive and not sysConf.job.isMoa():
+        moa.ui.exitError('Nothing to archive')
+        
+    l.info("archiving %s" % archiveFile)
+    
     TF = tarfile.open(
-        name = archiveName,
+        name = archiveFile,
         mode = 'w:gz')
 
     def _addFiles(tf, path, job):
@@ -91,7 +137,6 @@ def archive(job):
             [dirs.remove(x) for x in toRemove]
     else:
         _addFiles(TF, '.', job)
-
 
 def moacp(job):
     """
@@ -130,6 +175,9 @@ def moacp(job):
     
     options = sysConf.options
     args = sysConf.newargs
+
+    #remember the files copied
+    sysConf.moautil.filesCopied = []
     
     if len(args) > 1: dirTo = args[1]
     else: dirTo = '.'
@@ -184,13 +232,22 @@ def _copyMoaDir(job, toDir):
                 if not os.path.exists(thisToDir):
                     os.makedirs(thisToDir)
                 shutil.copyfile(fromFile, toFile)
+            sysConf.moautil.filesCopied.append(toFile)
 
-
-def moaren(job):
+def hook_git_finish_cp():
+    files = sysConf.moautil.get('filesCopied', [])
+    repo = sysConf.git.getRepo(sysConf.job)
+    repo.index.add(map(os.path.abspath, files))
+    repo.index.commit("moa cp %s" % " ".join(sysConf.newargs))
+    
+def moamv(job):
     """
     Renumber or rename a moa job..
     """
-    
+
+    #remember the files moved
+    sysConf.moautil.filesMoved = []
+
     args = sysConf.newargs
 
     fr = args[0]
@@ -213,9 +270,25 @@ def moaren(job):
             to = re.sub('^\d+', to, fr)
         else:
             to = '%s.%s' % (to, fr)
-
+            
     moa.ui.message("Moving %s to %s" % (fr, to))
-    shutil.move(fr, to)
+    if sysConf.git.active:
+        l.debug('git is active - deferring move to later')        
+        sysConf.moautil.mv.fr = fr
+        sysConf.moautil.mv.to = to
+    else:
+        shutil.move(fr, to)
+        
+def hook_git_finish_mv():
+    #make sure the 'from' directory is under git control
+    sysConf.git.commitDir(sysConf.moautil.mv.fr, 'Preparing for git mv')
+    #seems that we need to call git directly gitpython does not work
+    os.system('git mv %s %s' % (sysConf.moautil.mv.fr, sysConf.moautil.mv.to))
+    os.system('git commit %s %s -m "moa mv %s %s"' % (sysConf.moautil.mv.fr, sysConf.moautil.mv.to,
+                                                      sysConf.moautil.mv.fr, sysConf.moautil.mv.to))
+    #repo.index.add(map(os.path.abspath, files))
+    #repo.index.commit("moa cp %s" % " ".join(sysConf.newargs))
+            
 
 #Unittest scripts
 RENTEST = '''
