@@ -72,10 +72,14 @@ def hook_post_interrupt():
     _writeLog('interrupted')
 
 def hook_post_error():
-     moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s (%s)" % (
-         sysConf.originalCommand,
-         niceRunTime(str(sysConf.logger.run_time))))
-     _writeLog('error')
+    if sysConf.logger.run_time:
+        moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s (%s)" % (
+            sysConf.originalCommand,
+            niceRunTime(str(sysConf.logger.run_time))))
+    else:
+        moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s" % (
+            sysConf.originalCommand))
+    _writeLog('error')
 
 def hook_postRun():
     _writeLog('ok')
