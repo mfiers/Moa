@@ -125,7 +125,7 @@ def hook_finish():
         return
     if sysConf.originalCommand == 'run':
         if sysConf.rc == 0:
-            moa.ui.message('{{bold}}Succeess{{reset}} executing "%s" (%s)' % (
+            moa.ui.message('{{bold}}Success{{reset}} executing "%s" (%s)' % (
                 sysConf.originalCommand,
                 niceRunTime(str(sysConf.logger.run_time))))
                       
