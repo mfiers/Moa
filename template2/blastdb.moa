@@ -1,5 +1,5 @@
 author: Mark Fiers
-backend: gnumake
+backend: ruff
 commands:
   clean:
     help: Remove all job data, not the Moa job itself, note that this must be implemented
@@ -8,26 +8,23 @@ commands:
   run:
     help: Takes either a set of fasta files or a single multi-fasta input file and
       creates a BLAST database.
-    mode: map
+    mode: simple
 creation_date: Wed Nov 10 07:56:48 2010
 description: ''
 filesets: {}
 moa_id: blastdb
-modification_date: Wed Nov 10 07:56:48 2010
+modification_date: Tue, 03 Jan 2012 15:00:23
 name: blastdb
-parameter_category_order:
-- ''
-- system
-- advanced
-parameters:
-  fasta_file:
+filesets:
+  input:
+    category: input
     help: The file with all input FASTA sequences for the blastdb.
+    type: single
     optional: false
-    type: file
-  name:
-    allowed: []
-    category: ''
-    default: blastdb
+    pattern: '*/*.fasta'
+parameters:
+  dbname:
+    default: db
     help: Name of the BLAST database to create.
     optional: true
     type: string

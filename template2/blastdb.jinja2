@@ -1,0 +1,10 @@
+### run
+
+[[ -e {{dbname}}.?hr ]] || \
+	formatdb -i {{input}} -p {{protein}} -n {{dbname}}
+
+### clean
+
+rm {{blastdb_name}}
+rm {{blastdb_name}}.*
+
