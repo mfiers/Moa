@@ -1,10 +1,10 @@
 bamextract
 ------------------------------------------------
 
-**Bamextract**
+**bamextract**
 
 
-    Extract one sequence from a bam file
+    Extract a region from a BAM file
 
 
 
@@ -16,57 +16,50 @@ Commands
   
   
 **run**
-  *no help defined*
+  Extract a region from a BAM file
   
   
+
+Filesets
+~~~~~~~~
+
+
+**bam**
+  BAM input
+
+
+  | *type*: `single`
+  | *category*: `input`
+  | *optional*: `False`
+  | *pattern*: `{}`
+
+
+
+
+**regions**
+  List with regions to extract (id seqid start stop)
+
+
+  | *type*: `single`
+  | *category*: `input`
+  | *optional*: `True`
+  | *pattern*: `{}`
+
+
+
+
 
 Parameters
 ~~~~~~~~~~
 
 
 
-**bam_input**
-  BAM input file
-
-  | *type*: `file`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**fasta_file**
-  Fasta file with the reference sequence data
-
-  | *type*: `file`
-  | *default*: ``
-  | *optional*: `False`
-
-
-
-**gff_file**
-  GFF annotation file to extract data from
-
-  | *type*: `file`
-  | *default*: ``
-  | *optional*: `True`
-
-
-
-**haplotypes**
-  No of haplotypes in the sample
+**flank**
+  flanking region to extract
 
   | *type*: `integer`
-  | *default*: `2`
-  | *optional*: `True`
-
-
-
-**seq_id**
-  List of sequence ids to extract
-
-  | *type*: `string`
-  | *default*: ``
-  | *optional*: `False`
+  | *default*: `100`
+  | *optional*: `{}`
 
 
 
@@ -74,7 +67,7 @@ miscellaneous
 ~~~~~~~~~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

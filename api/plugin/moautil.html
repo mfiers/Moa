@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>moautil - Some extra utilities - copy/move jobs &mdash; Moa v0.10.11 documentation</title>
+    <title>moautil - Some extra utilities - copy/move jobs &mdash; Moa v0.10.12 documentation</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.10.11',
+        VERSION:     '0.10.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.11 documentation" href="../../index.html" />
+    <link rel="top" title="Moa v0.10.12 documentation" href="../../index.html" />
     <link rel="up" title="moa.plugin" href="index.html" />
     <link rel="next" title="newjob - Instantiate new jobs" href="newjob.html" />
     <link rel="prev" title="moaGit - maintain a git repository with job information" href="moaGit.html" /> 
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="moaGit.html" title="moaGit - maintain a git repository with job information"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">Moa</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
       </ul>
@@ -66,12 +66,17 @@ are all files that start with &#8216;moa.&#8217;</p>
 <p>Usage:</p>
 <div class="highlight-python"><pre>moa archive</pre>
 </div>
-<p>or</p>
-<blockquote>
-<div>moa archive -r</div></blockquote>
-<p>The latter archives all jobs in subdirs of the current directory.</p>
-<p>Note that only those directories that contain a moa job are
-included into the archive.</p>
+<p>or:</p>
+<div class="highlight-python"><pre>moa archive [NAME]</pre>
+</div>
+<p>an archive name can be omitted when the command is issued in a
+directory with a moa job, in which case the name is derived from
+the <cite>jobid</cite> parameter</p>
+<p>It is possible to run this command recursively with the <cite>-r</cite>
+parameter - in which case all (moa job containing) subdirectories
+are included in the archive.</p>
+<p>As an alternative application you can specify the
+<cite>&#8211;template</cite>.</p>
 </dd></dl>
 
 <dl class="function">
@@ -103,8 +108,8 @@ copied - if a directory contains a Moa job.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="moa.plugin.moautil.moaren">
-<tt class="descclassname">moa.plugin.moautil.</tt><tt class="descname">moaren</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.moautil.moaren" title="Permalink to this definition">¶</a></dt>
+<dt id="moa.plugin.moautil.moamv">
+<tt class="descclassname">moa.plugin.moautil.</tt><tt class="descname">moamv</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.moautil.moamv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renumber or rename a moa job..</p>
 </dd></dl>
 
@@ -125,11 +130,6 @@ copied - if a directory contains a Moa job.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="newjob.html"
                         title="next chapter"><strong>newjob</strong> - Instantiate new jobs</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../../_sources/api/plugin/moautil.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -162,14 +162,14 @@ copied - if a directory contains a Moa job.</p>
         <li class="right" >
           <a href="moaGit.html" title="moaGit - maintain a git repository with job information"
              >previous</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">Moa</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
           <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010, 2011, Mark Fiers.
-      Last updated on May 16, 2011.
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>

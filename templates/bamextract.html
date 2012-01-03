@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>bamextract &mdash; Moa v0.10.11 documentation</title>
+    <title>bamextract &mdash; Moa v0.10.12 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.11',
+        VERSION:     '0.10.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.12 documentation" href="../index.html" />
     <link rel="up" title="Templates" href="index.html" />
     <link rel="next" title="bartab" href="bartab.html" />
     <link rel="prev" title="adhoc" href="adhoc.html" /> 
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="adhoc.html" title="adhoc"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Templates</a> &raquo;</li> 
       </ul>
     </div>  
@@ -54,59 +54,50 @@
             
   <div class="section" id="bamextract">
 <h1>bamextract<a class="headerlink" href="#bamextract" title="Permalink to this headline">¶</a></h1>
-<p><strong>Bamextract</strong></p>
+<p><strong>bamextract</strong></p>
 <blockquote>
-<div>Extract one sequence from a bam file</div></blockquote>
+<div>Extract a region from a BAM file</div></blockquote>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>clean</strong></dt>
 <dd>Remove all job data, not the Moa job itself, note that this must be implemented by the template.</dd>
 <dt><strong>run</strong></dt>
-<dd><em>no help defined</em></dd>
+<dd>Extract a region from a BAM file</dd>
+</dl>
+</div>
+<div class="section" id="filesets">
+<h2>Filesets<a class="headerlink" href="#filesets" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>bam</strong></dt>
+<dd><p class="first">BAM input</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>single</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>pattern</em>: <cite>{}</cite></div>
+</div>
+</dd>
+<dt><strong>regions</strong></dt>
+<dd><p class="first">List with regions to extract (id seqid start stop)</p>
+<div class="last line-block">
+<div class="line"><em>type</em>: <cite>single</cite></div>
+<div class="line"><em>category</em>: <cite>input</cite></div>
+<div class="line"><em>optional</em>: <cite>True</cite></div>
+<div class="line"><em>pattern</em>: <cite>{}</cite></div>
+</div>
+</dd>
 </dl>
 </div>
 <div class="section" id="parameters">
 <h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><strong>bam_input</strong></dt>
-<dd><p class="first">BAM input file</p>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>file</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-<dt><strong>fasta_file</strong></dt>
-<dd><p class="first">Fasta file with the reference sequence data</p>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>file</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
-</div>
-</dd>
-<dt><strong>gff_file</strong></dt>
-<dd><p class="first">GFF annotation file to extract data from</p>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>file</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>haplotypes</strong></dt>
-<dd><p class="first">No of haplotypes in the sample</p>
+<dt><strong>flank</strong></dt>
+<dd><p class="first">flanking region to extract</p>
 <div class="last line-block">
 <div class="line"><em>type</em>: <cite>integer</cite></div>
-<div class="line"><em>default</em>: <cite>2</cite></div>
-<div class="line"><em>optional</em>: <cite>True</cite></div>
-</div>
-</dd>
-<dt><strong>seq_id</strong></dt>
-<dd><p class="first">List of sequence ids to extract</p>
-<div class="last line-block">
-<div class="line"><em>type</em>: <cite>string</cite></div>
-<div class="line"><em>default</em>: ``</div>
-<div class="line"><em>optional</em>: <cite>False</cite></div>
+<div class="line"><em>default</em>: <cite>100</cite></div>
+<div class="line"><em>optional</em>: <cite>{}</cite></div>
 </div>
 </dd>
 </dl>
@@ -115,7 +106,7 @@
 <h2>miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><strong>Backend</strong></dt>
-<dd>gnumake</dd>
+<dd>ruff</dd>
 <dt><strong>Author</strong></dt>
 <dd>Mark Fiers</dd>
 <dt><strong>Creation date</strong></dt>
@@ -135,27 +126,94 @@
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">bamextract</a><ul>
-<li><a class="reference internal" href="#commands">Commands</a></li>
-<li><a class="reference internal" href="#parameters">Parameters</a></li>
-<li><a class="reference internal" href="#miscellaneous">miscellaneous</a></li>
+<h3><a href="../index.html">Table of contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../goals.html">Goals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Templates</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="abyss_pe.html">abyss_pe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="abyss_se.html">abyss_se</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adhoc.html">adhoc</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">bamextract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bartab.html">bartab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bdbb.html">bdbb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bfast_aln.html">bfast_aln</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bfast_db.html">bfast_db</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blast.html">blast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blastdb.html">blastdb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blat.html">blat</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bowtie.html">bowtie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bowtie_pe.html">bowtie_pe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bowtie_se.html">bowtie_se</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bowtiedb.html">bowtiedb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bwa_aln.html">bwa_aln</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bwa_index.html">bwa_index</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bwa_sampe.html">bwa_sampe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bwa_samse.html">bwa_samse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cdsmatrix.html">cdsmatrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cleanFasta.html">cleanFasta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustalgroup.html">clustalgroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustalpair.html">clustalpair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clustalw.html">clustalw</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concatenate.html">concatenate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dottup.html">dottup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="empty.html">empty</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fasta2gff.html">fasta2gff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fastainfo.html">fastainfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fastqc.html">fastqc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fastx_clipper.html">fastx_clipper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fastx_qual_stats.html">fastx_qual_stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gather.html">gather</a></li>
+<li class="toctree-l2"><a class="reference internal" href="genemarks.html">genemarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getorf.html">getorf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glimmer3.html">glimmer3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmap.html">gmap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmapdb.html">gmapdb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gsMapper.html">gsMapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="h_blast.html">h_blast</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hagfish.html">hagfish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kanga.html">kanga</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kangar_pe.html">kangar_pe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kangar_se.html">kangar_se</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kangax.html">kangax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lftp.html">lftp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map.html">map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maq_fasta2bfa.html">maq_fasta2bfa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maq_fastq2bfq.html">maq_fastq2bfq</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maq_match_pair.html">maq_match_pair</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maq_pe.html">maq_pe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="maq_se.html">maq_se</a></li>
+<li class="toctree-l2"><a class="reference internal" href="moatest.html">moatest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mummer.html">mummer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ncbi.html">ncbi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="newbler.html">newbler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="newjobtest.html">newjobtest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nstretch.html">nstretch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orthomcl.html">orthomcl</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pregap.html">pregap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="project.html">project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reduce.html">reduce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sam2bam.html">sam2bam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="samtools_pileup.html">samtools_pileup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sffinfo.html">sffinfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simple.html">simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="soapdenovo_pe.html">soapdenovo_pe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsidx.html">statsidx</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sync.html">sync</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unittest.html">unittest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="varscan.html">varscan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vpcr.html">vpcr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vpcr_list.html">vpcr_list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wget.html">wget</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Moa API</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="adhoc.html"
-                        title="previous chapter">adhoc</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="bartab.html"
-                        title="next chapter">bartab</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/templates/bamextract.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -188,13 +246,13 @@
         <li class="right" >
           <a href="adhoc.html" title="adhoc"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa</a> &raquo;</li>
           <li><a href="index.html" >Templates</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010, 2011, Mark Fiers.
-      Last updated on May 16, 2011.
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>

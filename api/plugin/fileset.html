@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fileset - define sets of in&amp;output files &mdash; Moa v0.10.11 documentation</title>
+    <title>fileset - define sets of in&amp;output files &mdash; Moa v0.10.12 documentation</title>
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.10.11',
+        VERSION:     '0.10.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.11 documentation" href="../../index.html" />
+    <link rel="top" title="Moa v0.10.12 documentation" href="../../index.html" />
     <link rel="up" title="moa.plugin" href="index.html" />
     <link rel="next" title="help - generate help" href="help.html" />
     <link rel="prev" title="extraCommands - Pre &amp; Post commands" href="extraCommands.html" /> 
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="extraCommands.html" title="extraCommands - Pre &amp; Post commands"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">Moa</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
       </ul>
@@ -56,27 +56,15 @@
   <span class="target" id="module-moa.plugin.fileset"></span><div class="section" id="fileset-define-sets-of-in-output-files">
 <h1><strong>fileset</strong> - define sets of in&amp;output files<a class="headerlink" href="#fileset-define-sets-of-in-output-files" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
-<dt id="moa.plugin.fileset.defineCommands">
-<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">defineCommands</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.defineCommands" title="Permalink to this definition">¶</a></dt>
+<dt id="moa.plugin.fileset.hook_defineCommands">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">hook_defineCommands</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.fileset.hook_defineCommands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the moa commands for this plugin</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="moa.plugin.fileset.preFiles">
-<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">preFiles</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.preFiles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run before execution of any command (backend or plugin)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.fileset.pre_command">
-<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">pre_command</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.pre_command" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run before execution of any command (backend or plugin)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.fileset.preparefilesets">
-<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">preparefilesets</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#moa.plugin.fileset.preparefilesets" title="Permalink to this definition">¶</a></dt>
-<dd><p>prepare all filesets</p>
+<dt id="moa.plugin.fileset.hook_preparefilesets">
+<tt class="descclassname">moa.plugin.fileset.</tt><tt class="descname">hook_preparefilesets</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.fileset.hook_preparefilesets" title="Permalink to this definition">¶</a></dt>
+<dd><p>prepare all filesets - can be called as a plugin hook - if need be</p>
 </dd></dl>
 
 <dl class="function">
@@ -107,11 +95,6 @@ type filesets) and inferred from these for map type filesets.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="help.html"
                         title="next chapter"><strong>help</strong> - generate help</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../../_sources/api/plugin/fileset.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -144,14 +127,14 @@ type filesets) and inferred from these for map type filesets.</p>
         <li class="right" >
           <a href="extraCommands.html" title="extraCommands - Pre &amp; Post commands"
              >previous</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">Moa</a> &raquo;</li>
           <li><a href="../index.html" >Moa API</a> &raquo;</li>
           <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010, 2011, Mark Fiers.
-      Last updated on May 16, 2011.
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>

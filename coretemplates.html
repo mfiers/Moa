@@ -1,0 +1,196 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Three core templates &mdash; Moa v0.10.12 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.10.12',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.12 documentation" href="index.html" />
+    <link rel="next" title="How to write a template" href="write_template.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="write_template.html" title="How to write a template"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Moa</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="three-core-templates">
+<h1>Three core templates<a class="headerlink" href="#three-core-templates" title="Permalink to this headline">¶</a></h1>
+<p>Moa comes with a list of templates (see <em class="xref std std-ref">templates</em>). The three
+most important, flexible templates of these that allow you to embed
+custom code (called <cite>process</cite>) in your project are:</p>
+<p><cite>simple</cite>:</p>
+<blockquote>
+<div>Simply executes <cite>process</cite> as a bash one-liner</div></blockquote>
+<p><cite>map</cite>:</p>
+<blockquote>
+<div>Takes a set of in- and output files and executes the custom
+commands for each in- and output file (using the
+<a class="reference external" href="http://jinja.pocoo.org/docs/">Jinja2</a> template language).</div></blockquote>
+<p><cite>reduce</cite>:</p>
+<blockquote>
+<div>Takes a set of input files and a single output file and executes
+the custom commands with all input file, generating the output
+files.</div></blockquote>
+<p>Since <cite>simple</cite>, <cite>map</cite> and <cite>reduce</cite> have proven to be quite central to
+how Moa operates they come with their own shortcut commands (<cite>moa
+simple</cite>, <cite>moa map</cite> and <cite>moa reduce</cite>). These command query the user
+directly for the parameters instead of having to define this manually.</p>
+<p>For example, a <cite>simple</cite> job:</p>
+<div class="highlight-python"><pre>$ mkdir simple_test &amp;&amp; cd simple_test
+$ moa simple -t 'Generate some files'
+process:
+&gt; for x in `seq 1 5`; do touch test.$x; done
+$ moa run
+$ ls
+test.1  test.2  test.3  test.4  test.5</pre>
+</div>
+<p>Note that you can make your <cite>process</cite> as complicated as you
+like. Alternatively, you can write a script that you call from
+<cite>process</cite>.</p>
+<p>A map job would work like this:</p>
+<div class="highlight-python"><pre>$ mkdir ../map_test &amp;&amp; cd ../map_test
+$ moa map -t 'Map some files'
+process:
+&gt; echo {{ input }} ; echo {{ input }} &gt; {{ output }}
+input:
+&gt; ../simple_test/test.*
+output:
+&gt; ./out.*
+$ moa run
+../simple_test/test.3
+../simple_test/test.1
+../simple_test/test.5
+../simple_test/test.2
+../simple_test/test.
+Moa: Success executing "run" (&lt;1 sec)
+$ ls
+out.1  out.2  out.3  out.4  out.5
+$ cat out.1
+../simple_test/test.1</pre>
+</div>
+<p>Moa tracks which input file generates which outputfile. So, if you
+would like to repeat one of the jobs - you&#8217;ll need to delete the
+output file &amp; rerun <cite>moa</cite>:</p>
+<div class="highlight-python"><pre>$ rm out.3
+$ moa run
+../simple_test/test.3
+Moa: Success executing "run" (&lt;1 sec)</pre>
+</div>
+<p>And a <cite>reduce</cite> example:</p>
+<div class="highlight-python"><pre>$ mkdir ../reduce_test &amp;&amp; cd ../reduce_test
+$ moa reduce -t 'Reduce some files'
+process:
+&gt; echo {{ " ".join(input) }} &gt;&gt; {{ output }}
+input:
+&gt; ../map_test/out.*
+output:
+&gt; ./reduce_out
+$ moa run
+Moa: Success executing "run" (&lt;1 sec)
+$ ls
+reduce_out
+$ cat reduce_out
+../map_test/out.1 ../map_test/out.3 ../map_test/out.4 ../map_test/out.5 ../map_test/out.2</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+<h3><a href="index.html">Table of contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="goals.html">Goals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_template.html">How to write a template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="templates/index.html">Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Moa API</a></li>
+</ul>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="write_template.html" title="How to write a template"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation"
+             >previous</a> |</li>
+        <li><a href="index.html">Moa</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

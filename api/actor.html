@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>moa.actor &mdash; Moa v0.10.11 documentation</title>
+    <title>moa.actor &mdash; Moa v0.10.12 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.11',
+        VERSION:     '0.10.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.12 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
     <link rel="next" title="moa.commands" href="commands.html" />
     <link rel="prev" title="Moa API" href="index.html" /> 
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="index.html" title="Moa API"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -75,13 +75,13 @@
 
 <dl class="function">
 <dt id="moa.actor.simpleRunner">
-<tt class="descclassname">moa.actor.</tt><tt class="descname">simpleRunner</tt><big>(</big><em>wd</em>, <em>cl</em>, <em>silent=False</em><big>)</big><a class="headerlink" href="#moa.actor.simpleRunner" title="Permalink to this definition">¶</a></dt>
-<dd><ul class="simple">
-<li>put env in the environment</li>
-<li>Execute the commandline (in cl)</li>
-<li>store stdout &amp; stderr in log files</li>
-<li>return the rc</li>
-</ul>
+<tt class="descclassname">moa.actor.</tt><tt class="descname">simpleRunner</tt><big>(</big><em>wd</em>, <em>cl</em>, <em>conf={}</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#moa.actor.simpleRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Don&#8217;t think - just run - here &amp; now</p>
+<p>what does this function do?
+- put env in the environment
+- Execute the commandline (in cl)
+- store stdout &amp; stderr in log files
+- return the rc</p>
 </dd></dl>
 
 </div>
@@ -95,17 +95,33 @@
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Moa API</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="commands.html"
-                        title="next chapter">moa.commands</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/api/actor.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+<h3><a href="../index.html">Table of contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../goals.html">Goals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../templates/index.html">Templates</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Moa API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">moa.actor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html">moa.commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job.html">moa.job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobConf.html">moa.jobConf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysConf.html">moa.sysConf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui.html">moa.ui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">moa.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="template/index.html">moa.template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="template/provider/index.html">moa.template.provider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backend/index.html">moa.backend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugin/index.html">moa.plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Yaco.html">Yaco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fist.html">fist</a></li>
+</ul>
+</li>
+</ul>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -138,13 +154,13 @@
         <li class="right" >
           <a href="index.html" title="Moa API"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa</a> &raquo;</li>
           <li><a href="index.html" >Moa API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010, 2011, Mark Fiers.
-      Last updated on May 16, 2011.
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>

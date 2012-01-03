@@ -1,19 +1,32 @@
 
 Welcome to Moa!
-===============
+###############
 
-*lightweight workflows for bioinformatics*
+*Lightweight, command line, workflows for bioinformatics*
 
-Contents:
+Moa aims to assist a bioinformatician to organize, document, share,
+execute and repeat workflows in a command line environment without
+losing flexibility, and, at all times giving the user full access to
+all aspects of the workflow (see also :ref:`goals`).
+
+
+**NOTE: both the software and the manual are under development. Things might change.**
+
+
+Table of contents:
+==================
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
-   intro
+   goals
+   intro   
    install
-   using
-   filesets
+   coretemplates
+   #using
+   #configuration
+   #filesets
    write_template
    commands/index
    templates/index

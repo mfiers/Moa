@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &mdash; Moa v0.10.11 documentation</title>
+    <title>Introduction &mdash; Moa v0.10.12 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.10.11',
+        VERSION:     '0.10.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,9 +21,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.11 documentation" href="index.html" />
+    <link rel="top" title="Moa v0.10.12 documentation" href="index.html" />
     <link rel="next" title="Installation" href="install.html" />
-    <link rel="prev" title="Welcome to Moa!" href="index.html" /> 
+    <link rel="prev" title="Goals" href="goals.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,9 +39,9 @@
           <a href="install.html" title="Installation"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to Moa!"
+          <a href="goals.html" title="Goals"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Moa v0.10.11 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Moa</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,159 +50,108 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <p><strong>NOTE: both the software and the manual are under development. Things might change.</strong></p>
-<div class="section" id="introduction">
+  <div class="section" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>A bioinformatics project commonly consists of a number of separate
-steps that chain (3<sup>rd</sup> party) tools together. To finetune the
-behaviour of of such an analysis pipeline, a number of custom steps
-are often necessary. Particularly when such projects get bigger, it
-becomes vital to organize, automate and store analysis pipelines.</p>
+<p>These days, generating massive amounts of data is an everyday element
+of biological research; and almost all projects have a bioinformatics
+components. Such embedded bioinformatics work commonly consists of
+chaining a number of 3<sup>rd</sup> party tools together, often with
+some data manipulation in between the steps. It is important to have
+such projects properly organized, particularly when a projects grows
+bigger.</p>
 <p>There are many different ways to organize bioinformatics
 projects. Many bioinformaticians use the command line or tailor made
 scripts to organize and automate their work. This approach has obvious
 advantages, most importantly flexibility. Potential downsides to
 scripting are that a project easily becomes disorganized and
-untrackable unless measures are taken.</p>
-<p><strong>*Moa</strong> to assist in organizing, automating and maintaining a command
-line bioinformatics project without loss of flexibility.*</p>
-<p>The best way to understand how Moa aims to achieve this is by a simple
-example, imagine you would like to run a BLAST analysis:</p>
-<div class="highlight-python"><pre>moa new blast -t "demo run"
-moa set db=/data/blast/db/nt
-moa set input=../sequences/*.fasta
-moa set moa_postprocess='grep polymerase gff/*gff &gt; pol.gff'
-moa run</pre>
+untraceable unless measures are taken.</p>
+<p><em>Moa</em> aims to assist in organizing, automating and maintaining a
+command line bioinformatics project without loss of flexibility.</p>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>The best way to understand how Moa can help you to achieve this is by
+an example. A Moa workflow consists of separate Moa jobs. A workflow
+is typically organised as a directory tree, where the structure of the
+tree reflects the structure of the project. So, Starting a Moa project
+starts with outlining a directory structure to contain the workflow:</p>
+<div class="highlight-python"><pre>$ mkdir test.project &amp;&amp; cd test.project
+$ mkdir 00.proteins
+
+( copy or link some protein sequences into 00.proteins )
+
+$ mkdir 10.blast
+$ cd 10.blast</pre>
 </div>
-<p>In the first line, a new BLAST job (titled &#8220;demo run&#8221;) is created in
-the current directory. What really happens is that Moa copies the
-<cite>blast</cite> template to the current directory. The <cite>blast</cite> template knows
-how to execute a <a class="reference internal" href="#blast">[BLAST]</a> job, but needs at least two variables
-defined, defined in the next two lines. <cite>moa run</cite> executes the
-analysis and &#8216;blasts&#8217; the input sequences (in
-<tt class="docutils literal"><span class="pre">../sequences/*.fasta</span></tt>) against the database in
-<tt class="docutils literal"><span class="pre">/data/blast/db/nt</span></tt>. BLAST output files (XML) are generated and
-converted to GFF (GFF conversion is an extra of the template, not part
-of the BLAST suite). The one to last statement is probably most
-typical of the flexibility provided by Moa; it is a single shell
-commmand that will be executed after BLAST is executed (there is a
-corresponding <tt class="docutils literal"><span class="pre">moa_preprocess</span></tt>). This shell comamand filters all
-BLAST hits that have the word &#8220;polymerase&#8221; in their description into a
-separater GFF file.</p>
-<p>Moa aims to do the following things:</p>
-<ul>
-<li><p class="first"><em>Organize a project</em>: Each Moa job must be located in its own
-directory. It is possible to automatically execute a directory tree
-of Moa jobs. Proper use of these features will result in a logical
-project structure.</p>
-</li>
-<li><dl class="first docutils">
-<dt><em>Create reusable building blocks</em>: Moa templates are GNU Makefiles</dt>
-<dd><p class="first last">that follow a set of conventions. It is easy to implement new
-building blocks. (see chapter X).</p>
-</dd>
-</dl>
-</li>
-<li><p class="first"><em>Document</em>: It is possible to add meta-data such as a title and
-description to each Moa job, making it easy to</p>
-</li>
-<li><p class="first"><em>Provide a uniform interface</em>: Moa allows you to operate your
-project almost exclusively using a single command (conveniently
-called <tt class="docutils literal"><span class="pre">moa</span></tt>).</p>
-</li>
-</ul>
-<div class="section" id="example-session">
-<h2>Example session<a class="headerlink" href="#example-session" title="Permalink to this headline">¶</a></h2>
-<p>The best way to understand how to use Moa is a sample session.</p>
-<p>We&#8217;ll start by creating directories to hold the data and analysis
-structure:</p>
-<div class="highlight-python"><pre>mkdir introduction
-cd introduction</pre>
+<p>An important feature of Moa is that each separate analysis step is
+contained within a separate directory. Two Moa jobs never share a
+directory. This forces a Moa user to break a workflow down to atomic
+parts, which is typically beneficial to the organization and coherence
+of a workflow. The order of steps is easily ordered by prefixing
+directory names with a number. Note that these prefixes are not
+enforced by Moa; any alphabetical organization would work as
+well. Once a directory is created, a Moa job can be created:</p>
+<div class="highlight-python"><pre>$ moa new blast -t "demo run"</pre>
 </div>
-<p>We&#8217;ve created a directory <tt class="docutils literal"><span class="pre">introduction</span></tt> for the tutorial. Within
-this directory we&#8217;ll organize the components of our analysis. We
-want to initialize this directory so that it becomes a part of this
-Moa pipeline. This is useful later, if we want to run all analysis
-at once. To do this, run:</p>
-<div class="highlight-python"><pre>moa new project -t 'Introduction'</pre>
+<p>All interaction with Moa is done through a single command: <cite>moa</cite>. It
+is, at all times, possible to get help on the use of the <cite>moa</cite> command
+by invoking <cite>moa &#8211;help</cite>. The command above creates a <cite>BLAST</cite> job
+titled &#8220;demo run&#8221; in the current directory. All Moa related files are
+stored in a (hidden) sub-directory names <cite>.moa</cite> (have a look!).  A Moa
+job consists, amongst others, of a configuration file and a number of
+template files. All template files are copied into the <cite>.moa</cite>
+directory. This ensures that a workflow remains the same over time,
+even if the templates are updated (<cite>moa refresh</cite> would update a
+template to the latest version).</p>
+<p>Another topic in which Moa tries to help is by embedding (some)
+documentation. In the above command line the <cite>-t</cite> parameter sets a
+mandatory project title (a job won&#8217;t execute without a title).</p>
+<p>Obviously, telling a Moa job to do a BLAST analysis is not enough,
+some variables will need to be set:</p>
+<div class="highlight-python"><pre>$ moa set db=/data/blast/db/nr</pre>
 </div>
-<p>The <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">new</span></tt> command is used to create new moa jobs. In this
-case we create a job with the template &#8220;project&#8221;. In itself this
-template does not do anything but serves to group new projects. The
-<tt class="docutils literal"><span class="pre">-t</span></tt> parameters assigns a title to this Moa job. We will now
-create a new directory to hold the first step of the pipeline:</p>
-<div class="highlight-python"><pre>mkdir 10.download
-cd 10.download
-moa new</pre>
+<p>A few things could be noted here. Important is that you do not use
+spaces around the <cite>=</cite> sign. If you want to define a parameter with
+spaces, use quotes (<cite>key=&#8221;value with spaces&#8221;</cite>), and be aware of bash
+interpretation. A safe way of entering complex parameters is by
+running <cite>moa set db</cite> and Moa will query you the value.</p>
+<p>Another point is that Moa does not give you a response. You can check
+the current job configuration using <cite>moa show</cite>, which would at this
+moment result in something resembling:</p>
+<div class="highlight-python"><pre>db     L /data/blast/db/nr
+input  E (undefined)
+jobid  L blast
+title  L demo run</pre>
 </div>
-<p>Moa does not dictate a directory structure for your analysis
-pipeline, but to make full usage of Moa it is advisable to create a
-logical organization. Two important features of Moa that relate to
-this are:</p>
-<ul class="simple">
-<li>Each moa job is contained in one directory. Output files of a
-job are typically stored in that directory. It is not possible to
-have more than one Moa jobs in a directory.</li>
-<li>Moa is able to automatically execute all jobs in a directory and
-the underlying sub-directories (using <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">all</span></tt>).</li>
-</ul>
-<p>If properly used, these two features force a logical, modular,
-project structure. To assign an order to the steps inside a
-directory it is possible to prepend a number to the directory name
-(i.e. &#8220;10.&#8221;). Note that Moa sorts directories alphabetically and
-not numerically</p>
-<p>We will now created a new folder to hold a genome sequence we are
-about to download and set up the Moa job to actually do the
-download.</p>
-<div class="highlight-python"><pre>mkdir 10.genome
-cd 10.genome
-moa new -t 'download a potato BAC' ncbi</pre>
+<p>Note the variable <cite>db</cite> and <cite>title</cite>, which were set earlier. If you run
+<cite>show -a</cite>, more parameters will be revealed, amongst which is
+<cite>program</cite>. We will now set two more variables:</p>
+<div class="highlight-python"><pre>$ moa set program=blastp
+$ moa set input=../00.proteins/*.fasta</pre>
 </div>
-<p>Here we create a Moa job to download a sequence from
-<a class="reference external" href="http://www.ncbi.nlm.nih.gov">NCBI</a> by using the &#8220;ncbi&#8221; template.
-Once a Moa job is instantiated you can run <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">help</span></tt> to get some
-information on how to use this template</p>
-<p><img alt="moa help" src="_images/screenshot_moa_help4.png" /> Note that if you want help on how to use the moa itself,
-you should use <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">--help</span></tt></p>
-<p>Before you can get the data from NCBI, you will have to tell Moa
-what you want to download. This is easy if you know the Genbank
-accession numbers. In this case we&#8217;ll download the nucleotide
-sequence (from the database &#8220;nuccore&#8221;) with the accession id
-AC237669.1</p>
-<div class="highlight-python"><pre>moa set ncbi_db=nuccore
-moa set ncbi_query=AC237669.1</pre>
+<p>The last statement defines the input files to blast. Once all is set
+you can actually run the BLAST analysis with:</p>
+<div class="highlight-python"><pre>$ moa run</pre>
 </div>
-<p>You can check if the parameters are set correctly by running
-<tt class="docutils literal"><span class="pre">moa</span> <span class="pre">show</span></tt>. This should come back with the following text: title
-download a potato BAC ncbi_query AC237669.1 ncbi_db nuccore
-ncbi_sequence_name</p>
-<p>If everything seems fine, you can run this job:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">moa</span>
-</pre></div>
+<p>Now Moa performs the BLAST analysis on the input files. The output can
+be found in the <cite>out</cite> sub-directory. As an extra, the Moa <cite>blast</cite>
+template generates a <cite>blast_report</cite> file with simple one line report
+for the best five hits of each query sequence. If you, for example,
+would like to check for the presence of dicer genes in your query set,
+you could <cite>grep</cite> this file:</p>
+<div class="highlight-python"><pre>$ grep -i dicer blast_report</pre>
 </div>
-<p>Or, you could also have used <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">run</span></tt>. It is possible that you
-get an error message notifying that &#8220;wget&#8221; or &#8220;xml_grep&#8221; cannot be
-found. Most, properly written, Moa templates do prerequisite
-checking if necessary. If either of these tools is missing, you
-will need to install them first (possibly by running
-<tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt</span> <span class="pre">get</span> <span class="pre">install</span> <span class="pre">wget</span></tt> or
-<tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">xml-twig-tools</span></tt>, or ask your system
-administrator)</p>
-<p>If Moa runs, quite a lot of output is generated. If things go
-wrong, there is probably a clue to why it did not work in this
-output. If the Moa job is successful, the last line should be &#8220;Moa
-finished - Succes!&#8221;. If you do an <tt class="docutils literal"><span class="pre">ls</span></tt> you now see a <tt class="docutils literal"><span class="pre">fasta</span></tt>
-directory with one fasta file. This fasta file contains the
-downloaded genome.</p>
-<p>Now we can start doing things with the downloaded sequence. To see
-what other templates are available, try <tt class="docutils literal"><span class="pre">moa</span> <span class="pre">list</span></tt>.</p>
-<hr class="docutils" />
-<table class="docutils citation" frame="void" id="blast" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[BLAST]</a></td><td>Altschul SF, Gish W, Miller W, Myers EW, Lipman DJ. Basic local alignment search tool. J Mol Biol. 1990 Oct 5;215(3):403-10. PubMed PMID: <a class="reference external" href="http://www.ncbi.nlm.nih.gov/pubmed/2231712">2231712</a>.</td></tr>
-</tbody>
-</table>
+<p>Command line operation of data files can be very powerful, and this
+would be a typical operation for a command line bioinformatician. Moa
+lets you capture this and thus make it a part of the pipeline. Try:</p>
+<div class="highlight-python"><pre>$ moa set postcommand</pre>
+</div>
+<p>and, at the prompt enter:</p>
+<div class="highlight-python"><pre>postcommand:
+&gt; grep -i dicer blast_report &gt; dicer.out</pre>
+</div>
+<p>If you now rerun <cite>moa</cite>, the BLAST job will not be repeated, but the
+<cite>postcommand</cite> will be executed and a <cite>dicer.out</cite> file will be
+generated. (note, there is also a <cite>precommand</cite>)</p>
 </div>
 </div>
 
@@ -215,25 +164,21 @@ what other templates are available, try <tt class="docutils literal"><span class
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Introduction</a><ul>
-<li><a class="reference internal" href="#example-session">Example session</a></li>
+<h3><a href="index.html">Table of contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="goals.html">Goals</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_template.html">How to write a template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="templates/index.html">Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Moa API</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to Moa!</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="install.html"
-                        title="next chapter">Installation</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/intro.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -264,14 +209,14 @@ what other templates are available, try <tt class="docutils literal"><span class
           <a href="install.html" title="Installation"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to Moa!"
+          <a href="goals.html" title="Goals"
              >previous</a> |</li>
-        <li><a href="index.html">Moa v0.10.11 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Moa</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010, 2011, Mark Fiers.
-      Last updated on May 16, 2011.
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>

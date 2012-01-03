@@ -16,7 +16,7 @@ Commands
   
   
 **run**
-  *no help defined*
+  Run mummer
   
   
 
@@ -24,14 +24,14 @@ Filesets
 ~~~~~~~~
 
 
-**mum_input_a**
+**input**
   Set 1 input fasta files
 
 
 
 
 
-**mum_input_b**
+**reference**
   Set 1 input fasta files
 
 
@@ -44,7 +44,16 @@ Parameters
 
 
 
-**mum_breaklen**
+**base**
+  base name for all generated files
+
+  | *type*: `{}`
+  | *default*: `out`
+  | *optional*: `True`
+
+
+
+**breaklen**
   Set the distance an alignment extension will attempt to extend poor scoring regions before giving up (default 200)
 
   | *type*: `integer`
@@ -53,7 +62,34 @@ Parameters
 
 
 
-**mum_matchmode**
+**genomecenter**
+  genome center - used in the AGP file
+
+  | *type*: `{}`
+  | *default*: `pflnz`
+  | *optional*: `True`
+
+
+
+**gff_source**
+  GFF source field
+
+  | *type*: `{}`
+  | *default*: `mumscaff`
+  | *optional*: `True`
+
+
+
+**linker**
+  linker sequence for the merged output sequence
+
+  | *type*: `{}`
+  | *default*: `NNNNNNCTAGCTAGCATGNNNNNN`
+  | *optional*: `True`
+
+
+
+**matchmode**
   use all matching fragments (max) or only unique matchers (mum)
 
   | *type*: `set`
@@ -65,17 +101,26 @@ Parameters
 **mum_plot_raw**
   plot an alternative visualization where mummer does not attempt to put the sequences in the correct order
 
-  | *type*: `set`
-  | *default*: `F`
+  | *type*: `boolean`
+  | *default*: `False`
   | *optional*: `True`
 
 
 
-**mum_self**
-  mummer against self
+**organism**
+  Organism name - used in the AGP file
 
-  | *type*: `set`
-  | *default*: `T`
+  | *type*: `{}`
+  | *default*: ``
+  | *optional*: `True`
+
+
+
+**taxid**
+  Taxonomy id - used in the AGP file
+
+  | *type*: `{}`
+  | *default*: ``
   | *optional*: `True`
 
 
@@ -84,7 +129,7 @@ miscellaneous
 ~~~~~~~~~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

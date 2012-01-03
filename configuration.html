@@ -1,0 +1,148 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuring Moa &mdash; Moa v0.10.12 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.10.12',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Moa v0.10.12 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">Moa</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="configuring-moa">
+<h1>Configuring Moa<a class="headerlink" href="#configuring-moa" title="Permalink to this headline">¶</a></h1>
+<p>Moa is configured using the command line tool <cite>Moa</cite>. For example, you
+are creating a simple job somewhere:</p>
+<div class="highlight-python"><pre>$ moa simple -t 'test job' -- echo "Hello"</pre>
+</div>
+<p>and you would like to change the title, you can do this with <cite>moa
+set</cite>:</p>
+<div class="highlight-python"><pre>$ moa set title='I mean: Hello!!'</pre>
+</div>
+<p>When setting parameters on the command line you need to consider the
+fact that bash might try to expand or interpret the command line. For
+example, if you would like to set the process parameter to <cite>echo &#8220;it&#8217;s
+complicated&#8221;</cite>, you would need the following command line:</p>
+<div class="highlight-python"><pre>$ moa set process='echo "it'\'' complicated"'</pre>
+</div>
+<p>only to be able to use a single quote. Similar care needs to be taken
+with, for example, the <cite>$</cite> character, as that will be expanded by
+bash, unless placed between single quotes or properly escaped. An
+alternative way of setting variables would be by running:</p>
+<div class="highlight-python"><pre>$ moa set process</pre>
+</div>
+<p>which will prompt you for the value of <cite>process</cite>, without tyring to
+expand any variables.</p>
+<p>It is at all times possible to check what the current configuration is
+by running:</p>
+<div class="highlight-python"><pre>$ moa show</pre>
+</div>
+<p>which will give you (possibly with more color):</p>
+<div class="highlight-python"><pre>postcommand  o (undefined)
+precommand   o (undefined)
+process      L echo "it's complicated"
+project      o (undefined)
+title        L I mean: Hello!!</pre>
+</div>
+<p>The first column has the parameter name, followed by a single letter,
+and the value of the parameter, or <cite>(undefined)</cite> if no value is
+specified. The letters in the second column signify the state of the
+parameter:</p>
+<ul class="simple">
+<li><strong>o</strong>: Undefined, but <strong>O</strong>ptional.</li>
+<li><strong>L</strong>: Locally defined</li>
+<li><strong>R</strong>: <strong>R</strong>ecursively defined</li>
+<li><strong>E</strong>: <strong>E</strong>rror - undefined and not optional.</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+<h3><a href="index.html">Table of contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="goals.html">Goals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_template.html">How to write a template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="templates/index.html">Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Moa API</a></li>
+</ul>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">Moa</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

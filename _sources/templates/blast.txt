@@ -15,22 +15,12 @@ Commands
   Remove all job data, not the Moa job itself, note that this must be implemented by the template.
   
   
-**prepare**
-  *no help defined*
-  
-  
 **report**
   Generate a text BLAST report.
   
   
 **run**
   Running BLAST takes an input directory, determines what sequences are present and executes BLAST on each of these.  Moa BLAST is configured to create XML output (as opposed to the standard text based output) in the out directory. The output XML is subsequently converted to GFF3 by the custom blast2gff script (using BioPython). Additionally, a simple text report is created.
-  
-  
-  **run** delegates execution to: **prepare, run2, report**
-  
-**run2**
-  *no help defined*
   
   
 

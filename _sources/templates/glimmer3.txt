@@ -24,9 +24,61 @@ Filesets
 ~~~~~~~~
 
 
+**cds**
+  CDS output files from glimmer3
+
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `True`
+  | *pattern*: `cds/*.fasta`
+
+
+
+
+**gff**
+  GFF output files from glimmer3
+
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `True`
+  | *pattern*: `gff/*.gff`
+
+
+
+
 **input**
   Directory with the input files for Glimmer3
 
+
+
+
+
+**output**
+  Raw output files from glimmer3
+
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `True`
+  | *pattern*: `out/*.g3`
+
+
+
+
+**pep**
+  peptide output files from glimmer3
+
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `True`
+  | *pattern*: `pep/*.fasta`
 
 
 
@@ -64,6 +116,15 @@ Parameters
 
 
 
+**stop_codons**
+  stop codons
+
+  | *type*: `{}`
+  | *default*: `tag,tga,taa,nnn,tnn,ann,gnn,cnn`
+  | *optional*: `True`
+
+
+
 **treshold**
   treshold for calling a gene a gene (glimmer3 -t)
 
@@ -77,7 +138,7 @@ miscellaneous
 ~~~~~~~~~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**

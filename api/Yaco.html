@@ -6,13 +6,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Yaco &mdash; Moa v0.10.11 documentation</title>
+    <title>Yaco &mdash; Moa v0.10.12 documentation</title>
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.11',
+        VERSION:     '0.10.12',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +21,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.11 documentation" href="../index.html" />
+    <link rel="top" title="Moa v0.10.12 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
     <link rel="next" title="fist" href="fist.html" />
     <link rel="prev" title="twit - Tweet results" href="plugin/twit.html" /> 
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="plugin/twit.html" title="twit - Tweet results"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -169,6 +169,24 @@ data structures</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="Yaco.Yaco.simple">
+<tt class="descname">simple</tt><big>(</big><big>)</big><a class="headerlink" href="#Yaco.Yaco.simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a simplified representation of this
+Yaco struct - remove Yaco from the equation - and
+all object reference. Leave only bool, float, str, 
+lists, tuples and dicts</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Yaco</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Yaco</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">simple</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">][</span><span class="s">&#39;z&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">],</span> <span class="n">Yaco</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="Yaco.Yaco.update">
 <tt class="descname">update</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#Yaco.Yaco.update" title="Permalink to this definition">¶</a></dt>
 <dd><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">Yaco</span><span class="p">({</span><span class="s">&#39;a&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,{</span><span class="s">&#39;b&#39;</span> <span class="p">:</span> <span class="mi">12</span><span class="p">}]})</span>
@@ -195,25 +213,33 @@ data structures</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Yaco</a><ul>
-<li><a class="reference internal" href="#autogenerating-keys">Autogenerating keys</a></li>
+<h3><a href="../index.html">Table of contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../goals.html">Goals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../templates/index.html">Templates</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Moa API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="actor.html">moa.actor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="commands.html">moa.commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job.html">moa.job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jobConf.html">moa.jobConf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sysConf.html">moa.sysConf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ui.html">moa.ui</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">moa.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="template/index.html">moa.template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="template/provider/index.html">moa.template.provider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backend/index.html">moa.backend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plugin/index.html">moa.plugin</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Yaco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fist.html">fist</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="plugin/twit.html"
-                        title="previous chapter"><strong>twit</strong> - Tweet results</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="fist.html"
-                        title="next chapter">fist</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/api/Yaco.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -246,13 +272,13 @@ data structures</p>
         <li class="right" >
           <a href="plugin/twit.html" title="twit - Tweet results"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.11 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa</a> &raquo;</li>
           <li><a href="index.html" >Moa API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2010, 2011, Mark Fiers.
-      Last updated on May 16, 2011.
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on Jan 04, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
