@@ -22,6 +22,9 @@ plugins:
     dir: ~/.config/moa/archive
   moaGit: 
     enabled: true
+    warn: true
+  varInject:
+    enabled: true
   extraCommands: {}
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
