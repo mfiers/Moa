@@ -1,7 +1,0 @@
-Moa plugin API
-=======
-
-.. toctree::
-   :maxdepth: 2
-
-   info

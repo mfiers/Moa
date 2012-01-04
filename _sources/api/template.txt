@@ -1,2 +1,0 @@
-.. automodule:: moa.template
-   :members:
