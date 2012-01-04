@@ -32,6 +32,7 @@ clean:
 
 prepare:
 	cd templates && rm -r *.rst && ./refresh_templates
+	cd commands && ./update_commands
 
 html: prepare pdf
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

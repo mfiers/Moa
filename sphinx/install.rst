@@ -105,7 +105,7 @@ and many more
 
 
 Installation from source
-========================
+------------------------
 
 Moa is hosted on and can be installed from `github <http://github.com/mfiers/Moa>`_::
 

@@ -10,7 +10,6 @@ Moa API
    jobConf
    sysConf
    ui
-   unittests
    utils
    template/index
    template/provider/index

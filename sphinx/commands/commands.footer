@@ -1,0 +1,12 @@
+msp
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+moa set process
+
+Usage::
+    
+    msp    
+
+this is an alias for the often used::
+
+     moa set process

@@ -40,7 +40,7 @@ master_doc = 'index'
 # General information about the project.
 
 project = u'Moa'
-copyright = u'2010, 2011, Mark Fiers'
+copyright = u'2010-2012 Mark Fiers'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -115,7 +115,7 @@ html_theme_path = ["."]
 #html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = 'Moa'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -137,10 +137,14 @@ html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
-#html_use_smartypants = True
+html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
+html_sidebars = {
+   '*': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
+   '*/*': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -156,7 +160,8 @@ html_use_index = True
 html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
+
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the

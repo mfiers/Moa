@@ -1,2 +1,0 @@
-.. automodule:: moa.unittests
-   :members:

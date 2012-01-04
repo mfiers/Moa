@@ -16,26 +16,38 @@ Commands
   
   
 
-Parameters
-~~~~~~~~~~
+Filesets
+~~~~~~~~
+
+
+**dbname**
+  
+
+
+  | *type*: `map`
+  | *source*: `input`
+  | *category*: `output`
+  | *optional*: `{}`
+  | *pattern*: `./db`
 
 
 
-**fasta_file**
+
+**input**
   The file with all input FASTA sequences for the blastdb.
 
-  | *type*: `file`
-  | *default*: `{}`
+
+  | *type*: `single`
+  | *category*: `input`
   | *optional*: `False`
+  | *pattern*: `*/*.fasta`
 
 
 
-**name**
-  Name of the BLAST database to create.
 
-  | *type*: `string`
-  | *default*: `blastdb`
-  | *optional*: `True`
+
+Parameters
+~~~~~~~~~~
 
 
 
@@ -52,10 +64,10 @@ miscellaneous
 ~~~~~~~~~~~~~
 
 **Backend**
-  gnumake
+  ruff
 **Author**
   Mark Fiers
 **Creation date**
   Wed Nov 10 07:56:48 2010
 **Modification date**
-  Wed Nov 10 07:56:48 2010
+  Tue, 03 Jan 2012 15:00:23

@@ -15,10 +15,10 @@ sysConf.initialize()
 sysConf.commands = moa.commands.Commands()
 sysConf.pluginHandler.run('defineCommands')
 
-
 from jinja2 import Template as jTemplate
 
 l.setVerbose()
+
 #initialize jinja template
 templateFile = os.path.join(
     moa.utils.getMoaBase(), 'lib', 'jinja2', 'command.snippet.rst.jinja2')
@@ -27,23 +27,17 @@ template = jTemplate(open(templateFile).read())
 MOABASE = moa.utils.getMoaBase()
 PLUGINDIR = os.path.join(MOABASE, 'lib', 'python', 'moa', 'plugin')
 
+if os.path.exists('commands.header'):
+    command_index_header = open('commands.header').read()
+else: command_index_header = ""
+
+if os.path.exists('commands.footer'):
+    command_index_footer = open('commands.footer').read()
+else: command_index_footer = ""
+
 F = open('index.rst', 'w')
-G = open('private.rst', 'w')
 
-F.write("""
-Command reference
-=================
-
-""")
-
-G.write("""
-Command reference (+private)
-============================
-
-Includes private commands - private commands are for internal use
-only.
-
-""")
+F.write(command_index_header)
 
 allCommands = {}
 
@@ -74,13 +68,14 @@ for command in sysConf.commands:
     l.info("processing command %s" % command)
 
     fi = sysConf.commands[command]
-    func =sysConf[command].call
-
+    func =fi['call']
+    l.info("func call %s" %  func)
     #extract a longer description from the function docs
     longdesc = ''
     ld = []
-    if func.func_doc:
+    if func.func_doc:        
         ld = func.func_doc.split("\n")
+        print ld
         while ld and not ld[0].strip():
             ld.pop(0)
         if ld:
@@ -102,16 +97,9 @@ allComkeys = sysConf.commands.keys()
 allComkeys.sort()
 for k in allComkeys:
     dt = allCommands[k]
-    if dt.get('private', False):
-        G.write(template.render(dt))
-    else:
-        F.write(template.render(dt))
-        G.write(template.render(dt))
-    #print template.render(dt)
-    #import pprint
-    #pprint.pprint(dt)
+    F.write(template.render(dt))
+
+F.write(command_index_footer)
+
+
 F.close()
-G.close()
-    #F.write("   :members: %s\n" % ",".join(commands))
-    #F.write("   :noindex: %s\n" % ",".join(commands))
-    #F.write("\n")
