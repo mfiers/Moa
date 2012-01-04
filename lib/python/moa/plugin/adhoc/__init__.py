@@ -22,12 +22,6 @@ import moa.plugin
 from moa.sysConf import sysConf
 
 def hook_defineCommands():
-    sysConf['commands']['adhoc'] = { 
-        'desc' : 'Create an adhoc analysis',
-        'call' : createAdhoc,
-        'needsJob' : False,
-        'usage' : 'moa adhoc -t "title" -- echo "do something"'        
-        }
     sysConf['commands']['simple'] = { 
         'desc' : 'Create a "simple" adhoc analysis',
         'call' : createSimple,
@@ -47,10 +41,10 @@ def hook_defineCommands():
         'usage' : 'moa reduce -t "title" -- echo "do something"',
         }
     sysConf['commands']['!'] = { 
-        'desc' : 'Moa-fy the last (bash) command issued',
+        'desc' : 'Assign the last issued command to "process" parameter',
         'call' : exclamate,
         'needsJob' : False,        
-        'usage' : 'moa !'
+        'usage' : 'moa !',
         }
 
 def hook_defineOptions():
@@ -152,17 +146,17 @@ def exclamateInJob(job):
     """
     pc = os.environ.get('PROMPT_COMMAND', '')
     if not '_moa_prompt' in pc:
-        moa.ui.error("Need to activate the moa prompt for this to work")
-        moa.ui.exitError("Try running `moa_prompt_on`")
+        moa.ui.exitError("_moa_propt is not properly set up")
 
-    histFile = os.path.join(job.confDir, 'history')
+    histFile = os.path.join(job.confDir, 'local_bash_history')
     if not os.path.exists(histFile):
         moa.ui.exitError(
             ("This needs to be used in conjunction with the " +
-             "moa_prompt code. Please read the manual") )
+             "moa_prompt code. Make sure you've source `moainit`") )
 
     with open(histFile) as F:
         last = F.readlines()[-1].strip()
+        
     moa.ui.fprint("{{bold}}Using command:{{reset}}", f='jinja')
     moa.ui.fprint(last)
     job.conf.process=last
@@ -170,8 +164,20 @@ def exclamateInJob(job):
                 
 def exclamate(job):
     """
-    Set the 'process' parameter to the last issued command. If no moa
-    job exists, create a 'simple'job.
+    Set the `process` parameter to the last issued command. If a moa
+    job exists in the current directory, then the `process` parameter
+    is set without questions. (even if the Moa job in question does
+    not use the `process` parameter).  If no moa job exists, a
+    `simple` job is created first.
+
+    *Note:* This works only when using `bash` and if `moainit` is
+    sourced properly. `moainit` defines a bash function `_moa_prompt`
+    that is called every time a command is issued (using
+    `$PROMPT_COMMAND`). The `_moa_prompt` function takes the last
+    command from the bash history and stores it in
+    `~/.config/moa/last.command`. Additionally, the `_moa_prompt`
+    function stores all commands issued in a Moa directory in
+    `.moa/local_bash_history`.
     """
     
     if job.isMoa():
@@ -181,19 +187,13 @@ def exclamate(job):
     
 def createMap(job):
     """
-    Create a 'map' adhoc job.
-
-    There are a number of ways this command can be used::
-
-        $ moa map -t 'a title' -- echo 'define a command'
-
-    Anything after `--` will be the executable command. If omitted,
-    Moa will query the user for a command.
+    Anything after `--` will be stored in the `process` variable. If
+    `--` is omitted, Moa will query the user.
 
     Moa will also query the user for input & output files. An example
     session::
 
-        $ moa map -t 'something intelligent'
+        $ moa map -t 'test map'
         process:
         > echo 'processing {{ input }} {{ output }}'
         input:
@@ -201,7 +201,7 @@ def createMap(job):
         output:
         > ./*.out
 
-    Assuming you have a number of text files in the `../10/input/`
+    Assuming you have a number of `*.txt` files in the `../10/input/`
     directory, you will see, upon running::
 
        processing ../10.input/test.01.txt ./test.01.out
@@ -209,6 +209,10 @@ def createMap(job):
        processing ../10.input/test.03.txt ./test.03.out
        ...
 
+    If the output file exists, and is newer than the input file, the
+    process will not be executed for that specific pair. If you need
+    the job to be repeated, you should either delete the output files
+    or `touch` the input files.
     """
     wd = job.wd
     options = sysConf.options

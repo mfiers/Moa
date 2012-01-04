@@ -21,7 +21,10 @@ source $MOABASE/etc/bash_completion.d/moa
 ### Moa prompt stuff!
 alias moa_prompt_off='unset MOA_PROMPT'
 alias moa_prompt_on='export MOA_PROMPT=yes'
-export PROMPT_COMMAND="_moa_prompt;$PROMPT_COMMAND"
+if [[ ! "$PROMPT_COMMAND" =~ "_moa_prompt" ]]
+then
+    export PROMPT_COMMAND="_moa_prompt;$PROMPT_COMMAND"
+fi
 
 function _moa_prompt {
     
@@ -43,9 +46,10 @@ function _moa_prompt {
     [[ -d '.moa' ]] || return 0
 
 	#and add it to the local history if this is a mob job
-    if [[ -w '.moa/history' ]]
+    touch .moa/local_bash_history
+    if [[ -w '.moa/local_bash_history' ]]
     then
-	echo $lc >> .moa/history 2>/dev/null || true
+	echo $lc >> .moa/local_bash_history 2>/dev/null || true
     fi
 
     if [[ "$MOA_PROMPT" ]]
