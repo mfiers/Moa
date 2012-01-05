@@ -76,7 +76,41 @@ As an alternative application you can specify the
 moa **blog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-record a short note
+Maintain a blog (blog.md)
+
+
+Usage::
+  
+  moa blog
+
+
+
+**Description:**
+
+Allows a user to maintain a blog for this job (in Blog.md).
+
+Use it as follows::
+
+    $ moa blog
+    Enter your blog message (ctrl-d on an empty line to finish)
+
+    ... enter your message here ..
+    
+    [ctrl-d]
+
+Note: the ctrl-d needs to be given on an empty line. The text is
+appended to moa.desciption. In the web interface this is converted
+to Markdown_.
+
+.. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
+
+
+
+
+moa **change**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Maintain a changelog file (changelog.md)
 
 
 Usage::
@@ -88,12 +122,13 @@ Usage::
 **Description:**
 
 Allows a user to enter a short note that is appended to
-moa.description (including a timestamp). Use it as follows::
+Changelog.md (including a timestamp). Use it as follows::
 
-    $ moa blog
-    Here you can enter a short, conscise, multi-
-    line message describing what you have been
-    doing
+    $ moa change
+    Enter your changelog message (ctrl-d on an empty line to finish)
+
+    ... enter your message here ..
+    
     [ctrl-d]
 
 Note: the ctrl-d needs to be given on an empty line. The text is
@@ -444,6 +479,25 @@ Usage::
 **Description:**
 
 Execute the `precommand`
+
+
+
+
+moa **readme**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Edit the Readme.md file for this job
+
+
+Usage::
+  
+  moa readme
+
+
+
+**Description:**
+
+Edit the Readme.md file - you could, obviously, also edit the file yourself.
 
 
 
