@@ -12,9 +12,10 @@
 Manage project / title / description for jobs
 
 """
-
+import os
 import getpass
 import datetime
+import subprocess
 
 import moa.ui
 import moa.utils
@@ -49,13 +50,26 @@ def hook_defineCommands():
     Set the moa commands for this plugin
     """
     sysConf['commands']['blog'] = {
-        'desc' : 'record a short note',
+        'desc' : 'Maintain a blog (blog.md)',
         'usage' : 'moa blog',
         'call' : blog,
         'needsJob' : False,
         'log' : True
         }
-
+    sysConf['commands']['change'] = {
+        'desc' : 'Maintain a changelog file (changelog.md)',
+        'usage' : 'moa blog',
+        'call' : change,
+        'needsJob' : False,
+        'log' : True
+        }
+    sysConf['commands']['readme'] = {
+        'desc' : 'Edit the Readme.md file for this job',
+        'usage' : 'moa readme',
+        'call' : readme,
+        'needsJob' : False,
+        'log' : True
+        }
 
 def _readFromuser(job, header, fileName):
     """
@@ -91,13 +105,15 @@ def _readFromuser(job, header, fileName):
 
 def blog(job):
     """
-    Allows a user to enter a short note that is appended to
-    moa.description (including a timestamp). Use it as follows::
+    Allows a user to maintain a blog for this job (in Blog.md).
+
+    Use it as follows::
 
         $ moa blog
-        Here you can enter a short, conscise, multi-
-        line message describing what you have been
-        doing
+        Enter your blog message (ctrl-d on an empty line to finish)
+
+        ... enter your message here ..
+        
         [ctrl-d]
 
     Note: the ctrl-d needs to be given on an empty line. The text is
@@ -109,7 +125,66 @@ def blog(job):
     _readFromuser(
         job, 
         header="enter your blog message (ctrl-d on an empty line to finish)",
-        fileName="blog.md")
+        fileName="Blog.md")
                   
+def change(job):
+    """
+    Allows a user to enter a short note that is appended to
+    Changelog.md (including a timestamp). Use it as follows::
+
+        $ moa change
+        Enter your changelog message (ctrl-d on an empty line to finish)
+
+        ... enter your message here ..
+        
+        [ctrl-d]
+
+    Note: the ctrl-d needs to be given on an empty line. The text is
+    appended to moa.desciption. In the web interface this is converted
+    to Markdown_.
+
+    .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
+    """
+    _readFromuser(
+        job, 
+        header="Enter your changelog message (ctrl-d on an empty line to finish)",
+        fileName="Changelog.md")
+                  
+
+def readme(job):
+    """
+    Edit the Readme.md file - you could, obviously, also edit the file yourself.
+    """
     
- 
+    subprocess.call([os.environ.get('EDITOR','nano'), 'Readme.md'])
+
+
+
+def _update_git(filename):
+    """
+    Check if a file is under version control & commit changes    
+    """
+    job = sysConf.job
+    if os.path.exists(filename):
+        sysConf.git.repo.index.add([filename])
+        sysConf.git.commitJob(job, 'Worked on %s in  %s' % (filename, job.wd))
+        
+    
+def hook_git_finish_readme():
+    """
+    Execute just after setting running moa readme
+    """
+    _update_git('Readme.md')
+
+def hook_git_finish_blog():
+    """
+    Execute just after setting running moa blog
+    """
+    _update_git('Blog.md')
+
+
+def hook_git_finish_change():
+    """
+    Execute just after setting running moa blog
+    """
+    _update_git('Changelog.md')

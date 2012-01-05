@@ -120,8 +120,10 @@ class Job(object):
             '.moa/template.d/*',
             '.moa/config',
             'moa.*',
+            '*.md',
             'Readme', 'README', 'Readme.*',
             'Changelog', 'CHANGELOG', 'Changelog.*',
+            'blog.*', 'blog'
             ]
         
         self.loadTemplate()

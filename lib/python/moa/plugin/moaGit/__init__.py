@@ -107,8 +107,9 @@ def _commitDir(wd, message):
     for gl in ['.moa/template',
                '.moa/template.d/*',
                '.moa/config',
-               'moa.*',
+               'moa.*', '*.md',
                'Readme', 'README', 'Readme.*',
+               'Blog', 'BLOG', 'Readme.*',
                'Changelog', 'CHANGELOG', 'Changelog.*' ]:
         
         for f in glob.glob(os.path.join(wd, gl)):
