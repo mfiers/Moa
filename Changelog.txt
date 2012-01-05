@@ -1,3 +1,38 @@
+Moa 0.10.13 / 2012-01-05
+==========================
+
+  * improved docs
+  * moa ! works again
+  * moaGit works a lot better now
+  * Allows variables to be injected into a job configuration based on a oneliner
+  * Lots of templates now use Ruff
+  * Many improvements in the templates
+  * Basic archiving of jobs
+  * added alias msp / moa set process
+  * added a umask plugin
+  * Improved bash prompt interaction
+  * automatic registering of job in sysConf
+  * renamed jobId to runId
+  * tried to get command completion integrated ... did not work
+  * defactoring reduce code
+  * Fixed reused of ruffus object (old bug)
+  * improving & organizing prepare/run/finish structure of jobs
+  * lots of cleaning
+  * Preliminary version of an SGE plugin
+  * Better implementation of finish/prepare calls
+  * remove delegate
+  * Accepts jinja rendered configuration now
+  * improved tab completion - uses jinja2 expansion
+  * --bg is now properly silent
+  * display expanded variables in "moa show"
+  * prevent jinja expansion of 'process' parameter
+  * Handles rendered job parameters
+  * each plugin now has its own directory
+  * Refactored plugin structure
+  * Converted a number of functions to the new hook_ structure
+  * some general information for setup.py
+  * unittest2 based testing
+
 Moa 0.10.12 / 2011-05-31
 ==========================
 
@@ -9,12 +44,7 @@ Moa 0.10.12 / 2011-05-31
   * started moving web code to the plugins
   * Allowing seperate template files for commands
   * Template dealing with hagfish
-  * plugin defined commands that have no recursive mode are automatically "global" from now on
-  * Reporting to report.md (not moa.report)
-  * tabs now remember their last state (using cookies) (www)
-  * blog to Readme.md
-  * Recognize readme & changelog (but not report) as moa specific files
-  * work on the docs
+  * Improved documentation handling
   * Allow simple jobs to access job data
 
 Moa 0.10.11 / 2011-05-12
