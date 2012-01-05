@@ -12,6 +12,9 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 
+#for github
+GHPAGES = /home/mf/project/ghpages_moa/
+
 .PHONY: help clean html dirhtml pickle json htmlhelp qthelp latex changes linkcheck doctest
 
 help:
@@ -26,6 +29,10 @@ help:
 	@echo "  changes   to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck to check all external links for integrity"
 	@echo "  doctest   to run all doctests embedded in the documentation (if enabled)"
+
+ghpages:
+	cp -r  $(BUILDDIR)/html/* $(GHPAGES)/
+	cd $(GHPAGES) && git commit -m 'rebuild documentation' -a || true && pwd && git push
 
 clean:
 	-rm -rf $(BUILDDIR)/*
