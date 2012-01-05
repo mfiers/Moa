@@ -99,17 +99,38 @@ are included in the archive.</p>
 </div>
 <div class="section" id="moa-blog">
 <h2>moa <strong>blog</strong><a class="headerlink" href="#moa-blog" title="Permalink to this headline">¶</a></h2>
-<p>record a short note</p>
+<p>Maintain a blog (blog.md)</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa blog</pre>
+</div>
+<p><strong>Description:</strong></p>
+<p>Allows a user to maintain a blog for this job (in Blog.md).</p>
+<p>Use it as follows:</p>
+<div class="highlight-python"><pre>$ moa blog
+Enter your blog message (ctrl-d on an empty line to finish)
+
+... enter your message here ..
+
+[ctrl-d]</pre>
+</div>
+<p>Note: the ctrl-d needs to be given on an empty line. The text is
+appended to moa.desciption. In the web interface this is converted
+to <a class="reference external" href="http://daringfireball.net/projects/markdown/markdown.">Markdown</a>.</p>
+</div>
+<div class="section" id="moa-change">
+<h2>moa <strong>change</strong><a class="headerlink" href="#moa-change" title="Permalink to this headline">¶</a></h2>
+<p>Maintain a changelog file (changelog.md)</p>
 <p>Usage:</p>
 <div class="highlight-python"><pre>moa blog</pre>
 </div>
 <p><strong>Description:</strong></p>
 <p>Allows a user to enter a short note that is appended to
-moa.description (including a timestamp). Use it as follows:</p>
-<div class="highlight-python"><pre>$ moa blog
-Here you can enter a short, conscise, multi-
-line message describing what you have been
-doing
+Changelog.md (including a timestamp). Use it as follows:</p>
+<div class="highlight-python"><pre>$ moa change
+Enter your changelog message (ctrl-d on an empty line to finish)
+
+... enter your message here ..
+
 [ctrl-d]</pre>
 </div>
 <p>Note: the ctrl-d needs to be given on an empty line. The text is
@@ -289,6 +310,15 @@ or <cite>touch</cite> the input files.</p>
 <p><strong>Description:</strong></p>
 <p>Execute the <cite>precommand</cite></p>
 </div>
+<div class="section" id="moa-readme">
+<h2>moa <strong>readme</strong><a class="headerlink" href="#moa-readme" title="Permalink to this headline">¶</a></h2>
+<p>Edit the Readme.md file for this job</p>
+<p>Usage:</p>
+<div class="highlight-python"><pre>moa readme</pre>
+</div>
+<p><strong>Description:</strong></p>
+<p>Edit the Readme.md file - you could, obviously, also edit the file yourself.</p>
+</div>
 <div class="section" id="moa-reduce">
 <h2>moa <strong>reduce</strong><a class="headerlink" href="#moa-reduce" title="Permalink to this headline">¶</a></h2>
 <p>Create a &#8220;reduce&#8221; adhoc analysis</p>
@@ -462,6 +492,7 @@ configuration.</p>
 <li class="toctree-l2"><a class="reference internal" href="#moa">moa <strong>!</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-archive">moa <strong>archive</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-blog">moa <strong>blog</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#moa-change">moa <strong>change</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-cp">moa <strong>cp</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-err">moa <strong>err</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-files">moa <strong>files</strong></a></li>
@@ -480,6 +511,7 @@ configuration.</p>
 <li class="toctree-l2"><a class="reference internal" href="#moa-pause">moa <strong>pause</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-postcommand">moa <strong>postcommand</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-precommand">moa <strong>precommand</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#moa-readme">moa <strong>readme</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-reduce">moa <strong>reduce</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-refresh">moa <strong>refresh</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-resume">moa <strong>resume</strong></a></li>
@@ -537,7 +569,7 @@ configuration.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 04, 2012.
+      Last updated on Jan 05, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
     </div>
   </body>
