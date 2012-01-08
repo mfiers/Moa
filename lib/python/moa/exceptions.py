@@ -35,6 +35,13 @@ class MoaFileError(Exception):
     def __str__(self):
         return "Moa error handling file"
 
+class MoaDirNotWritable(Exception):
+    """
+    Moa directory is not writable
+    """
+    def __str__(self):
+        return "Moa directory (.moa) is not writable"
+
 class MoaPermissionDenied(Exception):
     """Permission denied - you do not have the rights to perform this opperation """
     def __str__(self):
