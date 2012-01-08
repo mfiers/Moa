@@ -165,7 +165,11 @@ def _update_git(filename):
     Check if a file is under version control & commit changes    
     """
     job = sysConf.job
-    if os.path.exists(filename):
+    if not sysConf.git.repo:
+        #repo is not initalized..(not in a repository?)
+        return
+    
+    if os.path.exists(filename):    
         sysConf.git.repo.index.add([filename])
         sysConf.git.commitJob(job, 'Worked on %s in  %s' % (filename, job.wd))
         
