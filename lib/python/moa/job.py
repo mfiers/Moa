@@ -22,6 +22,7 @@ import moa.utils
 import moa.logger as l
 import moa.template
 import moa.jobConf
+import moa.exceptions
 
 from moa.sysConf import sysConf
 
@@ -275,18 +276,24 @@ class Job(object):
         runIdFile = os.path.join(self.confDir, 'last_run_id')
         sysConf.runId = 1
         lock = lockfile.FileLock(runIdFile)
-        with lock:
-            old_id = 0
-            if os.path.exists(runIdFile):
-                with open(runIdFile) as F:
-                    _o = F.read().strip()
-                    try:
-                        old_id = int(_o)
-                    except:
-                        pass
-            sysConf.runId = old_id + 1
-            with open(runIdFile, 'w') as F:
-                F.write("%s" % sysConf.runId)
+        
+        try:
+            with lock:
+                old_id = 0
+                if os.path.exists(runIdFile):
+                    with open(runIdFile) as F:
+                        _o = F.read().strip()
+                        try:
+                            old_id = int(_o)
+                        except:
+                            pass
+                sysConf.runId = old_id + 1
+                with open(runIdFile, 'w') as F:
+                    F.write("%s" % sysConf.runId)
+        except lockfile.LockFailed, e:
+            if 'failed to create' in str(e):
+                raise moa.exceptions.MoaDirNotWritable()
+            raise
 
         #create a new folder for logging
         logDir = os.path.join(self.confDir, 'log.d', '%d' % sysConf.runId)
