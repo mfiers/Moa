@@ -65,7 +65,7 @@ import moa.actor
 import moa.version
 import moa.plugin
 import moa.commands
-
+import moa.exceptions
 
 ## Initialize the logger
 import moa.logger as l
@@ -335,6 +335,19 @@ def run_1():
 
     sysConf.pluginHandler.run('post_background')
 
+def _handle_error( message):
+    """
+    Try to handle an error situation - i.e. run post_error
+    """
+    sys.stderr.write("ERROR!\n")
+    sys.stderr.write(message + "\n")
+    try:        
+        sysConf.rc = -1
+        sysConf.pluginHandler.run("post_error")
+    except Exception, e:
+        sys.stderr.write("Error - cannot run post_error plugin hook:\n")
+        sys.stderr.write(str(e) + "\n\n")
+    
 ## Main dispatcher
 if __name__ == "__main__":
     """
@@ -366,9 +379,13 @@ if __name__ == "__main__":
             raise
         else:
             sys.exit(-2)
+    except moa.exceptions.MoaDirNotWritable:
+        _handle_error("the .moa directory is not writable") 
+    except IOError, e:
+        _handle_error("IOError - maybe the .moa directory is not writable")
+        raise e
     except Exception, e:
-        sysConf.rc = -1
-        sysConf.pluginHandler.run("post_error")
+        _handle_error("Unexpected error") 
         moa.ui.warn("Encountered a run error?")
-        raise
+        raise e
 
