@@ -171,6 +171,8 @@ def hook_finish():
     """
     Handle all git changes post execution - actually defer to plugin specific calls
     """
+    if sysConf.git.repo == None:
+        return
     sysConf.pluginHandler.run('git_finish_%s' % sysConf.originalCommand)
         
 def gitlog(job):
