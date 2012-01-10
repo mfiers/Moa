@@ -1,4 +1,6 @@
 plugins:
+  project:
+    enable: true
   umask:
     umask: 0o002
     enabled: true
