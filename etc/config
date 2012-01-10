@@ -1,6 +1,4 @@
 plugins:
-  project:
-    enable: true
   umask:
     umask: 0o002
     enabled: true
@@ -28,6 +26,8 @@ plugins:
   varInject:
     enabled: true
   extraCommands: {}
+  project:
+    enable: true
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True
