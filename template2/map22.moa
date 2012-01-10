@@ -1,0 +1,48 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: ''
+    mode: map
+creation_date: Tue Mar 29 16:34:19 2011
+description: Execute one command, on a number of input files.
+filesets:
+  input1:
+    category: input
+    help: '"map" input files set 1'
+    optional: false
+    pattern: '*/*'
+    type: set
+  input2:
+    category: input
+    help: '"map" input files set 2'
+    optional: false
+    pattern: '*/*'
+    type: map
+    source: input1
+  output1:
+    category: output
+    help: '"map" output files'
+    optional: true
+    pattern: ./*
+    source: input1
+    type: map
+  output2:
+    category: output
+    help: '"map" output files'
+    optional: true
+    pattern: ./*
+    source: input1
+    type: map
+moa_id: map22
+modification_date: Wed Mar 30 06:02:01 2011
+name: map22
+parameters:
+  process:
+    category: ''
+    default: true
+    help: The command to execute
+    optional: false
+    type: string
+    prevent_expansion: true
+title: Execute a "map22" ad-hoc analysis - two input files, two output files
