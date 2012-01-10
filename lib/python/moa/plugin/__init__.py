@@ -11,6 +11,7 @@ Handle Moa commands (i.e. anything that you can run as `moa COMMAND` on the
 commandline
 """
 
+import copy
 import UserDict
 import moa.logger as l
 import Yaco
@@ -51,9 +52,12 @@ class PluginHandler():
         Executing a plugin hook
         """
         rv = {}
-        runOrder = self.pluginList
+        runOrder = copy.copy(self.pluginList)
         if reverse:
             runOrder.reverse()
+
+        l.debug("plugin execution order %s" % ", ".join(runOrder))
+
         for p in runOrder:
             m = self.plugins[p].module
             if hasattr(m, command):
