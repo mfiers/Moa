@@ -1,31 +1,14 @@
 author: Mark Fiers
-backend: gnumake
+backend: ruff
 commands:
-  clean:
-    help: Remove all job data, not the Moa job itself, note that this must be implemented
-      by the template.
-    mode: simple
   run:
     help: This template does not do anything - it is a project placeholder.
     mode: map
-creation_date: Wed Nov 10 07:56:48 2010
-description: Create a new project, a placeholder for project settings, and used by
-  several plugins.
+creation_date: Tue, 10 Jan 2012 14:54:39 +1300
+description: Placeholder for a Moa Project
 filesets: {}
 moa_id: project
 modification_date: Wed Nov 10 07:56:48 2010
 name: project
-parameter_category_order:
-- ''
-- system
-- advanced
-parameters:
-  description:
-    allowed: []
-    category: ''
-    default: ''
-    help: A description of what this project is supposed to achieve, how to use it,
-      and what parameters are most important to set
-    optional: true
-    type: string
+parameters: {}
 title: Create a project
