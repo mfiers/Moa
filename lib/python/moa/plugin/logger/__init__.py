@@ -94,7 +94,10 @@ def _writeLog(status):
         return
 
     sysConf.logger.end_time = datetime.today()
-    sysConf.logger.run_time = sysConf.logger.end_time - sysConf.logger.start_time
+    if sysConf.logger.start_time:
+        sysConf.logger.run_time = sysConf.logger.end_time - sysConf.logger.start_time
+    else:
+        sysConf.logger.start_time = 0
     runtime = sysConf.logger.end_time - sysConf.logger.start_time    
     sysConf.logger.niceRunTime = niceRunTime(runtime)
 
@@ -108,13 +111,17 @@ def _writeLog(status):
     l.debug("Logging %s" % sysConf.originalCommand)
     command = " ".join(" ".join(sys.argv).split())
 
+    if sysConf.logger.run_time:
+        runtime = sysConf.logger.run_time
+    else:
+        runtime = 0
     with open(logFile, 'a') as F:
         F.write("%s\n" % "\t".join([
-            status, sysConf.originalCommand,
+            status, str(sysConf.originalCommand),
             str(logLevel),
             sysConf.logger.start_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
             sysConf.logger.end_time.strftime("%Y-%m-%dT%H:%M:%S.%f"),
-            str(sysConf.logger.run_time), command
+            str(runtime), command
             ]))
 
 
