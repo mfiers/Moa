@@ -93,7 +93,7 @@ def executeExtraCommand(command, job):
     template = jinja2.Template(command)
     os.system(template.render(jobData))
 
-def hook_preRun():
+def hook_prePrepare():
     """
     If defined, execute the precommand
     """
@@ -103,7 +103,7 @@ def hook_preRun():
         l.debug("Executing precommand %s" % precommand)
         executeExtraCommand(precommand, job)
 
-def hook_postRun():
+def hook_postFinish():
     """
     If defined, execute the postCommand
     """
