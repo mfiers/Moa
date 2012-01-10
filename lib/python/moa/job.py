@@ -235,12 +235,12 @@ class Job(object):
         if not self.backend:
             l.critical("No backend loaded - cannot execute %s" % command)
 
-        #for backwards compatibility - these should go:
+        #for backwards compatibility - these should eventually be deleted:
         sysConf.command = 'run'
         sysConf.executeCommand = ['run']
 
-
         ### Start job initialization
+        sysConf.pluginHandler.run('prePrepare')
         self.prepare()
 
         ### Run plugin initialization step 3 - just before execution
@@ -253,12 +253,13 @@ class Job(object):
         if sysConf.rc != 0:
             #do not bother with the following steps - call post_error
             sysConf.pluginHandler.run("post_error")
-        else:
-            sysConf.pluginHandler.run("postRun", reverse=True)
-            sysConf.pluginHandler.run("post_command", reverse=True) #make these postRun 
-            self.finish()
-            sysConf.pluginHandler.run("finish", reverse=True)
+            return sysConf.rc
 
+        sysConf.pluginHandler.run("postRun", reverse=True)
+        sysConf.pluginHandler.run("post_command", reverse=True) #make these postRun 
+        self.finish()
+        sysConf.pluginHandler.run("postFinish", reverse=True)
+        
         return sysConf.rc
 
     def prepare(self):
@@ -300,32 +301,23 @@ class Job(object):
         os.symlink('log.d/%d' % sysConf.runId, latestDir)
 
         l.debug("Acquired job id %s" % sysConf.runId)              
-        
-        if self.template.commands.get('prepare', {}).has_key('delegate'):
-            commandList = self.template.commands['prepare'].delegate
-        else:
-            commandList = ['prepare']
 
+        #see if the backend wants to do something
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
-
-        self.simpleExecute(commandList)
-
+        #run prepare
+        self.simpleExecute('prepare')
+        sysConf.pluginHandler.run("prepare")
 
     def finish(self):
-        self.simpleExecute('finish')
+        """
+        Finish the run!
+        """
         if self.backend and getattr(self.backend, 'finish', None):
-            self.backend.finish()
-
-        if self.template.commands.get('finish', {}).has_key('delegate'):
-            commandList = self.template.commands['finish'].delegate
-        else:
-            commandList = ['finish']
-            
-        if self.backend and getattr(self.backend, 'prepare', None):
-            self.backend.prepare()
-
-        self.simpleExecute(commandList)
+            self.backend.finish()            
+        self.simpleExecute('finish')
+        sysConf.pluginHandler.run("finish", reverse=True)
+                
 
     def defineOptions(self, parser):
         """
