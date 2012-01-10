@@ -102,7 +102,7 @@ def fformat(message, f='text', newline = True, ansi = None):
 #########################################################################
 
 ## See if we can do intelligent things with job variables
-def untangle(txt):    
+def untangle(txt):
     return sysConf.job.conf.interpret(txt)
     
 ## Handle moa directories
@@ -110,9 +110,9 @@ _FSCOMPLETECACHE = {}
 
 def fsCompleter(text, state):
     def g(*a):
-        pass
-        #with open('/tmp/fscomp.log', 'a') as F:        
-        #    F.write("\t".join(map(str, a)) + "\n")
+        #pass
+        with open('/tmp/fscomp.%d.log' % os.getuid(), 'a') as F:
+            F.write("\t".join(map(str, a)) + "\n")
 
     g("text   : ", text)
     g("state  :", state)
@@ -163,12 +163,14 @@ def fsCompleter(text, state):
         detangle = True
 
     g('untang :', cutext)
+    
     if os.path.isdir(cutext) and not cutext[-1] == '/': 
         sep = '/'
     else: sep = ''
 
     
-    if prefix or cutext[:2] == './' or cutext[:3] == '../':
+    if prefix or cutext[:2] == './' or \
+            cutext[:3] == '../' or cutext[0] == '/':
         #try to expand path
         #get all possibilities
         pos = glob.glob(cutext + sep + '*')
