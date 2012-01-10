@@ -152,7 +152,6 @@ class JobConf(object):
     def interpret(self, value):
         env = jEnv(undefined=StrictUndefined)
         renconf = self.render()
-
         templ = env.from_string(value)        
         try:
             rv = templ.render(renconf)
@@ -183,7 +182,15 @@ class JobConf(object):
         # expand the needed jinja vars
         env = jEnv(undefined=StrictUndefined)
         statesSeen = []
+        iteration = 0
         while toExpand:
+            iteration += 1
+            if iteration > 10:
+                l.debug("hard to solve -- too many iterations")
+                l.debug("unsolved are %s" % str(toExpand))
+                for i in toExpand:
+                    l.debug("  - %s : %s" % (i, self[i]))
+                break
             key = toExpand.pop(0)
             #create the template
             try:
