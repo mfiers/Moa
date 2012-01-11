@@ -1,3 +1,15 @@
+Moa 0.10.14 / 2012-01-11
+==========================
+
+  * added a few map derivates (map2, map22)
+  * moa.ui prompt now expands paths starting with /
+  * plugin to maintain project data ( {{_p}} )
+  * make sure the pluginOrder is copied before sorting - otherwise order is messed up
+  * safeguard for unsolvable configurations
+  * cleaned the order of execution a little bit - added prePrepare and postFinish
+  * do not run the git_finish_* hook if not in a git repository
+  * better handling of non writable .moa dirs
+
 Moa 0.10.13 / 2012-01-05
 ==========================
 

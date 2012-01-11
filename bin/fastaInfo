@@ -23,6 +23,7 @@ import os
 import sys
 import math
 import site
+import bz2
 import math
 import tempfile
 import optparse
@@ -62,6 +63,8 @@ parser.add_option('-x', dest='maxno', type='int',
                   help = 'max no of sequences to process')
 parser.add_option('-s', dest='stats', help = 'stats mode - generate averages',
                   action='store_true')
+parser.add_option('-O', dest='onlystats', help = 'only print stats to screen - ' +
+                  'do not write anything to disk', action='store_true')
 parser.add_option('-S', dest='statsSimple', 
                   help = 'Simple stat generation',
                   action='store_true')
@@ -79,12 +82,18 @@ parser.add_option('-e', dest='echo', action="store_true",
 #    raise Exception("Must define an inputfile!")
 
 if not args:
-    args = ['id', 'length']
+    if options.stats:
+        args = ['length']
+    else:
+        args = ['id', 'length']
 
 def fastareader(f):
     if type(f) == type('hi'):
         #it is probably a filename
-        F = open(f, 'r')
+        if f[-4:] == '.bz2':
+            F = bz2.BZ2File(f)
+        else:
+            F = open(f, 'r')
     else:
         #it is most likely stdin
         F = f
@@ -273,12 +282,16 @@ else:
     for stat in stats:
         print "".join(["%20s" % x for x in ([stat] + data[stat])])
 
+if options.onlystats:
+    sys.exit(0)
+    
 #write the raw data to file
 H,dataFile = tempfile.mkstemp()
 F = os.fdopen(H, 'w')
 for a in args:
     F.write("%s\t" % a)
 F.write("\n")
+
 for i in range(len(exportData[args[0]])):
     for a in args:
         if not exportData.has_key(a):
