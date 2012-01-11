@@ -384,8 +384,8 @@ if __name__ == "__main__":
     except IOError, e:
         _handle_error("IOError - maybe the .moa directory is not writable")
         raise e
-    except Exception, e:
+    except Exception:
         _handle_error("Unexpected error") 
         moa.ui.warn("Encountered a run error?")
-        raise e
+        raise 
 

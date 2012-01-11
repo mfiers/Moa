@@ -12,14 +12,15 @@
 """
 import os
 import sys
-import git
 import glob
 import time
 import optparse
+import subprocess
 
 from moa.sysConf import sysConf
 import moa.logger as l
 import moa.plugin.newjob
+
 
 def hook_defineCommands():
     sysConf['commands']['gitlog'] = {
@@ -36,17 +37,17 @@ def hook_defineCommands():
         }
 
 
-def _getRepo(job):
+def _checkInRepo(job):
     """
-    Return the git repository object
+    Check if we're inside a repository
     """
-    wd = job.wd
-    try:
-        repo = git.Repo(wd)
-        return repo
-    except git.InvalidGitRepositoryError:
-        return None
-
+    rc = subprocess.call(['git status --porcelain -uno'].split())
+    if rc == 0:
+        l.debug("In a git repository (%s)" % job.wd)
+        return True
+    else:
+        l.debug("NOT in a git repository (%s)" % job.wd)
+        return False
 
 def _realCommit(repo, files, wd, message):
     """
