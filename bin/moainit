@@ -46,7 +46,7 @@ function _moa_prompt {
     [[ -d '.moa' ]] || return 0
 
 	#and add it to the local history if this is a mob job
-    if [[ -w '.moa']]
+    if [[ -w '.moa' ]]
     then
         if [[ ! -a '.moa/local_bash_history' ]]
         then
