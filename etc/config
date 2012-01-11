@@ -25,7 +25,7 @@ plugins:
     enabled: true
     dir: ~/.config/moa/archive
   moaGit: 
-    enabled: true
+    enabled: false
     warn: true
   varInject:
     enabled: true
