@@ -48,7 +48,10 @@ function _moa_prompt {
 	#and add it to the local history if this is a mob job
     if [[ -w '.moa']]
     then
-        touch .moa/local_bash_history
+        if [[ ! -a '.moa/local_bash_history' ]]
+        then
+            touch .moa/local_bash_history
+        fi
         if [[ -w '.moa/local_bash_history' ]]
         then
 	        echo $lc >> .moa/local_bash_history 2>/dev/null || true
