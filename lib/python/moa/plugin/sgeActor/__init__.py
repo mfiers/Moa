@@ -12,7 +12,6 @@
 """
 import os
 import sys
-import git 
 import time
 import optparse
 import subprocess
