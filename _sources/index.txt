@@ -12,6 +12,11 @@ all aspects of the workflow (see also :ref:`goals`).
 
 **NOTE: both the software and the manual are under development. Things might change.**
 
+Quick links
+===========
+* Source code: https://github.com/mfiers/Moa
+* Issue tracker: https://github.com/mfiers/Moa/issues (`old issue tracker <http://moamoa.lighthouseapp.com/projects/73665-moa/overview>`_)
+* Python Package Index: http://pypi.python.org/pypi/moa/
 
 Table of contents:
 ==================

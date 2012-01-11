@@ -53,6 +53,8 @@ Contents:
    kangax
    lftp
    map
+   map2
+   map22
    maq_fasta2bfa
    maq_fastq2bfq
    maq_match_pair
