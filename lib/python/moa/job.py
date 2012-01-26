@@ -120,6 +120,8 @@ class Job(object):
             '.moa/template',
             '.moa/template.d/*',
             '.moa/config',
+            '.moa/history',
+            '.moa/local_bash_history',
             'moa.*',
             '*.md',
             'Readme', 'README', 'Readme.*',
