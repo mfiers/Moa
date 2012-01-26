@@ -17,6 +17,8 @@ import time
 import optparse
 import subprocess
 
+import git 
+
 from moa.sysConf import sysConf
 import moa.logger as l
 import moa.plugin.newjob
@@ -35,6 +37,18 @@ def hook_defineCommands():
         'desc' : 'Add the current job to the git repository',
         'call': gitadd
         }
+
+
+def _getRepo(job):
+    """
+Return the git repository object
+"""
+    wd = job.wd
+    try:
+        repo = git.Repo(wd)
+        return repo
+    except git.InvalidGitRepositoryError:
+        return None
 
 
 def _checkInRepo(job):
@@ -108,6 +122,8 @@ def _commitDir(wd, message):
     for gl in ['.moa/template',
                '.moa/template.d/*',
                '.moa/config',
+               '.moa/history',
+               '.moa/local_bash_history',
                'moa.*', '*.md',
                'Readme', 'README', 'Readme.*',
                'Blog', 'BLOG', 'Readme.*',
