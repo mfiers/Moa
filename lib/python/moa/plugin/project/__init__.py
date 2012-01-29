@@ -48,7 +48,7 @@ def hook_prepare_3():
             continue
 
         #found project!
-        job.conf.setPrivateVar('__p', lookat)
+        job.conf.setPrivateVar('_p', lookat)
         
         #get this wd's job conf
         projectConf = os.path.join(lookat, '.moa', 'config')
