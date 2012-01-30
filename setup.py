@@ -62,7 +62,7 @@ data_files.append(['etc/', ['./etc/config']])
 
 setup(name='moa',
       version=version,
-      description='Moa - lightweight bioinformatics pipelines',
+      description='Moa - lightweight workflows in bioinformatics',
       author='Mark Fiers',
       author_email='mark.fiers.42@gmail.com',
       url='http://mfiers.github.com/Moa/',
