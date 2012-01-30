@@ -142,17 +142,25 @@ def configShow(job):
     spacer = ' ' * (maxKeylen + 5)
     spacerR = ' ' * (maxKeylen + 1) + moa.ui.fformat('{{gray}}r ', newline=False, f='j')
     closeR = moa.ui.fformat('{{reset}}', newline=False, f='j')
-    for i, key in enumerate(outkeys):
+
+    #print outkeys
+    zipped = zip(outkeys, outvals, outflags)
+    
+    zipped.sort(lambda x,y: cmp(x[0].lstrip('_'), y[0].lstrip('_')))
+    #print outkeys
+    
+    for i, zippy in enumerate(zipped):
+        key, val, flag = zippy
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
-        moa.ui.fprint(" " + outflags[i] + " ", f='jinja', newline=False)
-        if len(str(outvals[i])) == 0:
+        moa.ui.fprint(" " + flag + " ", f='jinja', newline=False)
+        if len(str(val)) == 0:
             print
-        for j, ll in enumerate(textwrap.wrap(str(outvals[i]), wrapInit)):
+        for j, ll in enumerate(textwrap.wrap(str(val), wrapInit)):
             if j == 0:
                 moa.ui.fprint(ll, f=None)
             else:
                 moa.ui.fprint(spacer + ll, f=None)
-        if rendered[key] and rendered[key] != outvals[i]:
+        if rendered[key] and rendered[key] != val:
             for j, ll in enumerate(textwrap.wrap(str(rendered[key]), wrapInit)):
                 moa.ui.fprint(spacerR + ll + closeR)
             
