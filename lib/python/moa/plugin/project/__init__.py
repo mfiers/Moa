@@ -16,7 +16,7 @@ two variables to use in the job configuration
 * project: the 'title' varialbe of the first parent project
 
 """
-
+import re
 import os
 import sys
 import Yaco
@@ -48,7 +48,10 @@ def hook_prepare_3():
             continue
 
         #found project!
-        job.conf.setPrivateVar('_p', lookat)
+        job.conf.setPrivateVar('__project', lookat)
+        job.conf.setPrivateVar(
+            '_project',
+            re.sub("^[0-9]+\.+", "", os.path.basename(lookat)))
         
         #get this wd's job conf
         projectConf = os.path.join(lookat, '.moa', 'config')
