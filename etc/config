@@ -1,4 +1,7 @@
 plugins:
+  metavar:
+    enable: true
+    order: 50
   project:
     enable: true
     order: 50
@@ -25,7 +28,7 @@ plugins:
     enabled: true
     dir: ~/.config/moa/archive
   moaGit: 
-    enabled: false
+    enabled: true
     warn: true
   varInject:
     enabled: true
