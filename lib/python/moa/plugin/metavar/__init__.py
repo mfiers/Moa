@@ -40,15 +40,20 @@ Also a number of contextual variables are defined. In the same
 example as above, based on the directory name, the following variables
 are defined:
 
-* `_tmp`: `/tmp`
-* `_this`: `/tmp/this`
-* `_is`: `/tmp/this/is`
-* `_a`: `/tmp/this/is/a`
-* `_test`: `/tmp/this/is/a/test`
+* `__tmp`: `/tmp`
+* `__this`: `/tmp/this`
+* `__is`: `/tmp/this/is`
+* `__a`: `/tmp/this/is/a`
+* `__test`: `/tmp/this/is/a/test`
 
 Note that numerical prefixes are stripped from directoy names. So, for
 example: `/tmp/this/10.is/444.a/test` would result in the same
-variables names as mentioned above (but with different directories).
+variables names as mentioned above (but with different
+directories). Also, [^A-Za-z0-9_] in variable names are converted to
+underscores to become valid python variable names.
+
+(for backwards compatibility - _tmp versions are also defined with the
+same value)
 
 Additional contextual variables are, based on the following example
 directory structure (with cwd being `/tmp/test/20.dirc/20.subb/`::
@@ -62,15 +67,28 @@ directory structure (with cwd being `/tmp/test/20.dirc/20.subb/`::
     /tmp/test/20.dirc/40.subd/
     /tmp/test/30.dird/
 
-`_first`: `/tmp/test/20.dirc/10.suba`
-`_prev`: `/tmp/test/20.dirc/10.suba`
-`_next`: `/tmp/test/20.dirc/30.subc`
-`_last`: `/tmp/test/20.dirc/40.subd`
+`_f`: `10.suba`
+`_p`: `10.suba`
+`_n`: `30.subc`
+`_l`: `40.subd`
 
-`__first`: `/tmp/test/00.dira`
-`__prev`: `/tmp/test/10.dirb`
-`__next`: `/tmp/test/30.dird`
-`__last`: `/tmp/test/30.dird`
+`__f`: `/tmp/test/20.dirc/10.suba`
+`__p`: `/tmp/test/20.dirc/10.suba`
+`__n`: `/tmp/test/20.dirc/30.subc`
+`__l`: `/tmp/test/20.dirc/40.subd`
+
+`_ff`: `00.dira`
+`_pp`: `10.dirb`
+`_nn`: `30.dird`
+`_ll`: `30.dird`
+
+`__ff`: `/tmp/test/00.dira`
+`__pp`: `/tmp/test/10.dirb`
+`__nn`: `/tmp/test/30.dird`
+`__ll`: `/tmp/test/30.dird`
+
+
+
 
 Equivalently, `___first`, `___prev`, `___next` and `___last` are also
 defined.
@@ -107,30 +125,37 @@ def hook_prepare_3():
 
         #print i, clean_p, p, cp
         if not p: break
-        job.conf.setPrivateVar('dir%d' % i, p)
+        #job.conf.setPrivateVar('dir%d' % i, p)
         job.conf.setPrivateVar('_%d' % i, p)
         job.conf.setPrivateVar('_%s' % clean_p, cp)
+        job.conf.setPrivateVar('__%s' % clean_p, cp)
 
         if i <= 3:
             job.conf.setPrivateVar('_' * i, p)
 
         if i > 1 and  i <= 3:
-            thisdirlist = os.listdir(cp)
+            thisdirlist = [x for x in os.listdir(cp) if not x[0] == '.']
             thisdirlist.sort()
             
             iofp = thisdirlist.index(lastp)
 
-            job.conf.setPrivateVar(('_' * (i-1)) + 'first',
+            job.conf.setPrivateVar('_' + ('f' * (i-1)), thisdirlist[0])
+            job.conf.setPrivateVar('__' + ('f' * (i-1)),
                                    os.path.join(cp, thisdirlist[0]))
-            job.conf.setPrivateVar(('_' * (i-1)) + 'last',
+            
+            job.conf.setPrivateVar('_' +('l' * (i-1)), thisdirlist[-1])
+            job.conf.setPrivateVar('__' +('l' * (i-1)),
                                    os.path.join(cp, thisdirlist[-1]))
 
             if iofp > 0:
-                job.conf.setPrivateVar(('_' * (i-1)) + 'prev',
+                job.conf.setPrivateVar('_' +('p' * (i-1)), thisdirlist[iofp-1])
+                job.conf.setPrivateVar('__' +('p' * (i-1)),
                                        os.path.join(cp, thisdirlist[iofp-1]))
 
+
             if iofp < (len(thisdirlist)-1):
-                job.conf.setPrivateVar(('_' * (i-1)) + 'next',
+                job.conf.setPrivateVar('_' +('n' * (i-1)), thisdirlist[iofp+1])
+                job.conf.setPrivateVar('__' +('n' * (i-1)),
                                        os.path.join(cp, thisdirlist[iofp+1]))
 
 
