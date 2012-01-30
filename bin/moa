@@ -176,14 +176,7 @@ def run_3(wd, exitOnError=True):
     #create the job
     job = moa.job.Job(wd)
 
-    #check if we should run this job..
-    #TODO - 
-    doRun = sysConf.pluginHandler.run('check_run')
-    if False in doRun.values():
-        l.warning("Not running job in %s" % wd)
-        return
-    sysConf.pluginHandler.run('prepare_3')
-    
+   
     ## Aks the job & backend if they want to add to the options
     try:
         job.defineOptions(parser)
@@ -192,6 +185,14 @@ def run_3(wd, exitOnError=True):
     
     ## Only now the full set of options is parsed 
     sysConf.options, sysConf.args = parser.parse_args()
+
+    #check if we should run this job..
+    #TODO - 
+    doRun = sysConf.pluginHandler.run('check_run')
+    if (not sysConf.options.force) and  False in doRun.values():        
+        l.warning("Not running job in %s" % wd)
+        return
+    sysConf.pluginHandler.run('prepare_3')
 
     ## Proper setting of verbosity - after parsing of the command line
     if sysConf.options.verbose:
