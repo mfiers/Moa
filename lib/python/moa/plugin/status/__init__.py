@@ -75,9 +75,10 @@ def status(job):
         return
     message = ""
 
-    message +="{{bold}}Moa{{reset}} %s. " % sysConf.getVersion()
-    message += "template: {{bold}}%s{{reset}}. " % job.template.name
-    
+    message +="{{bold}}Moa{{reset}} %s " % sysConf.getVersion()
+    message += "- template: {{bold}}%s{{reset}}\n" % job.template.name
+
+    message +='"{{bold}}%s{{reset}}"\n' % job.conf.title
     status = _getStatus(job)
     color = {
         'running' : '{{bold}}',
