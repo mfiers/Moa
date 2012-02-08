@@ -84,7 +84,12 @@ if not os.path.exists(original):
 print "start parsing the source directory"
 originalConf = os.path.join(original, '.moa', 'config')
 
-for indir in os.listdir(source):
+sourcelist = os.listdir(source)
+if os.path.exists('_ref'):
+    sourcelist.append('_ref')
+
+print "found %d items to sync" % len(sourcelist)
+for indir in sourcelist:
     sourceDir = os.path.join(source, indir)
     basename = os.path.basename(indir)
 
@@ -104,7 +109,7 @@ for indir in os.listdir(source):
         targetConf = os.path.join(basename, '.moa', 'config')
         cl = 'cp %s %s' % (originalConf, targetConf)
         print "Copying configuration from %s to %s" % (original, basename)
-        os.system(cl)
+        os.system(cl)        
         cl = '(git rev-parse --git-dir 2>/dev/null) && cd %s && moa gitadd' % basename
         os.system(cl)
         continue

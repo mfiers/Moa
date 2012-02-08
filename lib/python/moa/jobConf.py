@@ -57,7 +57,8 @@ class JobConf(object):
         self.private = []
 
         #set a number of private variables to be used in variable expansion
-        self.setMetavars()
+        #MF: Moved this to a plugin
+        #self.setMetavars()
         
         #load the local conf separately - 
         if os.path.exists(self.jobConfFile):
@@ -118,7 +119,7 @@ class JobConf(object):
         """
         Register a recursive variable
         """
-
+        pass
         
     def setPrivateVar(self, k, v):
         self.private.append(k)
@@ -127,27 +128,27 @@ class JobConf(object):
         #self.template.parameters[k].private = True
         self.jobConf[k] = v
         
-    def setMetavars(self):
-        self.setPrivateVar('wd', self.job.wd)
-        dirparts = self.job.wd.split(os.path.sep)
-        self.setPrivateVar('dir', dirparts[-1])
-        self.setPrivateVar('_', dirparts[-1])
-        i = 1                
-        while dirparts:
-            cp = os.path.sep.join(dirparts)
-            p = dirparts.pop()
-            clean_p = re.sub("^[0-9]+\.+", "", p).replace('.', '_')
+    # def setMetavars(self):
+    #     self.setPrivateVar('wd', self.job.wd)
+    #     dirparts = self.job.wd.split(os.path.sep)
+    #     self.setPrivateVar('dir', dirparts[-1])
+    #     self.setPrivateVar('_', dirparts[-1])
+    #     i = 1                
+    #     while dirparts:
+    #         cp = os.path.sep.join(dirparts)
+    #         p = dirparts.pop()
+    #         clean_p = re.sub("^[0-9]+\.+", "", p).replace('.', '_')
             
-            #print i, clean_p, p, cp
-            if not p: break
-            self.setPrivateVar('dir%d' % i, p)
-            self.setPrivateVar('_%d' % i, p)
-            self.setPrivateVar('_%s' % clean_p, cp)
+    #         #print i, clean_p, p, cp
+    #         if not p: break
+    #         self.setPrivateVar('dir%d' % i, p)
+    #         self.setPrivateVar('_%d' % i, p)
+    #         self.setPrivateVar('_%s' % clean_p, cp)
 
-            if i <= 3:
-                self.setPrivateVar('_' * i, p)
+    #         if i <= 3:
+    #             self.setPrivateVar('_' * i, p)
 
-            i += 1
+    #         i += 1
 
     def interpret(self, value):
         env = jEnv(undefined=StrictUndefined)

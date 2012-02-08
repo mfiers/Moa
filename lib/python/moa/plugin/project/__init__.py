@@ -9,8 +9,14 @@
 **project** - Simple plugin to ease maintaining project data
 ------------------------------------------------------------
 
-"""
+Have more plans for this plugin - but for now it defines the following
+two variables to use in the job configuration
 
+* _p : directory of the parent project
+* project: the 'title' varialbe of the first parent project
+
+"""
+import re
 import os
 import sys
 import Yaco
@@ -22,12 +28,13 @@ import moa.ui
 
 def hook_prepare_3():
 
-    #see if we can find a project directory
+    #see if we can find a project directory - 
     job = sysConf.job
     lookat = os.path.abspath(sysConf.job.wd)
     while True:
         
         if lookat == '/': break
+        
         templateFile = os.path.join(lookat, '.moa', 'template')
         if not os.path.exists(templateFile):
             lookat = os.path.dirname(lookat)
@@ -41,7 +48,11 @@ def hook_prepare_3():
             continue
 
         #found project!
-        job.conf.setPrivateVar('_p', lookat)
+        job.conf.setPrivateVar('__project', lookat)
+        job.conf.setPrivateVar(
+            '_project',
+            re.sub("^[0-9]+\.+", "", os.path.basename(lookat)))
+        
         #get this wd's job conf
         projectConf = os.path.join(lookat, '.moa', 'config')
         if os.path.exists(projectConf):

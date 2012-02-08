@@ -1,3 +1,16 @@
+Moa 0.10.15 / 2012-01-30
+==========================
+
+  * slightly updated docs
+  * allow specific execution of one plugin in the plugin manager
+  * Defined _pref _next _first _last metavars
+  * meta variables are now defined in this separate plugin
+  * added history & bash_histroy to moaFiles
+  * new version of docs
+  * removed 'import git'
+  * check for absence of local_bash_history before touching
+  * only touch .moa/local_bash_history if .moa is present & writable
+
 Moa 0.10.14 / 2012-01-11
 ==========================
 

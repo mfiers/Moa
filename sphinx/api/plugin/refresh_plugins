@@ -5,6 +5,8 @@ import yaml
 import moa.utils
 import moa.template
 
+import moa.logger as l
+
 from jinja2 import Template as jTemplate
 
 tPluginFile = os.path.join(
@@ -18,14 +20,17 @@ tIndex = jTemplate(open(tIndexFile).read())
 os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'api', 'plugin'))
 
 all_plugs = []
-for plugin in os.listdir( os.path.join(
-    moa.utils.getMoaBase(), 'lib', 'python', 'moa', 'plugin')):
+l.warning("start parsing plugins")
+plugindir = os.path.join(moa.utils.getMoaBase(), 'lib', 'python', 'moa', 'plugin')
+l.warning("in directory %s" % plugindir)
 
-    if not plugin[-3:] == '.py': continue
-    if plugin == '__init__.py': continue
-    name = plugin.replace('.py', '')
+for plugin in os.listdir(plugindir):
+    if not os.path.isdir(os.path.join(plugindir, plugin)):
+        continue
+    pluginfile = os.path.join(plugindir, plugin, '__init__.py')
+    name = plugin
     print 'Found plugin: ' + name
-    all_plugs.append(name)
+    all_plugs.append(name)    
     with open('%s.rst' % name, 'w') as F:
         F.write(tPlugin.render({'name' : name}))
 

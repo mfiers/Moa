@@ -47,9 +47,12 @@ class PluginHandler():
                 moa.ui.exitError("Plugin %s is not installed" % plugin)
         
     
-    def run(self, command, reverse=False):
+    def run(self, command, reverse=False, only=[]):
         """
         Executing a plugin hook
+
+        possibly in `reverse` order
+        possiby only plugins in the `only` list
         """
         rv = {}
         runOrder = copy.copy(self.pluginList)
@@ -59,6 +62,9 @@ class PluginHandler():
         l.debug("plugin execution order %s" % ", ".join(runOrder))
 
         for p in runOrder:
+            if only and not p in only:
+                continue
+            
             m = self.plugins[p].module
             if hasattr(m, command):
                 l.warning("plugin %s has what looks like an invalid hook "
