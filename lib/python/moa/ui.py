@@ -146,9 +146,10 @@ def fsCompleter(text, state):
         detangle = True
         #if utext != text:
         #    detangle = True
+    else:
+        g("no detangle")
 
-    #check for two trailing slashes
-    #if while utext[-2:] == '//'
+    g("utext : " + utext)
     
     #find the last word - to expand
     #string: stored in 'ctext'. The rest is in 'prefix'
@@ -157,7 +158,7 @@ def fsCompleter(text, state):
         prefix, uptext = utext.rsplit(' ', 1)
     else:
         addPrefix = False
-        prefix, uptext = "", uptext
+        prefix, uptext = "", utext
 
     g('prefix :', prefix)
     g('uptext :', uptext)
