@@ -62,9 +62,10 @@ def newJob(job):
     targetdir = '.'
     
     title = job.conf.title
+
     if options.title:
         title = options.title
-
+        
     args2 = []
     for a in args:
         if '=' in a:
@@ -110,15 +111,19 @@ def newJob(job):
 
     try:
         job = moa.job.newJob(wd, template=template, title = options.title,
-                             provider=provider)
+                             provider=provider)        
     except moa.exceptions.InvalidTemplate:
         moa.ui.exitError("Invalid template: %s" % template)
         
     job.conf['title'] = title
-    
+
     for p in params:
         k,v = p.split('=', 1)
         job.conf[k] = v
+
+    #if no title is set - see if there is one set in the template
+    if not job.conf.title and job.template.parameters.title.default:
+        job.conf.title = job.template.parameters.title.default
 
     job.conf.save()
 
