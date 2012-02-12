@@ -1,0 +1,8 @@
+### run
+
+echo "running fastq-mcf on {{ input1 }} {{ input2 }}v"
+fastq-mcf -o {{ output1 }} -o {{ output2 }} \
+          -l {{ minlen }} -q {{ qual }} {{ adapters }}  \
+          {{ input1 }} {{ input2 }}
+
+
