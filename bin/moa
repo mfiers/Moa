@@ -366,7 +366,8 @@ if __name__ == "__main__":
                 import pstats
                 cProfile.run('run_1()', tf.name)
                 p = pstats.Stats(tf.name)
-                moa.ui.message("Profiler output")
+                
+                moa.ui.message("Profiler output (%s)" % tf.name)
                 p.sort_stats('cumulative').print_stats(20)
                 
             except ImportError:
