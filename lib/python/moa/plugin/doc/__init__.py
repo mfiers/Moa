@@ -25,13 +25,13 @@ from moa.sysConf import sysConf
 def hook_prepare_3():
     job = sysConf['job']
 
-    job.template.parameters.title = {
-        'optional' : False,
-        'help' : 'A short title for this job',
-        'type' : 'string',
-        'recursive' : False,
-        'default' : ''
-        }
+    if not job.template.parameters.has_key('title'):
+        job.template.parameters.title = {
+            'optional' : False,
+            'help' : 'A short and consise title for this job',
+            'type' : 'string',
+            'recursive' : False,
+            }
     
     job.template.parameters.project = {
         'optional' : True,
