@@ -47,22 +47,25 @@ def newJob(job):
 
     Usage::
 
-        moa new TEMPLATE_NAME -t 'a descriptive title'
+        moa new TEMPLATE_NAME [TARGET_DIR] -t 'a descriptive title'
         
     """
     wd = job.wd
     options = sysConf['options']
     args = sysConf['newargs']
+
     if not args:
         moa.ui.exitError("No template specified. Try `moa new TEMPLATENAME`")
     
     params = []
     template = 'empty'
-
+    targetdir = '.'
+    
     title = job.conf.title
     if options.title:
         title = options.title
-        
+
+    args2 = []
     for a in args:
         if '=' in a:
             k,v = a.split('=', 1)
@@ -73,7 +76,23 @@ def newJob(job):
             else:
                 params.append(a)
         else:
-            template = a
+            args2.append(a)
+
+    if len(args2) > 0:
+        template = args2[0]
+    if len(args2) > 1:
+        targetdir = args2[1]
+
+    fulltarget = os.path.abspath(targetdir)
+    if targetdir != '.':
+        if not os.path.exists(fulltarget):
+            moa.ui.message("Creating directory %s" % targetdir)
+            os.makedirs(fulltarget)
+
+        os.chdir(fulltarget)
+        job = moa.job.Job(fulltarget)
+
+    wd = job.wd
 
     if os.path.exists(os.path.join(
         wd, '.moa', 'template')) and \

@@ -25,8 +25,7 @@ import traceback
 import subprocess
 import contextlib
 
-
-import jinja2
+import moa.moajinja
 
 import moa.logger as l
 from moa.sysConf import sysConf
@@ -67,8 +66,13 @@ def fprint(message, **kwargs):
     sys.stdout.write(fformat(message, **kwargs))
     
 def fformat(message, f='text', newline = True, ansi = None):
+    
     if f == 'text':
         l.debug("deprecated use of text formatter")
+
+    jenv = None
+    if f and  f[:1] == 'j':
+        jenv = moa.moajinja.getEnv()
 
     if ansi == True:
         codes = FORMAT_CODES_ANSI
@@ -87,7 +91,7 @@ def fformat(message, f='text', newline = True, ansi = None):
     elif f[0].lower() == 't':
         rt += message % codes
     elif f[0].lower() == 'j':
-        template = jinja2.Template(message)
+        template = jenv.from_string(message)
         rt += template.render(**codes)
     if newline:
         rt += "\n"
@@ -132,48 +136,42 @@ def fsCompleter(text, state):
             g(E)
             return None
 
-    #see what we should complete
-    if '{{' in text:
-        #remove spaces within jinja codes
-        text2 = re.sub(r'{{\s*(\w*?)\s*}}', r'{{\1}}', text)
-        g("rem {{ :", text2)        
-    else:
-        text2 = text
+    detangle = False
+    utext = text
+    #see if there are templates in the text - if so - untangle
+    if '{{' in text or '{%' in text:
+        #do a complete untangle first
+        utext = untangle(text)
+        g("untang  :", utext)
+        detangle = True
+        #if utext != text:
+        #    detangle = True
 
-    #only trying to find a prefix for the last word of the current
+    #check for two trailing slashes
+    #if while utext[-2:] == '//'
+    
+    #find the last word - to expand
     #string: stored in 'ctext'. The rest is in 'prefix'
-    if ' ' in text2:
+    if ' ' in utext:
         addPrefix = True
-        prefix, ctext = text2.rsplit(' ', 1)
+        prefix, uptext = utext.rsplit(' ', 1)
     else:
         addPrefix = False
-        prefix, ctext = "", text2
+        prefix, uptext = "", uptext
 
     g('prefix :', prefix)
-    g('ctext  :', ctext)
-
-    if '{{' in ctext:
-        #jinja untangle
-        cutext = untangle(ctext)
-    else:
-        cutext = ctext
-
-    detangle = False
-    if cutext != ctext:
-        detangle = True
-
-    g('untang :', cutext)
-    
-    if os.path.isdir(cutext) and not cutext[-1] == '/': 
+    g('uptext :', uptext)
+        
+    if os.path.isdir(uptext) and not uptext[-1] == '/': 
         sep = '/'
     else: sep = ''
 
     
-    if prefix or cutext[:2] == './' or \
-            cutext[:3] == '../' or cutext[0] == '/':
+    if prefix or uptext[:2] == './' or \
+            uptext[:3] == '../' or uptext[0] == '/':
         #try to expand path
         #get all possibilities
-        pos = glob.glob(cutext + sep + '*')
+        pos = glob.glob(uptext + sep + '*')
     else:
         #see if there is an executable starting with this
         #
@@ -189,12 +187,17 @@ def fsCompleter(text, state):
         
     np = []
     for i, p in enumerate(pos):
+        g("found %s" % p)
         if os.path.isdir(p) and not p[-1] == '/':
             p += '/'
         if addPrefix:
             p = prefix + ' ' + p
         if detangle:
-            p = p.replace(cutext, ctext)
+            g("detangling")
+            g("from %s" % p)
+            g("replacing %s" % utext)
+            g("with %s" % text)
+            p = p.replace(utext , text)
         np.append(p)
     g('pos', np)
 
@@ -211,7 +214,7 @@ def askUser(prompt, d):
     def startup_hook():
         readline.insert_text('%s' % d)
   
-    readline.set_completer_delims("\n`~!@#$%^&*()-=+[]\|;:'\",<>?")
+    readline.set_completer_delims("\n`~!@#$^&*()-=+[]\|,?")
     readline.set_startup_hook(startup_hook)
 
     readline.set_completer(fsCompleter)

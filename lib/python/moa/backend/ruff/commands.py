@@ -1,12 +1,12 @@
 import os
 import re
 import glob
-from jinja2 import Template as jTemplate
-import jinja2.exceptions
 
 import Yaco
 
 import moa.ui
+import moa.utils
+import moa.moajinja
 from moa.sysConf import sysConf
 import moa.logger as l
 
@@ -97,8 +97,9 @@ class RuffCommands(Yaco.Yaco):
 
         if "##moa:noxpand" in script:
             return script
-        
-        jt = jTemplate(script)
+
+        jinjaEnv = moa.moajinja.getEnv()
+        jt = jinjaEnv.from_string(script)
 
         try:
             rscript = jt.render(data)
@@ -110,7 +111,7 @@ class RuffCommands(Yaco.Yaco):
         
         if '{{' or '{%' in rscript:
             #try a second level jinja interpretation
-            jt2 = jTemplate(rscript)
+            jt2 = jinjaEnv.from_string(rscript)
             rscript = jt2.render(data)
 
         return rscript

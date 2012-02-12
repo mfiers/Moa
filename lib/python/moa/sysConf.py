@@ -19,7 +19,7 @@ import sys
 import Yaco
  
 import moa.logger as l
-import moa.utils
+import moa.resources
 import moa.plugin
 
 sysConf = None
@@ -29,11 +29,12 @@ USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
 
 
 class SysConf(Yaco.Yaco):
+
     
     def __init__(self):
         
         
-        super(SysConf, self).__init__(moa.utils.getResource('etc/config'))
+        super(SysConf, self).__init__(moa.resources.getResource('etc/config'))
 
         l.debug("Loading system config: %s" % USERCONFIGFILE)
         if os.path.exists(USERCONFIGFILE):
@@ -51,7 +52,7 @@ class SysConf(Yaco.Yaco):
         """
         Return the version number of this Moa instance
         """
-        return moa.utils.getResource('VERSION').strip()
+        return moa.resources.getResource('VERSION').strip()
 
     
     def getPlugins(self):

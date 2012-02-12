@@ -20,13 +20,14 @@ import copy
 
 import Yaco
 
-from jinja2 import Template as jTemplate
-from jinja2 import Environment as jEnv
-from jinja2 import StrictUndefined
+#from jinja2 import Template as jTemplate
+#from jinja2 import Environment as jEnv
+#from jinja2 import StrictUndefined
 import jinja2.exceptions
 
 import moa.logger as l
 import moa.ui
+import moa.moajinja
 import moa.utils
 
 class JobConf(object):
@@ -151,7 +152,7 @@ class JobConf(object):
     #         i += 1
 
     def interpret(self, value):
-        env = jEnv(undefined=StrictUndefined)
+        env = moa.moajinja.getStrictEnv()
         renconf = self.render()
         templ = env.from_string(value)        
         try:
@@ -181,7 +182,7 @@ class JobConf(object):
                 rv[k] = v
 
         # expand the needed jinja vars
-        env = jEnv(undefined=StrictUndefined)
+        env = moa.moajinja.getStrictEnv()
         statesSeen = []
         iteration = 0
         while toExpand:

@@ -88,8 +88,6 @@ directory structure (with cwd being `/tmp/test/20.dirc/20.subb/`::
 `__ll`: `/tmp/test/30.dird`
 
 
-
-
 Equivalently, `___first`, `___prev`, `___next` and `___last` are also
 defined.
 
@@ -103,11 +101,52 @@ import os
 import sys
 import subprocess as sp
 
+import frappant
+
+import jinja2
+from jinja2.ext import Extension
+from jinja2 import nodes
+
 from moa.sysConf import sysConf
 import moa.logger as l
 import moa.ui
 
+class MoaPathParser(Extension):
+    tags = set(['mp'])
+
+    def processDirString(self, s):
+        cwd = os.getcwd()
+        return frappant.frp(cwd, s)
+        # l.critical(cwd)
+
+        # l.critical("parsing %s" % s)
+        # sp = s.split(os.path.sep)
+        # return '_'.join(sp)
+        
+    def parse(self, parser):
+        node = nodes.Scope(lineno=next(parser.stream).lineno)
+        lineno = parser.stream.current.lineno
+        #get first argument
+        expr = parser.parse_expression()
+        
+        while parser.stream.current.type != 'block_end':
+            #flush superfluous arguments
+            parser.stream.expect('comma')
+            parser.parse_expression()
+
+        #process the string!
+        return nodes.Const(self.processDirString(expr.value))
+
+
+def hook_prepare_1():
+
+    if not sysConf.jinja2.extensions:
+        sysConf.jinja2.extensions = []
+    print sysConf.jinja2.pretty()
+    sysConf.jinja2.extensions += [MoaPathParser]
+
 def hook_prepare_3():
+
     job = sysConf.job
     renderedConf = job.conf.render() 
 
