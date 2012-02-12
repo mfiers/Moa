@@ -21,6 +21,7 @@ import Yaco
 
 import moa.utils
 import moa.logger as l
+import moa.resources
 
 from moa.sysConf import sysConf
 from moa.template import provider
@@ -32,14 +33,14 @@ class Core(provider.ProviderBase):
 
     def hasTemplate(self, tName):
         fname = os.path.join(self.TEMPLATEBASE, '%s.moa' % tName)
-        return moa.utils.resourceExists(fname)
+        return moa.resources.resourceExists(fname)
 
     def getTemplate(self, name):
         """
         Returns a Yaco instance of the moa template
         """
         fname = os.path.join(self.TEMPLATEBASE, '%s.moa' % name)
-        return Yaco.Yaco(moa.utils.getResource(fname))
+        return Yaco.Yaco(moa.resources.getResource(fname))
 
     def templateList(self):
         """
@@ -72,10 +73,10 @@ class Core(provider.ProviderBase):
         #print type(moaFile)
         moaFile.save(os.path.join(wd, '.moa', 'template'))
 
-        for f in moa.utils.listResource(self.TEMPLATEBASE):
+        for f in moa.resources.listResource(self.TEMPLATEBASE):
             if not f.find(tName) == 0: continue
             if f[-1] in ['~', '#']: continue
             if f[-4:] == '.moa': continue
             with open(os.path.join(wd, '.moa', 'template.d', f), 'w') as F:
-                F.write(moa.utils.getResource(os.path.join(self.TEMPLATEBASE, f)))
+                F.write(moa.resources.getResource(os.path.join(self.TEMPLATEBASE, f)))
 
