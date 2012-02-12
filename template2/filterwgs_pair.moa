@@ -1,0 +1,57 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: 'Filter WGS data'
+    mode: map
+creation_date: Tue Mar 29 16:34:19 2011
+description: 'Filter raw WGS data'
+filesets:  
+  input1:
+    category: input
+    help: 'forward input fastq'
+    optional: false
+    pattern: '*/*'
+    type: set
+  input2:
+    category: input
+    help: 'reverse input fastq'
+    optional: false
+    pattern: '*/*'
+    type: map
+    source: input1
+  output1:
+    category: output
+    help: 'forward output fastq'
+    optional: true
+    pattern: ./*
+    source: input1
+    type: map
+  output2:
+    category: output
+    help: 'reverse output fastq'
+    optional: true
+    pattern: ./*
+    source: input1
+    type: map
+moa_id: filterwgs_pair
+modification_date: Mon, 13 Feb 2012 09:16:36 +1300
+name: filterwgs_pair
+parameters:
+  title:
+    default: "Filter paired fastq files using fastq-mcf" 
+  minlen:
+    default: 50
+    type: int
+    optional: true
+    help:  Minimum remaining sequence length
+  qual:
+    default: 13
+    type: int
+    optional: true
+    help:  quality threshold causing trimming
+  adapters:
+    optional: false
+    help: Fasta file with the adapter sequences to trim
+    type: file
+title: Execute a "map22" ad-hoc analysis - two input files, two output files
