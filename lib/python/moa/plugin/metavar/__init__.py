@@ -139,10 +139,9 @@ class MoaPathParser(Extension):
 
 
 def hook_prepare_1():
-
+    #register metavar jinja plugin!
     if not sysConf.jinja2.extensions:
         sysConf.jinja2.extensions = []
-    print sysConf.jinja2.pretty()
     sysConf.jinja2.extensions += [MoaPathParser]
 
 def hook_prepare_3():
