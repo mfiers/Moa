@@ -59,7 +59,7 @@ class PluginHandler():
         if reverse:
             runOrder.reverse()
 
-        l.debug("plugin execution order %s" % ", ".join(runOrder))
+        #l.debug("plugin execution order %s" % ", ".join(runOrder))
 
         for p in runOrder:
             if only and not p in only:
