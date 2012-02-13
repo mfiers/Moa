@@ -67,6 +67,8 @@ class RuffCommands(Yaco.Yaco):
                             + r'\.(\w+)\.(\w+)')
 
         for f in glob.glob(glb):
+            if f[-1] == '~': continue
+
             findName = finare.match(f)
             if not findName: 
                 #this could be the .jinja or .moa file
