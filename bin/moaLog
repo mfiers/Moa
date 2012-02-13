@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import time
+import MySQLdb
+from MySQLdb.cursors import DictCursor
+
+from moa.sysConf import sysConf
+sysConf.initialize()
+import moa.ui
+
+#print sysConf.plugins.remoteLogger
+
+db=MySQLdb.connect(host = sysConf.plugins.remoteLogger.host, 
+                   user = sysConf.plugins.remoteLogger.user, 
+                   passwd = sysConf.plugins.remoteLogger.passwd, 
+                   db = sysConf.plugins.remoteLogger.db)
+db.autocommit(True)
+
+c = db.cursor(DictCursor)
+#c = db.cursor()
+
+SQL1 = """ 
+SELECT * FROM log 
+WHERE id >  ((SELECT MAX(id) from log) - 10)
+ORDER BY id
+"""
+
+def print_line(record):
+    if record['status'] == 'error':
+        record['fstat'] = "{{red}}%-8s{{reset}}" % "Error"
+    elif record['status'] == 'ok':
+        record['fstat'] = "{{green}}%-8s{{reset}}" % "Ok"
+    else:
+        record['fstat'] = "{{bold}}%-8s{{reset}}" % record['status'].capitalize()[:8]
+    record['fserver'] = '%s:%s' % (record['server'], record['wd'])
+
+    moa.ui.fprint(
+        "%(fstat)s : {{blue}}%(full_command)s{{reset}} @ %(fserver)s" % record,
+        f = 'jinja')
+
+
+last_stamp = "0000-00-00 00:00:00"
+
+#from pprint import pprint
+c.execute(SQL1)
+while True:    
+    record = c.fetchone()
+    #pprint( record)
+    if record == None:
+        break
+    last_id = record['id']
+    #print last_stamp
+    print_line(record)
+
+
+SQL2 = """
+SELECT * FROM log
+WHERE id > %(last_id)s
+ORDER BY id
+"""
+
+while True:
+    c.execute(SQL2 % {'last_id' : last_id } )
+    while True:
+        record = c.fetchone()
+        if record == None: break
+        last_id = record['id']
+        print_line(record)
+    time.sleep(2)
+
+
+    
+
