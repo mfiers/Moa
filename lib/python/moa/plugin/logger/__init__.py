@@ -115,6 +115,15 @@ def _writeLog(status):
         runtime = sysConf.logger.run_time
     else:
         runtime = 0
+
+    
+    sysConf.logger.logLevel = logLevel
+    sysConf.logger.status = status
+    sysConf.logger.full_command = command
+    sysConf.logger.moa_command = sysConf.originalCommand
+    
+    sysConf.pluginHandler.run('logMessage')
+    
     with open(logFile, 'a') as F:
         F.write("%s\n" % "\t".join([
             status, str(sysConf.originalCommand),
