@@ -189,9 +189,11 @@ def moacp(job):
     if dirTo[-1] == '/': dirTo = dirTo[:-1]
     toBase = os.path.basename(dirTo)
 
+    #print fromBase, toBase
     # trick - the second argument is a number
     # renumber the target directory
-    if re.match("^[0-9]+$", toBase):
+    if re.match("^[0-9]+$", toBase) and re.match("^[0-9]+\..+$", toBase):
+        print toBase, fromBase
         toBase = re.sub("^[0-9]*\.", toBase + '.', fromBase)
         dirTo = os.path.join(os.path.dirname(dirTo), toBase)
         
@@ -221,6 +223,7 @@ def moacp(job):
 
                             
 def _copyMoaDir(job, toDir):
+    #l.info("Copying from %s to %s" % (job.wd, toDir))
     for pattern in job.data.moaFiles:
         for fromFile in  glob.glob(os.path.join(job.wd, pattern)):
             toFile = fromFile.replace(job.wd, toDir)
