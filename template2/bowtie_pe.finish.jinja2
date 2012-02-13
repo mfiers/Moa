@@ -12,7 +12,7 @@ stats = {}
 
 gap='http://chart.apis.google.com/chart?chbh=10,0,0&chs=100x20&cht=bhs&chco=4D89F9,E8EFFD&chds=0,%(max)d&chd=t:%(val)d|%(max)d&chdlp=l'
 
-bamfiles = "{{ job.data.filesets.output['files']|join(' ') }}".split()
+bamfiles = os.environ['moa_output_files'].split()
 
 #bamfiles = []
 fields = []
