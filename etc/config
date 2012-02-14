@@ -25,6 +25,7 @@ plugins:
       - tree
       - unset
       - show
+      - status
   adhoc: {}
   help: {}
   status: {}
