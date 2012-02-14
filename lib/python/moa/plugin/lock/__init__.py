@@ -35,11 +35,17 @@ def hook_defineCommands():
         }
     
 def hook_check_run():
+    command = sysConf.originalCommand
+
     if os.path.exists(os.path.join(sysConf.job.confDir, 'lock')):
-        moa.ui.fprint(("This {{bold}}{{green}}Moa{{reset}} job is "
-                       "{{bold}}{{red}}locked{{reset}} "
-                       "(try 'moa unlock')"), f='jinja')
-        return False
+        moa.ui.fprint(("This {{bold}}{{green}}Moa{{reset}} job is " +
+                       "{{bold}}{{red}}locked{{reset}}"), f='jinja')
+        #see if this command is 'lockable'
+        if command in sysConf.plugins.lock.runnable: 
+            return True
+        else:
+            return False
+
     else:
         return True
 
