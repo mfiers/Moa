@@ -186,12 +186,6 @@ def run_3(wd, exitOnError=True):
     ## Only now the full set of options is parsed 
     sysConf.options, sysConf.args = parser.parse_args()
 
-    #check if we should run this job..
-    #TODO - 
-    doRun = sysConf.pluginHandler.run('check_run')
-    if (not sysConf.options.force) and  False in doRun.values():        
-        l.warning("Not running job in %s" % wd)
-        return
     sysConf.pluginHandler.run('prepare_3')
 
     ## Proper setting of verbosity - after parsing of the command line
@@ -209,6 +203,13 @@ def run_3(wd, exitOnError=True):
 
     sysConf.newargs = newargs
     sysConf.originalCommand = command        
+
+    #check if we should run this job..
+    doRun = sysConf.pluginHandler.run('check_run')
+    if (not sysConf.options.force) and  False in doRun.values():        
+        l.warning("Not running job in %s" % wd)
+        return
+
 
     #see if this is all callback
     if command in sysConf.commands:
