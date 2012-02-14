@@ -21,23 +21,40 @@ db.autocommit(True)
 c = db.cursor(DictCursor)
 #c = db.cursor()
 
+import argparse
+parser = argparse.ArgumentParser('Tail the Moa RemoteLog output')
+parser.add_argument("-S", '--suppress_status', dest='suppress',  default="",
+                    help="Suppress these job statusses (for example -S start)")
+parser.add_argument("-l", '--lines', type=int, default=15,
+                    help="number of lines to print")
+args = parser.parse_args()
+
 SQL1 = """ 
 SELECT * FROM log 
-WHERE id >  ((SELECT MAX(id) from log) - 10)
+WHERE id >  ((SELECT MAX(id) from log) - %d)
 ORDER BY id
-"""
+""" % args.lines
 
 def print_line(record):
+    if args.suppress and record['status'] in args.suppress:
+        return
     if record['status'] == 'error':
-        record['fstat'] = "{{red}}%-8s{{reset}}" % "Error"
+        record['fstat'] = "{{red}}%-6s{{reset}}" % "Error"
     elif record['status'] == 'ok':
-        record['fstat'] = "{{green}}%-8s{{reset}}" % "Ok"
+        record['fstat'] = "{{green}}%-6s{{reset}}" % "Ok"
+    elif record['status'] == 'interrupted':
+        record['fstat'] = "{{blue}}%-6s{{reset}}" % "Intrpt"
     else:
-        record['fstat'] = "{{bold}}%-8s{{reset}}" % record['status'].capitalize()[:8]
-    record['fserver'] = '%s:%s' % (record['server'], record['wd'])
+        record['fstat'] = "{{bold}}%-6s{{reset}}" % record['status'].capitalize()[:6]
 
+    record['ftemplate'] = record.get('template', '')[:10]
+    #record['fuser'] = record.get('user', '')[:10]
+    if record.get('user'):
+        record['fserver'] = '{{red}}%s{{reset}}@{{cyan}}%s{{reset}}:%s' % (record['user'], record['server'], record['wd'])
+    else:
+        record['fserver'] = '{{cyan}}%s{{reset}}:%s' % (record['server'], record['wd'])
     moa.ui.fprint(
-        "%(fstat)s : {{blue}}%(full_command)s{{reset}} @ %(fserver)s" % record,
+        "%(fstat)s : {{green}}%(ftemplate)10s{{reset}} : {{blue}}%(full_command)s{{reset}} : %(fserver)s" % record,
         f = 'jinja')
 
 
