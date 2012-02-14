@@ -17,7 +17,14 @@ plugins:
   logger: {}
   test:
     enabled: false
-  lock: {}
+  lock:
+    enabled: true
+    runnable:
+      - set
+      - unlock
+      - tree
+      - unset
+      - show
   adhoc: {}
   help: {}
   status: {}
