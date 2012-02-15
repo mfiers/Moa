@@ -151,6 +151,11 @@ class JobConf(object):
 
     #         i += 1
 
+
+    def getRendered(self, key):
+        """ Get the rendered value of this key"""
+        return self.interpret(self.get(key, ""))
+
     def interpret(self, value):
         env = moa.moajinja.getStrictEnv()
         renconf = self.render()

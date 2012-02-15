@@ -83,6 +83,7 @@ def status(job):
     color = {
         'running' : '{{bold}}',
         'success' : '{{green}}',
+        'locked' : '{{red}}{{bold}}',
         'error' : '{{red}}{{bold}}',
         'interrupted' : '{{blue}}'}.get(status, '{{bold}}')
     message += "Status: %s%s{{reset}}" % (color, status)        
@@ -101,7 +102,12 @@ def _getStatus(job, silent=False):
     """
     
     statusFile = os.path.join(job.wd, '.moa', 'status')
+    lockFile = os.path.join(job.wd, '.moa', 'lock')
     pidFile = os.path.join(job.wd, '.moa', 'pid')
+
+    if os.path.exists(lockFile):
+        return 'locked'
+
     if not os.path.exists(statusFile):
         return 'waiting'
 
@@ -165,13 +171,6 @@ def _getPid(job):
         return None
     with open(pidFile) as F:
         return int(F.read())
-
-#def hook_background_exit():
-#    """
-#3    Rewrite the pid file to contain the child pid id
-#3    """
-#    _setPid(data.job, sysConf.childPid)
-#    if LLOG: print 'local parent exit'
 
 def kill(job):
     """

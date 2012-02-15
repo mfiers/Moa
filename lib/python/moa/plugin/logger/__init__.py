@@ -84,6 +84,21 @@ def hook_post_error():
 def hook_postRun():
     _writeLog('ok')
 
+def hook_postNew():
+    _writeLog('new')
+
+def hook_postCp():
+    _writeLog('cp')
+
+def hook_postMv():
+    _writeLog('mv')
+
+def hook_postLock():
+    _writeLog('lock')
+
+def hook_postUnlock():
+    _writeLog('unlock')
+
 def hook_preRun():
     _writeLog('start')
 
@@ -121,7 +136,6 @@ def _writeLog(status):
     sysConf.logger.status = status
     sysConf.logger.full_command = command
     sysConf.logger.moa_command = sysConf.originalCommand
-    
     sysConf.pluginHandler.run('logMessage')
     
     with open(logFile, 'a') as F:

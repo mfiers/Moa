@@ -130,9 +130,8 @@ def archive(job):
                 
     if sysConf.options.recursive:
         for path, dirs, files in os.walk('.'):
-            if '.moa' in dirs:
-                sjob = moa.job.Job(path)
-                _addFiles(TF, path, sjob) 
+            sjob = moa.job.Job(path)
+            _addFiles(TF, path, sjob) 
             toRemove = [x for x in dirs if x[0] == '.']
             [dirs.remove(x) for x in toRemove]
     else:
@@ -275,7 +274,7 @@ def moamv(job):
             to = '%s.%s' % (to, fr)
             
     moa.ui.message("Moving %s to %s" % (fr, to))
-    if sysConf.git.active:
+    if sysConf.git.active and sysConf.git.repo:
         l.debug('git is active - deferring move to later')        
         sysConf.moautil.mv.fr = fr
         sysConf.moautil.mv.to = to

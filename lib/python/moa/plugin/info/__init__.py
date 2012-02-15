@@ -126,8 +126,11 @@ def tree(job):
             if findmid: 
                 templateName = "{{blue}}%s{{reset}}" % findmid.groups()[0]
                 
+        lockFile = os.path.join(path, '.moa', 'lock')
         statusFile = os.path.join(path, '.moa', 'status')
-        if not os.path.exists(statusFile):
+        if os.path.exists(lockFile):
+            tag = '{{bold}}{{cyan}}L{{reset}}'
+        elif not os.path.exists(statusFile):
             tag = '{{bold}}{{black}}?{{reset}}'
         else:
             with open(statusFile) as F:

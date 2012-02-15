@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
 import time
+import datetime
 import MySQLdb
 from MySQLdb.cursors import DictCursor
 
@@ -27,6 +29,8 @@ parser.add_argument("-S", '--suppress_status', dest='suppress',  default="",
                     help="Suppress these job statusses (for example -S start)")
 parser.add_argument("-l", '--lines', type=int, default=15,
                     help="number of lines to print")
+parser.add_argument("-P", '--nopathmunge', dest='nopathmunge', action='store_true',
+                    default=False, help="do not munge paths to save space")
 args = parser.parse_args()
 
 SQL1 = """ 
@@ -35,7 +39,26 @@ WHERE id >  ((SELECT MAX(id) from log) - %d)
 ORDER BY id
 """ % args.lines
 
+mungeMoaPath = re.compile('^/[^\s]*/moa ')
+
 def print_line(record):
+    
+    sta, sto = record['start'], record['stop']
+    took = sto - sta
+    #print sto - sta,  datetime.timedelta(minutes=5)
+    
+    record['fstamp'] = record['stamp'].strftime("%Y-%m-%d %H:%M:%S")
+    record['ftitle'] = record['title'][:80]
+
+    if took > datetime.timedelta(hours=1):
+        ptook = '{{red}}%s{{reset}}' % took
+    elif took > datetime.timedelta(minutes=1):
+        ptook = '{{blue}}%s{{reset}}' % took
+    else:
+        ptook = '{{gray}}%s{{reset}}' % took
+
+    record['ptook'] = ptook
+
     if args.suppress and record['status'] in args.suppress:
         return
     if record['status'] == 'error':
@@ -45,18 +68,32 @@ def print_line(record):
     elif record['status'] == 'interrupted':
         record['fstat'] = "{{blue}}%-6s{{reset}}" % "Intrpt"
     else:
-        record['fstat'] = "{{bold}}%-6s{{reset}}" % record['status'].capitalize()[:6]
+        record['fstat'] = "%-6s" % record['status'].capitalize()[:6]
 
     record['ftemplate'] = record.get('template', '')[:10]
+
+    if args.nopathmunge:
+        record['pfull_command'] = record['full_command']
+    else:
+        _mp = mungeMoaPath.sub('', record['full_command'])
+        record['pfull_command'] = _mp[:20]
+        record['server'] = record['server'].split('.')[0]
+        wd = record['wd']
+        if len(wd) > 45:
+            record['wd'] = '...' + wd[-42:]
+        
     #record['fuser'] = record.get('user', '')[:10]
     if record.get('user'):
-        record['fserver'] = '{{red}}%s{{reset}}@{{cyan}}%s{{reset}}:%s' % (record['user'], record['server'], record['wd'])
+        record['fserver'] = '{{red}}%s{{reset}}@{{cyan}}%s{{reset}}:{{gray}}%-45s{{reset}}' % (record['user'], record['server'], record['wd'])
     else:
         record['fserver'] = '{{cyan}}%s{{reset}}:%s' % (record['server'], record['wd'])
-    moa.ui.fprint(
-        "%(fstat)s : {{green}}%(ftemplate)10s{{reset}} : {{blue}}%(full_command)s{{reset}} : %(fserver)s" % record,
-        f = 'jinja')
 
+
+    ptemplate = "%(fstamp)s %(ptook)s %(fstat)s {{green}}%(ftemplate)-10s{{reset}} {{blue}}%(pfull_command)-20s{{reset}} %(fserver)s %(ftitle)s" % record
+    try:
+        moa.ui.fprint(ptemplate, f = 'jinja')
+    except:
+        print ptemplate
 
 last_stamp = "0000-00-00 00:00:00"
 

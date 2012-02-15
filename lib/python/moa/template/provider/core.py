@@ -19,7 +19,6 @@ import pkg_resources
 
 import Yaco
 
-import moa.utils
 import moa.logger as l
 import moa.resources
 
@@ -50,7 +49,7 @@ class Core(provider.ProviderBase):
         @rtype: a list of strings
         """
         r = []
-        for f in moa.utils.listResource(self.TEMPLATEBASE):
+        for f in moa.resources.listResource(self.TEMPLATEBASE):
             if f[-4:] != '.moa':
                 continue
             if f[0] == '.': 
