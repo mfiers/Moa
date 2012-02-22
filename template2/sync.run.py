@@ -15,6 +15,9 @@ def errex(message):
 source = os.environ.get('moa_source').strip()
 original = os.environ.get('moa_original', "")
 ignore = os.environ.get('moa_ignore').strip().split()
+recursive = os.environ.get('moa_recursive').strip() == 'True'
+
+print "Recursive mode is on!"
 
 print "source based on %s" % source
 print "ignoring", ignore
@@ -102,7 +105,10 @@ for indir in sourcelist:
     #    print "ignoring source %s (not a directory)" % indir
     #    continue
     if not basename in dirlist:
-        cl = 'moa cp %s %s' % (original, basename)
+        if recursive:
+            cl = 'moa cp -r %s %s' % (original, basename)
+        else:
+            cl = 'moa cp %s %s' % (original, basename)            
         print 'Executing %s' % cl
         os.system(cl)
     else:
