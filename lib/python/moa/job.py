@@ -18,6 +18,8 @@ import tempfile
 import lockfile
 import Yaco
 
+import shutil
+
 import moa.utils
 import moa.logger as l
 import moa.template
@@ -306,7 +308,13 @@ class Job(object):
         #and a shortcut to that folder
         latestDir = os.path.join(self.confDir, 'log.latest')
         if os.path.exists(latestDir):
-            os.remove(os.path.join(self.confDir, 'log.latest'))
+            try:
+                os.remove(os.path.join(self.confDir, 'log.latest'))
+            except OSError:
+                #possibly not a link, but a folder - post copying -
+                #try that
+                shutil.rmtree(os.path.join(self.confDir, 'log.latest'))
+                
         os.symlink('log.d/%d' % sysConf.runId, latestDir)
 
         l.debug("Acquired job id %s" % sysConf.runId)              
