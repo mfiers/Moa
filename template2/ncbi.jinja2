@@ -37,7 +37,7 @@ echo "QueryKey $queryKey"
 
 if [[ ! -f $seqName.gb ]]
 then
-    wget "${base}/efetch.fcgi?db={{db}}&WebEnv=${webEnv}&query_key=${queryKey}&report=gb" \
+    wget "${base}/efetch.fcgi?db={{db}}&WebEnv=${webEnv}&query_key=${queryKey}&rettype=gb&retmode=text" \
         -O $seqName.gb
 fi
 
