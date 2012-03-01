@@ -43,12 +43,54 @@ def hook_defineCommands():
         'recursive' : 'local',
         'call' : archive }
 
+    sysConf['commands']['archive_exclude'] = {
+        'desc' : 'marks a directory to not be archived',
+        'needsJob' : False,
+        'call' : archive_exclude }
+    
+    sysConf['commands']['archive_include'] = {
+        'desc' : 'marks a directory to be archived',
+        'needsJob' : False,
+        'call' : archive_include }
+
+
+
 def hook_defineOptions():
     parserG = optparse.OptionGroup(sysConf.parser, 'moa archive')
     parserG.add_option("--template", dest="archive_template",
                               action='store_true', default=False,
                               help='store this archive as a template')
     sysConf.parser.add_option_group(parserG)
+
+def archive_include(job):
+    """
+    Toggle a directory to be included in an moa archive.
+    
+    """
+    moa.ui.message("%s {{green}}will{{reset}} be included in an archive" % job.wd)
+
+
+    moaConfDir = os.path.join(job.wd, '.moa')
+    if not os.path.exists(moaConfDir):
+        return #default is to include
+    moaNoArchiveFile = os.path.join(moaConfDir, 'noarchive')
+    if os.path.exists(moaNoArchiveFile):
+        os.unlink(moaNoArchiveFile)
+
+def archive_exclude(job):
+    """
+    Toggle a directory to be included in an moa archive.
+    
+    """
+    moa.ui.message("%s will {{bold}}NOT{{reset}} be included in an archive" % job.wd)
+    moaConfDir = os.path.join(job.wd, '.moa')
+    if not os.path.exists(moaConfDir):
+        os.makedirs(moaConfDir)
+    moaNoArchiveFile = os.path.join(moaConfDir, 'noarchive')
+    if not os.path.exists(moaNoArchiveFile):
+        with open(moaNoArchiveFile, 'w') as F:
+            F.write("")
+
 
 
 def archive(job):
@@ -130,6 +172,8 @@ def archive(job):
                 
     if sysConf.options.recursive:
         for path, dirs, files in os.walk('.'):
+            if os.path.exists(os.path.join(path, '.moa', 'noarchive')):
+                continue
             sjob = moa.job.Job(path)
             _addFiles(TF, path, sjob) 
             toRemove = [x for x in dirs if x[0] == '.']
