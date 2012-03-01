@@ -111,6 +111,9 @@ for indir in sourcelist:
             cl = 'moa cp %s %s' % (original, basename)            
         print 'Executing %s' % cl
         os.system(cl)
+        if basename == '_ref':
+            print "Automatically locking _ref"
+            os.system('cd _ref; moa lock; cd ..')
     else:
         targetConf = os.path.join(basename, '.moa', 'config')
         cl = 'cp %s %s' % (originalConf, targetConf)
