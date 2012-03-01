@@ -15,6 +15,9 @@ import copy
 import UserDict
 import moa.logger as l
 import Yaco
+import sys
+
+#import moa.ui
 
 ## Load & handle plugins
 class PluginHandler():
@@ -44,7 +47,8 @@ class PluginHandler():
                 self.plugins[plugin]['module'] = _m
                 l.debug("Successfully Loaded module %s" % pyModule)
             except ImportError, e:
-                moa.ui.exitError("Plugin %s is not installed" % plugin)
+                sys.stderr.write("Plugin %s is not installed\n" % plugin)
+                sys.exit(-1)
         
     
     def run(self, command, reverse=False, only=[]):

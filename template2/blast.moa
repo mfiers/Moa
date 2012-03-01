@@ -35,11 +35,13 @@ filesets:
     type: set
   outgff:
     category: output
+    help: GFF output files
     optional: true
     pattern: gff/*.gff
     source: input
     type: map
   output:
+    help: XML blast output files
     category: output
     optional: true
     pattern: out/*.out

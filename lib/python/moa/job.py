@@ -109,6 +109,7 @@ class Job(object):
         
         self.confDir = os.path.join(self.wd, '.moa')
         self.templateFile = os.path.join(self.confDir, 'template')
+        self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
         self.backend = None
         self.args = []
         self.env = {}
@@ -130,9 +131,11 @@ class Job(object):
             'Changelog', 'CHANGELOG', 'Changelog.*',
             'blog.*', 'blog'
             ]
+
         
         self.loadTemplate()
-
+        self.loadTemplateMeta()
+        
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
 
@@ -388,7 +391,17 @@ class Job(object):
         self.template = moa.template.Template(self.templateFile)
         l.debug("Job loaded template %s" % self.template.name)
         self.loadBackend()
-                
+
+    def loadTemplateMeta(self):
+        """        
+        Load the template meta data for this job, based on what configuration 
+        can be found
+        """
+        self.templateMeta = Yaco.Yaco()
+        if os.path.exists(self.templateMetaFile):
+            self.templateMeta.load(self.templateMetaFile)
+        l.debug("Job loaded template metadata")
+
     def loadBackend(self):
         """
         load the backend
