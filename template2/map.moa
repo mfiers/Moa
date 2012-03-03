@@ -31,4 +31,9 @@ parameters:
     optional: false
     type: string
     prevent_expansion: true
+  dummy:
+    default: false
+    help: do a dummy run
+    type: boolean
+    optional: true
 title: Execute a "map" ad-hoc analysis

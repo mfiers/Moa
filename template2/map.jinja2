@@ -1,7 +1,11 @@
 ### run
 
-echo '{{ process }}'
+cat <<EndOfScriptEndOfScriptEndOfScriptEndOfScript
 {{ process }}
+EndOfScriptEndOfScriptEndOfScriptEndOfScript
+{% if not dummy %}
+{{ process }}
+{% endif %}
 
 ### unittest noexpand
 
