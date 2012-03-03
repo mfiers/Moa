@@ -18,6 +18,11 @@ parameters:
     help: ignore these names (space separated list)
     default: ""
     optional: true
+  recursive:
+    help: copy the jobs/config recursively
+    default: False
+    type: boolean
+    optional: true
   original:
     help: The local directory to use as a source. If the target (based
       on what is in the source) does not exists, this directory is

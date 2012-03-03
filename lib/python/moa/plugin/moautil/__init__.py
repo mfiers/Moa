@@ -60,6 +60,9 @@ def hook_defineOptions():
     parserG.add_option("--template", dest="archive_template",
                               action='store_true', default=False,
                               help='store this archive as a template')
+    parserG.add_option("--altsync", dest="altsync",
+                              action='store_true', default=False,
+                              help='Alternative approach for sync jobs - include only _ref folders')
     sysConf.parser.add_option_group(parserG)
 
 def archive_include(job):
@@ -165,6 +168,7 @@ def archive(job):
         mode = 'w:gz')
 
     def _addFiles(tf, path, job):
+        moa.ui.message("Archiving %s" % path)
         for pattern in job.data.moaFiles:
             for fl in glob.glob(os.path.join(path, pattern)):
                 if fl[-1] == '~': continue
@@ -175,8 +179,11 @@ def archive(job):
             if os.path.exists(os.path.join(path, '.moa', 'noarchive')):
                 continue
             sjob = moa.job.Job(path)
-            _addFiles(TF, path, sjob) 
-            toRemove = [x for x in dirs if x[0] == '.']
+            _addFiles(TF, path, sjob)
+            if sysConf.options.altsync and '_ref' in dirs:
+                toRemove = [x for x in dirs if x != '_ref']
+            else:
+                toRemove = [x for x in dirs if x[0] == '.']
             [dirs.remove(x) for x in toRemove]
     else:
         _addFiles(TF, '.', job)
