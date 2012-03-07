@@ -62,7 +62,7 @@ parameters:
   stop_codons:
     help: stop codons
     optional: true
-    default: tag,tga,taa,nnn,tnn,ann,gnn,cnn
+    default: tag,tga,taa
   gff_source:
     allowed: []
     category: ''
