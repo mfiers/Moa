@@ -4,28 +4,31 @@ mkdir -p train
 
 echo '----------------------------------'
 echo 'start training'
-cd train
-
 
 echo '----------------------------------'
 echo 'concatenate sequences'
 echo
 infiles='{{ input_files|join(' ') }}'
-if [[ ! -f all.seq ]]
+if [[ ! -f train/all.seq ]]
 then
-    echo '>train' >> all.seq
+    echo '>train' >> train/all.seq
     for i in $infiles
     do
-        cat $i | grep -v '>' >> all.seq
-        echo 'NNNNNNCTAGCTAGCATGNNNNNN' >> all.seq
+        echo "processing $i"
+        cat $i | grep -v '>' | tr 'A-Z' 'a-z' | tr -d "\n" >> train/all.seq
+        echo 'nnnnnnctagctagcatgnnnnnn' >> all.seq
     done
 fi
 
+cd train
 echo '----------------------------------'
 echo 'Long orfs'
 echo
 if [[ ! -f "long.orfs" ]]
 then
+    echo long-orfs -n -t 1.15   \
+		-Z {{ stop_codons }}  \
+		all.seq long.orfs
     long-orfs -l -n -t 1.15   \
 		-Z {{ stop_codons }}  \
 		all.seq long.orfs
