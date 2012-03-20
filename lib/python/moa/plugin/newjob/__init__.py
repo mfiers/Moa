@@ -17,88 +17,87 @@ import moa.job
 import moa.logger as l
 import moa.plugin
 import moa.ui
+import moa.args
+
 from moa.sysConf import sysConf
 
-def hook_defineCommands():
-    sysConf['commands']['new'] = {
-        'desc' : "Create a new Moa job",
-        'call' : newJob,
-        'needsJob' : False,
-        }
+# def hook_defineCommands():
+#     sysConf['commands']['new'] = {
+#         'desc' : "Create a new Moa job",
+#         'call' : newJob,
+#         'needsJob' : False,
+#         }
     
 
-def hook_defineOptions():
+# def hook_defineOptions():
 
-    parserG = sysConf.parser.get_option_group('-t')
-    if parserG == None:
-        parserG = optparse.OptionGroup(sysConf.parser, 'moa new')
-        sysConf.parser.add_option_group(parserG)    
+#     parserG = sysConf.parser.get_option_group('-t')
+#     if parserG == None:
+#         parserG = optparse.OptionGroup(sysConf.parser, 'moa new')
+#         sysConf.parser.add_option_group(parserG)    
     
-    try:
-        parserG.parser.add_option("-t", dest="title", help='define job title ' +
-        '(when creating a job)')
-    except optparse.OptionConflictError:
-        pass
+#     try:
+#         parserG.parser.add_option("-t", dest="title", help='define job title ' +
+#         '(when creating a job)')
+#     except optparse.OptionConflictError:
+#         pass
 
-    
-def newJob(job):
+
+@moa.args.argument('parameter', nargs='*', help='arguments for this job, specify' +
+                   'as KEY=VALUE without spaces')
+@moa.args.argument('template', help='name of the template to use for this moa job ')
+@moa.args.argument('-t', '--title', help='mandatory job title', default='')
+
+@moa.args.argument('-d', '--directory', help='directory to create the job in',
+                   default='.')
+@moa.args.forceable
+@moa.args.command
+def new(job, args):
     """
-    **moa new**
+    Create a new job.
 
-    Usage::
-
-        moa new TEMPLATE_NAME [TARGET_DIR] -t 'a descriptive title'
+    This command creates a new job with the specified template in the
+    current directory. If the directory already contains a job it
+    needs to be forced using '-f'. It is possible to define arguments
+    for the job on the commandline using KEY=VALUE after the
+    template. Note: do not use spaces around the '=' sign. Use quotes
+    if you need spaces in variables (KEY='two values')
         
     """
+    
     wd = job.wd
-    options = sysConf['options']
-    args = sysConf['newargs']
-
-    if not args:
-        moa.ui.exitError("No template specified. Try `moa new TEMPLATENAME`")
+    targetdir = args.directory
+    title = args.title
+    template = args.template
     
     params = []
-    template = 'empty'
-    targetdir = '.'
-    
-    title = job.conf.title
-
-    if options.title:
-        title = options.title
-        
-    args2 = []
-    for a in args:
-        if '=' in a:
-            k,v = a.split('=', 1)
-            if k == 'title':
-                if options.title:
-                    moa.ui.warn("duplicate title defintions, using %s" % v)
-                title = v
-            else:
-                params.append(a)
+    for a in args.parameter:
+        if not '=' in a:
+            moa.ui.exitError("Need an '=' in parameter definition (problem was: '%s')" % a)
+        k,v = a.split('=', 1)
+        if k == 'title':
+            if title:
+                moa.ui.warn("duplicate title defintions, using %s" % v)
+            title = v
         else:
-            args2.append(a)
+            params.append(a)
 
-    if len(args2) > 0:
-        template = args2[0]
-    if len(args2) > 1:
-        targetdir = args2[1]
-
-    fulltarget = os.path.abspath(targetdir)
     if targetdir != '.':
+        fulltarget = os.path.abspath(targetdir)
         if not os.path.exists(fulltarget):
             moa.ui.message("Creating directory %s" % targetdir)
             os.makedirs(fulltarget)
-
+            
         os.chdir(fulltarget)
+        #create a new job for the target dir
         job = moa.job.Job(fulltarget)
 
     wd = job.wd
 
     if os.path.exists(os.path.join(
         wd, '.moa', 'template')) and \
-        not options.force:
-        l.error("Seems that there is already a Moa job in")
+        not args.force:
+        l.error("There is already a Moa job in")
         l.error(wd)
         l.error("use -f to override")
         
@@ -110,8 +109,8 @@ def newJob(job):
         provider, template = template.split(':')
 
     try:
-        job = moa.job.newJob(wd, template=template, title = options.title,
-                             provider=provider)        
+        job = moa.job.newJob(wd, template=template, title = title,
+                             provider=provider)
     except moa.exceptions.InvalidTemplate:
         moa.ui.exitError("Invalid template: %s" % template)
         
