@@ -15,12 +15,15 @@ Print info on Moa jobs and Moa
 import os
 import re
 import glob
+import fnmatch
 import optparse
 
 import moa.ui
 import moa.utils
 import moa.actor
 import moa.template
+import moa.args
+
 from moa.sysConf import sysConf
 
 def hook_defineCommands():
@@ -71,19 +74,15 @@ def hook_defineCommands():
         }
 
 
-def hook_defineOptions():
-    parserG = optparse.OptionGroup(
-        sysConf.parser, 'moa tree')
-    parserG.add_option('--ts', action='store_true',
-                       dest='sparseTree', 
-                       help = 'Hide all non moa jobs directories')
-    
-    sysConf.parser.add_option_group(parserG)
-
-
-def tree(job):
+@moa.args.argument('filter', nargs='?', help='show only direcotires that match this filter')
+@moa.args.addFlag('-a', '--all')
+@moa.args.command
+def tree(job, args):
+    """
+    Show a directory tree and job status
+    """
     wd = job.wd
-    filt = sysConf.args[1:]
+    filt = args.filter
     findMoaId = re.compile("^name: (\S*)$", re.M)
 
     output = []
@@ -91,8 +90,9 @@ def tree(job):
     for path, dirs, files in os.walk(job.wd):
         rpath = path.replace(wd, '')[1:]
 
-        remove = set(dirs) - set(filt)
         if not rpath and filt:
+            remove = [d for d in dirs if not
+                      fnmatch.fnmatch(d, filt)]
             while True:
                 for r in remove:
                     if r in dirs:
@@ -112,7 +112,7 @@ def tree(job):
         thisPath = "%s./%s" %  (' |' * lev, rpath)
 
         if not isMoa:
-            if not sysConf.options.sparseTree:
+            if args.all:
                 output.append(( '.', thisPath, ''))
             continue
         
@@ -124,7 +124,7 @@ def tree(job):
             templ = open(templateFile).read()
             findmid = findMoaId.search(templ)
             if findmid: 
-                templateName = "{{blue}}%s{{reset}}" % findmid.groups()[0]
+                templateName = "{{green}}%s{{reset}}" % findmid.groups()[0]
                 
         lockFile = os.path.join(path, '.moa', 'lock')
         statusFile = os.path.join(path, '.moa', 'status')
@@ -151,37 +151,39 @@ def tree(job):
         #moa.ui.fprint(
         #    ("%%s %%-%ds | %%s"  % maxTemplateLen) % (s,t,p), f='jinja')
         
-                      
-
-
-def getOut(job):
+@moa.args.command
+def out(job, args):
+    """
+    Show the stdout of the most recently executed moa job
+    """
     out = moa.actor.getLastStdout(job)
     if out == None:
         moa.ui.exitError("No stdout found")
     else:
         print out
 
-def getErr(job):
+@moa.args.command
+def err(job, args):
+    """
+    Show the stderr of the most recently executed moa job
+    """
     err = moa.actor.getLastStderr(job)
     if err == None:
         moa.ui.exitError("No stderr found")
     else:
         print err
 
-def version(job):
+@moa.args.command
+def version(job, args):
     """
-    **moa version** - Print the moa version number
+    print moa version number
     """
     print sysConf.getVersion()
 
-def status(job):
+@moa.args.command
+def status(job, args):
     """
-    **moa status** - print out a short status status message
-
-    Usage::
-
-       moa status
-       
+    print a short status message
     """
     if job.template.name == 'nojob':
         moa.ui.fprint("%(bold)s%(red)sNot a Moa job%(reset)s")
@@ -189,17 +191,15 @@ def status(job):
     moa.ui.fprint("%(bold)s%(green)sThis is a Moa job%(reset)s")
     moa.ui.fprint("%%(blue)s%%(bold)sTemplate name: %%(reset)s%s" %
                   job.template.name)
-   
-def rawCommands(job):
-    """
-    *(private)* **moa raw_commands** - Print a list of all known commands
-    
-    Usage::
 
-        moa raw_commands
+@moa.args.private
+@moa.args.command
+def rawCommands(job, args):
+    """
+    return a list available commands
 
     Print a list of known Moa commands, both global, plugin defined
-    commands as template specified ones. This command is mainly used
+    commands as template specified ones. This command meant to be used
     by software interacting with Moa.
     """
     commands = sysConf.commands
@@ -208,21 +208,15 @@ def rawCommands(job):
         c.extend(job.template.commands)
     print ' '.join(c)
 
-
-def rawParameters(job):
+@moa.args.private
+@moa.args.command
+def rawParameters(job, args):
     """
-    *(private)* **moa raw_parameters** - Print out a list of all known parameters
-
-    Usage::
-
-        moa raw_parameters
-        
-    print a list of all defined or known parameters
+    Print a list of all known parameters
     """
     if not job.isMoa():
         return
     print " ".join(job.conf.keys())
-
 
 TESTRAWCOMMANDS = '''
 out=`moa raw_commands`
