@@ -13,63 +13,32 @@ Control job configuration
 """
 import os
 
+
 import moa.ui
 import moa.utils
+import moa.args
 import textwrap
 import optparse
 import moa.logger as l
 from moa.sysConf import sysConf
 
-
-def hook_defineOptions():
-    parserG = optparse.OptionGroup(
-        sysConf.parser, 'moa show')
-    parserG.add_option('-p', action='store_true',
-                       dest='showPrivate', 
-                       help = 'Show private variables')
-    sysConf.parser.add_option_group(parserG)
-
-def hook_defineCommands():
+##
+## Set command
+##
+@moa.args.addFlag('-a', dest='showAll', help='show all parameters')
+@moa.args.addFlag('-p', dest='showPrivate', help='show private parameters')
+@moa.args.needsJob
+@moa.args.command
+def show(job, args):
     """
-    Set the moa commands for this plugin
-    """
-    sysConf['commands']['set'] = {
-        'desc' : 'Set, change or remove variables',
-        'usage' : 'moa set [KEY] [KEY=VALUE]',
-        'call' : configSet,
-        'needsJob' : True,
-        'recursive' : 'global',
-        'log' : True,
-        }
-    
-    sysConf['commands']['unset'] = {
-        'desc' : 'Remove a variable',
-        'call' : configUnset,
-        'usage' : 'moa unset KEY',
-        'recursive' : 'global',
-        'needsJob' : True,
-        'log' : True,
-        }
+    Show all parameters know to this job.
 
-    sysConf['commands']['show'] = {
-        'desc' : 'Show configuration',
-        'call' : configShow,
-        'usage' : 'moa show',
-        'needsJob' : True,
-        'log' : False,
-        }
-
-
-def configShow(job):
+    Parameters in **bold** are specifically configured for this job
+    (as opposed to those parameters that are set to their default
+    value). Parameters in red are not configured, but need to be for
+    the template to operate. Parameters in blue are not configured
+    either, but are optional.
     """
-    Show all parameters know to this job. Parameters in **bold** are
-    specifically configured for this job (as opposed to those
-    parameters that are set to their default value). Parameters in red
-    are not configured, but need to be for the template to
-    operate. Parameters in blue are not configured either, but are
-    optional.
-    """
-    job = sysConf['job']
     moa.utils.moaDirOrExit(job)
 
     keys = job.conf.keys()
@@ -86,17 +55,17 @@ def configShow(job):
         isPrivate = False
         
         if p[:4] == 'moa_':
-            if not sysConf.options.showPrivate:
+            if not args.showPrivate:
                 continue
 
         #see if this private in the template defintion
         if job.conf.isPrivate(p):
-            if sysConf.options.showPrivate:
+            if args.showPrivate:
                 isPrivate = True
             else:
                 continue
 
-        if not sysConf.options.showAll: 
+        if not args.showAll: 
             if job.template.parameters[p].optional and \
                    (not job.conf.setInJobConf(p)):
                 #do not show undefined optional parameters unless -a
@@ -176,17 +145,21 @@ def _unsetCallback(wd, vars):
         except KeyError:
             pass        
     job.conf.save()
-    
-def configUnset(job):
+
+
+@moa.args.argument('parameter', nargs='+', help='parameter to unset')
+@moa.args.command
+def unset(job, args):
     """
+    Remove a parameter from the configuration
+    
     Remove a configured parameter from this job. In the parameter was
     defined by the job template, it reverts back to the default
     value. If it was an ad-hoc parameter, it is lost from the
     configuration.
     """
-    options = sysConf.options
-
-    for a in sysConf.newargs:
+    
+    for a in args.parameter:
         if '=' in a:
             moa.ui.exitError("Invalid argument to unset %s" % a)
         try:
@@ -196,27 +169,30 @@ def configUnset(job):
             pass
         
     job.conf.save()
+
+@moa.args.argument('parameter', nargs='+', help='arguments for this job, specify' +
+                   'as KEY=VALUE without spaces')
+@moa.args.forceable
+@moa.args.command
+def set(job, args):
+    """
+    Set one or more variables
     
-def configSet(job):
-    """
-    This command can be used in a number of ways::
+    This command can be used in two ways. In its first form both
+    parameter key and value are defined on the command line: `moa set
+    KEY=VALUE`. Note that the command line will be processed by bash,
+    which can either create complications or prove very useful. Take
+    care to escape variables that you do not want to be expandend and
+    use single quotes where necessary. For example, to include a space
+    in a variable: `moa set KEY='VALUE WITH SPACES'`.
 
-        moa set PARAMETER_NAME=PARAMETER_VALUE
-        moa set PARAMETER_NAME='PARAMETER VALUE WITH SPACES'
-        moa set PARAMETER_NAME
-
-    In the first two forms, moa sets the parameter `PARAMETER_NAME` to
-    the `PARAMETER_VALUE`. In the latter form, Moa will present the
-    user with a prompt to enter a value. Note that the first two forms
-    the full command lines will be processed by bash, which can either
-    create complications or prove very useful. Take care to escape
-    variables that you do not want to be expandend and use single quotes
-    where you can. 
+    Alternative use of the set command is by just specifying the key:
+    'moa set PARAMETER_NAME', in which case Moa will prompt the user
+    enter a value - circumventing problems with bash interpretation.
     """
-    args = sysConf['newargs']
 
     #see if we need to query the user for input somehwere
-    for a in args:
+    for a in args.parameter:
         if not '=' in a:
             old = job.conf[a]
             val = moa.ui.askUser("%s:\n> " % a, old)
