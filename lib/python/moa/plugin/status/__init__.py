@@ -29,33 +29,6 @@ from moa.sysConf import sysConf
 LLOG = False
 STATUS = 'unknown'
 
-def hook_defineCommands():
-    """
-    Set the moa commands for this plugin
-    """
-    return
-
-    sysConf['commands']['kill'] = {
-        'desc' : 'Kill a job',
-        'log' : True,
-        'needsJob' : True,
-        'call' : kill,
-        'unittest' : KILLTEST,
-        }
-    
-    sysConf['commands']['pause'] = {
-        'desc' : 'Pause a job',
-        'log' : True,
-        'needsJob' : True,
-        'call' : pause,
-        }
-    sysConf['commands']['resume'] = {
-        'desc' : 'Resume a job',
-        'log' : True,
-        'needsJob' : True,
-        'call' : resume,
-        }
-
 @moa.args.addFlag('-a', dest='showAll', help='show all parameters')
 @moa.args.addFlag('-p', dest='showPrivate', help='show private parameters')
 @moa.args.needsJob
