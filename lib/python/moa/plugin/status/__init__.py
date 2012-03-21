@@ -33,13 +33,7 @@ def hook_defineCommands():
     """
     Set the moa commands for this plugin
     """
-    sysConf['commands']['status'] = {
-        'desc' : 'Show the state of the current job',
-        'log' : False,
-        'needsJob' : True,
-        'call' : status,
-        'unittest' : STATUSTEST
-        }
+    return
 
     sysConf['commands']['kill'] = {
         'desc' : 'Kill a job',
@@ -61,14 +55,16 @@ def hook_defineCommands():
         'needsJob' : True,
         'call' : resume,
         }
-    
-def status(job):
+
+@moa.args.addFlag('-a', dest='showAll', help='show all parameters')
+@moa.args.addFlag('-p', dest='showPrivate', help='show private parameters')
+@moa.args.needsJob
+@moa.args.command
+def status(job, args):
     """
-    **moa status** - print out a status status message
+    Show job status
 
-    Usage::
-
-       moa status       
+    Print a short status of the job, including configuration
     """
     if job.template.name == 'nojob':
         moa.ui.fprint("not a Moa job")
@@ -91,8 +87,8 @@ def status(job):
 
     moa.ui.fprint("\n{{bold}}Configuration{{reset}}:", f='jinja')
     if 'show' in sysConf.commands:
-        sysConf.pluginHandler.execute('show')
-        
+        commandFunction = sysConf.commands['show']['call']
+        commandFunction(job, args)
         
 def _getStatus(job, silent=False):
     """
@@ -172,9 +168,14 @@ def _getPid(job):
     with open(pidFile) as F:
         return int(F.read())
 
-def kill(job):
+@moa.args.needsJob
+@moa.args.command
+def kill(job, args):
     """
-    See if a job is running, if so - kill it
+    Kill a running job.
+
+    This command checks if a job is running. If so - it tries to kill
+    it by sending SIGKILL (-9) to the job.
     """
     status = _getStatus(job)
     print status
@@ -218,11 +219,11 @@ def hook_postError():
         _setStatus(sysConf.job, 'error')
         _removePid(sysConf.job)
 
-
-
-def pause(job):
+@moa.args.needsJob
+@moa.args.command
+def pause(job, args):
     """
-    pause a running job
+    Pause a running job
     """
     status = _getStatus(job)
     if LLOG: print 'pausing job with status', status
@@ -235,9 +236,11 @@ def pause(job):
     os.kill(pid, 19)
     _setStatus(job, 'paused')
 
-def resume(job):
+@moa.args.needsJob
+@moa.args.command
+def resume(job, args):
     """
-    pause a running job
+    Resume a running job
     """
     status = _getStatus(job)
     if LLOG: print 'resuming job with status', status
