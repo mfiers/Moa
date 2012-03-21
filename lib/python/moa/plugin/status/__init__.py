@@ -24,6 +24,7 @@ import signal
 
 import moa.ui
 import moa.utils
+import moa.args
 from moa.sysConf import sysConf
 
 LLOG = False
