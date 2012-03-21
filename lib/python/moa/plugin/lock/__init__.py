@@ -19,20 +19,9 @@ import sys
 import moa.ui
 import moa.job
 import moa.logger as l
+import moa.args
 import moa.plugin
 from moa.sysConf import sysConf
-
-def hook_defineCommands():
-    sysConf['commands']['unlock'] = { 
-        'desc' : 'Unlock this job',
-        'call' : unlock,
-        'unittest' : UNLOCKTEST
-        }
-    sysConf['commands']['lock'] = { 
-        'desc' : 'Lock this job - prevent execution',
-        'call' : lock,
-        'unittest' : LOCKTEST
-        }
     
 def hook_check_run():
     command = sysConf.originalCommand
@@ -50,13 +39,23 @@ def hook_check_run():
     else:
         return True
 
-def unlock(job):
+@moa.args.needsJob
+@moa.args.command
+def unlock(job, args):
+    """
+    Unlock a job - allow execution
+    """
     lockfile = os.path.join(job.confDir, 'lock')
     if os.path.exists(lockfile):
         l.debug("unlocking job in %s" % job.wd)
         os.remove(lockfile)
 
-def lock(job):
+@moa.args.needsJob
+@moa.args.command
+def lock(job, args):
+    """
+    Lock a job - prevent execution
+    """
     lockfile = os.path.join(job.confDir, 'lock')
     if not os.path.exists(lockfile):
         l.debug("locking job in %s" % job.wd)
