@@ -148,6 +148,7 @@ def _unsetCallback(wd, vars):
 
 
 @moa.args.argument('parameter', nargs='+', help='parameter to unset')
+@moa.args.needsJob
 @moa.args.command
 def unset(job, args):
     """
@@ -173,6 +174,7 @@ def unset(job, args):
 @moa.args.argument('parameter', nargs='+', help='arguments for this job, specify' +
                    'as KEY=VALUE without spaces')
 @moa.args.forceable
+@moa.args.needsJob
 @moa.args.command
 def set(job, args):
     """
