@@ -17,50 +17,14 @@ import textwrap
 
 import moa.ui
 import moa.utils
+import moa.args
 import moa.template
 
 from moa.sysConf import sysConf
 
-def hook_defineCommands():
-    """
-    Set the moa commands for this plugin
-    """
-    sysConf['commands']['template_dump'] = {
-        'desc' : 'Display the raw template description',
-        'private': True,
-        'call' : dumpTemplate,
-        'unittest' : TEMPLATEDUMPTEST
-        }
-    
-    sysConf['commands']['template'] = {
-        'desc' : 'Display the template name',
-        'private' : True,
-        'call' : template,
-        'unittest' : TEMPLATETEST,
-        }
-    
-    sysConf['commands']['list'] = {
-        'desc' : 'Print a list of all known templates',
-        'call' : listTemplates,
-        'needsJob' : False,
-        'unittest' : LISTTEST,
-        }
-
-    sysConf['commands']['refresh'] = {
-        'desc' : 'Reload the template',
-        'call' : refresh,
-        'needsJob' : True,
-        'unittest' : REFRESHTEST
-        }
-
-    sysConf['commands']['template_set'] = {
-        'desc' : 'Set a template parameters',
-        'private': True,
-        'call' : templateSet,
-        }
-    
-
-def refresh(job):
+@moa.args.needsJob
+@moa.args.command
+def refresh(job, args):
     """
     Refresh the template - i.e. reload the template from the central
     repository.
@@ -90,42 +54,39 @@ def _getTemplateFromData(job):
 
     return template
 
-def templateSet(job):
+# def templateSet(job):
+#     """
+#     **moa template_set** - set a template parameter.
+
+#     This only works for top level template parameters
+#     """
+#     template = _getTemplateFromData(job)
+#     for i, a in enumerate(sysConf.args):
+#         print i,a
+#         if i == 0 and not '=' in a: continue
+#         elif not '=' in a:
+#             moa.ui.exitError("Do not know how to set '%s'" % a)
+#         k, v = a.split('=', 1)
+#         template[k] = v
+#         template.modification_data = time.asctime()
+#         template.save()
+
+
+@moa.args.addFlag('-d', dest='desc', help='Print a short template description')
+@moa.args.command
+def list(job, args):
     """
-    **moa template_set** - set a template parameter.
+    Lists all known templates
 
-    This only works for top level template parameters
-    """
-    template = _getTemplateFromData(job)
-    for i, a in enumerate(sysConf.args):
-        print i,a
-        if i == 0 and not '=' in a: continue
-        elif not '=' in a:
-            moa.ui.exitError("Do not know how to set '%s'" % a)
-        k, v = a.split('=', 1)
-        template[k] = v
-        template.modification_data = time.asctime()
-        template.save()
-    
-def listTemplates(job):
-    """
-    **moa list** - Print a list of all known templates
-
-    Usage::
-
-        moa list
-        moa list -l
-
-    Print a list of all templates known to this moa installation. If
-    the option '-l' is used, a short description for each tempalte is
-    printed as well.
+    Print a list of all templates known to this moa installation. This
+    includes locally installed templates as well.
     """
 
     for name in moa.template.templateList():
-        if sysConf.options.showAll:
+        if args.desc:
             ti = moa.template.getMoaFile(name)
             txt = moa.ui.fformat(
-                '{{bold}}%s{{reset}}:{{blue}} %s{{reset}}' % (name, ti.description),
+                '{{bold}}%s{{reset}}:{{cyan}} %s{{reset}}' % (name, ti.description),
                 f='jinja')
             for line in textwrap.wrap(txt, initial_indent=' - ', width=80,
                                       subsequent_indent = '   '):
@@ -133,7 +94,9 @@ def listTemplates(job):
         else:
             print name
 
-def template(job):
+@moa.args.private
+@moa.args.command
+def template(job, args):
     """
     **moa template** - Print the template name of the current job
 
@@ -145,8 +108,9 @@ def template(job):
     """
     moa.ui.fprint(job.template.name)
 
-
-def dumpTemplate(job):
+@moa.args.private
+@moa.args.command
+def dumpTemplate(job, args):
     """
     **moa template_dump** - Show raw template information
 
