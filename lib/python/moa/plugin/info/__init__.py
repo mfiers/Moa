@@ -26,55 +26,7 @@ import moa.args
 
 from moa.sysConf import sysConf
 
-def hook_defineCommands():
-    """
-    Set the moa commands for this plugin
-    """
-
-    sysConf['commands']['raw_commands'] = {
-        'private' : True,
-        'log' : False,
-        'needsJob' : True,
-        'call' : rawCommands,
-        'unittest' : TESTRAWCOMMANDS
-        }
-    
-    sysConf['commands']['raw_parameters'] = {
-        'private' : True,
-        'log' : False,
-        'needsJob' : True,
-        'call' : rawParameters,
-        }
-    sysConf['commands']['version'] = {
-        'desc' : 'Print the moa version',
-        'call' : version,
-        'log' : False,
-        'needsJob' : False,
-        'unittest' : TESTVERSION
-        }
-    sysConf['commands']['out'] = {
-        'desc' : 'Returns stdout of the last moa run',
-        'call' : getOut,
-        'needsJob' : True,
-        'log' : False,
-        'unittest' : TESTOUT
-        }
-    sysConf['commands']['err'] = {
-        'desc' : 'Returns stderr of the last moa run',
-        'call' : getErr,
-        'needsJob' : True,
-        'log' : False,
-        'unittest' : TESTERR
-        }
-    sysConf['commands']['tree'] = {
-        'desc' : 'display a directory tree',
-        'call' : tree,
-        'needsJob' : False,
-        'log' : False
-        }
-
-
-@moa.args.argument('filter', nargs='?', help='show only direcotires that match this filter')
+@moa.args.argument('filter', nargs='?', help='show only directories that match this filter')
 @moa.args.addFlag('-a', '--all')
 @moa.args.command
 def tree(job, args):
@@ -150,7 +102,8 @@ def tree(job, args):
         moa.ui.fprint("%s %s (%s)" % (s, p, t), f='jinja')
         #moa.ui.fprint(
         #    ("%%s %%-%ds | %%s"  % maxTemplateLen) % (s,t,p), f='jinja')
-        
+
+@moa.args.needsJob
 @moa.args.command
 def out(job, args):
     """
@@ -162,6 +115,7 @@ def out(job, args):
     else:
         print out
 
+@moa.args.needsJob
 @moa.args.command
 def err(job, args):
     """
@@ -180,17 +134,6 @@ def version(job, args):
     """
     print sysConf.getVersion()
 
-@moa.args.command
-def status(job, args):
-    """
-    print a short status message
-    """
-    if job.template.name == 'nojob':
-        moa.ui.fprint("%(bold)s%(red)sNot a Moa job%(reset)s")
-        return
-    moa.ui.fprint("%(bold)s%(green)sThis is a Moa job%(reset)s")
-    moa.ui.fprint("%%(blue)s%%(bold)sTemplate name: %%(reset)s%s" %
-                  job.template.name)
 
 @moa.args.private
 @moa.args.command
