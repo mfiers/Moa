@@ -13,17 +13,9 @@
 import os
 import sys
 
+import moa.args
 import moa.ui
 from moa.sysConf import sysConf
-
-def hook_defineCommands():
-    """
-    Define the parameters test commands
-    """
-    sysConf['commands']['test'] = {
-        'desc' : 'Test the currennt configuration',
-        'call' : test_ui
-        }
 
     
 def errorMessage(message, details):
@@ -54,7 +46,7 @@ def hook_promptSnippet():
     Function used by the prompt plugin to generate snippets for inlusion 
     in the prompt
     """  
-    m = test()
+    m = test(sysConf.job, {})
     if m: 
         return "{{red}}X{{reset}}"
     else:
@@ -64,19 +56,20 @@ def hook_promptSnippet():
 def test_ui():
     
     options = sysConf['options']
-    messages = test()
+    messages = test(sysConf.job,{})
     
     for message, detail in messages:
         errorMessage(message, detail)
     
     if messages and not options.force:
         moa.ui.exitError()
-    
-def test():
-    job = sysConf['job']
-    if not job.isMoa():
-        moa.utils.moaDirOrExit(job)
-        
+
+@moa.args.needsJob
+@moa.args.command
+def test(job, args):
+    """
+    Test the job parameters 
+    """
     messages = []
     rconf = job.conf.render()
     for p in rconf.keys():
