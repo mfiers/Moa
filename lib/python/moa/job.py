@@ -23,6 +23,7 @@ import shutil
 import moa.utils
 import moa.logger as l
 import moa.template
+import moa.args
 import moa.jobConf
 import moa.exceptions
 
@@ -139,9 +140,6 @@ class Job(object):
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
 
-        # register this job as the current job in sysConf
-        sysConf.job = self
-
     def getFiles(self):
         """
         Return all moa files - i.e. all files crucial to this job.
@@ -225,7 +223,7 @@ class Job(object):
             
         return self.backend.simpleExecute(commandList)
             
-    def execute(self, verbose=False, silent=False):
+    def execute(self, job, args, **kwargs):
         """
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
@@ -238,14 +236,16 @@ class Job(object):
         :type silent: Boolean        
 
         """
-        rc = 0
+
+        #want to be certain that we're not mixing things up - this is a
+        #called with ourselves as a
+        assert(job == self)
         
         if not self.backend:
             l.critical("No backend loaded - cannot execute %s" % command)
 
         #for backwards compatibility - these should eventually be deleted:
-        sysConf.command = 'run'
-        sysConf.executeCommand = ['run']
+        command = args.command
 
         ### Start job initialization
         sysConf.pluginHandler.run('prePrepare')
@@ -256,7 +256,8 @@ class Job(object):
 
         l.debug("Executing moa run")
         sysConf.pluginHandler.run("preRun")
-        sysConf.rc = self.backend.execute('run', verbose = verbose, silent=silent)
+        sysConf.rc = self.backend.execute(args.command, verbose = verbose,
+                                          silent=silent)
         
         if sysConf.rc != 0:
             #do not bother with the following steps - call post_error
@@ -339,9 +340,31 @@ class Job(object):
         sysConf.pluginHandler.run("finish", reverse=True)
                 
 
+    def defineCommands(self, commandparser):
+        """
+        Register template commands with the argparser
+        """
+        parser, cparser = moa.args.getParser()
+        
+        for c in self.template.commands:
+            cinf = self.template.commands[c]
+            hlp = cinf.get('help', '').strip()
+            if not hlp:
+                hlp = '(Execute template command "%s")' % c
+                
+            cparser.add_parser(
+                str(c), help=hlp)
+            sysConf.commands[c] = {
+                'desc' : hlp,
+                'long' : hlp,
+                'source' : 'template',
+                'recursive' : 'global',
+                'needsJob' : True,
+                'call' : self.execute }
+        
     def defineOptions(self, parser):
         """
-        Set command line options - deferred to the backends
+        Set command line options - deferred to the backend
         
         >>> job = newTestJob('unittest')
         >>> import optparse
