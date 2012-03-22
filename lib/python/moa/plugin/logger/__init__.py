@@ -18,16 +18,9 @@ from datetime import datetime
 import moa.job
 import moa.utils
 import moa.logger as l
+import moa.args
 import moa.plugin
 from moa.sysConf import sysConf
-
-def hook_defineCommands():
-    sysConf['commands']['log'] = { 
-        'desc' : 'Show the logs for this job',
-        'call' : showLog,
-        'log' : False,
-        'logLevel' : logging.DEBUG,
-        }
 
 def hook_prepareCommand():
     moa.ui.message('Start "%s"' % sysConf.originalCommand)
@@ -158,26 +151,19 @@ def hook_finish():
             moa.ui.message('{{bold}}Success{{reset}} executing "%s" (%s)' % (
                 sysConf.originalCommand,
                 niceRunTime(str(sysConf.logger.run_time))))
-                      
-def showLog(job):
+
+
+@moa.args.needsJob
+@moa.args.command
+def log(job, args):
     """
-    **moa lcog** - show a log of the most recent moa calls
-
-    Usage::
-
-        moa log [LINES]
+    Show activity log
 
     Shows a log of moa commands executed. Only commands with an impact
-    on the pipeline are logged, such as `moa run` & `moa set`. The
-    number of log entries to display can be controlled with the
-    optional LINES parameter.    
+    on the pipeline are logged, such as `moa run` & `moa set`. 
     """
-    args = sysConf.args
-    if len(args) > 1:
-        noLines = int(args[1])
-    else:
-        noLines = 5
-        
+    
+    noLines = 10
     logFile = os.path.join(job.confDir, 'log')
 
     moa.utils.moaDirOrExit(job)
