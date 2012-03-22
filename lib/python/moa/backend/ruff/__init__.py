@@ -61,12 +61,11 @@ class Ruff(moa.backend.BaseBackend):
         
     def hasCommand(self, command):
         return command in self.commands.keys()
-    
+
     def defineOptions(self, parser):
-        g = parser.add_option_group('Ruffus backend')
-        parser.set_defaults(threads=1)
-        g.add_option("-j", dest="threads", type='int',
-                     help="threads to use when running Ruffus")
+        parser.add_argument("-j", dest="threads", type=int,
+                        default=1,
+                        help="No threads to use when running Ruffus")
 
         #TODO:
         #g.add_option("-B", dest="remake", action='store_true',
