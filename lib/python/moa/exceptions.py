@@ -42,6 +42,11 @@ class MoaDirNotWritable(Exception):
     def __str__(self):
         return "Moa directory (.moa) is not writable"
 
+class MoaCommandDoesNotExist(Exception):
+    """Command does not exists?"""
+    def __str__(self):
+        return "Command does not exist"
+    
 class MoaPermissionDenied(Exception):
     """Permission denied - you do not have the rights to perform this opperation """
     def __str__(self):
