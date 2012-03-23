@@ -13,6 +13,7 @@ import ruffus
 import moa.utils
 import moa.template
 import moa.actor
+import moa.exceptions
 import moa.backend
 import moa.logger as l
 from moa.sysConf import sysConf
@@ -32,6 +33,7 @@ def load(job):
     Load the backend
     """    
     return Ruff(job)
+
 
 class Ruff(moa.backend.BaseBackend):
     """
@@ -72,42 +74,35 @@ class Ruff(moa.backend.BaseBackend):
         #             help="Reexecute all targets (corresponds to make -B) ")
 
 
-    def simpleExecute(self, commandList):
+    def execute(self, command):
         """
         Run a 'simple' template command
         """
-        for command in commandList:
-            if not self.commands.has_key(command):
-                return -1
-            l.debug('executing %s' % command)
-            j = RuffSimpleJob(command)
-            return j.go()
-
-    def execute(self, 
-                command,
-                verbose=False,
-                silent=False,
-                renderTemplate = True):
-        """
-        Execute the 'run' template command
-
-        :param renderTemplate: Jinja-render the template
-        """
-
-        if command != 'run':
-            moa.ui.exitError("Not 'run'ning???")
-
-        #should have 'run'...
+        if command == 'run':
+            return self.run()
+        
         if not self.commands.has_key(command):
+            raise moa.exceptions.MoaCommandDoesNotExist
+        
+        l.debug('executing %s' % command)
+        j = RuffSimpleJob(command)
+        return j.go()
+
+    def run(self, verbose=False, silent=False,
+            renderTemplate = True):
+        """
+        special case of execute for command == 'run'
+
+        """
+        if not self.commands.has_key('run'):
             return -1
 
-        if self.job.template.commands.has_key(command):
-            cmode = self.job.template.commands[command].mode
+        if self.job.template.commands.has_key('run'):
+            cmode = self.job.template.commands['run'].mode
         else:
             cmode = 'simple'
             
         rc = 0
-
                 
         if cmode == 'map':
             j = RuffMapJob('run')
@@ -116,7 +111,6 @@ class Ruff(moa.backend.BaseBackend):
         elif cmode == 'reduce':
             j = RuffReduceJob('run')
             rc = j.go()
-
  
         elif cmode == 'simple':
             j = RuffSimpleJob('run')
