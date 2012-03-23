@@ -71,10 +71,6 @@ class PluginHandler():
                 continue
             
             m = self.plugins[p].module
-            if hasattr(m, command):
-                l.warning("plugin %s has what looks like an invalid hook "
-                          "(%s) definition" % (
-                    p, command))
             if not m.__dict__.has_key('hook_' + command):
                 continue
 
