@@ -19,20 +19,6 @@ import jinja2
 
 from moa.sysConf import sysConf
 
-def hook_defineCommands():
-    sysConf['commands']['postcommand'] = { 
-        'desc' : 'Run the postcommand',
-        'call' : runPostCommand,
-        'needsJob' : True,
-        'usage' : 'moa postcommand'
-        }
-    sysConf['commands']['precommand'] = { 
-        'desc' : 'Run the precommand',
-        'call' : runPreCommand,
-        'needsJob' : True,
-        'usage' : 'moa pprecommand'
-        }
-
 def hook_prepare_3():
     job = sysConf['job']
 
@@ -54,11 +40,12 @@ def hook_prepare_3():
         'type' : 'string'
         }
 
-def runPostCommand(d):
+@moa.args.needsJob
+@moa.args.command
+def postcommand(job, args):
     """
-    Execute the `postcommand`
+    Execute 'postcommand'
     """
-    job = sysConf.job
     renderedConf = job.conf.render()
 
     postcommand = renderedConf.get('postcommand', '')
@@ -67,9 +54,11 @@ def runPostCommand(d):
         moa.ui.message("%s" % postcommand)
         executeExtraCommand(postcommand, job)
 
-def runPreCommand(d):
+@moa.args.needsJob
+@moa.args.command
+def precommand(job, args):
     """
-    Execute the `precommand`
+    Execute 'precommand'
     """
     job = sysConf.job
     renderedConf = job.conf.render() 
@@ -78,7 +67,6 @@ def runPreCommand(d):
         moa.ui.message("Executing precommand")
         moa.ui.message("%s" % precommand)
         executeExtraCommand(precommand, job)
-
 
 def executeExtraCommand(command, job):
     jobData = job.conf
@@ -93,7 +81,7 @@ def executeExtraCommand(command, job):
     template = jinja2.Template(command)
     os.system(template.render(jobData))
 
-def hook_prePrepare():
+def hook_preRun():
     """
     If defined, execute the precommand
     """
@@ -103,7 +91,7 @@ def hook_prePrepare():
         l.debug("Executing precommand %s" % precommand)
         executeExtraCommand(precommand, job)
 
-def hook_postFinish():
+def hook_postRun():
     """
     If defined, execute the postCommand
     """
