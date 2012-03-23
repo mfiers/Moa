@@ -23,47 +23,6 @@ from moa.sysConf import sysConf
 
 l = moa.logger.getLogger(__name__)
 
-
-def hook_defineCommands():
-    sysConf['commands']['map'] = { 
-        'desc' : 'Create a "map" adhoc analysis',
-        'call' : createMap,
-        'needsJob' : False,
-        'usage' : 'moa map -t "title" -- echo "do something"',
-        }
-    sysConf['commands']['reduce'] = { 
-        'desc' : 'Create a "reduce" adhoc analysis',
-        'call' : createReduce,
-        'needsJob' : False,
-        'usage' : 'moa reduce -t "title" -- echo "do something"',
-        }
-    sysConf['commands']['!'] = { 
-        'desc' : 'Assign the last issued command to "process" parameter',
-        'call' : exclamate,
-        'needsJob' : False,        
-        'usage' : 'moa !',
-        }
-
-def hook_defineOptions():
-    
-    parserG = sysConf.parser.get_option_group('-t')
-    if parserG == None:
-        parserG = optparse.OptionGroup(sysConf.parser, 'moa new')
-        sysConf.parser.add_option_group(parserG)    
-
-    try:
-        parserG.add_option("-t", dest="title", help='define job title ' +
-        '(when creating a job)')
-    except  optparse.OptionConflictError:
-        pass
-
-    try:
-        parserG.add_option("--np", dest="noprompt", action='store_true',
-                           help="Do not prompt for process, input or output")        
-    except optparse.OptionConflictError:
-        pass # this options are probably already defined in the newjob plugin
-
-
 @moa.args.argument('-t', '--title', help='A title for this job')
 @moa.args.forceable
 @moa.args.command
