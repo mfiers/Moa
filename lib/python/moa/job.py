@@ -21,12 +21,13 @@ import Yaco
 import shutil
 
 import moa.utils
-import moa.logger as l
+import moa.logger
 import moa.template
 import moa.args
 import moa.jobConf
 import moa.exceptions
 
+l = moa.logger.getLogger(__name__)
 from moa.sysConf import sysConf
 
 
@@ -212,16 +213,11 @@ class Job(object):
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
 
-    def simpleExecute(self, commandList):
+    def simpleExecute(self, command):
         """
         Just 'execute' a template call 
         """
-        sysConf.pluginHandler.run('pre_command')
 
-        if isinstance(commandList, str):
-            commandList = [commandList]
-            
-        return self.backend.simpleExecute(commandList)
             
     def execute(self, job, args, **kwargs):
         """
@@ -247,37 +243,51 @@ class Job(object):
         #for backwards compatibility - these should eventually be deleted:
         command = args.command
 
-        ### Start job initialization
-        sysConf.pluginHandler.run('prePrepare')
-        self.prepare()
-
-        ### Run plugin initialization step 3 - just before execution
-        sysConf.pluginHandler.run("pre_command") #move these to 'preRun'
-
-        l.debug("Executing moa run")
-        sysConf.pluginHandler.run("preRun")
-        sysConf.rc = self.backend.execute(args.command, verbose = verbose,
-                                          silent=silent)
+        self.prepareExecute()
         
-        if sysConf.rc != 0:
-            #do not bother with the following steps - call post_error
-            sysConf.pluginHandler.run("post_error")
+        #unless command == 'run' - just execute it and return the RC
+        if command != 'run':
+            sysConf.rc =  self.backend.execute(command)
+            self.finishExecute()
             return sysConf.rc
-
-        sysConf.pluginHandler.run("postRun", reverse=True)
-        sysConf.pluginHandler.run("post_command", reverse=True) #make these postRun 
-        self.finish()
-        sysConf.pluginHandler.run("postFinish", reverse=True)
         
+        # command == 'run' is a special case - this will trigger a series of
+        # runs.
+        
+        try:
+            rc = self.backend.execute('prepare')
+            l.debug("job prepare finished with an rc of %s" % rc)
+            if rc != 0:
+                sysConf.pluginHandler.run("post_error")
+                return rc
+        except moa.exceptions.MoaCommandDoesNotExist:
+            l.debug("prepare step is not present")
+            
+        try:
+            rc = self.backend.execute('run')
+            l.debug("job run finished with an rc of %s" % rc)
+            if rc != 0:
+                sysConf.pluginHandler.run("post_error")
+                return rc
+        except moa.exceptions.MoaCommandDoesNotExist:
+            l.debug("run step is not present????")
+
+        try:
+            rc = self.backend.execute('finish')
+            l.debug("job 'finish' finished with an rc of %s" % rc)
+            if rc != 0:
+                sysConf.pluginHandler.run("post_error")
+                return rc
+        except moa.exceptions.MoaCommandDoesNotExist:
+            l.debug("finis step is not present")
+        
+        self.finishExecute()
+
         return sysConf.rc
 
-    def prepare(self):
+    def prepareExecute(self):
         """
-        Give this job a chance to prepare for execution - deferred to
-        the backend.
-
-        >>> job = newTestJob('unittest')
-        >>> job.prepare()
+        Give this job a chance to prepare for execution.
         
         """
 
@@ -326,18 +336,14 @@ class Job(object):
         #see if the backend wants to do something
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
-        #run prepare
-        self.simpleExecute('prepare')
-        sysConf.pluginHandler.run("prepare")
 
-    def finish(self):
+        
+    def finishExecute(self):
         """
         Finish the run!
         """
         if self.backend and getattr(self.backend, 'finish', None):
             self.backend.finish()            
-        self.simpleExecute('finish')
-        sysConf.pluginHandler.run("finish", reverse=True)
                 
 
     def defineCommands(self, commandparser):
