@@ -235,8 +235,8 @@ def mv(job, args):
     #remember the files moved
     sysConf.moautil.filesMoved = []
 
-    fr = args.fromdir
-    
+    fr = args.fromdir[0]
+    #l.info("copying from" + fr)
     if fr[-1] == '/':
         fr = fr[:-1]
         
