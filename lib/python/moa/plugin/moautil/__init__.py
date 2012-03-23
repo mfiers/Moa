@@ -20,55 +20,13 @@ import optparse
 
 import moa.logger as l
 import moa.ui
+import moa.args
 from moa.sysConf import sysConf
 
-def hook_defineCommands():
-    sysConf['commands']['cp'] = {
-        'desc' : 'Copy a moa job',
-        'call' : moacp,
-        'needsJob' : False,
-        'recursive' : 'local',
-        'unittest' : COPYTEST}
-
-    sysConf['commands']['mv'] = {
-        'desc' : 'Rename/renumber/move a job',
-        'call' : moamv,
-        'needsJob' : False,
-        'recursive' : 'none',
-        'unittest' : RENTEST}
-
-    sysConf['commands']['archive'] = {
-        'desc' : 'Archive a job, ',
-        'needsJob' : True,
-        'recursive' : 'local',
-        'call' : archive }
-
-    sysConf['commands']['archive_exclude'] = {
-        'desc' : 'marks a directory to not be archived',
-        'needsJob' : False,
-        'call' : archive_exclude }
-    
-    sysConf['commands']['archive_include'] = {
-        'desc' : 'marks a directory to be archived',
-        'needsJob' : False,
-        'call' : archive_include }
-
-
-
-def hook_defineOptions():
-    parserG = optparse.OptionGroup(sysConf.parser, 'moa archive')
-    parserG.add_option("--template", dest="archive_template",
-                              action='store_true', default=False,
-                              help='store this archive as a template')
-    parserG.add_option("--altsync", dest="altsync",
-                              action='store_true', default=False,
-                              help='Alternative approach for sync jobs - include only _ref folders')
-    sysConf.parser.add_option_group(parserG)
-
-def archive_include(job):
+@moa.args.command
+def archive_incl(job, args):
     """
     Toggle a directory to be included in an moa archive.
-    
     """
     moa.ui.message("%s {{green}}will{{reset}} be included in an archive" % job.wd)
 
@@ -80,10 +38,10 @@ def archive_include(job):
     if os.path.exists(moaNoArchiveFile):
         os.unlink(moaNoArchiveFile)
 
-def archive_exclude(job):
+@moa.args.command
+def archive_excl(job, args):
     """
     Toggle a directory to be included in an moa archive.
-    
     """
     moa.ui.message("%s will {{bold}}NOT{{reset}} be included in an archive" % job.wd)
     moaConfDir = os.path.join(job.wd, '.moa')
@@ -95,45 +53,37 @@ def archive_exclude(job):
             F.write("")
 
 
-
-def archive(job):
+@moa.args.argument('name', nargs='?', help='archive name')
+@moa.args.addFlag('-t', '--template', help='Store this archive as a template')
+@moa.args.addFlag('-s', '--sync', help='Alternative approach to deal with sync type jobs - only include _ref directories')
+@moa.args.forceable
+@moa.args.localRecursive
+@moa.args.command
+def archive(job, args):
     """
-    Archive a job, or tree with jobs for later execution.
+    Archive a job, or tree with jobs for later reuse.
     
     This command stores only those files that are necessary for
     execution of this job, that is: templates & configuration. In &
     output files, and any other file are ignored. An exception to this
-    are all files that start with 'moa.'
-
-    Usage::
-
-        moa archive
-
-    or::
-
-        moa archive [NAME]
-
-    an archive name can be omitted when the command is issued in a
-    directory with a moa job, in which case the name is derived from
-    the `jobid` parameter
+    are all files that start with 'moa. If the `name` is omitted, it
+    is derived from the `jobid` parameter.
 
     It is possible to run this command recursively with the `-r`
     parameter - in which case all (moa job containing) subdirectories
     are included in the archive.
-
-    As an alternative application you can specify the
-    `--template`. 
-    
     """
+    
 
-    if len(sysConf.newargs) > 0:
-        archiveName = sysConf.newargs[0]
+    if args.name:
+        archiveName = args.name
     else:
         archiveName = job.conf.get('jobid', None)
         if archiveName == None:
-            moa.ui.exitError('When not in a moa job, you must define an archive name')
+            moa.ui.exitError('When not in a moa job, you must define an ' +
+                             'archive name')
 
-    if sysConf.options.archive_template:    
+    if args.template:
         if ('/' in archiveName):
             moa.ui.exitError("You can not specify a path when using --template")
             
@@ -154,11 +104,11 @@ def archive(job):
     archiveFile = os.path.join(archivePath, archiveName)
 
     if os.path.exists(archiveFile):
-        if not sysConf.options.force:
+        if not args.force:
             moa.ui.exitError("%s exists - use -f to overwrite" %
                              archiveFile)
 
-    if not sysConf.options.recursive and not sysConf.job.isMoa():
+    if not args.recursive and not sysConf.job.isMoa():
         moa.ui.exitError('Nothing to archive')
         
     l.info("archiving %s" % archiveFile)
@@ -174,13 +124,13 @@ def archive(job):
                 if fl[-1] == '~': continue
                 tf.add(fl)
                 
-    if sysConf.options.recursive:
+    if args.recursive:
         for path, dirs, files in os.walk('.'):
             if os.path.exists(os.path.join(path, '.moa', 'noarchive')):
                 continue
             sjob = moa.job.Job(path)
             _addFiles(TF, path, sjob)
-            if sysConf.options.altsync and '_ref' in dirs:
+            if args.sync and '_ref' in dirs:
                 toRemove = [x for x in dirs if x != '_ref']
             else:
                 toRemove = [x for x in dirs if x[0] == '.']
@@ -188,51 +138,31 @@ def archive(job):
     else:
         _addFiles(TF, '.', job)
 
-def moacp(job):
+@moa.args.argument('todir', metavar='to', nargs='?', help='copy to this path')
+@moa.args.argument('fromdir', metavar='from', nargs=1, help='copy from this path')
+@moa.args.localRecursive
+@moa.args.command
+def cp(job, args):
     """
-    Copy a moa job, or a tree with jobs.
+    Copy a moa job, or a tree with jobs (with -r).
 
     moa cp copies only those files defining a job: the template files
     and the job configuration. Additionaly, all files in the moa
     directory that start with `moa.` (for example `moa.description`
-    are copied as well. Data and log files are not copied!
-
-    The command has two modes of operation. The first is::
-
-        moa cp 10.from 20.to
-
-    copies the moa job in 10.from to a newly created 20.to
-    directory. If the `20.to` directory already exists, a new
-    directory is created in `20.to/10.from`. As an shortcut one can
-    use::
-
-        moa cp 10.from 20
-
-    in which case the job will be copied to the `20.from` directory.
-
-    If the source (`10.from`) directory is not a Moa job, the command
-    exits with an error.
-
-    The second mode of operation is recursive copying::
-
-       moa cp -r 10.from 20.to
-
-    in which case all subdirectories under 10.from are traversed and
-    copied - if a directory contains a Moa job. 
-
-    ::TODO..  Warn for changing file & dir links
+    are copied as well. Data and log files are not copied!. If used in
+    conjunction with the -r (recursive) flag the complete tree is
+    copied.
     """
     
-    options = sysConf.options
-    args = sysConf.newargs
-
     #remember the files copied
     sysConf.moautil.filesCopied = []
-    
-    if len(args) > 1: dirTo = args[1]
+
+    if args.todir:
+        dirTo = args.todir
     else: dirTo = '.'
 
-    dirFrom = args[0]
+    dirFrom = args.fromdir[0]
+        
     if dirFrom[-1] == '/': dirFrom = dirFrom[:-1]
     fromBase = os.path.basename(dirFrom)
 
@@ -253,7 +183,7 @@ def moacp(job):
     
     l.info("Copying from %s to %s" % (dirFrom, dirTo))
 
-    if  not options.recursive:
+    if  not args.recursive:
         if not os.path.isdir(dirFrom):
             moa.ui.exitError(
                 "Need %s to be a directory" % dirFrom)
@@ -292,23 +222,28 @@ def hook_git_finish_cp():
     repo = sysConf.git.getRepo(sysConf.job)
     repo.index.add(map(os.path.abspath, files))
     repo.index.commit("moa cp %s" % " ".join(sysConf.newargs))
-    
-def moamv(job):
+
+@moa.args.argument('todir', metavar='to', nargs='?', help='copy to this path')
+@moa.args.argument('fromdir', metavar='from', nargs=1, help='copy from this path')
+@moa.args.localRecursive
+@moa.args.command
+def mv(job, args):
     """
-    Renumber or rename a moa job..
+    Move, rename or renumber a moa job.
     """
 
     #remember the files moved
     sysConf.moautil.filesMoved = []
 
-    args = sysConf.newargs
-
-    fr = args[0]
+    fr = args.fromdir
+    
     if fr[-1] == '/':
         fr = fr[:-1]
         
-    if len(args) > 1: to = args[1]
-    else: to = '.'
+    if args.todir:
+        to = args.todir
+    else:
+        to = '.'
 
     #see if fr is a number
     if re.match('\d+', fr):
