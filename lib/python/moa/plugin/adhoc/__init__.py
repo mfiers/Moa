@@ -16,18 +16,15 @@ import sys
 import optparse
 
 import moa.job
-import moa.logger as l
+import moa.logger
 import moa.plugin
-
+import moa.args
 from moa.sysConf import sysConf
 
+l = moa.logger.getLogger(__name__)
+
+
 def hook_defineCommands():
-    sysConf['commands']['simple'] = { 
-        'desc' : 'Create a "simple" adhoc analysis',
-        'call' : createSimple,
-        'needsJob' : False,
-        'usage' : 'moa simple -t "title" -- echo "do something"',
-        }
     sysConf['commands']['map'] = { 
         'desc' : 'Create a "map" adhoc analysis',
         'call' : createMap,
@@ -67,38 +64,24 @@ def hook_defineOptions():
         pass # this options are probably already defined in the newjob plugin
 
 
-
-def createSimple(job):
+@moa.args.argument('-t', '--title', help='A title for this job')
+@moa.args.forceable
+@moa.args.command
+def simple(job, args):
     """
     Create a 'simple' adhoc job. Simple meaning that no in or output
-    files are tracked.
-
-    There are a number of ways this command can be used::
-
-        moa simple -t 'a title' -- echo 'define a command'
-        
-    Anything after `--` will be the executable command. Note that bash
-    will attempt to process the command line. A safer method is::
-
-        moa simple -t 'a title'
-
-    Moa will query you for a command to execute (the parameter
-    `process`).
+    files are tracked. Moa will query you for a command to execute
+    (the `process` parameter).
     """
 
     wd = job.wd
-    options = sysConf.options
-    args = sysConf.args
     
-    if not options.force and \
+    if not args.force and \
            os.path.exists(os.path.join(wd, '.moa', 'template')):
         moa.ui.exitError("Job already exists, use -f to override")
 
-    command = " ".join(args[1:]
-                       ).strip()
-    if not command and not options.noprompt:
-        command=moa.ui.askUser('process:\n> ', '')
-        
+    command=moa.ui.askUser('process:\n> ', '')
+    
     params = [('process', command)]
 
     #make sure the correct hooks are called
@@ -106,64 +89,43 @@ def createSimple(job):
 
     moa.job.newJob(
         wd, template='simple',
-        title = options.title,
+        title = args.title,
         parameters=params)
 
     #make sure the correct hooks are called
     sysConf.pluginHandler.run("postNew")
 
-
-
-def exclamateNoJob(job):
+def exclamateNoJob(job, args, command):
     """
     Create a "simple" job & set the last command
     to the 'process' parameter 
     """
-    options = sysConf['options']
-
-    title = options.title
+    title = args.title
     if not options.title: 
         moa.ui.warn("Do not forget to set a title")
-    histFile = os.path.join(os.path.expanduser('~'), '.moa.last.command')
-    if not os.path.exists(histFile):
-        moa.ui.exitError(
-            ("This needs to be used in conjunction with the " +
-             "moa_prompt code. Please read the manual") )
 
-    with open(histFile) as F:
-        last = F.read().strip()
-        
-    
     job = moa.job.newJob(
         wd = job.wd, template='simple', 
         title = title,
-        parameters = [('process', last)])
+        parameters = [('process', command)])
 
-def exclamateInJob(job):
+def exclamateInJob(job, args, command):
     """
     Reuse the last issued command: set it as the 'process' parameters
     in the current job    
-    """
-    pc = os.environ.get('PROMPT_COMMAND', '')
-    if not '_moa_prompt' in pc:
-        moa.ui.exitError("_moa_propt is not properly set up")
-
-    histFile = os.path.join(job.confDir, 'local_bash_history')
-    if not os.path.exists(histFile):
-        moa.ui.exitError(
-            ("This needs to be used in conjunction with the " +
-             "moa_prompt code. Make sure you've source `moainit`") )
-
-    with open(histFile) as F:
-        last = F.readlines()[-1].strip()
-        
+    """        
     moa.ui.fprint("{{bold}}Using command:{{reset}}", f='jinja')
-    moa.ui.fprint(last)
-    job.conf.process=last
+    moa.ui.fprint(command)
+    job.conf.process=command
     job.conf.save()
-                
-def exclamate(job):
+
+@moa.args.argument('-t', '--title', help='A title for this job')
+@moa.args.forceable
+@moa.args.commandName('!')
+def exclamate(job, args):
     """
+    Create a 'simple' job from the last command issued.
+    
     Set the `process` parameter to the last issued command. If a moa
     job exists in the current directory, then the `process` parameter
     is set without questions. (even if the Moa job in question does
@@ -179,11 +141,19 @@ def exclamate(job):
     function stores all commands issued in a Moa directory in
     `.moa/local_bash_history`.
     """
-    
+
+    pc = os.environ.get('PROMPT_COMMAND', '')
+    if not '_moa_prompt' in pc:
+        moa.ui.exitError("moa is not set up to capture the last command issued")
+
+    histFile = os.path.join(os.path.expanduser('~'), '.moa.last.command')
+    with open(histFile) as F:
+        last = F.readlines()[-1].strip()
+
     if job.isMoa():
-        exclamateInJob(job)
+        exclamateInJob(job, args, last)
     else: 
-        exclamateNoJob(job)
+        exclamateNoJob(job, args, last)
     
 def createMap(job):
     """
