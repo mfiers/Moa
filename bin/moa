@@ -25,8 +25,6 @@ This script is a command dispatcher for all Moa functionality.
 Run order
 
  * define & load plugins
- * plugin run 'defineCommands'
- * plugin run 'defineOptions'
  * __main__
  
     * plugin run 'prepare_1'
@@ -44,7 +42,8 @@ Run order
 
 import os
 import sys
-import optparse
+import moa.args
+#import optparse
 import textwrap
 
 # check we have the proper version of python
@@ -64,90 +63,37 @@ import moa.utils
 import moa.actor
 import moa.version
 import moa.plugin
-import moa.commands
 import moa.exceptions
 
 ## Initialize the logger
-import moa.logger as l
+import moa.logger
+l = moa.logger.getLogger('test')
 
 ## A hack to set verbosity before reading command line arguments
-if '-v' in sys.argv: moa.logger.setVerbose()
+if ('-v' in sys.argv) or ('-vv' in sys.argv):
+    moa.logger.setVerbose()
 
 sysConf.rc = 0
 
-## Command definitions
-sysConf.commands = moa.commands.Commands()
-sysConf.pluginHandler.run('defineCommands')
-
-## defining a usage message
-USAGE = "Usage: {{bold}}{{green}}%prog {{blue}}[options] COMMAND ARGUMENTS{{reset}}\n\n"
-moaCommandNames = sysConf.commands.keys()
-moaCommandNames.sort()
-
-commandsG = []
-commandsJ = []
-
-for _c in moaCommandNames:
-    if sysConf.commands[_c].get('private', False):
-        continue
-    if sysConf.commands[_c].get('needsJob',  True):
-        commandsJ.append([_c, sysConf.commands[_c]['desc']])
-    else:
-        commandsG.append([_c, sysConf.commands[_c]['desc']])
-
-commandsG.sort()
-commandsJ.sort()
-USAGE += "Universal Moa commands:\n"
-for c, d in commandsG:
-    USAGE += "\n".join(
-        textwrap.wrap(
-            '{{bold}}%15s{{reset}} : %s' % (c, d),
-            initial_indent=' ',
-            subsequent_indent = ' ' * 19)) + "\n"
-
-USAGE += "\nJob specific Moa commands:\n"
-for c,d  in commandsJ:
-    USAGE += "\n".join(
-        textwrap.wrap(
-            '{{bold}}%15s{{reset}} : %s' % (c, d),
-            initial_indent=' ',
-            subsequent_indent = ' ' * 19)) + "\n"
-
-
 ## define & parse command line options  
-parser = optparse.OptionParser(usage=moa.ui.fformat(USAGE, f='jinja'))
+parser, commandparser = moa.args.getParser()
 
-parser.add_option(
-    '-f', '--force', dest='force', action='store_true',
-    help='Force an action, if applicable.')
+parser.add_argument(
+     "-v", "--verbose", dest="verbose", action="store_true",
+     help="Show debugging output")
 
-parser.add_option(
-    "-v", "--verbose", dest="verbose", action="store_true",
-    help="Show debugging output")
+parser.add_argument(
+     "--bg", dest="background", action="store_true",
+     help="Run moa in the background (implies -s)")
 
-parser.add_option(
-    '-a', '--all', action='store_true', dest='showAll', 
-    help = 'Show more - depends on context')
+parser.add_argument(
+     "--profile", dest="profile", action="store_true",
+     help="Run the profiler")
 
-parser.add_option(
-    "-s", "--silent", dest="silent", action="store_true",
-    help="Be very silent")
+#del(parser._option_string_actions['--profile'])
+#pprint(parser._current_section.items)
 
-parser.add_option(
-    "--bg", dest="background", action="store_true",
-    help="Run moa in the background (implies -s)")
 
-parser.add_option(
-    "--profile", dest="profile", action="store_true",
-    help="Run the profiler")
-
-parser.add_option("-r", "--recursive", dest="recursive",
-                  help="Perfom action recursively", action='store_true')
-
-## See if the pluginHandler have anything to add to the optparse instance:
-sysConf.parser = parser
-sysConf.pluginHandler.run('defineOptions')
-    
 def run_3(wd, exitOnError=True):
     """
     instantiate the job, prepare and run.
@@ -164,82 +110,94 @@ def run_3(wd, exitOnError=True):
 
     """
 
-    #finally we have a directory to run in - see if this job want to
-    #be executed..
+    # finally we have a directory to run in - see if this job want to
+    # be executed..
 
-    #make sure we're in the correct wd for the rest of the invocation
+    # make sure we're in the correct wd for the rest of the
+    # invocation
     os.chdir(wd)
 
-    #see if we can update the job
-    moa.version.fixOld(wd)
-
-    #create the job
+    # create the job
     job = moa.job.Job(wd)
-
-   
-    ## Aks the job & backend if they want to add to the options
-    try:
-        job.defineOptions(parser)
-    except optparse.OptionConflictError:
-        pass
     
-    ## Only now the full set of options is parsed 
-    sysConf.options, sysConf.args = parser.parse_args()
-
+    # We should NOT depend on the following (if at all possible)
+    sysConf.job = job
+    job.defineOptions(parser)
+    job.defineCommands(commandparser)
+    
+    # Only now the full set of options is parsed
+    # first check if there is a command (i.e. any item on sys.argv
+    # not starting with a -. If not add the default command
+    if  [x for x in sys.argv[1:] if x[0] != '-']:
+        args = parser.parse_args()
+    else:
+        l.debug("Reverting to default command: %s" %
+                sysConf.default_command)
+        args = parser.parse_args(sys.argv[1:] + \
+                                 [sysConf.default_command])
+        
+    sysConf.args = args
     sysConf.pluginHandler.run('prepare_3')
+    l.debug("Command is %s" % sysConf.args.command)
+    
+    command = sysConf.args.command
+    sysConf.originalCommand = command
+    sysConf.command = command        
 
-    ## Proper setting of verbosity - after parsing of the command line
+    ## Proper setting of verbosity - after parsing of the
+    ## command line    
     if sysConf.options.verbose:
         moa.logger.setVerbose()
-    
-    ## Determine command to run:
-    if len(sysConf.args) > 0:
-        command = sysConf.args[0]
-        newargs = sysConf.args[1:]
-    else:
-        #default command
-        command = sysConf.default_command
-        newargs = []
-
-    sysConf.newargs = newargs
-    sysConf.originalCommand = command        
 
     #check if we should run this job..
     doRun = sysConf.pluginHandler.run('check_run')
-    if (not sysConf.options.force) and  False in doRun.values():        
+    if (not sysConf.options.force) and  False in doRun.values():
         l.warning("Not running job in %s" % wd)
         return
 
-
-    #see if this is all callback
-    if command in sysConf.commands:
-
-        l.debug("running plugin callback for %s" % command)
-        sysConf.pluginHandler.execute(command)
-
-    else:
-        if not job.isMoa():
-            if exitOnError:
-                moa.ui.exitError("Must run 'moa %s' in a Moa dir" % command)
-            else:
-                return False
+    #see if this is all plugin command callback
+    if command in sysConf.commands.keys():
+        comInf = sysConf.commands[command]
+        if comInf.get('needsJob', False) and not job.isMoa():
+            moa.ui.exitError("Must execute 'moa %s' in a directory "+
+                             "containing a Moa job (try moa -h)" % command)
             
-        if command == 'run':
-            job.execute(
-                verbose = sysConf.options.verbose,
-                silent = sysConf.options.silent)
-        elif command == 'prepare':
-            job.prepare()
-        elif command == 'finish':
-            job.finish()
-        elif job.hasCommand(command):
-            job.simpleExecute(command)
-        else:            
-            if exitOnError:
-                moa.ui.exitError("Unknown command '%s'" % command)
-            else:
-                moa.ui.warn("Unknown command '%s'" % command)
-                return False
+        sysConf.pluginHandler.run('prepare')
+        sysConf.pluginHandler.run('pre%s' % command.capitalize())
+        
+        #run the command function
+        l.debug("running plugin callback for %s" % command)
+        commandFunction = sysConf.commands[command]['call']
+        commandFunction(job, args)
+
+        #run finish & post plugin hooks
+        sysConf.pluginHandler.run("post%s" % command.capitalize(),
+                                  reverse=True)
+        sysConf.pluginHandler.run('finish', reverse=True)
+        
+    # else:
+    #     if not job.isMoa():
+    #         if exitOnError:
+    #             moa.ui.exitError("Must run 'moa %s' in a Moa dir" % command)
+    #         else:
+    #             return False
+            
+    #     if command == 'run':
+    #         job.execute(
+    #             verbose = sysConf.options.verbose,
+    #             silent = sysConf.options.silent)
+    #     elif command == 'prepare':
+    #         job.prepare()
+    #     elif command == 'finish':
+    #         job.finish()
+    #     elif job.hasCommand(command):
+    #         job.simpleExecute(command)
+    #     else:            
+    #         if exitOnError:
+    #             moa.ui.exitError("Unknown command '%s'" % command)
+    #         else:
+    #             moa.ui.warn("Unknown command '%s'" % command)
+    #             return False
 
 
 def run_recursive(wd):
@@ -355,7 +313,7 @@ def _handle_error( message):
 ## Main dispatcher
 if __name__ == "__main__":
     """
-    Main run routing - not much has been prepared yet
+    Main run - not much has been prepared yet
     """
     try:
         if '--profile' in sys.argv:
@@ -372,8 +330,8 @@ if __name__ == "__main__":
                 p.sort_stats('cumulative').print_stats(20)
                 
             except ImportError:
-                moa.ui.exitError("Cannot run the profiler - make sure it is properly installed")
-            
+                moa.ui.exitError("Cannot run the profiler - "+
+                                 "make sure it is properly installed")
         else:
             run_1()
     except KeyboardInterrupt:
@@ -392,5 +350,6 @@ if __name__ == "__main__":
     except Exception:
         _handle_error("Unexpected error") 
         moa.ui.warn("Encountered a run error?")
+        
         raise 
 
