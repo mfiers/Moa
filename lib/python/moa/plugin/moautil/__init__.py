@@ -140,6 +140,8 @@ def archive(job, args):
 
 @moa.args.argument('todir', metavar='to', nargs='?', help='copy to this path')
 @moa.args.argument('fromdir', metavar='from', nargs=1, help='copy from this path')
+@moa.args.addFlag('-o', '--overwrite', help='if the target dir exists - overwrite (instead' +
+               'of copying into that dir')
 @moa.args.localRecursive
 @moa.args.command
 def cp(job, args):
@@ -177,7 +179,7 @@ def cp(job, args):
         toBase = re.sub("^[0-9]*\.", toBase + '.', fromBase)
         dirTo = os.path.join(os.path.dirname(dirTo), toBase)
         
-    elif os.path.exists(dirTo):
+    elif args.overwrite and os.path.exists(dirTo):
         #if the 'to' directory exists - create a new sub directory 
         dirTo = os.path.join(dirTo, fromBase)     
     
