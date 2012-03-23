@@ -3,6 +3,7 @@
 Wrapper around argparse for Moa
 """
 
+import re
 import argparse
 import inspect
 from moa.sysConf import sysConf
@@ -79,11 +80,23 @@ class MoaHelpFormatter(argparse.HelpFormatter):
 
         # if there are any sub-actions, add their help as well
         for subaction in self._iter_indented_subactions(action):
+            flag = "."
             if not subaction.dest in sysConf.commands:
-                print subaction.dest, self._format_action(subaction)
                 continue
             if sysConf.commands[subaction.dest]['private']:
                 continue
+            if sysConf.commands[subaction.dest].get('needsJob') and \
+               (not sysConf.job.isMoa()):
+                continue
+            if sysConf.commands[subaction.dest].get('source', '') == \
+                   'template':
+                flag='*'
+            elif sysConf.commands[subaction.dest].get('needsJob', False):
+                flag='j'
+                
+            if not re.match(r'^[\*j.] .*$', subaction.help):
+                subaction.help = '%s %s' % (flag, subaction.help)
+
             parts.append(self._format_action(subaction))
 
         # return a single string
@@ -96,9 +109,13 @@ def getParser():
     else:
         parser =  argparse.ArgumentParser(
             formatter_class=MoaHelpFormatter)
+
+        hlptxt = ("Command legend: '.' can be executed everywhere; "+
+                  "'j' require a job; '*' are specified by the template")
+            
         commandParser = parser.add_subparsers(
             title='command', help='Moa Command', dest='command',
-            description='Any of the following Moa commands')
+            description=hlptxt)
         
         sysConf.args.parser = parser
         sysConf.args.cParser =  commandParser
@@ -107,6 +124,43 @@ def getParser():
 #
 # Decorators - @command must always come last (hence - is executed first)
 #
+
+
+def commandName(name):
+    def decorator(f):
+        print inspect.getargspec(f)
+        assert(inspect.getargspec(f).args == ['job', 'args'])
+        l.debug("registering command %s" % name)
+        _desc = [x.strip() for x in f.__doc__.strip().split("\n", 1)]
+        if len(_desc) == 2:
+            shortDesc, longDesc = _desc
+        else:
+            shortDesc = _desc[0]
+            longDesc = ''
+
+        parser, cparser = getParser()
+
+        this_parser = cparser.add_parser(
+           name, help= shortDesc,
+            description="%s %s" % ( shortDesc, longDesc))
+
+
+        this_parser.add_argument(
+         "-r", "--recursive", dest="recursive", action="store_true",
+        default="false", help="Run this job recursively")
+
+
+
+        sysConf.commands[name] = {
+            'desc' : shortDesc,
+            'long' : longDesc,
+            'recursive' : 'gbobal',
+            'needsJob' : False,
+            'call' : f,
+            }
+        f.arg_parser = this_parser
+        return f
+    return decorator
 
 def command(f):
     name = f.func_name
@@ -124,6 +178,13 @@ def command(f):
     this_parser = cparser.add_parser(
        name, help= shortDesc,
         description="%s %s" % ( shortDesc, longDesc))
+
+
+    this_parser.add_argument(
+     "-r", "--recursive", dest="recursive", action="store_true",
+    default="false", help="Run this job recursively")
+
+
 
     sysConf.commands[name] = {
         'desc' : shortDesc,
@@ -154,6 +215,10 @@ def addFlag(*args, **kwargs):
     
 def needsJob(f):
     sysConf.commands[f.func_name]['needsJob'] = True
+    return f
+
+def localRecursive(f):
+    sysConf.commands[f.func_name]['recursive'] = 'local'
     return f
 
 def private(f):
