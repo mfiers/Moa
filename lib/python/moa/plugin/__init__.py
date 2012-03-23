@@ -13,10 +13,11 @@ commandline
 
 import copy
 import UserDict
-import moa.logger as l
+import moa.logger
 import Yaco
 import sys
 
+l = moa.logger.getLogger(__name__)
 #import moa.ui
 
 ## Load & handle plugins
