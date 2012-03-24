@@ -70,8 +70,8 @@ class RuffMapJob(RuffBaseJob):
 
             ## What files are prerequisites?
             prereqs = []
-            for fsid in sysConf.job.data.prerequisites:
-                prereqs.extend(sysConf.job.data.filesets[fsid]['files'])
+            for fsid in self.job.data.prerequisites:
+                prereqs.extend(self.job.data.filesets[fsid]['files'])
                 
                   
             # What files are 'others' - 
@@ -80,40 +80,40 @@ class RuffMapJob(RuffBaseJob):
             # look at this.
 
             others = []
-            for fsid in sysConf.job.data.others:
-                others.extend(sysConf.job.data.filesets[fsid]['files'])
+            for fsid in self.job.data.others:
+                others.extend(self.job.data.filesets[fsid]['files'])
                     
 
             # determine number the number of files - make sure that each
             # job has the same number of in & output files
 
             noFiles = 0
-            in_out_files = sysConf.job.data.outputs + sysConf.job.data.inputs
+            in_out_files = self.job.data.outputs + self.job.data.inputs
             for i, k in enumerate(in_out_files):
                 if i == 0:
-                    noFiles = len(sysConf.job.data.filesets[k].files)
+                    noFiles = len(self.job.data.filesets[k].files)
                 else:
-                    assert(len(sysConf.job.data.filesets[k].files) == noFiles)
+                    assert(len(self.job.data.filesets[k].files) == noFiles)
 
             # rearrange the files for yielding
                     
             for i in range(noFiles):
-                outputs = [sysConf.job.data.filesets[x].files[i] 
-                           for x in sysConf.job.data.outputs]
-                inputs =  [sysConf.job.data.filesets[x].files[i] 
-                           for x in sysConf.job.data.inputs]
+                outputs = [self.job.data.filesets[x].files[i] 
+                           for x in self.job.data.outputs]
+                inputs =  [self.job.data.filesets[x].files[i] 
+                           for x in self.job.data.inputs]
                 
                 l.debug('pushing job with inputs %s' % ", ".join(inputs[:10]))
                                 
-                fsDict = dict([(x, sysConf.job.data.filesets[x]['files'][i])
-                               for x in sysConf.job.data.inputs + sysConf.job.data.outputs])
+                fsDict = dict([(x, self.job.data.filesets[x]['files'][i])
+                               for x in self.job.data.inputs + self.job.data.outputs])
 
                 thisJobData = copy.copy(self.jobData)
                 thisJobData.update(fsDict)                
                 thisJobData['command'] = 'run'
                 runid = thisJobData.get('runid', "moa")
-                if sysConf.job.data.inputs:
-                    fips =  sysConf.job.data.inputs[0]
+                if self.job.data.inputs:
+                    fips =  self.job.data.inputs[0]
                     ffn =  os.path.basename(fsDict[fips])
                     runid = ffn + '.' + runid
                 runid = 'r' + runid
@@ -135,7 +135,7 @@ class RuffMapJob(RuffBaseJob):
             del localMapExecutor.pipeline_task
         
         #if there are no & output files complain:
-        if len(sysConf.job.data.inputs) + len(sysConf.job.data.outputs) == 0:
+        if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
             moa.ui.exitError("no in or output files")
 
 
@@ -144,20 +144,20 @@ class RuffMapJob(RuffBaseJob):
         l.debug("decorating executor")
         executor2 = ruffus.files(generate_data_map)(localMapExecutor)
         l.debug("Start run (with %d thread(s))" %
-                sysConf.options.threads)
+                self.args.threads)
             
         try:
             #Run!
             ruffus.pipeline_run(
                 [executor2],
-                verbose = sysConf.options.verbose,
+                verbose = self.args.verbose,
                 one_second_per_job=False,
-                multiprocess= sysConf.options.threads,
+                multiprocess= self.args.threads,
                 logger = ruffus.black_hole_logger,                    
                 )
             rc = 0
             l.debug("Finished running (with %d thread(s))" %
-                    sysConf.options.threads)
+                    self.args.threads)
 
         except ruffus.ruffus_exceptions.RethrownJobError as e:
             #any error thrown somewhere in the pipeline will be

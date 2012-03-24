@@ -35,11 +35,12 @@ TEMPLATEDIR = os.path.join(MOABASE, 'template2')
 
 class RuffBaseJob(object):
 
-    def __init__(self, command):
+    def __init__(self, job, command, args):
 
-        job = sysConf.job
-
+        self.job = job
         self.command = command
+        self.args = args
+
         self.commands = RuffCommands(job.confDir, job.template.moa_id)
 
         #dict, not Yaco! - ruffus does not like any complex objects
@@ -73,7 +74,7 @@ class RuffBaseJob(object):
         self.jobData.update(sysConf.job.data.simple())
         self.jobData.update(sysConf.job.conf.render())
         self.jobData['wd'] = sysConf.job.wd
-        self.jobData['silent'] = sysConf.options.silent
+        self.jobData['silent'] = False #sysConf.options.silent
         
     def writeScript(self):
         """

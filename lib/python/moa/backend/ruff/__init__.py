@@ -69,51 +69,31 @@ class Ruff(moa.backend.BaseBackend):
                         default=1,
                         help="No threads to use when running Ruffus")
 
-        #TODO:
-        #g.add_option("-B", dest="remake", action='store_true',
-        #             help="Reexecute all targets (corresponds to make -B) ")
 
-
-    def execute(self, command):
+    def execute(self, job, command, args):
         """
         Run a 'simple' template command
         """
-        if command == 'run':
-            return self.run()
-        
+
         if not self.commands.has_key(command):
             raise moa.exceptions.MoaCommandDoesNotExist
         
+        #see how it should execute
+        cmode = job.template.commands[command].get('mode', 'simple')
+
         l.debug('executing %s' % command)
-        j = RuffSimpleJob(command)
-        return j.go()
-
-    def run(self, verbose=False, silent=False,
-            renderTemplate = True):
-        """
-        special case of execute for command == 'run'
-
-        """
-        if not self.commands.has_key('run'):
-            return -1
-
-        if self.job.template.commands.has_key('run'):
-            cmode = self.job.template.commands['run'].mode
-        else:
-            cmode = 'simple'
             
-        rc = 0
-                
+        rc = 0                
         if cmode == 'map':
-            j = RuffMapJob('run')
+            j = RuffMapJob(job, command, args)
             rc = j.go()
             
         elif cmode == 'reduce':
-            j = RuffReduceJob('run')
+            j = RuffReduceJob(job, command, args)
             rc = j.go()
  
         elif cmode == 'simple':
-            j = RuffSimpleJob('run')
+            j = RuffSimpleJob(job, command, args)
             rc = j.go()
 
         #empty the ruffus node name cache needs to be empty -

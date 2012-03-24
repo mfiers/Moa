@@ -8,6 +8,7 @@ import argparse
 import inspect
 from moa.sysConf import sysConf
 
+import moa.ui
 import moa.logger as l
 
 
@@ -125,46 +126,15 @@ def getParser():
 # Decorators - @command must always come last (hence - is executed first)
 #
 
-
-def commandName(name):
-    def decorator(f):
-        print inspect.getargspec(f)
+def _commandify(f, name):
+    """
+    Do the actual commandification of function f with specified name 
+    """
+    try:
         assert(inspect.getargspec(f).args == ['job', 'args'])
-        l.debug("registering command %s" % name)
-        _desc = [x.strip() for x in f.__doc__.strip().split("\n", 1)]
-        if len(_desc) == 2:
-            shortDesc, longDesc = _desc
-        else:
-            shortDesc = _desc[0]
-            longDesc = ''
+    except AssertionError:
+        moa.ui.exitError("Command function for %s seems invalid - contact a developer" % name)
 
-        parser, cparser = getParser()
-
-        this_parser = cparser.add_parser(
-           name, help= shortDesc,
-            description="%s %s" % ( shortDesc, longDesc))
-
-
-        this_parser.add_argument(
-         "-r", "--recursive", dest="recursive", action="store_true",
-        default="false", help="Run this job recursively")
-
-
-
-        sysConf.commands[name] = {
-            'desc' : shortDesc,
-            'long' : longDesc,
-            'recursive' : 'gbobal',
-            'needsJob' : False,
-            'call' : f,
-            }
-        f.arg_parser = this_parser
-        return f
-    return decorator
-
-def command(f):
-    name = f.func_name
-    assert(inspect.getargspec(f).args == ['job', 'args'])
     l.debug("registering command %s" % name)
     _desc = [x.strip() for x in f.__doc__.strip().split("\n", 1)]
     if len(_desc) == 2:
@@ -195,15 +165,36 @@ def command(f):
         }
     f.arg_parser = this_parser
     return f
+    
 
+def command(f):
+    """
+    Decorator for any function in moa - name is derived from function name
+    """
+    return _commandify(f, f.__name__)
+
+def commandName(name):
+    """
+    Decorate a function as a moa command with the option to specify a
+    name for the function
+    """
+    def decorator(f):
+        return _commandify(f, name)
+    return decorator
 
 def argument(*args, **kwargs):
+    """
+    Add an argument to a function
+    """
     def decorator(f):
         f.arg_parser.add_argument(*args, **kwargs)
         return f
     return decorator
 
 def addFlag(*args, **kwargs):
+    """
+    Add a flag to (default false - true if specified) any command
+    """
     def decorator(f):
         if not kwargs.has_key('action'):
             kwargs['action'] = 'store_true'
