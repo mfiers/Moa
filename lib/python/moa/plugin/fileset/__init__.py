@@ -80,15 +80,6 @@ def hook_prepareWWW():
             fs['lifs'] = _prepFileList(fs.files)
             job.data.mappedSets[source]['maps'][fsid] = fs
 
-def hook_defineCommands():
-    """
-    Set the moa commands for this plugin
-    """
-    sysConf['commands']['files'] = {
-        'desc' : 'Show an overview of the files for this job',
-        'call' : showFiles,
-        }
-
 def _preformatFile(f):
     """
     Check if a file exists
@@ -97,14 +88,12 @@ def _preformatFile(f):
         return "{{green}}%s{{reset}}" % f
     else:
         return "{{red}}%s{{reset}}" % f
-        
-def showFiles(job):
+
+
+@moa.args.command
+def files(job, args):
     """
-    **moa files** - Display discovered & inferred files for this job
-
-    Usage::
-
-       moa files
+    Show in and output files for this job
 
     Display a list of all files discovered (for input & prerequisite
     type filesets) and inferred from these for map type filesets.
