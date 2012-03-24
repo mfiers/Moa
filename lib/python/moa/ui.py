@@ -46,21 +46,22 @@ FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
 def exitError(message=''):
     sysConf.pluginHandler.run("post_error")
     if message:
-        fprint("{{green}}Moa{{reset}}:{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
+        fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
+        print 'x'
     sys.exit(-1)
 
 def exit(message):
-    fprint("{{green}}Moa{{reset}}: %s" % message, f='jinja')
-    sys.exit(-1)
+    fprint("{{green}}Moa:{{reset}}: %s" % message, f='jinja')
+    sys.exit(0)
 
 def error(message):
-    fprint("{{green}}Moa{{reset}}:{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
+    fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
 
 def message(message):
     fprint("{{green}}Moa:{{reset}} %s" % message, f='jinja')
     
 def warn(message):
-    fprint("{{green}}Moa{{reset}}:{{blue}}Warning:{{reset}} %s" % message, f='jinja')
+    fprint("{{blue}}Warning:{{reset}} %s" % message, f='jinja')
 
 def fprint(message, **kwargs):
     sys.stdout.write(fformat(message, **kwargs))
