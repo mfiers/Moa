@@ -41,13 +41,17 @@ ORDER BY id
 
 mungeMoaPath = re.compile('^/[^\s]*/moa ')
 
+def format_time(t):
+    return t.strftime("%Y-%m-%d %H:%M:%S")
+
+
 def print_line(record):
     
     sta, sto = record['start'], record['stop']
     took = sto - sta
     #print sto - sta,  datetime.timedelta(minutes=5)
     
-    record['fstamp'] = record['stamp'].strftime("%Y-%m-%d %H:%M:%S")
+    record['fstamp'] = format_time(record['stamp'])
     record['ftitle'] = record['title'][:80]
 
     if took > datetime.timedelta(hours=1):
@@ -84,18 +88,28 @@ def print_line(record):
         
     #record['fuser'] = record.get('user', '')[:10]
     if record.get('user'):
-        record['fserver'] = '{{red}}%s{{reset}}@{{cyan}}%s{{reset}}:{{gray}}%-45s{{reset}}' % (record['user'], record['server'], record['wd'])
+        record['fserver'] = ('{{red}}%s{{reset}}@{{cyan}}%s{{reset}}:'+
+                             '{{gray}}%-45s{{reset}}') \
+                             % (record['user'],
+                                record['server'],
+                                record['wd'])
     else:
-        record['fserver'] = '{{cyan}}%s{{reset}}:%s' % (record['server'], record['wd'])
+        record['fserver'] = '{{cyan}}%s{{reset}}:%s' % \
+                            (record['server'], record['wd'])
 
 
-    ptemplate = "%(fstamp)s %(ptook)s %(fstat)s {{green}}%(ftemplate)-10s{{reset}} {{blue}}%(pfull_command)-20s{{reset}} %(fserver)s %(ftitle)s" % record
+    ptemplate = ("%(fstamp)s %(ptook)s %(fstat)s {{green}}"+
+                 "%(ftemplate)-10s{{reset}} {{blue}}"+
+                 "%(pfull_command)-20s{{reset}} %(fserver)s "+
+                 "%(ftitle)s") % record
     try:
         moa.ui.fprint(ptemplate, f = 'jinja')
     except:
         print ptemplate
+        
+    return record['stamp']
 
-last_stamp = "0000-00-00 00:00:00"
+last_stamp = None
 
 #from pprint import pprint
 c.execute(SQL1)
@@ -105,8 +119,7 @@ while True:
     if record == None:
         break
     last_id = record['id']
-    #print last_stamp
-    print_line(record)
+    last_stamp = print_line(record)
 
 
 SQL2 = """
@@ -121,7 +134,27 @@ while True:
         record = c.fetchone()
         if record == None: break
         last_id = record['id']
-        print_line(record)
+        last_stamp = print_line(record)
+    now = datetime.datetime.now()
+    since = now - last_stamp
+    days_since = since.days    
+    hours_since = since.seconds / 3600
+    minutes_since = (since.seconds - (hours_since * 3600)) / 60
+    seconds_since = (since.seconds - (hours_since * 3600) - (minutes_since * 60))
+    if days_since > 0:
+        message = ("{{gray}}%s - Last record is{{reset}} "+
+                   "{{cyan}}%d days and %d:%02d hours{{reset}}"+
+                   "{{gray}} old{{reset}}") % (
+            format_time(now),
+            days_since, hours_since, minutes_since)
+    else:
+        message = ("{{gray}}%s - Last record is{{reset}} "+
+                   "{{cyan}}%d:%02d:%02d hours{{reset}}"+
+                   "{{gray}} old{{reset}}") % (
+            format_time(now), hours_since, minutes_since, seconds_since)
+
+    sys.stdout.write(moa.ui.fformat(message, f='jinja2', newline=False) + "\r")
+    sys.stdout.flush()
     time.sleep(2)
 
 
