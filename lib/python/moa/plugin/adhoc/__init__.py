@@ -28,9 +28,10 @@ l = moa.logger.getLogger(__name__)
 @moa.args.command
 def simple(job, args):
     """
-    Create a 'simple' adhoc job. Simple meaning that no in or output
-    files are tracked. Moa will query you for a command to execute
-    (the `process` parameter).
+    Create a 'simple' adhoc job.
+
+    Simple meaning that no in or output files are tracked. Moa will
+    query you for a command to execute (the `process` parameter).
     """
 
     wd = job.wd

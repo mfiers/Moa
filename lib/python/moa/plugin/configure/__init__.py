@@ -12,8 +12,6 @@
 Control job configuration
 """
 import os
-
-
 import moa.ui
 import moa.utils
 import moa.args

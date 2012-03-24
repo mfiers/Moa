@@ -137,7 +137,7 @@ def version(job, args):
 
 @moa.args.private
 @moa.args.command
-def rawCommands(job, args):
+def raw_commands(job, args):
     """
     return a list available commands
 
@@ -153,7 +153,7 @@ def rawCommands(job, args):
 
 @moa.args.private
 @moa.args.command
-def rawParameters(job, args):
+def raw_parameters(job, args):
     """
     Print a list of all known parameters
     """

@@ -23,6 +23,7 @@ import moa.ui
 import moa.args
 from moa.sysConf import sysConf
 
+@moa.args.private
 @moa.args.command
 def archive_incl(job, args):
     """
@@ -38,6 +39,7 @@ def archive_incl(job, args):
     if os.path.exists(moaNoArchiveFile):
         os.unlink(moaNoArchiveFile)
 
+@moa.args.private
 @moa.args.command
 def archive_excl(job, args):
     """
@@ -171,10 +173,12 @@ def cp(job, args):
     if dirTo[-1] == '/': dirTo = dirTo[:-1]
     toBase = os.path.basename(dirTo)
 
+    print toBase
+    
     #print fromBase, toBase
     # trick - the second argument is a number
     # renumber the target directory
-    if re.match("^[0-9]+$", toBase) and re.match("^[0-9]+\..+$", toBase):
+    if re.match("^[0-9]+$", toBase) and re.match("^[0-9]+\..+$", fromBase):
         print toBase, fromBase
         toBase = re.sub("^[0-9]*\.", toBase + '.', fromBase)
         dirTo = os.path.join(os.path.dirname(dirTo), toBase)

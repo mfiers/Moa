@@ -25,6 +25,7 @@ import signal
 import moa.ui
 import moa.utils
 import moa.args
+import moa.logger as l
 from moa.sysConf import sysConf
 
 LLOG = False
@@ -75,20 +76,25 @@ def _getStatus(job, silent=False):
     lockFile = os.path.join(job.wd, '.moa', 'lock')
     pidFile = os.path.join(job.wd, '.moa', 'pid')
 
+    l.debug("checking status")
     if os.path.exists(lockFile):
+        l.debug("found lockfile")
         return 'locked'
 
     if not os.path.exists(statusFile):
+        l.debug("no statusfile - not doing anything")
         return 'waiting'
 
     with open(statusFile) as F:
         status = F.read()
+        l.debug("reading status file: " + status.strip())
         
     if status != 'running':
         return status
 
-    #if running - check if it is really running    
+    #if running - check if it is really running 
     otherPid = _getPid(job)
+    l.debug("Check if we're really running - should be process id %s" % otherPid)
     if otherPid == None:
         return 'error'
     
@@ -116,6 +122,7 @@ def _getStatus(job, silent=False):
     return "error"
 
 def _setStatus(job, status):
+    l.debug("set job status to %s" % status)
     sysConf.job.status = status
     statusFile = os.path.join(job.wd, '.moa', 'status')
     if LLOG: print 'writing status %s' % status
@@ -123,6 +130,7 @@ def _setStatus(job, status):
         F.write("%s" % status)
 
 def _setPid(job, pid):
+    l.debug("write PID file (%s)" % pid)
     pidFile = os.path.join(job.wd, '.moa', 'pid')
     with open(pidFile, 'w') as F:
         F.write("%s" % pid)

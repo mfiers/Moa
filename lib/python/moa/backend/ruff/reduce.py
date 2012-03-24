@@ -63,8 +63,8 @@ class RuffReduceJob(RuffBaseJob):
 
         ## What files are prerequisites?
         prereqs = []
-        for fsid in sysConf.job.data.prerequisites:
-            prereqs.extend(sysConf.job.data.filesets[fsid]['files'])
+        for fsid in self.job.data.prerequisites:
+            prereqs.extend(self.job.data.filesets[fsid]['files'])
 
 
         # What files are 'others' - 
@@ -72,16 +72,16 @@ class RuffReduceJob(RuffBaseJob):
         # if updated - currently ignoring these - should probably 
         # look at this.
         others = []
-        for fsid in sysConf.job.data.others:
-            others.extend(sysConf.job.data.filesets[fsid]['files'])
+        for fsid in self.job.data.others:
+            others.extend(self.job.data.filesets[fsid]['files'])
 
 
         outputs = []
-        for x in sysConf.job.data.outputs:
-            outputs.extend(sysConf.job.data.filesets[x].files)
+        for x in self.job.data.outputs:
+            outputs.extend(self.job.data.filesets[x].files)
         inputs = []
-        for x in sysConf.job.data.inputs:
-            inputs.extend(sysConf.job.data.filesets[x].files)
+        for x in self.job.data.inputs:
+            inputs.extend(self.job.data.filesets[x].files)
 
         if len(outputs) != 1:
             moa.ui.exitError("invalid number of outputfiles for a reduce job")
@@ -90,11 +90,11 @@ class RuffReduceJob(RuffBaseJob):
 
 
         fsInDict = dict(
-            [(x, sysConf.job.data.filesets[x]['files'])
-             for x in sysConf.job.data.inputs])
+            [(x, self.job.data.filesets[x]['files'])
+             for x in self.job.data.inputs])
         fsOutDict = dict(
-            [(x, sysConf.job.data.filesets[x]['files'][0])
-             for x in sysConf.job.data.outputs])
+            [(x, self.job.data.filesets[x]['files'][0])
+             for x in self.job.data.outputs])
 
         thisJobData = copy.copy(self.jobData)
         thisJobData.update(fsInDict)                
@@ -126,14 +126,14 @@ class RuffReduceJob(RuffBaseJob):
             #Run!
             ruffus.pipeline_run(
                 [executor2],
-                verbose = sysConf.options.verbose,
+                verbose = self.args.verbose,
                 one_second_per_job=False,
-                multiprocess= sysConf.options.threads,
+                multiprocess= args.threads,
                 logger = ruffus.black_hole_logger,                    
                 )
             rc = 0
             l.debug("Finished running (with %d thread(s))" %
-                    sysConf.options.threads)
+                    self.args.threads)
 
         except ruffus.ruffus_exceptions.RethrownJobError as e:
             #any error thrown somewhere in the pipeline will be

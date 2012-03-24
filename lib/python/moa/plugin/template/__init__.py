@@ -26,8 +26,9 @@ from moa.sysConf import sysConf
 @moa.args.command
 def refresh(job, args):
     """
-    Refresh the template - i.e. reload the template from the central
-    repository.
+    Refresh the template
+
+    Reload the template from the original repository.
     """
     job.refreshTemplate()
 
