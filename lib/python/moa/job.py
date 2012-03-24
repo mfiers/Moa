@@ -20,12 +20,14 @@ import Yaco
 
 import shutil
 
+import moa.ui
 import moa.utils
 import moa.logger
 import moa.template
 import moa.args
 import moa.jobConf
 import moa.exceptions
+import moa.filesets
 
 l = moa.logger.getLogger(__name__)
 from moa.sysConf import sysConf
@@ -137,10 +139,21 @@ class Job(object):
         
         self.loadTemplate()
         self.loadTemplateMeta()
-        
+
+
         # then load the job configuration
         self.conf = moa.jobConf.JobConf(self)
 
+        #prepare filesets (if need be)o
+        self.prepareFilesets()
+        self.renderFilesets()
+
+    def prepareFilesets(self):
+        moa.filesets.prepare(self)
+
+    def renderFilesets(self):
+        moa.filesets.render(self)
+        
     def getFiles(self):
         """
         Return all moa files - i.e. all files crucial to this job.
@@ -212,12 +225,6 @@ class Job(object):
         
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
-
-    def simpleExecute(self, command):
-        """
-        Just 'execute' a template call 
-        """
-
             
     def execute(self, job, args, **kwargs):
         """
@@ -233,53 +240,41 @@ class Job(object):
 
         """
 
-        #want to be certain that we're not mixing things up - this is a
-        #called with ourselves as a
+        # want to be certain that we're not mixing things up - this is
+        # a called with ourselves as the first argument (well first &
+        # second) - not really necessary - but required for the plugin
+        # command calls.
         assert(job == self)
         
         if not self.backend:
-            l.critical("No backend loaded - cannot execute %s" % command)
+            moa.ui.exitError("No backend loaded - cannot execute %s" % command)
 
-        #for backwards compatibility - these should eventually be deleted:
+        #figure out what we were really after
         command = args.command
 
+        #prepare for execution - i.e. prepare log dir, etc..
         self.prepareExecute()
         
         #unless command == 'run' - just execute it and return the RC
         if command != 'run':
-            sysConf.rc =  self.backend.execute(command)
+            sysConf.rc =  self.backend.execute(self, command, args)
             self.finishExecute()
             return sysConf.rc
         
         # command == 'run' is a special case - this will trigger a series of
         # runs.
-        
-        try:
-            rc = self.backend.execute('prepare')
-            l.debug("job prepare finished with an rc of %s" % rc)
-            if rc != 0:
-                sysConf.pluginHandler.run("post_error")
-                return rc
-        except moa.exceptions.MoaCommandDoesNotExist:
-            l.debug("prepare step is not present")
-            
-        try:
-            rc = self.backend.execute('run')
-            l.debug("job run finished with an rc of %s" % rc)
-            if rc != 0:
-                sysConf.pluginHandler.run("post_error")
-                return rc
-        except moa.exceptions.MoaCommandDoesNotExist:
-            l.debug("run step is not present????")
 
-        try:
-            rc = self.backend.execute('finish')
-            l.debug("job 'finish' finished with an rc of %s" % rc)
-            if rc != 0:
-                sysConf.pluginHandler.run("post_error")
-                return rc
-        except moa.exceptions.MoaCommandDoesNotExist:
-            l.debug("finis step is not present")
+        for subcommand in ['prepare', 'run', 'finish']:
+            try:
+                rc = self.backend.execute(self, subcommand, args)
+                l.debug(("executing backend '%s' finished "+
+                        "with an rc of %s") % (subcommand, rc))
+                if rc != 0:
+                    sysConf.rc = rc
+                    sysConf.pluginHandler.run("post_error")
+                    return rc
+            except moa.exceptions.MoaCommandDoesNotExist:
+                l.debug("%s step is not present" % subcommand)
         
         self.finishExecute()
 
