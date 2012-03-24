@@ -69,8 +69,13 @@ class PluginHandler():
         for p in runOrder:
             if only and not p in only:
                 continue
-            
-            m = self.plugins[p].module
+
+            plugin_info = self.plugins.get(p, None)
+            if not plugin_info:
+                continue
+            m = plugin_info.module
+            if not m:
+                continue
             if not m.__dict__.has_key('hook_' + command):
                 continue
 
