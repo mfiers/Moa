@@ -10,6 +10,8 @@ import os
 import sys
 import time
 import logging
+from logging import DEBUG, INFO, WARNING, CRITICAL
+
 import traceback
 LOGGER  = logging.getLogger('moa')
 
@@ -18,8 +20,7 @@ handler = logging.StreamHandler()
 logmark = chr(27) + '[0;45mMOA' + \
           chr(27) + '[0m ' 
 
-logging.basicConfig(format=logmark + '%(levelname)s|%(asctime)s|%(name)s - %(message)s', datefmt='%y/%m/%d %H:%M:%S:')
-
+logging.basicConfig(format=logmark + '%(levelname)s|%(asctime)s|%(name)s # %(message)s', datefmt='%y/%m/%d %H:%M:%S')
 
 def exitError(message=""):
     l.critical("Deprecated function call - do not use logger.exitError, but moa.ui.exitError")
