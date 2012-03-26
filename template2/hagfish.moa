@@ -3,6 +3,7 @@ backend: ruff
 commands:
   run:
     help: 'Run hagfish'
+    mode: map
   clean:
     mode: simple
     help: remove all Hagfish files
@@ -40,6 +41,11 @@ parameters:
     default: 0
     help: Maximal acceptable insert size for an aligned pair. If omitted,
       hagfish will make an estimate
+    optional: true
+    type: int
+  min_len:
+    default: 1000
+    help: minimal sequence length to be processed
     optional: true
     type: int
   circosbinsize:

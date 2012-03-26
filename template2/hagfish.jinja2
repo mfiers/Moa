@@ -1,0 +1,5 @@
+### run
+echo {{ output }}
+mkdir -p `dirname {{ output }}`
+hagfish_extract -v --minLen={{min_len}} {% if min_ok %}--low {{ min_ok }}{% endif %} {% if max_ok %}--high {{ max_ok }}{% endif %} {{ input }}
+#touch {{ output }}
