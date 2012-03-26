@@ -65,6 +65,12 @@ def hook_defineOptions():
                               help='Alternative approach for sync jobs - include only _ref folders')
     sysConf.parser.add_option_group(parserG)
 
+    parserC = optparse.OptionGroup(sysConf.parser, 'moa cp')
+    parserC.add_option("--overwrite", dest="cp_overwrite",
+                              action='store_true', default=False,
+                              help='overwrite an old directory structure')
+    sysConf.parser.add_option_group(parserC)
+
 def archive_include(job):
     """
     Toggle a directory to be included in an moa archive.
@@ -242,14 +248,18 @@ def moacp(job):
     #print fromBase, toBase
     # trick - the second argument is a number
     # renumber the target directory
+    
     if re.match("^[0-9]+$", toBase) and re.match("^[0-9]+\..+$", toBase):
-        print toBase, fromBase
+        #l.info(toBase, fromBase
         toBase = re.sub("^[0-9]*\.", toBase + '.', fromBase)
         dirTo = os.path.join(os.path.dirname(dirTo), toBase)
         
     elif os.path.exists(dirTo):
-        #if the 'to' directory exists - create a new sub directory 
-        dirTo = os.path.join(dirTo, fromBase)     
+        #if the 'to' directory exists - create a new sub directory
+        if not options.cp_overwrite:
+            dirTo = os.path.join(dirTo, fromBase)
+        else:
+            l.warning("Overwriting %s" % dirTo)
     
     l.info("Copying from %s to %s" % (dirFrom, dirTo))
 
