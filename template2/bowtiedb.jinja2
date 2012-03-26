@@ -1,5 +1,7 @@
 ### run
 	echo run bowtie_build
+    echo {{ input }}
+    echo 'bowtie-build {{ extra_params }} {{ input|join(',') }} {{ output }}'
 	bowtie-build {{ extra_params }} {{ input|join(',') }} {{ output }}
 	touch {{ output }}
 

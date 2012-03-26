@@ -1,6 +1,6 @@
 ### run
 
-echo running bwa_sampe
+echo "Start BWA Sampe run"
 bwa sampe \
     {% if max_insert_size %} -a {{max_insert_size}} {% endif %} \
     {% if max_occ_read %} -o {{max_occ_read}} {% endif %} \
@@ -13,12 +13,16 @@ bwa sampe \
     {{ db }} \
     {{ sai_forward_input }} {{ sai_reverse_input }} \
     {{ fq_forward_input }} {{ fq_reverse_input }} \
-       | samtools view -bhS - | samtools sort - `basename {{ output_bam }} .bam`
+       | samtools view -bhS -F 3 - | samtools sort - `basename {{ output_bam }} .bam`
 
+echo "Indexing output BAM file"
+samtools index {{ output_bam }}
+
+echo "Finished" 
 
 ### clean
 
-rm *.bam
+cd rm *.bam
 
 ### unittest
 
