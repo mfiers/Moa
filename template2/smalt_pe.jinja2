@@ -1,0 +1,25 @@
+%### run
+echo Start smalt pe
+
+outbase=`basename {{ output }} .bam`
+
+#smalt map -i 800 -f samsoft -o map.sam hs37k13s6 mate_1.fastq mate_2.fastq
+
+smalt map                                       \
+    -i {{ max_insertsize }}                     \
+    -j {{ min_insertsize }}                     \
+    -l {{ pairtype }}                           \
+    -f samsoft                                  \
+    -n {{ threads }}                            \
+    {{ db }}                                    \
+    {{ fq_forward_input }}                      \
+    {{ fq_reverse_input }}                      \
+    | grep -v "^#"                              \
+    | samtools view -bS -T {{ fasta }} -f 3 -o {{ output }} -
+
+
+### clean
+
+rm *.bam
+rm *.bam.bai
+rm *.report
