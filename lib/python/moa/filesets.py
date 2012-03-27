@@ -17,7 +17,9 @@ import fist
 
 import moa.ui
 import moa.utils
-import moa.logger as l
+import moa.logger
+
+l = moa.logger.getLogger(__name__)
 
 from moa.sysConf import sysConf
     
@@ -83,9 +85,6 @@ def render(job):
     job.data.filesets = {}
     renJobConf = job.conf.render()
 
-    #sys.stderr.write("*" * 80)
-    #sys.stderr.write("%s" % job.template['filesets'])
-    
     if not job.template.has_key('filesets'):
         return
 
@@ -95,8 +94,6 @@ def render(job):
     allSets = copy.copy(fileSets)
     allSets.sort()
 
-    #sys.stderr.write("*" * 80)
-    #sys.stderr.write("%s" % allSets)
     while True:
             
         if len(fileSets) == 0: break
@@ -105,12 +102,13 @@ def render(job):
                 
         job.data.filesets[fsid] = fs
 
+        l.debug("preparing fileset '%s' %s (from %s)" % (fsid, renJobConf[fsid], job.wd))
         #Resolve filesets - first the NON-map sets
         if fs.type == 'set':
-            files = fist.fistFileset(renJobConf[fsid])
+            files = fist.fistFileset(renJobConf[fsid], context=job.wd)
             files.resolve()
         elif fs.type == 'single':
-            files = fist.fistSingle(renJobConf[fsid])
+            files = fist.fistSingle(renJobConf[fsid], context=job.wd)
             files.resolve()
         elif fs.type == 'map':
             if not fs.source:
@@ -122,7 +120,7 @@ def render(job):
                 fileSets.append(fsid)
                 continue
             source = job.data.filesets[fs.source].files
-            files = fist.fistMapset(renJobConf[fsid])
+            files = fist.fistMapset(renJobConf[fsid], context=job.wd)
             files.resolve(source)
         else:
             moa.ui.exitError("Invalid data set type %s for data set %s" % (

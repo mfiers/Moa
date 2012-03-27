@@ -114,60 +114,37 @@ def exclamate(job, args):
         exclamateInJob(job, args, last)
     else: 
         exclamateNoJob(job, args, last)
-    
-def createMap(job):
+
+
+@moa.args.argument('-t', '--title', help='A title for this job')
+@moa.args.forceable
+@moa.args.commandName('map')
+def createMap(job, args):
     """
-    Anything after `--` will be stored in the `process` variable. If
-    `--` is omitted, Moa will query the user.
+    create an adhoc moa 'map' job
 
-    Moa will also query the user for input & output files. An example
-    session::
-
-        $ moa map -t 'test map'
-        process:
-        > echo 'processing {{ input }} {{ output }}'
-        input:
-        > ../10.input/*.txt
-        output:
-        > ./*.out
-
-    Assuming you have a number of `*.txt` files in the `../10/input/`
-    directory, you will see, upon running::
-
-       processing ../10.input/test.01.txt ./test.01.out
-       processing ../10.input/test.02.txt ./test.02.out
-       processing ../10.input/test.03.txt ./test.03.out
-       ...
-
-    If the output file exists, and is newer than the input file, the
-    process will not be executed for that specific pair. If you need
-    the job to be repeated, you should either delete the output files
-    or `touch` the input files.
+    Moa will query the user for process, input & output files. An
+    example session
     """
     wd = job.wd
-    options = sysConf.options
-    args = sysConf.args
-    
-    if not options.force and \
+        
+    if not args.force and \
            os.path.exists(os.path.join(wd, '.moa', 'template')):
         moa.ui.exitError("Job already exists, use -f to override")
 
-    command = " ".join(args[1:]
-                       ).strip()
     params = []
-    if not command and not options.noprompt:
-        command=moa.ui.askUser('process:\n> ', '')
-        params.append(('process', command))
+    
+    command=moa.ui.askUser('process:\n> ', '')
+    params.append(('process', command))
 
-    if not options.noprompt:
-        input=moa.ui.askUser('input:\n> ', '')
-        output=moa.ui.askUser('output:\n> ', './*')
-        params.append(('input', input))
-        params.append(('output', output))
+    input=moa.ui.askUser('input:\n> ', '')
+    output=moa.ui.askUser('output:\n> ', './*')
+    params.append(('input', input))
+    params.append(('output', output))
         
     moa.job.newJob(
         wd, template='map',
-        title = options.title,
+        title = args.title,
         parameters=params)
 
 

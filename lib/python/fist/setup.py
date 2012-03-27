@@ -19,7 +19,7 @@ http://mfiers.github.com/Moa/api/fist.html for more information
 """.strip()
  
 setup(name='fist',
-      version='0.1.3',
+      version='0.1.4',
       description=DESCRIPTION,
       author='Mark Fiers',
       author_email='mark.fiers42@gmail.com',

@@ -34,26 +34,47 @@ This fileset object contains a list with all `*.txt` files in
 import os
 import re
 import glob
+import logging
 import urlparse
 
+logging.basicConfig(level=logging.WARNING)
+l = logging.getLogger(__name__)
+#l.setLevel(logging.DEBUG)
 DEBUG=False
-
-if DEBUG:
-    import logging
-    logging.basicConfig(filename='/tmp/fist.log', level=logging.DEBUG)
     
 class fistCore(list):
     """
     Core class for all fist classes
     """
-    def __init__(self, url):
+    def __init__(self, url, context=None):
+        """
+        :param url: URI of the fileset
+        :type url: Str
+        :param context: If the URI is relative - render from this viewpoint
+        :type context: Str
+        """
+        l.debug("preparing fileset %s (context %s)" % (url, context))
+        
         self.url = url.strip()
+        self.context = os.path.abspath(context)
         self.init()
         self.resolved = False
 
     def init(self):
         self.scheme, self.netloc, self.path, self.glob = \
              self._urlparse(self.url)
+
+    def absolute(self):
+        olddir = os.getcwd()
+        if self.context:
+            os.chdir(self.context)
+
+        rv = [os.path.abspath(os.path.expanduser(x)) for x in self]
+        
+        if self.context:
+            os.chdir(olddir)
+
+        return rv
             
     def _urlparse(self, url):
         o = urlparse.urlparse(url)
@@ -80,8 +101,23 @@ class fistCore(list):
             urlglob=o.path
 
         return scheme, netloc, urlpath, urlglob
-    
+
+    def append(self, item):
+        #item = os.path.abspath(os.path.expanduser(item))
+        return super(fistCore, self).append(item)
+
+    def extend(self, itemlist):
+        #itemlist = [os.path.abspath(os.path.expanduser(x)) for x in itemlist]
+        return super(fistCore, self).extend(itemlist)
+        
+
+
     def resolve(self):
+        """
+        This function needs to be overridden
+        context 
+        """
+
         raise Exception("needs to be overridden")    
 
 class fistSingle(fistCore):
@@ -141,8 +177,16 @@ class fistFileset(fistCore):
         super(fistFileset, self).init()
     
     def resolve(self):
-        self.resolved = True    
+        olddir = os.getcwd()
+        if self.context:
+            os.chdir(self.context)
         self.extend(glob.glob('%s/%s' % (self.path, self.glob)))
+        if self.context:
+            os.chdir(olddir)
+        l.debug("found files (first %s)" % self[0])
+        self.resolved = True
+
+
 
 class fistMapset(fistCore):
     """
@@ -232,6 +276,7 @@ class fistMapset(fistCore):
         reT = ''
         method = ''
 
+        l.info("Start mapping. First file: %s" % mapFrom[0])
         if not '*' in self.path and not '*' in self.glob:
             #special case - no interpretation is needed
             if len(list) == 0:
@@ -282,32 +327,40 @@ class fistMapset(fistCore):
                 addReT = addReT.replace('*', '\g<glob' + str(c) +'>',1)
             reF += '/' + addReF
             reT += '/' + addReT
-
+            
         if DEBUG:
-            logging.info( '#' * 95 )
-            logging.info(" Method %s *count %d" % (method, fromStarCount))
-            logging.info( 'PATH cur.value : %50s -> %-50s' % (mapFrom.path, self.path))
-            logging.info( 'GLOB cur.value : %50s -> %-50s' % (mapFrom.glob, self.glob))
-            logging.info( 'REGEX FROM '+ reF)
-            logging.info( 'REGEX TO   '+ reT)
-            logging.info( 'METHOD %s' % method)
+            l.debug( '#' * 95 )
+            l.debug(" Method %s *count %d" % (method, fromStarCount))
+            l.debug( 'PATH cur.value : %50s -> %-50s' % (mapFrom.path, self.path))
+            l.debug( 'GLOB cur.value : %50s -> %-50s' % (mapFrom.glob, self.glob))
+            l.debug( 'REGEX FROM '+ reF)
+            l.debug( 'REGEX TO   '+ reT)
+            l.debug( 'METHOD %s' % method)
             for x in range(min(len(list),3)):
-                logging.info( 'input file no %d: %s' % (x +1, list[x])) 
+                logging.debug( 'input file no %d: %s' % (x +1, list[x]))
+                
         rex = re.compile(reF)        
         rv = [rex.sub(reT, x) for x in list]
-
+        l.debug("processed map regex. First file is %s" % rv[0])
         if DEBUG:
             for x in range(min(len(list),3)):
-                logging.info( 'output file no %d: %s' % (x +1, rv[x])) 
-    
+                logging.debug( 'output file no %d: %s' % (x +1, rv[x]))     
         return rv
     
     def resolve(self, mapFrom):
         """
         Resolve the mapped set based on a input fileSet    
         """
+        olddir = os.getcwd()
+        #if self.context:
+        #    l.debug("Chdir to %s" % self.context)
+        #    os.chdir(self.context)
         self.extend(self.resolver(mapFrom, mapFrom))
-        self.resolved = True                
+        # l.debug("found files (first %s)" % self[0])
+        # if self.context:
+        #    os.chdir(olddir)
+        self.resolved = True
+
 
 
 
