@@ -72,9 +72,11 @@ class PluginHandler():
 
             plugin_info = self.plugins.get(p, None)
             if not plugin_info:
+                l.warning("potential problem with plugin %s" % p)
                 continue
             m = plugin_info.module
             if not m:
+                l.warning("potential problem with plugin %s (no module loaded)" % p)
                 continue
             if not m.__dict__.has_key('hook_' + command):
                 continue

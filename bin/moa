@@ -117,6 +117,9 @@ def run_3(wd, exitOnError=True):
     # invocation
     os.chdir(wd)
 
+    sysConf.wd = wd
+
+    sysConf.pluginHandler.run('pre_create_job')
     # create the job
     job = moa.job.Job(wd)
     

@@ -144,10 +144,9 @@ def hook_prepare_1():
         sysConf.jinja2.extensions = []
     sysConf.jinja2.extensions += [MoaPathParser]
 
-def hook_prepare_3():
+def hook_pre_create_job():
 
-    job = sysConf.job
-    renderedConf = job.conf.render() 
+    wd = sysConf.wd
 
     job.conf.setPrivateVar('wd', job.wd)
 

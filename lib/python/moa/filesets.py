@@ -85,6 +85,8 @@ def render(job):
     job.data.filesets = {}
     renJobConf = job.conf.render()
 
+    import pprint
+    #pprint.pprint(renJobConf)
     if not job.template.has_key('filesets'):
         return
 
@@ -102,7 +104,7 @@ def render(job):
                 
         job.data.filesets[fsid] = fs
 
-        l.debug("preparing fileset '%s' %s (from %s)" % (fsid, renJobConf[fsid], job.wd))
+        l.debug("preparing fileset '%s' %s (from %s)" % (fsid, renJobConf.get(fsid, 'undef'), job.wd))
         #Resolve filesets - first the NON-map sets
         if fs.type == 'set':
             files = fist.fistFileset(renJobConf[fsid], context=job.wd)
