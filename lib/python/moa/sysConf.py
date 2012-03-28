@@ -27,7 +27,6 @@ sysConf = None
 USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
                           '.config', 'moa', 'config')
 
-
 class SysConf(Yaco.Yaco):
 
     
@@ -39,29 +38,12 @@ class SysConf(Yaco.Yaco):
         l.debug("Loading system config: %s" % USERCONFIGFILE)
         if os.path.exists(USERCONFIGFILE):
             self.load(USERCONFIGFILE)
-
-        #prepare the plugins
-        self.pluginHandler = moa.plugin.PluginHandler(
-            self, self.getPlugins())
-
-    def initialize(self):
-        self.pluginHandler.initialize()
-        
         
     def getVersion(self):
         """
         Return the version number of this Moa instance
         """
         return moa.resources.getResource('VERSION').strip()
-
-    
-    def getPlugins(self):
-        tmprv = []        
-        for p in self.plugins:
-            if self.plugins[p].get('enabled', True):
-                tmprv.append((self.plugins[p].get('order', 100), p))
-        tmprv.sort()
-        return [x[1] for x in tmprv]
     
 
 if sysConf == None:

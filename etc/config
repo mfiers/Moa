@@ -1,46 +1,69 @@
 plugins:
-  metavar:
-    enable: true
-    order: 50
-  project:
-    enable: true
-    order: 50
-  umask:
-    umask: 0o002
-    enabled: true
-  fileset: 
-    order: 75
-  parameterCheck: {}
-  doc: {}
-  configure: {}
-  newjob: {}
-  logger: {}
-  test:
-    enabled: false
-  lock:
-    enabled: true
-    runnable:
-      - set
-      - unlock
-      - tree
-      - unset
-      - show
-      - status
-  adhoc: {}
-  help: {}
-  status: {}
-  template: {}
-  info: 
-    enabled: true
-  moautil: 
-    enabled: true
-    dir: ~/.config/moa/archive
-  moaGit: 
-    enabled: true
-    warn: true
-  varInject:
-    enabled: true
-  extraCommands: {}
+  job:
+    metavar:
+      module: moa.plugin.job.metavar
+      enable: true
+      order: 50
+  system:
+    project:
+      module: moa.plugin.system.project
+      enable: true
+      order: 50
+    umask:
+      module: moa.plugin.system.umask
+      umask: 0o002
+      enabled: true
+    fileset:
+      module: moa.plugin.system.fileset
+      order: 75
+    parameterCheck:
+      module: moa.plugin.system.parameterCheck
+    doc:
+      module: moa.plugin.system.doc
+    configure:
+      module: moa.plugin.system.configure
+    newjob:
+      module: moa.plugin.system.newjob
+    logger:
+      module: moa.plugin.system.logger
+      enabled: true
+    test:
+      module: moa.plugin.system.test
+      enabled: false
+    lock:
+      module: moa.plugin.system.lock
+      enabled: true
+      runnable:
+        - set
+        - unlock
+        - tree
+        - unset
+        - show
+        - status
+    adhoc:
+      module: moa.plugin.system.adhoc
+    help:
+      module: moa.plugin.system.help
+    status:
+      module: moa.plugin.system.status
+    template:
+      module: moa.plugin.system.template
+    info: 
+      module: moa.plugin.system.info
+      enabled: true
+    moautil: 
+      module: moa.plugin.system.moautil
+      enabled: true
+      dir: ~/.config/moa/archive
+    moaGit: 
+      module: moa.plugin.system.moaGit
+      enabled: true
+      warn: true
+    varInject:
+      module: moa.plugin.system.varInject
+      enabled: true
+    extraCommands:
+      module: moa.plugin.system.extraCommands
 mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True

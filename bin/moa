@@ -55,7 +55,6 @@ if sys.version_info < (2, 6):
 # rest of the system
 
 from moa.sysConf import sysConf
-sysConf.initialize()
 
 # moa specific libs
 import moa.job
@@ -68,6 +67,10 @@ import moa.exceptions
 ## Initialize the logger
 import moa.logger
 l = moa.logger.getLogger('test')
+
+
+## Initalize system plugins
+sysConf.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.system)
 
 ## A hack to set verbosity before reading command line arguments
 if ('-v' in sys.argv) or ('-vv' in sys.argv):

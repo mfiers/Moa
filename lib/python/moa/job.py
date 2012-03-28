@@ -21,10 +21,11 @@ import Yaco
 import shutil
 
 import moa.ui
+import moa.args
 import moa.utils
 import moa.logger
+import moa.plugin
 import moa.template
-import moa.args
 import moa.jobConf
 import moa.exceptions
 import moa.filesets
@@ -107,13 +108,20 @@ class Job(object):
         :param register: Register this job in the sysConf? Usually this should be yes
         """
 
+        #prepare the plugins
+        self.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.job)
+
         if wd[-1] == '/':
             wd = wd[:-1]
         self.wd = wd
+
+        self.run_hook('prepare')
         
         self.confDir = os.path.join(self.wd, '.moa')
         self.templateFile = os.path.join(self.confDir, 'template')
         self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
+        
+
         self.backend = None
         self.args = []
         self.env = {}
@@ -136,18 +144,25 @@ class Job(object):
             'blog.*', 'blog'
             ]
 
-        
         self.loadTemplate()
         self.loadTemplateMeta()
 
-
         # then load the job configuration
+        self.run_hook('pre_load_config')
         self.conf = moa.jobConf.JobConf(self)
-
+        
         #prepare filesets (if need be)o
+        self.run_hook('pre_filesets')
         self.prepareFilesets()
         self.renderFilesets()
 
+
+    def run_hook(self, hook):
+        """
+        Shortcut to run a job plugin hook
+        """
+        self.pluginHandler.run(hook, job=self)
+        
     def prepareFilesets(self):
         moa.filesets.prepare(self)
 

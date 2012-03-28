@@ -18,19 +18,29 @@ import Yaco
 import sys
 
 l = moa.logger.getLogger(__name__)
+<<<<<<< HEAD
 #import moa.ui
+=======
+#l.setLevel(moa.logger.DEBUG)
+>>>>>>> 2c77972... job plugins work
 
 ## Load & handle plugins
 class PluginHandler():
 
-    def __init__(self, sysConf, pluginList):
+    def __init__(self, config):
         """
         Manage the plugins
         """
-
-        self.plugins = {}
-        self.pluginList = pluginList
-        self.sysConf = sysConf
+        self.config = config
+        self.pluginList = self.getPluginOrder()
+        self.initialize()
+        
+    def getPluginOrder(self):
+        tmprv = []        
+        for p in self.config:
+            if self.config[p].get('enabled', True):
+                tmprv.append((self.config[p].get('order', 100), p))
+        return [x[1] for x in sorted(tmprv)]
         
     def initialize(self):
         """
@@ -40,15 +50,18 @@ class PluginHandler():
         ## do we have a python module??
         l.debug('Start plugin init')
         for plugin in self.pluginList:
-            self.plugins[plugin] = Yaco.Yaco()
+            self.config[plugin] = Yaco.Yaco()
 
-            pyModule = 'moa.plugin.%s' % plugin
+            pyModule = self.config[plugin].module
+
             try:
+                l.debug("trying to load module %s" % pyModule)
                 _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
-                self.plugins[plugin]['module'] = _m
+                self.config[plugin]['loaded_module'] = _m
                 l.debug("Successfully Loaded module %s" % pyModule)
             except ImportError, e:
-                sys.stderr.write("Plugin %s is not installed\n" % plugin)
+                sys.stderr.write("ERROR - Plugin %s is not (properly) installed\n" % plugin)
+                self.self.config[plugin]
                 sys.exit(-1)
         
     
@@ -64,22 +77,24 @@ class PluginHandler():
         if reverse:
             runOrder.reverse()
 
-        #l.debug("plugin execution order %s" % ", ".join(runOrder))
+        l.debug("plugin command run of hook %s" % command)
+                        
 
         for p in runOrder:
             if only and not p in only:
                 continue
 
-            plugin_info = self.plugins.get(p, None)
+            plugin_info = self.config[p]
             if not plugin_info:
-                l.warning("potential problem with plugin %s" % p)
-                continue
-            m = plugin_info.module
-            if not m:
-                l.warning("potential problem with plugin %s (no module loaded)" % p)
-                continue
+                sys.stderr.write("ERROR - potential problem with plugin %s" % p)
+                sys.exit()
+
+            m = plugin_info['loaded_module']
+            
+
             if not m.__dict__.has_key('hook_' + command):
                 continue
+
 
             l.debug("plugin executing hook %s for %s" % (command, p))
             #rv[p]= eval("m.hook_%s" % command)
