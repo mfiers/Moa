@@ -18,11 +18,7 @@ import Yaco
 import sys
 
 l = moa.logger.getLogger(__name__)
-<<<<<<< HEAD
-#import moa.ui
-=======
-#l.setLevel(moa.logger.DEBUG)
->>>>>>> 2c77972... job plugins work
+
 
 ## Load & handle plugins
 class PluginHandler():
@@ -65,7 +61,7 @@ class PluginHandler():
                 sys.exit(-1)
         
     
-    def run(self, command, reverse=False, only=[]):
+    def run(self, command, reverse=False, only=[], **kwargs):
         """
         Executing a plugin hook
 
@@ -98,7 +94,7 @@ class PluginHandler():
 
             l.debug("plugin executing hook %s for %s" % (command, p))
             #rv[p]= eval("m.hook_%s" % command)
-            rv[p] = getattr(m, "hook_" + command)()
+            rv[p] = getattr(m, "hook_" + command)(**kwargs)
         return rv
             
     def execute(self, command):
