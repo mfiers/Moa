@@ -108,9 +108,8 @@ class fistCore(list):
 
     def extend(self, itemlist):
         #itemlist = [os.path.abspath(os.path.expanduser(x)) for x in itemlist]
-        return super(fistCore, self).extend(itemlist)
-        
-
+        if itemlist:
+            return super(fistCore, self).extend(itemlist)
 
     def resolve(self):
         """
@@ -180,10 +179,14 @@ class fistFileset(fistCore):
         olddir = os.getcwd()
         if self.context:
             os.chdir(self.context)
-        self.extend(glob.glob('%s/%s' % (self.path, self.glob)))
+        result = glob.glob('%s/%s' % (self.path, self.glob))
+        self.extend(result)
         if self.context:
             os.chdir(olddir)
-        l.debug("found files (first %s)" % self[0])
+        if len(self) > 0:
+            l.debug("found files (first %s)" % self[0])
+        else:
+            l.debug("No files found")
         self.resolved = True
 
 
@@ -276,7 +279,11 @@ class fistMapset(fistCore):
         reT = ''
         method = ''
 
+        if len(mapFrom) == 0:
+            return
+        
         l.info("Start mapping. First file: %s" % mapFrom[0])
+
         if not '*' in self.path and not '*' in self.glob:
             #special case - no interpretation is needed
             if len(list) == 0:
