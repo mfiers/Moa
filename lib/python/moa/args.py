@@ -105,8 +105,8 @@ class MoaHelpFormatter(argparse.HelpFormatter):
 
 
 def getParser():
-    if sysConf.args.parser:
-        return sysConf.args.parser, sysConf.args.cParser
+    if sysConf.argParser:
+        return sysConf.argParser, sysConf.commandParser
     else:
         parser =  argparse.ArgumentParser(
             formatter_class=MoaHelpFormatter)
@@ -118,8 +118,8 @@ def getParser():
             title='command', help='Moa Command', dest='command',
             description=hlptxt)
         
-        sysConf.args.parser = parser
-        sysConf.args.cParser =  commandParser
+        sysConf.argParser = parser
+        sysConf.commandParser =  commandParser
         return parser, commandParser
 
 #
@@ -153,8 +153,6 @@ def _commandify(f, name):
     this_parser.add_argument(
      "-r", "--recursive", dest="recursive", action="store_true",
     default="false", help="Run this job recursively")
-
-
 
     sysConf.commands[name] = {
         'desc' : shortDesc,

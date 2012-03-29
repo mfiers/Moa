@@ -65,10 +65,7 @@ class Ruff(moa.backend.BaseBackend):
         return command in self.commands.keys()
 
     def defineOptions(self, parser):
-        parser.add_argument("-j", dest="threads", type=int,
-                        default=1,
-                        help="No threads to use when running Ruffus")
-
+        pass
 
     def execute(self, job, command, args):
         """

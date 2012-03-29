@@ -368,8 +368,17 @@ class Job(object):
             if not hlp:
                 hlp = '(Execute template command "%s")' % c
                 
-            cparser.add_parser(
+            cp = cparser.add_parser(
                 str(c), help=hlp)
+            
+            cp.add_argument(
+                "-r", "--recursive", dest="recursive", action="store_true",
+                default="false", help="Run this job recursively")
+
+            cp.add_argument("-j", dest="threads", type=int,
+                            default=1,
+                            help="No threads to use when running Ruffus")
+
             sysConf.commands[c] = {
                 'desc' : hlp,
                 'long' : hlp,
