@@ -70,6 +70,10 @@ import moa.logger
 l = moa.logger.getLogger('test')
 
 
+## define an initial command line parser - so all commands
+## can define themselves.
+parser, commandparser = moa.args.getParser()
+
 ## Initalize system plugins
 sysConf.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.system)
 
@@ -109,12 +113,6 @@ def run_3(wd, exitOnError=True):
     # create the job
     job = moa.job.Job(wd)
 
-    
-    ## define & parse command line options  
-    parser, commandparser = moa.args.getParser(reuse=False)
-
-    #del(parser._option_string_actions['--profile'])
-    #pprint(parser._current_section.items)
 
     # We should NOT depend on the following (if at all possible)
     sysConf.job = job
@@ -155,8 +153,8 @@ def run_3(wd, exitOnError=True):
     if command in sysConf.commands.keys():
         comInf = sysConf.commands[command]
         if comInf.get('needsJob', False) and not job.isMoa():
-            moa.ui.exitError("Must execute 'moa %s' in a directory "+
-                             "containing a Moa job (try moa -h)" % command)
+            moa.ui.exitError(("Must execute 'moa %s' in a directory "+
+                              "containing a Moa job (try moa -h)") % command)
             
         sysConf.pluginHandler.run('prepare')
         sysConf.pluginHandler.run('pre%s' % command.capitalize())

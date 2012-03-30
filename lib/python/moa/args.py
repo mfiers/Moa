@@ -4,6 +4,7 @@ Wrapper around argparse for Moa
 """
 
 import re
+import copy
 import argparse
 import inspect
 from moa.sysConf import sysConf
@@ -133,8 +134,16 @@ class MoaArgumentParser(argparse.ArgumentParser):
 
 def getParser(reuse=True):
     
-    if reuse and  sysConf.argParser:
-        return sysConf.argParser, sysConf.commandParser
+    if sysConf.argParser:
+        if reuse:
+            #work on the current parser
+            return sysConf.argParser, sysConf.argParser.commandParser
+        elif sysConf.argParser and not reuse:
+            #make a copy of the parser
+            newParser = copy.deepcopy(sysConf.originalParser)
+            sysConf.argParser = newParser
+            sysConf.commandParser = newParser.commandParser
+            return newParser, newParser.commandParser
     else:
         parser =  MoaArgumentParser(
             formatter_class=MoaHelpFormatter)
@@ -145,10 +154,13 @@ def getParser(reuse=True):
         commandParser = parser.add_subparsers(
             title='command', help='Moa Command', dest='command',
             description=hlptxt)
-        
-        sysConf.argParser = parser
+
+        parser.commandParser = commandParser
+        sysConf.originalParser = parser
+        sysConf.argParser = parser        
         sysConf.commandParser =  commandParser
         return parser, commandParser
+
 
 #
 # Decorators - @command must always come last (hence - is executed first)
@@ -172,7 +184,7 @@ def _commandify(f, name):
         longDesc = ''
     
     parser, cparser = getParser()
-    
+
     cp = cparser.add_parser(
        name, help= shortDesc,
         description="%s %s" % ( shortDesc, longDesc))
