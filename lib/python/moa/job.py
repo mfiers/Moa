@@ -375,9 +375,21 @@ class Job(object):
                 "-r", "--recursive", dest="recursive", action="store_true",
                 default="false", help="Run this job recursively")
 
-            cp.add_argument("-j", dest="threads", type=int,
-                            default=1,
-                            help="No threads to use when running Ruffus")
+            cp.add_argument(
+                "-v", "--verbose", dest="verbose", action="store_true",
+                help="Show debugging output")
+            
+            cp.add_argument(
+                "--bg", dest="background", action="store_true",
+                help="Run moa in the background (implies -s)")
+
+            cp.add_argument(
+                "--profile", dest="profile", action="store_true",
+                help="Run the profiler")
+            
+            cp.add_argument(
+                "-j", dest="threads", type=int,
+                default=1, help="No threads to use when running Ruffus")
 
             sysConf.commands[c] = {
                 'desc' : hlp,

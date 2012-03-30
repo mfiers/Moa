@@ -51,3 +51,9 @@ class MoaPermissionDenied(Exception):
     """Permission denied - you do not have the rights to perform this opperation """
     def __str__(self):
         return "Permission denied"
+
+class MoaInvalidCommandLine(Exception):
+    """Invalid command line"""
+    def __str__(self):
+        return "Invalid command line" 
+

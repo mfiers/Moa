@@ -9,7 +9,9 @@ import inspect
 from moa.sysConf import sysConf
 
 import moa.ui
+import moa.exceptions
 import moa.logger as l
+
 
 
 class MoaHelpFormatter(argparse.HelpFormatter):
@@ -103,12 +105,38 @@ class MoaHelpFormatter(argparse.HelpFormatter):
         # return a single string
         return self._join_parts(parts)
 
+class MoaArgumentParser(argparse.ArgumentParser):
+        
+    def error(self, message):
+        """error(message: string)
+        Prints a usage message incorporating the message to stderr and
+        exits.
+        
+        If you override this in a subclass, it should not return -- it
+        should either exit or raise an exception.
+        """
+        self.error_message = message
+        raise moa.exceptions.MoaInvalidCommandLine, self
+    
+    def real_error(self):
+        """
+        after argparser.error, but takes the message from self.error_meesage
 
-def getParser():
-    if sysConf.argParser:
+        this structure allows problems to be raise and caught
+        """
+
+        self.print_usage(argparse._sys.stderr)
+        self.exit(2, argparse._('%s: error: %s\n') % (self.prog, self.error_message))
+                   
+                                
+
+
+def getParser(reuse=True):
+    
+    if reuse and  sysConf.argParser:
         return sysConf.argParser, sysConf.commandParser
     else:
-        parser =  argparse.ArgumentParser(
+        parser =  MoaArgumentParser(
             formatter_class=MoaHelpFormatter)
 
         hlptxt = ("Command legend: '.' can be executed everywhere; "+
@@ -145,14 +173,20 @@ def _commandify(f, name):
     
     parser, cparser = getParser()
     
-    this_parser = cparser.add_parser(
+    cp = cparser.add_parser(
        name, help= shortDesc,
         description="%s %s" % ( shortDesc, longDesc))
 
 
-    this_parser.add_argument(
-     "-r", "--recursive", dest="recursive", action="store_true",
-    default="false", help="Run this job recursively")
+    cp.add_argument("-r", "--recursive", dest="recursive", action="store_true",
+                    default="false", help="Run this job recursively")
+
+    cp.add_argument("-v", "--verbose", dest="verbose", action="store_true",
+                    help="Show debugging output")
+
+    
+    cp.add_argument("--profile", dest="profile", action="store_true",
+                    help="Run the profiler")
 
     sysConf.commands[name] = {
         'desc' : shortDesc,
@@ -161,7 +195,7 @@ def _commandify(f, name):
         'needsJob' : False,
         'call' : f,
         }
-    f.arg_parser = this_parser
+    f.arg_parser = cp
     return f
     
 

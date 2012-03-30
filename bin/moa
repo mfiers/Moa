@@ -57,6 +57,7 @@ if sys.version_info < (2, 6):
 from moa.sysConf import sysConf
 
 # moa specific libs
+import moa.ui
 import moa.job
 import moa.utils
 import moa.actor
@@ -77,25 +78,6 @@ if ('-v' in sys.argv) or ('-vv' in sys.argv):
     moa.logger.setVerbose()
 
 sysConf.rc = 0
-
-## define & parse command line options  
-parser, commandparser = moa.args.getParser()
-
-parser.add_argument(
-     "-v", "--verbose", dest="verbose", action="store_true",
-     help="Show debugging output")
-
-parser.add_argument(
-     "--bg", dest="background", action="store_true",
-     help="Run moa in the background (implies -s)")
-
-parser.add_argument(
-     "--profile", dest="profile", action="store_true",
-     help="Run the profiler")
-
-#del(parser._option_string_actions['--profile'])
-#pprint(parser._current_section.items)
-
 
 def run_3(wd, exitOnError=True):
     """
@@ -118,6 +100,7 @@ def run_3(wd, exitOnError=True):
 
     # make sure we're in the correct wd for the rest of the
     # invocation
+
     os.chdir(wd)
 
     sysConf.wd = wd
@@ -125,7 +108,14 @@ def run_3(wd, exitOnError=True):
     sysConf.pluginHandler.run('pre_create_job')
     # create the job
     job = moa.job.Job(wd)
+
     
+    ## define & parse command line options  
+    parser, commandparser = moa.args.getParser(reuse=False)
+
+    #del(parser._option_string_actions['--profile'])
+    #pprint(parser._current_section.items)
+
     # We should NOT depend on the following (if at all possible)
     sysConf.job = job
     job.defineOptions(parser)
@@ -216,15 +206,22 @@ def run_recursive(wd):
         if '.moa' in dirs:
             if os.path.exists(os.path.join(path, '.moa', 'template')):
                 clargs = " ".join(sys.argv)
-                moa.ui.message("Executing '%s' .." % clargs)
+                moa.ui.message("Trying to run '%s' .." % clargs)
                 moa.ui.message("  .. in %s" % (path))
-                rc = run_3(path, exitOnError=False)
-                if rc == False:
-                    moa.ui.message("Error running %s" % clargs)
+                try:
+                    rc = run_3(path, exitOnError=False)
+                    if rc == False:
+                        moa.ui.message("Error running %s" % clargs)
+
+                except moa.exceptions.MoaInvalidCommandLine:
+                    moa.ui.warn("Cannot run moa %s in %s" % (
+                        " ".join(sys.argv[1:]), path))
             
-        #remove all '.' directories -
+        # remove all '.' directories from the list to recurse
+        
         drem = [ x for x in dirs if x[0] in ['.', '_'] ]
         [ dirs.remove(t) for t in drem]
+        
     sysConf.pluginHandler.run('post_recursive')
 
     
@@ -249,7 +246,12 @@ def run_2(force_silent=False):
     wd = os.getcwd()
     if not '-r' in sys.argv:
         #not recursive - go directly to stage 3
-        run_3(wd)
+        try:
+            run_3(wd)
+        except moa.exceptions.MoaInvalidCommandLine, e:
+            parser = e.args[0]
+            parser.real_error()
+            
     else:
         #default mode is global
         recurseMode = 'global'
