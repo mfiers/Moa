@@ -47,7 +47,6 @@ def exitError(message=''):
     sysConf.pluginHandler.run("post_error")
     if message:
         fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
-        print 'x'
     sys.exit(-1)
 
 def exit(message):
