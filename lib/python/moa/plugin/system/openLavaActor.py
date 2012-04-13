@@ -21,7 +21,7 @@ import moa.logger as l
 import moa.ui
 
 l = moa.logger.getLogger(__name__)
-l.setLevel(moa.logger.DEBUG)
+#l.setLevel(moa.logger.DEBUG)
 
 def hook_defineCommandOptions(job, parser):
     parser.add_argument( '--ol', action='store_const', const='openlava',
@@ -79,22 +79,21 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     if command == 'run':
         prep_jids = sysConf.job.data.openlava.jids.get('prepare', [])
         #hold until the 'prepare' jobs are done
-        l.critical("Prepare jids - wait for these! %s" % prep_jids)
-        #if prep_jids: 
+        #l.critical("Prepare jids - wait for these! %s" % prep_jids)
+        for j in prep_jids: 
+            s("#BSUB -w done(%d)" % j)
         #    qcl.append("-w '")
         #    qcl.append('&&'.join(['exit(%s)' % x for x in prep_jids])
 
-    #elif command == 'finish':
-    #    run_jids = sysConf.job.data.openlava.jids.get('run', [])
+    elif command == 'finish':
+        run_jids = sysConf.job.data.openlava.jids.get('run', [])
         #hold until the 'prepare' jobs are done
-        #if run_jids: 
-        #    qcl.append('-hold_jid')
-        #    qcl.append(','.join(map(str, run_jids)))
+        for j in run_jids: 
+            s("#BSUB -w done(%d)" % j)
 
     #give it a reasonable name
-    #if conf.get('runid', None):
-    #    qcl.append('-N')
-    #    qcl.append(str(conf['runid']))
+    if conf.get('runid', None):
+        s("#BSUB -J %s/%s" % (str(conf['runid']), command))
 
     # make sure the environment is copied
     #qcl.append('-V')
