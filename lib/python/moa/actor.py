@@ -24,7 +24,7 @@ from moa.sysConf import sysConf
 
 
 def getRunner():    
-    actorId = getattr(sysConf.options, 'actorId', 'default')
+    actorId = getattr(sysConf.args, 'actorId', 'default')
     if not actorId: actorId = 'default'
     if not sysConf.actor.actors.has_key(actorId):
         moa.ui.exitError("Invalid actor id: %s" % actorId)

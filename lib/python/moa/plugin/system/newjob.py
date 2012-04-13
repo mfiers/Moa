@@ -21,28 +21,6 @@ import moa.args
 
 from moa.sysConf import sysConf
 
-# def hook_defineCommands():
-#     sysConf['commands']['new'] = {
-#         'desc' : "Create a new Moa job",
-#         'call' : newJob,
-#         'needsJob' : False,
-#         }
-    
-
-# def hook_defineOptions():
-
-#     parserG = sysConf.parser.get_option_group('-t')
-#     if parserG == None:
-#         parserG = optparse.OptionGroup(sysConf.parser, 'moa new')
-#         sysConf.parser.add_option_group(parserG)    
-    
-#     try:
-#         parserG.parser.add_option("-t", dest="title", help='define job title ' +
-#         '(when creating a job)')
-#     except optparse.OptionConflictError:
-#         pass
-
-
 @moa.args.argument('parameter', nargs='*', help='arguments for this job, specify' +
                    'as KEY=VALUE without spaces')
 @moa.args.argument('template', help='name of the template to use for this moa job ')

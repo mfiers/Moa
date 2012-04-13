@@ -157,11 +157,11 @@ class Job(object):
         self.renderFilesets()
 
 
-    def run_hook(self, hook):
+    def run_hook(self, hook, **kwargs):
         """
         Shortcut to run a job plugin hook
         """
-        self.pluginHandler.run(hook, job=self)
+        self.pluginHandler.run(hook, job=self, **kwargs)
         
     def prepareFilesets(self):
         moa.filesets.prepare(self)
@@ -267,11 +267,14 @@ class Job(object):
         #figure out what we were really after
         command = args.command
 
+        l.info("Running '%s'" % command)
+
         #prepare for execution - i.e. prepare log dir, etc..
         self.prepareExecute()
         
         #unless command == 'run' - just execute it and return the RC
         if command != 'run':
+            l.debug("Simple execute of '%s'" % command)
             sysConf.rc =  self.backend.execute(self, command, args)
             self.finishExecute()
             return sysConf.rc
@@ -279,7 +282,9 @@ class Job(object):
         # command == 'run' is a special case - this will trigger a series of
         # runs.
 
+        l.debug("Starting RUN")
         for subcommand in ['prepare', 'run', 'finish']:
+            l.debug("Starting RUN/%s" % subcommand)
             try:
                 rc = self.backend.execute(self, subcommand, args)
                 l.debug(("executing backend '%s' finished "+
@@ -391,6 +396,7 @@ class Job(object):
                 "-j", dest="threads", type=int,
                 default=1, help="No threads to use when running Ruffus")
 
+            self.run_hook('defineCommandOptions', parser=cp)
             sysConf.commands[c] = {
                 'desc' : hlp,
                 'long' : hlp,
@@ -401,7 +407,7 @@ class Job(object):
         
     def defineOptions(self, parser):
         """
-        Set command line options - deferred to the backend
+        Set command line options - deferred to the backend - PER COMMAND
         
         >>> job = newTestJob('unittest')
         >>> import optparse
@@ -409,6 +415,7 @@ class Job(object):
         >>> job.defineOptions(parser)
 
         """
+        #self.run_hook('defineOptions', parser=parser)
         if self.backend and getattr(self.backend, 'defineOptions'):
             self.backend.defineOptions(parser)
                 

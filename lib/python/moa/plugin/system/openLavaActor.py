@@ -20,9 +20,15 @@ from moa.sysConf import sysConf
 import moa.logger as l
 import moa.ui
 
+l = moa.logger.getLogger(__name__)
+l.setLevel(moa.logger.DEBUG)
+
 def hook_defineCommandOptions(job, parser):
     parser.add_argument( '--ol', action='store_const', const='openlava',
                                dest='actorId', help='Use OpenLava as actor' )
+
+    parser.add_argument( '--olq', default='normal', dest='openlavaQueue', 
+                         help='The Openlava queue to submit this job to' )
 
 def openlavaRunner(wd, cl, conf={}, **kwargs):
     """
@@ -38,7 +44,10 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     #see if we can get a command
     command = kwargs.get('command', 'unknown')
     if command == 'unknown':
-        l.error("runner should be called with a command")
+        l.critical("runner should be called with a command")
+        sys.exit(-1)
+
+    l.debug("starting openlava actor for %s" % command)
 
     outDir = os.path.join(wd, '.moa', 'log.latest')
     if not os.path.exists(outDir):
@@ -59,16 +68,18 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("cd", wd)
     s("#BSUB -o", outfile)
     s("#BSUB -e", errfile)
-
+    s("#BSUB -q", sysConf.args.openlavaQueue)
 
     lastJids = []
+
     #if len(sysConf.job.data.openlava.get('jidlist', [])) > 1:
     #    lastJids = sysConf.job.data.openlava.get('jidlist')[-1]
     
 
-    #if command == 'run':
-    #    prep_jids = sysConf.job.data.openlava.jids.get('prepare', [])
+    if command == 'run':
+        prep_jids = sysConf.job.data.openlava.jids.get('prepare', [])
         #hold until the 'prepare' jobs are done
+        l.critical("Prepare jids - wait for these! %s" % prep_jids)
         #if prep_jids: 
         #    qcl.append("-w '")
         #    qcl.append('&&'.join(['exit(%s)' % x for x in prep_jids])
@@ -119,14 +130,18 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     moa.ui.message("Submitting job to openlava")
     p = sp.Popen('bsub', cwd = wd, stdout=sp.PIPE, stdin=sp.PIPE)
     o,e = p.communicate("\n".join(sc))
-    jid = int(o.strip().split()[2])
-    sysConf.actor.openlava.jids.append(jid)
-    moa.ui.message("submitted job with openlava job id %s " % jid)
+    
+    jid = int(o.split("<")[1].split(">")[0])
 
+    if not sysConf.job.data.openlava.jids.has_key(command):
+        sysConf.job.data.openlava.jids[command] = []
+
+    moa.ui.message("submitted job with openlava job id %s " % jid)
     #store the job id submitted
     if not sysConf.job.data.openlava.jids.has_key(command):
             sysConf.job.data.openlava.jids[command] = []
     sysConf.job.data.openlava.jids[command].append(jid)
+    l.debug("jids stored %s" % str(sysConf.job.data.openlava.jids))
     return p.returncode
 
 def hook_postRun():

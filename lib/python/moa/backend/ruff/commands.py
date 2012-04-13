@@ -8,7 +8,9 @@ import moa.ui
 import moa.utils
 import moa.moajinja
 from moa.sysConf import sysConf
-import moa.logger as l
+import moa.logger
+l = moa.logger.getLogger(__name__)
+#l.setLevel(moa.logger.DEBUG)
 
 class RuffCommands(Yaco.Yaco):
     """
@@ -31,8 +33,10 @@ class RuffCommands(Yaco.Yaco):
             self._confDir, 'template.d',
             '%s.jinja2' % (self._moaid))
 
+        l.debug("loading template file from %s" % templateFile)
+
         if os.path.exists(templateFile):
-            #first, attempt to load 'old style' template files
+            #first, attempt to load 'old' style template files
             with open(templateFile) as F:
                 raw = F.read()
 

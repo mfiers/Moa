@@ -15,7 +15,7 @@ import moa.template
 import moa.actor
 import moa.exceptions
 import moa.backend
-import moa.logger as l
+import moa.logger
 from moa.sysConf import sysConf
 
 from moa.backend.ruff.commands import RuffCommands
@@ -24,6 +24,9 @@ from moa.backend.ruff.reduce import RuffReduceJob
 from moa.backend.ruff.map import RuffMapJob
 
 import Yaco
+
+l = moa.logger.getLogger(__name__)
+#l.setLevel(moa.logger.DEBUG)
 
 MOABASE = moa.utils.getMoaBase()
 TEMPLATEDIR = os.path.join(MOABASE, 'template2')
@@ -73,6 +76,8 @@ class Ruff(moa.backend.BaseBackend):
         """
 
         if not self.commands.has_key(command):
+            l.debug("command '%s' does not exists" % command)
+            l.debug("was able to find: %s" % str(self.commands.keys()))
             raise moa.exceptions.MoaCommandDoesNotExist
         
         #see how it should execute
