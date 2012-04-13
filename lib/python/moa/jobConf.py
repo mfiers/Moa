@@ -298,9 +298,8 @@ class JobConf(object):
                 if not (v[:2] == './' or v[:3] == '../'):
                     continue
 
-                moa.ui.error("Please, no recursive definition of relative paths!")
-                moa.ui.error("This will surely end in tears!")
-                moa.ui.error("%s %s=%s" % (os.path.abspath(delta), k, v))
+                moa.ui.warn("Recursive definition of relative paths - can be dangerous!!")
+                moa.ui.warn("%s %s=%s" % (os.path.abspath(delta), k, v))
 
                 #correctedPath = os.path.normpath(delta + '/' + v)
                 #relPath = os.path.relpath(correctedPath)

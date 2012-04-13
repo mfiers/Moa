@@ -147,7 +147,6 @@ def hook_prepare(job):
     if not sysConf.jinja2.extensions:
         sysConf.jinja2.extensions = []
     sysConf.jinja2.extensions += [MoaPathParser]
-    
 
 def hook_pre_filesets(job):
 

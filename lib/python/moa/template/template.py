@@ -70,6 +70,7 @@ class Template(Yaco.Yaco):
 
         #try to load the template!!
         noTemplate = False
+
         if not os.path.isfile(self.templateFile):
             noTemplate = True
         elif not os.access(self.templateFile, os.R_OK):
@@ -87,18 +88,19 @@ class Template(Yaco.Yaco):
                     noTemplate = True
 
 
-
         if noTemplate:
             self.name = 'nojob'
             self.backend = 'nojob'
             self.parameters = {}
+            self.original = {}
         else:
             self.load(self.templateFile)
 
-        #keep a copy of the original template
-        original = Yaco.Yaco()
-        original.load(self.templateFile)
-        self.original = original
+            #keep a copy of the original template
+            original = Yaco.Yaco()
+            original.load(self.templateFile)
+            self.original = original
+
 
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         if not self.name == 'nojob' and not self.modification_date:

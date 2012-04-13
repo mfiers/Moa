@@ -117,6 +117,7 @@ class Job(object):
 
         self.run_hook('prepare')
         
+
         self.confDir = os.path.join(self.wd, '.moa')
         self.templateFile = os.path.join(self.confDir, 'template')
         self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
@@ -143,6 +144,7 @@ class Job(object):
             'Changelog', 'CHANGELOG', 'Changelog.*',
             'blog.*', 'blog'
             ]
+
 
         self.loadTemplate()
         self.loadTemplateMeta()
@@ -455,6 +457,7 @@ class Job(object):
         Load the template for this job, based on what configuration 
         can be found
         """
+
         self.template = moa.template.Template(self.templateFile)
         l.debug("Job loaded template %s" % self.template.name)
         self.loadBackend()
