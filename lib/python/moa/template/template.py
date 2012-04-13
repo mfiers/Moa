@@ -15,6 +15,7 @@ retrieving template information.
 """
 
 import os
+import copy
 
 import Yaco
 
@@ -94,7 +95,11 @@ class Template(Yaco.Yaco):
         else:
             self.load(self.templateFile)
 
-            
+        #keep a copy of the original template
+        original = Yaco.Yaco()
+        original.load(self.templateFile)
+        self.original = original
+
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         if not self.name == 'nojob' and not self.modification_date:
             self.modification_date = os.path.getmtime(self.templateFile)
