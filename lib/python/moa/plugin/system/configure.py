@@ -69,6 +69,11 @@ def show(job, args):
                 #do not show undefined optional parameters unless -a
                 #is defined on the command line
                 continue
+            #also - no recursively defined stuff - unless it is relevant
+            #to the current job
+            if (not job.conf.is_local(p)) and \
+                    (p not in job.template.original.parameters):
+                continue
 
         outkeys.append(p)
 
