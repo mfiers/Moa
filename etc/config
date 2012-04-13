@@ -57,7 +57,7 @@ plugins:
       dir: ~/.config/moa/archive
     moaGit: 
       module: moa.plugin.system.moaGit
-      enabled: true
+      enabled: false
       warn: true
     varInject:
       module: moa.plugin.system.varInject
