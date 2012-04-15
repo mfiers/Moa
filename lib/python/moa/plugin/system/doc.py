@@ -18,6 +18,7 @@ import datetime
 import subprocess
 
 import moa.ui
+import moa.args
 import moa.utils
 import moa.logger as l
 from moa.sysConf import sysConf
@@ -40,10 +41,9 @@ def hook_prepare_3():
         }
 
 def hook_defineOptions():
-    sysConf.parser.add_option(
+    sysConf.argParser.add_argument(
         '-m', action='store',
-        dest='message', help = 'Message accompanying this operations - ' + 
-        'used for git & changelogs ')
+        dest='message', help = 'Change message for this operation')
 
 def hook_defineCommands():
     """
@@ -53,13 +53,6 @@ def hook_defineCommands():
         'desc' : 'Maintain a blog (blog.md)',
         'usage' : 'moa blog',
         'call' : blog,
-        'needsJob' : False,
-        'log' : True
-        }
-    sysConf['commands']['change'] = {
-        'desc' : 'Maintain a changelog file (changelog.md)',
-        'usage' : 'moa blog',
-        'call' : change,
         'needsJob' : False,
         'log' : True
         }
@@ -126,11 +119,15 @@ def blog(job):
         job, 
         header="enter your blog message (ctrl-d on an empty line to finish)",
         fileName="Blog.md")
-                  
-def change(job):
+
+
+@moa.args.command
+def change(job, args):
     """
-    Allows a user to enter a short note that is appended to
-    Changelog.md (including a timestamp). Use it as follows::
+    Add entry to Changelog.md
+    
+    This function allows the user to add an entry to Changelog.md
+    (including a timestamp). Use it as follows::
 
         $ moa change
         Enter your changelog message (ctrl-d on an empty line to finish)
@@ -144,6 +141,12 @@ def change(job):
     to Markdown_.
 
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
+
+    Note the same can be achieved by specifying the -m parameter
+    (before the command - for example:
+
+    `moa -m 'intelligent remark' set ...`
+
     """
     _readFromuser(
         job, 
