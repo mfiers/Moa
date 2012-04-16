@@ -24,6 +24,7 @@ import moa.logger as l
 from moa.sysConf import sysConf
 
 def hook_prepare_3():
+
     job = sysConf['job']
 
     if not job.template.parameters.has_key('title'):
@@ -33,17 +34,22 @@ def hook_prepare_3():
             'type' : 'string',
             'recursive' : False,
             }
+
+    if sysConf.args.changeMessage:
+        _appendMessage(
+            fileName="Changelog.md",
+            txt = sysConf.args.changeMessage.split("\n") )
     
-    job.template.parameters.project = {
-        'optional' : True,
-        'help' : 'Project name',
-        'type' : 'string'
-        }
+    # job.template.parameters.project = {
+    #     'optional' : True,
+    #     'help' : 'Project name',
+    #     'type' : 'string'
+    #     }
 
 def hook_defineOptions():
     sysConf.argParser.add_argument(
         '-m', action='store',
-        dest='message', help = 'Change message for this operation')
+        dest='changeMessage', help = 'Change message for this operation')
 
 def hook_defineCommands():
     """
@@ -64,23 +70,13 @@ def hook_defineCommands():
         'log' : True
         }
 
-def _readFromuser(job, header, fileName):
+def _appendMessage(fileName, txt):
     """
-    gather Blog or Changelog information
+    Append a markdown formatted message to either Changelog or Blog
+
+    :param txt: message to save
+    :type txt: array of strings
     """
-    #moa.utils.moaDirOrExit(job)
-
-    txt = []
-    print header, "..."
-    while True:
-        try:
-            line = raw_input("")
-            txt.append(line)
-        except (EOFError, KeyboardInterrupt):
-            break
-
-    sysConf.job.data.blog.txt = "\n".join(txt)
-
     try:
         with open(fileName) as F:
             oldFile = F.read()
@@ -95,6 +91,23 @@ def _readFromuser(job, header, fileName):
         F.write("\n    ".join(txt))
         F.write("\n-----\n")
         F.write(oldFile)
+
+def _readFromuser(job, header, fileName):
+    """
+    gather Blog or Changelog information
+    """
+    #moa.utils.moaDirOrExit(job)
+
+    txt = []
+    print header, "..."
+    while True:
+        try:
+            line = raw_input("")
+            txt.append(line)
+        except (EOFError, KeyboardInterrupt):
+            break
+        
+    _appendMessage(fileName, txt)
 
 def blog(job):
     """
