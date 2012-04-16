@@ -6,16 +6,17 @@ commands:
   clean:
     mode: simple
     help: remove all Hagfish files
-  report:
-    mode: simple
-  circos:
-    help: convert to circos histogram data
-    mode: simple
-  combine:
+  finish:
+    help: finish up - find gaps - combine plots - create a report
     mode: simple
 creation_date: Tue Mar 29 16:34:19 2011
 description: Run the preparatory steps for hagfish
 filesets:
+  fasta:
+    category: prerequisite
+    help: fasta sequence of the reference 
+    type: single
+    optional: false
   input:
     category: input
     help: '"hagfish" input files'
@@ -24,7 +25,7 @@ filesets:
     type: set
   output:
     category: output
-    help: '"hagfish" output files'
+    help: '"hagfish" touch files - track what files are done - please do not touch this!'
     optional: true
     pattern: ./touch/*.touch
     source: input
