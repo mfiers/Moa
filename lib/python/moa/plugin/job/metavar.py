@@ -152,10 +152,12 @@ def hook_prepare(job):
 def hook_pre_filesets(job):
 
     wd = job.wd
+    awd = os.path.abspath(wd)
 
-    job.conf.setPrivateVar('wd', job.wd)
+    job.conf.setPrivateVar('wd', awd)
 
-    dirparts = job.wd.split(os.path.sep)
+    dirparts = awd.split(os.path.sep)
+    #print 'x', awd, dirparts
     job.conf.setPrivateVar('_', dirparts[-1])
     i = 1
     lastp = None
@@ -178,6 +180,12 @@ def hook_pre_filesets(job):
         if i > 1 and  i <= 3:
             thisdirlist = [x for x in os.listdir(cp) if not x[0] == '.']
             thisdirlist.sort()
+            
+            #print i
+            #print cp
+            #print p
+            #print lastp
+            #print thisdirlist
             
             iofp = thisdirlist.index(lastp)
 

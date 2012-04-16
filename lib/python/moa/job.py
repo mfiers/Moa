@@ -115,19 +115,17 @@ class Job(object):
             wd = wd[:-1]
         self.wd = wd
 
-        self.run_hook('prepare')
-        
-        self.confDir = os.path.join(self.wd, '.moa')
-        self.templateFile = os.path.join(self.confDir, 'template')
-        self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
-        
-
         self.backend = None
         self.args = []
         self.env = {}
-        
+
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
+
+        self.confDir = os.path.join(self.wd, '.moa')
+        self.templateFile = os.path.join(self.confDir, 'template')
+        self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
+
 
         # a list of globs that defines what is crucial to a Moa job
         # and what is not.
@@ -144,17 +142,23 @@ class Job(object):
             'blog.*', 'blog'
             ]
 
-        self.loadTemplate()
-        self.loadTemplateMeta()
+        if wd.split(os.path.sep)[-1] == '.moa':
+            #this is a .moa dir = cannot be a job
+            pass
+        else:    
+            self.run_hook('prepare')
 
-        # then load the job configuration
-        self.run_hook('pre_load_config')
-        self.conf = moa.jobConf.JobConf(self)
-        
-        #prepare filesets (if need be)o
-        self.run_hook('pre_filesets')
-        self.prepareFilesets()
-        self.renderFilesets()
+            self.loadTemplate()
+            self.loadTemplateMeta()
+
+            # then load the job configuration
+            self.run_hook('pre_load_config')
+            self.conf = moa.jobConf.JobConf(self)
+
+            #prepare filesets (if need be)o
+            self.run_hook('pre_filesets')
+            self.prepareFilesets()
+            self.renderFilesets()
 
 
     def run_hook(self, hook):
