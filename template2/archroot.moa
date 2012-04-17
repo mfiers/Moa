@@ -1,0 +1,17 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: ''
+    mode: simple
+creation_date: Tue, 17 Apr 2012 10:21:31
+description: Helper script for the root of an archive template
+moa_id: archroot
+modification_date: Tue, 17 Apr 2012 10:21:25
+name: archroot
+parameters:
+  moa_archive_parameters:
+    help: space separated list of parameters to set for this template
+    optional: false
+    type: string
+title: Helper script for a root archive
