@@ -109,11 +109,13 @@ def _readFromuser(job, header, fileName):
         
     _appendMessage(fileName, txt)
 
-def blog(job):
+@moa.args.command
+def blog(job, args):
     """
-    Allows a user to maintain a blog for this job (in Blog.md).
+    Add an entry to the blog job (Blog.md)
 
-    Use it as follows::
+    Allows a user to maintain a blog for this job (in Blog.md). Use as
+    follows::
 
         $ moa blog
         Enter your blog message (ctrl-d on an empty line to finish)
@@ -130,7 +132,7 @@ def blog(job):
     """
     _readFromuser(
         job, 
-        header="enter your blog message (ctrl-d on an empty line to finish)",
+        header="Enter your blog message (ctrl-d on an empty line to finish)",
         fileName="Blog.md")
 
 
@@ -167,9 +169,13 @@ def change(job, args):
         fileName="Changelog.md")
                   
 
-def readme(job):
+@moa.args.command
+def readme(job, args):
     """
-    Edit the Readme.md file - you could, obviously, also edit the file yourself.
+    Edit the Readme.md file for this job
+
+    You could, obviously, also edit the file yourself - this is a mere
+    shortcut to try to stimulate you in maintaining one
     """
     
     subprocess.call([os.environ.get('EDITOR','nano'), 'Readme.md'])

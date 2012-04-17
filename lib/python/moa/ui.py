@@ -44,7 +44,9 @@ for c in sysConf.ansi:
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
  
 def exitError(message=''):
-    sysConf.pluginHandler.run("post_error")
+    if sysConf.pluginHandler:
+        #see if this is instantiated yet!
+        sysConf.pluginHandler.run("post_error")
     if message:
         fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
     sys.exit(-1)

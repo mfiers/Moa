@@ -45,7 +45,8 @@ class Archive(provider.ProviderBase):
 
     def saveMeta(self, meta, filename):
         """
-        No meta - not refreshable
+        Archives (currently) have no meta data - not refreshable
+        (although you can unpack a newer archive over an older one
         """
         pass
 

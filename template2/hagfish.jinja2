@@ -1,8 +1,9 @@
 ### run
 
-mkdir -p `dirname {{ output }}`
+mkdir -p touch
 hagfish_extract -v --low {{ min_ok }} --high {{ max_ok }} {{ input }}
-touch {{ output }}
+hagfish_gapfinder -v -f {{ fasta }}
+echo touch {{ output }}
 
 ### finish
 

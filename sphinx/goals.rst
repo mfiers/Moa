@@ -3,15 +3,15 @@
 Goals
 =====
 
-Moa aims to assist in achieving the following for a bioinformatics
-project:
+Moa has as objective to assist in keeping a bioinformatics project:
 
 - *Organized*: 
 
-    Moa facilitates project organization by allowing at only one
-    `job` per directory, and, by having all configuration, templates,
-    data, and intermediate data available as files in this directory
-    structure.     
+    Moa facilitates project organization in many (smaller and more
+    major) ways, for example by providing a uniform way to capture
+    commands as Moa jobs. Each Moa job is linked to a specific
+    directory, and has all configuration, templates, data, and
+    intermediate data available as files in this directory structure.
 
 - *Documented*: 
 
