@@ -65,13 +65,13 @@ def hook_post_interrupt():
     _writeLog('interrupted')
 
 def hook_post_error():
-    if sysConf.logger.run_time:
-        moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s (%s)" % (
-            sysConf.originalCommand,
-            niceRunTime(str(sysConf.logger.run_time))))
-    else:
-        moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s" % (
-            sysConf.originalCommand))
+    # if sysConf.logger.run_time:
+    #     moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s (%s)" % (
+    #         sysConf.originalCommand,
+    #         niceRunTime(str(sysConf.logger.run_time))))
+    # else:
+    #     moa.ui.message("{{red}}{{bold}}Error{{reset}} running %s" % (
+    #         sysConf.originalCommand))
     _writeLog('error')
 
 def hook_postRun():
@@ -98,7 +98,7 @@ def hook_preRun():
 def _writeLog(status):
     
     #only save logs for moa jobs
-    if not sysConf.job.isMoa():
+    if (not sysConf) or (not sysConf.has_key('job')) or (not sysConf.job.isMoa()):
         return
 
     sysConf.logger.end_time = datetime.today()

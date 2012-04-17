@@ -105,6 +105,9 @@ def render(job):
         job.data.filesets[fsid] = fs
 
         l.debug("preparing fileset '%s' %s (from %s)" % (fsid, renJobConf.get(fsid, 'undef'), job.wd))
+        if not renJobConf.has_key(fsid):
+            moa.ui.exitError("Undefined fileset %s" % fsid)
+
         #Resolve filesets - first the NON-map sets
         if fs.type == 'set':
             files = fist.fistFileset(renJobConf[fsid], context=job.wd)
