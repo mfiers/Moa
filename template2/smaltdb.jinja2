@@ -1,0 +1,11 @@
+### run
+
+echo run smalt index 
+echo on fasta input: {{ input }}
+smalt index -k {{ word_length }} -s {{ word_spacing }} {{ output }} {{ input }}
+touch {{ output }}
+
+### clean
+
+rm *.smi *.sma
+

@@ -1,0 +1,75 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data, not the Moa job itself
+    mode: simple
+  run:
+    help: Execute SMALT with with paired-end fastq
+    mode: map
+creation_date: Tue, 27 Mar 2012 10:05:40 +1300
+description: Run SMALT on an set of input files (query) vs a database index.
+filesets:
+  fasta:
+    category: prerequisite
+    help: reference fasta file
+    optional: false
+    pattern: '*.fasta'
+    type: single
+  db:
+    category: prerequisite
+    help: The (basename of the) smalt database to use.
+    optional: false
+    pattern: ../10.smaltdb/db
+    type: single
+  fq_forward_input:
+    category: input
+    help: fastq input files directory - forward
+    optional: false
+    pattern: '*/*_1.fq'
+    type: set
+  fq_reverse_input:
+    category: input
+    help: fastq input files directory - reverse
+    optional: true
+    pattern: '*/*_2.fq'
+    source: fq_forward_input
+    type: map
+  output:
+    category: output
+    help: output BAM file (automatically converted & filtered for reads that to not map)
+    pattern: ./*.sam
+    source: fq_forward_input
+    type: map
+moa_id: smalt_pe
+modification_date: Tue, 27 Mar 2012 10:31:09 +1300
+name: smalt_pe
+parameters:
+  extra_params:
+    default: ''
+    help: extra parameters to feed to smalt
+    optional: true
+    type: string
+  output_format:
+    default: sam
+    optional: true
+    help: output format (sam or samsoft)
+  pairtype:
+    default: pe
+    help: 'pair type (pe: fr/illumina short; mp: rf/illumina mate pairs or pp: ff'
+    optional: true
+  threads:
+    default: 4
+    help: No threads to use
+    optional: true
+    type: int
+  max_insertsize:
+    default: '250'
+    help: Maximum allowed insertsize
+    optional: true
+    type: integer
+  min_insertsize:
+    default: '1'
+    help: Minimum allowed insertsize
+    optional: true
+    type: integer
