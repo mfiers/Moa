@@ -33,6 +33,10 @@ STATUS = 'unknown'
 
 @moa.args.addFlag('-a', dest='showAll', help='show all parameters')
 @moa.args.addFlag('-p', dest='showPrivate', help='show private parameters')
+@moa.args.addFlag('-R', dest='showRecursive', help='show recursively defined '
+                  + 'parameters not specified by the local template')
+@moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values '+
+                  '(when using inline parameters)')
 @moa.args.needsJob
 @moa.args.command
 def status(job, args):

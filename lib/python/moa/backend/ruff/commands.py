@@ -1,8 +1,10 @@
 import os
 import re
 import glob
+import copy
 
 import Yaco
+import jinja2
 
 import moa.ui
 import moa.utils
@@ -107,6 +109,8 @@ class RuffCommands(Yaco.Yaco):
         jinjaEnv = moa.moajinja.getEnv()
         jt = jinjaEnv.from_string(script)
 
+        #trick - for introspection
+        data['__moadata__'] = copy.copy(data)
         try:
             rscript = jt.render(data)
         except jinja2.exceptions.UndefinedError:
@@ -114,7 +118,7 @@ class RuffCommands(Yaco.Yaco):
             l.debug(script)
             raise
             moa.ui.exitError("Error jinja rendering command") 
-        
+
         if '{{' or '{%' in rscript:
             #try a second level jinja interpretation
             jt2 = jinjaEnv.from_string(rscript)

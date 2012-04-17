@@ -1,0 +1,32 @@
+### run
+
+{%- for par in moa_archive_parameters.split() %}
+val='{{__moadata__[par]}}'
+{%- set help=__moadata__['moa_' + par+'_help'] %}
+{%- set test=__moadata__['moa_' + par + '_test'] %}
+echo 'Checking {{ par }}'
+echo '- help: {{ help }}'
+
+echo "- value: ${val}"
+if [[ -z "${val}" ]]
+then
+    echo "ERROR"
+    echo "{{par}} is undefined"
+    false
+fi
+    
+{% if test %}
+echo '- test {{ test }}'
+if {{ test }}
+then
+    echo '- check ok'
+else
+    echo "ERROR"
+    echo {{ __moadata__['moa_' + par+'_error'] }}
+    false
+fi
+{% else %}
+echo "- NO TEST DEFINED"
+{% endif %}
+echo
+{% endfor %}
