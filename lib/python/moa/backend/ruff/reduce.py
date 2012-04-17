@@ -128,7 +128,7 @@ class RuffReduceJob(RuffBaseJob):
                 [executor2],
                 verbose = self.args.verbose,
                 one_second_per_job=False,
-                multiprocess= args.threads,
+                multiprocess= self.args.threads,
                 logger = ruffus.black_hole_logger,                    
                 )
             rc = 0
@@ -140,18 +140,19 @@ class RuffReduceJob(RuffBaseJob):
             #caught here.
             l.debug("CAUGHT A RUFFUS ERROR!")
             l.debug(str(e))
-            startOfError = "{{gray}}" + re.sub(r'\s+', " ", str(e))[:72].strip() + "...{{reset}}"
-            moa.ui.error("Caught a Ruffus error")
-            moa.ui.error(startOfError)
+
+            error_message = "{{bold}}Backend trouble{{reset}}\n"
+            error_message += "{{gray}}" + re.sub(r'\s+', " ", str(e))[:72].strip() + "...{{reset}}\n"
 
             try:
                 #try to get some structured info & output that.
                 einfo = e[0][1].split('->')[0].split('=')[1].strip()
                 einfo = einfo.replace('[', '').replace(']', '')
-                moa.ui.error("While  processing: %s" % einfo)
+                error_message += ("\nWhile  processing: %s\n" % einfo)
             except:
+                
                 pass
-            moa.ui.exitError("Quitting")
+            moa.ui.exitError(error_message)
                  
 
         #empty the ruffus node name cache needs to be empty -

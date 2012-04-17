@@ -1,0 +1,17 @@
+### run
+
+mkdir -p touch
+hagfish_extract -v --low {{ min_ok }} --high {{ max_ok }} {{ input }}
+hagfish_gapfinder -v -f {{ fasta }}
+echo touch {{ output }}
+
+### finish
+
+hagfish_coverage_combine -v
+hagfish_report -v
+
+### clean
+
+rm -rf `dirname {{ output }}`
+rm -rf bins combined coverage  readpairs  report  seqInfo  stats 
+

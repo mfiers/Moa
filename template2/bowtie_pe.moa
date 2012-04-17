@@ -16,13 +16,13 @@ description: Run BOWTIE on an set of input files (query) vs a database index.
 filesets:
   fq_forward_input:
     category: input
-    help: fastq input files directory - forward
+    help: Fastq input files - forward
     optional: false
     pattern: '*/*_1.fq'
     type: set
   fq_reverse_input:
     category: input
-    help: fastq input files directory - reverse
+    help: Fastq input files - reverse
     optional: true
     pattern: '*/*_2.fq'
     source: fq_forward_input
@@ -76,3 +76,8 @@ parameters:
     help: Minimum allowed insertsize
     optional: true
     type: integer
+  save_unmapped:
+    default: false
+    help: Save the unmapped reads to a separate file
+    optional: true
+    type: boolean

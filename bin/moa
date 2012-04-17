@@ -77,6 +77,8 @@ parser, commandparser = moa.args.getParser()
 ## Initalize system plugins
 sysConf.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.system)
 
+
+sysConf.pluginHandler.run('defineOptions')
 ## A hack to set verbosity before reading command line arguments
 if ('-v' in sys.argv) or ('-vv' in sys.argv):
     moa.logger.setVerbose()

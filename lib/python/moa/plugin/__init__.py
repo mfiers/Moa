@@ -52,12 +52,14 @@ class PluginHandler():
 
             try:
                 l.debug("trying to load module %s" % pyModule)
+                #print plugin, pyModule
                 _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
                 self.config[plugin]['loaded_module'] = _m
                 l.debug("Successfully Loaded module %s" % pyModule)
             except ImportError, e:
                 sys.stderr.write("ERROR - Plugin %s is not (properly) installed\n" % plugin)
-                self.self.config[plugin]
+                #self.config[plugin]
+                raise
                 sys.exit(-1)
         
     

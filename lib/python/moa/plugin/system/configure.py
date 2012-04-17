@@ -25,6 +25,10 @@ from moa.sysConf import sysConf
 ##
 @moa.args.addFlag('-a', dest='showAll', help='show all parameters')
 @moa.args.addFlag('-p', dest='showPrivate', help='show private parameters')
+@moa.args.addFlag('-R', dest='showRecursive', help='show recursively defined '
+                  + 'parameters not specified by the local template')
+@moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values '+
+                  '(when using inline parameters)')
 @moa.args.needsJob
 @moa.args.command
 def show(job, args):
@@ -53,6 +57,10 @@ def show(job, args):
         isPrivate = False
         
         if p[:4] == 'moa_':
+            if not args.showAll:
+                continue
+
+        if p[0] == '_':
             if not args.showPrivate:
                 continue
 
@@ -69,6 +77,13 @@ def show(job, args):
                 #do not show undefined optional parameters unless -a
                 #is defined on the command line
                 continue
+        if not args.showRecursive:
+            #also - no recursively defined stuff - unless it is relevant
+            #to the current job
+            if not ( p in job.template.original.parameters or \
+                         p in job.template.filesets):
+                if not job.conf.is_local(p):
+                    continue
 
         outkeys.append(p)
 
@@ -88,14 +103,15 @@ def show(job, args):
             if job.template.parameters[p].optional:
                 outflags.append('{{blue}}o{{reset}}')
                 val = job.conf[p]
-                if val:
-                    outvals.append(val)
+                if val != None:
+                    outvals.append(
+                        moa.ui.fformat('{{gray}}%s{{reset}}' % val, f='j'))
                 else:
                     outvals.append(
                         moa.ui.fformat(
                             '{{gray}}(undefined){{reset}}', f='j'))
             else:
-                #wow - not optional                
+                #not optional                
                 outflags.append('{{bold}}{{red}}E{{reset}}')
                 outvals.append(
                     moa.ui.fformat(
@@ -122,12 +138,16 @@ def show(job, args):
         moa.ui.fprint(" " + flag + " ", f='jinja', newline=False)
         if len(str(val)) == 0:
             print
-        for j, ll in enumerate(textwrap.wrap(str(val), wrapInit)):
+
+        if args.showUnrendered: mainval = val
+        else: mainval = rendered[key]
+
+        for j, ll in enumerate(textwrap.wrap(str(mainval), wrapInit)):
             if j == 0:
                 moa.ui.fprint(ll, f=None)
             else:
                 moa.ui.fprint(spacer + ll, f=None)
-        if rendered[key] and rendered[key] != val:
+        if args.showUnrendered and rendered[key] and rendered[key] != val:
             for j, ll in enumerate(textwrap.wrap(str(rendered[key]), wrapInit)):
                 moa.ui.fprint(spacerR + ll + closeR)
             

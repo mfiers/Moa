@@ -3,12 +3,6 @@ echo Start bowtie pe
 
 outbase=`basename {{ output }} .bam`
 
-echo bowtie -S {{ extra_params }} --{{orientation}}                             \
-    -I {{ min_insertsize }} -X {{ max_insertsize }}                             \
-	--un ${outbase}.unmapped.fq													\
-    {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }}                \
-    \| samtools view -bS - > ${outbase}.unsorted
-
 bowtie -S {{ extra_params }} --{{orientation}}                                  \
     -I {{ min_insertsize }} -X {{ max_insertsize }}                             \
 	--un ${outbase}.unmapped.fq													\

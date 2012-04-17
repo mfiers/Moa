@@ -1,14 +1,18 @@
 import os
 import re
 import glob
+import copy
 
 import Yaco
+import jinja2
 
 import moa.ui
 import moa.utils
 import moa.moajinja
 from moa.sysConf import sysConf
-import moa.logger as l
+import moa.logger
+l = moa.logger.getLogger(__name__)
+#l.setLevel(moa.logger.DEBUG)
 
 class RuffCommands(Yaco.Yaco):
     """
@@ -31,8 +35,10 @@ class RuffCommands(Yaco.Yaco):
             self._confDir, 'template.d',
             '%s.jinja2' % (self._moaid))
 
+        l.debug("loading template file from %s" % templateFile)
+
         if os.path.exists(templateFile):
-            #first, attempt to load 'old style' template files
+            #first, attempt to load 'old' style template files
             with open(templateFile) as F:
                 raw = F.read()
 
@@ -103,6 +109,8 @@ class RuffCommands(Yaco.Yaco):
         jinjaEnv = moa.moajinja.getEnv()
         jt = jinjaEnv.from_string(script)
 
+        #trick - for introspection
+        data['__moadata__'] = copy.copy(data)
         try:
             rscript = jt.render(data)
         except jinja2.exceptions.UndefinedError:
@@ -110,7 +118,7 @@ class RuffCommands(Yaco.Yaco):
             l.debug(script)
             raise
             moa.ui.exitError("Error jinja rendering command") 
-        
+
         if '{{' or '{%' in rscript:
             #try a second level jinja interpretation
             jt2 = jinjaEnv.from_string(rscript)
