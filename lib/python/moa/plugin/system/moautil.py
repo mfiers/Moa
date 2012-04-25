@@ -18,7 +18,10 @@ import shutil
 import tarfile
 import optparse
 
-import moa.logger as l
+import moa.logger
+l = moa.logger.getLogger(__name__)
+#l.setLevel(moa.logger.DEBUG)
+
 import moa.ui
 import moa.args
 from moa.sysConf import sysConf
@@ -105,6 +108,7 @@ def archive(job, args):
     archiveName += '.tar.gz'
     archiveFile = os.path.join(archivePath, archiveName)
 
+    l.debug("archive name is %s" % archiveName)
     if os.path.exists(archiveFile):
         if not args.force:
             moa.ui.exitError("%s exists - use -f to overwrite" %
@@ -124,6 +128,7 @@ def archive(job, args):
         for pattern in job.data.moaFiles:
             for fl in glob.glob(os.path.join(path, pattern)):
                 if fl[-1] == '~': continue
+                l.debug("adding to tarfile: %s" % fl)
                 tf.add(fl)
                 
     if args.recursive:

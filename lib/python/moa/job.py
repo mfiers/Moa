@@ -59,6 +59,7 @@ def newJob(wd, template, title, parameters=[], provider=None):
 
     job = Job(wd)
     job.setTemplate(template, provider=provider)
+    job.load_config()
     job.conf.title = title
     for pk, pv in parameters:
         job.conf[pk] = pv
@@ -158,14 +159,17 @@ class Job(object):
             self.loadTemplate()
             self.loadTemplateMeta()
 
-            # then load the job configuration
-            self.run_hook('pre_load_config')
-            self.conf = moa.jobConf.JobConf(self)
-
+            self.load_config()
             #prepare filesets (if need be)o
             self.run_hook('pre_filesets')
             self.prepareFilesets()
             self.renderFilesets()
+
+
+    def load_config(self):
+        # then load the job configuration
+        self.run_hook('pre_load_config')
+        self.conf = moa.jobConf.JobConf(self)
 
 
     def run_hook(self, hook, **kwargs):

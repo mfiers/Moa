@@ -14,7 +14,11 @@ import os
 
 import optparse
 import moa.job
-import moa.logger as l
+import moa.logger
+
+l = moa.logger.getLogger(__name__)
+l.setLevel(moa.logger.DEBUG)
+
 import moa.plugin
 import moa.ui
 import moa.args
@@ -87,6 +91,7 @@ def new(job, args):
         provider, template = template.split(':')
 
     try:
+        l.debug("instantiating new job")
         job = moa.job.newJob(wd, template=template, title = title,
                              provider=provider)
     except moa.exceptions.InvalidTemplate:
