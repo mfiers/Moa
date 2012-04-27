@@ -137,10 +137,20 @@ def show(job, args):
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
         moa.ui.fprint(" " + flag + " ", f='jinja', newline=False)
         if len(str(val)) == 0:
-            print
+            print 
+
+        #print str( val)
+        #print textwrap.wrap(str(val), wrapInit)
 
         if args.showUnrendered: mainval = val
-        else: mainval = rendered[key]
+        else: 
+            renval = rendered[key]
+            if str(renval):
+                mainval = renval
+            else:
+                mainval = val
+        
+        
 
         for j, ll in enumerate(textwrap.wrap(str(mainval), wrapInit)):
             if j == 0:
