@@ -178,7 +178,7 @@ def readme(job, args):
     shortcut to try to stimulate you in maintaining one
     """
     
-    subprocess.call([os.environ.get('EDITOR','nano'), 'README.md'])
+    subprocess.call(os.environ.get('EDITOR','nano').split() + ['README.md'])
 
 
 
