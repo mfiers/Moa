@@ -26,6 +26,20 @@ then
     export PROMPT_COMMAND="_moa_prompt;$PROMPT_COMMAND"
 fi
 
+function moar {
+    for x in `find . -type d -not \( -type d -name ".?*" -prune \)`
+    do
+	(cd $x; echo "in $x"; $*)
+    done
+}
+
+function moarr {
+    for x in `find . -type d -not \( -type d -name ".?*" -prune \)`
+    do
+	(cd $x; echo "in $x"; $* &)
+    done
+}
+
 function _moa_prompt {
     
     #Get the last command
