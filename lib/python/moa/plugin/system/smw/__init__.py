@@ -16,11 +16,14 @@ import os
 import sys
 import random
 import getpass
+import socket
 import datetime
 import subprocess
 import pkg_resources
+import subprocess as sp
 
 import jinja2
+
 import mwclient
 
 import moa.ui
@@ -30,14 +33,7 @@ import moa.logger as l
 from moa.sysConf import sysConf
 
 SITE = None
-                  
-def _getProjectJobid():
-    job = sysConf.job
-    project = job.conf.project
-    if not project:
-        project = 'moa'        
-    jobid = job.conf.jobid
-    return project, jobid
+jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.smw'))
 
 def _getRandomId(ln=5):
     RANDCHARS=list('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
@@ -78,36 +74,117 @@ def smw_prepare(job, args):
         print pagename
     pass
 
+@moa.args.forceable
+@moa.args.command
+def smw_save_job(job, args):
+    """
+    save a job page to SMW
+    """
+    _saveJobToSmw(job)
+    
+
 def hook_prepare_3():
     """
     """
-
     job = sysConf.job
     job.template.parameters.smwjobid = {
         'optional' : True,
         'help' : 'The random id used for this job in smw',
         'recursive' : False,
-        'type' : 'string'
+        'type' : 'string',
+        'private': True
         }
     job = sysConf['job']
     message = sysConf.args.changeMessage
-    if _checkJobInSmw():
-        print 'saved!'
-    else:
-        saveJobToSmw(job)
+
     if message: 
+        _saveJobToSmw(job)
         _saveChangeMessage(message)
 
-def saveJobToSmw():
+def _checkJobInSmw(job):
+    if not job.conf.get('smwjobid'):
+        return False
 
+    project = job.conf.get('project', 'No Project')
+    jobid = job.conf.get('smwjobid', _getRandomId())
+    site = _getMwSite()
+    pagename = 'moa/%s/job/%s' % (project, jobid)
+    page = site.Pages[pagename]
+    return page.exists
+
+def _saveJobToSmw(job):
     job = sysConf.job
+    templateName = job.template.name
+
+
+
+    project = job.conf.get('project', 'No Project')
+    jobid = job.conf.smwjobid
+    doesNotExists = False
+    if not jobid:
+        jobid = _getRandomId()
+        doesNotExists = True
+    site = _getMwSite()
+
+    if templateName == 'project':
+        pagename = 'moa/%s' % (project)
+    else:
+        pagename = 'moa/%s/job/%s' % (project, jobid)
+
+    page = site.Pages[pagename]
+
+    old_comments = str(page.edit()).split('<!-- you may edit below this marker -->')
+
+    if len(old_comments) == 2:
+        sysConf.smw.comments = old_comments[1].replace('<headertabs />', '').strip()
+    else:
+        sysConf.smw.comments = ""
+        
+    #print "\n".join([x[:20] for x in old_comments])
+
+    if doesNotExists:        
+        while True:
+            if not page.exists:
+                break
+            jobid = _getRandomId()
+            pagename = 'moa/%s/job/%s' % (project, jobid)
+            page = site.Pages[pagename]
+
+
+    sysConf.smw.project = project
+    sysConf.smw.jobid = jobid
+    sysConf.smw.host = socket.gethostname()
+    job.conf.smwjobid = jobid
+    job.conf.save()
+
+    #get the README from disk
+    readmefile = os.path.join(job.wd, 'README.md')
+    if os.path.exists(readmefile):
+        cl = 'pandoc %s --base-header-level 2 -f markdown -t mediawiki' % readmefile
+        P = sp.Popen(cl.split(), stdout=sp.PIPE)
+        o,e = P.communicate()    
+        sysConf.smw.readme = o
+    else:
+        sysConf.smw.readme = ""
+
+    jtemplate = jenv.select_template(
+        ["job/%s.jinja2" % templateName,
+        "job/default.jinja2"])
+    
+    txt = jtemplate.render(sysConf)
+    #print txt
+    page.save(txt)
+    
+    
+            
     
 def _saveChangeMessage(message):
-    
+    job = sysConf.job
     sysConf.smw.message = message
     sysConf.smw.commandline = " ".join(sys.argv)
     site = _getMwSite()
-    project, jobid = _getProjectJobid()
+    project = job.conf.get('project', 'No Project')
+    jobid = job.conf.get('smwjobid')
     sysConf.smw.project = project
     sysConf.smw.jobid = jobid
     while True:
@@ -120,14 +197,11 @@ def _saveChangeMessage(message):
     jtemplate = jinja2.Template(template)
     txt = jtemplate.render(sysConf)
     page.save(txt)
-    
-    
     #try a random identifier
     
 
 
 def hook_postReadme():
-    print 'hi'
     print _getJobPageName()
 
 #def p

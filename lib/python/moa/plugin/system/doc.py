@@ -37,7 +37,7 @@ def hook_prepare_3():
 
     if sysConf.args.changeMessage:
         _appendMessage(
-            fileName="Changelog.md",
+            fileName="CHANGELOG.md",
             txt = sysConf.args.changeMessage.split("\n") )
     
     # job.template.parameters.project = {
@@ -63,7 +63,7 @@ def hook_defineCommands():
         'log' : True
         }
     sysConf['commands']['readme'] = {
-        'desc' : 'Edit the Readme.md file for this job',
+        'desc' : 'Edit the README.md file for this job',
         'usage' : 'moa readme',
         'call' : readme,
         'needsJob' : False,
@@ -139,9 +139,9 @@ def blog(job, args):
 @moa.args.command
 def change(job, args):
     """
-    Add entry to Changelog.md
+    Add entry to CHANGELOG.md
     
-    This function allows the user to add an entry to Changelog.md
+    This function allows the user to add an entry to CHANGELOG.md
     (including a timestamp). Use it as follows::
 
         $ moa change
@@ -166,19 +166,19 @@ def change(job, args):
     _readFromuser(
         job, 
         header="Enter your changelog message (ctrl-d on an empty line to finish)",
-        fileName="Changelog.md")
+        fileName="CHANGELOG.md")
                   
 
 @moa.args.command
 def readme(job, args):
     """
-    Edit the Readme.md file for this job
+    Edit the README.md file for this job
 
     You could, obviously, also edit the file yourself - this is a mere
     shortcut to try to stimulate you in maintaining one
     """
     
-    subprocess.call([os.environ.get('EDITOR','nano'), 'Readme.md'])
+    subprocess.call([os.environ.get('EDITOR','nano'), 'README.md'])
 
 
 
@@ -200,7 +200,7 @@ def hook_git_finish_readme():
     """
     Execute just after setting running moa readme
     """
-    _update_git('Readme.md')
+    _update_git('README.md')
 
 def hook_git_finish_blog():
     """
@@ -213,4 +213,4 @@ def hook_git_finish_change():
     """
     Execute just after setting running moa blog
     """
-    _update_git('Changelog.md')
+    _update_git('CHANGELOG.md')

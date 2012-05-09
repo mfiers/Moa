@@ -30,6 +30,7 @@ from moa.sysConf import sysConf
 @moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values '+
                   '(when using inline parameters)')
 @moa.args.needsJob
+@moa.args.doNotLog
 @moa.args.command
 def show(job, args):
     """
@@ -134,6 +135,8 @@ def show(job, args):
     
     for i, zippy in enumerate(zipped):
         key, val, flag = zippy
+        if not args.showAll:
+            if not val: continue
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
         moa.ui.fprint(" " + flag + " ", f='jinja', newline=False)
         if len(str(val)) == 0:
