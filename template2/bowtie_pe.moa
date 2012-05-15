@@ -76,8 +76,8 @@ parameters:
     help: Minimum allowed insertsize
     optional: true
     type: integer
-  save_unmapped:
+  lots_of_data:
     default: false
-    help: Save the unmapped reads to a separate file
+    help: 'Keep unmapped reads, unsorted BAM - takes up a lot of space!'
     optional: true
     type: boolean
