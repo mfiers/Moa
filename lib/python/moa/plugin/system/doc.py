@@ -13,6 +13,7 @@ Manage project / title / description for jobs
 
 """
 import os
+import sys
 import getpass
 import datetime
 import subprocess
@@ -35,10 +36,25 @@ def hook_prepare_3():
             'recursive' : False,
             }
 
-    if sysConf.args.changeMessage:
+
+    message = sysConf.args.changeMessage 
+    if not message: 
+        message = ""
+
+    if sysConf.autoChangeMessage:
+        if message:
+            message += "\n---\n\n" + sysConf.autoChangeMessage
+        else:
+            message = sysConf.autoChangeMessage
+    
+    if message: 
+        message += "\n"
+    message += "Command line:\n\n  " + " ".join(sys.argv) 
+
+    if message:
         _appendMessage(
             fileName="CHANGELOG.md",
-            txt = sysConf.args.changeMessage.split("\n") )
+            txt = message.split("\n"))
     
     # job.template.parameters.project = {
     #     'optional' : True,
@@ -85,7 +101,7 @@ def _appendMessage(fileName, txt):
 
     with open(fileName, "w") as F:
         now = datetime.datetime.now()
-        header = "**%s - %s writes**" % (
+        header = "**%s - %s changes**" % (
             now.strftime("On %A, %d %b %Y %H:%M"), getpass.getuser()) 
         F.write("%s\n\n" %  header)
         F.write("\n    ".join(txt))
