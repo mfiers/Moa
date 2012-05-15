@@ -34,6 +34,7 @@ from moa.sysConf import sysConf
 
 SITE = None
 jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.smw'))
+DEFAULT_PROJECT='No Project'
 
 def _getRandomId(ln=5):
     RANDCHARS=list('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
@@ -70,11 +71,12 @@ def smw_prepare(job, args):
         if page.exists and not sysConf.args.force:
             moa.ui.warn("'%s' exists - use -f to overwrite" % pagename)
             continue
+        moa.ui.message("saving %s" % pagename)
         page.save(text, summary='auto generation of a number of core smw/moa pages')
-        print pagename
     pass
 
 @moa.args.forceable
+@moa.args.needsJob
 @moa.args.command
 def smw_save_job(job, args):
     """
@@ -83,7 +85,7 @@ def smw_save_job(job, args):
     _saveJobToSmw(job)
     
 
-def hook_prepare_3():
+def hook_finish():
     """
     """
     job = sysConf.job
@@ -95,17 +97,25 @@ def hook_prepare_3():
         'private': True
         }
     job = sysConf['job']
-    message = sysConf.args.changeMessage
 
-    if message: 
-        _saveJobToSmw(job)
+    message = sysConf.args.changeMessage    
+
+    if sysConf.autoChangeMessage:
+        if message:
+            message += "\n---\n\n" + sysConf.autoChangeMessage
+        else:
+            message = sysConf.autoChangeMessage
+
+    if message or sysConf.commands[sysConf.args.command]['logJob']:
+        if sysConf.args.command != 'smw_save_job':
+            _saveJobToSmw(job)
         _saveChangeMessage(message)
 
 def _checkJobInSmw(job):
     if not job.conf.get('smwjobid'):
         return False
 
-    project = job.conf.get('project', 'No Project')
+    project = job.conf.get('project', DEFAULT_PROJECT)
     jobid = job.conf.get('smwjobid', _getRandomId())
     site = _getMwSite()
     pagename = 'moa/%s/job/%s' % (project, jobid)
@@ -116,11 +126,10 @@ def _saveJobToSmw(job):
     job = sysConf.job
     templateName = job.template.name
 
-
-
     project = job.conf.get('project', 'No Project')
     jobid = job.conf.smwjobid
     doesNotExists = False
+
     if not jobid:
         jobid = _getRandomId()
         doesNotExists = True
@@ -140,6 +149,7 @@ def _saveJobToSmw(job):
     else:
         sysConf.smw.comments = ""
         
+
     #print "\n".join([x[:20] for x in old_comments])
 
     if doesNotExists:        
@@ -174,12 +184,14 @@ def _saveJobToSmw(job):
     txt = jtemplate.render(sysConf)
     #print txt
     page.save(txt)
+    moa.ui.message("saved job to SMW")
     
-    
-            
     
 def _saveChangeMessage(message):
+
     job = sysConf.job
+    project = job.conf.get('project', DEFAULT_PROJECT)
+
     sysConf.smw.message = message
     sysConf.smw.commandline = " ".join(sys.argv)
     site = _getMwSite()
@@ -188,16 +200,24 @@ def _saveChangeMessage(message):
     sysConf.smw.project = project
     sysConf.smw.jobid = jobid
     while True:
-        changename = '%s/%s/change/%s' % (project, jobid, _getRandomId())
+        if job.template.name == 'project':
+            changename = '%s/change/%s' % (project, _getRandomId())
+        else:
+            changename = '%s/job/%s/change/%s' % (project, jobid, _getRandomId())
         page = site.Pages[changename]
         if not page.exists:
             break
 
-    template = pkg_resources.resource_string(__name__, "templates/changemessage.jinja2")
-    jtemplate = jinja2.Template(template)
+    if job.template.name == 'project':
+        smwjobid = 'moa/%s' % (project)
+    else:
+        smwjobid = 'moa/%s/job/%s' % (project, jobid)
+        
+    sysConf.smw.smwjobid = smwjobid
+
+    jtemplate = jenv.select_template(["changemessage.jinja2"])
     txt = jtemplate.render(sysConf)
     page.save(txt)
-    #try a random identifier
     
 
 
