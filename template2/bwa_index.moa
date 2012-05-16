@@ -9,18 +9,18 @@ commands:
     mode: simple
 creation_date: Wed Nov 10 07:56:48 2010
 description: Builds a bwa index from a reference sequence
-filesets: {}
+filesets:
+  input:
+    category: input
+    help: Input fasta file for the bowtie database
+    optional: false
+    pattern: '*/*.fasta'
+    type: single
 moa_id: bwa_index
 modification_date: Wed Nov 10 07:56:48 2010
 name: bwa_index
-parameter_category_order:
-- ''
-- input
-- system
-- advanced
 parameters:
   algorithm:
-    category: ''
     default: is
     help: Algorithm for constructing BWT index. Available options are 'is' and  'bwtsw'
     optional: true
@@ -31,12 +31,9 @@ parameters:
     help: input sequences are in the color space
     optional: true
     type: boolean
-  input_fasta:
-    help: input fasta file for the database
-    optional: false
-    type: file
   prefix:
+    default: db
     help: Name of the bwa index to create
-    optional: false
+    optional: true
     type: string
 title: Bwa index builder
