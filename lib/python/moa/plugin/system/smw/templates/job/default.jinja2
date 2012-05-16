@@ -1,0 +1,70 @@
+{% block header %}__SHOWFACTBOX__ [[Category:Moa]][[Category:MoaJob]]{% endblock -%}
+
+{%- block post_header %}{% endblock -%}
+
+{%- block general_info %}[[ moaSmwJobId::{{job.conf.smwjobid}}| ]]
+{| style="color: black; background-color: #ffffff;" width="100%" class="wikitable"
+! Project 
+| [[moaProject::moa/{{smw.project}}]]
+! title
+| [[moaJobTitle::{{job.conf.title}}]]
+|-
+! Host
+| [[moaHost::{{smw.host}}]]
+! Path
+| [[moaPath::{{job.wd}}]]
+|}
+{% endblock -%}
+
+{%- block post_general_info %}{% endblock -%}
+
+
+{% block readme %}{% if smw.readme %}
+= Readme =
+
+{{ smw.readme }}
+
+{% endif %}{% endblock -%}
+
+{%- block post_readme %}{% endblock -%}
+
+{%- block parameters %}
+= Parameters =
+
+{| style="color: black; background-color: #ffffff;" width="100%" class="wikitable"
+{% for p in job.conf.keys() -%}
+{% if p[0] != '_' %}
+! align="left"| {{ p }}
+| {{job.conf.get(p) }}
+|-
+{% endif -%}
+{% endfor %}|}
+
+{% endblock -%}
+
+{%- block post_parameters %}{% endblock -%}
+
+{% block changes %}
+
+= Changelog =
+{{ '{{' }}#ask: [[Category:MoaChangeMessage]] [[MoaJob::moa/{{smw.project}}/job/{{job.conf.smwjobid}}]]
+|? MoaChangeMessage=Message
+|? MoaCommandLine=Command line
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=10
+{{ '}}' }}
+
+{% endblock %}
+
+{%- block post_changes %}{% endblock -%}
+
+{%- block comments %}
+= WikiComments =
+<!-- you may edit below this marker -->
+
+{{ smw.comments}}
+
+{% endblock %}
+<headertabs />

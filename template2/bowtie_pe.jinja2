@@ -4,14 +4,18 @@ echo Start bowtie pe
 outbase=`basename {{ output }} .bam`
 
 bowtie -S {{ extra_params }} --{{orientation}}                                  \
-    -I {{ min_insertsize }} -X {{ max_insertsize }}                             \
-	--un ${outbase}.unmapped.fq													\
-    {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }}                \
-    | samtools view -bS - > ${outbase}.unsorted
+       -I {{ min_insertsize }} -X {{ max_insertsize }}                          \
+       {% if lots_of_data %} --un ${outbase}.unmapped.fq {% endif %}		\
+       {{ db }} -1 {{ fq_forward_input }} -2 {{ fq_reverse_input }}		\
+       | samtools view {% if not lots_of_data %}-f 2{% endif %} -bS -		\
+       > ${outbase}.unsorted
 
 samtools sort ${outbase}.unsorted ${outbase}
 samtools index ${outbase}.bam
 samtools flagstat ${outbase}.bam  > ${outbase}.report
+{% if not lots_of_data %}
+rm ${outbase}.unsorted
+{% endif %}
 
 ### fix
 

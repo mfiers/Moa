@@ -15,12 +15,9 @@ def errex(message):
 source = os.environ.get('moa_source').strip()
 original = os.environ.get('moa_original', "")
 ignore = os.environ.get('moa_ignore').strip().split()
-recursive = os.environ.get('moa_recursive').strip() == 'True'
 
-print "Recursive mode is on!"
-
-print "source based on %s" % source
-print "ignoring", ignore
+if ignore:
+    print "ignoring", ignore
 
 if not source:
     errex("source directory is not defined")
@@ -70,12 +67,10 @@ for indir in os.listdir('.'):
 
 print "Found %d directories" % len(dirlist),
 print "With the '%s' template" % templateId
-print "Last accessed is '%s'" % lastAccessDir
+print "Using '%s' as original (last accessed)" % lastAccessDir
 
 if not original: 
     original = lastAccessDir
-
-print "Using '%s' as original" % original
 
 if not os.path.exists(original):
     print "No original found - cannot sync"
@@ -87,13 +82,17 @@ if not os.path.exists(original):
 print "start parsing the source directory"
 originalConf = os.path.join(original, '.moa', 'config')
 
-sourcelist = os.listdir(source)
+sourcelist = [x for x in os.listdir(source) if os.path.isdir(x)]
 if os.path.exists('_ref'):
     sourcelist.append('_ref')
 
-print "found %d items to sync" % len(sourcelist)
+#make sure we're not copying the file to itself
+sourcelist.remove(original)
+
+print "Syncing %s to %d target(s)" % (original, len(sourcelist))
 for indir in sourcelist:
     sourceDir = os.path.join(source, indir)
+
     basename = os.path.basename(indir)
 
     if basename in ignore:
@@ -105,10 +104,7 @@ for indir in sourcelist:
     #    print "ignoring source %s (not a directory)" % indir
     #    continue
     if not basename in dirlist:
-        if recursive:
-            cl = 'moa cp -r %s %s' % (original, basename)
-        else:
-            cl = 'moa cp %s %s' % (original, basename)            
+        cl = 'moa cp %s %s' % (original, basename)            
         print 'Executing %s' % cl
         os.system(cl)
         if basename == '_ref':
@@ -118,8 +114,8 @@ for indir in sourcelist:
         targetConf = os.path.join(basename, '.moa', 'config')
         cl = 'cp %s %s' % (originalConf, targetConf)
         print "Copying configuration from %s to %s" % (original, basename)
-        os.system(cl)        
-        cl = '(git rev-parse --git-dir 2>/dev/null) && cd %s && moa gitadd' % basename
+        os.system(cl)
+        cl = '(git rev-parse --git-dir >/dev/null 2>/dev/null) && (moa raw_commands | grep "gitadd") && cd %s && moa gitadd' % basename
         os.system(cl)
         continue
 
