@@ -82,10 +82,11 @@ if not os.path.exists(original):
 print "start parsing the source directory"
 originalConf = os.path.join(original, '.moa', 'config')
 
-sourcelist = [x for x in os.listdir(source) if os.path.isdir(x)]
+sourcelist = [x for x in os.listdir(source) if os.path.isdir(os.path.join(source, x))]
 if os.path.exists('_ref'):
     sourcelist.append('_ref')
 
+print sourcelist
 #make sure we're not copying the file to itself
 sourcelist.remove(original)
 
