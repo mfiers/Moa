@@ -146,6 +146,7 @@ def getParser(reuse=True):
             return newParser, newParser.commandParser
     else:
         parser =  MoaArgumentParser(
+            prog='moa',
             formatter_class=MoaHelpFormatter)
 
         hlptxt = ("Command legend: '.' can be executed everywhere; "+
@@ -206,6 +207,7 @@ def _commandify(f, name):
         'recursive' : 'gbobal',
         'needsJob' : False,
         'call' : f,
+        'cp' : cp,
         }
     f.arg_parser = cp
     return f
