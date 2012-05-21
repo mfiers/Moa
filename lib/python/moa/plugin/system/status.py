@@ -38,6 +38,7 @@ STATUS = 'unknown'
 @moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values '+
                   '(when using inline parameters)')
 @moa.args.needsJob
+@moa.args.doNotLog
 @moa.args.command
 def status(job, args):
     """

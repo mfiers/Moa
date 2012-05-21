@@ -20,23 +20,24 @@ import subprocess
 import git 
 
 from moa.sysConf import sysConf
+import moa.args
 import moa.logger as l
 import moa.plugin.newjob
 
 
-def hook_defineCommands():
-    sysConf['commands']['gitlog'] = {
-        'desc' : 'display a nicely formatted git log',
-        'call': gitlog
-        }
-    sysConf['commands']['gittag'] = {
-        'desc' : 'Tag the current version',
-        'call': tag
-        }
-    sysConf['commands']['gitadd'] = {
-        'desc' : 'Add the current job to the git repository',
-        'call': gitadd
-        }
+# def hook_defineCommands():
+#     sysConf['commands']['gitlog'] = {
+#         'desc' : 'display a nicely formatted git log',
+#         'call': gitlog
+#         }
+#     sysConf['commands']['gittag'] = {
+#         'desc' : 'Tag the current version',
+#         'call': tag
+#         }
+#     sysConf['commands']['gitadd'] = {
+#         'desc' : 'Add the current job to the git repository',
+#         'call': gitadd
+#         }
 
 
 def _getRepo(job):
@@ -152,7 +153,8 @@ def _commit(job, message):
     files.extend(job.getFiles())
     _realCommit(repo, files, job.wd, message)
     #repo.git.commit(os.path.join(job.wd,  '.moa', 'template.d'))
-                    
+
+@moa.args.command                    
 def gitadd(job):
     """
     Add a job to the git repository

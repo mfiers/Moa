@@ -1,19 +1,22 @@
 #!/usr/bin/env python
 
 import os
+import sys
+import cStringIO
 
 import Yaco
 
 import moa.utils
+import moa.args
 import moa.logger as l
 import moa.commands
 
 from moa.sysConf import sysConf
-sysConf.initialize()
+#sysConf.initialize()
 
 ## Command definitions
 sysConf.commands = moa.commands.Commands()
-sysConf.pluginHandler.run('defineCommands')
+sysConf.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.system)
 
 from jinja2 import Template as jTemplate
 
@@ -46,7 +49,6 @@ for plugin in os.listdir(PLUGINDIR):
     if not os.path.isdir(os.path.join(PLUGINDIR, plugin)):
         continue
 
-
     l.info("processing plugin %s" % plugin)
     
     modname = 'moa.plugin.%s' % (plugin.replace('.py', ''))
@@ -69,32 +71,27 @@ for command in sysConf.commands:
 
     fi = sysConf.commands[command]
     func =fi['call']
-    l.info("func call %s" %  func)
-    #extract a longer description from the function docs
-    longdesc = ''
-    ld = []
-    if func.func_doc:        
-        ld = func.func_doc.split("\n")
-        print ld
-        while ld and not ld[0].strip():
-            ld.pop(0)
-        if ld:
-            ws = min([len(x) - len(x.lstrip()) for x in ld if x.strip()])
-            ld = [x[ws:] for x in ld]
-            longdesc = "\n".join(ld)
 
+    cp = fi['cp'] # argparse object
+    #capture usage by temporary redirecting stdout
+    tmpstdout = sys.stdout
+    sys.stdout=cStringIO.StringIO()
+    cp.print_help()
+    sys.stdout.seek(0)
+    helptext = sys.stdout.read()
+    sys.stdout = tmpstdout
+    l.debug("func call %s" %  func)
+    #extract a longer description from the function docs
     td = {
         'name' : command,
-        'desc' : fi['desc'],
+        'helptext' : helptext,
         'needsJob' : fi.get('needsJob', True),
-        'log' : fi.get('log', True),
-        'usage' : fi.get('usage', ""),
-        'longdesc' : longdesc
+        'log' : fi.get('log', True)
           }
     allCommands[command] = td
 
-allComkeys = sysConf.commands.keys()
-allComkeys.sort()
+allComkeys = sorted(sysConf.commands.keys())
+
 for k in allComkeys:
     dt = allCommands[k]
     F.write(template.render(dt))

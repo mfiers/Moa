@@ -4,7 +4,12 @@ plugins:
       module: moa.plugin.job.metavar
       enable: true
       order: 50
+    openLavaActor:
+      module: moa.plugin.system.openLavaActor
+      enabled: true
   system:
+    moaGit:
+      enabled: false
     project:
       module: moa.plugin.system.project
       enable: true
@@ -19,6 +24,7 @@ plugins:
     parameterCheck:
       module: moa.plugin.system.parameterCheck
     doc:
+      enabled: true
       module: moa.plugin.system.doc
     configure:
       module: moa.plugin.system.configure

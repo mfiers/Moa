@@ -146,6 +146,7 @@ def getParser(reuse=True):
             return newParser, newParser.commandParser
     else:
         parser =  MoaArgumentParser(
+            prog='moa',
             formatter_class=MoaHelpFormatter)
 
         hlptxt = ("Command legend: '.' can be executed everywhere; "+
@@ -204,8 +205,10 @@ def _commandify(f, name):
         'desc' : shortDesc,
         'long' : longDesc,
         'recursive' : 'gbobal',
+        'logJob' : True,
         'needsJob' : False,
         'call' : f,
+        'cp' : cp,
         }
     f.arg_parser = cp
     return f
@@ -250,6 +253,10 @@ def addFlag(*args, **kwargs):
     
 def needsJob(f):
     sysConf.commands[f.func_name]['needsJob'] = True
+    return f
+
+def doNotLog(f):
+    sysConf.commands[f.func_name]['logJob'] = False
     return f
 
 def localRecursive(f):

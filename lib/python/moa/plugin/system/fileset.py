@@ -91,6 +91,8 @@ def _preformatFile(f):
         return "{{red}}%s{{reset}}" % f
 
 
+@moa.args.doNotLog
+@moa.args.needsJob
 @moa.args.command
 def files(job, args):
     """

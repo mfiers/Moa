@@ -1,0 +1,30 @@
+{% extends "job/default.jinja2" %}
+{% block header %}[[Category:Moa]][[Category:MoaProject]]{% endblock -%}
+{%- block post_parameters %}
+= Jobs =
+
+{{ '{{' }}#ask: [[Category:MoaJob]] [[MoaProject::moa/{{smw.project}}]]
+|? MoaHost=Host
+|? MoaPath=Path
+|? MoaJobTitle
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=20
+{{ '}}' }}
+
+{% endblock -%}
+
+{% block changes %}
+
+= Changelog =
+{{ '{{' }}#ask: [[Category:MoaChangeMessage]] [[MoaProject::moa/{{smw.project}}]]
+|? MoaChangeMessage=Message
+|? MoaCommandLine=Command line
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=10
+{{ '}}' }}
+
+{% endblock %}

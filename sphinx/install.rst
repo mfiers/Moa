@@ -8,26 +8,17 @@ Prerequisites
 Moa is developed and tested on `Ubuntu <http://www.ubuntu.com>`_ and
 `RHEL <http://www.redhat.com>`_ and is expected to operate without
 much problems on all modern Linux distributions. Moa has the following
-prerequisites (and a large number more for all templates). The version
+prerequisites (and a large number more for all templates). Version
 numbers are an indication, not strict prerequisites. Other, even
-older, versions might work.
+older, versions might work. 
 
 
-- `Gnu Make <http://www.gnu.org/software/make/>`_ (3.81)
+- `Python <http://python.org>`_ (2.6 or 2.7). Moa will not work with
+  versions earlier, or with 3.0 and up
 
 - `Git <http://git-scm.com/>`_ (1.6). Necessary either to download the
   Moa software from github, or, to make use of the integrated version
   control.
-
-- `Python <http://python.org>`_ (2.6). Moa is not tested with other
-   versions of Python
-
-- `Bash <http://www.gnu.org/software/bash/>`_ (4.1.2). Many of the
-   embedded scripts expect the Bash shell. 
-
-- `Gnu Make Standard Library <http://sourceforge.net/gsml>`_ (GSML). A
-   set of standard routines for Gnu Make. GSML is distributed together
-   with Moa.
 
 - A number of support scripts & templates depend on `Biopython
   <http://biopython.org/wiki/Main_Page>`_. Consider installing it
@@ -41,52 +32,30 @@ older, versions might work.
 
     sudo apt-get install python-dev
 
-- `python-yaml`: Again - this is not really necessary, but will
-  improve performace::
+- `python-yaml`:On ubuntu, this installs a fast YAML parser - using
+  easy_install or pip might install a slower, python only, version::
 
     sudo apt-get install python-yaml
 
-- `Python easy_install
-  <http://peak.telecommunity.com/DevCenter/EasyInstall>`_ is the
-  preferred way to install Moa and a number of further prerequisites.
+Python prerequisites
+--------------------
 
-Installing Moa using easy_install
-----------------------------------
+These prereqs can be installed manually or with `easy_install` or
+`pip`:
 
-Easy::
-
-    sudo easy_install moa
-
-The commandline will install moa and a number of other python
-libraries 
-
-There is a number of other prerequisites Moa requires the
-following modules to be installed:
-
-- `pyyaml <http://pyyaml.org/wiki/PyYAML>`_
+- `pyyaml <http://pyyaml.org/wiki/PyYAML>`_ (unless already installed)
 - `Jinja2 <http://jinja.pocoo.org/2/>`_ 
 - `Ruffus <http://code.google.com/p/ruffus/>`_
 - `gitpython <http://gitorious.org/git-python>`_
-- `Yaco <http://mfiers.github.com/Moa/api/Yaco.html>`_
-- `fist <http://mfiers.github.com/Moa/api/fist.html>`_
 - `unittest2 http://pypi.python.org/pypi/unittest2`_
 - `lockfile http://pypi.python.org/pypi/lockfile`_
 
-These can be installed using 
-install Moa::
-
-    easy_install-2.6 moa
 
 Not part of the list of prerequisites are the following libraries, which
 you'll only need if you are planning to run the web interface:
 
 - `ElementTree <http://effbot.org/zone/element-index.htm>`_
 - `Markdown <http://freewisdom.org/projects/python-markdown/>`_
-
-Note - these can be installed using easy_install::
-
-    $ sudo easy_install-2.6 ElementTree
-    $ sudo easy_install-2.6 Markdown
 
 
 Bioinformatics tools
@@ -104,8 +73,8 @@ PATH. The standard Moa distribution comes with wrappers for:
 and many more
 
 
-Installation from source
-------------------------
+Installing git (from github)
+----------------------------
 
 Moa is hosted on and can be installed from `github <http://github.com/mfiers/Moa>`_::
 
@@ -126,8 +95,7 @@ Configuration of Moa is simple, and can be done by sourcing the
 It is probably a good idea to add this line to your ``~/.bashrc`` for
 future sessions.
 
-Moa should now work, try `moa --help` or, for a more extensive test:
-`moa unittest`
+Moa should now work, try `moa --help`.
 
 If your default python version is NOT `python2.6` or `python2.7` there
 are a few options that you can pursue:
@@ -140,8 +108,9 @@ are a few options that you can pursue:
 Installing the web interface
 ----------------------------
 
-Note - this is a little experimental - you will need to experiment a
-little to get it working. Start with installing apache2.
+Note - this is experimental - you will probably need to fiddle a
+little with the configuration to get it working. Start with installing
+apache2. 
 
 Then - assuming that:
 * Your Moa work directory is under /home/moa/work
@@ -179,7 +148,6 @@ contents::
         Options +Indexes
     </Directory>
 
-You might want to check the shebang of
-`/opt/moa/www/cgi/indexHeader.cgi` depending on your system
-configuration. Restart apache and it should work
-
+You might want to check the #! of `/opt/moa/www/cgi/indexHeader.cgi`
+depending on your system configuration. Restart apache and it should
+work

@@ -114,6 +114,7 @@ class JobConf(object):
         name = re.sub("^[0-9]+\.+", "", name)
         l.debug("Setting job id to '%s'" % name)
         self['jobid'] = name
+        
         self.save()
 
     def setRecursiveVar(self, k, v):
