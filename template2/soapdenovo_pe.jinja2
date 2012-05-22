@@ -1,4 +1,19 @@
 ### run
+if [[  {{ kmer }} -le 31 ]]
+then 
+   soape='SOAPdenovo-31mer'
+elif [[  {{ kmer }} -le 63 ]]
+then
+   soape='SOAPdenovo-63mer'
+elif [[  {{ kmer }} -le 127 ]]
+then
+   soape='SOAPdenovo-127mer'
+else
+   echo "Invalid kmer length!!!"
+   false
+fi
+
+
 if [[ "{{ skip_config_file }}" = "True" ]]
 then
     echo "skip config file generation"
@@ -16,7 +31,9 @@ else
     {% endfor %}
 fi
 
-echo {{ executable }} all -s soap.config -K {{ kmer }} -p {{ threads }} -o output 
+${soape} all -s soap.config -K {{ kmer }} -p {{ threads }} -o output 
+
+fastaInfo -s  -i output.scafSeq  > output.stats 
 
 ### clean
 
