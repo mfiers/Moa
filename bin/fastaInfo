@@ -63,8 +63,8 @@ parser.add_option('-x', dest='maxno', type='int',
                   help = 'max no of sequences to process')
 parser.add_option('-s', dest='stats', help = 'stats mode - generate averages',
                   action='store_true')
-parser.add_option('-r', dest='rawNumbers', help = 'just print numbers',
-                  action='store_true')
+parser.add_option('-r', dest='rawNumbers', help = 'Print nicely formatted numbers',
+                  action='store_false', default=True)
 parser.add_option('-O', dest='onlystats', help = 'only print stats to screen - ' +
                   'do not write anything to disk', action='store_true')
 parser.add_option('-S', dest='statsSimple', 
