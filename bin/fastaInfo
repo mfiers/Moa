@@ -63,6 +63,8 @@ parser.add_option('-x', dest='maxno', type='int',
                   help = 'max no of sequences to process')
 parser.add_option('-s', dest='stats', help = 'stats mode - generate averages',
                   action='store_true')
+parser.add_option('-r', dest='rawNumbers', help = 'Print nicely formatted numbers',
+                  action='store_false', default=True)
 parser.add_option('-O', dest='onlystats', help = 'only print stats to screen - ' +
                   'do not write anything to disk', action='store_true')
 parser.add_option('-S', dest='statsSimple', 
@@ -204,11 +206,17 @@ def statAdd(d,w,v,what,store):
         if abs(v) < 1e-8:
             d[w].append("0       ")
         elif math.log10(abs(v)) > 6:
-            d[w].append("%.2e" % v)
+            if options.rawNumbers:
+                d[w].append("%s" % v)
+            else:
+                d[w].append("%.2e" % v)
         elif v == int(v):
             d[w].append("%d       " % v)
         elif math.log10(abs(v)) < -3:
-            d[w].append("%.2e" % v)
+            if options.rawNumbers:
+                d[w].append("%s" % v)
+            else:
+                d[w].append("%.2e" % v)
         else:
             d[w].append("%.4f  " % v)
     except ValueError:
@@ -280,7 +288,10 @@ if options.statsSimple:
 else:
     print "".join(["%20s" % x for x in ([""] + args)])
     for stat in stats:
-        print "".join(["%20s" % x for x in ([stat] + data[stat])])
+        if options.rawNumbers:
+            print "".join(["%20s" % x for x in ([stat] + data[stat])])
+        else:
+            print "".join(["%20s" % x for x in ([stat] + data[stat])])
 
 if options.onlystats:
     sys.exit(0)
