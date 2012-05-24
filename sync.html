@@ -1,0 +1,175 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Synchronizing jobs &mdash; Moa 0.11.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.11.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Moa 0.11.0 documentation" href="index.html" />
+    <link rel="next" title="How to write a template" href="write_template.html" />
+    <link rel="prev" title="Three core templates" href="coretemplates.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="write_template.html" title="How to write a template"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="coretemplates.html" title="Three core templates"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Moa 0.11.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="synchronizing-jobs">
+<h1>Synchronizing jobs<a class="headerlink" href="#synchronizing-jobs" title="Permalink to this headline">¶</a></h1>
+<p>It is quite often usefull to repeat a jobs on a number of different
+input files. For simple operations, one liners, this ca be
+accomplished using <cite>moa map</cite>. More complex operations, or those
+requiring a template other than <cite>map</cite> can be replicated using job
+syncronization. Assume you have a set of fastq libraries, each in it&#8217;s
+own directory:</p>
+<div class="highlight-python"><pre>./fq/set1/set1_1.fq
+./fq/set1/set1_2.fq
+./fq/set2/set2_1.fq
+./fq/set2/set2_2.fq
+./fq/set3/set3_1.fq
+./fq/set3/set3_2.fq</pre>
+</div>
+<p>And you want to run a bowtie alignment for each separately. The
+approach to take is to create a directory containing all alignments:</p>
+<div class="highlight-python"><pre>mkdir bowtie
+cd bowtie</pre>
+</div>
+<p>and, in that directory, create one job running bowtie, in a directory
+named <strong>exactly</strong> as the input directories:</p>
+<div class="highlight-python"><pre>mkdir set1
+cd set1
+moa new bowtie -t 'run bowtie for {{_}}'</pre>
+</div>
+<p>Note the magic variable <cite>{{_}}</cite>. This variable is replaced by the name
+of the current directory. So when running <cite>moa show</cite>, the title would
+show up as &#8220;run bowtie for set1&#8221;. This magic variable can be used in
+all variables, and we&#8217;ll use it here to set this job up in such a way
+that it can be reused for the other datasets:</p>
+<div class="highlight-python"><pre>set moa fq_forward_input='../../fq/{{_}}/*_1.fq'
+# .. configure the remaining variables</pre>
+</div>
+<p>Now - we replicate this directory in the following manner. We&#8217;ll move
+one directory up, to the <cite>bowtie</cite> directory, and create a <cite>sync</cite> job:</p>
+<div class="highlight-python"><pre>cd ..
+moa new sync -t 'run bowtie for all fq datasets'
+moa set source=../fq/</pre>
+</div>
+<p>The sync template keeps directories synchronized, based on the
+<cite>source</cite> directory. If you now run <cite>moa run</cite> in the <cite>bowtie</cite>
+directory, two more directories will be created: <cite>set2</cite> and <cite>set3</cite>,
+each containing a verbatim copy of the original bowtie job created.</p>
+<p>If, at a certain moment you obtain more fastq datasets:</p>
+<div class="highlight-python"><pre>./fq/set4/set4_1.fq
+./fq/set4/set4_2.fq</pre>
+</div>
+<p>you can repeat <cite>moa run</cite> in the <cite>./bowtie</cite> sync directory, and a new
+directory will be created. Note that the <cite>sync</cite> template will not
+remove directories. Also if you want to update the configuration of
+the syncronized bowtie jobs, you only need to change the configuration
+in one directory, run <cite>moa run</cite> again in the <cite>./bowtie</cite> directory and
+the configuration is synchronized across all jobs.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+<h3><a href="index.html">Table of contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="goals.html">Goals</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Synchronizing jobs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_template.html">How to write a template</a></li>
+<li class="toctree-l1"><a class="reference internal" href="commands/index.html">Command reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="templates/index.html">Templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">Moa API</a></li>
+</ul>
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="write_template.html" title="How to write a template"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="coretemplates.html" title="Three core templates"
+             >previous</a> |</li>
+        <li><a href="index.html">Moa 0.11.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
