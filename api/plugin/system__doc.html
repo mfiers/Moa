@@ -1,0 +1,193 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>doc - Manage job documentation &mdash; Moa 0.11.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.11.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa 0.11.0 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="extraCommands - Pre &amp; Post commands" href="system__extraCommands.html" />
+    <link rel="prev" title="configure - Configure jobs" href="system__configure.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="system__extraCommands.html" title="extraCommands - Pre &amp; Post commands"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="system__configure.html" title="configure - Configure jobs"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-moa.plugin.system.doc"></span><div class="section" id="doc-manage-job-documentation">
+<h1><strong>doc</strong> - Manage job documentation<a class="headerlink" href="#doc-manage-job-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Manage project / title / description for jobs</p>
+<dl class="function">
+<dt id="moa.plugin.system.doc.blog">
+<tt class="descclassname">moa.plugin.system.doc.</tt><tt class="descname">blog</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.system.doc.blog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an entry to the blog job (Blog.md)</p>
+<p>Allows a user to maintain a blog for this job (in Blog.md). Use as
+follows:</p>
+<div class="highlight-python"><pre>$ moa blog
+Enter your blog message (ctrl-d on an empty line to finish)
+
+... enter your message here ..
+
+[ctrl-d]</pre>
+</div>
+<p>Note: the ctrl-d needs to be given on an empty line. The text is
+appended to moa.desciption. In the web interface this is converted
+to <a class="reference external" href="http://daringfireball.net/projects/markdown/markdown.">Markdown</a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.doc.change">
+<tt class="descclassname">moa.plugin.system.doc.</tt><tt class="descname">change</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.system.doc.change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add entry to CHANGELOG.md</p>
+<p>This function allows the user to add an entry to CHANGELOG.md
+(including a timestamp). Use it as follows:</p>
+<div class="highlight-python"><pre>$ moa change
+Enter your changelog message (ctrl-d on an empty line to finish)
+
+... enter your message here ..
+
+[ctrl-d]</pre>
+</div>
+<p>Note: the ctrl-d needs to be given on an empty line. The text is
+appended to moa.desciption. In the web interface this is converted
+to <a class="reference external" href="http://daringfireball.net/projects/markdown/markdown.">Markdown</a>.</p>
+<p>Note the same can be achieved by specifying the -m parameter
+(before the command - for example:</p>
+<p><cite>moa -m &#8216;intelligent remark&#8217; set ...</cite></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.doc.hook_defineCommands">
+<tt class="descclassname">moa.plugin.system.doc.</tt><tt class="descname">hook_defineCommands</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.system.doc.hook_defineCommands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the moa commands for this plugin</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.doc.hook_git_finish_blog">
+<tt class="descclassname">moa.plugin.system.doc.</tt><tt class="descname">hook_git_finish_blog</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.system.doc.hook_git_finish_blog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute just after setting running moa blog</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.doc.hook_git_finish_change">
+<tt class="descclassname">moa.plugin.system.doc.</tt><tt class="descname">hook_git_finish_change</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.system.doc.hook_git_finish_change" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute just after setting running moa blog</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.doc.hook_git_finish_readme">
+<tt class="descclassname">moa.plugin.system.doc.</tt><tt class="descname">hook_git_finish_readme</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.system.doc.hook_git_finish_readme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute just after setting running moa readme</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.doc.readme">
+<tt class="descclassname">moa.plugin.system.doc.</tt><tt class="descname">readme</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.system.doc.readme" title="Permalink to this definition">¶</a></dt>
+<dd><p>Edit the README.md file for this job</p>
+<p>You could, obviously, also edit the file yourself - this is a mere
+shortcut to try to stimulate you in maintaining one</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="system__configure.html"
+                        title="previous chapter"><strong>configure</strong> - Configure jobs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="system__extraCommands.html"
+                        title="next chapter"><strong>extraCommands</strong> - Pre &amp; Post commands</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="system__extraCommands.html" title="extraCommands - Pre &amp; Post commands"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="system__configure.html" title="configure - Configure jobs"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

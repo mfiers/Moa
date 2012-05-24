@@ -76,11 +76,13 @@ and many more
 Installing git (from github)
 ----------------------------
 
-Moa is hosted on and can be installed from `github <http://github.com/mfiers/Moa>`_::
+Moa is hosted on, and can be installed from, `github <http://github.com/mfiers/Moa>`_::
 
     cd ~
     git clone git://github.com/mfiers/Moa.git moa
 
+Note - their is also a copy of moa in the python package index - this
+one is almost certainly outdated, and is currently not supported.
 
 Configuration
 -------------
@@ -108,9 +110,9 @@ are a few options that you can pursue:
 Installing the web interface
 ----------------------------
 
-Note - this is experimental - you will probably need to fiddle a
-little with the configuration to get it working. Start with installing
-apache2. 
+Note - this is highly experimental - you will probably need to fiddle
+with the configuration files to get it working. Start with installing
+apache2.
 
 Then - assuming that:
 * Your Moa work directory is under /home/moa/work

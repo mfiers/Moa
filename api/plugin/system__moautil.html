@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>moautil - Some extra utilities - copy/move jobs &mdash; Moa 0.11.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.11.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa 0.11.0 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="newjob - Instantiate new jobs" href="system__newjob.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="system__moaGit.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="system__newjob.html" title="newjob - Instantiate new jobs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="system__moaGit.html" title="&lt;no title&gt;"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-moa.plugin.system.moautil"></span><div class="section" id="moautil-some-extra-utilities-copy-move-jobs">
+<h1><strong>moautil</strong> - Some extra utilities - copy/move jobs<a class="headerlink" href="#moautil-some-extra-utilities-copy-move-jobs" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="moa.plugin.system.moautil.archive">
+<tt class="descclassname">moa.plugin.system.moautil.</tt><tt class="descname">archive</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.system.moautil.archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Archive a job, or tree with jobs for later reuse.</p>
+<p>This command stores only those files that are necessary for
+execution of this job, that is: templates &amp; configuration. In &amp;
+output files, and any other file are ignored. An exception to this
+are all files that start with &#8216;moa. If the <cite>name</cite> is omitted, it
+is derived from the <cite>jobid</cite> parameter.</p>
+<p>It is possible to run this command recursively with the <cite>-r</cite>
+parameter - in which case all (moa job containing) subdirectories
+are included in the archive.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.moautil.cp">
+<tt class="descclassname">moa.plugin.system.moautil.</tt><tt class="descname">cp</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.system.moautil.cp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy a moa job, or a tree with jobs (with -r).</p>
+<p>moa cp copies only those files defining a job: the template files
+and the job configuration. Additionaly, all files in the moa
+directory that start with <cite>moa.</cite> (for example <cite>moa.description</cite>
+are copied as well. Data and log files are not copied!. If used in
+conjunction with the -r (recursive) flag the complete tree is
+copied.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.system.moautil.mv">
+<tt class="descclassname">moa.plugin.system.moautil.</tt><tt class="descname">mv</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.system.moautil.mv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move, rename or renumber a moa job.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="system__moaGit.html"
+                        title="previous chapter">&lt;no title&gt;</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="system__newjob.html"
+                        title="next chapter"><strong>newjob</strong> - Instantiate new jobs</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="system__newjob.html" title="newjob - Instantiate new jobs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="system__moaGit.html" title="&lt;no title&gt;"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

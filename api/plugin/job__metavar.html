@@ -1,0 +1,190 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>metavar - Create a number of meta variables &mdash; Moa 0.11.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.11.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Moa 0.11.0 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="adhoc - create jobs from adhoc bash code" href="system__adhoc.html" />
+    <link rel="prev" title="moa.plugin" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="system__adhoc.html" title="adhoc - create jobs from adhoc bash code"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="moa.plugin"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-moa.plugin.job.metavar"></span><div class="section" id="metavar-create-a-number-of-meta-variables">
+<h1><strong>metavar</strong> - Create a number of meta variables<a class="headerlink" href="#metavar-create-a-number-of-meta-variables" title="Permalink to this headline">¶</a></h1>
+<p>Set a number of meta variables to be used in job
+configuration. Variable that are currently created are:</p>
+<p>(Assuming we&#8217;re in the directory: <cite>/tmp/this/is/a/test</cite>)</p>
+<dl class="docutils">
+<dt><cite>_</cite></dt>
+<dd>name of the current directory. In the example, <cite>_</cite>
+renders to <cite>test</cite></dd>
+<dt><cite>__</cite></dt>
+<dd>name of the parent directory - (example: <cite>a</cite>)</dd>
+<dt><cite>___</cite></dt>
+<dd>name of the parent directory - (example: <cite>is</cite>)</dd>
+<dt><cite>dir1</cite></dt>
+<dd>same as <cite>_</cite></dd>
+<dt><cite>dir2</cite></dt>
+<dd>same as <cite>__</cite></dd>
+<dt><cite>dir3</cite></dt>
+<dd>same as <cite>___</cite></dd>
+<dt><cite>dir4</cite></dt>
+<dd>parent directory of dir3</dd>
+</dl>
+<p>Also a number of contextual variables are defined. In the same
+example as above, based on the directory name, the following variables
+are defined:</p>
+<ul class="simple">
+<li><cite>__tmp</cite>: <cite>/tmp</cite></li>
+<li><cite>__this</cite>: <cite>/tmp/this</cite></li>
+<li><cite>__is</cite>: <cite>/tmp/this/is</cite></li>
+<li><cite>__a</cite>: <cite>/tmp/this/is/a</cite></li>
+<li><cite>__test</cite>: <cite>/tmp/this/is/a/test</cite></li>
+</ul>
+<p>Note that numerical prefixes are stripped from directoy names. So, for
+example: <cite>/tmp/this/10.is/444.a/test</cite> would result in the same
+variables names as mentioned above (but with different
+directories). Also, [^A-<a href="#id1"><span class="problematic" id="id2">Za-z0-9_</span></a>] in variable names are converted to
+underscores to become valid python variable names.</p>
+<p>(for backwards compatibility - _tmp versions are also defined with the
+same value)</p>
+<p>Additional contextual variables are, based on the following example
+directory structure (with cwd being <cite>/tmp/test/20.dirc/20.subb/</cite>:</p>
+<div class="highlight-python"><pre>/tmp/test/00.dira/
+/tmp/test/10.dirb/
+/tmp/test/20.dirc/
+/tmp/test/20.dirc/10.suba/
+/tmp/test/20.dirc/20.subb/
+/tmp/test/20.dirc/30.subc/
+/tmp/test/20.dirc/40.subd/
+/tmp/test/30.dird/</pre>
+</div>
+<p><cite>_f</cite>: <cite>10.suba</cite>
+<cite>_p</cite>: <cite>10.suba</cite>
+<cite>_n</cite>: <cite>30.subc</cite>
+<cite>_l</cite>: <cite>40.subd</cite></p>
+<p><cite>__f</cite>: <cite>/tmp/test/20.dirc/10.suba</cite>
+<cite>__p</cite>: <cite>/tmp/test/20.dirc/10.suba</cite>
+<cite>__n</cite>: <cite>/tmp/test/20.dirc/30.subc</cite>
+<cite>__l</cite>: <cite>/tmp/test/20.dirc/40.subd</cite></p>
+<p><cite>_ff</cite>: <cite>00.dira</cite>
+<cite>_pp</cite>: <cite>10.dirb</cite>
+<cite>_nn</cite>: <cite>30.dird</cite>
+<cite>_ll</cite>: <cite>30.dird</cite></p>
+<p><cite>__ff</cite>: <cite>/tmp/test/00.dira</cite>
+<cite>__pp</cite>: <cite>/tmp/test/10.dirb</cite>
+<cite>__nn</cite>: <cite>/tmp/test/30.dird</cite>
+<cite>__ll</cite>: <cite>/tmp/test/30.dird</cite></p>
+<p>Equivalently, <cite>___first</cite>, <cite>___prev</cite>, <cite>___next</cite> and <cite>___last</cite> are also
+defined.</p>
+<p>Note that all directory orders are based on an alphanumerical sort of
+directory names. <cite>9.dir</cite> comes after <cite>10.dir</cite>. (so use <cite>09.dir</cite>).</p>
+<p>The latter definitions override the earlier ones.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">moa.plugin</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="system__adhoc.html"
+                        title="next chapter"><strong>adhoc</strong> - create jobs from adhoc bash code</a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="system__adhoc.html" title="adhoc - create jobs from adhoc bash code"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="moa.plugin"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010-2012 Mark Fiers.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
