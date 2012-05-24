@@ -11,20 +11,12 @@ hagfish
 Commands
 ~~~~~~~~
 
-**circos**
-  convert to circos histogram data
-  
-  
 **clean**
   remove all Hagfish files
   
   
-**combine**
-  *no help defined*
-  
-  
-**report**
-  *no help defined*
+**finish**
+  finish up - find gaps - combine plots - create a report
   
   
 **run**
@@ -36,6 +28,18 @@ Filesets
 ~~~~~~~~
 
 
+**fasta**
+  fasta sequence of the reference
+
+
+  | *type*: `single`
+  | *category*: `prerequisite`
+  | *optional*: `False`
+  | *pattern*: `{}`
+
+
+
+
 **input**
   "hagfish" input files
 
@@ -44,7 +48,7 @@ Filesets
 
 
 **output**
-  "hagfish" output files
+  "hagfish" touch files - track what files are done - please do not touch this!
 
 
   | *type*: `map`

@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>adhoc - create jobs from adhoc bash code &mdash; Moa v0.10.14 documentation</title>
+    <title>adhoc - create jobs from adhoc bash code &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../../index.html" /> 
+    <link rel="top" title="Moa 0.11.0 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="&lt;no title&gt;" href="checkversion.html" />
+    <link rel="prev" title="moa.plugin" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -33,7 +39,15 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="checkversion.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="moa.plugin"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,30 +66,10 @@
 
 <dl class="function">
 <dt id="moa.plugin.adhoc.createMap">
-<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">createMap</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.createMap" title="Permalink to this definition">¶</a></dt>
-<dd><p>Anything after <cite>&#8211;</cite> will be stored in the <cite>process</cite> variable. If
-<cite>&#8211;</cite> is omitted, Moa will query the user.</p>
-<p>Moa will also query the user for input &amp; output files. An example
-session:</p>
-<div class="highlight-python"><pre>$ moa map -t 'test map'
-process:
-&gt; echo 'processing {{ input }} {{ output }}'
-input:
-&gt; ../10.input/*.txt
-output:
-&gt; ./*.out</pre>
-</div>
-<p>Assuming you have a number of <cite>*.txt</cite> files in the <cite>../10/input/</cite>
-directory, you will see, upon running:</p>
-<div class="highlight-python"><pre>processing ../10.input/test.01.txt ./test.01.out
-processing ../10.input/test.02.txt ./test.02.out
-processing ../10.input/test.03.txt ./test.03.out
-...</pre>
-</div>
-<p>If the output file exists, and is newer than the input file, the
-process will not be executed for that specific pair. If you need
-the job to be repeated, you should either delete the output files
-or <cite>touch</cite> the input files.</p>
+<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">createMap</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.createMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>create an adhoc moa &#8216;map&#8217; job</p>
+<p>Moa will query the user for process, input &amp; output files. An
+example session</p>
 </dd></dl>
 
 <dl class="function">
@@ -107,25 +101,10 @@ processing ../10.input/test.03.txt ./test.03.out
 </dd></dl>
 
 <dl class="function">
-<dt id="moa.plugin.adhoc.createSimple">
-<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">createSimple</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.createSimple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a &#8216;simple&#8217; adhoc job. Simple meaning that no in or output
-files are tracked.</p>
-<p>There are a number of ways this command can be used:</p>
-<div class="highlight-python"><pre>moa simple -t 'a title' -- echo 'define a command'</pre>
-</div>
-<p>Anything after <cite>&#8211;</cite> will be the executable command. Note that bash
-will attempt to process the command line. A safer method is:</p>
-<div class="highlight-python"><pre>moa simple -t 'a title'</pre>
-</div>
-<p>Moa will query you for a command to execute (the parameter
-<cite>process</cite>).</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="moa.plugin.adhoc.exclamate">
-<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">exclamate</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.exclamate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the <cite>process</cite> parameter to the last issued command. If a moa
+<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">exclamate</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.exclamate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a &#8216;simple&#8217; job from the last command issued.</p>
+<p>Set the <cite>process</cite> parameter to the last issued command. If a moa
 job exists in the current directory, then the <cite>process</cite> parameter
 is set without questions. (even if the Moa job in question does
 not use the <cite>process</cite> parameter).  If no moa job exists, a
@@ -142,16 +121,24 @@ function stores all commands issued in a Moa directory in
 
 <dl class="function">
 <dt id="moa.plugin.adhoc.exclamateInJob">
-<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">exclamateInJob</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.exclamateInJob" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">exclamateInJob</tt><big>(</big><em>job</em>, <em>args</em>, <em>command</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.exclamateInJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reuse the last issued command: set it as the &#8216;process&#8217; parameters
 in the current job</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="moa.plugin.adhoc.exclamateNoJob">
-<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">exclamateNoJob</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.exclamateNoJob" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">exclamateNoJob</tt><big>(</big><em>job</em>, <em>args</em>, <em>command</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.exclamateNoJob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a &#8220;simple&#8221; job &amp; set the last command
 to the &#8216;process&#8217; parameter</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moa.plugin.adhoc.simple">
+<tt class="descclassname">moa.plugin.adhoc.</tt><tt class="descname">simple</tt><big>(</big><em>job</em>, <em>args</em><big>)</big><a class="headerlink" href="#moa.plugin.adhoc.simple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a &#8216;simple&#8217; adhoc job.</p>
+<p>Simple meaning that no in or output files are tracked. Moa will
+query you for a command to execute (the <cite>process</cite> parameter).</p>
 </dd></dl>
 
 </div>
@@ -165,10 +152,16 @@ to the &#8216;process&#8217; parameter</p>
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">moa.plugin</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="checkversion.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -191,13 +184,21 @@ to the &#8216;process&#8217; parameter</p>
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="checkversion.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="moa.plugin"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

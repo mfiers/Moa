@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installation &mdash; Moa v0.10.14 documentation</title>
+    <title>Installation &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="index.html" />
+    <link rel="top" title="Moa 0.11.0 documentation" href="index.html" />
     <link rel="next" title="Three core templates" href="coretemplates.html" />
     <link rel="prev" title="Introduction" href="intro.html" /> 
   </head>
@@ -41,7 +44,7 @@
         <li class="right" >
           <a href="intro.html" title="Introduction"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Moa 0.11.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,34 +60,16 @@
 <p>Moa is developed and tested on <a class="reference external" href="http://www.ubuntu.com">Ubuntu</a> and
 <a class="reference external" href="http://www.redhat.com">RHEL</a> and is expected to operate without
 much problems on all modern Linux distributions. Moa has the following
-prerequisites (and a large number more for all templates). The version
+prerequisites (and a large number more for all templates). Version
 numbers are an indication, not strict prerequisites. Other, even
 older, versions might work.</p>
 <ul>
-<li><p class="first"><a class="reference external" href="http://www.gnu.org/software/make/">Gnu Make</a> (3.81)</p>
+<li><p class="first"><a class="reference external" href="http://python.org">Python</a> (2.6 or 2.7). Moa will not work with
+versions earlier, or with 3.0 and up</p>
 </li>
 <li><p class="first"><a class="reference external" href="http://git-scm.com/">Git</a> (1.6). Necessary either to download the
 Moa software from github, or, to make use of the integrated version
 control.</p>
-</li>
-<li><dl class="first docutils">
-<dt><a class="reference external" href="http://python.org">Python</a> (2.6). Moa is not tested with other</dt>
-<dd><p class="first last">versions of Python</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><a class="reference external" href="http://www.gnu.org/software/bash/">Bash</a> (4.1.2). Many of the</dt>
-<dd><p class="first last">embedded scripts expect the Bash shell.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><a class="reference external" href="http://sourceforge.net/gsml">Gnu Make Standard Library</a> (GSML). A</dt>
-<dd><p class="first last">set of standard routines for Gnu Make. GSML is distributed together
-with Moa.</p>
-</dd>
-</dl>
 </li>
 <li><p class="first">A number of support scripts &amp; templates depend on <a class="reference external" href="http://biopython.org/wiki/Main_Page">Biopython</a>. Consider installing it
 before starting to use Moa.</p>
@@ -97,49 +82,31 @@ installed:</p>
 <div class="highlight-python"><pre>sudo apt-get install python-dev</pre>
 </div>
 </li>
-<li><p class="first"><cite>python-yaml</cite>: Again - this is not really necessary, but will
-improve performace:</p>
+<li><p class="first"><cite>python-yaml</cite>:On ubuntu, this installs a fast YAML parser - using
+easy_install or pip might install a slower, python only, version:</p>
 <div class="highlight-python"><pre>sudo apt-get install python-yaml</pre>
 </div>
 </li>
-<li><p class="first"><a class="reference external" href="http://peak.telecommunity.com/DevCenter/EasyInstall">Python easy_install</a> is the
-preferred way to install Moa and a number of further prerequisites.</p>
-</li>
 </ul>
 </div>
-<div class="section" id="installing-moa-using-easy-install">
-<h2>Installing Moa using easy_install<a class="headerlink" href="#installing-moa-using-easy-install" title="Permalink to this headline">¶</a></h2>
-<p>Easy:</p>
-<div class="highlight-python"><pre>sudo easy_install moa</pre>
-</div>
-<p>The commandline will install moa and a number of other python
-libraries</p>
-<p>There is a number of other prerequisites Moa requires the
-following modules to be installed:</p>
+<div class="section" id="python-prerequisites">
+<h2>Python prerequisites<a class="headerlink" href="#python-prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>These prereqs can be installed manually or with <cite>easy_install</cite> or
+<cite>pip</cite>:</p>
 <ul class="simple">
-<li><a class="reference external" href="http://pyyaml.org/wiki/PyYAML">pyyaml</a></li>
+<li><a class="reference external" href="http://pyyaml.org/wiki/PyYAML">pyyaml</a> (unless already installed)</li>
 <li><a class="reference external" href="http://jinja.pocoo.org/2/">Jinja2</a></li>
 <li><a class="reference external" href="http://code.google.com/p/ruffus/">Ruffus</a></li>
 <li><a class="reference external" href="http://gitorious.org/git-python">gitpython</a></li>
-<li><a class="reference external" href="http://mfiers.github.com/Moa/api/Yaco.html">Yaco</a></li>
-<li><a class="reference external" href="http://mfiers.github.com/Moa/api/fist.html">fist</a></li>
 <li><a href="#id1"><span class="problematic" id="id2">`unittest2 http://pypi.python.org/pypi/unittest2`_</span></a></li>
 <li><a href="#id3"><span class="problematic" id="id4">`lockfile http://pypi.python.org/pypi/lockfile`_</span></a></li>
 </ul>
-<p>These can be installed using
-install Moa:</p>
-<div class="highlight-python"><pre>easy_install-2.6 moa</pre>
-</div>
 <p>Not part of the list of prerequisites are the following libraries, which
 you&#8217;ll only need if you are planning to run the web interface:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://effbot.org/zone/element-index.htm">ElementTree</a></li>
 <li><a class="reference external" href="http://freewisdom.org/projects/python-markdown/">Markdown</a></li>
 </ul>
-<p>Note - these can be installed using easy_install:</p>
-<div class="highlight-python"><pre>$ sudo easy_install-2.6 ElementTree
-$ sudo easy_install-2.6 Markdown</pre>
-</div>
 </div>
 <div class="section" id="bioinformatics-tools">
 <h2>Bioinformatics tools<a class="headerlink" href="#bioinformatics-tools" title="Permalink to this headline">¶</a></h2>
@@ -154,8 +121,8 @@ PATH. The standard Moa distribution comes with wrappers for:</p>
 </ul>
 <p>and many more</p>
 </div>
-<div class="section" id="installation-from-source">
-<h2>Installation from source<a class="headerlink" href="#installation-from-source" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installing-git-from-github">
+<h2>Installing git (from github)<a class="headerlink" href="#installing-git-from-github" title="Permalink to this headline">¶</a></h2>
 <p>Moa is hosted on and can be installed from <a class="reference external" href="http://github.com/mfiers/Moa">github</a>:</p>
 <div class="highlight-python"><pre>cd ~
 git clone git://github.com/mfiers/Moa.git moa</pre>
@@ -170,8 +137,7 @@ git clone git://github.com/mfiers/Moa.git moa</pre>
 <p>(Note the dot!, alternatively use: <tt class="docutils literal"><span class="pre">source</span> <span class="pre">~/moa/bin/moainit</span></tt>)</p>
 <p>It is probably a good idea to add this line to your <tt class="docutils literal"><span class="pre">~/.bashrc</span></tt> for
 future sessions.</p>
-<p>Moa should now work, try <cite>moa &#8211;help</cite> or, for a more extensive test:
-<cite>moa unittest</cite></p>
+<p>Moa should now work, try <cite>moa &#8211;help</cite>.</p>
 <p>If your default python version is NOT <cite>python2.6</cite> or <cite>python2.7</cite> there
 are a few options that you can pursue:</p>
 <ul class="simple">
@@ -183,8 +149,9 @@ that that is first in your path.</li>
 </div>
 <div class="section" id="installing-the-web-interface">
 <h2>Installing the web interface<a class="headerlink" href="#installing-the-web-interface" title="Permalink to this headline">¶</a></h2>
-<p>Note - this is a little experimental - you will need to experiment a
-little to get it working. Start with installing apache2.</p>
+<p>Note - this is experimental - you will probably need to fiddle a
+little with the configuration to get it working. Start with installing
+apache2.</p>
 <p>Then - assuming that:
 * Your Moa work directory is under /home/moa/work
 * Your Moa is installed in /opt/moa Create a file in
@@ -220,9 +187,9 @@ Alias /moa/html/ /opt/moa/www/html/
     Options +Indexes
 &lt;/Directory&gt;</pre>
 </div>
-<p>You might want to check the shebang of
-<cite>/opt/moa/www/cgi/indexHeader.cgi</cite> depending on your system
-configuration. Restart apache and it should work</p>
+<p>You might want to check the #! of <cite>/opt/moa/www/cgi/indexHeader.cgi</cite>
+depending on your system configuration. Restart apache and it should
+work</p>
 </div>
 </div>
 
@@ -241,14 +208,15 @@ configuration. Restart apache and it should work</p>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installing-moa-using-easy-install">Installing Moa using easy_install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python-prerequisites">Python prerequisites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#bioinformatics-tools">Bioinformatics tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation-from-source">Installation from source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-git-from-github">Installing git (from github)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration">Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-the-web-interface">Installing the web interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sync.html">Synchronizing jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="write_template.html">How to write a template</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands/index.html">Command reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="templates/index.html">Templates</a></li>
@@ -258,7 +226,7 @@ configuration. Restart apache and it should work</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -287,13 +255,13 @@ configuration. Restart apache and it should work</p>
         <li class="right" >
           <a href="intro.html" title="Introduction"
              >previous</a> |</li>
-        <li><a href="index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Moa 0.11.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

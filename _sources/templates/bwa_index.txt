@@ -20,6 +20,23 @@ Commands
   
   
 
+Filesets
+~~~~~~~~
+
+
+**input**
+  Input fasta file for the bowtie database
+
+
+  | *type*: `single`
+  | *category*: `input`
+  | *optional*: `False`
+  | *pattern*: `*/*.fasta`
+
+
+
+
+
 Parameters
 ~~~~~~~~~~
 
@@ -43,21 +60,12 @@ Parameters
 
 
 
-**input_fasta**
-  input fasta file for the database
-
-  | *type*: `file`
-  | *default*: `{}`
-  | *optional*: `False`
-
-
-
 **prefix**
   Name of the bwa index to create
 
   | *type*: `string`
-  | *default*: `{}`
-  | *optional*: `False`
+  | *default*: `db`
+  | *optional*: `True`
 
 
 

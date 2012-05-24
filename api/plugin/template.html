@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>template - information on templates &mdash; Moa v0.10.14 documentation</title>
+    <title>&lt;no title&gt; &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../../index.html" /> 
+    <link rel="top" title="Moa 0.11.0 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="&lt;no title&gt;" href="test.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="status.html" /> 
   </head>
   <body>
     <div class="related">
@@ -33,7 +39,15 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="test.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="status.html" title="&lt;no title&gt;"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -42,62 +56,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-moa.plugin.template"></span><div class="section" id="template-information-on-templates">
-<h1><strong>template</strong> - information on templates<a class="headerlink" href="#template-information-on-templates" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="moa.plugin.template.dumpTemplate">
-<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">dumpTemplate</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.template.dumpTemplate" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>moa template_dump</strong> - Show raw template information</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa template_dump [TEMPLATE_NAME]</pre>
-</div>
-<p>Show the raw template sysConf.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.template.hook_defineCommands">
-<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">hook_defineCommands</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.template.hook_defineCommands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the moa commands for this plugin</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.template.listTemplates">
-<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">listTemplates</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.template.listTemplates" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>moa list</strong> - Print a list of all known templates</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa list
-moa list -l</pre>
-</div>
-<p>Print a list of all templates known to this moa installation. If
-the option &#8216;-l&#8217; is used, a short description for each tempalte is
-printed as well.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.template.refresh">
-<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">refresh</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.template.refresh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Refresh the template - i.e. reload the template from the central
-repository.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.template.template">
-<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">template</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.template.template" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>moa template</strong> - Print the template name of the current job</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa template</pre>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.template.templateSet">
-<tt class="descclassname">moa.plugin.template.</tt><tt class="descname">templateSet</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.template.templateSet" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>moa template_set</strong> - set a template parameter.</p>
-<p>This only works for top level template parameters</p>
-</dd></dl>
-
-</div>
-
+  
 
           </div>
         </div>
@@ -107,10 +66,16 @@ repository.</p>
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="status.html"
+                        title="previous chapter">&lt;no title&gt;</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -133,13 +98,21 @@ repository.</p>
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="test.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="status.html" title="&lt;no title&gt;"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -48,7 +48,7 @@ Filesets
 
 
 **outgff**
-  
+  GFF output files
 
 
   | *type*: `map`
@@ -61,7 +61,7 @@ Filesets
 
 
 **output**
-  
+  XML blast output files
 
 
   | *type*: `map`

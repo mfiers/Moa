@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>moa.job &mdash; Moa v0.10.14 documentation</title>
+    <title>moa.job &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../index.html" />
+    <link rel="top" title="Moa 0.11.0 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
     <link rel="next" title="moa.jobConf" href="jobConf.html" />
     <link rel="prev" title="moa.commands" href="commands.html" /> 
@@ -42,7 +45,7 @@
         <li class="right" >
           <a href="commands.html" title="moa.commands"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -81,11 +84,11 @@ operations try to access the job in sysConf</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>commands</strong> (<em>list of strings</em>) &#8211; The list of commands to check</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>commands</strong> (<em>list of strings</em>) &#8211; The list of commands to check</td>
 </tr>
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">The checked list of commands</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The checked list of commands</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">list of strings</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list of strings</td>
 </tr>
 </tbody>
 </table>
@@ -108,9 +111,15 @@ operations try to access the job in sysConf</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="moa.job.Job.defineCommands">
+<tt class="descname">defineCommands</tt><big>(</big><em>commandparser</em><big>)</big><a class="headerlink" href="#moa.job.Job.defineCommands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register template commands with the argparser</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="moa.job.Job.defineOptions">
 <tt class="descname">defineOptions</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#moa.job.Job.defineOptions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set command line options - deferred to the backends</p>
+<dd><p>Set command line options - deferred to the backend - PER COMMAND</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">optparse</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parser</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">()</span>
@@ -121,7 +130,7 @@ operations try to access the job in sysConf</p>
 
 <dl class="method">
 <dt id="moa.job.Job.execute">
-<tt class="descname">execute</tt><big>(</big><em>verbose=False</em>, <em>silent=False</em><big>)</big><a class="headerlink" href="#moa.job.Job.execute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">execute</tt><big>(</big><em>job</em>, <em>args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#moa.job.Job.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute <cite>command</cite> in the context of this job. Execution is
 alwasy deferred to the backend</p>
 <p>#Note: Uncertain how to test verbose &amp; silent</p>
@@ -129,7 +138,7 @@ alwasy deferred to the backend</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>verbose</strong> (<em>Boolean</em>) &#8211; output lots of data</li>
 <li><strong>silent</strong> (<em>Boolean</em>) &#8211; output nothing</li>
 </ul>
@@ -140,8 +149,8 @@ alwasy deferred to the backend</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="moa.job.Job.finish">
-<tt class="descname">finish</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.finish" title="Permalink to this definition">¶</a></dt>
+<dt id="moa.job.Job.finishExecute">
+<tt class="descname">finishExecute</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.finishExecute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finish the run!</p>
 </dd></dl>
 
@@ -193,14 +202,16 @@ can be found</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="moa.job.Job.prepare">
-<tt class="descname">prepare</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.prepare" title="Permalink to this definition">¶</a></dt>
-<dd><p>Give this job a chance to prepare for execution - deferred to
-the backend.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">newTestJob</span><span class="p">(</span><span class="s">&#39;unittest&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="o">.</span><span class="n">prepare</span><span class="p">()</span>
-</pre></div>
-</div>
+<dt id="moa.job.Job.loadTemplateMeta">
+<tt class="descname">loadTemplateMeta</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.loadTemplateMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the template meta data for this job, based on what configuration 
+can be found</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.job.Job.prepareExecute">
+<tt class="descname">prepareExecute</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.job.Job.prepareExecute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give this job a chance to prepare for execution.</p>
 </dd></dl>
 
 <dl class="method">
@@ -219,6 +230,12 @@ the backend.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="moa.job.Job.run_hook">
+<tt class="descname">run_hook</tt><big>(</big><em>hook</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#moa.job.Job.run_hook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shortcut to run a job plugin hook</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="moa.job.Job.setTemplate">
 <tt class="descname">setTemplate</tt><big>(</big><em>name</em>, <em>provider=None</em><big>)</big><a class="headerlink" href="#moa.job.Job.setTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a new template for this job</p>
@@ -228,12 +245,6 @@ the backend.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">afile</span><span class="p">))</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="moa.job.Job.simpleExecute">
-<tt class="descname">simpleExecute</tt><big>(</big><em>commandList</em><big>)</big><a class="headerlink" href="#moa.job.Job.simpleExecute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Just &#8216;execute&#8217; a template call</p>
 </dd></dl>
 
 </dd></dl>
@@ -255,7 +266,7 @@ template, and instantiate the proper job type</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>wd</strong> &#8211; Directory to create this job in, note that this
 directory must already exists</li>
 <li><strong>template</strong> (<em>String</em>) &#8211; Template name for this job</li>
@@ -263,7 +274,7 @@ directory must already exists</li>
 </ul>
 </td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">instance of <a class="reference internal" href="#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">instance of <a class="reference internal" href="#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></p>
 </td>
 </tr>
 </tbody>
@@ -288,9 +299,9 @@ instantiate a job. This function returns the job object created</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Returns:</th><td class="field-body">the created job</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the created job</td>
 </tr>
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">instance of <a class="reference internal" href="#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">instance of <a class="reference internal" href="#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -313,6 +324,7 @@ instantiate a job. This function returns the job object created</p>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sync.html">Synchronizing jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../templates/index.html">Templates</a></li>
@@ -337,7 +349,7 @@ instantiate a job. This function returns the job object created</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -366,14 +378,14 @@ instantiate a job. This function returns the job object created</p>
         <li class="right" >
           <a href="commands.html" title="moa.commands"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >Moa API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

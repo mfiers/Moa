@@ -4,762 +4,630 @@ Command reference
 moa **!**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Assign the last issued command to "process" parameter
+~~~~~~~~~~~~~~~~~~
+usage: moa ! [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
 
-
-Usage::
-  
-  moa !
-
-
-
-**Description:**
-
-Set the `process` parameter to the last issued command. If a moa
-job exists in the current directory, then the `process` parameter
-is set without questions. (even if the Moa job in question does
-not use the `process` parameter).  If no moa job exists, a
-`simple` job is created first.
-
-*Note:* This works only when using `bash` and if `moainit` is
-sourced properly. `moainit` defines a bash function `_moa_prompt`
-that is called every time a command is issued (using
-`$PROMPT_COMMAND`). The `_moa_prompt` function takes the last
-command from the bash history and stores it in
-`~/.config/moa/last.command`. Additionally, the `_moa_prompt`
-function stores all commands issued in a Moa directory in
+Create a 'simple' job from the last command issued. Set the `process`
+parameter to the last issued command. If a moa job exists in the current
+directory, then the `process` parameter is set without questions. (even if the
+Moa job in question does not use the `process` parameter). If no moa job
+exists, a `simple` job is created first. *Note:* This works only when using
+`bash` and if `moainit` is sourced properly. `moainit` defines a bash function
+`_moa_prompt` that is called every time a command is issued (using
+`$PROMPT_COMMAND`). The `_moa_prompt` function takes the last command from the
+bash history and stores it in `~/.config/moa/last.command`. Additionally, the
+`_moa_prompt` function stores all commands issued in a Moa directory in
 `.moa/local_bash_history`.
 
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --recursive       Run this job recursively
+  -v, --verbose         Show debugging output
+  --profile             Run the profiler
+  -f, --force           Force this action
+  -t TITLE, --title TITLE
+                        A title for this job
 
+~~~~~~~~~~~~~~~~~~
 
 
 moa **archive**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Archive a job, 
+~~~~~~~~~~~~~~~~~~
+usage: moa archive [-h] [-r] [-v] [--profile] [-f] [-s] [-t] [name]
 
+Archive a job, or tree with jobs for later reuse. This command stores only
+those files that are necessary for execution of this job, that is: templates &
+configuration. In & output files, and any other file are ignored. An exception
+to this are all files that start with 'moa. If the `name` is omitted, it is
+derived from the `jobid` parameter. It is possible to run this command
+recursively with the `-r` parameter - in which case all (moa job containing)
+subdirectories are included in the archive.
 
+positional arguments:
+  name             archive name
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+  -f, --force      Force this action
+  -s, --sync       Alternative approach to deal with sync type jobs - only
+                   include _ref directories
+  -t, --template   Store this archive as a template
 
-**Description:**
-
-Archive a job, or tree with jobs for later execution.
-
-This command stores only those files that are necessary for
-execution of this job, that is: templates & configuration. In &
-output files, and any other file are ignored. An exception to this
-are all files that start with 'moa.'
-
-Usage::
-
-    moa archive
-
-or::
-
-    moa archive [NAME]
-
-an archive name can be omitted when the command is issued in a
-directory with a moa job, in which case the name is derived from
-the `jobid` parameter
-
-It is possible to run this command recursively with the `-r`
-parameter - in which case all (moa job containing) subdirectories
-are included in the archive.
-
-As an alternative application you can specify the
-`--template`. 
-
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **blog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Maintain a blog (blog.md)
+~~~~~~~~~~~~~~~~~~
+usage: moa blog [-h] [-r] [-v] [--profile]
 
+Add an entry to the blog job (Blog.md) Allows a user to maintain a blog for
+this job (in Blog.md). Use as follows:: $ moa blog Enter your blog message
+(ctrl-d on an empty line to finish) ... enter your message here .. [ctrl-d]
+Note: the ctrl-d needs to be given on an empty line. The text is appended to
+moa.desciption. In the web interface this is converted to Markdown_. ..
+_Markdown: http://daringfireball.net/projects/markdown/ markdown.
 
-Usage::
-  
-  moa blog
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-
-**Description:**
-
-Allows a user to maintain a blog for this job (in Blog.md).
-
-Use it as follows::
-
-    $ moa blog
-    Enter your blog message (ctrl-d on an empty line to finish)
-
-    ... enter your message here ..
-    
-    [ctrl-d]
-
-Note: the ctrl-d needs to be given on an empty line. The text is
-appended to moa.desciption. In the web interface this is converted
-to Markdown_.
-
-.. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **change**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Maintain a changelog file (changelog.md)
+~~~~~~~~~~~~~~~~~~
+usage: moa change [-h] [-r] [-v] [--profile]
 
+Add entry to CHANGELOG.md This function allows the user to add an entry to
+CHANGELOG.md (including a timestamp). Use it as follows:: $ moa change Enter
+your changelog message (ctrl-d on an empty line to finish) ... enter your
+message here .. [ctrl-d] Note: the ctrl-d needs to be given on an empty line.
+The text is appended to moa.desciption. In the web interface this is converted
+to Markdown_. .. _Markdown: http://daringfireball.net/projects/markdown/
+markdown. Note the same can be achieved by specifying the -m parameter (before
+the command - for example: `moa -m 'intelligent remark' set ...`
 
-Usage::
-  
-  moa blog
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-
-**Description:**
-
-Allows a user to enter a short note that is appended to
-Changelog.md (including a timestamp). Use it as follows::
-
-    $ moa change
-    Enter your changelog message (ctrl-d on an empty line to finish)
-
-    ... enter your message here ..
-    
-    [ctrl-d]
-
-Note: the ctrl-d needs to be given on an empty line. The text is
-appended to moa.desciption. In the web interface this is converted
-to Markdown_.
-
-.. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **cp**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Copy a moa job
+~~~~~~~~~~~~~~~~~~
+usage: moa cp [-h] [-r] [-v] [--profile] [-o] from [to]
 
+Copy a moa job, or a tree with jobs (with -r). moa cp copies only those files
+defining a job: the template files and the job configuration. Additionaly, all
+files in the moa directory that start with `moa.` (for example
+`moa.description` are copied as well. Data and log files are not copied!. If
+used in conjunction with the -r (recursive) flag the complete tree is copied.
 
+positional arguments:
+  from             copy from this path
+  to               copy to this path
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+  -o, --overwrite  if the target dir exists - overwrite (insteadof copying
+                   into that dir
 
-**Description:**
-
-Copy a moa job, or a tree with jobs.
-
-moa cp copies only those files defining a job: the template files
-and the job configuration. Additionaly, all files in the moa
-directory that start with `moa.` (for example `moa.description`
-are copied as well. Data and log files are not copied!
-
-The command has two modes of operation. The first is::
-
-    moa cp 10.from 20.to
-
-copies the moa job in 10.from to a newly created 20.to
-directory. If the `20.to` directory already exists, a new
-directory is created in `20.to/10.from`. As an shortcut one can
-use::
-
-    moa cp 10.from 20
-
-in which case the job will be copied to the `20.from` directory.
-
-If the source (`10.from`) directory is not a Moa job, the command
-exits with an error.
-
-The second mode of operation is recursive copying::
-
-   moa cp -r 10.from 20.to
-
-in which case all subdirectories under 10.from are traversed and
-copied - if a directory contains a Moa job. 
-
-::TODO..  Warn for changing file & dir links
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **err**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Returns stderr of the last moa run
+~~~~~~~~~~~~~~~~~~
+usage: moa err [-h] [-r] [-v] [--profile]
 
+Show the stderr of the most recently executed moa job
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **files**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Show an overview of the files for this job
+~~~~~~~~~~~~~~~~~~
+usage: moa files [-h] [-r] [-v] [--profile]
 
+Show in and output files for this job Display a list of all files discovered
+(for input & prerequisite type filesets) and inferred from these for map type
+filesets.
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-**Description:**
-
-**moa files** - Display discovered & inferred files for this job
-
-Usage::
-
-   moa files
-
-Display a list of all files discovered (for input & prerequisite
-type filesets) and inferred from these for map type filesets.
-
-
-
-
-
-moa **gitadd**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Add the current job to the git repository
-
-
-
-
-**Description:**
-
-Add a job to the git repository
-
-
-
-
-moa **gitlog**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-display a nicely formatted git log
-
-
-
-
-**Description:**
-
-Print a log to screen
-
-
-
-
-moa **gittag**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Tag the current version
-
-
-
-
-
-
-moa **help**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Display help for a template
-
-
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **kill**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Kill a job
+~~~~~~~~~~~~~~~~~~
+usage: moa kill [-h] [-r] [-v] [--profile]
 
+Kill a running job. This command checks if a job is running. If so - it tries
+to kill it by sending SIGKILL (-9) to the job.
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-**Description:**
-
-See if a job is running, if so - kill it
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **list**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Print a list of all known templates
+~~~~~~~~~~~~~~~~~~
+usage: moa list [-h] [-r] [-v] [--profile] [-d]
 
+Lists all known templates Print a list of all templates known to this moa
+installation. This includes locally installed templates as well.
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+  -d               Print a short template description
 
-
-**Description:**
-
-**moa list** - Print a list of all known templates
-
-Usage::
-
-    moa list
-    moa list -l
-
-Print a list of all templates known to this moa installation. If
-the option '-l' is used, a short description for each tempalte is
-printed as well.
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **lock**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lock this job - prevent execution
+~~~~~~~~~~~~~~~~~~
+usage: moa lock [-h] [-r] [-v] [--profile]
 
+Lock a job - prevent execution
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **log**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Show the logs for this job
+~~~~~~~~~~~~~~~~~~
+usage: moa log [-h] [-r] [-v] [--profile]
 
+Show activity log Shows a log of moa commands executed. Only commands with an
+impact on the pipeline are logged, such as `moa run` & `moa set`.
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-**Description:**
-
-**moa lcog** - show a log of the most recent moa calls
-
-Usage::
-
-    moa log [LINES]
-
-Shows a log of moa commands executed. Only commands with an impact
-on the pipeline are logged, such as `moa run` & `moa set`. The
-number of log entries to display can be controlled with the
-optional LINES parameter.    
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **map**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a "map" adhoc analysis
+~~~~~~~~~~~~~~~~~~
+usage: moa map [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
 
+create an adhoc moa 'map' job Moa will query the user for process, input &
+output files. An example session
 
-Usage::
-  
-  moa map -t "title" -- echo "do something"
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --recursive       Run this job recursively
+  -v, --verbose         Show debugging output
+  --profile             Run the profiler
+  -f, --force           Force this action
+  -t TITLE, --title TITLE
+                        A title for this job
 
-
-
-**Description:**
-
-Anything after `--` will be stored in the `process` variable. If
-`--` is omitted, Moa will query the user.
-
-Moa will also query the user for input & output files. An example
-session::
-
-    $ moa map -t 'test map'
-    process:
-    > echo 'processing {{ input }} {{ output }}'
-    input:
-    > ../10.input/*.txt
-    output:
-    > ./*.out
-
-Assuming you have a number of `*.txt` files in the `../10/input/`
-directory, you will see, upon running::
-
-   processing ../10.input/test.01.txt ./test.01.out
-   processing ../10.input/test.02.txt ./test.02.out
-   processing ../10.input/test.03.txt ./test.03.out
-   ...
-
-If the output file exists, and is newer than the input file, the
-process will not be executed for that specific pair. If you need
-the job to be repeated, you should either delete the output files
-or `touch` the input files.
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **mv**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Rename/renumber/move a job
+~~~~~~~~~~~~~~~~~~
+usage: moa mv [-h] [-r] [-v] [--profile] from [to]
 
+Move, rename or renumber a moa job.
 
+positional arguments:
+  from             copy from this path
+  to               copy to this path
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-**Description:**
-
-Renumber or rename a moa job..
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **new**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a new Moa job
+~~~~~~~~~~~~~~~~~~
+usage: moa new [-h] [-r] [-v] [--profile] [-f] [-d DIRECTORY] [-t TITLE]
+               template [parameter [parameter ...]]
 
+Create a new job. This command creates a new job with the specified template
+in the current directory. If the directory already contains a job it needs to
+be forced using '-f'. It is possible to define arguments for the job on the
+commandline using KEY=VALUE after the template. Note: do not use spaces around
+the '=' sign. Use quotes if you need spaces in variables (KEY='two values')
 
+positional arguments:
+  template              name of the template to use for this moa job
+  parameter             arguments for this job, specifyas KEY=VALUE without
+                        spaces
 
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --recursive       Run this job recursively
+  -v, --verbose         Show debugging output
+  --profile             Run the profiler
+  -f, --force           Force this action
+  -d DIRECTORY, --directory DIRECTORY
+                        directory to create the job in
+  -t TITLE, --title TITLE
+                        mandatory job title
 
-**Description:**
-
-**moa new**
-
-Usage::
-
-    moa new TEMPLATE_NAME -t 'a descriptive title'
-    
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **out**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Returns stdout of the last moa run
+~~~~~~~~~~~~~~~~~~
+usage: moa out [-h] [-r] [-v] [--profile]
 
+Show the stdout of the most recently executed moa job
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **pause**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Pause a job
+~~~~~~~~~~~~~~~~~~
+usage: moa pause [-h] [-r] [-v] [--profile]
 
+Pause a running job
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-**Description:**
-
-pause a running job
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **postcommand**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run the postcommand
+~~~~~~~~~~~~~~~~~~
+usage: moa postcommand [-h] [-r] [-v] [--profile]
 
+Execute 'postcommand'
 
-Usage::
-  
-  moa postcommand
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-
-**Description:**
-
-Execute the `postcommand`
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **precommand**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Run the precommand
+~~~~~~~~~~~~~~~~~~
+usage: moa precommand [-h] [-r] [-v] [--profile]
 
+Execute 'precommand'
 
-Usage::
-  
-  moa pprecommand
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-
-**Description:**
-
-Execute the `precommand`
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **readme**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Edit the Readme.md file for this job
+~~~~~~~~~~~~~~~~~~
+usage: moa readme [-h] [-r] [-v] [--profile]
 
+Edit the README.md file for this job You could, obviously, also edit the file
+yourself - this is a mere shortcut to try to stimulate you in maintaining one
 
-Usage::
-  
-  moa readme
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-
-**Description:**
-
-Edit the Readme.md file - you could, obviously, also edit the file yourself.
-
-
-
-
-moa **reduce**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Create a "reduce" adhoc analysis
-
-
-Usage::
-  
-  moa reduce -t "title" -- echo "do something"
-
-
-
-**Description:**
-
-Create a 'reduce' adhoc job.
-
-There are a number of ways this command can be used::
-
-    $ moa reduce -t 'a title' -- echo 'define a command'
-
-Anything after `--` will be the executable command. If omitted,
-Moa will query the user for a command.
-
-Moa will also query the user for input & output files. An example
-session::
-
-    $ moa map -t 'something intelligent'
-    process:
-    > echo 'processing {{ input }} {{ output }}'
-    input:
-    > ../10.input/*.txt
-    output:
-    > ./*.out
-
-Assuming you have a number of text files in the `../10/input/`
-directory, you will see, upon running::
-
-   processing ../10.input/test.01.txt ./test.01.out
-   processing ../10.input/test.02.txt ./test.02.out
-   processing ../10.input/test.03.txt ./test.03.out
-   ...
-
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **refresh**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Reload the template
+~~~~~~~~~~~~~~~~~~
+usage: moa refresh [-h] [-r] [-v] [--profile]
 
+Refresh the template Reload the template from the original repository.
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-**Description:**
-
-Refresh the template - i.e. reload the template from the central
-repository.
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **resume**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Resume a job
+~~~~~~~~~~~~~~~~~~
+usage: moa resume [-h] [-r] [-v] [--profile]
 
+Resume a running job
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-**Description:**
-
-pause a running job
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **set**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Set, change or remove variables
+~~~~~~~~~~~~~~~~~~
+usage: moa set [-h] [-r] [-v] [--profile] [-f] parameter [parameter ...]
 
+Set one or more variables This command can be used in two ways. In its first
+form both parameter key and value are defined on the command line: `moa set
+KEY=VALUE`. Note that the command line will be processed by bash, which can
+either create complications or prove very useful. Take care to escape
+variables that you do not want to be expandend and use single quotes where
+necessary. For example, to include a space in a variable: `moa set KEY='VALUE
+WITH SPACES'`. Alternative use of the set command is by just specifying the
+key: 'moa set PARAMETER_NAME', in which case Moa will prompt the user enter a
+value - circumventing problems with bash interpretation.
 
-Usage::
-  
-  moa set [KEY] [KEY=VALUE]
+positional arguments:
+  parameter        arguments for this job, specifyas KEY=VALUE without spaces
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+  -f, --force      Force this action
 
-
-**Description:**
-
-This command can be used in a number of ways::
-
-    moa set PARAMETER_NAME=PARAMETER_VALUE
-    moa set PARAMETER_NAME='PARAMETER VALUE WITH SPACES'
-    moa set PARAMETER_NAME
-
-In the first two forms, moa sets the parameter `PARAMETER_NAME` to
-the `PARAMETER_VALUE`. In the latter form, Moa will present the
-user with a prompt to enter a value. Note that the first two forms
-the full command lines will be processed by bash, which can either
-create complications or prove very useful. Take care to escape
-variables that you do not want to be expandend and use single quotes
-where you can. 
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **show**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Show configuration
+~~~~~~~~~~~~~~~~~~
+usage: moa show [-h] [-r] [-v] [--profile] [-u] [-R] [-p] [-a]
 
-
-Usage::
-  
-  moa show
-
-
-
-**Description:**
-
-Show all parameters know to this job. Parameters in **bold** are
-specifically configured for this job (as opposed to those
-parameters that are set to their default value). Parameters in red
-are not configured, but need to be for the template to
-operate. Parameters in blue are not configured either, but are
+Show all parameters know to this job. Parameters in **bold** are specifically
+configured for this job (as opposed to those parameters that are set to their
+default value). Parameters in red are not configured, but need to be for the
+template to operate. Parameters in blue are not configured either, but are
 optional.
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+  -u               show unrendered values (when using inline parameters)
+  -R               show recursively defined parameters not specified by the
+                   local template
+  -p               show private parameters
+  -a               show all parameters
 
+~~~~~~~~~~~~~~~~~~
 
 
 moa **simple**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a "simple" adhoc analysis
+~~~~~~~~~~~~~~~~~~
+usage: moa simple [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
 
+Create a 'simple' adhoc job. Simple meaning that no in or output files are
+tracked. Moa will query you for a command to execute (the `process`
+parameter).
 
-Usage::
-  
-  moa simple -t "title" -- echo "do something"
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --recursive       Run this job recursively
+  -v, --verbose         Show debugging output
+  --profile             Run the profiler
+  -f, --force           Force this action
+  -t TITLE, --title TITLE
+                        A title for this job
 
-
-
-**Description:**
-
-Create a 'simple' adhoc job. Simple meaning that no in or output
-files are tracked.
-
-There are a number of ways this command can be used::
-
-    moa simple -t 'a title' -- echo 'define a command'
-    
-Anything after `--` will be the executable command. Note that bash
-will attempt to process the command line. A safer method is::
-
-    moa simple -t 'a title'
-
-Moa will query you for a command to execute (the parameter
-`process`).
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **status**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Show the state of the current job
+~~~~~~~~~~~~~~~~~~
+usage: moa status [-h] [-r] [-v] [--profile] [-u] [-R] [-p] [-a]
 
+Show job status Print a short status of the job, including configuration
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+  -u               show unrendered values (when using inline parameters)
+  -R               show recursively defined parameters not specified by the
+                   local template
+  -p               show private parameters
+  -a               show all parameters
 
-
-**Description:**
-
-**moa status** - print out a status status message
-
-Usage::
-
-   moa status       
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **test**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Test the currennt configuration
+~~~~~~~~~~~~~~~~~~
+usage: moa test [-h] [-r] [-v] [--profile]
 
+Test the job parameters
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **tree**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-display a directory tree
+~~~~~~~~~~~~~~~~~~
+usage: moa tree [-h] [-r] [-v] [--profile] [-a] [filter]
 
+Show a directory tree and job status
 
+positional arguments:
+  filter           show only directories that match this filter
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+  -a, --all
 
-
-
-moa **unittest**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Run Moa unittests
-
-
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **unlock**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Unlock this job
+~~~~~~~~~~~~~~~~~~
+usage: moa unlock [-h] [-r] [-v] [--profile]
 
+Unlock a job - allow execution
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
+~~~~~~~~~~~~~~~~~~
 
 
 moa **unset**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Remove a variable
+~~~~~~~~~~~~~~~~~~
+usage: moa unset [-h] [-r] [-v] [--profile] parameter [parameter ...]
 
-
-Usage::
-  
-  moa unset KEY
-
-
-
-**Description:**
-
-Remove a configured parameter from this job. In the parameter was
-defined by the job template, it reverts back to the default
-value. If it was an ad-hoc parameter, it is lost from the
+Remove a parameter from the configuration Remove a configured parameter from
+this job. In the parameter was defined by the job template, it reverts back to
+the default value. If it was an ad-hoc parameter, it is lost from the
 configuration.
 
+positional arguments:
+  parameter        parameter to unset
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
 
 
 moa **version**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Print the moa version
+~~~~~~~~~~~~~~~~~~
+usage: moa version [-h] [-r] [-v] [--profile]
 
+print moa version number
 
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
-
-**Description:**
-
-**moa version** - Print the moa version number
-
-
+~~~~~~~~~~~~~~~~~~
 
 
 msp

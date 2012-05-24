@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>moaGit - maintain a git repository with job information &mdash; Moa v0.10.14 documentation</title>
+    <title>&lt;no title&gt; &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../../index.html" /> 
+    <link rel="top" title="Moa 0.11.0 documentation" href="../../index.html" />
+    <link rel="up" title="moa.plugin" href="index.html" />
+    <link rel="next" title="&lt;no title&gt;" href="moautil.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="metavar.html" /> 
   </head>
   <body>
     <div class="related">
@@ -33,7 +39,15 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="moautil.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="metavar.html" title="&lt;no title&gt;"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">moa.plugin</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -42,34 +56,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-moa.plugin.moaGit"></span><div class="section" id="moagit-maintain-a-git-repository-with-job-information">
-<h1><strong>moaGit</strong> - maintain a git repository with job information<a class="headerlink" href="#moagit-maintain-a-git-repository-with-job-information" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="moa.plugin.moaGit.gitadd">
-<tt class="descclassname">moa.plugin.moaGit.</tt><tt class="descname">gitadd</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.moaGit.gitadd" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a job to the git repository</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.moaGit.gitlog">
-<tt class="descclassname">moa.plugin.moaGit.</tt><tt class="descname">gitlog</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.plugin.moaGit.gitlog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print a log to screen</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.moaGit.hook_finish">
-<tt class="descclassname">moa.plugin.moaGit.</tt><tt class="descname">hook_finish</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.moaGit.hook_finish" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle all git changes post execution - actually defer to plugin specific calls</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.plugin.moaGit.hook_prepare_3">
-<tt class="descclassname">moa.plugin.moaGit.</tt><tt class="descname">hook_prepare_3</tt><big>(</big><big>)</big><a class="headerlink" href="#moa.plugin.moaGit.hook_prepare_3" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register a function for submitting a job</p>
-</dd></dl>
-
-</div>
-
+  
 
           </div>
         </div>
@@ -79,10 +66,16 @@
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/moa.logo.small.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="metavar.html"
+                        title="previous chapter">&lt;no title&gt;</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="moautil.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -105,13 +98,21 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="moautil.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="metavar.html" title="&lt;no title&gt;"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Moa API</a> &raquo;</li>
+          <li><a href="index.html" >moa.plugin</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>fist &mdash; Moa v0.10.14 documentation</title>
+    <title>fist &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../index.html" />
+    <link rel="top" title="Moa 0.11.0 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
     <link rel="prev" title="Yaco" href="Yaco.html" /> 
   </head>
@@ -38,7 +41,7 @@
         <li class="right" >
           <a href="Yaco.html" title="Yaco"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -71,13 +74,20 @@ characters:</p>
 <cite>/tmp</cite>. Subsequently it is possible to map this set</p>
 <dl class="class">
 <dt id="fist.fistCore">
-<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistCore</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistCore" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistCore</tt><big>(</big><em>url</em>, <em>context=None</em><big>)</big><a class="headerlink" href="#fist.fistCore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Core class for all fist classes</p>
+<dl class="method">
+<dt id="fist.fistCore.resolve">
+<tt class="descname">resolve</tt><big>(</big><big>)</big><a class="headerlink" href="#fist.fistCore.resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function needs to be overridden
+context</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="fist.fistFileset">
-<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistFileset</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistFileset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistFileset</tt><big>(</big><em>url</em>, <em>context=None</em><big>)</big><a class="headerlink" href="#fist.fistFileset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Most basic set of files - handle a set of files described by a single URI with wildcards, for
 example:</p>
 <div class="highlight-python"><pre>* `*.txt`
@@ -113,7 +123,7 @@ example:</p>
 
 <dl class="class">
 <dt id="fist.fistMapset">
-<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistMapset</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistMapset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistMapset</tt><big>(</big><em>url</em>, <em>context=None</em><big>)</big><a class="headerlink" href="#fist.fistMapset" title="Permalink to this definition">¶</a></dt>
 <dd><p>fistMapset</p>
 <p>Map set - map a fileset based on a target uri</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">fistFileset</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">))</span>
@@ -197,7 +207,7 @@ example:</p>
 
 <dl class="class">
 <dt id="fist.fistSingle">
-<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistSingle</tt><big>(</big><em>url</em><big>)</big><a class="headerlink" href="#fist.fistSingle" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">fist.</tt><tt class="descname">fistSingle</tt><big>(</big><em>url</em>, <em>context=None</em><big>)</big><a class="headerlink" href="#fist.fistSingle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single file</p>
 <dl class="method">
 <dt id="fist.fistSingle.init">
@@ -224,6 +234,7 @@ example:</p>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sync.html">Synchronizing jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../templates/index.html">Templates</a></li>
@@ -248,7 +259,7 @@ example:</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -274,14 +285,14 @@ example:</p>
         <li class="right" >
           <a href="Yaco.html" title="Yaco"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >Moa API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

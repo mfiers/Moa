@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>moa.jobConf &mdash; Moa v0.10.14 documentation</title>
+    <title>moa.jobConf &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../index.html" />
+    <link rel="top" title="Moa 0.11.0 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
     <link rel="next" title="moa.sysConf" href="sysConf.html" />
     <link rel="prev" title="moa.job" href="job.html" /> 
@@ -42,7 +45,7 @@
         <li class="right" >
           <a href="job.html" title="moa.job"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -62,14 +65,20 @@
 configuration parameters</p>
 <dl class="attribute">
 <dt id="moa.jobConf.JobConf.doNotCheck">
-<tt class="descname">doNotCheck</tt><a class="headerlink" href="#moa.jobConf.JobConf.doNotCheck" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">doNotCheck</tt><em class="property"> = None</em><a class="headerlink" href="#moa.jobConf.JobConf.doNotCheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>these fields are not be type-checked</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="moa.jobConf.JobConf.doNotSave">
-<tt class="descname">doNotSave</tt><a class="headerlink" href="#moa.jobConf.JobConf.doNotSave" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">doNotSave</tt><em class="property"> = None</em><a class="headerlink" href="#moa.jobConf.JobConf.doNotSave" title="Permalink to this definition">¶</a></dt>
 <dd><p>these fields are not to be saved</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="moa.jobConf.JobConf.getRendered">
+<tt class="descname">getRendered</tt><big>(</big><em>key</em><big>)</big><a class="headerlink" href="#moa.jobConf.JobConf.getRendered" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the rendered value of this key</p>
 </dd></dl>
 
 <dl class="method">
@@ -100,7 +109,7 @@ defined in the job configuration of the template</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta</strong> &#8211; if a value appears to be a relative path,
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta</strong> &#8211; if a value appears to be a relative path,
 try to correct for this. Currently this only works
 for files that exist. i.e.</td>
 </tr>
@@ -110,7 +119,7 @@ for files that exist. i.e.</td>
 
 <dl class="attribute">
 <dt id="moa.jobConf.JobConf.private">
-<tt class="descname">private</tt><a class="headerlink" href="#moa.jobConf.JobConf.private" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">private</tt><em class="property"> = None</em><a class="headerlink" href="#moa.jobConf.JobConf.private" title="Permalink to this definition">¶</a></dt>
 <dd><p>these fields are private (i.e. not to be
 displayed by default)</p>
 </dd></dl>
@@ -146,6 +155,7 @@ displayed by default)</p>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sync.html">Synchronizing jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../templates/index.html">Templates</a></li>
@@ -170,7 +180,7 @@ displayed by default)</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -199,14 +209,14 @@ displayed by default)</p>
         <li class="right" >
           <a href="job.html" title="moa.job"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >Moa API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

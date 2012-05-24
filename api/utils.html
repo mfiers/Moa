@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>moa.utils &mdash; Moa v0.10.14 documentation</title>
+    <title>moa.utils &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../index.html" />
+    <link rel="top" title="Moa 0.11.0 documentation" href="../index.html" />
     <link rel="up" title="Moa API" href="index.html" />
     <link rel="next" title="moa.template" href="template/index.html" />
     <link rel="prev" title="moa.ui" href="ui.html" /> 
@@ -42,7 +45,7 @@
         <li class="right" >
           <a href="ui.html" title="moa.ui"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Moa API</a> &raquo;</li> 
       </ul>
     </div>  
@@ -63,7 +66,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> &#8211; any function</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> &#8211; any function</td>
 </tr>
 </tbody>
 </table>
@@ -83,7 +86,7 @@ def any_function(*args);
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> &#8211; Any python function</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>func</strong> &#8211; Any python function</td>
 </tr>
 </tbody>
 </table>
@@ -104,7 +107,7 @@ function also sets an environment variable <cite>MOABASE</cite></p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Return type:</th><td class="field-body">string (path)</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string (path)</td>
 </tr>
 </tbody>
 </table>
@@ -117,21 +120,6 @@ function also sets an environment variable <cite>MOABASE</cite></p>
 </dd></dl>
 
 <dl class="function">
-<dt id="moa.utils.getResource">
-<tt class="descclassname">moa.utils.</tt><tt class="descname">getResource</tt><big>(</big><em>what</em><big>)</big><a class="headerlink" href="#moa.utils.getResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets a data file from the moa package.</p>
-<p>There are two possible locations where any resource could be,
-either three dirs up, or only one. This depends on if this a
-pypi (one dir up) package or the git package (three dirs up)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="moa.utils.listResource">
-<tt class="descclassname">moa.utils.</tt><tt class="descname">listResource</tt><big>(</big><em>what</em><big>)</big><a class="headerlink" href="#moa.utils.listResource" title="Permalink to this definition">¶</a></dt>
-<dd><p>List a directory</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="moa.utils.moaDirOrExit">
 <tt class="descclassname">moa.utils.</tt><tt class="descname">moaDirOrExit</tt><big>(</big><em>job</em><big>)</big><a class="headerlink" href="#moa.utils.moaDirOrExit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the job contains a proper Moa job, if not, exit with an
@@ -140,7 +128,7 @@ error message and a non-zero exit code.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><strong>job</strong> &#8211; An instance of <a class="reference internal" href="job.html#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>job</strong> &#8211; An instance of <a class="reference internal" href="job.html#moa.job.Job" title="moa.job.Job"><tt class="xref py py-class docutils literal"><span class="pre">moa.job.Job</span></tt></a></td>
 </tr>
 </tbody>
 </table>
@@ -179,6 +167,7 @@ exactly. This seems the most likely source:</p>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sync.html">Synchronizing jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../commands/index.html">Command reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../templates/index.html">Templates</a></li>
@@ -203,7 +192,7 @@ exactly. This seems the most likely source:</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -232,14 +221,14 @@ exactly. This seems the most likely source:</p>
         <li class="right" >
           <a href="ui.html" title="moa.ui"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li>
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >Moa API</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

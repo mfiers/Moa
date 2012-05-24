@@ -46,6 +46,15 @@ Parameters
 
 
 
+**dummy**
+  do a dummy run
+
+  | *type*: `boolean`
+  | *default*: `False`
+  | *optional*: `True`
+
+
+
 **process**
   The command to execute
 

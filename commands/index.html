@@ -2,17 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Command reference &mdash; Moa v0.10.14 documentation</title>
+    <title>Command reference &mdash; Moa 0.11.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.10.14',
+        VERSION:     '0.11.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -21,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Moa v0.10.14 documentation" href="../index.html" />
+    <link rel="top" title="Moa 0.11.0 documentation" href="../index.html" />
     <link rel="next" title="Templates" href="../templates/index.html" />
     <link rel="prev" title="How to write a template" href="../write_template.html" /> 
   </head>
@@ -41,7 +44,7 @@
         <li class="right" >
           <a href="../write_template.html" title="How to write a template"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,411 +57,1004 @@
 <h1>Command reference<a class="headerlink" href="#command-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="moa">
 <h2>moa <strong>!</strong><a class="headerlink" href="#moa" title="Permalink to this headline">¶</a></h2>
-<p>Assign the last issued command to &#8220;process&#8221; parameter</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa !</pre>
-</div>
-<p><strong>Description:</strong></p>
-<p>Set the <cite>process</cite> parameter to the last issued command. If a moa
-job exists in the current directory, then the <cite>process</cite> parameter
-is set without questions. (even if the Moa job in question does
-not use the <cite>process</cite> parameter).  If no moa job exists, a
-<cite>simple</cite> job is created first.</p>
-<p><em>Note:</em> This works only when using <cite>bash</cite> and if <cite>moainit</cite> is
-sourced properly. <cite>moainit</cite> defines a bash function <cite>_moa_prompt</cite>
-that is called every time a command is issued (using
-<cite>$PROMPT_COMMAND</cite>). The <cite>_moa_prompt</cite> function takes the last
-command from the bash history and stores it in
-<cite>~/.config/moa/last.command</cite>. Additionally, the <cite>_moa_prompt</cite>
-function stores all commands issued in a Moa directory in
+<p>Create a &#8216;simple&#8217; job from the last command issued. Set the <cite>process</cite>
+parameter to the last issued command. If a moa job exists in the current
+directory, then the <cite>process</cite> parameter is set without questions. (even if the
+Moa job in question does not use the <cite>process</cite> parameter). If no moa job
+exists, a <cite>simple</cite> job is created first. <em>Note:</em> This works only when using
+<cite>bash</cite> and if <cite>moainit</cite> is sourced properly. <cite>moainit</cite> defines a bash function
+<cite>_moa_prompt</cite> that is called every time a command is issued (using
+<cite>$PROMPT_COMMAND</cite>). The <cite>_moa_prompt</cite> function takes the last command from the
+bash history and stores it in <cite>~/.config/moa/last.command</cite>. Additionally, the
+<cite>_moa_prompt</cite> function stores all commands issued in a Moa directory in
 <cite>.moa/local_bash_history</cite>.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></td>
+<td>Force this action</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t <var>TITLE</var></span>, <span class="option">--title <var>TITLE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>A title for this job</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-archive">
 <h2>moa <strong>archive</strong><a class="headerlink" href="#moa-archive" title="Permalink to this headline">¶</a></h2>
-<p>Archive a job,</p>
-<p><strong>Description:</strong></p>
-<p>Archive a job, or tree with jobs for later execution.</p>
-<p>This command stores only those files that are necessary for
-execution of this job, that is: templates &amp; configuration. In &amp;
-output files, and any other file are ignored. An exception to this
-are all files that start with &#8216;moa.&#8217;</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa archive</pre>
+<p>Archive a job, or tree with jobs for later reuse. This command stores only
+those files that are necessary for execution of this job, that is: templates &amp;
+configuration. In &amp; output files, and any other file are ignored. An exception
+to this are all files that start with &#8216;moa. If the <cite>name</cite> is omitted, it is
+derived from the <cite>jobid</cite> parameter. It is possible to run this command
+recursively with the <cite>-r</cite> parameter - in which case all (moa job containing)
+subdirectories are included in the archive.</p>
+<dl class="docutils">
+<dt>positional arguments:</dt>
+<dd>name             archive name</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></td>
+<td>Force this action</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-s</span>, <span class="option">--sync</span></kbd></td>
+<td>Alternative approach to deal with sync type jobs - only
+include _ref directories</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-t</span>, <span class="option">--template</span></kbd></td>
+<td>Store this archive as a template</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p>or:</p>
-<div class="highlight-python"><pre>moa archive [NAME]</pre>
-</div>
-<p>an archive name can be omitted when the command is issued in a
-directory with a moa job, in which case the name is derived from
-the <cite>jobid</cite> parameter</p>
-<p>It is possible to run this command recursively with the <cite>-r</cite>
-parameter - in which case all (moa job containing) subdirectories
-are included in the archive.</p>
-<p>As an alternative application you can specify the
-<cite>&#8211;template</cite>.</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-blog">
 <h2>moa <strong>blog</strong><a class="headerlink" href="#moa-blog" title="Permalink to this headline">¶</a></h2>
-<p>Maintain a blog (blog.md)</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa blog</pre>
+<p>Add an entry to the blog job (Blog.md) Allows a user to maintain a blog for
+this job (in Blog.md). Use as follows:: $ moa blog Enter your blog message
+(ctrl-d on an empty line to finish) ... enter your message here .. [ctrl-d]
+Note: the ctrl-d needs to be given on an empty line. The text is appended to
+moa.desciption. In the web interface this is converted to <a href="#id1"><span class="problematic" id="id2">Markdown_</span></a>. ..
+_Markdown: <a class="reference external" href="http://daringfireball.net/projects/markdown/">http://daringfireball.net/projects/markdown/</a> markdown.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>Allows a user to maintain a blog for this job (in Blog.md).</p>
-<p>Use it as follows:</p>
-<div class="highlight-python"><pre>$ moa blog
-Enter your blog message (ctrl-d on an empty line to finish)
-
-... enter your message here ..
-
-[ctrl-d]</pre>
-</div>
-<p>Note: the ctrl-d needs to be given on an empty line. The text is
-appended to moa.desciption. In the web interface this is converted
-to <a class="reference external" href="http://daringfireball.net/projects/markdown/markdown.">Markdown</a>.</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-change">
 <h2>moa <strong>change</strong><a class="headerlink" href="#moa-change" title="Permalink to this headline">¶</a></h2>
-<p>Maintain a changelog file (changelog.md)</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa blog</pre>
+<p>Add entry to CHANGELOG.md This function allows the user to add an entry to
+CHANGELOG.md (including a timestamp). Use it as follows:: $ moa change Enter
+your changelog message (ctrl-d on an empty line to finish) ... enter your
+message here .. [ctrl-d] Note: the ctrl-d needs to be given on an empty line.
+The text is appended to moa.desciption. In the web interface this is converted
+to <a href="#id3"><span class="problematic" id="id4">Markdown_</span></a>. .. _Markdown: <a class="reference external" href="http://daringfireball.net/projects/markdown/">http://daringfireball.net/projects/markdown/</a>
+markdown. Note the same can be achieved by specifying the -m parameter (before
+the command - for example: <cite>moa -m &#8216;intelligent remark&#8217; set ...</cite></p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>Allows a user to enter a short note that is appended to
-Changelog.md (including a timestamp). Use it as follows:</p>
-<div class="highlight-python"><pre>$ moa change
-Enter your changelog message (ctrl-d on an empty line to finish)
-
-... enter your message here ..
-
-[ctrl-d]</pre>
-</div>
-<p>Note: the ctrl-d needs to be given on an empty line. The text is
-appended to moa.desciption. In the web interface this is converted
-to <a class="reference external" href="http://daringfireball.net/projects/markdown/markdown.">Markdown</a>.</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-cp">
 <h2>moa <strong>cp</strong><a class="headerlink" href="#moa-cp" title="Permalink to this headline">¶</a></h2>
-<p>Copy a moa job</p>
-<p><strong>Description:</strong></p>
-<p>Copy a moa job, or a tree with jobs.</p>
-<p>moa cp copies only those files defining a job: the template files
-and the job configuration. Additionaly, all files in the moa
-directory that start with <cite>moa.</cite> (for example <cite>moa.description</cite>
-are copied as well. Data and log files are not copied!</p>
-<p>The command has two modes of operation. The first is:</p>
-<div class="highlight-python"><pre>moa cp 10.from 20.to</pre>
+<p>Copy a moa job, or a tree with jobs (with -r). moa cp copies only those files
+defining a job: the template files and the job configuration. Additionaly, all
+files in the moa directory that start with <cite>moa.</cite> (for example
+<cite>moa.description</cite> are copied as well. Data and log files are not copied!. If
+used in conjunction with the -r (recursive) flag the complete tree is copied.</p>
+<dl class="docutils">
+<dt>positional arguments:</dt>
+<dd>from             copy from this path
+to               copy to this path</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o</span>, <span class="option">--overwrite</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>if the target dir exists - overwrite (insteadof copying
+into that dir</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p>copies the moa job in 10.from to a newly created 20.to
-directory. If the <cite>20.to</cite> directory already exists, a new
-directory is created in <cite>20.to/10.from</cite>. As an shortcut one can
-use:</p>
-<div class="highlight-python"><pre>moa cp 10.from 20</pre>
-</div>
-<p>in which case the job will be copied to the <cite>20.from</cite> directory.</p>
-<p>If the source (<cite>10.from</cite>) directory is not a Moa job, the command
-exits with an error.</p>
-<p>The second mode of operation is recursive copying:</p>
-<div class="highlight-python"><pre>moa cp -r 10.from 20.to</pre>
-</div>
-<p>in which case all subdirectories under 10.from are traversed and
-copied - if a directory contains a Moa job.</p>
-<p>::TODO..  Warn for changing file &amp; dir links</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-err">
 <h2>moa <strong>err</strong><a class="headerlink" href="#moa-err" title="Permalink to this headline">¶</a></h2>
-<p>Returns stderr of the last moa run</p>
+<p>Show the stderr of the most recently executed moa job</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-files">
 <h2>moa <strong>files</strong><a class="headerlink" href="#moa-files" title="Permalink to this headline">¶</a></h2>
-<p>Show an overview of the files for this job</p>
-<p><strong>Description:</strong></p>
-<p><strong>moa files</strong> - Display discovered &amp; inferred files for this job</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa files</pre>
+<p>Show in and output files for this job Display a list of all files discovered
+(for input &amp; prerequisite type filesets) and inferred from these for map type
+filesets.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p>Display a list of all files discovered (for input &amp; prerequisite
-type filesets) and inferred from these for map type filesets.</p>
-</div>
-<div class="section" id="moa-gitadd">
-<h2>moa <strong>gitadd</strong><a class="headerlink" href="#moa-gitadd" title="Permalink to this headline">¶</a></h2>
-<p>Add the current job to the git repository</p>
-<p><strong>Description:</strong></p>
-<p>Add a job to the git repository</p>
-</div>
-<div class="section" id="moa-gitlog">
-<h2>moa <strong>gitlog</strong><a class="headerlink" href="#moa-gitlog" title="Permalink to this headline">¶</a></h2>
-<p>display a nicely formatted git log</p>
-<p><strong>Description:</strong></p>
-<p>Print a log to screen</p>
-</div>
-<div class="section" id="moa-gittag">
-<h2>moa <strong>gittag</strong><a class="headerlink" href="#moa-gittag" title="Permalink to this headline">¶</a></h2>
-<p>Tag the current version</p>
-</div>
-<div class="section" id="moa-help">
-<h2>moa <strong>help</strong><a class="headerlink" href="#moa-help" title="Permalink to this headline">¶</a></h2>
-<p>Display help for a template</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-kill">
 <h2>moa <strong>kill</strong><a class="headerlink" href="#moa-kill" title="Permalink to this headline">¶</a></h2>
-<p>Kill a job</p>
-<p><strong>Description:</strong></p>
-<p>See if a job is running, if so - kill it</p>
+<p>Kill a running job. This command checks if a job is running. If so - it tries
+to kill it by sending SIGKILL (-9) to the job.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-list">
 <h2>moa <strong>list</strong><a class="headerlink" href="#moa-list" title="Permalink to this headline">¶</a></h2>
-<p>Print a list of all known templates</p>
-<p><strong>Description:</strong></p>
-<p><strong>moa list</strong> - Print a list of all known templates</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa list
-moa list -l</pre>
+<p>Lists all known templates Print a list of all templates known to this moa
+installation. This includes locally installed templates as well.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-d</span></kbd></td>
+<td>Print a short template description</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p>Print a list of all templates known to this moa installation. If
-the option &#8216;-l&#8217; is used, a short description for each tempalte is
-printed as well.</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-lock">
 <h2>moa <strong>lock</strong><a class="headerlink" href="#moa-lock" title="Permalink to this headline">¶</a></h2>
-<p>Lock this job - prevent execution</p>
+<p>Lock a job - prevent execution</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-log">
 <h2>moa <strong>log</strong><a class="headerlink" href="#moa-log" title="Permalink to this headline">¶</a></h2>
-<p>Show the logs for this job</p>
-<p><strong>Description:</strong></p>
-<p><strong>moa lcog</strong> - show a log of the most recent moa calls</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa log [LINES]</pre>
+<p>Show activity log Shows a log of moa commands executed. Only commands with an
+impact on the pipeline are logged, such as <cite>moa run</cite> &amp; <cite>moa set</cite>.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p>Shows a log of moa commands executed. Only commands with an impact
-on the pipeline are logged, such as <cite>moa run</cite> &amp; <cite>moa set</cite>. The
-number of log entries to display can be controlled with the
-optional LINES parameter.</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-map">
 <h2>moa <strong>map</strong><a class="headerlink" href="#moa-map" title="Permalink to this headline">¶</a></h2>
-<p>Create a &#8220;map&#8221; adhoc analysis</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa map -t "title" -- echo "do something"</pre>
+<p>create an adhoc moa &#8216;map&#8217; job Moa will query the user for process, input &amp;
+output files. An example session</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></td>
+<td>Force this action</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t <var>TITLE</var></span>, <span class="option">--title <var>TITLE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>A title for this job</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>Anything after <cite>&#8211;</cite> will be stored in the <cite>process</cite> variable. If
-<cite>&#8211;</cite> is omitted, Moa will query the user.</p>
-<p>Moa will also query the user for input &amp; output files. An example
-session:</p>
-<div class="highlight-python"><pre>$ moa map -t 'test map'
-process:
-&gt; echo 'processing {{ input }} {{ output }}'
-input:
-&gt; ../10.input/*.txt
-output:
-&gt; ./*.out</pre>
-</div>
-<p>Assuming you have a number of <cite>*.txt</cite> files in the <cite>../10/input/</cite>
-directory, you will see, upon running:</p>
-<div class="highlight-python"><pre>processing ../10.input/test.01.txt ./test.01.out
-processing ../10.input/test.02.txt ./test.02.out
-processing ../10.input/test.03.txt ./test.03.out
-...</pre>
-</div>
-<p>If the output file exists, and is newer than the input file, the
-process will not be executed for that specific pair. If you need
-the job to be repeated, you should either delete the output files
-or <cite>touch</cite> the input files.</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-mv">
 <h2>moa <strong>mv</strong><a class="headerlink" href="#moa-mv" title="Permalink to this headline">¶</a></h2>
-<p>Rename/renumber/move a job</p>
-<p><strong>Description:</strong></p>
-<p>Renumber or rename a moa job..</p>
+<p>Move, rename or renumber a moa job.</p>
+<dl class="docutils">
+<dt>positional arguments:</dt>
+<dd>from             copy from this path
+to               copy to this path</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-new">
 <h2>moa <strong>new</strong><a class="headerlink" href="#moa-new" title="Permalink to this headline">¶</a></h2>
-<p>Create a new Moa job</p>
-<p><strong>Description:</strong></p>
-<p><strong>moa new</strong></p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa new TEMPLATE_NAME -t 'a descriptive title'</pre>
+<p>Create a new job. This command creates a new job with the specified template
+in the current directory. If the directory already contains a job it needs to
+be forced using &#8216;-f&#8217;. It is possible to define arguments for the job on the
+commandline using KEY=VALUE after the template. Note: do not use spaces around
+the &#8216;=&#8217; sign. Use quotes if you need spaces in variables (KEY=&#8217;two values&#8217;)</p>
+<dl class="docutils">
+<dt>positional arguments:</dt>
+<dd><p class="first">template              name of the template to use for this moa job
+parameter             arguments for this job, specifyas KEY=VALUE without</p>
+<blockquote class="last">
+<div>spaces</div></blockquote>
+</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></td>
+<td>Force this action</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-d <var>DIRECTORY</var></span>, <span class="option">--directory <var>DIRECTORY</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>directory to create the job in</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t <var>TITLE</var></span>, <span class="option">--title <var>TITLE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>mandatory job title</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-out">
 <h2>moa <strong>out</strong><a class="headerlink" href="#moa-out" title="Permalink to this headline">¶</a></h2>
-<p>Returns stdout of the last moa run</p>
+<p>Show the stdout of the most recently executed moa job</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-pause">
 <h2>moa <strong>pause</strong><a class="headerlink" href="#moa-pause" title="Permalink to this headline">¶</a></h2>
-<p>Pause a job</p>
-<p><strong>Description:</strong></p>
-<p>pause a running job</p>
+<p>Pause a running job</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-postcommand">
 <h2>moa <strong>postcommand</strong><a class="headerlink" href="#moa-postcommand" title="Permalink to this headline">¶</a></h2>
-<p>Run the postcommand</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa postcommand</pre>
+<p>Execute &#8216;postcommand&#8217;</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>Execute the <cite>postcommand</cite></p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-precommand">
 <h2>moa <strong>precommand</strong><a class="headerlink" href="#moa-precommand" title="Permalink to this headline">¶</a></h2>
-<p>Run the precommand</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa pprecommand</pre>
+<p>Execute &#8216;precommand&#8217;</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>Execute the <cite>precommand</cite></p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-readme">
 <h2>moa <strong>readme</strong><a class="headerlink" href="#moa-readme" title="Permalink to this headline">¶</a></h2>
-<p>Edit the Readme.md file for this job</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa readme</pre>
+<p>Edit the README.md file for this job You could, obviously, also edit the file
+yourself - this is a mere shortcut to try to stimulate you in maintaining one</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>Edit the Readme.md file - you could, obviously, also edit the file yourself.</p>
-</div>
-<div class="section" id="moa-reduce">
-<h2>moa <strong>reduce</strong><a class="headerlink" href="#moa-reduce" title="Permalink to this headline">¶</a></h2>
-<p>Create a &#8220;reduce&#8221; adhoc analysis</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa reduce -t "title" -- echo "do something"</pre>
-</div>
-<p><strong>Description:</strong></p>
-<p>Create a &#8216;reduce&#8217; adhoc job.</p>
-<p>There are a number of ways this command can be used:</p>
-<div class="highlight-python"><pre>$ moa reduce -t 'a title' -- echo 'define a command'</pre>
-</div>
-<p>Anything after <cite>&#8211;</cite> will be the executable command. If omitted,
-Moa will query the user for a command.</p>
-<p>Moa will also query the user for input &amp; output files. An example
-session:</p>
-<div class="highlight-python"><pre>$ moa map -t 'something intelligent'
-process:
-&gt; echo 'processing {{ input }} {{ output }}'
-input:
-&gt; ../10.input/*.txt
-output:
-&gt; ./*.out</pre>
-</div>
-<p>Assuming you have a number of text files in the <cite>../10/input/</cite>
-directory, you will see, upon running:</p>
-<div class="highlight-python"><pre>processing ../10.input/test.01.txt ./test.01.out
-processing ../10.input/test.02.txt ./test.02.out
-processing ../10.input/test.03.txt ./test.03.out
-...</pre>
-</div>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-refresh">
 <h2>moa <strong>refresh</strong><a class="headerlink" href="#moa-refresh" title="Permalink to this headline">¶</a></h2>
-<p>Reload the template</p>
-<p><strong>Description:</strong></p>
-<p>Refresh the template - i.e. reload the template from the central
-repository.</p>
+<p>Refresh the template Reload the template from the original repository.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-resume">
 <h2>moa <strong>resume</strong><a class="headerlink" href="#moa-resume" title="Permalink to this headline">¶</a></h2>
-<p>Resume a job</p>
-<p><strong>Description:</strong></p>
-<p>pause a running job</p>
+<p>Resume a running job</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-set">
 <h2>moa <strong>set</strong><a class="headerlink" href="#moa-set" title="Permalink to this headline">¶</a></h2>
-<p>Set, change or remove variables</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa set [KEY] [KEY=VALUE]</pre>
+<p>Set one or more variables This command can be used in two ways. In its first
+form both parameter key and value are defined on the command line: <cite>moa set
+KEY=VALUE</cite>. Note that the command line will be processed by bash, which can
+either create complications or prove very useful. Take care to escape
+variables that you do not want to be expandend and use single quotes where
+necessary. For example, to include a space in a variable: <cite>moa set KEY=&#8217;VALUE
+WITH SPACES&#8217;</cite>. Alternative use of the set command is by just specifying the
+key: &#8216;moa set PARAMETER_NAME&#8217;, in which case Moa will prompt the user enter a
+value - circumventing problems with bash interpretation.</p>
+<dl class="docutils">
+<dt>positional arguments:</dt>
+<dd>parameter        arguments for this job, specifyas KEY=VALUE without spaces</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></td>
+<td>Force this action</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>This command can be used in a number of ways:</p>
-<div class="highlight-python"><pre>moa set PARAMETER_NAME=PARAMETER_VALUE
-moa set PARAMETER_NAME='PARAMETER VALUE WITH SPACES'
-moa set PARAMETER_NAME</pre>
-</div>
-<p>In the first two forms, moa sets the parameter <cite>PARAMETER_NAME</cite> to
-the <cite>PARAMETER_VALUE</cite>. In the latter form, Moa will present the
-user with a prompt to enter a value. Note that the first two forms
-the full command lines will be processed by bash, which can either
-create complications or prove very useful. Take care to escape
-variables that you do not want to be expandend and use single quotes
-where you can.</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-show">
 <h2>moa <strong>show</strong><a class="headerlink" href="#moa-show" title="Permalink to this headline">¶</a></h2>
-<p>Show configuration</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa show</pre>
-</div>
-<p><strong>Description:</strong></p>
-<p>Show all parameters know to this job. Parameters in <strong>bold</strong> are
-specifically configured for this job (as opposed to those
-parameters that are set to their default value). Parameters in red
-are not configured, but need to be for the template to
-operate. Parameters in blue are not configured either, but are
+<p>Show all parameters know to this job. Parameters in <strong>bold</strong> are specifically
+configured for this job (as opposed to those parameters that are set to their
+default value). Parameters in red are not configured, but need to be for the
+template to operate. Parameters in blue are not configured either, but are
 optional.</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-u</span></kbd></td>
+<td>show unrendered values (when using inline parameters)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-R</span></kbd></td>
+<td>show recursively defined parameters not specified by the
+local template</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-p</span></kbd></td>
+<td>show private parameters</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-a</span></kbd></td>
+<td>show all parameters</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-simple">
 <h2>moa <strong>simple</strong><a class="headerlink" href="#moa-simple" title="Permalink to this headline">¶</a></h2>
-<p>Create a &#8220;simple&#8221; adhoc analysis</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa simple -t "title" -- echo "do something"</pre>
+<p>Create a &#8216;simple&#8217; adhoc job. Simple meaning that no in or output files are
+tracked. Moa will query you for a command to execute (the <cite>process</cite>
+parameter).</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></td>
+<td>Force this action</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t <var>TITLE</var></span>, <span class="option">--title <var>TITLE</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>A title for this job</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-<p><strong>Description:</strong></p>
-<p>Create a &#8216;simple&#8217; adhoc job. Simple meaning that no in or output
-files are tracked.</p>
-<p>There are a number of ways this command can be used:</p>
-<div class="highlight-python"><pre>moa simple -t 'a title' -- echo 'define a command'</pre>
-</div>
-<p>Anything after <cite>&#8211;</cite> will be the executable command. Note that bash
-will attempt to process the command line. A safer method is:</p>
-<div class="highlight-python"><pre>moa simple -t 'a title'</pre>
-</div>
-<p>Moa will query you for a command to execute (the parameter
-<cite>process</cite>).</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-status">
 <h2>moa <strong>status</strong><a class="headerlink" href="#moa-status" title="Permalink to this headline">¶</a></h2>
-<p>Show the state of the current job</p>
-<p><strong>Description:</strong></p>
-<p><strong>moa status</strong> - print out a status status message</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa status</pre>
+<p>Show job status Print a short status of the job, including configuration</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-u</span></kbd></td>
+<td>show unrendered values (when using inline parameters)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-R</span></kbd></td>
+<td>show recursively defined parameters not specified by the
+local template</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-p</span></kbd></td>
+<td>show private parameters</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-a</span></kbd></td>
+<td>show all parameters</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-test">
 <h2>moa <strong>test</strong><a class="headerlink" href="#moa-test" title="Permalink to this headline">¶</a></h2>
-<p>Test the currennt configuration</p>
+<p>Test the job parameters</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-tree">
 <h2>moa <strong>tree</strong><a class="headerlink" href="#moa-tree" title="Permalink to this headline">¶</a></h2>
-<p>display a directory tree</p>
+<p>Show a directory tree and job status</p>
+<dl class="docutils">
+<dt>positional arguments:</dt>
+<dd>filter           show only directories that match this filter</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+<p class="last">-a, &#8211;all</p>
+</dd>
+</dl>
 </div>
-<div class="section" id="moa-unittest">
-<h2>moa <strong>unittest</strong><a class="headerlink" href="#moa-unittest" title="Permalink to this headline">¶</a></h2>
-<p>Run Moa unittests</p>
-</div>
+<hr class="docutils" />
 <div class="section" id="moa-unlock">
 <h2>moa <strong>unlock</strong><a class="headerlink" href="#moa-unlock" title="Permalink to this headline">¶</a></h2>
-<p>Unlock this job</p>
+<p>Unlock a job - allow execution</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-unset">
 <h2>moa <strong>unset</strong><a class="headerlink" href="#moa-unset" title="Permalink to this headline">¶</a></h2>
-<p>Remove a variable</p>
-<p>Usage:</p>
-<div class="highlight-python"><pre>moa unset KEY</pre>
-</div>
-<p><strong>Description:</strong></p>
-<p>Remove a configured parameter from this job. In the parameter was
-defined by the job template, it reverts back to the default
-value. If it was an ad-hoc parameter, it is lost from the
+<p>Remove a parameter from the configuration Remove a configured parameter from
+this job. In the parameter was defined by the job template, it reverts back to
+the default value. If it was an ad-hoc parameter, it is lost from the
 configuration.</p>
+<dl class="docutils">
+<dt>positional arguments:</dt>
+<dd>parameter        parameter to unset</dd>
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="moa-version">
 <h2>moa <strong>version</strong><a class="headerlink" href="#moa-version" title="Permalink to this headline">¶</a></h2>
-<p>Print the moa version</p>
-<p><strong>Description:</strong></p>
-<p><strong>moa version</strong> - Print the moa version number</p>
+<p>print moa version number</p>
+<dl class="docutils">
+<dt>optional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recursive</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Run this job recursively</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-v</span>, <span class="option">--verbose</span></kbd></td>
+<td>Show debugging output</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--profile</span></kbd></td>
+<td>Run the profiler</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
 </div>
+<hr class="docutils" />
 <div class="section" id="msp">
 <h2>msp<a class="headerlink" href="#msp" title="Permalink to this headline">¶</a></h2>
 <p>moa set process</p>
@@ -487,6 +1083,7 @@ configuration.</p>
 <li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../coretemplates.html">Three core templates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sync.html">Synchronizing jobs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../write_template.html">How to write a template</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Command reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#moa">moa <strong>!</strong></a></li>
@@ -496,10 +1093,6 @@ configuration.</p>
 <li class="toctree-l2"><a class="reference internal" href="#moa-cp">moa <strong>cp</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-err">moa <strong>err</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-files">moa <strong>files</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#moa-gitadd">moa <strong>gitadd</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#moa-gitlog">moa <strong>gitlog</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#moa-gittag">moa <strong>gittag</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#moa-help">moa <strong>help</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-kill">moa <strong>kill</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-list">moa <strong>list</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-lock">moa <strong>lock</strong></a></li>
@@ -512,7 +1105,6 @@ configuration.</p>
 <li class="toctree-l2"><a class="reference internal" href="#moa-postcommand">moa <strong>postcommand</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-precommand">moa <strong>precommand</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-readme">moa <strong>readme</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#moa-reduce">moa <strong>reduce</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-refresh">moa <strong>refresh</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-resume">moa <strong>resume</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-set">moa <strong>set</strong></a></li>
@@ -521,7 +1113,6 @@ configuration.</p>
 <li class="toctree-l2"><a class="reference internal" href="#moa-status">moa <strong>status</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-test">moa <strong>test</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-tree">moa <strong>tree</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#moa-unittest">moa <strong>unittest</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-unlock">moa <strong>unlock</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-unset">moa <strong>unset</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#moa-version">moa <strong>version</strong></a></li>
@@ -535,7 +1126,7 @@ configuration.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -564,13 +1155,13 @@ configuration.</p>
         <li class="right" >
           <a href="../write_template.html" title="How to write a template"
              >previous</a> |</li>
-        <li><a href="../index.html">Moa v0.10.14 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">Moa 0.11.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010-2012 Mark Fiers.
-      Last updated on Jan 12, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Last updated on May 25, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

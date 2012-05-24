@@ -45,14 +45,14 @@ Filesets
 
 
 **fq_forward_input**
-  fastq input files directory - forward
+  Fastq input files - forward
 
 
 
 
 
 **fq_reverse_input**
-  fastq input files directory - reverse
+  Fastq input files - reverse
 
 
   | *type*: `map`
@@ -97,6 +97,15 @@ Parameters
 
   | *type*: `set`
   | *default*: `fastq`
+  | *optional*: `True`
+
+
+
+**lots_of_data**
+  Keep unmapped reads, unsorted BAM - takes up a lot of space!
+
+  | *type*: `boolean`
+  | *default*: `False`
   | *optional*: `True`
 
 

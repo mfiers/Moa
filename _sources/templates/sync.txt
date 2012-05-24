@@ -39,6 +39,15 @@ Parameters
 
 
 
+**recursive**
+  copy the jobs/config recursively
+
+  | *type*: `boolean`
+  | *default*: `False`
+  | *optional*: `True`
+
+
+
 **source**
   The directory to keep in sync with
 

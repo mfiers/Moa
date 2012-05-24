@@ -9,6 +9,7 @@ Contents:
    abyss_pe
    abyss_se
    adhoc
+   archroot
    bamextract
    bartab
    bdbb
@@ -38,6 +39,7 @@ Contents:
    fastqc
    fastx_clipper
    fastx_qual_stats
+   filterwgs_pair
    gather
    genemarks
    getorf
@@ -74,6 +76,8 @@ Contents:
    samtools_pileup
    sffinfo
    simple
+   smalt_pe
+   smaltdb
    soapdenovo_pe
    statsidx
    sync
