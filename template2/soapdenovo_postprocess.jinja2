@@ -1,0 +1,85 @@
+### run
+
+echo "Prepare the SSPace library file"
+echo "" > sspace.config
+libname=""
+libcount=0
+while read line
+do
+    if [[ $line == \[* ]]; then
+	if [[ -n "$libname" ]];      
+	then
+	    echo $libname $fq1 $fq2 $insert 0.25 FR >> sspace.config
+	fi
+	let libcount+=1
+	libname=`echo $line | sed 's/[^[:alnum:]]//g'`$libcount
+    elif [[ $line == q1* ]]; then
+	fq1=`echo -n $line | sed "s/q1=//"`
+    elif [[ $line == q2* ]]; then
+	fq2=`echo -n $line | sed "s/q2=//"`
+    elif [[ $line == avg_ins* ]]; then
+	insert=`echo -n $line | sed "s/avg_ins=//"`
+    fi
+done < {{ soapdir }}/soap.config
+
+if [[ -n "$libname" ]]; 
+then
+    echo $libname $fq1 $fq2 $insert 0.25 FR >> sspace.config
+fi
+
+
+echo "Start iterating"
+
+lastScaff={{ soapdir }}/output.scafSeq
+
+[[ -f before.stats ]] || \
+    fastaInfo -s -i $lastScaff length ncount > before.stats
+
+counter=0
+for x in `seq 1 {{ noruns }}`; do
+    let counter+=1
+
+    newScaff="output.scafSeq.gap.$x"
+
+    echo "GapCloser run $x"
+    if [[ -f $newScaff ]]
+    then
+	echo "Skipping $newScaff - file exists"
+    else
+	time GapCloser -a $lastScaff \
+            -b  {{ soapdir }}/soap.config \
+            -t {{ threads }} \
+            -o $newScaff > gapcloser.${x}.report \
+	    || true
+    fi
+
+    lastScaff=$newScaff
+    newScaff="output.scafSeq.scaf.$x.final.scaffolds.fasta"
+ 
+    echo "Scaffolder run $x"
+    if [[ -f "$newScaff" ]]
+    then
+	echo "Skipping $newScaff - file exists"
+    else
+	time {{ sspace_executable }} \
+	    -l sspace.config \
+	    -s ${lastScaff} \
+	    -b output.scafSeq.scaf.$x \
+	    {{ sspace_extra_variables }} \
+	    -x 1 -T {{ threads }} -p 1 > sspace.${x}.output \
+	    || true
+	fastaInfo -s -i $newScaff length ncount > $newScaff.stats
+    fi
+    lastScaff=$newScaff
+done
+
+echo "Run gapcloser one last time"
+echo "on $lastScaff"
+
+GapCloser -a $lastScaff \
+    -b  {{ soapdir }}/soap.config \
+    -t {{ threads }} \
+    -o output.final.fasta \
+    > gapcloser.final.report || true
+
+fastaInfo -s -i output.final.fasta length ncount > output.final.stats
