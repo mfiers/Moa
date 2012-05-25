@@ -30,6 +30,9 @@ def hook_defineCommandOptions(job, parser):
     parser.add_argument( '--olq', default='normal', dest='openlavaQueue', 
                          help='The Openlava queue to submit this job to' )
 
+    parser.add_argument( '--oln', default=1, type=int, dest='openlavaSlots', 
+                         help='The number of cores the jobs requires')
+
 def openlavaRunner(wd, cl, conf={}, **kwargs):
     """
     Run the job using OPENLAVA
@@ -69,6 +72,10 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("#BSUB -o", outfile)
     s("#BSUB -e", errfile)
     s("#BSUB -q", sysConf.args.openlavaQueue)
+
+
+    slots = sysConf.job.conf.get('threads', sysConf.args.openlavaSlots)
+    s("#BSUB -n", slots)
 
     lastJids = []
 

@@ -6,10 +6,12 @@ import subprocess as sp
 
 base = os.path.abspath(os.getcwd())
 
-cl = sys.argv[1:]
+cl = " ".join(sys.argv[1:])
+print 'executing:'
+print cl
 for path, dirs, files in os.walk(base):
     toRemove = [x for x in dirs if x[0] in ['.', '_']]
     [dirs.remove(x) for x in toRemove]
-    print "Running in %s" % path
+    print 'executing in %s' % path
     P = sp.Popen(cl, cwd=path, shell=True)
     P.wait()

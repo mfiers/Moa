@@ -128,13 +128,16 @@ if options.stats:
     for x in args:
         dd[x] = []
 
-funcs = ['length', 'fracn', 'id', 'scaf10', 'scaf100', 'gcfrac']
+funcs = ['length', 'fracn', 'id', 'scaf10', 'scaf100', 'gcfrac', 'ncount']
 
 def f_id(name, seq):
     return name.split()[0]
 
 def f_length(name,seq):
     return len(seq)
+
+def f_ncount(name,seq):
+    return seq.count('n')
 
 def f_loglength(name,seq):
     return math.log10(len(seq))
@@ -202,27 +205,24 @@ data = dict([(x, []) for x in stats])
 
 def statAdd(d,w,v,what,store):
     store[what][w] = v
-    try:
-        if abs(v) < 1e-8:
-            d[w].append("0       ")
-        elif math.log10(abs(v)) > 6:
-            if options.rawNumbers:
-                d[w].append("%s" % v)
-            else:
+    if options.rawNumbers:
+        d[w].append("%s" % v)
+    else:
+        try:
+            if abs(v) < 1e-8:
+                d[w].append("0       ")
+            elif math.log10(abs(v)) > 6:
                 d[w].append("%.2e" % v)
-        elif v == int(v):
-            d[w].append("%d       " % v)
-        elif math.log10(abs(v)) < -3:
-            if options.rawNumbers:
-                d[w].append("%s" % v)
-            else:
+            elif v == int(v):
+                d[w].append("%d       " % v)
+            elif math.log10(abs(v)) < -3:
                 d[w].append("%.2e" % v)
-        else:
-            d[w].append("%.4f  " % v)
-    except ValueError:
-        l.error("ERROR")
-        l.error("probably with a math.log10 of something close to 0")
-        l.error("%s %s %s" % (d,w,v))
+            else:
+                d[w].append("%.4f  " % v)
+        except ValueError:
+            l.error("ERROR")
+            l.error("probably with a math.log10 of something close to 0")
+            l.error("%s %s %s" % (d,w,v))
 
 def getNX(d, N):
     cutoff = np.sum(d) * N

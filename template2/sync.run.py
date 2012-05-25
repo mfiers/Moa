@@ -19,8 +19,8 @@ ignore = os.environ.get('moa_ignore').strip().split()
 if ignore:
     print "ignoring", ignore
 
-if source:
-    print "source directory is not defined"
+if not source:
+    print "source directory is not defined - just syncing"
     SOURCE=False
 elif os.path.isdir(source):
     SOURCE=True
@@ -86,10 +86,12 @@ originalConf = os.path.join(original, '.moa', 'config')
 
 if SOURCE:
     print "start parsing the source directory"
-    sourcelist = [x for x in os.listdir(source) if os.path.isdir(x)]
+    sourcelist = [x for x in os.listdir(source) 
+                  if ( not x[0] == '.' 
+                       and  os.path.isdir(os.path.join(source, x)))
+                  ]
     if os.path.exists('_ref'):
         sourcelist.append('_ref')
-
     #make sure we're not copying the file to itself
     sourcelist.remove(original)
 
@@ -98,6 +100,7 @@ else:
     sourcelist = [x for x in os.listdir('.') if os.path.isdir(x)]
 
 print "Syncing %s to %d target(s)" % (original, len(sourcelist))
+
 for indir in sourcelist:
     sourceDir = os.path.join(source, indir)
 
