@@ -49,7 +49,12 @@ def new(job, args):
     
     wd = job.wd
     targetdir = args.directory
-    title = args.title
+    title = ""
+    if job.conf.title:
+        title = job.conf.title
+    if args.title:
+        title = args.title
+
     template = args.template
     
     params = []
