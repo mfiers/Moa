@@ -13,6 +13,7 @@
 import os
 import sys
 import time
+import tempfile
 import optparse
 import subprocess as sp
 
@@ -74,14 +75,17 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("#BSUB -q", sysConf.args.openlavaQueue)
 
 
-    slots = sysConf.job.conf.get('threads', sysConf.args.openlavaSlots)
+    if '--oln' in sys.argv:
+        slots = sysConf.args.openlavaSlots
+    else:
+        slots = sysConf.job.conf.get('threads', sysConf.args.openlavaSlots)
+
     s("#BSUB -n", slots)
 
     lastJids = []
 
     #if len(sysConf.job.data.openlava.get('jidlist', [])) > 1:
     #    lastJids = sysConf.job.data.openlava.get('jidlist')[-1]
-    
 
     if command == 'run':
         prep_jids = sysConf.job.data.openlava.jids.get('prepare', [])
@@ -132,9 +136,20 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("")
     s(*(['/bin/bash'] + cl))
 
+    #save the file
+    tmpdir = os.path.join(wd, '.moa', 'tmp')    
+    if not os.path.exists(tmpdir):
+        os.makedirs(tmpdir)
+
+    tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='openlava.', 
+                                         delete=False, suffix='.sh')
+    tmpfile.write("\n".join(sc))
+    tmpfilename = tmpfile.name
+    tmpfile.close()
+
     l.debug("executing bsub")
     moa.ui.message("Submitting job to openlava")
-    p = sp.Popen('bsub', cwd = wd, stdout=sp.PIPE, stdin=sp.PIPE)
+    p = sp.Popen(['bsub', tmpfilename], cwd = wd, stdout=sp.PIPE, stdin=sp.PIPE)
     o,e = p.communicate("\n".join(sc))
     
     jid = int(o.split("<")[1].split(">")[0])
