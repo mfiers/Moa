@@ -21,7 +21,6 @@ from jinja2 import Template as jTemplate
 
 import moa.utils
 import moa.template
-import moa.actor
 import moa.backend
 import moa.logger as l
 from moa.sysConf import sysConf
@@ -81,11 +80,18 @@ class RuffBaseJob(object):
         Render & write the script to a tempfile
         """
 
-        tf = tempfile.NamedTemporaryFile( 
-            delete = False, prefix='moa', mode='w')
-        self.scriptFile = tf.name
-        
+        #save the file
+        tmpdir = os.path.join(self.job.wd, '.moa', 'tmp')    
+        if not os.path.exists(tmpdir):
+            os.makedirs(tmpdir)
+
+        tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='moa.', 
+                                         delete=False, suffix='.sh')
+        #tmpfile.write("\n".join(sc))
+        self.scriptFile = os.path.realpath(os.path.abspath(tmpfile.name))
+
         script = self.commands.render(self.command, self.jobData)
-        tf.write(script + "\n")
-        tf.close()
-        os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        tmpfile.write(script + "\n\n")
+        tmpfile.close()
+        os.chmod(tmpfile.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        
