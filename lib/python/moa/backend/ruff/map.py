@@ -31,7 +31,15 @@ from moa.backend.ruff.commands import RuffCommands
 from moa.backend.ruff.base import RuffBaseJob
 
 def localMapExecutor(input, output, script, jobData):    
+
+    wd = jobData['wd']
+    tmpdir = os.path.realpath(os.path.abspath(
+            os.path.join(wd, '.moa', 'tmp')))
+    if not os.path.exists(tmpdir):
+        os.makedirs(tmpdir)
+
     tf = tempfile.NamedTemporaryFile( delete = False,
+                                      dir=tmpdir,
                                       prefix='moa',
                                       mode='w')
     

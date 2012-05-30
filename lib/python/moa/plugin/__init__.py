@@ -58,8 +58,8 @@ class PluginHandler():
                 l.debug("Successfully Loaded module %s" % pyModule)
             except ImportError, e:
                 sys.stderr.write("ERROR - Plugin %s is not (properly) installed\n" % plugin)
-                #if '-v' in sys.argv or '-vv' in sys.argv:
-                #    raise
+                if '-v' in sys.argv or '-vv' in sys.argv:
+                    raise
                 sys.exit(-1)
         
     

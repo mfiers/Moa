@@ -12,7 +12,9 @@
 """
 import os
 import sys
+import stat
 import time
+import tempfile
 import optparse
 import subprocess as sp
 
@@ -29,6 +31,9 @@ def hook_defineCommandOptions(job, parser):
 
     parser.add_argument( '--olq', default='normal', dest='openlavaQueue', 
                          help='The Openlava queue to submit this job to' )
+
+    parser.add_argument( '--oln', default=1, type=int, dest='openlavaSlots', 
+                         help='The number of cores the jobs requires')
 
 def openlavaRunner(wd, cl, conf={}, **kwargs):
     """
@@ -49,7 +54,7 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
 
     l.debug("starting openlava actor for %s" % command)
 
-    outDir = os.path.join(wd, '.moa', 'log.latest')
+    outDir = os.path.realpath(os.path.abspath(os.path.join(wd, '.moa', 'log.latest')))
     if not os.path.exists(outDir):
         try:
             os.makedirs(outDir)
@@ -59,6 +64,8 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     #expect the cl to be nothing more than a single script to execute
     outfile = os.path.join(outDir, 'stdout')
     errfile = os.path.join(outDir, 'stderr')
+    
+    bsub_cl = ['bsub']
 
     sc = []
     def s(*cl):
@@ -66,34 +73,40 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
 
     s("#!/bin/bash")
     s("cd", wd)
-    s("#BSUB -o", outfile)
-    s("#BSUB -e", errfile)
-    s("#BSUB -q", sysConf.args.openlavaQueue)
+    bsub_cl.extend(["-o", outfile])
+    bsub_cl.extend(["-e", errfile])
+    bsub_cl.extend(["-q", sysConf.args.openlavaQueue])
+
+
+    if '--oln' in sys.argv:
+        slots = sysConf.args.openlavaSlots
+    else:
+        slots = sysConf.job.conf.get('threads', sysConf.args.openlavaSlots)
+
+    bsub_cl.extend(["-n", slots])
 
     lastJids = []
 
     #if len(sysConf.job.data.openlava.get('jidlist', [])) > 1:
     #    lastJids = sysConf.job.data.openlava.get('jidlist')[-1]
-    
 
     if command == 'run':
         prep_jids = sysConf.job.data.openlava.jids.get('prepare', [])
         #hold until the 'prepare' jobs are done
         #l.critical("Prepare jids - wait for these! %s" % prep_jids)
         for j in prep_jids: 
-            s("#BSUB -w done(%d)" % j)
-        #    qcl.append("-w '")
-        #    qcl.append('&&'.join(['exit(%s)' % x for x in prep_jids])
-
+            bsub_cl.extend(["-w", "'done(%d)'" % j])
     elif command == 'finish':
         run_jids = sysConf.job.data.openlava.jids.get('run', [])
         #hold until the 'prepare' jobs are done
         for j in run_jids: 
-            s("#BSUB -w done(%d)" % j)
+            bsub_cl.extend(["-w", "'done(%d)'" % j])
 
     #give it a reasonable name
+    jobname = "%s/%s" % (str(conf['runid']), command)
     if conf.get('runid', None):
-        s("#BSUB -J %s/%s" % (str(conf['runid']), command))
+        bsub_cl.extend(["-J", jobname])
+        #s("#BSUB-J %s" % jobname)
 
     # make sure the environment is copied
     #qcl.append('-V')
@@ -113,6 +126,11 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
         else:
             outk = 'moa_' + k
         v = conf[k]
+
+        #this should not happen:
+        if ' ' in outk: 
+            continue
+
         if isinstance(v, list):
             s("%s='%s'" % (outk, " ".join(v)))
         elif isinstance(v, dict):
@@ -123,12 +141,28 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("")
     s("## Run the command")
     s("")
-    s(*(['/bin/bash'] + cl))
 
+    s(*cl)
+
+    #save the file
+    tmpdir = os.path.join(wd, '.moa', 'tmp')
+    if not os.path.exists(tmpdir):
+        os.makedirs(tmpdir)
+
+    tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='openlava.', 
+                                         delete=False, suffix='.sh')
+    tmpfile.write("\n".join(sc))
+    tmpfilename = os.path.realpath(os.path.abspath(tmpfile.name))
+    tmpfile.close()
+    os.chmod(tmpfile.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        
     l.debug("executing bsub")
     moa.ui.message("Submitting job to openlava")
-    p = sp.Popen('bsub', cwd = wd, stdout=sp.PIPE, stdin=sp.PIPE)
-    o,e = p.communicate("\n".join(sc))
+    bsub_cl.append(tmpfilename)
+    moa.ui.message("Executing")
+    moa.ui.message(" ".join(map(str, bsub_cl)))
+    p = sp.Popen(map(str, bsub_cl), cwd = wd, stdout=sp.PIPE)
+    o,e = p.communicate()
     
     jid = int(o.split("<")[1].split(">")[0])
 

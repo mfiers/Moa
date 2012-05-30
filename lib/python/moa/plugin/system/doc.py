@@ -72,7 +72,7 @@ def hook_defineCommands():
     Set the moa commands for this plugin
     """
     sysConf['commands']['blog'] = {
-        'desc' : 'Maintain a blog (blog.md)',
+        'desc' : 'post to a simple blog (BLOG.md)',
         'usage' : 'moa blog',
         'call' : blog,
         'needsJob' : False,
@@ -88,7 +88,7 @@ def hook_defineCommands():
 
 def _appendMessage(fileName, txt):
     """
-    Append a markdown formatted message to either Changelog or Blog
+    Append a markdown formatted message to either CHANGELOG or BLOG
 
     :param txt: message to save
     :type txt: array of strings
@@ -110,7 +110,7 @@ def _appendMessage(fileName, txt):
 
 def _readFromuser(job, header, fileName):
     """
-    gather Blog or Changelog information
+    gather Blog or CHANGELOG information
     """
     #moa.utils.moaDirOrExit(job)
 
@@ -128,9 +128,9 @@ def _readFromuser(job, header, fileName):
 @moa.args.command
 def blog(job, args):
     """
-    Add an entry to the blog job (Blog.md)
+    Add an entry to the job blog (BLOG.md)
 
-    Allows a user to maintain a blog for this job (in Blog.md). Use as
+    Allows a user to maintain a blog for this job (in BLOG.md). Use as
     follows::
 
         $ moa blog
@@ -149,7 +149,7 @@ def blog(job, args):
     _readFromuser(
         job, 
         header="Enter your blog message (ctrl-d on an empty line to finish)",
-        fileName="Blog.md")
+        fileName="BLOG.md")
 
 
 @moa.args.command
@@ -181,7 +181,7 @@ def change(job, args):
     """
     _readFromuser(
         job, 
-        header="Enter your changelog message (ctrl-d on an empty line to finish)",
+        header="Enter your CHANGELOG message (ctrl-d on an empty line to finish)",
         fileName="CHANGELOG.md")
                   
 
@@ -195,8 +195,6 @@ def readme(job, args):
     """
     
     subprocess.call(os.environ.get('EDITOR','nano').split() + ['README.md'])
-
-
 
 def _update_git(filename):
     """
@@ -222,7 +220,7 @@ def hook_git_finish_blog():
     """
     Execute just after setting running moa blog
     """
-    _update_git('Blog.md')
+    _update_git('BLOG.md')
 
 
 def hook_git_finish_change():

@@ -1,0 +1,33 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: 'Postprocess - run GapCloser & SSpace'
+    mode: simple
+creation_date: Mon, 21 Nov 2011 12:47:16
+description: Run Soapdenovo 
+moa_id: soapdenovo_postprocess
+modification_date: Mon, 21 Nov 2011 12:47:22
+name: soapdenovo_postprocess
+parameters:
+  soapdir:
+    help: directory where soap ran
+    optional: false
+  threads:
+    default: 8
+    help: 'no threads to use'
+    optional: true
+    type: integer
+  noruns:
+    default: 2
+    help: 'no times to run gapcloser & SSPace'
+    type: integer
+    optional: true
+  sspace_executable:
+    default: SSPACE_Basic_v2.0.pl
+    optional: true
+    help: SSPace executable
+  sspace_extra_variables:
+    default: ''
+    optional: true
+    help: Extra variables to pass to Sspace

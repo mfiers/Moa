@@ -27,7 +27,7 @@ filesets:
     category: output
     help: soap denovo output file
     optional: true
-    default: soap.output
+    pattern: output.scafSeq
     type: single
 moa_id: soapdenovo_pe
 modification_date: Mon, 21 Nov 2011 12:47:22
@@ -38,7 +38,7 @@ parameters:
     help: kmer size
     optional: true
     type: integer
-  executable:
+  executable_not_used_anymore:
     default: 'SOAPdenovo-31mer'
     help: 'which executable to use (SOAPdenovo-127mer, SOAPdenovo-31mer or SOAPdenovo-63mer)'
     optional: true

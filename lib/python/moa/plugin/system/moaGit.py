@@ -17,12 +17,14 @@ import time
 import optparse
 import subprocess
 
-import git 
+#import smmap
+#import git
 
 from moa.sysConf import sysConf
+
 import moa.args
 import moa.logger as l
-import moa.plugin.newjob
+import moa.plugin.system.newjob
 
 
 # def hook_defineCommands():
@@ -40,16 +42,16 @@ import moa.plugin.newjob
 #         }
 
 
-def _getRepo(job):
-    """
-Return the git repository object
-"""
-    wd = job.wd
-    try:
-        repo = git.Repo(wd)
-        return repo
-    except git.InvalidGitRepositoryError:
-        return None
+# def _getRepo(job):
+#     """
+# Return the git repository object
+# """
+#     wd = job.wd
+#     try:
+#         repo = git.Repo(wd)
+#         return repo
+#     except git.InvalidGitRepositoryError:
+#         return None
 
 
 def _checkInRepo(job):
@@ -155,9 +157,9 @@ def _commit(job, message):
     #repo.git.commit(os.path.join(job.wd,  '.moa', 'template.d'))
 
 @moa.args.command                    
-def gitadd(job):
+def gitadd(job, args):
     """
-    Add a job to the git repository
+    add this job to a git repository
     """
     l.debug("adding to git %s" % job.wd)
     _commit(job, "add/refresh of %s" % job.wd)
