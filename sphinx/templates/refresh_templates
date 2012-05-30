@@ -21,7 +21,10 @@ os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'templates'))
 _allTemplates = []
 for tfile in moa.template.templateList():
     print tfile
-    template = moa.template.getMoaFile(tfile)
+    template = moa.template.getMoaFile(tfile)    
+    if not template: 
+        continue
+
     tname = template.moa_id
     assert(template.moa_id == tfile)
     

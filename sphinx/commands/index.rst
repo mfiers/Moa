@@ -89,8 +89,8 @@ moa **change**
 ~~~~~~~~~~~~~~~~~~
 usage: moa change [-h] [-r] [-v] [--profile]
 
-Add entry to Changelog.md This function allows the user to add an entry to
-Changelog.md (including a timestamp). Use it as follows:: $ moa change Enter
+Add entry to CHANGELOG.md This function allows the user to add an entry to
+CHANGELOG.md (including a timestamp). Use it as follows:: $ moa change Enter
 your changelog message (ctrl-d on an empty line to finish) ... enter your
 message here .. [ctrl-d] Note: the ctrl-d needs to be given on an empty line.
 The text is appended to moa.desciption. In the web interface this is converted
@@ -390,7 +390,7 @@ moa **readme**
 ~~~~~~~~~~~~~~~~~~
 usage: moa readme [-h] [-r] [-v] [--profile]
 
-Edit the Readme.md file for this job You could, obviously, also edit the file
+Edit the README.md file for this job You could, obviously, also edit the file
 yourself - this is a mere shortcut to try to stimulate you in maintaining one
 
 optional arguments:

@@ -34,6 +34,7 @@ Table of contents:
    intro   
    install
    coretemplates
+   sync
    #using
    #configuration
    #filesets

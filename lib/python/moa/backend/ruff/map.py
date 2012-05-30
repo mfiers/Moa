@@ -104,7 +104,7 @@ class RuffMapJob(RuffBaseJob):
                            for x in self.job.data.inputs]
                 
                 l.debug('pushing job with inputs %s' % ", ".join(inputs[:10]))
-                                
+                    
                 fsDict = dict([(x, self.job.data.filesets[x]['files'][i])
                                for x in self.job.data.inputs + self.job.data.outputs])
 

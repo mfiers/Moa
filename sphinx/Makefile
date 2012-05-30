@@ -32,13 +32,17 @@ help:
 
 ghpages:
 	cp -r  $(BUILDDIR)/html/* $(GHPAGES)/
-	cd $(GHPAGES) && git commit -m 'rebuild documentation' -a || true && pwd && git push
+	cd $(GHPAGES) && \
+		sh add_all_to_repo.sh && \
+		git commit -m 'rebuild documentation' -a || true && \
+		pwd && \
+		git push
 
 clean:
 	-rm -rf $(BUILDDIR)/*
 
 prepare:
-	cd templates && rm -r *.rst && ./refresh_templates
+	cd templates &&  ( rm -rf *.rst || true ) && ./refresh_templates
 	cd commands && ./update_commands
 
 html: prepare pdf

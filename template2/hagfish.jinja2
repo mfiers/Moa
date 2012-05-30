@@ -1,13 +1,22 @@
 ### run
 
+echo "Running Hagfish:"
+echo "Input file is {{ input }}"
+echo "Output file is {{ output }}"
+
 mkdir -p touch
+echo hagfish_extract -v --low {{ min_ok }} --high {{ max_ok }} {{ input }}
 hagfish_extract -v --low {{ min_ok }} --high {{ max_ok }} {{ input }}
 echo touch {{ output }}
+touch {{ output }}
 
 ### finish
 
+echo hagfish_gapfinder -v -f {{ fasta }}
 hagfish_gapfinder -v -f {{ fasta }}
+echo hagfish_coverage_combine -v
 hagfish_coverage_combine -v
+echo hagfish_report -v
 hagfish_report -v
 
 ### clean

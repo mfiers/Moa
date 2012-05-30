@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import yaml
 import moa.utils
 import moa.template
 
 import moa.logger as l
+
+
+from moa.sysConf import sysConf
 
 from jinja2 import Template as jTemplate
 
@@ -17,22 +21,20 @@ tIndexFile = os.path.join(
 tPlugin = jTemplate(open(tPluginFile).read())
 tIndex = jTemplate(open(tIndexFile).read())
 
-os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'api', 'plugin'))
-
 all_plugs = []
 l.warning("start parsing plugins")
-plugindir = os.path.join(moa.utils.getMoaBase(), 'lib', 'python', 'moa', 'plugin')
-l.warning("in directory %s" % plugindir)
+#plugindir = os.path.join(moa.utils.getMoaBase(), 'lib', 'python', 'moa', 'plugin')
+#l.warning("in directory %s" % plugindir)
 
-for plugin in os.listdir(plugindir):
-    if not os.path.isdir(os.path.join(plugindir, plugin)):
-        continue
-    pluginfile = os.path.join(plugindir, plugin, '__init__.py')
-    name = plugin
-    print 'Found plugin: ' + name
-    all_plugs.append(name)    
-    with open('%s.rst' % name, 'w') as F:
-        F.write(tPlugin.render({'name' : name}))
+for category in ['job', 'system']:
+    for plugin in sysConf.plugins[category].keys():
+        plugInfo = sysConf.plugins[category].get(plugin, {})
+        module = plugInfo.module
+        name = plugin
+        print 'Found plugin: ', category, name
+        all_plugs.append((category, name))
+        with open('%s__%s.rst' % (category, name), 'w') as F:
+            F.write(tPlugin.render({'module' : module}))
 
 all_plugs.sort()
 with open("index.rst", 'w') as F:

@@ -4,6 +4,6 @@ moa.plugin
 .. toctree::
    :maxdepth: 2
 
-   {% for plugin in plugins -%}
-   {{plugin}}
+   {% for category, plugin in plugins -%}
+   {{category}}__{{plugin}}
    {% endfor %}
