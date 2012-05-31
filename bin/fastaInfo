@@ -72,7 +72,7 @@ parser.add_option('-S', dest='statsSimple',
                   action='store_true')
 parser.set_defaults(graphengine="R")
 parser.add_option('-g', dest='graphengine',
-                  help='either "R" or "gnuplot" is used to generated the graphs')
+                  help='either "R", "gnuplot" or "none" is used to generated the graphs')
 parser.set_defaults(histogramsteps=50)
 parser.add_option('-b', dest='histogramsteps', type="int",
                   help='no of bins to use in the histograms')
@@ -128,7 +128,7 @@ if options.stats:
     for x in args:
         dd[x] = []
 
-funcs = ['length', 'fracn', 'id', 'scaf10', 'scaf100', 'gcfrac', 'ncount']
+funcs = ['length', 'fracn', 'id', 'scaf10', 'scaf1', 'scaf100', 'gcfrac', 'ncount']
 
 def f_id(name, seq):
     return name.split()[0]
@@ -152,8 +152,13 @@ def f_gcfrac(name, seq):
     t = seq.count('t')
     return float(g+c) / (g + c + a + t)
 
+scaf1rex = re.compile(r'n{1,}')
 scaf10rex = re.compile(r'n{10,}')
 scaf100rex = re.compile(r'n{100,}')
+
+def f_scaf1(name,seq):
+    return len(scaf10rex.split(seq))
+
 def f_scaf10(name,seq):
     return len(scaf10rex.split(seq))
 

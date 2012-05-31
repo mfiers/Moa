@@ -2,16 +2,36 @@
 
 import os
 import sys
+import argparse
 import subprocess as sp
 
 base = os.path.abspath(os.getcwd())
+parser = argparse.ArgumentParser(description='run recursively')
+parser.add_argument('--bg', dest='background', action='store_true',
+                   default=False,
+                   help='run in the background')
+parser.add_argument('-d', dest='depth', default=0, help='depth: 1 means run only in first ' + 
+                    'level subdirs, 2 only in second level, and so on', type=int)
+parser.add_argument('command', nargs='+')
+args = parser.parse_args()
 
-cl = " ".join(sys.argv[1:])
-print 'executing:'
-print cl
+cl = " ".join(args.command).strip()
+if args.background and cl[-1] != '&':
+    cl = '( ' + cl + ' )& '
+
+print 'executing:', cl
+
+if base[-1] == '/': base = base[:-1]
+
 for path, dirs, files in os.walk(base):
     toRemove = [x for x in dirs if x[0] in ['.', '_']]
     [dirs.remove(x) for x in toRemove]
-    print 'executing in %s' % path
+    localpath =  path.replace(base, '')
+    level = len(localpath.split('/')) - 1
+
+    if args.depth and args.depth != level:
+        continue
+    print 'executing in %s' % localpath
+
     P = sp.Popen(cl, cwd=path, shell=True)
     P.wait()
