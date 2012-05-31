@@ -76,6 +76,9 @@ def test(job, args):
         if p in job.conf.doNotCheck:
             continue
         
+        if ' ' in p:
+            messages.append(("Invalid parameter name - cannot contain spaces", p))
+            
         if not p in job.template.parameters:
             continue
         
