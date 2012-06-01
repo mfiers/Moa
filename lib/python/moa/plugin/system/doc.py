@@ -41,27 +41,26 @@ def hook_prepare_3():
     if not message: 
         message = ""
 
-    if sysConf.autoChangeMessage:
+    if sysConf.autochangemessage:
         if message:
-            message += "\n---\n\n" + sysConf.autoChangeMessage
-        else:
-            message = sysConf.autoChangeMessage
+            message += "\n---\n\n"
+        for status, acm in sysConf.autochangemessage:
+            if status == 'message':
+                message += acm
+            else:
+                message +=  '%s: %s ' % (status, acm)
+            message += "\n"
     
     if message: 
         message += "\n"
-    message += "Command line:\n\n  " + " ".join(sys.argv) 
+
+    message += "Command line:\n\n  " + " ".join(sys.argv)
 
     if message:
         _appendMessage(
             fileName="CHANGELOG.md",
             txt = message.split("\n"))
     
-    # job.template.parameters.project = {
-    #     'optional' : True,
-    #     'help' : 'Project name',
-    #     'type' : 'string'
-    #     }
-
 def hook_defineOptions():
     sysConf.argParser.add_argument(
         '-m', action='store',
