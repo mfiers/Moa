@@ -27,7 +27,7 @@ def hook_check_run():
     command = sysConf.originalCommand
 
     #see if this command is 'lockable'
-    if command in sysConf.plugins.lock.runnable: 
+    if command in sysConf.plugins.system.lock.runnable: 
         return True
 
     if os.path.exists(os.path.join(sysConf.job.confDir, 'lock')):
@@ -49,6 +49,7 @@ def unlock(job, args):
     if os.path.exists(lockfile):
         l.debug("unlocking job in %s" % job.wd)
         os.remove(lockfile)
+    moa.ui.message("Unlocked job")
 
 @moa.args.needsJob
 @moa.args.command
@@ -61,7 +62,7 @@ def lock(job, args):
         l.debug("locking job in %s" % job.wd)
         with open(lockfile, 'w') as F:
             F.write(" ")        
-
+    moa.ui.message("Locked job")
 
 LOCKTEST = '''
 moa simple --np -t test -- echo "poiuy"
