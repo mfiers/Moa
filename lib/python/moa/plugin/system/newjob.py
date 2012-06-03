@@ -47,7 +47,7 @@ def new(job, args):
     """
 
     wd = job.wd
-    targetdir = args.directory
+    #targetdir = args.directory
     title = ""
     if job.conf.title:
         title = job.conf.title
@@ -118,14 +118,6 @@ def new(job, args):
     if title:
         moa.ui.message('with title "%s"' % title)
         
-
-    # if provider:
-    #     moa.ui.fprint("Created a Moa {{bold}}%s{{reset}}:{{green}}%s{{reset}} job" %
-    #                   (provider, template),
-    #                   f='jinja')
-    # else:
-    #     moa.ui.fprint("Created a Moa {{green}}{{bold}}%s{{reset}} job" % template,
-    #                   f='jinja')
 
 def hook_git_finish_new():
     l.debug('running git add for newjob')
