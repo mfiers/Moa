@@ -34,8 +34,7 @@ def simple(job, args):
     query you for a command to execute (the `process` parameter).
     """
 
-    wd = job.wd
-    
+    wd = job.wd    
     if not args.force and \
            os.path.exists(os.path.join(wd, '.moa', 'template')):
         moa.ui.exitError("Job already exists, use -f to override")
@@ -46,9 +45,9 @@ def simple(job, args):
 
     #make sure the correct hooks are called
     sysConf.pluginHandler.run("preNew")
-
-    moa.job.newJob(
-        wd, template='simple',
+    
+    job = moa.job.newJob(
+        job, template='simple',
         title = args.title,
         parameters=params)
 
@@ -65,7 +64,7 @@ def exclamateNoJob(job, args, command):
         moa.ui.warn("Do not forget to set a title")
 
     job = moa.job.newJob(
-        wd = job.wd, template='simple', 
+        job, template='simple', 
         title = title,
         parameters = [('process', command)])
 
@@ -142,8 +141,9 @@ def createMap(job, args):
     params.append(('input', input))
     params.append(('output', output))
         
+
     moa.job.newJob(
-        wd, template='map',
+        job, template='map',
         title = args.title,
         parameters=params)
 
@@ -201,7 +201,7 @@ def createReduce(job):
         params.append(('output', output))
         
     moa.job.newJob(
-        wd, template='reduce',
+        job, template='reduce',
         title = options.title,
         parameters=params)
 
@@ -226,6 +226,8 @@ def createAdhoc(job):
     """
     Creates an adhoc job.
     """
+    l.critical("I don't think this function is ever called!!")
+
     wd = sysConf['cwd']
     options = sysConf['options']
     args = sysConf['newargs']
@@ -349,7 +351,7 @@ def createAdhoc(job):
     for pk, pv in params:
         l.debug('setting parameters %s to %s' % (pk, pv))
     
-    moa.job.newJob(wd, template='adhoc',
+    moa.job.newJob(job, template='adhoc',
                          title = options.title,
                          parameters=params)
 
