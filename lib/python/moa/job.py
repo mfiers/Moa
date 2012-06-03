@@ -34,20 +34,13 @@ l = moa.logger.getLogger(__name__)
 from moa.sysConf import sysConf
 
 
-def newJob(wd, template, title, parameters=[], provider=None):
+def newJob(job, template, title, parameters=[], provider=None):
     """
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
     template, and instantiate the proper job type
-
-    >>> wd = tempfile.mkdtemp()
-    >>> job = newJob(wd, template='blast', title='test')
-    >>> assert(isinstance(job, Job))
-    >>> assert(job.template.name == 'blast')
-    >>> assert(job.conf.title == 'test')
     
-    :param wd: Directory to create this job in, note that this
-       directory must already exists
+    :param job: Job object to fill - needs only wd set.
     :param template: Template name for this job
     :type template: String
     :type force: Boolean
@@ -57,12 +50,13 @@ def newJob(wd, template, title, parameters=[], provider=None):
     
     """
 
-    job = Job(wd)
     job.setTemplate(template, provider=provider)
     job.load_config()
     job.conf.title = title
     for pk, pv in parameters:
         job.conf[pk] = pv
+        moa.ui.message('setting "%s" to "%s"' % (pk, pv))
+    print job.conf.pretty()
     job.conf.save()
     return job
 
@@ -164,7 +158,7 @@ class Job(object):
             self.run_hook('pre_filesets')
             self.prepareFilesets()
             self.renderFilesets()
-
+            
 
     def load_config(self):
         # then load the job configuration
