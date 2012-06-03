@@ -47,7 +47,6 @@ def newJob(job, template, title, parameters=[], provider=None):
     :param parameters: A list of parameters to set for this job
     :type parameters: list of (key, value) tuples
     :rtype: instance of :class:`moa.job.Job`
-    
     """
 
     job.setTemplate(template, provider=provider)
@@ -56,7 +55,6 @@ def newJob(job, template, title, parameters=[], provider=None):
     for pk, pv in parameters:
         job.conf[pk] = pv
         moa.ui.message('setting "%s" to "%s"' % (pk, pv))
-    print job.conf.pretty()
     job.conf.save()
     return job
 
