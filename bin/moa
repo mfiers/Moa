@@ -170,30 +170,6 @@ def run_3(wd, exitOnError=True):
         sysConf.pluginHandler.run("post%s" % command.capitalize(),
                                   reverse=True)
         sysConf.pluginHandler.run('finish', reverse=True)
-        
-    # else:
-    #     if not job.isMoa():
-    #         if exitOnError:
-    #             moa.ui.exitError("Must run 'moa %s' in a Moa dir" % command)
-    #         else:
-    #             return False
-            
-    #     if command == 'run':
-    #         job.execute(
-    #             verbose = sysConf.options.verbose,
-    #             silent = sysConf.options.silent)
-    #     elif command == 'prepare':
-    #         job.prepare()
-    #     elif command == 'finish':
-    #         job.finish()
-    #     elif job.hasCommand(command):
-    #         job.simpleExecute(command)
-    #     else:            
-    #         if exitOnError:
-    #             moa.ui.exitError("Unknown command '%s'" % command)
-    #         else:
-    #             moa.ui.warn("Unknown command '%s'" % command)
-    #             return False
 
 
 def run_recursive(wd):
