@@ -80,13 +80,9 @@ def new(job, args):
 
     wd = job.wd
 
-    if os.path.exists(os.path.join(
-        wd, '.moa', 'template')) and \
-        not args.force:
-        l.error("There is already a Moa job in")
-        l.error(wd)
-        l.error("use -f to override")
-        
+    if os.path.exists(os.path.join(wd, '.moa', 'template')) and not args.force:
+        moa.ui.exitError("This directory already contains a moa job\nUse -f to override")
+
     if not title:
         moa.ui.warn("Please define a title for this job")
 
