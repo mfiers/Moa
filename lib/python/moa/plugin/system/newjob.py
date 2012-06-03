@@ -17,7 +17,7 @@ import moa.job
 import moa.logger
 
 l = moa.logger.getLogger(__name__)
-l.setLevel(moa.logger.DEBUG)
+#l.setLevel(moa.logger.DEBUG)
 
 import moa.plugin
 import moa.ui
@@ -25,13 +25,12 @@ import moa.args
 
 from moa.sysConf import sysConf
 
+#@moa.args.argument('-d', '--directory', help='directory to create the job in',
+#                   default='.')
 @moa.args.argument('parameter', nargs='*', help='arguments for this job, specify' +
                    'as KEY=VALUE without spaces')
 @moa.args.argument('template', help='name of the template to use for this moa job ')
 @moa.args.argument('-t', '--title', help='mandatory job title', default='')
-
-@moa.args.argument('-d', '--directory', help='directory to create the job in',
-                   default='.')
 @moa.args.forceable
 @moa.args.command
 def new(job, args):
@@ -46,7 +45,7 @@ def new(job, args):
     if you need spaces in variables (KEY='two values')
         
     """
-    
+
     wd = job.wd
     targetdir = args.directory
     title = ""
@@ -64,20 +63,20 @@ def new(job, args):
         k,v = a.split('=', 1)
         if k == 'title':
             if title:
-                moa.ui.warn("duplicate title defintions, using %s" % v)
+                moa.ui.warn('Duplicate title defintions, using "%s"' % v)
             title = v
         else:
             params.append(a)
 
-    if targetdir != '.':
-        fulltarget = os.path.abspath(targetdir)
-        if not os.path.exists(fulltarget):
-            moa.ui.message("Creating directory %s" % targetdir)
-            os.makedirs(fulltarget)
+    # if targetdir != '.':
+    #     fulltarget = os.path.abspath(targetdir)
+    #     if not os.path.exists(fulltarget):
+    #         moa.ui.message("Creating directory %s" % targetdir)
+    #         os.makedirs(fulltarget)
             
-        os.chdir(fulltarget)
-        #create a new job for the target dir
-        job = moa.job.Job(fulltarget)
+    #     os.chdir(fulltarget)
+    #     #create a new job for the target dir
+    #     job = moa.job.Job(fulltarget)
 
     wd = job.wd
 
@@ -91,13 +90,14 @@ def new(job, args):
     if not title:
         moa.ui.warn("Please define a title for this job")
 
+    originaltemplate = template
     provider = None
     if ':' in template:
         provider, template = template.split(':')
 
     try:
         l.debug("instantiating new job")
-        job = moa.job.newJob(wd, template=template, title = title,
+        job = moa.job.newJob(job, template=template, title = title,
                              provider=provider)
     except moa.exceptions.InvalidTemplate:
         moa.ui.exitError("Invalid template: %s" % template)
@@ -114,13 +114,18 @@ def new(job, args):
 
     job.conf.save()
 
-    if provider:
-        moa.ui.fprint("Created a Moa {{bold}}%s{{reset}}:{{green}}%s{{reset}} job" %
-                      (provider, template),
-                      f='jinja')
-    else:
-        moa.ui.fprint("Created a Moa {{green}}{{bold}}%s{{reset}} job" % template,
-                      f='jinja')
+    moa.ui.message('Created a "%s" job' % originaltemplate)
+    if title:
+        moa.ui.message('with title "%s"' % title)
+        
+
+    # if provider:
+    #     moa.ui.fprint("Created a Moa {{bold}}%s{{reset}}:{{green}}%s{{reset}} job" %
+    #                   (provider, template),
+    #                   f='jinja')
+    # else:
+    #     moa.ui.fprint("Created a Moa {{green}}{{bold}}%s{{reset}} job" % template,
+    #                   f='jinja')
 
 def hook_git_finish_new():
     l.debug('running git add for newjob')
