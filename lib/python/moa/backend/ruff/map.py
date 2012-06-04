@@ -29,40 +29,7 @@ from moa.sysConf import sysConf
 
 from moa.backend.ruff.commands import RuffCommands
 from moa.backend.ruff.base import RuffBaseJob
-
-def localMapExecutor(input, output, script, jobData):    
-
-    wd = jobData['wd']
-    tmpdir = os.path.realpath(os.path.abspath(
-            os.path.join(wd, '.moa', 'tmp')))
-    if not os.path.exists(tmpdir):
-        os.makedirs(tmpdir)
-
-    tf = tempfile.NamedTemporaryFile( delete = False,
-                                      dir=tmpdir,
-                                      prefix='moa',
-                                      mode='w')
-    
-    tf.write(script)
-    tf.close()
-    os.chmod(tf.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-
-    import logging
-    for k in jobData:
-        v = jobData[k]
-        if isinstance(v, list):
-            os.putenv(k, " ".join(v))
-        elif isinstance(v, dict):
-            continue
-        else:
-            os.putenv(k, str(v))
-
-    runner = moa.actor.getRunner()
-    rc = runner(jobData['wd'],  [tf.name], jobData, command=jobData['command'])
-    if rc != 0:
-        raise ruffus.JobSignalledBreak
-    l.debug("Executing %s" % tf.name)
-    
+from moa.backend.ruff.executor import ruffusExecutor
 
 class RuffMapJob(RuffBaseJob):    
 
@@ -135,12 +102,12 @@ class RuffMapJob(RuffBaseJob):
 
 
 
-        #this is because we're possibly reusing the this module (are we??)
-        #function in multiple ruffus calls. In all cases it's to
-        #be interpreted as a new, fresh call - so, remove all
-        #metadata that might have stuck from the last time
-        if hasattr(localMapExecutor, 'pipeline_task'):
-            del localMapExecutor.pipeline_task
+        # this is because we're possibly reusing the this module (are
+        # we??)  function in multiple ruffus calls. In all cases it's
+        # to be interpreted as a new, fresh call - so, remove all
+        # metadata that might have stuck from the last time
+        if hasattr(ruffusExecutor, 'pipeline_task'):
+            del ruffusExecutor.pipeline_task
         
         #if there are no & output files complain:
         if len(self.job.data.inputs) + len(self.job.data.outputs) == 0:
@@ -150,7 +117,7 @@ class RuffMapJob(RuffBaseJob):
         #here we're telling ruffus to proceed using the in & output files
         #we're generating
         l.debug("decorating executor")
-        executor2 = ruffus.files(generate_data_map)(localMapExecutor)
+        executor2 = ruffus.files(generate_data_map)(ruffusExecutor)
         l.debug("Start run (with %d thread(s))" %
                 self.args.threads)
             
@@ -177,7 +144,8 @@ class RuffMapJob(RuffBaseJob):
                          "{{reset}}"
             moa.ui.error("Caught a Ruffus error")
             moa.ui.error(startOfError)
-            moa.ui.error(endOfError)
+            print endOfError
+            moa.ui.error(endOfError.replace('%', '%%'))
             try:
                 #try to get some structured info & output that.
                 einfo = e[0][1].split('->')[0].split('=')[1].strip()
@@ -190,9 +158,9 @@ class RuffMapJob(RuffBaseJob):
 
         #empty the ruffus node name cache needs to be empty -
         #otherwise ruffus might think that we're rerunning jobs
-        if hasattr(localMapExecutor, 'pipeline_task'):
-            for k in localMapExecutor.pipeline_task._name_to_node.keys():
-                del localMapExecutor.pipeline_task._name_to_node[k]
+        if hasattr(ruffusExecutor, 'pipeline_task'):
+            for k in ruffusExecutor.pipeline_task._name_to_node.keys():
+                del ruffusExecutor.pipeline_task._name_to_node[k]
         return rc
                  
 
