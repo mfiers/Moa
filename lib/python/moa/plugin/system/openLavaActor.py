@@ -35,6 +35,9 @@ def hook_defineCommandOptions(job, parser):
     parser.add_argument( '--oln', default=1, type=int, dest='openlavaSlots', 
                          help='The number of cores the jobs requires')
 
+    parser.add_argument( '--olm', default=1, dest='openlavaHost', 
+                         help='The host to use for openlava')
+
 def openlavaRunner(wd, cl, conf={}, **kwargs):
     """
     Run the job using OPENLAVA
@@ -84,6 +87,9 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
         slots = sysConf.job.conf.get('threads', sysConf.args.openlavaSlots)
 
     bsub_cl.extend(["-n", slots])
+
+    if '--olm' in sys.argv:
+        bsub_cl.extend(["-m", sysConf.args.openlavaHost])
 
     lastJids = []
 
