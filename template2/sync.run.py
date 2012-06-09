@@ -19,7 +19,7 @@ ignore = os.environ.get('moa_ignore').strip().split()
 if ignore:
     print "ignoring", ignore
 
-if source:
+if not source:
     print "source directory is not defined"
     SOURCE=False
 elif os.path.isdir(source):
@@ -86,7 +86,7 @@ originalConf = os.path.join(original, '.moa', 'config')
 
 if SOURCE:
     print "start parsing the source directory"
-    sourcelist = [x for x in os.listdir(source) if os.path.isdir(x)]
+    sourcelist = [x for x in os.listdir(source) if os.path.isdir(os.path.join(source, x))]
     if os.path.exists('_ref'):
         sourcelist.append('_ref')
 
