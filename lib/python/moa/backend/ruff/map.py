@@ -33,8 +33,8 @@ from moa.backend.ruff.base import RuffBaseJob
 def localMapExecutor(input, output, script, jobData):    
 
     wd = jobData['wd']
-    tmpdir = os.path.realpath(os.path.abspath(
-            os.path.join(wd, '.moa', 'tmp')))
+    tmpdir = os.path.abspath(
+            os.path.join(wd, '.moa', 'tmp'))
     if not os.path.exists(tmpdir):
         os.makedirs(tmpdir)
 
