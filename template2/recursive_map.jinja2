@@ -1,0 +1,56 @@
+### run
+
+reference={{reference}}
+
+{% for i in range(iterations) %}
+    {% if i <= (iterations / 2) %}{% set aln_param=param_strict %}
+    {% else %}{% set aln_param=param_loose %}
+    {% endif %}
+    echo "Iteration {{i}} ---"
+    echo "With reference: ${reference}"
+    if [[ ! -f "db.{{i}}.ann" ]]
+    then
+        echo "create bwa database {{i}}"
+        bwa index -p db.{{i}} ${reference}
+    fi
+
+    echo "start aligning $i"
+    bamfiles=""
+    {% for ffq in fq_forward %}
+       {% set rfq =  fq_reverse[loop.index0] %}
+       base=`basename {{ ffq }} .fq`
+       [[ -f "${base}__{{i}}.f.sai" ]] || \
+           bwa aln {{ aln_param }} -t {{ threads }} \
+               -f ${base}__{{i}}.f.sai db.{{i}} {{ ffq }}
+       [[ -f "${base}__{{i}}.r.sai" ]] || \
+           bwa aln {{ aln_param }} -t {{ threads }} \
+               -f ${base}__{{i}}.r.sai db.{{i}} {{ rfq }} 
+       [[ -f ${base}__{{i}}.bam ]] || \
+           bwa sampe db.{{i}} ${base}__{{i}}.f.sai ${base}__{{i}}.r.sai \
+           {{ ffq }} {{ rfq }} \
+           | samtools view -Sb -f 2 - \
+           | samtools sort - ${base}__{{i}}
+       bamfiles="${bamfiles} ${base}__{{i}}.bam"
+    {% endfor %}
+    
+    echo "bamfiles collected: ${bamfiles}"
+    if [[ ! -f variants.{{i}}.vcf ]]
+    then
+        samtools mpileup -uf $reference \
+            ${bamfiles} \
+            | bcftools view -bvcg - \
+            > variants.raw.{{i}}.bcf
+        bcftools view variants.raw.{{i}}.bcf \
+            | vcfutils.pl varFilter -D100 \
+            > variants.{{i}}.vcf
+    fi
+
+    if [[ ! -f consensus.{{i}}.fasta ]]
+    then
+        vcf_applicator ${reference} variants.{{i}}.vcf \
+            consensus.{{i}}.fasta
+    fi
+
+    reference=consensus.{{i}}.fasta
+    #false
+{% endfor %}
