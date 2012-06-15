@@ -1,0 +1,32 @@
+= Most recent Moa projects =
+{{#ask: [[Category:MoaProject]]
+|? MoaHost
+|? MoaPath
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=10
+}}
+
+
+= Most recent jobs =
+{{#ask: [[Category:MoaJob]]
+|? MoaHost=Host
+|? MoaPath=Path
+|? MoaJobTitle
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=20
+}}
+
+
+= Most recent changelog entries =
+{{#ask: [[Category:MoaChangeMessage]]
+|? MoaChangeMessage=Message
+|? MoaCommandLine=Command line
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=10
+}}
