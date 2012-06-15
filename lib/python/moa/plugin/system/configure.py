@@ -191,20 +191,16 @@ def unset(job, args):
     configuration.
     """
 
-    #generate an autoChangeMessage
-    message = "Unset parameters:\n"
-    
     for a in args.parameter:
         if '=' in a:
             moa.ui.exitError("Invalid argument to unset %s" % a)
         try:
             del job.conf[a]
-            message += ' %s\n' % a
+            moa.ui.message('unset %s' % a)
         except KeyError:
             #probably a non existsing key - ignor
-            message += ' %s (failed)\n' % a
+            moa.ui.warn('failed to unset %s' % a)
             pass
-    sysConf.autoChangeMessage = message        
     job.conf.save()
 
 @moa.args.argument('parameter', nargs='+', help='arguments for this job, specify' +
@@ -237,16 +233,13 @@ def set(job, args):
             val = moa.ui.askUser("%s:\n> " % a, old)
             job.conf[a] = val
             new_pars.append((a,val))
+            moa.ui.message('set "%s" to "%s"' % (a, " ".join(val.split())[:80]))
         else:
             key,val = a.split('=',1)
             job.conf[key] = val
             new_pars.append((key,val))
-            
-    #generate an autoChangeMessage
-    message = "Set parameters:\n"
-    for i in new_pars:
-        message += "  %s: %s\n" % i
-    sysConf.autoChangeMessage = message
+            moa.ui.message('set "%s" to "%s"' % (key, " ".join(val.split())[:80]))
+
     job.conf.save()
 
 

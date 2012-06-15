@@ -1,4 +1,11 @@
-{% block header %}__SHOWFACTBOX__ [[Category:Moa]][[Category:MoaJob]]{% endblock -%}
+<!-- 
+
+Please do not edit this page - it is automatically generated. If you would like
+to discuss the contents, use the talk page 
+
+-->
+{%- block header %}__SHOWFACTBOX__ [[Category:Moa]] [[Category:MoaJob]]
+{%- endblock -%}
 
 {%- block post_header %}{% endblock -%}
 
@@ -44,6 +51,21 @@
 
 {%- block post_parameters %}{% endblock -%}
 
+{% block blog %}
+
+= Blog =
+{{ '{{' }}#ask: [[Category:MoaBlogEntry]] [[MoaJob::moa/{{smw.project}}/job/{{job.conf.smwjobid}}]]
+|? MoaBlogTeaser
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=10
+{{ '}}' }}
+
+{% endblock %}
+
+{%- block post_blog %}{% endblock -%}
+
 {% block changes %}
 
 = Changelog =
@@ -59,12 +81,4 @@
 {% endblock %}
 
 {%- block post_changes %}{% endblock -%}
-
-{%- block comments %}
-= WikiComments =
-<!-- you may edit below this marker -->
-
-{{ smw.comments}}
-
-{% endblock %}
 <headertabs />

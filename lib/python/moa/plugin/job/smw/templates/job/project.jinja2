@@ -15,6 +15,21 @@
 
 {% endblock -%}
 
+{% block blog %}
+
+= Blog =
+{{ '{{' }}#ask: [[Category:MoaBlogEntry]] [[MoaProject::moa/{{smw.project}}]]
+|? MoaBlogTeaser
+|? Modification date
+|sort=Modification date
+|order=desc
+|limit=10
+{{ '}}' }}
+
+{% endblock %}
+
+{%- block post_blog %}{% endblock -%}
+
 {% block changes %}
 
 = Changelog =

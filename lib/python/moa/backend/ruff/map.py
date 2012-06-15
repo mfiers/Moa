@@ -82,15 +82,17 @@ class RuffMapJob(RuffBaseJob):
                     
                 fsDict = dict([(x, self.job.data.filesets[x]['files'][i])
                                for x in self.job.data.inputs + self.job.data.outputs])
-
+                
                 thisJobData = copy.copy(self.jobData)
                 thisJobData.update(fsDict)                
                 thisJobData['command'] = 'run'
                 runid = thisJobData.get('runid', "moa")
+
                 if self.job.data.inputs:
                     fips =  self.job.data.inputs[0]
                     ffn =  os.path.basename(fsDict[fips])
                     runid = ffn + '.' + runid
+
                 runid = 'r' + runid
                 thisJobData['runid'] = runid
                 thisJobData['command'] = 'run'
@@ -98,7 +100,7 @@ class RuffMapJob(RuffBaseJob):
                 script = self.commands.render('run', thisJobData)
                 l.debug("Executing %s" %  script)
 
-                yield([inputs + prereqs], outputs, script, thisJobData)
+                yield(inputs + prereqs, outputs, script, thisJobData)
 
 
 

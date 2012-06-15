@@ -8,10 +8,11 @@ from moa.sysConf import sysConf
 
 def ruffusExecutor(input, output, script, jobData):
 
-    if not sysConf.has_key('files_processed'):
-        sysConf.files_processed = []
-    sysConf.files_processed.append((input, output))
-    print input, '->', output
+    if not sysConf.actor.has_key('files_processed'):
+        sysConf.actor.files_processed = []
+
+    sysConf.actor.files_processed.append((input, output))
+
     wd = jobData['wd']
     tmpdir = os.path.realpath(os.path.abspath(
             os.path.join(wd, '.moa', 'tmp')))

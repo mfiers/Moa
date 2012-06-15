@@ -34,6 +34,9 @@ from moa.sysConf import sysConf
 ##
 ## user interface
 ##
+## Note that anything printed to screen via message, warn, error 
+## and exitError automatically is included in the job changemessage
+##
 ################################################################################
 
 FORMAT_CODES_ANSI = {}
@@ -43,7 +46,54 @@ for c in sysConf.ansi:
     
 FORMAT_CODES_NOANSI = dict([(x,"") for x in FORMAT_CODES_ANSI.keys()])
  
+def _appendMessage(status, message):
+    """
+    Helper function to store messages - for later processing & logging
+    """
+    if not type(sysConf.autochangemessage) == type([]):
+        sysConf.autochangemessage = []
+    sysConf.autochangemessage.append(
+        (status, fformat(message, f='text', newline = False)))
+
+def _textFormattedMessage(msgs = []):
+    """
+    text format messages and append automatically generated 
+    messages - for logging purposes
+
+    returns a list of lines
+    """
+    m = []
+    for msg in msgs:
+        if not msg: continue
+        if type(msg) != type([]):
+            msg = str(msg).rstrip().split("\n")
+        m.extend(msg)
+        m.append("")
+
+    if sysConf.autochangemessage:
+        if m:
+            m.extend(['', '---', '', ''])
+        for status, acm in sysConf.autochangemessage:
+            if status == 'message':
+                m.append(acm)
+            else:
+                m.append('%s: %s ' % (status, acm))
+            m.append('')
+
+    m.append('Command line:')
+    m.append('')
+    m.append(" ".join(sys.argv))
+
+    while (len(m) > 1) and (not m[0].strip()):
+        m = m[1:]
+        
+    return m
+    
+    
+
+
 def exitError(message=''):
+    _appendMessage('error', message)
     if sysConf.pluginHandler:
         #see if this is instantiated yet!
         sysConf.pluginHandler.run("post_error")
@@ -52,16 +102,22 @@ def exitError(message=''):
     sys.exit(-1)
 
 def exit(message):
+    _appendMessage('exit', message)
     fprint("{{green}}Moa:{{reset}}: %s" % message, f='jinja')
     sys.exit(0)
 
 def error(message):
+    _appendMessage('error', message)
     fprint("{{red}}{{bold}}Error:{{reset}} %s" % message, f='jinja')
 
-def message(message):
+def message(message, store=True):
+    if store: 
+        _appendMessage('message', message)
     fprint("{{green}}Moa:{{reset}} %s" % message, f='jinja')
     
-def warn(message):
+def warn(message, store=True):
+    if store:
+        _appendMessage('warn', message)
     fprint("{{blue}}Warning:{{reset}} %s" % message, f='jinja')
 
 def fprint(message, **kwargs):

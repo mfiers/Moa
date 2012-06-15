@@ -24,7 +24,7 @@ import moa.utils
 import moa.logger as l
 from moa.sysConf import sysConf
 
-def hook_prepare_3():
+def hook_finish():
 
     job = sysConf['job']
 
@@ -36,54 +36,19 @@ def hook_prepare_3():
             'recursive' : False,
             }
 
-
-    message = sysConf.args.changeMessage 
-    if not message: 
-        message = ""
-
-    if sysConf.autochangemessage:
-        if message:
-            message += "\n---\n\n"
-        for status, acm in sysConf.autochangemessage:
-            if status == 'message':
-                message += acm
-            else:
-                message +=  '%s: %s ' % (status, acm)
-            message += "\n"
+    message = moa.ui._textFormattedMessage(
+        [sysConf.args.changeMessage,
+         sysConf.doc.changeMessage] )
     
-    if message: 
-        message += "\n"
-
-    message += "Command line:\n\n  " + " ".join(sys.argv)
-
     if message:
         _appendMessage(
             fileName="CHANGELOG.md",
-            txt = message.split("\n"))
+            txt = message)
     
 def hook_defineOptions():
     sysConf.argParser.add_argument(
         '-m', action='store',
         dest='changeMessage', help = 'Change message for this operation')
-
-def hook_defineCommands():
-    """
-    Set the moa commands for this plugin
-    """
-    sysConf['commands']['blog'] = {
-        'desc' : 'post to a simple blog (BLOG.md)',
-        'usage' : 'moa blog',
-        'call' : blog,
-        'needsJob' : False,
-        'log' : True
-        }
-    sysConf['commands']['readme'] = {
-        'desc' : 'Edit the README.md file for this job',
-        'usage' : 'moa readme',
-        'call' : readme,
-        'needsJob' : False,
-        'log' : True
-        }
 
 def _appendMessage(fileName, txt):
     """
@@ -103,7 +68,7 @@ def _appendMessage(fileName, txt):
         header = "**%s - %s changes**" % (
             now.strftime("On %A, %d %b %Y %H:%M"), getpass.getuser()) 
         F.write("%s\n\n" %  header)
-        F.write("\n    ".join(txt))
+        F.write("    " + "\n    ".join(txt))
         F.write("\n-----\n")
         F.write(oldFile)
 
@@ -123,6 +88,7 @@ def _readFromuser(job, header, fileName):
             break
         
     _appendMessage(fileName, txt)
+    return txt
 
 @moa.args.command
 def blog(job, args):
@@ -145,11 +111,12 @@ def blog(job, args):
 
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
     """
-    _readFromuser(
+    message = _readFromuser(
         job, 
         header="Enter your blog message (ctrl-d on an empty line to finish)",
         fileName="BLOG.md")
-
+    moa.ui.message("Created a blog entry", store=False)
+    sysConf.doc.blog = message
 
 @moa.args.command
 def change(job, args):
@@ -178,11 +145,14 @@ def change(job, args):
     `moa -m 'intelligent remark' set ...`
 
     """
-    _readFromuser(
+
+    message = _readFromuser(
         job, 
-        header="Enter your CHANGELOG message (ctrl-d on an empty line to finish)",
-        fileName="CHANGELOG.md")
-                  
+        header="Enter your CHANGELOG message (ctrl-d on an empty " +
+        "line to finish)", fileName="CHANGELOG.md")
+
+    moa.ui.message("Created a changelog entry", store=False)
+    sysConf.doc.changeMessage = "\n".join(message)
 
 @moa.args.command
 def readme(job, args):
@@ -190,9 +160,8 @@ def readme(job, args):
     Edit the README.md file for this job
 
     You could, obviously, also edit the file yourself - this is a mere
-    shortcut to try to stimulate you in maintaining one
-    """
-    
+    shortcut - maybe it will stimulate you to maintain a README file
+    """    
     subprocess.call(os.environ.get('EDITOR','nano').split() + ['README.md'])
 
 def _update_git(filename):

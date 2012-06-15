@@ -112,9 +112,9 @@ def run_3(wd, exitOnError=True):
     sysConf.wd = wd
 
     sysConf.pluginHandler.run('pre_create_job')
+
     # create the job
     job = moa.job.Job(wd)
-
 
     # We should NOT depend on the following (if at all possible)
     sysConf.job = job
@@ -159,6 +159,7 @@ def run_3(wd, exitOnError=True):
                               "containing a Moa job (try moa -h)") % command)
             
         sysConf.pluginHandler.run('prepare')
+        job.run_hook('prepare')
         sysConf.pluginHandler.run('pre%s' % command.capitalize())
         
         #run the command function
@@ -169,6 +170,8 @@ def run_3(wd, exitOnError=True):
         #run finish & post plugin hooks
         sysConf.pluginHandler.run("post%s" % command.capitalize(),
                                   reverse=True)
+
+        job.run_hook('finish')
         sysConf.pluginHandler.run('finish', reverse=True)
 
 

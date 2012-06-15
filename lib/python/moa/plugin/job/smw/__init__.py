@@ -25,6 +25,7 @@ import subprocess as sp
 import jinja2
 
 import mwclient
+import mwclient.errors
 
 import moa.ui
 import moa.args
@@ -33,7 +34,7 @@ import moa.logger as l
 from moa.sysConf import sysConf
 
 SITE = None
-jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.smw'))
+jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.job.smw'))
 DEFAULT_PROJECT='No Project'
 
 def _getRandomId(ln=5):
@@ -45,11 +46,37 @@ def _getMwSite():
     global SITE
     if SITE != None:
         return SITE
-
-    smwi = sysConf.plugins.system.smw
+    
+    
+    smwi = sysConf.plugins.job.smw
     SITE = mwclient.client.Site(host=smwi.host, path=smwi.path)
-    SITE.login(username=smwi.user, password=smwi.passwd)    
+    SITE.login(username=smwi.user, password=smwi.password)    
     return SITE
+
+
+def _savePage2(page, txt):
+    try:
+        l.warning("saving page to smw")
+        page.save(txt, 
+                  summary='automatic save by the moa smw plugin',
+                  minor=sysConf.plugins.job.smw.get('minor_saves', False))
+        #moa.ui.message("saved change message to SMW")
+    except mwclient.errors.LoginError:
+        moa.ui.error("Invalid login for smw - cannot save change message")
+
+def _savePage(page, txt):
+    background = sysConf.plugins.job.smw.get('background', False)
+    if background:
+        try:
+            fid = os.fork()
+            if fid == 0:
+                _savePage2(page, txt)
+            else:
+                del(page)
+        except OSError:
+            l.warning("Cannot fork for saving to SMW")
+    else:
+        _savePage2(page, txt)
 
 @moa.args.forceable
 @moa.args.command
@@ -71,9 +98,12 @@ def smw_prepare(job, args):
         if page.exists and not sysConf.args.force:
             moa.ui.warn("'%s' exists - use -f to overwrite" % pagename)
             continue
-        moa.ui.message("saving %s" % pagename)
-        page.save(text, summary='auto generation of a number of core smw/moa pages')
-    pass
+        #moa.ui.message("saving %s" % pagename)
+
+        try:
+            page.save(text, summary='automatic save by the moa smw plugin')
+        except mwclient.errors.LoginError:
+            moa.ui.exitError("Invalid login for smw - cannot run smw_prepare")
 
 @moa.args.forceable
 @moa.args.needsJob
@@ -85,10 +115,10 @@ def smw_save_job(job, args):
     _saveJobToSmw(job)
     
 
-def hook_finish():
+
+def hook_prepare_3(job):
     """
     """
-    job = sysConf.job
     job.template.parameters.smwjobid = {
         'optional' : True,
         'help' : 'The random id used for this job in smw',
@@ -98,18 +128,19 @@ def hook_finish():
         }
     job = sysConf['job']
 
-    message = sysConf.args.changeMessage    
 
-    if sysConf.autoChangeMessage:
-        if message:
-            message += "\n---\n\n" + sysConf.autoChangeMessage
-        else:
-            message = sysConf.autoChangeMessage
+def hook_finish(job):
+    """
+    """
 
-    if message or sysConf.commands[sysConf.args.command]['logJob']:
+    message = moa.ui._textFormattedMessage(
+        [sysConf.args.changeMessage,
+         sysConf.doc.changeMessage] )
+        
+    if sysConf.commands[sysConf.args.command]['logJob']:
         if sysConf.args.command != 'smw_save_job':
             _saveJobToSmw(job)
-        _saveChangeMessage(message)
+        _saveChangeMessage(job, message)
 
 def _checkJobInSmw(job):
     if not job.conf.get('smwjobid'):
@@ -123,7 +154,6 @@ def _checkJobInSmw(job):
     return page.exists
 
 def _saveJobToSmw(job):
-    job = sysConf.job
     templateName = job.template.name
 
     project = job.conf.get('project', 'No Project')
@@ -142,16 +172,6 @@ def _saveJobToSmw(job):
 
     page = site.Pages[pagename]
 
-    old_comments = str(page.edit()).split('<!-- you may edit below this marker -->')
-
-    if len(old_comments) == 2:
-        sysConf.smw.comments = old_comments[1].replace('<headertabs />', '').strip()
-    else:
-        sysConf.smw.comments = ""
-        
-
-    #print "\n".join([x[:20] for x in old_comments])
-
     if doesNotExists:        
         while True:
             if not page.exists:
@@ -160,10 +180,10 @@ def _saveJobToSmw(job):
             pagename = 'moa/%s/job/%s' % (project, jobid)
             page = site.Pages[pagename]
 
-
     sysConf.smw.project = project
     sysConf.smw.jobid = jobid
     sysConf.smw.host = socket.gethostname()
+
     job.conf.smwjobid = jobid
     job.conf.save()
 
@@ -182,17 +202,18 @@ def _saveJobToSmw(job):
         "job/default.jinja2"])
     
     txt = jtemplate.render(sysConf)
-    #print txt
-    page.save(txt)
-    moa.ui.message("saved job to SMW")
+    _savePage(page, txt)
     
-    
-def _saveChangeMessage(message):
+def _saveChangeMessage(job, message):
 
-    job = sysConf.job
     project = job.conf.get('project', DEFAULT_PROJECT)
 
-    sysConf.smw.message = message
+    simplemessage = message[0].strip()
+    if len(simplemessage) > 50: 
+        simplemessage = simplemessage[:47] + '...'
+
+    sysConf.smw.message = "\n".join(message)
+    sysConf.smw.simplemessage = simplemessage
     sysConf.smw.commandline = " ".join(sys.argv)
     site = _getMwSite()
     project = job.conf.get('project', 'No Project')
@@ -217,56 +238,54 @@ def _saveChangeMessage(message):
 
     jtemplate = jenv.select_template(["changemessage.jinja2"])
     txt = jtemplate.render(sysConf)
-    page.save(txt)
-    
+    _savePage(page, txt)
 
 
-def hook_postReadme():
-    print _getJobPageName()
+def _saveBlogToSmw(job):
 
-#def p
-# @moa.args.command
-# def readme(job, args):
-#     """
-#     Edit the README.md file for this job
+    project = job.conf.get('project', DEFAULT_PROJECT)
+    blog = sysConf.doc.blog
 
-#     You could, obviously, also edit the file yourself - this is a mere
-#     shortcut to try to stimulate you in maintaining one
-#     """
-    
-#     subprocess.call([os.environ.get('EDITOR','nano'), 'README.md'])
+    if not "\n".join(blog).strip():
+        #empty message - return
+        return
 
+    message = "\n".join(blog)
+    teaser = " ".join(message.split())
+    if len(teaser) > 50: 
+        teaser = teaser[:47] + '...'
+    sysConf.smw.teaser = teaser
 
+    cl = 'pandoc --base-header-level 2 -f markdown -t mediawiki' 
+    P = sp.Popen(cl.split(), stdout=sp.PIPE, stdin=sp.PIPE)
+    o,e = P.communicate(message)
+    sysConf.smw.message = o
 
-# def _update_git(filename):
-#     """
-#     Check if a file is under version control & commit changes    
-#     """
-#     job = sysConf.job
-#     if not sysConf.git.repo:
-#         #repo is not initalized..(not in a repository?)
-#         return
-    
-#     if os.path.exists(filename):    
-#         sysConf.git.repo.index.add([filename])
-#         sysConf.git.commitJob(job, 'Worked on %s in  %s' % (filename, job.wd))
+    site = _getMwSite()
+    project = job.conf.get('project', 'No Project')
+    jobid = job.conf.get('smwjobid')
+    sysConf.smw.project = project
+    sysConf.smw.jobid = jobid
+    while True:
+        blogname = '%s/job/%s/blog/%s' % (project, jobid, _getRandomId())
+        page = site.Pages[blogname]
+        if not page.exists:
+            break
+
+    if job.template.name == 'project':
+        smwjobid = 'moa/%s' % (project)
+    else:
+        smwjobid = 'moa/%s/job/%s' % (project, jobid)
         
-    
-# def hook_git_finish_readme():
-#     """
-#     Execute just after setting running moa readme
-#     """
-#     _update_git('README.md')
+    sysConf.smw.smwjobid = smwjobid
 
-# def hook_git_finish_blog():
-#     """
-#     Execute just after setting running moa blog
-#     """
-#     _update_git('Blog.md')
+    jtemplate = jenv.select_template(["blogmessage.jinja2"])
+    txt = jtemplate.render(sysConf)
+    _savePage(page, txt)
 
+def hook_postReadme(job):
+    _saveJobToSmw(job)
 
-# def hook_git_finish_change():
-#     """
-#     Execute just after setting running moa blog
-#     """
-#     _update_git('CHANGELOG.md')
+def hook_postBlog(job):
+    _saveBlogToSmw(job)
+
