@@ -187,91 +187,90 @@ reGC = None
 if options.gapConvert:
     reGC = re.compile("N{6,}", re.I)
 
+GFFFILE = open('%s.gff' % outId, 'w')
+AGPFILE = open('%s.agp' % outId, 'w')
+SCFFILE = open('%s.fasta' % outId, 'w')
 
-with open('%s.gff' % outId, 'w') as G:
+if options.organism:
+    AGPFILE.write("# ORGANISM: %s \n" % options.organism)
+if options.taxid:
+    AGPFILE.write("# TAX_ID: %s \n" % options.taxid)
+if options.genomecenter:
+    AGPFILE.write("# GENOME CENTER: %s \n" % options.genomecenter)
 
-    with open('%s.agp' % outId, 'w') as H:
+GFFFILE.write("##gff-version 3\n")
+allseq = []
+i = 0
+cp = 1
 
-        if options.organism:
-            H.write("# ORGANISM: %s \n" % options.organism)
-        if options.taxid:
-            H.write("# TAX_ID: %s \n" % options.taxid)
-        if options.genomecenter:
-            H.write("# GENOME CENTER: %s \n" % options.genomecenter)
+#run through the input sequences
 
-        G.write("##gff-version 3\n")
-        allseq = []
-        i = 0
-        cp = 1
+for seqId in ids:
+    cleanSeqId = re.sub('\|.*$', '', seqId)
+    print seqId, cleanSeqId
+    _i, header, seq = output[seqId]
 
-        #run through the input sequences
+    if i > 0:
+        #create a 'gap'
+        i += 1
+        #print "print gap", seqId, seqId in mappedContigs
+        if seqId in mappedContigs:
+            hasLink = "yes"
+        else:
+            hasLink = "no"
 
-        for seqId in ids:
-            _i, header, seq = output[seqId]
+        #write the gap
+        AGPFILE.write(
+            "\t".join(
+                map( str, [ outId, cp, cp + len(linker)-1, i,
+                        'N', len(linker), 'clone', hasLink, ''
+                        ]))+ "\n")
+        #write the GFF 
+        GFFFILE.write(
+            "%s\n" %
+            "\t".join(map(str, [
+                        outId, options.source, 'gap', 
+                    cp, cp+len(options.linker)-1, '.',
+                    ',', '.', "ID=%s_linker_%s" % (cleanSeqId,i)])))
 
-            if i > 0:
-                #create a 'gap'
-                i += 1
-                print "print gap", seqId, seqId in mappedContigs
-                if seqId in mappedContigs:
-                    hasLink = "yes"
-                else:
-                    hasLink = "no"
-                H.write(
-                    "\t".join(
-                        map(
-                            str, [
-                                outId, 
-                                cp,
-                                cp + len(linker)-1,
-                                i,
-                                'N', 
-                                len(linker), 
-                                'clone',
-                                hasLink,
-                                ''
-                                ]))+ "\n")
+        cp += len(linker) # correct for linker sequence
 
-                G.write(
-                    "%s\n" %
-                    "\t".join(map(str, [
-                                outId, options.source, 'gap', 
-                            cp, cp+len(options.linker)-1, '.',
-                            ',', '.', "ID=%s_linker_%s" % (seqId,i)])))
+    i += 1
 
-                cp += len(linker) # correct for linker sequence
-            
-            i += 1
-            
 
-            if options.gapConvert:
-                def _replacer(o):
-                    return options.linker
+    if options.gapConvert:
+        def _replacer(o):
+            return options.linker
 
-                seq = reGC.sub(_replacer, seq)
+        seq = reGC.sub(_replacer, seq)
 
-            G.write(
-                "%s\n" %
-                "\t".join(map(str, [
-                            outId, options.source, 'scaffold', 
-                            cp, cp+len(seq)-1, '.',
-                            '-' if seqId in revcomp else '+',
-                            '.', "ID=%s" % seqId])))
-
-            if options.genomecenter: agpSeqId = "gnl|pflnz|%s" % seqId
-            else: agpSeqId = seqId
-            
-            H.write(
-                "\t".join(map(str, [
-                    outId, cp, cp + len(seq) -1, i, 'W',
-                    agpSeqId, 
-                    1, len(seq), 
+    GFFFILE.write(
+        "%s\n" %
+        "\t".join(map(str, [
+                    outId, options.source, 'scaffold', 
+                    cp, cp+len(seq)-1, '.',
                     '-' if seqId in revcomp else '+',
-                    ] ) ) + "\n" )
+                    '.', "ID=%s" % cleanSeqId])))
 
 
-            cp += len(seq)
-            allseq.append(seq)
+    if options.genomecenter: 
+        agpSeqId = "gnl|pflnz|%s" % cleanSeqId
+        fastaheader = "gnl|pflnz|%s" % cleanSeqId
+    else: 
+        fastaheader = cleanSeqId
+        agpSeqId = cleanSeqId
+
+    AGPFILE.write(
+        "\t".join(map(str, [
+            outId, cp, cp + len(seq) -1, i, 'W',
+            agpSeqId, 
+            1, len(seq), 
+            '-' if seqId in revcomp else '+',
+            ] ) ) + "\n" )
+
+
+    cp += len(seq)
+    allseq.append(seq)
 
 with open('%s.fasta' % outId, 'w') as F:
     F.write(">%s\n" % outId)

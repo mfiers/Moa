@@ -88,7 +88,7 @@ class RuffBaseJob(object):
         tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='moa.', 
                                          delete=False, suffix='.sh')
         #tmpfile.write("\n".join(sc))
-        self.scriptFile = os.path.realpath(os.path.abspath(tmpfile.name))
+        self.scriptFile = os.path.abspath(tmpfile.name)
 
         script = self.commands.render(self.command, self.jobData)
         tmpfile.write(script + "\n\n")

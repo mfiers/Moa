@@ -13,8 +13,10 @@ bwa sampe \
     {{ db }} \
     {{ sai_forward_input }} {{ sai_reverse_input }} \
     {{ fq_forward_input }} {{ fq_reverse_input }} \
-       | samtools view -bhS - | samtools sort - `basename {{ output_bam }} .bam`
+    | samtools view {% if not lots_of_data %} -f 2 {% endif %} \
+    -bhS - | samtools sort - `basename {{ output_bam }} .bam`
 
+samtools flagstat {{ output_bam }} > `basename {{ output_bam }} .bam`.report
 
 ### clean
 

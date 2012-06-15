@@ -35,6 +35,9 @@ def hook_defineCommandOptions(job, parser):
     parser.add_argument( '--oln', default=1, type=int, dest='openlavaSlots', 
                          help='The number of cores the jobs requires')
 
+    parser.add_argument( '--olm', default=1, dest='openlavaHost', 
+                         help='The host to use for openlava')
+
 def openlavaRunner(wd, cl, conf={}, **kwargs):
     """
     Run the job using OPENLAVA
@@ -54,7 +57,7 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
 
     l.debug("starting openlava actor for %s" % command)
 
-    outDir = os.path.realpath(os.path.abspath(os.path.join(wd, '.moa', 'log.latest')))
+    outDir = os.path.abspath(os.path.join(wd, '.moa', 'log.latest'))
     if not os.path.exists(outDir):
         try:
             os.makedirs(outDir)
@@ -84,6 +87,9 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
         slots = sysConf.job.conf.get('threads', sysConf.args.openlavaSlots)
 
     bsub_cl.extend(["-n", slots])
+
+    if '--olm' in sys.argv:
+        bsub_cl.extend(["-m", sysConf.args.openlavaHost])
 
     lastJids = []
 
@@ -152,7 +158,7 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='openlava.', 
                                          delete=False, suffix='.sh')
     tmpfile.write("\n".join(sc))
-    tmpfilename = os.path.realpath(os.path.abspath(tmpfile.name))
+    tmpfilename = os.path.abspath(tmpfile.name)
     tmpfile.close()
     os.chmod(tmpfile.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
         

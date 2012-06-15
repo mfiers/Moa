@@ -95,6 +95,19 @@ Note that all directory orders are based on an alphanumerical sort of
 directory names. `9.dir` comes after `10.dir`. (so use `09.dir`).
 
 The latter definitions override the earlier ones.
+
+Another feature that metavar does it try to parse out variables from
+the directory name. So if a directory name is:
+./test__qual_13__cutoff_0.12
+
+Note that
+* variables are delimited by a double underscore
+* Key/values are separate by a single underscore
+* the item before the first __ is not interpreted
+* items without a '_' are ignored
+
+Then this plugin will filter set the variable qual to 13 and cutoff to 0.12.
+
 """
 import re
 import os
@@ -111,7 +124,7 @@ from moa.sysConf import sysConf
 import moa.logger
 
 l = moa.logger.getLogger(__name__)
-l.setLevel(moa.logger.DEBUG)
+#l.setLevel(moa.logger.DEBUG)
 import moa.ui
 
 class MoaPathParser(Extension):
@@ -148,6 +161,18 @@ def hook_prepare(job):
         sysConf.jinja2.extensions = []
     sysConf.jinja2.extensions += [MoaPathParser]
 
+def _varparser(conf, name):
+    """
+    Filter out variables from the variable name
+    """
+    l.debug('parsing parameters from directory name %s', name)
+    for item in name.split('__')[1:]:
+        if not '_' in item: 
+            continue
+        k, v = item.split('_', 1)
+        l.debug('setting %s to %s' % (k, v))
+        conf[k] = v
+    
 def hook_pre_filesets(job):
 
     wd = job.wd
@@ -163,7 +188,11 @@ def hook_pre_filesets(job):
 
     while dirparts:
         cp = os.path.sep.join(dirparts)
-        p = dirparts.pop()        
+        p = dirparts.pop()
+        if i == 1:
+            #top level - parse parameters from the dirname
+            _varparser(job.conf, p)
+
         clean_p = re.sub("^[0-9]+\.+", "", p).replace('.', '_')
 
         #print i, clean_p, p, cp

@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+import argparse
+
+parser = argparse.ArgumentParser('vcf applicator')
+parser.add_argument('seq')
+parser.add_argument('vcf')
+parser.add_argument('out')
+args = parser.parse_args()
+
+seq = []
+head = ''
+with open(args.seq) as F:
+    head = F.readline().strip()
+    for line in F:
+        seq.append(line.strip().lower())
+
+seq = list("".join(seq))
+
+print 'Input sequence length', len(seq)
+for i, line in enumerate(reversed(open(args.vcf).readlines())):
+    if line[:1] == '#': continue 
+    ls = line.split()
+    if not ls: continue
+    if len(ls) < 8: continue
+
+    pos = int(ls[1])-1
+    ref = ls[3]
+    alt = ls[4]
+    
+    #print pos, ref, alt,
+    #print seq[pos-2:pos+len(ref)+2], '-->',
+    for j in range(pos, pos+len(ref)):
+        seq[j] = '' 
+    seq[pos] = alt.upper()
+    #print seq[pos-2:pos+len(ref)+2]
+
+seq = "".join(seq)
+print 'Output sequence length', len(seq)
+with open(args.out, 'w') as F:
+    F.write(head+"\n")
+    while seq:
+        F.write("%s\n" % seq[:60])
+        seq = seq[60:]
+    

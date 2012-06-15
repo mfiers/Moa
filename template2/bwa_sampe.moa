@@ -62,6 +62,11 @@ parameters:
     help: disable Smith-Waterman for the unmapped mate
     optional: true
     type: boolean
+  lots_of_data:
+    default: false
+    help: 'store unmapped reads - takes up a lot of space!'
+    optional: true
+    type: boolean
   disable_insert_size:
     default: false
     help: disable insert size estimate (force -s)
