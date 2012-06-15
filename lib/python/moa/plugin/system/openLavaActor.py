@@ -57,7 +57,7 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
 
     l.debug("starting openlava actor for %s" % command)
 
-    outDir = os.path.realpath(os.path.abspath(os.path.join(wd, '.moa', 'log.latest')))
+    outDir = os.path.abspath(os.path.join(wd, '.moa', 'log.latest'))
     if not os.path.exists(outDir):
         try:
             os.makedirs(outDir)
@@ -158,7 +158,7 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='openlava.', 
                                          delete=False, suffix='.sh')
     tmpfile.write("\n".join(sc))
-    tmpfilename = os.path.realpath(os.path.abspath(tmpfile.name))
+    tmpfilename = os.path.abspath(tmpfile.name)
     tmpfile.close()
     os.chmod(tmpfile.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
         
