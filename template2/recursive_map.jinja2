@@ -1,6 +1,8 @@
 ### run
 
 reference={{reference}}
+lastreference=$reference
+lasti=0
 
 {% for i in range(iterations) %}
     {% if i <= (iterations / 2) %}{% set aln_param=param_strict %}
@@ -51,6 +53,11 @@ reference={{reference}}
             consensus.{{i}}.fasta
     fi
 
+    lastreference=$reference
     reference=consensus.{{i}}.fasta
-    #false
+    lasti={{i}}
 {% endfor %}
+
+samtools mpileup -uf $lastreference ${bamfiles} \
+    | bcftools view -cg - \
+    | vcfutils.pl vcf2fq > final.consensus.fq
