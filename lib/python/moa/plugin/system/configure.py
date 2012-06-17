@@ -164,20 +164,6 @@ def show(job, args):
             for j, ll in enumerate(textwrap.wrap(str(rendered[key]), wrapInit)):
                 moa.ui.fprint(spacerR + ll + closeR)
             
-def _unsetCallback(wd, vars):
-    """
-    Does the actual unset of variables `vars` in folder `wd`:
-    """
-    job = moa.job.Job(wd)
-    #print "unsetting", " ".join(data.unset), "in", wd
-    for u in vars:
-        try:
-            del job.conf[u]
-        except KeyError:
-            pass        
-    job.conf.save()
-
-
 @moa.args.argument('parameter', nargs='+', help='parameter to unset')
 @moa.args.needsJob
 @moa.args.command
