@@ -247,6 +247,16 @@ class JobConf(object):
             return True
         
         return False
+
+    def getPublicParameters(self):
+        rv = []
+        for k in self.keys():
+            if k in self.private:
+                continue
+            if self.job.template.parameters[k].private:
+                continue
+            rv.append(k)
+        return rv
         
     def pretty(self):
         return self.jobConf.pretty()

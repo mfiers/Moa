@@ -140,7 +140,7 @@ def _writeLog(status):
             str(runtime), command
             ]))
 
-
+#@moa.utils.printstack
 def hook_finish():
     #and - probably not the location to do this, but print something to screen
     #as well

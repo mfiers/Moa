@@ -56,7 +56,7 @@ def _getMwSite():
 
 def _savePage2(page, txt):
     try:
-        l.warning("saving page to smw")
+        l.debug("saving page to smw %s" % page)
         page.save(txt, 
                   summary='automatic save by the moa smw plugin',
                   minor=sysConf.plugins.job.smw.get('minor_saves', False))
@@ -136,6 +136,11 @@ def hook_finish(job):
         #only save is this directory continas a moa job
         return
 
+    pid = os.fork()
+    if pid != 0:
+        #parent process - return now
+        return 
+
     message = moa.ui._textFormattedMessage(
         [sysConf.args.changeMessage,
          sysConf.doc.changeMessage] )
@@ -144,6 +149,7 @@ def hook_finish(job):
         if sysConf.args.command != 'smw_save_job':
             _saveJobToSmw(job)
         _saveChangeMessage(job, message)
+    sys.exit(0)
 
 def _checkJobInSmw(job):
     if not job.conf.get('smwjobid'):
@@ -157,6 +163,13 @@ def _checkJobInSmw(job):
     return page.exists
 
 def _saveJobToSmw(job):
+    """
+    gather data & save the job to SMW
+
+    note - this is done in the background - hence - the 
+    function forks & the master returns directly
+    """
+
     templateName = job.template.name
 
     project = job.conf.get('project', 'No Project')
@@ -166,13 +179,13 @@ def _saveJobToSmw(job):
     if not jobid:
         jobid = _getRandomId()
         doesNotExists = True
-    site = _getMwSite()
 
     if templateName == 'project':
         pagename = 'moa/%s' % (project)
     else:
         pagename = 'moa/%s/job/%s' % (project, jobid)
 
+    site = _getMwSite()
     page = site.Pages[pagename]
 
     if doesNotExists:        
@@ -290,7 +303,6 @@ def hook_postReadme(job):
     if not job.isMoa():
         #only save is this directory continas a moa job
         return
-
     _saveJobToSmw(job)
 
 def hook_postBlog(job):

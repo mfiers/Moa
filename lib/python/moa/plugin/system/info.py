@@ -134,9 +134,33 @@ def version(job, args):
     """
     print sysConf.getVersion()
 
+@moa.args.private
+@moa.args.command
+@moa.args.doNotLog
+def rehash(job, args):
+    """
+    cache a list of variables for command line completion
+
+    """
+    print job
+    print job.isMoa()
+    globalCommandFile = os.path.join(
+        os.path.expanduser('~'), '.config', 'moa', 'globalCommands')
+
+    globalCommands = []
+    for c in sysConf.commands.keys():
+        
+        if sysConf.commands[c].get('needsJob', False):
+            continue
+        globalCommands.append(c)
+    
+    with open(globalCommandFile, 'w') as F:
+        F.write(" ".join(globalCommands))
+
 
 @moa.args.private
 @moa.args.command
+@moa.args.doNotLog
 def raw_commands(job, args):
     """
     return a list available commands
@@ -153,6 +177,7 @@ def raw_commands(job, args):
 
 @moa.args.private
 @moa.args.command
+@moa.args.doNotLog
 def raw_parameters(job, args):
     """
     Print a list of all known parameters

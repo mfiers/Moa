@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+ # -*- coding: utf-8 -*-
 #this is a liteweight script that reads some stats from the moa logs & prints them to screen
 
 import os
@@ -23,37 +24,36 @@ if not os.path.exists('.moa'):
 if not os.path.exists('.moa/template'):
     sys.exit(0)
     
-bg = acb(252)
-fg = acf(16)
+bg = acb(254)
+fg = acf(0)
 normal = bg + fg
 
-moal = "%s %s%sM%s%sO%s%sA%s  " % (
-    acb(250),
-    acb(247), acf(33), 
-    acb(244), acf(79),  
-    acb(241), acf(156),
-    acb(238) )
-
-
 if not os.path.exists('.moa'):
-    sys.exit(0)
-if not os.path.exists('.moa/template'):
     sys.exit(0)
 if not os.path.isfile('.moa/template'):
     sys.exit(0)
     
-bg = acb(252)
+bg = acb(254)
 fg = acf(16)
 normal = bg + fg
 
-moal = "%s %s%sM%s%sO%s%sA%s " % (
-    acb(250),
-    acb(247), acf(33), 
-    acb(244), acf(79),  
-    acb(241), acf(156),
-    acb(238)
-    )
-    
+
+if 'UTF' in os.environ.get('LANG', '').upper():
+    moal = "%s %sⲮ%s %s%sM%s%so%s%sa%s%s/" % (
+    acb(253), acb(252), acb(251),
+        acb(250), acf(22), 
+        acb(249), acf(23),  
+        acb(248), acf(24),
+        acb(247), acf(25), )
+else:
+    moal = "%s %s %s %s%sM%s%so%s%sa%s%s/" % (
+    acb(253), acb(252), acb(251),
+        acb(250), acf(22), 
+        acb(249), acf(23),  
+        acb(248), acf(24),
+        acb(247), acf(25), )
+
+
 data = {
     'moal'      : moal,
     'reset'     : ac(0),
@@ -88,19 +88,21 @@ def getTerminalSize():
 
 def prettyDelta(d):
     if d.days > 2:
-        return "%d days" % d.days
+        return "%dd" % d.days
     elif d.days == 2:
-        return "2 days %s hours" % (d.seconds / 3600)
+        return "2d %sh" % (d.seconds / 3600)
     elif d.days == 1:
-        return "1 day %s hours" % (d.seconds / 3600)
+        return "1d %sh" % (d.seconds / 3600)
     else:
         hours = d.seconds / 3600
         minutes = (d.seconds % 3600) / 60
         seconds = d.seconds % 60
         if hours > 0:
-            return "%d:%02d hours" % (hours, minutes)
+            return "%d:%02dh" % (hours, minutes)
+        if minutes > 0:
+            return "%d:%02dm" % (minutes, seconds)
         else:
-            return "%d:%02d minutes" % (minutes, seconds)
+            return "%02ds" % (seconds)
 
 tw, th = getTerminalSize()
 
@@ -118,10 +120,19 @@ if os.path.exists('.moa/status'):
     with open('.moa/status') as F:
         data['status'] = F.read().strip()
 
-if data['status'] == 'error':
-    data['cstate'] = acb(197) + acf(16)
-elif data['status'] == 'success':
-    data['cstate'] = acb(35) + acf(16)
+data['cchar'] = ' '
+if 'UTF' in os.environ.get('LANG', '').upper():
+    if data['status'] == 'error':
+        data['cstate'] = bg + acf(124)
+        data['cchar'] = '✘'
+    elif data['status'] == 'success':
+        data['cstate'] = bg + acf(22)
+        data['cchar'] = '✓'
+else:
+    if data['status'] == 'error':
+        data['cstate'] = acb(197) + acf(16)
+    elif data['status'] == 'success':
+        data['cstate'] = acb(35) + acf(16)
 
 title = ''
 if os.path.exists('.moa/config'):
@@ -146,9 +157,7 @@ if os.path.exists('.moa/log'):
             #assume the log file is less than 10k bytes long
             #read all
             F.seek(0)
-            lines = F.read().strip().split('\n')
-
-
+        lines = F.read().strip().split('\n')
     ll = []
     for l in range(len(lines), 0, -1):
         ll = lines[l-1].split("\t", 5)
@@ -156,29 +165,40 @@ if os.path.exists('.moa/log'):
         if ll[1] == 'run': break
 
     if len(ll) != 6:
-        data['time'] = '(error parsing log)'
+        data['time'] = '(logerror)'
+
     else:
+        start, stop = '', ''
+        started, duration = '', ''
+        pstarted, pduration = '', ''
         try:
             #old bug - 
-            start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S:%f')
-            stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S:%f')
+            start = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S:%f')
+            stop = datetime.datetime.strptime(ll[4], '%Y-%m-%dT%H:%M:%S:%f')
         except ValueError:
-            start = datetime.datetime.strptime(ll[2], '%Y-%m-%dT%H:%M:%S.%f')
-            stop = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S.%f')
+            try:
+                start = datetime.datetime.strptime(ll[3], '%Y-%m-%dT%H:%M:%S.%f')
+                stop = datetime.datetime.strptime(ll[4], '%Y-%m-%dT%H:%M:%S.%f')
+            except:
+                pass
 
-        started = datetime.datetime.now() - start
-        duration = stop-start
-        pstarted = prettyDelta(started)
-        pduration = prettyDelta(duration)
-        data['time'] = 'ran %s ago taking %s' % (pstarted, pduration)
+        if isinstance(start, datetime.datetime) and \
+                isinstance(stop, datetime.datetime):
+            started = datetime.datetime.now() - start
+            duration = stop-start
+            pstarted = prettyDelta(started)
+            pduration = prettyDelta(duration)
+            data['time'] = 'ran %s ago (d %s)' % (pstarted, pduration)
+        else:
+            data['time'] = '(?time)'
 
 
 fstring = " Moa %(tname)s %(status)s %(time)s" % data
-splen = tw - len(fstring)
+splen = tw - len(fstring) -2
 if len(title) > splen-1:
-    title = title[:splen-4] + '...'
+    title = title[:splen-5] + '...'
 data['spacer'] = acf(241) + ("%%-%ds" % (splen)) % title[:splen-3]
 
-pstring = "%(bg)s%(spacer)s%(moal)s%(tname)s%(normal)s%(cstate)s %(normal)s%(status)s %(time)s%(reset)s" % data
+pstring = "\r%(bg)s%(spacer)s%(moal)s%(tname)s%(normal)s%(cstate)s%(cchar)s%(status)s%(normal)s %(time)s%(reset)s" % data
 
 print pstring

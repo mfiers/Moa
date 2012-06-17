@@ -119,6 +119,18 @@ def deprecated(func):
         func(*args, **kwargs)
     return depfunc
 
+
+def printstack(func):
+    """
+    Decorator function to print stack
+
+    :param func: any function
+    """
+    def depfunc(*args, **kwargs):
+        l.critical("\n" + "\n".join(traceback.format_stack()[:-1]))
+        func(*args, **kwargs)
+    return depfunc
+
     
 def simple_decorator(decorator):
 

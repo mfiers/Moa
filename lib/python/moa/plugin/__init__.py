@@ -81,7 +81,6 @@ class PluginHandler():
 
         l.debug("plugin command run of hook %s" % command)
                         
-
         for p in runOrder:
             if only and not p in only:
                 continue
@@ -100,6 +99,7 @@ class PluginHandler():
 
             l.debug("plugin executing hook %s for %s" % (command, p))
             #rv[p]= eval("m.hook_%s" % command)
+            #print p, command
             rv[p] = getattr(m, "hook_" + command)(**kwargs)
         return rv
             

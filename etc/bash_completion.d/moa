@@ -22,13 +22,17 @@ __moa_all_templates() {
     echo `moa list`
 }	
 
-
 __moa_all_vars() {
-	#return a list of all known moa templates
-	if [[ $(__moa_is_moadir) == "yes" ]]
-	then
+    #return a list of all known moa templates
+    if [[ $(__moa_is_moadir) == "yes" ]]
+    then
+        if [[ -f ".moa/completion/parameters" ]]
+        then
+            echo `cat .moa/completion/parameters`
+        else
 	    echo `moa raw_parameters`
 	fi
+    fi
 }		
 
 _moa() 
@@ -53,7 +57,21 @@ _moa()
     fi
 
     if [[ ${prev} == moa ]]; then
-	local commands=`moa raw_commands`;
+        globalcommandfile="~/.config/moa/globalCommands"
+        if [[ -f ".moa/completion/commands" ]]
+        then
+            local commands=`cat .moa/completion/commands`
+        elif [[ -f ".moa/template" ]]
+        then
+            echo 'raw'
+            local commands=`moa raw_commands`
+        elif [[ -f `eval "echo ~/.config/moa/globalCommands"` ]]
+        then
+            local commands=`cat  ~/.config/moa/globalCommands`
+        else
+            echo 'raw2'
+            local commands=`moa raw_commands`;
+        fi
     	COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
         return 0
     fi
@@ -82,31 +100,8 @@ _moa()
 	    local vars=$(__moa_all_vars)
 	    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
 	    ;;
-	pack)
-	    case "${moaSecCommand}" in 
-		rm)
-		    vars=$(__moa_all_packs)
-		    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
-		    ;;
-		unpack)
-		    vars=$(__moa_all_packs)
-		    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
-		    ;;
-		list)
-		    ;;
-		*)
-		    vars="unpack list args rm"
-		    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
-		    ;;	       
-	    esac
-	    ;;
-	unpack)
-	    local vars=$(__moa_all_packs)
-	    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
-	    ;;
         *)
         	;;
     esac
-               	
 }
 complete -o nospace -o default -o bashdefault -F _moa moa
