@@ -132,6 +132,9 @@ def hook_prepare_3(job):
 def hook_finish(job):
     """
     """
+    if not job.isMoa():
+        #only save is this directory continas a moa job
+        return
 
     message = moa.ui._textFormattedMessage(
         [sysConf.args.changeMessage,
@@ -284,8 +287,16 @@ def _saveBlogToSmw(job):
     _savePage(page, txt)
 
 def hook_postReadme(job):
+    if not job.isMoa():
+        #only save is this directory continas a moa job
+        return
+
     _saveJobToSmw(job)
 
 def hook_postBlog(job):
+    if not job.isMoa():
+        #only save is this directory continas a moa job
+        return
+
     _saveBlogToSmw(job)
 
