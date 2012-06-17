@@ -22,6 +22,10 @@ import socket
 from datetime import datetime, timedelta
 import subprocess as sp
 
+import moa.logger 
+l = moa.logger.getLogger(__name__)
+import moa.ui
+
 from moa.sysConf import sysConf
 
 def niceRunTime(d):
@@ -76,6 +80,14 @@ def hook_postRun():
         niceRunTime(runtime))
     
     #start TTYter process
-    P = sp.Popen(['ttytter', '-script'], stdin=sp.PIPE)
-    P.communicate(message)
+    moa.ui.message('Sending tweet', store=False)
+    P = sp.Popen(['ttytter', '-script'], stdin=sp.PIPE,stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
+    moa.ui.message('Message ' + message)
+    o,e = P.communicate(message)
+    with open('twitt.log', 'a') as F:
+        F.write('\n\noo\n')
+        F.write(o)
+        F.write('\n\nee\n')
+        F.write(e)
+        
 
