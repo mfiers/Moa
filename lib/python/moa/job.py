@@ -108,8 +108,6 @@ class Job(object):
             wd = wd[:-1]
         self.wd = wd
 
-        self.run_hook('prepare')
-        
         self.confDir = os.path.join(self.wd, '.moa')
         self.templateFile = os.path.join(self.confDir, 'template')
         self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
