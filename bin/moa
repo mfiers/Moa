@@ -159,7 +159,7 @@ def run_3(wd, exitOnError=True):
                               "containing a Moa job (try moa -h)") % command)
             
         sysConf.pluginHandler.run('prepare')
-        job.run_hook('prepare')
+        #job.run_hook('prepare') #executed during job initialization
         sysConf.pluginHandler.run('pre%s' % command.capitalize())
         
         #run the command function
