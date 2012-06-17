@@ -70,6 +70,10 @@ class PluginHandler():
         possibly in `reverse` order
         possiby only plugins in the `only` list
         """
+        #import traceback
+        #print '~' * 80
+        #print "\n".join(traceback.format_stack()[-4:-1])
+        #print 'calling ', command
         rv = {}
         runOrder = copy.copy(self.pluginList)
         if reverse:
