@@ -74,11 +74,4 @@ $DEBUG time GapCloser -a $lastScaff \
 $DEBUG fastaInfo -O -s -i {{ output }} length ncount scaf1 scaf10 scaf100 \
     > 9.final.stats
 
-echo "And now start a Hagfish run with the libraries"
-echo "Create bowtie database"
-bowtie-build {{ output }} hagfishdb
-
-mkdir hagfish_bam
-{% for l in fq_forward %}
-bowtie -p {{ threads }}
 

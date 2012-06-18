@@ -61,3 +61,7 @@ lasti=0
 samtools mpileup -uf $lastreference ${bamfiles} \
     | bcftools view -cg - \
     | vcfutils.pl vcf2fq > final.consensus.fq
+
+
+echo "Convert the fq output to contigs - for postprocessing"
+fastq2contigs  final.consensus.fq final.contigs.fasta
