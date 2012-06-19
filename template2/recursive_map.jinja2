@@ -38,7 +38,7 @@ lasti=0
     echo "bamfiles collected: ${bamfiles}"
     if [[ ! -f variants.{{i}}.vcf ]]
     then
-        samtools mpileup -uf $reference \
+        samtools mpileup -C50 -d 5000 -L 5000 -uf $reference \
             ${bamfiles} \
             | bcftools view -bvcg - \
             > variants.raw.{{i}}.bcf
