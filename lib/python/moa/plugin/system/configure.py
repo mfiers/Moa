@@ -219,12 +219,12 @@ def set(job, args):
             val = moa.ui.askUser("%s:\n> " % a, old)
             job.conf[a] = val
             new_pars.append((a,val))
-            moa.ui.message('set "%s" to "%s"' % (a, " ".join(val.split())[:80]))
+            moa.ui.message('set "%s" to "%s"' % (a, " ".join(val.split())))
         else:
             key,val = a.split('=',1)
             job.conf[key] = val
             new_pars.append((key,val))
-            moa.ui.message('set "%s" to "%s"' % (key, " ".join(val.split())[:80]))
+            moa.ui.message('set "%s" to "%s"' % (a, " ".join(val.split())))
 
     job.conf.save()
 
