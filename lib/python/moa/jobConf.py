@@ -287,8 +287,8 @@ class JobConf(object):
         
         normdelta = os.path.normpath(delta)
 
-        if y.has_key('jobid'):
-            self.setPrivateVar('_%s' % y['jobid'], normdelta)
+        #if y.has_key('jobid'):
+        #    self.setPrivateVar('_%s' % y['jobid'], normdelta)
         
         #print self.job.template.parameters.keys()
         #find relative links & see if they need to be adjusted
