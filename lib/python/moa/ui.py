@@ -25,6 +25,8 @@ import traceback
 import subprocess
 import contextlib
 
+import jinja2.exceptions
+
 import moa.moajinja
 
 import moa.logger as l
@@ -149,8 +151,12 @@ def fformat(message, f='text', newline = True, ansi = None):
     elif f[0].lower() == 't':
         rt += message % codes
     elif f[0].lower() == 'j':
-        template = jenv.from_string(message)
-        rt += template.render(**codes)
+        try:
+            template = jenv.from_string(message)
+            rt += template.render(**codes)
+        except jinja2.exceptions.TemplateSyntaxError:
+            rt += message
+
     if newline:
         rt += "\n"
         
