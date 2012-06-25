@@ -29,6 +29,22 @@ import contextlib
 import moa.utils
 import moa.logger as l
 
+def getCwd():
+    """
+    Do not use os.getcwd() - 
+    need to make sure symbolic links do not get dereferenced
+    
+    hijacked some code from:
+    http://stackoverflow.com/questions/123958/how-to-get-set-logical-directory-path-in-python
+    """
+    
+    cwd = os.environ.get("PWD")
+    if cwd is not None: 
+        return cwd
+    # no environment. fall back to calling pwd on shell
+    cwd = subprocess.Popen('pwd', stdout=subprocess.PIPE).communicate()[0].strip()
+    return cwd
+
 def getTerminalSize():
     def ioctl_GWINSZ(fd):
         try:
