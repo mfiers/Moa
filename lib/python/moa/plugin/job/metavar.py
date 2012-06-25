@@ -122,6 +122,7 @@ from jinja2 import nodes
 
 from moa.sysConf import sysConf
 import moa.logger
+import moa.utils
 
 l = moa.logger.getLogger(__name__)
 #l.setLevel(moa.logger.DEBUG)
@@ -131,7 +132,7 @@ class MoaPathParser(Extension):
     tags = set(['mp'])
 
     def processDirString(self, s):
-        cwd = os.getcwd()
+        cwd = moa.utils.getCwd()
         return frappant.frp(cwd, s)
         # l.critical(cwd)
 
