@@ -98,7 +98,6 @@ class Job(object):
     def __init__(self, wd):
         """
         :param wd: The directory containing the job
-        :param register: Register this job in the sysConf? Usually this should be yes
         """
 
         #prepare the plugins
@@ -108,6 +107,9 @@ class Job(object):
             wd = wd[:-1]
         self.wd = wd
 
+
+        l.debug('Creating job with wd %s' % self.wd)
+        
         self.confDir = os.path.join(self.wd, '.moa')
         self.templateFile = os.path.join(self.confDir, 'template')
         self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
