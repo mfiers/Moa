@@ -9,9 +9,11 @@ base = os.path.abspath(os.getcwd())
 parser = argparse.ArgumentParser(description='run recursively')
 parser.add_argument('--bg', dest='background', action='store_true',
                    default=False,
-                   help='run in the background')
+                   help='run each job in the background')
 parser.add_argument('-d', dest='depth', default=0, help='depth: 1 means run only in first ' + 
                     'level subdirs, 2 only in second level, and so on', type=int)
+parser.add_argument('-t', dest='test', default=False, 
+                    help='test run', action='store_true')
 parser.add_argument('command', nargs='+')
 args = parser.parse_args()
 
@@ -31,7 +33,11 @@ for path, dirs, files in os.walk(base):
 
     if args.depth and args.depth != level:
         continue
-    print 'executing in %s' % localpath
 
-    P = sp.Popen(cl, cwd=path, shell=True)
-    P.wait()
+    if args.test:
+        print 'would executed in', localpath
+        print '   ', cl
+    else:
+        print 'executing in %s' % localpath
+        P = sp.Popen(cl, cwd=path, shell=True)
+        P.wait()
