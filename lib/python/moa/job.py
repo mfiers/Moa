@@ -279,16 +279,20 @@ class Job(object):
         
         #unless command == 'run' - just execute it and return the RC
         if command != 'run':
-            l.debug("Simple execute of '%s'" % command)
-            sysConf.rc =  self.backend.execute(self, command, args)
-            self.finishExecute()
-            return sysConf.rc
+            l.debug("Simple type execute of '%s'" % command)
+            rc =  self.backend.execute(self, command, args)
+            sysConf.rc = rc
+            if rc != 0:
+                sysConf.pluginHandler.run("post_error")
+                moa.ui.exitError("Error running")
+            return rc
         
         # command == 'run' is a special case - this will trigger a series of
         # runs.
 
         l.debug("Starting RUN")
         for subcommand in ['prepare', 'run', 'finish']:
+            self.pluginHandler.run("pre_%s" % subcommand)
             l.debug("Starting RUN/%s" % subcommand)
             try:
                 rc = self.backend.execute(self, subcommand, args)
@@ -297,7 +301,7 @@ class Job(object):
                 if rc != 0:
                     sysConf.rc = rc
                     sysConf.pluginHandler.run("post_error")
-                    return rc
+                    moa.ui.exitError("Exit on error")
             except moa.exceptions.MoaCommandDoesNotExist:
                 l.debug("%s step is not present" % subcommand)
         
@@ -371,6 +375,21 @@ class Job(object):
         Register template commands with the argparser
         """
         parser, cparser = moa.args.getParser()
+        
+        if self.hasCommand('unittest'):
+            # this does not have to be defined in the .moa - if it is here
+            # we'll register it
+            hlp = 'run unittest for this template'
+            cp = cparser.add_parser(
+                'unittest', help=hlp)
+
+            sysConf.commands['unittest'] = {
+                'desc' : hlp,
+                'long' : hlp,
+                'source' : 'template',
+                'recursive' : 'global',
+                'needsJob' : True,
+                'call' : self.execute }
         
         for c in self.template.commands:
             cinf = self.template.commands[c]
