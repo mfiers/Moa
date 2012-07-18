@@ -222,7 +222,8 @@ def run_2(force_silent=False):
     
     sysConf.pluginHandler.run('prepare_recursion')
 
-    wd = os.getcwd()
+    wd = moa.utils.getCwd()
+    l.debug("starting run_2 in %s" % wd)
     if not '-r' in sys.argv:
         #not recursive - go directly to stage 3
         try:

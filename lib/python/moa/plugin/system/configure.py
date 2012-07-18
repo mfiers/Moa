@@ -58,65 +58,80 @@ def show(job, args):
         isPrivate = False
         
         if p[:4] == 'moa_':
-            if not args.showAll:
-                continue
+            isPrivate = True
 
         if p[0] == '_':
-            if not args.showPrivate:
+            isPrivate = True
+            
+        isPrivate = job.conf.isPrivate(p)            
+        if p[0] == '_': isPrivate = True
+        if p[:4] == 'moa_': isPrivate = True
+
+        isOptional = job.template.parameters[p].get('optional', True)
+        isLocal =  job.conf.is_local(p)
+        isDefined = len(str(job.conf[p])) > 0
+        
+        # args.showPrivate:
+        # args.showAll
+        # args.showRecursive
+
+        if isPrivate and not args.showPrivate:
+            continue
+
+        if not args.showAll:
+            if not isLocal and isOptional:
                 continue
-
-        #see if this private in the template defintion
-        if job.conf.isPrivate(p):
-            if args.showPrivate:
-                isPrivate = True
-            else:
-                continue
-
-        if not args.showAll: 
-            if job.template.parameters[p].optional and \
-                   (not job.conf.setInJobConf(p)):
-                #do not show undefined optional parameters unless -a
-                #is defined on the command line
-                continue
-
-        if args.showRecursive:
-            #also - no recursively defined stuff - unless it is relevant
-            #to the current job
-            if not job.conf.is_local(p):
-                continue
-
-
+            
         outkeys.append(p)
+        
+        #print '%s "%s" %s' % (p, job.conf[p], isDefined)
 
-        #is this variable defined?
-        if isPrivate:
-            outflags.append('{{red}}p{{reset}}')
-            outvals.append(job.conf[p])
-        elif job.conf.setInJobConf(p):
-            #yes: locally?
-            if job.conf.is_local(p):
-                outflags.append('{{green}}L{{reset}}')
-            else:
-                outflags.append('{{magenta}}R{{reset}}')
-            outvals.append(job.conf[p])
+        key = ''
+        if not isDefined:
+            key += '{{gray}}.{{reset}}'            
+            outvals.append('')
+        elif isLocal:
+            outvals.append(str(job.conf[p]))
+            key += '{{bold}}{{green}}l{{reset}}'
         else:
-            #not defined - does it need to be??            
-            if job.template.parameters[p].optional:
-                outflags.append('{{blue}}o{{reset}}')
-                val = job.conf[p]
-                if val != None:
-                    outvals.append(
-                        moa.ui.fformat('{{gray}}%s{{reset}}' % val, f='j'))
-                else:
-                    outvals.append(
-                        moa.ui.fformat(
-                            '{{gray}}(undefined){{reset}}', f='j'))
-            else:
-                #not optional                
-                outflags.append('{{bold}}{{red}}E{{reset}}')
-                outvals.append(
-                    moa.ui.fformat(
-                        '{{red}}{{bold}}(undefined){{reset}}', f='j'))
+            outvals.append(str(job.conf[p]))
+            key += '{{magenta}}r{{reset}}'
+
+        if isPrivate:
+            key += 'p'
+        else:
+            key += '{{gray}}.{{reset}}'
+
+        if isOptional:
+            key += '{{gray}}o{{reset}}'
+        else:
+            key += '{{green}}{{bold}}M{{reset}}'
+
+        outflags.append(key)
+
+        #     #yes: locally?
+        #     if job.conf.is_local(p):
+        #         outflags.append('{{green}}L{{reset}}')
+        #     else:
+        #         outflags.append('{{magenta}}R{{reset}}')
+        #     outvals.append(job.conf[p])
+        # else:
+        #     #not defined - does it need to be??            
+        #     if job.template.parameters[p].optional:
+        #         val = job.conf[p]
+        #         if val != None:
+        #             outvals.append(
+        #                 moa.ui.fformat('{{gray}}%s{{reset}}' % val, f='j'))
+        #         else:
+        #             outvals.append(
+        #                 moa.ui.fformat(
+        #                     '{{gray}}(undefined){{reset}}', f='j'))
+        #     else:
+        #         #not optional                
+        #         outflags.append('{{bold}}{{red}}E{{reset}}')
+        #         outvals.append(
+        #             moa.ui.fformat(
+        #                 '{{red}}{{bold}}(undefined){{reset}}', f='j'))
 
     maxKeylen = max([len(x) for x in outkeys]) + 1
 
@@ -137,6 +152,7 @@ def show(job, args):
         key, val, flag = zippy
         if not args.showAll:
             if not val: continue
+
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
         moa.ui.fprint(" " + flag + " ", f='jinja', newline=False)
         if len(str(val)) == 0:
@@ -160,6 +176,7 @@ def show(job, args):
                 moa.ui.fprint(ll, f=None)
             else:
                 moa.ui.fprint(spacer + ll, f=None)
+
         if args.showUnrendered and rendered[key] and rendered[key] != val:
             for j, ll in enumerate(textwrap.wrap(str(rendered[key]), wrapInit)):
                 moa.ui.fprint(spacerR + ll + closeR)
@@ -219,12 +236,12 @@ def set(job, args):
             val = moa.ui.askUser("%s:\n> " % a, old)
             job.conf[a] = val
             new_pars.append((a,val))
-            moa.ui.message('set "%s" to "%s"' % (a, " ".join(val.split())[:80]))
+            moa.ui.message('set "%s" to "%s"' % (a, " ".join(val.split())))
         else:
             key,val = a.split('=',1)
             job.conf[key] = val
             new_pars.append((key,val))
-            moa.ui.message('set "%s" to "%s"' % (key, " ".join(val.split())[:80]))
+            moa.ui.message('set "%s" to "%s"' % (a, " ".join(val.split())))
 
     job.conf.save()
 

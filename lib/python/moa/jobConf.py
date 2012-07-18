@@ -110,7 +110,7 @@ class JobConf(object):
         
         jobid = self['jobid']
         if jobid != 'unset': return
-        name = os.path.basename(os.getcwd())
+        name = os.path.basename(moa.utils.getCwd())
         name = re.sub("^[0-9]+\.+", "", name)
         l.debug("Setting job id to '%s'" % name)
         self['jobid'] = name
@@ -287,8 +287,8 @@ class JobConf(object):
         
         normdelta = os.path.normpath(delta)
 
-        if y.has_key('jobid'):
-            self.setPrivateVar('_%s' % y['jobid'], normdelta)
+        #if y.has_key('jobid'):
+        #    self.setPrivateVar('_%s' % y['jobid'], normdelta)
         
         #print self.job.template.parameters.keys()
         #find relative links & see if they need to be adjusted

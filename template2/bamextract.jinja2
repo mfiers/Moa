@@ -8,10 +8,17 @@ do
     fi
     fstop=$((${stop}+{{flank}}))
 
-    echo samtools view -b {{bam}} ${seqid}:${fstart}-${fstop}
-    samtools view -b {{bam}} ${seqid}:${fstart}-${fstop} > ${id}.bam
-    #samtools view -b -r ${seqid}:${fstart}-${fstop}  > ${id}.bam
-
+    [[ -f ${id}.bam ]] || \
+	samtools view -b {{bam}} ${seqid}:${fstart}-${fstop} > ${id}.bam
+                
+    if [[ -f "{{vcf}}" ]]
+    then
+        if [[ -f ${id}.vcf ]]
+        then
+                echo "Getting vcf"
+                tabix {{ vcf }} ${seqid}:${fstart}-${fstop} > ${id}.vcf
+        fi
+    fi
     echo 
 done
 

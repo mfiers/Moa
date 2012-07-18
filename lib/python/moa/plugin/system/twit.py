@@ -17,6 +17,7 @@ see: http://www.floodgap.com/software/ttytter/
 """
 
 import os
+import sys
 import time
 import socket
 from datetime import datetime, timedelta
@@ -78,16 +79,21 @@ def hook_postRun():
         socket.gethostname().split('.')[0],
         sysConf.job.wd,
         niceRunTime(runtime))
-    
+
+    #fork - don't wait for this!
+    pid = os.fork()
+    if pid != 0: 
+        return
+
     #start TTYter process
     moa.ui.message('Sending tweet', store=False)
-    P = sp.Popen(['ttytter', '-script'], stdin=sp.PIPE,stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
+    P = sp.Popen(['ttytter', '-script'], stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
     moa.ui.message('Message ' + message)
     o,e = P.communicate(message)
-    with open('twitt.log', 'a') as F:
+    with open('.moa/twitt.log', 'a') as F:
         F.write('\n\noo\n')
         F.write(o)
         F.write('\n\nee\n')
-        F.write(e)
-        
+        F.write(e)        
+    sys.exit(0)
 

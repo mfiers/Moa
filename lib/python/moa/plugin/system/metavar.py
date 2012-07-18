@@ -110,12 +110,13 @@ from jinja2 import nodes
 from moa.sysConf import sysConf
 import moa.logger as l
 import moa.ui
+import moa.utils
 
 class MoaPathParser(Extension):
     tags = set(['mp'])
 
     def processDirString(self, s):
-        cwd = os.getcwd()
+        cwd = moa.utils.getCwd()
         return frappant.frp(cwd, s)
         # l.critical(cwd)
 
