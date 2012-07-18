@@ -88,8 +88,13 @@ def test(job, args):
         elif pt.type == 'file' \
                and job.conf[p] \
                and not os.path.isfile(rconf[p]):
-            messages.append(("Not a file",
-                             "%s=%s " % (p, rconf[p])))
+            if pt.get('optional', True):
+                #ignore this
+                pass
+            else:
+                print 
+                messages.append(("Not a file",
+                                 "%s=%s " % (p, rconf[p])))
         elif pt.type == 'directory' \
                and job.conf[p] \
                and not os.path.isdir(rconf[p]):

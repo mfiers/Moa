@@ -198,44 +198,38 @@ def hook_pre_filesets(job):
 
         #print i, clean_p, p, cp
         if not p: break
-        #job.conf.setPrivateVar('dir%d' % i, p)
-        job.conf.setPrivateVar('_%d' % i, p)
-        job.conf.setPrivateVar('_%s' % clean_p, cp)
-        job.conf.setPrivateVar('__%s' % clean_p, cp)
+
+        #job.conf.setPrivateVar('_%d' % i, p)
+        #job.conf.setPrivateVar('_%s' % clean_p, cp)
+        #job.conf.setPrivateVar('__%s' % clean_p, cp)
 
         if i <= 3:
             job.conf.setPrivateVar('_' * i, p)
 
-        if i > 1 and  i <= 3:
-            thisdirlist = [x for x in os.listdir(cp) if not x[0] == '.']
-            thisdirlist.sort()
+        # if i > 1 and  i <= 3:
+        #     thisdirlist = [x for x in os.listdir(cp) if not x[0] == '.']
+        #     thisdirlist.sort()
             
-            #print i
-            #print cp
-            #print p
-            #print lastp
-            #print thisdirlist
+        #     iofp = thisdirlist.index(lastp)
+
+        #     job.conf.setPrivateVar('_' + ('f' * (i-1)), thisdirlist[0])
+        #     job.conf.setPrivateVar('__' + ('f' * (i-1)),
+        #                            os.path.join(cp, thisdirlist[0]))
             
-            iofp = thisdirlist.index(lastp)
+        #     job.conf.setPrivateVar('_' +('l' * (i-1)), thisdirlist[-1])
+        #     job.conf.setPrivateVar('__' +('l' * (i-1)),
+        #                            os.path.join(cp, thisdirlist[-1]))
 
-            job.conf.setPrivateVar('_' + ('f' * (i-1)), thisdirlist[0])
-            job.conf.setPrivateVar('__' + ('f' * (i-1)),
-                                   os.path.join(cp, thisdirlist[0]))
-            
-            job.conf.setPrivateVar('_' +('l' * (i-1)), thisdirlist[-1])
-            job.conf.setPrivateVar('__' +('l' * (i-1)),
-                                   os.path.join(cp, thisdirlist[-1]))
-
-            if iofp > 0:
-                job.conf.setPrivateVar('_' +('p' * (i-1)), thisdirlist[iofp-1])
-                job.conf.setPrivateVar('__' +('p' * (i-1)),
-                                       os.path.join(cp, thisdirlist[iofp-1]))
+        #     if iofp > 0:
+        #         job.conf.setPrivateVar('_' +('p' * (i-1)), thisdirlist[iofp-1])
+        #         job.conf.setPrivateVar('__' +('p' * (i-1)),
+        #                                os.path.join(cp, thisdirlist[iofp-1]))
 
 
-            if iofp < (len(thisdirlist)-1):
-                job.conf.setPrivateVar('_' +('n' * (i-1)), thisdirlist[iofp+1])
-                job.conf.setPrivateVar('__' +('n' * (i-1)),
-                                       os.path.join(cp, thisdirlist[iofp+1]))
+        #     if iofp < (len(thisdirlist)-1):
+        #         job.conf.setPrivateVar('_' +('n' * (i-1)), thisdirlist[iofp+1])
+        #         job.conf.setPrivateVar('__' +('n' * (i-1)),
+        #                                os.path.join(cp, thisdirlist[iofp+1]))
 
 
         lastp = p

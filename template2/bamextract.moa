@@ -16,11 +16,16 @@ filesets:
     category: input
     help: BAM input
     optional: false
+  vcf:
+    type: single
+    category: input
+    help: optional VCF input
+    optional: true
   regions:
     type: single
     category: input
     help: List with regions to extract (id seqid start stop)
-    optional: true
+    optional: false
 parameters:
   flank:
     type: integer

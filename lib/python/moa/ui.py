@@ -149,7 +149,10 @@ def fformat(message, f='text', newline = True, ansi = None):
     if not f:
         rt += message
     elif f[0].lower() == 't':
-        rt += message % codes
+        try:
+            rt += message % codes
+        except:
+            rt += message
     elif f[0].lower() == 'j':
         try:
             template = jenv.from_string(message)
