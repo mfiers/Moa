@@ -49,7 +49,8 @@ def new(job, args):
     wd = job.wd
     #targetdir = args.directory
     title = ""
-    if job.conf.title:
+
+    if job.conf.title and job.conf.is_local('title'):
         title = job.conf.title
     if args.title:
         title = args.title
