@@ -24,17 +24,21 @@ import moa.utils
 import moa.logger as l
 from moa.sysConf import sysConf
 
+# def hook_prepare_3():
+#     if not job.template.parameters.has_key('title'):
+#         job.template.parameters.title = {
+#             'optional' : False,
+#             'help' : 'A short and consise title for this job',
+#             'type' : 'string',
+#             'recursive' : False,
+#             }
+
 def hook_finish():
 
     job = sysConf['job']
-
-    if not job.template.parameters.has_key('title'):
-        job.template.parameters.title = {
-            'optional' : False,
-            'help' : 'A short and consise title for this job',
-            'type' : 'string',
-            'recursive' : False,
-            }
+    
+    if not sysConf.commands[sysConf.args.command]['logJob']:
+        return
 
     message = moa.ui._textFormattedMessage(
         [sysConf.args.changeMessage,
@@ -76,8 +80,11 @@ def _readFromuser(job, header, fileName):
     """
     gather Blog or CHANGELOG information
     """
+
     #moa.utils.moaDirOrExit(job)
 
+    oldstdin = sys.stdin
+    sys.stdin = open('/dev/tty')
     txt = []
     print header, "..."
     while True:
@@ -88,6 +95,7 @@ def _readFromuser(job, header, fileName):
             break
         
     _appendMessage(fileName, txt)
+    sys.stdin = oldstdin
     return txt
 
 @moa.args.command
@@ -111,12 +119,32 @@ def blog(job, args):
 
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
     """
+
+    sin = _getFromStdin()
+
+
     message = _readFromuser(
         job, 
         header="Enter your blog message (ctrl-d on an empty line to finish)",
         fileName="BLOG.md")
+
+    if sin:
+        message.append("\nStdin:\n")
+        message.extend(["   " + x for x in sin.split("\n")])
+
     moa.ui.message("Created a blog entry", store=False)
     sysConf.doc.blog = message
+
+def _getFromStdin():
+    import re
+    
+    if not sys.stdin.isatty():
+        m = sys.stdin.read()
+        #print m
+        m = re.sub(r'\x1b\[[^m]*m', '', m)
+        #print m
+        return m
+    return ""
 
 @moa.args.command
 def change(job, args):
@@ -144,15 +172,30 @@ def change(job, args):
 
     `moa -m 'intelligent remark' set ...`
 
+    Note. It is also possible to cat some text into moa change:
+
+    wc -l | moa change 
+
+    Moa will still query you for a message and append the data from
+    stdin to the message
+    
+
     """
+
+    sin = _getFromStdin()
 
     message = _readFromuser(
         job, 
         header="Enter your CHANGELOG message (ctrl-d on an empty " +
         "line to finish)", fileName="CHANGELOG.md")
 
+    if sin:
+        message.append("\nStdin:\n")
+        message.extend(["   " + x for x in sin.split("\n")])
+
     moa.ui.message("Created a changelog entry", store=False)
     sysConf.doc.changeMessage = "\n".join(message)
+
 
 @moa.args.command
 def readme(job, args):
