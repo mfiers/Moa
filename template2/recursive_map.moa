@@ -46,13 +46,13 @@ parameters:
     optional: true
     type: integer
     default: 4
-  param_strict:
-    help: 'Strict parameters for the first half of alignment runs'
+  param_first:
+    help: 'First set of parameters - get the low hanging fruit'
     optional: true
     type: string
-    default: ''
-  param_loose:
-    help: 'Looser parameters for the second half of alignment runs'
+    default: '--fast'
+  param_second:
+    help: 'Second set of parameters - more sensitive'
     optional: true
     type: string
-    default: '-e 1 -E 3 -k 3 -O 10'
+    default: '--very-sensitive'
