@@ -1,10 +1,8 @@
 ### run 
 
-echo bwa index -p {{ prefix }} -a {{ algorithm }}               \
-     	{% if color_space %} -c {% endif %} {{ input }} 
-
-bwa index -p {{ prefix }} -a {{ algorithm }}                    \
-	{% if color_space %} -c {% endif %} {{ input }} 
+bwa index -p {{ prefix }} -a {{ algorithm }} \
+	{% if color_space %} -c {% endif %} \
+        {{ input }} 
 
 touch {{ prefix }}
 

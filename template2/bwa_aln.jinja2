@@ -1,25 +1,25 @@
 ### run
 
 echo running bwa_aln
-bwa aln {{db}}                                                                  \
-	{% if edit_dist_missing_prob %} -n {{edit_dist_missing_prob}} {% endif %}   \
-    {% if gap_opens_max %} -o {{gap_opens_max}} {% endif %}                     \
-	{% if gap_ext_max %} -e {{gap_ext_max}} {% endif %}                         \
-    {% if no_indel_from_ends %} -i {{no_indel_from_ends}} {% endif %}           \
-	{% if max_ext_long_del %} -d {{max_ext_long_del}} {% endif %}               \
-	{% if seed_len %} -l {{seed_len}} {% endif %}                               \
-	{% if seed_max_diff %} -k {{seed_max_diff}} {% endif %}                     \
-	{% if max_queue_entry %} -m {{max_queue_entry}} {% endif %}                 \
-	{% if thread_num %} -t {{thread_num}} {% endif %}                           \
-	{% if mismatch_penalty %} -M {{mismatch_penalty}} {% endif %}               \
-	{% if gap_open_penalty %} -O {{gap_open_penalty}} {% endif %}               \
-	{% if gap_ext_penalty %} -E {{gap_ext_penalty}} {% endif %}                 \
-	{% if best_hits_stop %} -R {{best_hits_stop}} {% endif %}                   \
-	{% if quality_step %} -q {{quality_step}} {% endif %}                       \
-	{% if color_space %} -c {% endif %}                                         \
-	{% if log_gap_penalty_del %} -L {% endif %}	                                \
-	{% if non_iterative %} -N {% endif %}		                                \
-	{{ input }}									                                \
+bwa aln {{db}} \
+	{% if edit_dist_missing_prob %} -n {{edit_dist_missing_prob}} {% endif %} \
+    {% if gap_opens_max %} -o {{gap_opens_max}} {% endif %} \
+	{% if gap_ext_max %} -e {{gap_ext_max}} {% endif %} \
+    {% if no_indel_from_ends %} -i {{no_indel_from_ends}} {% endif %} \
+	{% if max_ext_long_del %} -d {{max_ext_long_del}} {% endif %} \
+	{% if seed_len %} -l {{seed_len}} {% endif %} \
+	{% if seed_max_diff %} -k {{seed_max_diff}} {% endif %} \
+	{% if max_queue_entry %} -m {{max_queue_entry}} {% endif %} \
+	{% if thread_num %} -t {{thread_num}} {% endif %} \
+	{% if mismatch_penalty %} -M {{mismatch_penalty}} {% endif %} \
+	{% if gap_open_penalty %} -O {{gap_open_penalty}} {% endif %} \
+	{% if gap_ext_penalty %} -E {{gap_ext_penalty}} {% endif %} \
+	{% if best_hits_stop %} -R {{best_hits_stop}} {% endif %} \
+	{% if quality_step %} -q {{quality_step}} {% endif %} \
+	{% if color_space %} -c {% endif %} \
+	{% if log_gap_penalty_del %} -L {% endif %} \
+	{% if non_iterative %} -N {% endif %} \
+	{{ input }} \
 	-f {{ output }}
 
 ### clean

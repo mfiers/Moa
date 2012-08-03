@@ -5,7 +5,20 @@ echo '{{ process }}'
 
 
 ### unittest
+#!/bin/bash -v
+set -e
+tmpdir=`mktemp -d`
+cd $tmpdir
+touch 'testtesttest'
+moa new simple -t 'test'
+moa set title="helllloooooo!"
 
 moa set process=ls
-moa run
+echo '---------'
+cat .moa/config
+pwd
+ls -al
+moa
+moa run | grep 'testtesttest'
+rm -rf $tmpdir
 
