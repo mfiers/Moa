@@ -294,7 +294,7 @@ class Job(object):
 
         l.debug("Starting RUN")
         for subcommand in ['prepare', 'run', 'finish']:
-            self.pluginHandler.run("pre_%s" % subcommand)
+            self.pluginHandler.run("pre_%s" % subcommand, job = self)
             l.debug("Starting RUN/%s" % subcommand)
             try:
                 rc = self.backend.execute(self, subcommand, args)
