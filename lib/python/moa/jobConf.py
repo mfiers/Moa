@@ -240,6 +240,9 @@ class JobConf(object):
         can be locally defined or in the template definition
 
         """
+        if k[:4] == 'moa_':
+            return True
+
         if k in self.private:
             return True
         
