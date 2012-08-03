@@ -136,6 +136,17 @@ def hook_finish(job):
         #only save is this directory continas a moa job
         return
 
+    fwd = os.path.abspath(job.wd)
+    
+    #do not save anything in an '/tmp/' path
+    if '/tmp/' in fwd:
+        return
+
+    #do not save jobs if they're not spposed to log
+    if not sysConf.commands.get(sysConf.args.command, {})\
+            .get('logJob', False):
+        return
+
     pid = os.fork()
     if pid != 0:
         #parent process - return now
