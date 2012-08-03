@@ -87,7 +87,7 @@ class Providers(object):
         rv = set()
         for pName in self.order:
             #print self.providers[pName].templateList()
-            rv.update(set(self.providers[pName].templateList()))
+            rv.update(set((pName, x) for x in self.providers[pName].templateList()))
         rv = list(rv)
         rv.sort()
         return rv
