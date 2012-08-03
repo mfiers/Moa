@@ -135,8 +135,8 @@ def version(job, args):
     print sysConf.getVersion()
 
 @moa.args.private
-@moa.args.command
 @moa.args.doNotLog
+@moa.args.command
 def rehash(job, args):
     """
     cache a list of variables for command line completion
@@ -159,8 +159,8 @@ def rehash(job, args):
 
 
 @moa.args.private
-@moa.args.command
 @moa.args.doNotLog
+@moa.args.command
 def raw_commands(job, args):
     """
     return a list available commands
@@ -176,8 +176,8 @@ def raw_commands(job, args):
     print ' '.join(c)
 
 @moa.args.private
-@moa.args.command
 @moa.args.doNotLog
+@moa.args.command
 def raw_parameters(job, args):
     """
     Print a list of all known parameters

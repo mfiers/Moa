@@ -5,33 +5,34 @@ lastreference=$reference
 lasti=0
 
 {% for i in range(iterations) %}
-    {% if i <= (iterations / 2) %}{% set aln_param=param_strict %}
-    {% else %}{% set aln_param=param_loose %}
+
+
+    {% if i <= (iterations / 2) %}{% set aln_param=param_first %}
+    {% else %}{% set aln_param=param_second %}
     {% endif %}
     echo "Iteration {{i}} ---"
     echo "With reference: ${reference}"
-    if [[ ! -f "db.{{i}}.ann" ]]
+    if [[ ! -f "db.{{i}}.1.bt2" ]]
     then
-        echo "create bwa database {{i}}"
-        bwa index -p db.{{i}} ${reference}
+        echo "create bowtie2 database {{i}}"
+        bowtie2-build ${reference} db.{{i}}
     fi
 
     echo "start aligning $i"
+
     bamfiles=""
     {% for ffq in fq_forward %}
        {% set rfq =  fq_reverse[loop.index0] %}
        base=`basename {{ ffq }} .fq`
-       [[ -f "${base}__{{i}}.f.sai" ]] || \
-           bwa aln {{ aln_param }} -t {{ threads }} \
-               -f ${base}__{{i}}.f.sai db.{{i}} {{ ffq }}
-       [[ -f "${base}__{{i}}.r.sai" ]] || \
-           bwa aln {{ aln_param }} -t {{ threads }} \
-               -f ${base}__{{i}}.r.sai db.{{i}} {{ rfq }} 
-       [[ -f ${base}__{{i}}.bam ]] || \
-           bwa sampe db.{{i}} ${base}__{{i}}.f.sai ${base}__{{i}}.r.sai \
-           {{ ffq }} {{ rfq }} \
-           | samtools view -Sb -f 2 - \
-           | samtools sort - ${base}__{{i}}
+       if [[ ! -f "${base}__{{i}}.bam" ]]
+       then
+           echo "start align {{i}} - "
+           bowtie2 --reorder -p {{ threads }} {{ aln_param }} \
+               -x db.{{i}} \
+               -1 {{ ffq }} -2 {{ rfq }} \
+               | samtools view -Sb -f 2 - \
+               | samtools sort - ${base}__{{i}}
+       fi
        bamfiles="${bamfiles} ${base}__{{i}}.bam"
     {% endfor %}
     
@@ -54,7 +55,9 @@ lasti=0
     fi
 
     lastreference=$reference
+
     reference=consensus.{{i}}.fasta
+
     lasti={{i}}
 {% endfor %}
 
