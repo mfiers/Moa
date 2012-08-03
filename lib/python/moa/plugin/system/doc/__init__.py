@@ -24,15 +24,6 @@ import moa.utils
 import moa.logger as l
 from moa.sysConf import sysConf
 
-# def hook_prepare_3():
-#     if not job.template.parameters.has_key('title'):
-#         job.template.parameters.title = {
-#             'optional' : False,
-#             'help' : 'A short and consise title for this job',
-#             'type' : 'string',
-#             'recursive' : False,
-#             }
-
 def hook_finish():
 
     job = sysConf['job']
@@ -40,9 +31,13 @@ def hook_finish():
     if not sysConf.commands[sysConf.args.command]['logJob']:
         return
 
+    if sysConf.args.command == 'change': 
+        #this is already taken care of!
+        return
+
     message = moa.ui._textFormattedMessage(
-        [sysConf.args.changeMessage,
-         sysConf.doc.changeMessage] )
+        [ sysConf.args.changeMessage,
+          sysConf.doc.changeMessage ] )
     
     if message:
         _appendMessage(
@@ -54,31 +49,40 @@ def hook_defineOptions():
         '-m', action='store',
         dest='changeMessage', help = 'Change message for this operation')
 
-def _appendMessage(fileName, txt):
+def _writeMessage(category, txt):
     """
     Append a markdown formatted message to either CHANGELOG or BLOG
 
     :param txt: message to save
     :type txt: array of strings
     """
-    try:
-        with open(fileName) as F:
-            oldFile = F.read()
-    except IOError:
-        oldFile = ""
+    
+    dirname = os.path.join('doc', category)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
 
-    with open(fileName, "w") as F:
-        now = datetime.datetime.now()
-        header = "**%s - %s changes**" % (
-            now.strftime("On %A, %d %b %Y %H:%M"), getpass.getuser()) 
-        F.write("%s\n\n" %  header)
-        F.write("    " + "\n    ".join(txt))
-        F.write("\n-----\n")
-        F.write(oldFile)
+    now = datetime.datetime.now()
 
-def _readFromuser(job, header, fileName):
+    filename = os.path.join(dirname, '%s_%d%d%d_%d%d%d.md' % (
+            category, now.year, now.month, now.day,
+            now.hour, now.minute, now.second))
+
+    title = "%s" % category.capitalize()
+
+    with open(filename, "w") as F:
+        F.write("Title: %s\n\n" % title)
+        F.write("\n".join(txt))
+
+        #header = "**%s - %s changes**" % (
+        #    now.strftime("On %A, %d %b %Y %H:%M"), getpass.getuser()) 
+        #F.write("%s\n\n" %  header)
+        #F.write("    " + "\n    ".join(txt))
+        #F.write("\n-----\n")
+        #F.write(oldFile)
+
+def _readFromuser(job, header, category):
     """
-    gather Blog or CHANGELOG information
+    gather blog or changelog information
     """
 
     #moa.utils.moaDirOrExit(job)
@@ -93,11 +97,11 @@ def _readFromuser(job, header, fileName):
             txt.append(line)
         except (EOFError, KeyboardInterrupt):
             break
-        
-    _appendMessage(fileName, txt)
+
     sys.stdin = oldstdin
     return txt
 
+@moa.args.argument('message', nargs='*')
 @moa.args.command
 def blog(job, args):
     """
@@ -123,17 +127,23 @@ def blog(job, args):
     sin = _getFromStdin()
 
 
-    message = _readFromuser(
-        job, 
-        header="Enter your blog message (ctrl-d on an empty line to finish)",
-        fileName="BLOG.md")
+    if args.message:
+        message = " ".join(args.message)
+    else:
+        message = _readFromuser(
+            job, 
+            header="Enter your BLOG message (ctrl-d on an empty " +
+            "line to finish)")
 
     if sin:
         message.append("\nStdin:\n")
         message.extend(["   " + x for x in sin.split("\n")])
 
+    
+    _writeMessage('blog', message)
+
     moa.ui.message("Created a blog entry", store=False)
-    sysConf.doc.blog = message
+    sysConf.doc.blog = "\n".join(message)
 
 def _getFromStdin():
     import re
@@ -146,6 +156,7 @@ def _getFromStdin():
         return m
     return ""
 
+@moa.args.argument('message', nargs='*')
 @moa.args.command
 def change(job, args):
     """
@@ -184,19 +195,34 @@ def change(job, args):
 
     sin = _getFromStdin()
 
-    message = _readFromuser(
-        job, 
-        header="Enter your CHANGELOG message (ctrl-d on an empty " +
-        "line to finish)", fileName="CHANGELOG.md")
+    if args.message:
+        message = [" ".join(args.message)]
+    else:
+        message = _readFromuser(
+            job, 
+            header="Enter your CHANGELOG message (ctrl-d on an empty " +
+            "line to finish)")
 
     if sin:
         message.append("\nStdin:\n")
-        message.extend(["   " + x for x in sin.split("\n")])
+        message.extend(["    " + x for x in sin.split("\n")])
+    
+    _writeMessage('change', message)
 
     moa.ui.message("Created a changelog entry", store=False)
     sysConf.doc.changeMessage = "\n".join(message)
 
 
+@moa.args.command
+def pelican(job, args):
+    """
+    Run pelican :)
+    """
+    if not os.path.exists('doc'):
+        moa.ui.message("Nothing to generate")
+        return ""
+
+    
 @moa.args.command
 def readme(job, args):
     """
