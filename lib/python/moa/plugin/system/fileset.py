@@ -18,7 +18,8 @@ import fist
 import moa.ui
 import moa.args
 import moa.utils
-import moa.logger as l
+import moa.logger
+l = moa.logger.getLogger(__name__)
 
 from moa.sysConf import sysConf
 

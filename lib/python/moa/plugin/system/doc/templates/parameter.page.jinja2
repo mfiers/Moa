@@ -1,0 +1,22 @@
+Title: parameters
+
+{% macro printrow(i, name) -%}
+{%- set val=conf.get(name, '') -%}
+{%- set ren=rendered.get(name, '') -%}
+**{{ fsk|format(name) }}** | {{ "%5s"|format(conf.getFlags(name)) }} | {{ fsv|format(ren) }} 
+{%- if val != ren %}   
+{{ fsk|format(" ") }} | (raw) | {{ fsv|format(val) }} 
+{%- endif -%}
+{%- endmacro %}
+{{head1}}
+{{head2}}
+{% for p in keys -%}
+{% if not conf.isPrivate(p) -%}
+{{ printrow(loop.index, p) }}
+{% endif -%}
+{% endfor -%}
+{% for p in keys -%}
+{% if  conf.isPrivate(p) -%}
+{{ printrow(loop.index, p) }}
+{% endif -%}
+{% endfor %}

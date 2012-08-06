@@ -153,6 +153,17 @@ class JobConf(object):
     #         i += 1
 
 
+    def getFlags(self, key):
+        rv = []
+        if self.is_local(key):
+            rv.append('L')
+        else:
+            rv.append('R')
+        if self.isPrivate(key):
+            rv.append('P')
+
+        return "".join(rv)
+
     def getRendered(self, key):
         """ Get the rendered value of this key"""
         return self.interpret(self.get(key, ""))

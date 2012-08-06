@@ -14,6 +14,9 @@ Manage project / title / description for jobs
 """
 import os
 import sys
+
+import jinja2
+import socket
 import getpass
 import datetime
 import subprocess
@@ -23,6 +26,8 @@ import moa.args
 import moa.utils
 import moa.logger as l
 from moa.sysConf import sysConf
+
+from moa.plugin.system.doc import pelican_util
 
 def hook_finish():
 
@@ -36,12 +41,13 @@ def hook_finish():
         return
 
     message = moa.ui._textFormattedMessage(
-        [ sysConf.args.changeMessage,
+        [ 'changelog',
+          sysConf.args.changeMessage,
           sysConf.doc.changeMessage ] )
     
     if message:
-        _appendMessage(
-            fileName="CHANGELOG.md",
+        _writeMessage(
+            category='change',
             txt = message)
     
 def hook_defineOptions():
@@ -67,10 +73,14 @@ def _writeMessage(category, txt):
             category, now.year, now.month, now.day,
             now.hour, now.minute, now.second))
 
-    title = "%s" % category.capitalize()
+    title = txt[0]
+    txt = txt[1:]
+
+    #title = "%s" % category.capitalize()
 
     with open(filename, "w") as F:
-        F.write("Title: %s\n\n" % title)
+        F.write("Title: %s\n" % title)
+        F.write("Author: %s\n\n" % getpass.getuser())
         F.write("\n".join(txt))
 
         #header = "**%s - %s changes**" % (
@@ -80,7 +90,7 @@ def _writeMessage(category, txt):
         #F.write("\n-----\n")
         #F.write(oldFile)
 
-def _readFromuser(job, header, category):
+def _readFromuser(job, header):
     """
     gather blog or changelog information
     """
@@ -128,7 +138,7 @@ def blog(job, args):
 
 
     if args.message:
-        message = " ".join(args.message)
+        message = [" ".join(args.message)]
     else:
         message = _readFromuser(
             job, 
@@ -137,7 +147,7 @@ def blog(job, args):
 
     if sin:
         message.append("\nStdin:\n")
-        message.extend(["   " + x for x in sin.split("\n")])
+        message.extend(["    " + x for x in sin.split("\n")])
 
     
     _writeMessage('blog', message)
@@ -213,15 +223,46 @@ def change(job, args):
     sysConf.doc.changeMessage = "\n".join(message)
 
 
+@moa.args.doNotLog
+@moa.args.needsJob
+@moa.args.addFlag('-f', '--force', help='force rewriting of configuration')
 @moa.args.command
 def pelican(job, args):
     """
     Run pelican :)
     """
-    if not os.path.exists('doc'):
-        moa.ui.message("Nothing to generate")
-        return ""
 
+    themedir = os.path.join(os.path.dirname(__file__), 'theme')
+    sysConf.doc.server = socket.gethostname()
+    peliconf = '.moa/pelican.conf.py'
+    renderdir = 'doc/pelican'
+
+    if not os.path.exists('doc'):
+        os.makedirs('doc')
+
+    pelican_util.generate_parameter_page(job)
+    pelican_util.generate_file_page(job)
+    pelican_util.generate_readme_page(job)
+
+    if args.force or (not os.path.exists(peliconf)):
+        jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.doc'))
+        jtemplate = jenv.select_template(['pelican.conf.jinja2'])
+
+        txt = jtemplate.render(sysConf)
+        with open(peliconf, 'w') as F:
+            F.write(txt)
+            
+    if not os.path.exists(renderdir):
+        os.makedirs(renderdir)
+
+    cl = 'pelican -q -t %s -s .moa/pelican.conf.py -o doc/pelican/ doc/' % (
+        themedir)
+
+    
+    P = subprocess.Popen(cl, shell=True)
+    
+            
+    
     
 @moa.args.command
 def readme(job, args):

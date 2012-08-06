@@ -1,0 +1,21 @@
+# -*- coding: utf-8 -*-
+
+SITEURL = './doc/test/test/pelican/'
+SITENAME = "Moa"
+DEFAULT_LANG = 'en'
+SERVER = u'{{ doc.server }}'
+WD= u'{{ job.wd }}'
+RELATIVE_URLS = True
+DISPLAY_PAGES_ON_MENU = True
+DEFAULT_PAGINATION = 5
+OUTPUT_PATH = './doc/pelican/'
+#PATH = 'doc'
+REVERSE_ARCHIVE_ORDER = True
+CONTENT_STATIC_LOC = '../../'
+MD_EXTENSIONS = ['tables']
+SUMMARY_MAX_LENGTH = 550
+
+LINKS = (('Moa docs', 'http://mfiers.github.com/Moa/'), 
+         ('Moa source', 'https://github.com/mfiers/Moa'),
+         )
+
