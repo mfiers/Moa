@@ -5,7 +5,7 @@ Title: parameters
 {%- set ren=rendered.get(name, '') -%}
 **{{ fsk|format(name) }}** | {{ "%5s"|format(conf.getFlags(name)) }} | {{ fsv|format(ren) }} 
 {%- if val != ren %}   
-{{ fsk|format(" ") }} | (raw) | {{ fsv|format(val) }} 
+{{ fsk|format(" ") }} |*(raw)*| {{ fsv|format(val) }} 
 {%- endif -%}
 {%- endmacro %}
 {{head1}}

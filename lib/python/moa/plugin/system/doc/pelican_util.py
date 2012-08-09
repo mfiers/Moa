@@ -13,14 +13,23 @@ l = moa.logger.getLogger(__name__)
 from Yaco import Yaco
 
 def _getpagename(name):
-    l.critical("creating page for %s" % name)
     pagedir = os.path.join('doc', 'pages')
     if not os.path.exists(pagedir):
         os.makedirs(pagedir)
     
     return os.path.join(pagedir, name)
 
-
+def generate_template_page(job):
+    """
+    create a page with template parameters
+    """
+    jtemplate = jenv.select_template(['template.page.jinja2'])
+    pagename = _getpagename('template.md')
+        
+    with open(pagename, 'w') as F:
+        F.write(jtemplate.render({
+                    't' : job.template}))
+    
 def generate_readme_page(job):
     """
     Create a parameter page for pelican
@@ -53,7 +62,6 @@ def generate_parameter_page(job):
     fsv = '%-' + str(mvl) + 's'
     head1 = ('%-' + str(mkl) + 's | FLAG  | %-' + str(mvl) + 's') % ('key', 'value')
     head2 = ('%-' + str(mkl) + 's | ----- | %-' + str(mvl) + 's') % ('-' * mkl, '-' * mvl)
-    print head1
     
     with open(pagename, 'w') as F:
         F.write(jtemplate.render({
@@ -84,7 +92,7 @@ def generate_file_page(job):
     
     fsets = []
     fmaps = []
-
+    
     data = Yaco()
 
     for fsid in filesets:
@@ -135,47 +143,3 @@ def generate_file_page(job):
         F.write(jtemplate.render(data))
 
     return
-
-
-            #         if j == 0:
-    #             moa.ui.fprint("  {{bold}}%3d{{reset}}:" % i, f='jinja', newline=False)
-    #         else:
-    #             moa.ui.fprint("      ", f='jinja', newline=False)
-    #         cat = templateInfo.category
-    #         if cat == 'input':
-    #             moa.ui.fprint("{{green}}inp{{reset}}", f='jinja', newline=False)
-    #         elif cat == 'output':
-    #             moa.ui.fprint("{{blue}}out{{reset}}", f='jinja', newline=False)
-    #         else:
-    #             moa.ui.fprint("{{red}}%s{{reset}}" % cat[:3], f='jinja', newline=False)
-    #         moa.ui.fprint(" {{gray}}%-5s{{reset}}" % templateInfo.type, f='jinja', newline=False)
-    #         moa.ui.fprint(" {{bold}}%-20s{{reset}} " % fsid, f='jinja', newline=False)
-    #         moa.ui.fprint(_preformatFile(files[i]), f='jinja', newline=False)
-    #         moa.ui.fprint("")
-    #     moa.ui.fprint("")
-
-
-    # dar = sysConf.www.dataRoot
-    # wer = sysConf.www.webRoot
-    # rv = []
-    # for f in fileList:
-    #     #if f[0] == '.':
-    #     #    f = os.path.join(sysConf.job.wd, f)
-            
-    #     fup = os.path.abspath(f)
-    #     if os.path.exists(fup):
-    #         linkClass = 'moaFileExists'
-    #     else:
-    #         linkClass = 'moaFileAbsent'
-            
-    #     if fup.find(dar) == 0:
-    #         fullurl = fup.replace(dar, wer)
-    #         dirurl = os.path.dirname(fup).replace(dar,wer)
-    #         link = '<a class="%s" href="%s#fileBrowser">%s</a>' % (
-    #             linkClass, dirurl, os.path.basename(fup))  
-    #         if linkClass == 'moaFileExists':
-    #             link += ' <span style="font-size: 60%%;">(<a href="%s">dl</a>)</span>' % (fullurl)
-    #         rv.append(link)
-    #     else:
-    #         rv.append("%s" % (f)) #os.path.basename(f)))
-    # return rv

@@ -24,15 +24,14 @@ import subprocess
 import moa.ui
 import moa.args
 import moa.utils
-import moa.logger as l
+import moa.logger
+l = moa.logger.getLogger(__name__)
 from moa.sysConf import sysConf
 
 from moa.plugin.system.doc import pelican_util
 
 def hook_finish():
 
-    job = sysConf['job']
-    
     if not sysConf.commands[sysConf.args.command]['logJob']:
         return
 
@@ -243,6 +242,7 @@ def pelican(job, args):
     pelican_util.generate_parameter_page(job)
     pelican_util.generate_file_page(job)
     pelican_util.generate_readme_page(job)
+    pelican_util.generate_template_page(job)
 
     if args.force or (not os.path.exists(peliconf)):
         jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.doc'))
@@ -257,9 +257,14 @@ def pelican(job, args):
 
     cl = 'pelican -q -t %s -s .moa/pelican.conf.py -o doc/pelican/ doc/' % (
         themedir)
+    subprocess.Popen(cl, shell=True)
 
     
-    P = subprocess.Popen(cl, shell=True)
+    #make a symlink to the index.thml
+    if not os.path.exists('index.html'):
+        os.symlink('doc/pelican/index.html', 'index.html')
+    
+
     
             
     

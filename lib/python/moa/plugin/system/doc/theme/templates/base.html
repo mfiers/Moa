@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>{% block windowtitle %}{{ SITENAME }}{% endblock %}</title>
+	<title>{% block windowtitle %}{{ SITENAME }} job in {{ WD }} {% endblock %}</title>
 	<meta name="description" content="">
 	<meta name="author" content="{{ AUTHOR }}">
 
@@ -23,24 +23,25 @@
 	      <a class="brand" href="{{ SITEURL }}/index.html">{{ SITENAME }}</a>
               x {{ WD }} x
 	      <ul class="nav">
-                <li><a href="../..">{{WD}}</a></li>
+                <li><a href="{% block jobdir %}../../{% endblock %}">{{WD}}</a></li>
 	      </ul>
 	      <p class="pull-right"><a href="{{ SITEURL }}/archives.html">[archives]</a> <a href="{{ SITEURL }}/tags.html">[tags]</a></p>
 	    </div>
 	  </div>
 	</div>
 
-	<div class="container-fluid">	
+	<div class="container-fluid">
 	  <div class="sidebar">
 	    <div class="well">
               <h3>Job</h3>
 	      <ul>
+		<li><a href="{{ self.jobdir() }}">dir</a>
 		{% for title, link in MENUITEMS %}
 		<li><a href="{{ link }}">{{ title }}</a></li>
 		{% endfor %}
 		{% if DISPLAY_PAGES_ON_MENU %}
 		{% for page in PAGES %}
-		<li><a href="{{ SITEURL }}/pages/{{ page.url }}">{{ page.title }}</a></li>
+		<li><a href="{{ SITEURL }}/{{ page.url }}">{{ page.title }}</a></li>
 		{% endfor %}
 		{% endif %}
 		{% for cat, null in categories %}
