@@ -15,16 +15,11 @@ A set of random utilities used by Moa
 
 import os
 import sys
-import time
-import glob
 import fcntl
 import struct
 import termios
-import errno
-import readline
 import traceback
 import subprocess
-import contextlib
 
 import moa.utils
 import moa.logger as l

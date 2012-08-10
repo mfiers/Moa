@@ -14,7 +14,6 @@ Store Moa wide configuration
 """
 
 import os
-import sys
 
 import Yaco
  

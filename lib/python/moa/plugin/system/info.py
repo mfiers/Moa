@@ -14,9 +14,7 @@ Print info on Moa jobs and Moa
 
 import os
 import re
-import glob
 import fnmatch
-import optparse
 
 import moa.ui
 import moa.utils
