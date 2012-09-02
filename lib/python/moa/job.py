@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.job
 -------
@@ -39,7 +39,7 @@ def newJob(job, template, title, parameters=[], provider=None):
     Create a new job in the wd and return the proper job object
     currently only makefile jobs are supported - later we'll scan the
     template, and instantiate the proper job type
-    
+
     :param job: Job object to fill - needs only wd set.
     :param template: Template name for this job
     :type template: String
@@ -58,8 +58,9 @@ def newJob(job, template, title, parameters=[], provider=None):
     job.conf.save()
     return job
 
+
 def newTestJob(template, title="Test job", provider=None):
-    """    
+    """
     for testing purposes - creates a temporary directory and uses that to
     instantiate a job. This function returns the job object created
 
@@ -70,7 +71,7 @@ def newTestJob(template, title="Test job", provider=None):
     >>> assert(os.path.exists(os.path.join(job.wd, '.moa')))
     >>> assert(os.path.exists(os.path.join(job.wd, '.moa', 'template')))
     >>> assert(job.template.name == 'adhoc')
-    
+
     :returns: the created job
     :rtype: instance of :class:`moa.job.Job`
     """
@@ -82,19 +83,20 @@ def newTestJob(template, title="Test job", provider=None):
     job.conf.save()
     return job
 
+
 class Job(object):
     """
     Class defining a single job
 
     Note - in the moa system, there can be only one current job - many
-    operations try to access the job in sysConf 
+    operations try to access the job in sysConf
 
     >>> wd = tempfile.mkdtemp()
     >>> job = Job(wd)
     >>> assert(isinstance(job, Job))
-    >>> assert(job.template.name == 'nojob')    
+    >>> assert(job.template.name == 'nojob')
     """
-      
+
     def __init__(self, wd):
         """
         :param wd: The directory containing the job
@@ -107,13 +109,12 @@ class Job(object):
             wd = wd[:-1]
         self.wd = wd
 
+        l.debug('Instantiating job in %s' % self.wd)
 
-        l.debug('Creating job with wd %s' % self.wd)
-        
         self.confDir = os.path.join(self.wd, '.moa')
         self.templateFile = os.path.join(self.confDir, 'template')
-        self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
-     
+        self.templateMetaFile = os.path.join(
+            self.confDir, 'template.d', 'meta')
 
         self.backend = None
         self.args = []
@@ -124,8 +125,8 @@ class Job(object):
 
         self.confDir = os.path.join(self.wd, '.moa')
         self.templateFile = os.path.join(self.confDir, 'template')
-        self.templateMetaFile = os.path.join(self.confDir, 'template.d', 'meta')
-
+        self.templateMetaFile = os.path.join(
+            self.confDir, 'template.d', 'meta')
 
         # a list of globs that defines what is crucial to a Moa job
         # and what is not.
@@ -140,12 +141,12 @@ class Job(object):
             'Readme', 'README', 'Readme.*',
             'Changelog', 'CHANGELOG', 'Changelog.*',
             'blog.*', 'blog'
-            ]
+        ]
 
         if wd.split(os.path.sep)[-1] == '.moa':
             #this is a .moa dir = cannot be a job
             pass
-        else:    
+        else:
             self.run_hook('prepare')
 
             self.loadTemplate()
@@ -156,26 +157,24 @@ class Job(object):
             self.run_hook('pre_filesets')
             self.prepareFilesets()
             self.renderFilesets()
-            
 
     def load_config(self):
         # then load the job configuration
         self.run_hook('pre_load_config')
         self.conf = moa.jobConf.JobConf(self)
 
-
     def run_hook(self, hook, **kwargs):
         """
         Shortcut to run a job plugin hook
         """
         self.pluginHandler.run(hook, job=self, **kwargs)
-        
+
     def prepareFilesets(self):
         moa.filesets.prepare(self)
 
     def renderFilesets(self):
         moa.filesets.render(self)
-        
+
     def getFiles(self):
         """
         Return all moa files - i.e. all files crucial to this job.
@@ -188,9 +187,9 @@ class Job(object):
         remove = [x for x in rv if x[-1] == '~']
         rv.difference_update(remove)
         return list(rv)
-    
+
     def hasCommand(self, command):
-        """        
+        """
         Check if this job defines a certain command
 
         .. Warning::
@@ -211,20 +210,20 @@ class Job(object):
     def checkCommands(self, command):
         """
         Check command, and rearrange if there are delegates.
-        
+
         >>> job = newTestJob('unittest')
         >>> assert(job.template.commands.run.delegate == ['prepare', 'run2'])
         >>> assert(job.checkCommands('run2') == ['run2'])
         >>> assert(job.checkCommands('run') == ['prepare', 'run2'])
         >>> assert(job.checkCommands('prepare') == ['prepare'])
-        
+
         :param commands: The list of commands to check
         :type commands: list of strings
         :returns: The checked list of commands
         :rtype: list of strings
-        """        
+        """
         rv = []
-        if self.template.commands.get(command, {}).has_key('delegate'):
+        if 'delegate' in self.template.commands.get(command, {}):
             rv.extend(self.template.commands[command].delegate)
         else:
             rv.append(command)
@@ -234,7 +233,7 @@ class Job(object):
     def checkConfDir(self):
         """
         Check if the configuration directory exists. If not create it.
-        
+
         >>> job = newTestJob('unittest')
         >>> confdir = os.path.join(job.wd, '.moa')
         >>> assert(os.path.exists(confdir))
@@ -244,10 +243,10 @@ class Job(object):
         >>> job.checkConfDir()
         >>> assert(os.path.exists(confdir))
         """
-        
+
         if not os.path.exists(self.confDir):
             os.mkdir(self.confDir)
-            
+
     def execute(self, job, args, **kwargs):
         """
         Execute `command` in the context of this job. Execution is
@@ -256,9 +255,9 @@ class Job(object):
         #Note: Uncertain how to test verbose & silent
 
         :param verbose: output lots of data
-        :type verbose: Boolean        
+        :type verbose: Boolean
         :param silent: output nothing
-        :type silent: Boolean        
+        :type silent: Boolean
 
         """
 
@@ -267,7 +266,7 @@ class Job(object):
         # second) - not really necessary - but required for the plugin
         # command calls.
         assert(job == self)
-        
+
         if not self.backend:
             moa.ui.exitError("No backend loaded - cannot execute %s" % command)
 
@@ -278,27 +277,27 @@ class Job(object):
 
         #prepare for execution - i.e. prepare log dir, etc..
         self.prepareExecute()
-        
+
         #unless command == 'run' - just execute it and return the RC
         if command != 'run':
             l.debug("Simple type execute of '%s'" % command)
-            rc =  self.backend.execute(self, command, args)
+            rc = self.backend.execute(self, command, args)
             sysConf.rc = rc
             if rc != 0:
                 sysConf.pluginHandler.run("post_error")
                 moa.ui.exitError("Error running")
             return rc
-        
+
         # command == 'run' is a special case - this will trigger a series of
         # runs.
 
         l.debug("Starting RUN")
         for subcommand in ['prepare', 'run', 'finish']:
-            self.pluginHandler.run("pre_%s" % subcommand, job = self)
+            self.pluginHandler.run("pre_%s" % subcommand, job=self)
             l.debug("Starting RUN/%s" % subcommand)
             try:
                 rc = self.backend.execute(self, subcommand, args)
-                l.debug(("executing backend '%s' finished "+
+                l.debug(("executing backend '%s' finished " +
                         "with an rc of %s") % (subcommand, rc))
                 if rc != 0:
                     sysConf.rc = rc
@@ -306,7 +305,7 @@ class Job(object):
                     moa.ui.exitError("Exit on error")
             except moa.exceptions.MoaCommandDoesNotExist:
                 l.debug("%s step is not present" % subcommand)
-        
+
         self.finishExecute()
 
         return sysConf.rc
@@ -314,14 +313,14 @@ class Job(object):
     def prepareExecute(self):
         """
         Give this job a chance to prepare for execution.
-        
+
         """
 
         #organize a run id..
         runIdFile = os.path.join(self.confDir, 'last_run_id')
         sysConf.runId = 1
         lock = lockfile.FileLock(runIdFile)
-        
+
         try:
             with lock:
                 old_id = 0
@@ -344,7 +343,7 @@ class Job(object):
         logDir = os.path.join(self.confDir, 'log.d', '%d' % sysConf.runId)
         if not os.path.exists(logDir):
             os.makedirs(logDir)
-        
+
         #and a shortcut to that folder
         latestDir = os.path.join(self.confDir, 'log.latest')
         if os.path.exists(latestDir):
@@ -354,30 +353,28 @@ class Job(object):
                 #possibly not a link, but a folder - post copying -
                 #try that
                 shutil.rmtree(os.path.join(self.confDir, 'log.latest'))
-                
+
         os.symlink('log.d/%d' % sysConf.runId, latestDir)
 
-        l.debug("Acquired job id %s" % sysConf.runId)              
+        l.debug("Acquired job id %s" % sysConf.runId)
 
         #see if the backend wants to do something
         if self.backend and getattr(self.backend, 'prepare', None):
             self.backend.prepare()
 
-        
     def finishExecute(self):
         """
         Finish the run!
         """
         if self.backend and getattr(self.backend, 'finish', None):
-            self.backend.finish()            
-                
+            self.backend.finish()
 
     def defineCommands(self, commandparser):
         """
         Register template commands with the argparser
         """
         parser, cparser = moa.args.getParser()
-        
+
         if self.hasCommand('unittest'):
             # this does not have to be defined in the .moa - if it is here
             # we'll register it
@@ -386,22 +383,23 @@ class Job(object):
                 'unittest', help=hlp)
 
             sysConf.commands['unittest'] = {
-                'desc' : hlp,
-                'long' : hlp,
-                'source' : 'template',
-                'recursive' : 'global',
-                'needsJob' : True,
-                'call' : self.execute }
-        
+                'desc': hlp,
+                'long': hlp,
+                'source': 'template',
+                'recursive': 'global',
+                'needsJob': True,
+                'call': self.execute
+            }
+
         for c in self.template.commands:
             cinf = self.template.commands[c]
             hlp = cinf.get('help', '').strip()
             if not hlp:
                 hlp = '(Execute template command "%s")' % c
-                
+
             cp = cparser.add_parser(
                 str(c), help=hlp)
-            
+
             cp.add_argument(
                 "-r", "--recursive", dest="recursive", action="store_true",
                 default="false", help="Run this job recursively")
@@ -409,7 +407,7 @@ class Job(object):
             cp.add_argument(
                 "-v", "--verbose", dest="verbose", action="store_true",
                 help="Show debugging output")
-            
+
             cp.add_argument(
                 "--bg", dest="background", action="store_true",
                 help="Run moa in the background (implies -s)")
@@ -417,24 +415,25 @@ class Job(object):
             cp.add_argument(
                 "--profile", dest="profile", action="store_true",
                 help="Run the profiler")
-            
+
             cp.add_argument(
                 "-j", dest="threads", type=int,
                 default=1, help="No threads to use when running Ruffus")
 
             self.run_hook('defineCommandOptions', parser=cp)
             sysConf.commands[c] = {
-                'desc' : hlp,
-                'long' : hlp,
-                'source' : 'template',
-                'recursive' : 'global',
-                'needsJob' : True,
-                'call' : self.execute }
-        
+                'desc': hlp,
+                'long': hlp,
+                'source': 'template',
+                'recursive': 'global',
+                'needsJob': True,
+                'call': self.execute
+            }
+
     def defineOptions(self, parser):
         """
         Set command line options - deferred to the backend - PER COMMAND
-        
+
         >>> job = newTestJob('unittest')
         >>> import optparse
         >>> parser = optparse.OptionParser()
@@ -444,23 +443,23 @@ class Job(object):
         #self.run_hook('defineOptions', parser=parser)
         if self.backend and getattr(self.backend, 'defineOptions'):
             self.backend.defineOptions(parser)
-                
+
     def refreshTemplate(self):
         """
         Reload the template into the local .moa/template.d directory
 
         >>> job = newTestJob('unittest')
-        >>> templateFile = os.path.join(job.confDir, 'template.d', 'unittest.jinja2')
-        >>> assert(os.path.exists(templateFile))
-        >>> os.unlink(templateFile)
-        >>> assert(not os.path.exists(templateFile))
+        >>> templ = os.path.join(job.confDir, 'template.d', 'unittest.jinja2')
+        >>> assert(os.path.exists(templ))
+        >>> os.unlink(templ)
+        >>> assert(not os.path.exists(templ))
         >>> job.refreshTemplate()
-        >>> assert(os.path.exists(templateFile))
-        
+        >>> assert(os.path.exists(templ))
+
         """
         moa.template.refresh(self.wd)
-        
-    def setTemplate(self, name, provider = None):
+
+    def setTemplate(self, name, provider=None):
         """
         Set a new template for this job
 
@@ -472,13 +471,13 @@ class Job(object):
         self.checkConfDir()
         l.debug("Setting job template to %s" % name)
         #get the template
-        moa.template.installTemplate(self.wd, name, provider = provider)
+        moa.template.installTemplate(self.wd, name, provider=provider)
         self.loadTemplate()
-        
+
     def loadTemplate(self):
         """
-        
-        Load the template for this job, based on what configuration 
+
+        Load the template for this job, based on what configuration
         can be found
         """
 
@@ -487,14 +486,13 @@ class Job(object):
         self.loadBackend()
 
     def loadTemplateMeta(self):
-        """        
-        Load the template meta data for this job, based on what configuration 
+        """
+        Load the template meta data for this job, based on what configuration
         can be found
         """
         self.templateMeta = Yaco.Yaco()
         if os.path.exists(self.templateMetaFile):
             self.templateMeta.load(self.templateMetaFile)
-        l.debug("Job loaded template metadata")
 
     def loadBackend(self):
         """
@@ -504,32 +502,31 @@ class Job(object):
         l.debug("attempt to load backend %s" % backendName)
         try:
             moduleName = 'moa.backend.%s' % backendName
-            module =  __import__( moduleName, globals(),
-                                   locals(), [moduleName], -1)            
+            module = __import__(moduleName, globals(),
+                                locals(), [moduleName], -1)
             l.debug("Successfully Loaded module %s" % moduleName)
         except ImportError, e:
             if str(e) == "No module named %s" % moduleName:
                 l.critical("Backend %s does not exists" % backendName)
             l.critical("!! Error loading backend %s" % backendName)
             raise
-            
+
         #self.backend = getattr(module, backendName.capitalize())(self)
         self.backend = getattr(module, 'load')(self)
         self.initialize()
 
-        
     def isMoa(self):
         """
-        Check if this is a Moa directory - Currently, this needs to be overridden
-        #weird; uncertain if this ever gets called
-        
+        Check if this is a Moa directory - Currently,
+        this needs to be overridden
+
+        TODO: check if this  ever gets called
         """
         if not os.path.exists(os.path.join(self.wd, '.moa')):
             return False
         if str(self.template.name).lower() == 'noJob':
             return False
         return True
-                              
 
     def initialize(self):
         """
@@ -539,9 +536,3 @@ class Job(object):
             l.debug("calling backend to initialize template %s" %
                     self.template.name)
             self.backend.initialize()
-        
-
-
-####
-# nose tests
-
