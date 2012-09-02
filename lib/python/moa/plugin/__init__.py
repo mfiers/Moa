@@ -30,96 +30,93 @@ class PluginHandler():
         self.config = config
         self.pluginList = self.getPluginOrder()
         self.initialize()
-        
+
     def getPluginOrder(self):
-        tmprv = []        
+        tmprv = []
         for p in self.config:
             if self.config[p].get('enabled', True):
                 tmprv.append((self.config[p].get('order', 100), p))
         return [x[1] for x in sorted(tmprv)]
-        
+
     def initialize(self):
         """
         attempt to load the python modules for each plugin
         """
-        
+
         ## do we have a python module??
         l.debug('Start plugin init')
+        successfully_loaded = []
         for plugin in self.pluginList:
             self.config[plugin] = Yaco.Yaco()
-
             pyModule = self.config[plugin].module
-
             try:
-                l.debug("trying to load module %s" % pyModule)
                 #print plugin, pyModule
-                _m =  __import__( pyModule, globals(), locals(), ['git'], -1)
+                _m = __import__(pyModule, globals(), locals(), ['git'], -1)
                 self.config[plugin]['loaded_module'] = _m
-                l.debug("Successfully Loaded module %s" % pyModule)
+                successfully_loaded.append(pyModule)
             except ImportError, e:
-                sys.stderr.write("ERROR - Plugin %s is not (properly) installed\n" % plugin)
+                sys.stderr.write(
+                    "ERROR - Plugin %s is not (properly) installed\n" % plugin)
                 if '-v' in sys.argv or '-vv' in sys.argv:
                     raise
-                sys.exit(-1)
-        
-    
+                else:
+                    sys.exit(-1)
+        l.debug("loaded module %s" % ", ".join(successfully_loaded))
+
     def run(self, command, reverse=False, only=[], **kwargs):
         """
         Executing a plugin hook
 
-        possibly in `reverse` order
-        possiby only plugins in the `only` list
+        :param reverse: execute in reverse order
+        :param only: execute only the plugins in this list
+        :param **kwargs: pass these parameters on to the plugin function
         """
-        #import traceback
-        #print '~' * 80
-        #print "\n".join(traceback.format_stack()[-4:-1])
-        #print 'calling ', command
         rv = {}
         runOrder = copy.copy(self.pluginList)
         if reverse:
             runOrder.reverse()
 
-        l.debug("plugin command run of hook %s" % command)
-                        
+        executed_in = []
         for p in runOrder:
             if only and not p in only:
                 continue
 
             plugin_info = self.config[p]
             if not plugin_info:
-                sys.stderr.write("ERROR - potential problem with plugin %s" % p)
+                sys.stderr.write(
+                    "ERROR - potential problem with plugin %s" % p)
                 sys.exit()
 
             m = plugin_info['loaded_module']
-            
 
-            if not m.__dict__.has_key('hook_' + command):
+            if not 'hook_' + command in m.__dict__:
                 continue
 
-
-            l.debug("plugin executing hook %s for %s" % (command, p))
-            #rv[p]= eval("m.hook_%s" % command)
-            #print p, command
             rv[p] = getattr(m, "hook_" + command)(**kwargs)
+            executed_in.append(p)
+
+        if len(executed_in) > 0:
+            l.debug("Executed hook %s in %s" % (
+                command, ", ".join(executed_in)))
         return rv
-            
+
     def execute(self, command):
         """
-        Run a command callback 
+        Run a command callback
         """
         self.run('prepare_3')
         self.run("pre%s" % command.capitalize())
 
         commandInfo = self.sysConf.commands[command]
 
-        if not commandInfo.has_key('call'):
-            raise Exception("Invalid command - no callback %s" % command) 
+        if not call in commandInfo:
+            raise Exception(
+                "Invalid command - no callback %s" % command)
 
         commandInfo['call'](self.sysConf.job)
-        
+
         self.run("post%s" % command.capitalize(), reverse=True)
         self.run('finish', reverse=True)
-
 
     def getAttr(self, attribute):
         """
@@ -128,10 +125,9 @@ class PluginHandler():
         """
         for p in self.pluginList:
             a = getattr(self.plugins[p], attribute, None)
-            if a: yield p, a
+            if a:
+                yield p, a
 
-#Should I create a global placeholder for this moa run??
-#moaPlugins = Plugins()
 
 class BasePlugin:
     def __init__(self):
