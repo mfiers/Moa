@@ -31,7 +31,7 @@ def generate_redirect(job):
         os.unlink('index.html')
     with open('index.html', 'w') as F:
         F.write(jtemplate.render({
-            'job' : job}))
+            'job': job}))
 
 
 def generate_template_page(job):
