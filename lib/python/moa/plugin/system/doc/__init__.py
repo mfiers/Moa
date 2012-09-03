@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **doc** - Manage job documentation
 ----------------------------------
@@ -30,29 +30,32 @@ from moa.sysConf import sysConf
 
 from moa.plugin.system.doc import pelican_util
 
+
 def hook_finish():
 
     if not sysConf.commands[sysConf.args.command]['logJob']:
         return
 
-    if sysConf.args.command == 'change': 
+    if sysConf.args.command == 'change':
         #this is already taken care of!
         return
 
-    message = moa.ui._textFormattedMessage(
-        [ 'changelog',
-          sysConf.args.changeMessage,
-          sysConf.doc.changeMessage ] )
-    
+    message = moa.ui._textFormattedMessage([
+        'changelog', sysConf.args.changeMessage,
+        sysConf.doc.changeMessage
+    ])
+
     if message:
         _writeMessage(
             category='change',
-            txt = message)
-    
+            txt=message)
+
+
 def hook_defineOptions():
     sysConf.argParser.add_argument(
         '-m', action='store',
-        dest='changeMessage', help = 'Change message for this operation')
+        dest='changeMessage', help='Change message for this operation')
+
 
 def _writeMessage(category, txt):
     """
@@ -61,7 +64,7 @@ def _writeMessage(category, txt):
     :param txt: message to save
     :type txt: array of strings
     """
-    
+
     dirname = os.path.join('doc', category)
     if not os.path.exists(dirname):
         os.makedirs(dirname)
@@ -69,8 +72,8 @@ def _writeMessage(category, txt):
     now = datetime.datetime.now()
 
     filename = os.path.join(dirname, '%s_%d%d%d_%d%d%d.md' % (
-            category, now.year, now.month, now.day,
-            now.hour, now.minute, now.second))
+        category, now.year, now.month, now.day,
+        now.hour, now.minute, now.second))
 
     title = txt[0]
     txt = txt[1:]
@@ -82,12 +85,6 @@ def _writeMessage(category, txt):
         F.write("Author: %s\n\n" % getpass.getuser())
         F.write("\n".join(txt))
 
-        #header = "**%s - %s changes**" % (
-        #    now.strftime("On %A, %d %b %Y %H:%M"), getpass.getuser()) 
-        #F.write("%s\n\n" %  header)
-        #F.write("    " + "\n    ".join(txt))
-        #F.write("\n-----\n")
-        #F.write(oldFile)
 
 def _readFromuser(job, header):
     """
@@ -123,7 +120,7 @@ def blog(job, args):
         Enter your blog message (ctrl-d on an empty line to finish)
 
         ... enter your message here ..
-        
+
         [ctrl-d]
 
     Note: the ctrl-d needs to be given on an empty line. The text is
@@ -140,7 +137,7 @@ def blog(job, args):
         message = [" ".join(args.message)]
     else:
         message = _readFromuser(
-            job, 
+            job,
             header="Enter your BLOG message (ctrl-d on an empty " +
             "line to finish)")
 
@@ -148,7 +145,7 @@ def blog(job, args):
         message.append("\nStdin:\n")
         message.extend(["    " + x for x in sin.split("\n")])
 
-    
+
     _writeMessage('blog', message)
 
     moa.ui.message("Created a blog entry", store=False)
@@ -156,7 +153,7 @@ def blog(job, args):
 
 def _getFromStdin():
     import re
-    
+
     if not sys.stdin.isatty():
         m = sys.stdin.read()
         #print m
@@ -170,7 +167,7 @@ def _getFromStdin():
 def change(job, args):
     """
     Add entry to CHANGELOG.md
-    
+
     This function allows the user to add an entry to CHANGELOG.md
     (including a timestamp). Use it as follows::
 
@@ -178,7 +175,7 @@ def change(job, args):
         Enter your changelog message (ctrl-d on an empty line to finish)
 
         ... enter your message here ..
-        
+
         [ctrl-d]
 
     Note: the ctrl-d needs to be given on an empty line. The text is
@@ -194,11 +191,11 @@ def change(job, args):
 
     Note. It is also possible to cat some text into moa change:
 
-    wc -l | moa change 
+    wc -l | moa change
 
     Moa will still query you for a message and append the data from
     stdin to the message
-    
+
 
     """
 
@@ -208,14 +205,14 @@ def change(job, args):
         message = [" ".join(args.message)]
     else:
         message = _readFromuser(
-            job, 
+            job,
             header="Enter your CHANGELOG message (ctrl-d on an empty " +
             "line to finish)")
 
     if sin:
         message.append("\nStdin:\n")
         message.extend(["    " + x for x in sin.split("\n")])
-    
+
     _writeMessage('change', message)
 
     moa.ui.message("Created a changelog entry", store=False)
@@ -239,36 +236,39 @@ def pelican(job, args):
     if not os.path.exists('doc'):
         os.makedirs('doc')
 
+    #call a plugin hook to let other plugins generate pelican pages
+    # (if they want to)
+
+    job.pluginHandler.run('pelican', job=job)
+    sysConf.pluginHandler.run('pelican')
+
     pelican_util.generate_parameter_page(job)
     pelican_util.generate_file_page(job)
     pelican_util.generate_readme_page(job)
     pelican_util.generate_template_page(job)
 
     if args.force or (not os.path.exists(peliconf)):
-        jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.doc'))
+        jenv = jinja2.Environment(
+            loader=jinja2.PackageLoader('moa.plugin.system.doc'))
         jtemplate = jenv.select_template(['pelican.conf.jinja2'])
 
         txt = jtemplate.render(sysConf)
         with open(peliconf, 'w') as F:
             F.write(txt)
-            
+
     if not os.path.exists(renderdir):
         os.makedirs(renderdir)
 
     cl = 'pelican -q -t %s -s .moa/pelican.conf.py -o doc/pelican/ doc/' % (
         themedir)
+    l.debug("Executing pelican:")
+    l.debug("   %s" % cl)
     subprocess.Popen(cl, shell=True)
 
-    
-    #make a symlink to the index.thml
-    if not os.path.exists('index.html'):
-        os.symlink('doc/pelican/index.html', 'index.html')
-    
+    #create a redirect page to the proper index.thml
+    pelican_util.generate_redirect(job)
 
-    
-            
-    
-    
+
 @moa.args.command
 def readme(job, args):
     """
@@ -276,28 +276,31 @@ def readme(job, args):
 
     You could, obviously, also edit the file yourself - this is a mere
     shortcut - maybe it will stimulate you to maintain a README file
-    """    
-    subprocess.call(os.environ.get('EDITOR','nano').split() + ['README.md'])
+    """
+    subprocess.call(
+        os.environ.get('EDITOR', 'nano').split() + ['README.md'])
+
 
 def _update_git(filename):
     """
-    Check if a file is under version control & commit changes    
+    Check if a file is under version control & commit changes
     """
     job = sysConf.job
     if not sysConf.git.repo:
         #repo is not initalized..(not in a repository?)
         return
-    
-    if os.path.exists(filename):    
+
+    if os.path.exists(filename):
         sysConf.git.repo.index.add([filename])
         sysConf.git.commitJob(job, 'Worked on %s in  %s' % (filename, job.wd))
-        
-    
+
+
 def hook_git_finish_readme():
     """
     Execute just after setting running moa readme
     """
     _update_git('README.md')
+
 
 def hook_git_finish_blog():
     """
