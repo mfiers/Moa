@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
 #
@@ -13,15 +15,92 @@ import logging
 from logging import DEBUG, INFO, WARNING, CRITICAL
 
 import traceback
-LOGGER = logging.getLogger('moa')
 
+
+class MoaFormatter(logging.Formatter):
+    """
+    A somewhat more advanced formatter
+    """
+
+    def formatTime(self, record, datefmt):
+        return time.strftime("%d%m%y:%H%M%S")
+
+    def format(self, record):
+        """
+        Defines two extra fields in the record class, upon formatting:
+        - visual, a visual indication of the severity of the message
+        - tb, a formatted traceback, used when sending mail
+        @param record: the log message record
+        """
+        record.coloff = chr(27) + "[0m"
+        record.colon = chr(27) + "[1m"
+
+        if record.levelno <= logging.DEBUG:
+            record.colon = chr(27) + "[30m" + chr(27) + "[47m"
+            record.visual = "#DBUG "
+            record.vis1 = "DBG"
+        elif record.levelno <= logging.INFO:
+            record.colon = chr(27) + "[30m" + chr(27) + "[42m"
+            record.visual = "#INFO "
+            record.vis1 = "INF"
+        elif record.levelno <= logging.WARNING:
+            record.visual = "#WARN "
+            record.colon = chr(27) + "[30m" + chr(27) + "[46m"
+            record.vis1 = "WRN"
+        elif record.levelno <= logging.ERROR:
+            record.visual = "#ERRR "
+            record.vis1 = "ERR"
+            record.colon = chr(27) + "[30m" + chr(27) + "[43m"
+        else:
+            record.colon = chr(27) + "[30m" + chr(27) + "[41m"
+            record.visual = "#CRIT "
+            record.vis1 = "CRT"
+
+        record.blue = chr(27) + "[34m"
+        record.green = chr(27) + "[32m"
+
+        record.msg = " ".join(str(record.msg).split(" "))
+
+        #check if we're on a tty, if not, reset colon/coloff
+        if not sys.stdout.isatty():
+            record.colon = ""
+            record.coloff = ""
+
+        caller = traceback.extract_stack()[-11]
+        record.file = caller[0]
+        module = os.path.basename(record.file).replace('.py', '')
+        if module == '__init__':
+            module = os.path.basename(
+                record.file.replace('/__init__.py', '')) + '.m'
+
+        record.msg = record.msg[:30]
+        record.module = module
+        record.lineno = str(caller[1])
+        record.function = caller[2]
+
+        #check if there is an env variable that prevents ANSI
+        #coloring
+        if 'MOAANSI' in os.environ and \
+           os.environ['MOAANSI'] == 'no':
+            record.blue = ""
+            record.green = ""
+            record.colon = ""
+            record.coloff = ""
+
+        return logging.Formatter.format(self, record)
+
+LOGGER = logging.getLogger()
 handler = logging.StreamHandler()
+logmark = chr(27) + '[0;45mⲮ' + chr(27) + '[0m'
 
-logmark = chr(27) + '[0;45mMOA' + chr(27) + '[0m'
+normalFormatter = MoaFormatter(logmark + '%(colon)s%(vis1)s%(coloff)s ' +
+                               '%(name)s - %(message)s')
+handler.setFormatter(normalFormatter)
+LOGGER.addHandler(handler)
 
-logging.basicConfig(format=logmark +
-                    ' %(name)s - %(message)s',
-                    datefmt='%y/%m/%d %H:%M:%S')
+#logging.basicConfig(format=logmark +
+#                    ' %(name)s - %(message)s',
+#                    datefmt='%y/%m/%d %H:%M:%S')
 
 
 def exitError(message=""):
