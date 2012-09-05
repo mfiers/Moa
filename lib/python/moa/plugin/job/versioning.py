@@ -58,8 +58,6 @@ def _get_specific_versioninfo(run_id):
                 l.warning(line.strip())
                 continue
             vd[ls[0]] = ls[1].strip()
-    from pprint import pprint
-    pprint(vd)
     return vd
 
 

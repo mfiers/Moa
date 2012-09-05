@@ -1,8 +1,7 @@
 author: Mark Fiers
 backend: ruff
 prerequisites:
-  xml_grep: 
-    version: 'xml_grep --version'
+  xml_grep: 'xml_grep --version 2>&1'
 commands:
   clean:
     help: Remove all job data, not the Moa job itself, note that this must be implemented

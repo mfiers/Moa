@@ -1,4 +1,3 @@
-
 """
 Functions to support pelican
 """

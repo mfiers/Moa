@@ -30,14 +30,22 @@ class SysConf(Yaco.Yaco):
 
     
     def __init__(self):
-        
-        
+                
         super(SysConf, self).__init__(moa.resources.getResource('etc/config'))
 
         l.debug("Loading system config: %s" % USERCONFIGFILE)
         if os.path.exists(USERCONFIGFILE):
             self.load(USERCONFIGFILE)
-        
+            
+        #assign a runId
+        runid = '.moa/last_run_id'
+        if os.path.exists(runid):
+            lri = open(runid).read().strip()
+        else:
+            lri = 1
+            
+
+                
     def getVersion(self):
         """
         Return the version number of this Moa instance
