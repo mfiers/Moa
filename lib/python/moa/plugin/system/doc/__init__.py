@@ -228,6 +228,10 @@ def pelican(job, args):
     Run pelican :)
     """
 
+    jenv = jinja2.Environment(
+        loader=jinja2.PackageLoader('moa.plugin.system.doc'))
+    sysConf.plugins.pelican.jenv = jenv
+
     themedir = os.path.join(os.path.dirname(__file__), 'theme')
     sysConf.doc.server = socket.gethostname()
     peliconf = '.moa/pelican.conf.py'
@@ -248,8 +252,6 @@ def pelican(job, args):
     pelican_util.generate_template_page(job)
 
     if args.force or (not os.path.exists(peliconf)):
-        jenv = jinja2.Environment(
-            loader=jinja2.PackageLoader('moa.plugin.system.doc'))
         jtemplate = jenv.select_template(['pelican.conf.jinja2'])
 
         txt = jtemplate.render(sysConf)
