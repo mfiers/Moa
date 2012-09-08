@@ -187,23 +187,21 @@ def hook_pelican():
             'vinfo': vinfo}))
 
 
-@moa.args.needsJob
-@moa.args.command
-def log(job, args):
+def _getLog(job, noLines=10):
     """
-    Show activity log
+    Retrieve the last noLines of the log file
 
-    Shows a log of moa commands executed. Only commands with an impact
-    on the pipeline are logged, such as `moa run` & `moa set`.
+    :param noLines: no of lines to retrieve
+    :type noLines: int
     """
 
-    noLines = 10
     logFile = os.path.join(job.confDir, 'log')
 
     moa.utils.moaDirOrExit(job)
     if not os.path.exists(logFile):
         moa.ui.exit("No logs found")
 
+    rv = []
     with open(logFile) as F:
         #read the last 2k - prevent reading the whole file
         try:
@@ -228,18 +226,30 @@ def log(job, args):
 
                 continue
 
-            status, command, logLevel, start, stop, delta, command = \
-                line.split("\t")
+            rv.append(line.split("\t"))
+    return rv
 
-            logLevel = int(logLevel)
-            if status == 'ok':
-                lc = '{{bold}}{{green}}Success {{reset}}'
-            elif status == 'error':
-                lc = "{{bold}}{{red}}Error   {{reset}}"
-            else:
-                lc = "{{blue}}%-8s{{reset}}" % status[:7].capitalize()
+@moa.args.needsJob
+@moa.args.command
+def log(job, args):
+    """
+    Show activity log
 
-            lc += "%s " % start.rsplit(':', 1)[0]
-            lc += "%10s " % niceRunTime(delta)
-            lc += command
-            moa.ui.fprint(lc, f='jinja')
+    Shows a log of moa commands executed. Only commands with an impact
+    on the pipeline are logged, such as `moa run` & `moa set`.
+    """
+    for logRec in _getLog(job, 10):
+        status, command, logLevel, start, stop, delta, command = logRec
+
+        logLevel = int(logLevel)
+        if status == 'ok':
+            lc = '{{bold}}{{green}}Success {{reset}}'
+        elif status == 'error':
+            lc = "{{bold}}{{red}}Error   {{reset}}"
+        else:
+            lc = "{{blue}}%-8s{{reset}}" % status[:7].capitalize()
+
+        lc += "%s " % start.rsplit(':', 1)[0]
+        lc += "%10s " % niceRunTime(delta)
+        lc += command
+        moa.ui.fprint(lc, f='jinja')

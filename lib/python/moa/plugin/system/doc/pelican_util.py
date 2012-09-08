@@ -1,18 +1,27 @@
 """
 Functions to support pelican
 """
-
+import datetime
 import os
-import jinja2
-jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.doc'))
 
 import moa.logger
-l = moa.logger.getLogger(__name__)
-
 from Yaco import Yaco
+
+import jinja2
+
+
+jenv = jinja2.Environment(loader=jinja2.PackageLoader('moa.plugin.system.doc'))
+
+l = moa.logger.getLogger(__name__)
 
 
 def _getpagename(name):
+    """
+    Create a filename for a pelican page with this name
+
+    :param name: Name of the page
+    :type name: String
+    """
     pagedir = os.path.join('doc', 'pages')
     if not os.path.exists(pagedir):
         os.makedirs(pagedir)
@@ -20,9 +29,31 @@ def _getpagename(name):
     return os.path.join(pagedir, name)
 
 
+def _getpostname(category):
+    """
+    Return a file name for a (blog) "post" -
+
+    :param category: post category
+    :type category: string
+    """
+
+    pagedir = os.path.join('doc', category)
+    if not os.path.exists(pagedir):
+        os.makedirs(pagedir)
+
+    now = datetime.datetime.now()
+    filename = os.path.join(pagedir, '%s_%d%d%d_%d%d%d.md' % (
+        category, now.year, now.month, now.day,
+        now.hour, now.minute, now.second))
+    return filename
+
+
 def generate_redirect(job):
     """
     Create a redirect page
+
+    :param job: job for the HTML redirect
+    :type job: moa.job.Job object
     """
     jtemplate = jenv.select_template(['redirect.jinja2'])
     pagename = _getpagename('template.md')
@@ -36,10 +67,13 @@ def generate_redirect(job):
 def generate_template_page(job):
     """
     create a page with template parameters
+
+    :type job: moa.job.Job object
     """
     jtemplate = jenv.select_template(['template.page.jinja2'])
-    pagename = _getpagename('template.md')
+    pagename = _getpostname('template')
 
+    l.warning("generate template page")
     with open(pagename, 'w') as F:
         F.write(jtemplate.render({
             't': job.template}))
