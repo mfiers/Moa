@@ -1,5 +1,8 @@
 author: Mark Fiers
 backend: ruff
+prerequisites:
+  blastall: 'blastall | grep blastall'
+  biopython: 'python -c "import Bio; print Bio.__version__"'
 commands:
   report:
     help: Generate a text BLAST report.
