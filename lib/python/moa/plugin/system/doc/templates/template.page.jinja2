@@ -1,40 +1,58 @@
 Title: template "{{ t.moa_id }}"
 Category: template
 
-{{ t.description }}
-
 {% macro printpar(p) -%}
-{{ "%24s"|format('**' + p + '**') }} |
-{%- if t.parameters[p]['optional'] == False %} M {% else %} O {% endif %}|
-{%- if t.parameters[p]['type'] %}{{ "%10s"|format(t.parameters[p].type)}} {% else %} -         {% endif -%}
-|{% if t.parameters[p].help %}{{t.parameters[p].help}}{%endif%}
-{% endmacro -%}
+{{ p }}
+:    {% if t.parameters[p].help -%}
+         {{t.parameters[p].help}}
+     {%- else -%}
+     	 *(no help provided)*
+     {%- endif %}
 
-{%- macro printfs(f) -%}
-{{ "%24s"|format('**' + f + '**') }} |{%- set strip='yes' -%}
-{% if t.filesets[f].optional%} O {% else %} M {% endif %}|{%- set strip='yes' -%}
-{{ "%10s"|format(t.filesets[f].category) }}|{%- set strip='yes' -%}
-{{ "%10s"|format(t.filesets[f].type) }}|{%- set strip='yes' -%}
-{% if t.filesets[f].help %}{{ t.filesets[f].help }}{% endif %}
+     *type: *
+       {%- if t.parameters[p]['type'] -%}
+          {{ t.parameters[p].type }}
+       {%- else -%}
+          String
+       {%- endif %}<br>
+       optional: {%- if t.parameters[p]['optional'] == True %}yes{% else %}no{% endif %}
+
 {% endmacro -%}
+{%- macro printfs(f) -%}
+{{ f }}
+:    {% if t.filesets[f].help -%}
+         {{ t.filesets[f].help }}
+     {%- else -%}
+     	 *(no help provided)*
+     {%- endif %}
+
+     *type:* {{ t.filesets[f].type }}<br>
+     *category:* {{ t.filesets[f].category }}<br>
+     *optional:* {% if t.filesets[f].optional %}yes{% else %}no{% endif %}
+
+{% endmacro %}
+
+### Description
+
+{{ t.description }}
 
 ### Filesets
 
-Name                     | O | category | type     | help
--------------------------|---|----------|----------|-------------------------------------------------------------
 {% for p in t.filesets -%}
 {{ printfs(p) }}
 {%- endfor %}
 
 ### Parameters
 
-Name                     | O | type      | help
--------------------------|---|-----------|-------------------------------------------------------------
 {% for p in t.parameters -%}
 {%- if p[0] != "_" and p[:4] != "moa" %}{{printpar(p)}}{% endif %}
 {%- endfor %}
 
+### Private parameters
 
+{% for p in t.parameters -%}
+{%- if p[0] == "_" or p[:4] != "moa" %}{{printpar(p)}}{% endif %}
+{%- endfor %}
 
 ### General
 
