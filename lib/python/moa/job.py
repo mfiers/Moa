@@ -64,13 +64,13 @@ def newTestJob(template, title="Test job", provider=None):
     for testing purposes - creates a temporary directory and uses that to
     instantiate a job. This function returns the job object created
 
-    >>> job = newTestJob(template = 'adhoc', title='test title')
+    >>> job = newTestJob(template = 'simple', title='test title')
     >>> assert(isinstance(job, Job))
     >>> assert(os.path.exists(job.wd))
     >>> assert(job.conf.title == 'test title')
     >>> assert(os.path.exists(os.path.join(job.wd, '.moa')))
     >>> assert(os.path.exists(os.path.join(job.wd, '.moa', 'template')))
-    >>> assert(job.template.name == 'adhoc')
+    >>> assert(job.template.name == 'simple')
 
     :returns: the created job
     :rtype: instance of :class:`moa.job.Job`
@@ -464,8 +464,8 @@ class Job(object):
         Set a new template for this job
 
         >>> job = newTestJob('unittest')
-        >>> job.setTemplate('adhoc')
-        >>> afile = os.path.join(job.confDir, 'template.d', 'adhoc.mk')
+        >>> job.setTemplate('simple')
+        >>> afile = os.path.join(job.confDir, 'template.d', 'simple.jinja2')
         >>> assert(os.path.exists(afile))
         """
         self.checkConfDir()
