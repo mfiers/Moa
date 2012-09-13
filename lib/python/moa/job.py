@@ -54,7 +54,7 @@ def newJob(job, template, title, parameters=[], provider=None):
     job.conf.title = title
     for pk, pv in parameters:
         job.conf[pk] = pv
-        moa.ui.message('setting "%s" to "%s"' % (pk, pv))
+        moa.ui.message('Setting "%s" to "%s"' % (pk, pv))
     job.conf.save()
     return job
 
