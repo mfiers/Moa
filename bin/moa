@@ -1,22 +1,22 @@
 #!/usr/bin/env python
-# 
+#
 # Copyright 2009, 2010 Mark Fiers, Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Moa is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or (at your
 # option) any later version.
-# 
+#
 # Moa is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 # or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
 # License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with Moa.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 """
 Moa executable
 
@@ -26,13 +26,13 @@ Run order
 
  * define & load plugins
  * __main__
- 
+
     * plugin run 'prepare_1'
     * bg - then fork
        * Forking
-       
-    
- *    
+
+
+ *
  * prepare_1_hook
 
  1) check if we're going to backgound - if yes, do so & exit
@@ -70,7 +70,6 @@ import moa.exceptions
 import moa.logger
 l = moa.logger.getLogger('test')
 
-
 ## define an initial command line parser - so all commands
 ## can define themselves.
 parser, commandparser = moa.args.getParser()
@@ -92,7 +91,7 @@ def run_3(wd, exitOnError=True):
 
     Running means that either a plugin callback is called or the main
     job is executed. Main job execution consists of three steps:
-    
+
     - prepare
     - run
     - finish
@@ -121,7 +120,7 @@ def run_3(wd, exitOnError=True):
     sysConf.job = job
     job.defineOptions(parser)
     job.defineCommands(commandparser)
-    
+
     # Only now the full set of options is parsed
     # first check if there is a command (i.e. any item on sys.argv
     # not starting with a -. If not add the default command
@@ -132,17 +131,17 @@ def run_3(wd, exitOnError=True):
                 sysConf.default_command)
         args = parser.parse_args(sys.argv[1:] + \
                                  [sysConf.default_command])
-        
+
     sysConf.args = args
     sysConf.pluginHandler.run('prepare_3')
     l.debug("Command is %s" % sysConf.args.command)
-    
+
     command = sysConf.args.command
     sysConf.originalCommand = command
-    sysConf.command = command        
+    sysConf.command = command
 
     ## Proper setting of verbosity - after parsing of the
-    ## command line    
+    ## command line
     if sysConf.options.verbose:
         moa.logger.setVerbose()
 
@@ -158,11 +157,11 @@ def run_3(wd, exitOnError=True):
         if comInf.get('needsJob', False) and not job.isMoa():
             moa.ui.exitError(("Must execute 'moa %s' in a directory "+
                               "containing a Moa job (try moa -h)") % command)
-            
+
         sysConf.pluginHandler.run('prepare')
         #job.run_hook('prepare') #executed during job initialization
         sysConf.pluginHandler.run('pre%s' % command.capitalize())
-        
+
         #run the command function
         l.debug("running plugin callback for %s" % command)
         commandFunction = sysConf.commands[command]['call']
@@ -196,15 +195,15 @@ def run_recursive(wd):
                 except moa.exceptions.MoaInvalidCommandLine:
                     moa.ui.warn("Cannot run moa %s in %s" % (
                         " ".join(sys.argv[1:]), path))
-            
+
         # remove all '.' directories from the list to recurse
-        
+
         drem = [ x for x in dirs if x[0] in ['.', '_'] ]
         [ dirs.remove(t) for t in drem]
-        
+
     sysConf.pluginHandler.run('post_recursive')
 
-    
+
 def run_2(force_silent=False):
     """
     Are we going to do a recursive run?: check if -r is in the arguments...
@@ -220,7 +219,7 @@ def run_2(force_silent=False):
     'global'
 
     """
-    
+
     sysConf.pluginHandler.run('prepare_recursion')
 
     wd = moa.utils.getCwd()
@@ -232,7 +231,7 @@ def run_2(force_silent=False):
         except moa.exceptions.MoaInvalidCommandLine, e:
             parser = e.args[0]
             parser.real_error()
-            
+
     else:
         #default mode is global
         recurseMode = 'global'
@@ -249,7 +248,7 @@ def run_2(force_silent=False):
             recurseMode = sysConf.commands[command].get('recursive', 'global')
         else:
             recurseMode = 'global'
-            
+
         if recurseMode == 'global':
             run_recursive(wd)
         elif recurseMode == 'none':
@@ -292,13 +291,13 @@ def _handle_error( message):
     """
     sys.stderr.write("ERROR!\n")
     sys.stderr.write(message + "\n")
-    try:        
+    try:
         sysConf.rc = -1
         sysConf.pluginHandler.run("post_error")
     except Exception, e:
         sys.stderr.write("Error - cannot run post_error plugin hook:\n")
         sys.stderr.write(str(e) + "\n\n")
-    
+
 ## Main dispatcher
 if __name__ == "__main__":
     """
@@ -314,10 +313,10 @@ if __name__ == "__main__":
                 import pstats
                 cProfile.run('run_1()', tf.name)
                 p = pstats.Stats(tf.name)
-                
+
                 moa.ui.message("Profiler output (%s)" % tf.name)
                 p.sort_stats('cumulative').print_stats(20)
-                
+
             except ImportError:
                 moa.ui.exitError("Cannot run the profiler - "+
                                  "make sure it is properly installed")
@@ -332,13 +331,13 @@ if __name__ == "__main__":
         else:
             sys.exit(-2)
     except moa.exceptions.MoaDirNotWritable:
-        _handle_error("the .moa directory is not writable") 
+        _handle_error("the .moa directory is not writable")
     except IOError, e:
         _handle_error("IOError - maybe the .moa directory is not writable")
         raise e
     except Exception:
-        _handle_error("Unexpected error") 
+        _handle_error("Unexpected error")
         moa.ui.warn("Encountered a run error?")
-        
-        raise 
+
+        raise
 
