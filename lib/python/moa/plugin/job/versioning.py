@@ -174,6 +174,4 @@ def hook_pre_run(job):
         moa.ui.warn("Version differences found")
         for k in diffset:
             v = diffset[k]
-            moa.ui.warn(" - %s" % k)
-            moa.ui.warn("   last run: '%s'" % v[0])
-            moa.ui.warn("   now: '%s'" % v[1])
+            moa.ui.warn(' - %s is now "%s" (was "%s")' % (k, v[1], v[0]))
