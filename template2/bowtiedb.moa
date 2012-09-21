@@ -25,11 +25,6 @@ filesets:
 moa_id: bowtiedb
 modification_date: Wed Dec 09 07:56:48 2010
 name: bowtiedb
-parameter_category_order:
-- ''
-- input
-- system
-- advanced
 parameters:
   extra_params:
     category: ''
@@ -37,4 +32,5 @@ parameters:
     help: any option parameters
     optional: true
     type: string
-title: Bowtie index builder
+  title:
+    default: Bowtie index builder
