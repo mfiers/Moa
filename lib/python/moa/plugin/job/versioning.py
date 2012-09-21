@@ -21,7 +21,7 @@ import moa.logger
 from moa.sysConf import sysConf
 
 l = moa.logger.getLogger(__name__)
-l.setLevel(moa.logger.DEBUG)
+l.setLevel(moa.logger.WARNING)
 
 
 def _run_cl(cl):
@@ -104,7 +104,7 @@ def hook_pelican(job):
 
     jenv = sysConf.plugins.pelican.jenv
     jtemplate = jenv.select_template(['versioning.page.jinja2'])
-    with open('./doc/pages/version.md', 'w') as F:
+    with open('.moa/doc/pages/version.md', 'w') as F:
         F.write(jtemplate.render({
             'last_run_id': last_run_id,
             'vrange': vrange,

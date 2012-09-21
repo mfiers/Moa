@@ -57,15 +57,18 @@ def hook_defineOptions():
         dest='changeMessage', help='Change message for this operation')
 
 
-def _writeMessage(category, txt):
+def _writeMessage(category, txt, title=None):
     """
     Append a markdown formatted message to either CHANGELOG or BLOG
 
+    :param category: the category of message
+    :param title: an optional title for the message
+    :type title: string
     :param txt: message to save
     :type txt: array of strings
     """
 
-    dirname = os.path.join('doc', category)
+    dirname = os.path.join('.moa', 'doc', category)
     if not os.path.exists(dirname):
         os.makedirs(dirname)
 
@@ -75,8 +78,11 @@ def _writeMessage(category, txt):
         category, now.year, now.month, now.day,
         now.hour, now.minute, now.second))
 
-    title = txt[0]
-    txt = txt[1:]
+    if title is None:
+        title = txt[0]
+        txt = txt[1:]
+
+    txt = "\n".join(txt).rstrip() + "\n"
 
     #title = "%s" % category.capitalize()
 
@@ -221,7 +227,6 @@ def change(job, args):
 
 @moa.args.doNotLog
 @moa.args.needsJob
-@moa.args.addFlag('-f', '--force', help='force rewriting of configuration')
 @moa.args.command
 def pelican(job, args):
     """
@@ -233,12 +238,13 @@ def pelican(job, args):
     sysConf.plugins.pelican.jenv = jenv
 
     themedir = os.path.join(os.path.dirname(__file__), 'theme')
+
     sysConf.doc.server = socket.gethostname()
     peliconf = '.moa/pelican.conf.py'
-    renderdir = 'doc/pelican'
+    renderdir = '.moa/doc/pelican'
 
-    if not os.path.exists('doc'):
-        os.makedirs('doc')
+    if not os.path.exists('.moa/doc/pages'):
+        os.makedirs('.moa/doc/pages')
 
     #call a plugin hook to let other plugins generate pelican pages
     # (if they want to)
@@ -251,18 +257,18 @@ def pelican(job, args):
     pelican_util.generate_readme_page(job)
     pelican_util.generate_template_page(job)
 
-    if args.force or (not os.path.exists(peliconf)):
-        jtemplate = jenv.select_template(['pelican.conf.jinja2'])
+    jtemplate = jenv.select_template(['pelican.conf.jinja2'])
 
-        txt = jtemplate.render(sysConf)
-        with open(peliconf, 'w') as F:
-            F.write(txt)
+    txt = jtemplate.render(sysConf)
+    with open(peliconf, 'w') as F:
+        F.write(txt)
 
     if not os.path.exists(renderdir):
         os.makedirs(renderdir)
 
-    cl = 'pelican -q -t %s -s .moa/pelican.conf.py -o doc/pelican/ doc/' % (
-        themedir)
+    cl = ('pelican -q -t %s -m md -s .moa/pelican.conf.py ' +
+          '-o .moa/doc/pelican/ .moa/doc/') % (themedir)
+
     l.debug("Executing pelican:")
     l.debug("   %s" % cl)
     subprocess.Popen(cl, shell=True)

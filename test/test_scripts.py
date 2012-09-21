@@ -1,7 +1,9 @@
 import os
+import shutil
+import stat
+import subprocess as sp
 import tempfile
 import unittest
-import subprocess as sp
 
 
 class TestScript(unittest.TestCase):
@@ -14,8 +16,15 @@ class TestScript(unittest.TestCase):
             pass
 
     def runTest(self):
-        P = sp.Popen([self.script_name], shell=True,
-                     stdout=sp.PIPE, stderr=sp.PIPE)
+
+        tmpdir = tempfile.mkdtemp(suffix='moatest')
+        tmpfile = os.path.join(tmpdir, 'run.sh')
+
+        shutil.copyfile(self.script_name, tmpfile)
+        os.chmod(tmpfile, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
+        P = sp.Popen(['bash', '-vex', tmpfile],
+                     stdout=sp.PIPE, stderr=sp.PIPE,
+                     cwd=tmpdir)
         o, e = P.communicate()
         rc = P.returncode
         msg = ""
@@ -29,6 +38,10 @@ class TestScript(unittest.TestCase):
             msg += "\n"
 
         self.assertTrue(rc == 0, msg=msg)
+        shutil.rmtree(tmpdir)
+
+    def __str__(self):
+        return 'TestScript(%s)' % self.script_name
 
 
 def script_test_suite(subdir):

@@ -162,7 +162,7 @@ def hook_finish():
 
 
 def hook_pelican():
-    l.critical("logger pelican hook")
+    l.debug("logger pelican hook")
     return
     l.debug("pelican versioning output")
     nov = 10

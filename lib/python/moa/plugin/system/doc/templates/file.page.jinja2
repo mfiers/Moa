@@ -1,18 +1,25 @@
-Title: Filesets
-Category: Filesets
+Title: file sets
 
-
-Set  | Name         | Typ | Cat     | File
------|--------------|-----|---------|----------------------------------------------
-{% for fset in sets %}{%- set outerindex=loop.index -%}
-{%- for f in fset -%}
+Set  | Input                   | Output                 |
+-----|-------------------------|------------------------|
+{% for no_in_cat, fset in sets %}{%- set outerindex=loop.index -%}
+{%- for i in range(no_in_cat) -%}
 {%- if loop.index0 == 0 -%}
 {{ "%03d"|format(outerindex) }}. |
 {%- else -%}
 {{ "%4s"|format(" ") }} |
 {%- endif -%}
- {{ "%-12s"|format('**' + f[0][:8] + '**') }} | {{ "%3s"|format(f[1][:3]) }} | {% set dummy=1 -%}
-{{ "%6s"|format(f[2][:6]) }} | {% set dummy=2 -%}
-[{{ f[4] }}]({{ f[4] }}) **/** [{{ f[5] }}]({{ f[3] }})
-{% endfor -%}
-{% endfor %}
+{%- if fset.input|length <= i -%}
+{{ '                         |' }}
+{%- else -%}{% set f=fset['input'][i] -%}
+[{{f[3]}}]({{ f[3] }}) / [&psi;]({{ f[3] }}/index.html) / [{{ f[4] }}]({{ f[2] }}) |
+{%- endif -%}
+{%- if fset.output|length <= i -%}
+{{ '                         |' }}
+{%- else -%}{% set f=fset['output'][i] -%}
+[{{f[3]}}]({{ f[3] }}) / [&psi;]({{ f[3] }}/index.html) / [{{ f[4] }}]({{ f[2] }})
+{%- endif -%}
+{{ '\n' }}
+{%- endfor -%}
+{%- endfor %}
+

@@ -11,17 +11,18 @@
 		<script src="{{ SITEURL }}/theme/html5.js"></script>
 	<![endif]-->
 
-	<!-- Le styles -->
-	<link href="{{ SITEURL }}/theme/bootstrap.min.css" rel="stylesheet">
-	<link href="{{ SITEURL }}/theme/local.css" rel="stylesheet">
-	<link href="{{ SITEURL }}/theme/pygments.css" rel="stylesheet">
+	<link rel="shortcut icon" href="{{ SITEURL }}/theme/images/icons/favicon.ico" />
+	<link href="{{ SITEURL }}/theme/bootstrap.min.css" rel="stylesheet" />
+	<link href="{{ SITEURL }}/theme/local.css" rel="stylesheet" />
+	<link href="{{ SITEURL }}/theme/pygments.css" rel="stylesheet" />
 </head>
 <body>
 	<div class="topbar">
 	  <div class="topbar-inner">
 	    <div class="container-fluid">
-	      <a class="brand" href="{{ SITEURL }}/index.html">{{ SITENAME }}</a>
-              x {{ WD }} x
+	      <a class="brand" href="{{ SITEURL }}/index.html">
+		<img src="{{SITEURL}}/theme/images/moa.logo.very.small.png">
+		{{ SITENAME }} | {{ MOATEMPLATE }} | <b> {{ TITLE }} </b> | </a>
 	      <ul class="nav">
                 <li><a href="{% block jobdir %}../../{% endblock %}">{{WD}}</a></li>
 	      </ul>
@@ -52,7 +53,7 @@
                 </li>
 		{% endfor %}
 	      </ul>
-              
+
 	      <h3>Links</h3>
 	      <ul>
 		{% for name, link in LINKS %}
@@ -68,7 +69,7 @@
 	      <p> Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a>, theme based on <a href="http://twitter.github.com/bootstrap/">Bootstrap from Twitter</a>&copy; {{ AUTHOR }} 2011</p>
 	    </footer>
 	  </div>
-   
+
 	</div>
 </body>
 </html>

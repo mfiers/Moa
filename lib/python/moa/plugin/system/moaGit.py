@@ -1,30 +1,29 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **moaGit** - maintain a git repository with job information
 -----------------------------------------------------------
 
 """
-import os
-import sys
+
 import glob
-import time
-import optparse
+import os
 import subprocess
-
-#import smmap
-#import git
-
-from moa.sysConf import sysConf
+import sys
+import time
 
 import moa.args
 import moa.logger as l
-import moa.plugin.system.newjob
+from moa.sysConf import sysConf
+
+
+#import smmap
+#import git
 
 
 # def hook_defineCommands():
@@ -90,7 +89,7 @@ def _realCommit(repo, files, wd, message):
         repo.git.commit(m='"remove deleted files"')
     except git.exc.GitCommandError:
         pass
-    
+
 def _checkGitIgnore(gitignoreFile):
     """
     See if there is moa dir specific git ignore file - if not create one
@@ -104,7 +103,7 @@ def _checkGitIgnore(gitignoreFile):
             F.write("status\n")
             F.write("*.fof\n")
             F.write("*~\n")
-            
+
 def _commitDir(wd, message):
     """
     Simpler utility to add files to a repository without
@@ -113,11 +112,11 @@ def _commitDir(wd, message):
     repo = sysConf.git.repo
     if not repo: return
 
-    
+
     moadir = os.path.join(wd, '.moa')
     if not os.path.exists(moadir):
         return
-    
+
     gitignoreFile = os.path.join(wd, '.moa', '.gitignore')
     _checkGitIgnore(gitignoreFile)
 
@@ -131,23 +130,23 @@ def _commitDir(wd, message):
                'Readme', 'README', 'Readme.*',
                'Blog', 'BLOG', 'Readme.*',
                'Changelog', 'CHANGELOG', 'Changelog.*' ]:
-        
+
         for f in glob.glob(os.path.join(wd, gl)):
             files.update(set(glob.glob(os.path.join(wd, gl))))
-            
+
         remove = [x for x in files if x[-1] == '~']
         files.difference_update(remove)
 
     _realCommit(repo, list(files), wd, message)
     #repo.git.commit(os.path.join(wd, '.moa', 'template.d'))
-    
+
 def _commit(job, message):
     """
     Commit the current job to the repository
     """
     repo = sysConf.git.repo
     if not repo: return
-    
+
     gitignoreFile = os.path.join(job.wd, '.moa', '.gitignore')
     _checkGitIgnore(gitignoreFile)
 
@@ -156,7 +155,7 @@ def _commit(job, message):
     _realCommit(repo, files, job.wd, message)
     #repo.git.commit(os.path.join(job.wd,  '.moa', 'template.d'))
 
-@moa.args.command                    
+@moa.args.command
 def gitadd(job, args):
     """
     add this job to a git repository
@@ -195,7 +194,7 @@ def hook_finish():
     if sysConf.git.repo == None:
         return
     sysConf.pluginHandler.run('git_finish_%s' % sysConf.originalCommand)
-        
+
 def gitlog(job):
     """
     Print a log to screen
@@ -206,7 +205,7 @@ def gitlog(job):
         return
 
     tags = {}
-    
+
     for t in repo.tags:
         tags[t.commit] = t
 
@@ -215,5 +214,5 @@ def gitlog(job):
 
         if c in tags.keys():
             print " tag| %s" % tags[c]
-        
+
         print "%3s | %s | %s" % (c.count(), t, c.message.split("\n")[0])

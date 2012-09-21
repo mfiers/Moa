@@ -2,7 +2,9 @@
 Functions to support pelican
 """
 import datetime
+import collections
 import os
+import glob
 
 import moa.logger
 from Yaco import Yaco
@@ -22,7 +24,7 @@ def _getpagename(name):
     :param name: Name of the page
     :type name: String
     """
-    pagedir = os.path.join('doc', 'pages')
+    pagedir = os.path.join('.moa', 'doc', 'pages')
     if not os.path.exists(pagedir):
         os.makedirs(pagedir)
 
@@ -37,15 +39,21 @@ def _getpostname(category):
     :type category: string
     """
 
-    pagedir = os.path.join('doc', category)
+    pagedir = os.path.join('.moa', 'doc', category)
     if not os.path.exists(pagedir):
         os.makedirs(pagedir)
+
+    flist = glob.glob(os.path.join(pagedir, '*.md'))
+    if len(flist) == 0:
+        latest = None
+    else:
+        latest = max(flist, key=lambda x: os.stat(x).st_mtime)
 
     now = datetime.datetime.now()
     filename = os.path.join(pagedir, '%s_%d%d%d_%d%d%d.md' % (
         category, now.year, now.month, now.day,
         now.hour, now.minute, now.second))
-    return filename
+    return filename, latest
 
 
 def generate_redirect(job):
@@ -56,7 +64,6 @@ def generate_redirect(job):
     :type job: moa.job.Job object
     """
     jtemplate = jenv.select_template(['redirect.jinja2'])
-    pagename = _getpagename('template.md')
     if os.path.exists('index.html'):
         os.unlink('index.html')
     with open('index.html', 'w') as F:
@@ -71,12 +78,14 @@ def generate_template_page(job):
     :type job: moa.job.Job object
     """
     jtemplate = jenv.select_template(['template.page.jinja2'])
-    pagename = _getpostname('template')
+    pagename = _getpagename('template.md')
 
-    l.warning("generate template page")
+    l.debug("generate template page")
+    newpage = jtemplate.render({
+        't': job.template})
+
     with open(pagename, 'w') as F:
-        F.write(jtemplate.render({
-            't': job.template}))
+        F.write(newpage)
 
 
 def generate_readme_page(job):
@@ -86,7 +95,7 @@ def generate_readme_page(job):
     if not os.path.exists('README.md'):
         return
 
-    targetdir = os.path.join('doc', 'pages')
+    targetdir = os.path.join('.moa', 'doc', 'pages')
     if not os.path.exists(targetdir):
         os.makedirs(targetdir)
     targetfile = os.path.join(targetdir, 'readme.md')
@@ -158,27 +167,30 @@ def generate_file_page(job):
         else:
             data.single['fsid'].files = files
 
-    if len(fsets + fmaps) == 0:
-        with open(pagename, 'w') as F:
-            F.write(jtemplate.render(data))
-        return
-
     #rearrange the files into logical sets
     nofiles = len(job.data.filesets[(fsets + fmaps)[0]].files)
 
     data.sets = []
+    all_categories = ['input', 'output']
     for i in range(nofiles):
-        thisSet = []
+        thisFiles = collections.defaultdict(list)
+        max_in_category = 0
         for j, fsid in enumerate((fsets + fmaps)):
             files = job.data.filesets[fsid].files
             templateInfo = job.template.filesets[fsid]
-            thisSet.append((templateInfo.category,
-                            templateInfo.type,
-                            fsid,
-                            files[i],
-                            os.path.dirname(files[i]),
-                            os.path.basename(files[i])))
-        data.sets.append(thisSet)
+            cat = templateInfo.category
+
+            if not cat in all_categories:
+                all_categories.append(cat)
+
+            thisFiles[cat].append(
+                [templateInfo.type,
+                 fsid,
+                 files[i],
+                 os.path.dirname(files[i]),
+                 os.path.basename(files[i])])
+        max_in_category = max([len(x) for x in thisFiles.values()])
+        data.sets.append((max_in_category, thisFiles))
 
     with open(pagename, 'w') as F:
         F.write(jtemplate.render(data))
