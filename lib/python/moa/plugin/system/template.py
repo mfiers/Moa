@@ -1,10 +1,11 @@
+
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **template** - information on templates
 -------------------------------------------
@@ -22,6 +23,7 @@ import moa.template
 
 from moa.sysConf import sysConf
 
+
 @moa.args.needsJob
 @moa.args.command
 def refresh(job, args):
@@ -32,8 +34,10 @@ def refresh(job, args):
     """
     job.refreshTemplate()
 
+
 def hook_git_finish_refresh():
     sysConf.git.commitJob(sysConf.job, 'moa refresh (%s)' % sysConf.job.wd)
+
 
 def _getTemplateFromData(job):
     """
@@ -42,7 +46,7 @@ def _getTemplateFromData(job):
 
     :param data: global data structure, containing all relevant information
     :type data: dict
-    
+
     """
     args = sysConf['newargs']
     if len(args) > 0 and not '=' in args[0]:
@@ -54,6 +58,7 @@ def _getTemplateFromData(job):
         moa.ui.exitError("No template found")
 
     return template
+
 
 # def templateSet(job):
 #     """
@@ -87,13 +92,15 @@ def list(job, args):
         if args.desc:
             ti = moa.template.getMoaFile(name)
             txt = moa.ui.fformat(
-                '{{bold}}%s{{reset}}:{{cyan}} %s{{reset}}' % (name, ti.description),
+                '{{bold}}%s{{reset}}:{{cyan}} %s{{reset}}'
+                % (name, ti.description),
                 f='jinja')
             for line in textwrap.wrap(txt, initial_indent=' - ', width=80,
-                                      subsequent_indent = '   '):
+                                      subsequent_indent='   '):
                 print line
         else:
             print name
+
 
 @moa.args.private
 @moa.args.command
@@ -105,9 +112,10 @@ def template(job, args):
 
         moa template
 
-        
+
     """
     moa.ui.fprint(job.template.name)
+
 
 @moa.args.private
 @moa.args.command
