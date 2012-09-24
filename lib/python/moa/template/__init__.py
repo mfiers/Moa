@@ -13,19 +13,14 @@ Store information on a template. This module is also responsible for
 retrieving template information.
 
 """
-
 import os
 import shutil
-import datetime
 
 import Yaco
-
-import moa.ui
-import moa.utils
 import moa.logger as l
-
+import moa.ui
 from moa.template import provider
-from moa.template.template import Template
+
 
 PROVIDERS = provider.Providers()
 
