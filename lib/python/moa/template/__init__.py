@@ -107,7 +107,5 @@ def refresh(wd):
     l.debug("template name  %s" % meta.name)
     l.debug("from provider %s" % provider)
 
-    installTemplate(wd,
-                    tName = meta.name,
+    installTemplate(wd, tName=meta.name,
                     provider=meta.get('provider', None))
-
