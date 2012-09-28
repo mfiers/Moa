@@ -15,7 +15,6 @@ retrieving template information.
 """
 
 import os
-import copy
 
 import Yaco
 
@@ -28,7 +27,7 @@ class Template(Yaco.Yaco):
     Template extends Yaco
     """
 
-    def __init__(self, templateFile):
+    def __init__(self, wd):
         """
         Initialze the template object, which means:
 
@@ -46,7 +45,18 @@ class Template(Yaco.Yaco):
 
         super(Template, self).__init__(self)
 
-        self.templateFile = templateFile
+        templateFile1 = os.path.join('.moa', 'template.d', 'template')
+        templateFile2 = os.path.join('.moa', 'template')
+
+        self.metaFile = os.path.join('.moa', 'template.meta')
+        self.loadMeta()
+
+        if os.path.exists(templateFile1):
+            self.templateFile = templateFile1
+        elif os.path.exists(templateFile2):
+            self.templateFile = templateFile2
+        else:
+            self.templateFile = templateFile1
 
         #set a few defaults to be used by each template
         self.parameters = {}
@@ -101,6 +111,15 @@ class Template(Yaco.Yaco):
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         if not self.name == 'nojob' and not self.modification_date:
             self.modification_date = os.path.getmtime(self.templateFile)
+
+    def loadMeta(self):
+        """
+        Load the template meta data for this job, based on what configuration
+        can be found
+        """
+        self.meta = Yaco.Yaco()
+        if os.path.exists(self.metaFile):
+            self.templateMeta.load(self.metaFile)
 
     def getRaw(self):
         """
