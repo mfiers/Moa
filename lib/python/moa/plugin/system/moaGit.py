@@ -12,7 +12,7 @@
 """
 import glob
 import os
-import subprocess
+import subprocess as sp
 import sys
 import time
 
@@ -20,6 +20,11 @@ import git
 import moa.args
 import moa.logger as l
 from moa.sysConf import sysConf
+
+
+def _callGit(cl):
+    moa.ui.message("executing %s" % cl)
+    return sp.call(cl, shell=True)
 
 
 def _getRepo(job):
@@ -34,11 +39,12 @@ def _getRepo(job):
     except git.InvalidGitRepositoryError:
         return None
 
+
 def _checkInRepo(job):
     """
     Check if we're inside a repository
     """
-    rc = subprocess.call(['git status --porcelain -uno'].split())
+    rc = sp.call(['git status --porcelain -uno'].split())
     if rc == 0:
         l.debug("In a git repository (%s)" % job.wd)
         return True
@@ -104,7 +110,7 @@ def _commitDir(wd, message):
     if not os.path.exists(moadir):
         return
 
-    _checkGitIgnore(wd)
+    #_checkGitIgnore(wd)
 
     files = set()
     for gl in sysConf.plugins.system.moaGit.commit:
@@ -125,7 +131,7 @@ def _commit(job, message):
     if not repo:
         return
 
-    _checkGitIgnore(job.wd)
+    #_checkGitIgnore(job.wd)
 
     files = []
     files.extend(job.getFiles())
@@ -161,6 +167,7 @@ def hook_prepare_3():
     """
     sysConf.git.commit = _commit
     sysConf.git.active = True
+    sysConf.git.callGit = _callGit
     sysConf.git.commitJob = _commit
     sysConf.git.commitDir = _commitDir
     sysConf.git.getRepo = _getRepo
@@ -193,7 +200,10 @@ def hook_postNew():
     if sysConf.job.template.name != 'project':
         return
 
-    l.warning("Creating a new git repository")
+    #create a .gitignore file
+    _checkGitIgnore(sysConf.job.wd)
+
+    moa.ui.warn("Creating a new git repository")
     sysConf.git.repo = git.Repo.init(sysConf.job.wd)
     _commit(sysConf.job, "New Moa Project")
 
