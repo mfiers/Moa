@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.provider.core
 -----------------
@@ -15,19 +15,17 @@ Provides templates from the Moa package.
 import os
 import shutil
 
-import pkg_resources
-
 import Yaco
-
-import moa.logger as l
+import moa.logger
 import moa.resources
-
-from moa.sysConf import sysConf
 from moa.template import provider
 
 
+l = moa.logger.getLogger(__name__)
+
+
 class Core(provider.ProviderBase):
-    
+
     TEMPLATEBASE = 'template2'
 
     def hasTemplate(self, tName):
@@ -52,10 +50,10 @@ class Core(provider.ProviderBase):
         for f in moa.resources.listResource(self.TEMPLATEBASE):
             if f[-4:] != '.moa':
                 continue
-            if f[0] == '.': 
+            if f[0] == '.':
                 continue
             name = f.replace(".moa", "")
-            r.append(f[:-4])
+            r.append(name)
         return r
 
     def installTemplate(self, wd, tName):
@@ -73,9 +71,12 @@ class Core(provider.ProviderBase):
         moaFile.save(os.path.join(wd, '.moa', 'template'))
 
         for f in moa.resources.listResource(self.TEMPLATEBASE):
-            if not f.find(tName) == 0: continue
-            if f[-1] in ['~', '#']: continue
+            if not f.find(tName) == 0:
+                continue
+            if f[-1] in ['~', '#']:
+                continue
+
             if f[-4:] == '.moa': continue
             with open(os.path.join(wd, '.moa', 'template.d', f), 'w') as F:
-                F.write(moa.resources.getResource(os.path.join(self.TEMPLATEBASE, f)))
-
+                F.write(moa.resources.getResource(
+                    os.path.join(self.TEMPLATEBASE, f)))

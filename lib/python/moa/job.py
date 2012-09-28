@@ -112,9 +112,6 @@ class Job(object):
         l.debug('Instantiating job in %s' % self.wd)
 
         self.confDir = os.path.join(self.wd, '.moa')
-        self.templateFile = os.path.join(self.confDir, 'template')
-        self.templateMetaFile = os.path.join(
-            self.confDir, 'template.d', 'meta')
 
         self.backend = None
         self.args = []
@@ -122,11 +119,6 @@ class Job(object):
 
         #used by the backends to store specific data
         self.data = Yaco.Yaco()
-
-        self.confDir = os.path.join(self.wd, '.moa')
-        self.templateFile = os.path.join(self.confDir, 'template')
-        self.templateMetaFile = os.path.join(
-            self.confDir, 'template.d', 'meta')
 
         # a list of globs that defines what is crucial to a Moa job
         # and what is not.
@@ -143,20 +135,25 @@ class Job(object):
             'blog.*', 'blog'
         ]
 
-        if wd.split(os.path.sep)[-1] == '.moa':
-            #this is a .moa dir = cannot be a job
-            pass
-        else:
-            self.run_hook('prepare')
+        self.init2()
 
-            self.loadTemplate()
-            self.loadTemplateMeta()
+    def init2(self):
+        """
+        Continue initialization
+        """
+        if self.wd.split(os.path.sep)[-1] == '.moa':
+           #this is a .moa dir = cannot be a job
+            return
 
-            self.load_config()
-            #prepare filesets (if need be)o
-            self.run_hook('pre_filesets')
-            self.prepareFilesets()
-            self.renderFilesets()
+        self.run_hook('prepare')
+
+        self.loadTemplate()
+
+        self.load_config()
+        #prepare filesets (if need be)
+        self.run_hook('pre_filesets')
+        self.prepareFilesets()
+        self.renderFilesets()
 
     def load_config(self):
         # then load the job configuration
@@ -480,25 +477,16 @@ class Job(object):
         Load the template for this job, based on what configuration
         can be found
         """
-
-        self.template = moa.template.Template(self.templateFile)
+        self.template = moa.template.Template(self.wd)
         l.debug("Job loaded template %s" % self.template.name)
         self.loadBackend()
-
-    def loadTemplateMeta(self):
-        """
-        Load the template meta data for this job, based on what configuration
-        can be found
-        """
-        self.templateMeta = Yaco.Yaco()
-        if os.path.exists(self.templateMetaFile):
-            self.templateMeta.load(self.templateMetaFile)
 
     def loadBackend(self):
         """
         load the backend
         """
         backendName = self.template.backend
+
         l.debug("attempt to load backend %s" % backendName)
         try:
             moduleName = 'moa.backend.%s' % backendName

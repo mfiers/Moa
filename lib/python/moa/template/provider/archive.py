@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.provider.core
 -----------------
@@ -71,7 +71,7 @@ class Archive(provider.ProviderBase):
         for f in os.listdir(self.directory):
             if f[-7:] != '.tar.gz':
                 continue
-            if f[0] == '.': 
+            if f[0] == '.':
                 continue
             name = f.replace(".moa", "")
             r.append(f[:-7])
