@@ -62,7 +62,8 @@ def process_dir():
     else:
         print "README.md exists - use '-f' to overwrite"
 
-    os.system('git add README.md COPYING')
+    os.system('git add -f README.md COPYING')
+    os.system('git add -f template *.jinja2')
 
     print "possible commands that might need to be executed"
     print "writing README.md"

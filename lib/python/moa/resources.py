@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.resources
 -------------
@@ -25,8 +25,9 @@ def resourceExists(what):
         __name__, os.path.join('..', what)) \
         or \
         pkg_resources.resource_exists(
-        __name__, os.path.join('..', '..', '..', what))
-    
+            __name__, os.path.join('..', '..', '..', what))
+
+
 def getResource(what):
     """
     Gets a data file from the moa package.
@@ -35,20 +36,21 @@ def getResource(what):
     either three dirs up, or only one. This depends on if this a
     pypi (one dir up) package or the git package (three dirs up)
     """
-    
+
     try:
         res = pkg_resources.resource_string(__name__, os.path.join('..', what))
     except IOError:
-        #this is the git-package structure - bit inconvenient really
+        #this seems to be the package structure - bit inconvenient really
         res = pkg_resources.resource_string(
             __name__, os.path.join('..','..','..', what))
     return res
+
 
 def listResource(what):
     """
     List a directory
     """
-    
+
     if pkg_resources.resource_isdir(__name__, os.path.join('..', what)):
         what = os.path.join('..', what)
     else:

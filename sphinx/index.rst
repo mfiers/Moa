@@ -16,7 +16,7 @@ giving the user full access to all aspects of the workflow (see also
 Quick links
 ===========
 * Source code: https://github.com/mfiers/Moa
-* Issue tracker: https://github.com/mfiers/Moa/issues 
+* Issue tracker: https://github.com/mfiers/Moa/issues
 * Old issue tracker <http://moamoa.lighthouseapp.com/projects/73665-moa/overview>
 * Python Package Index: http://pypi.python.org/pypi/moa/ (note - this
   is not updated regularly - might not work)
@@ -31,10 +31,11 @@ Table of contents:
    :glob:
 
    goals
-   intro   
+   intro
    install
    coretemplates
    sync
+   git
    #using
    #configuration
    #filesets

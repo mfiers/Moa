@@ -33,7 +33,7 @@ keys that are not present (yet). For example::
     >>> x = Yaco()
     >>> x.a.b.c.d = 1
     >>> assert(x.a.b.c.d == 1)
-    
+
 works - `a`, `b` and `c` are assumed to be `Yaco` dictionaries and d
 is give value `1`. This makes populating data structures easy.
 
@@ -67,6 +67,7 @@ import sys
 import yaml
 import pprint
 
+
 class Yaco(dict):
     """
     Rather loosely based on http://code.activestate.com/recipes/473786/ (r1)
@@ -78,13 +79,13 @@ class Yaco(dict):
     >>> v= Yaco({'a':1})
     >>> assert(v.a == 1)
     >>> assert(v['a'] == 1)
-    
+
     """
-    
+
     def __init__(self, data={}):
         """
         Constructor
-        
+
         :param data: data to initialize the Yaco structure with
         :type data: dict
         """
@@ -96,7 +97,7 @@ class Yaco(dict):
     def __str__(self):
         """
         Map the structure to a string
-        
+
         >>> v= Yaco({'a':1})
         >>> assert(str(v.a) == '1')
         """
@@ -105,7 +106,7 @@ class Yaco(dict):
     def __setattr__(self, key, value):
         """
         Set the value of a key
-        
+
         >>> v= Yaco()
         >>> v.a = 18
         >>> assert(v.a == 18)
@@ -114,7 +115,7 @@ class Yaco(dict):
         >>> assert(v.a == 72)
 
         >>> v.a = {'b' : 5}
-        >>> assert(v.a.b == 5)        
+        >>> assert(v.a.b == 5)
 
         >>> v.a = {'c' : {'d' : 19}}
         >>> assert(v.a.b == 5)
@@ -152,7 +153,7 @@ class Yaco(dict):
             super(Yaco, self).__setitem__(key, new_value)
         else:
             super(Yaco, self).__setitem__(key, value)
-     
+
     def has_key(self, key):
         rv = super(Yaco, self).has_key(key)
         return rv
@@ -160,7 +161,7 @@ class Yaco(dict):
     def __getattr__(self, key):
         """
         >>> v= Yaco()
-        >>> v.a = 18       
+        >>> v.a = 18
         >>> assert(v.a == 18)
         >>> assert(isinstance(v.a, int))
         """
@@ -173,7 +174,7 @@ class Yaco(dict):
             rv = Yaco()
             super(Yaco, self).__setitem__(key, rv)
             return rv
-        
+
     def __delitem__(self, name):
         return super(Yaco, self).__delitem__(name)
 
@@ -182,7 +183,7 @@ class Yaco(dict):
         """
         return a simplified representation of this
         Yaco struct - remove Yaco from the equation - and
-        all object reference. Leave only bool, float, str, 
+        all object reference. Leave only bool, float, str,
         lists, tuples and dicts
 
         >>> x = Yaco()
@@ -208,7 +209,7 @@ class Yaco(dict):
                 return str(item)
 
         return _returnSimple(self)
-            
+
     def _list_parser(self, old_list):
         """
         Recursively parse a list & replace all dicts with Yaco objects
@@ -231,7 +232,7 @@ class Yaco(dict):
         >>> assert(v.a[3][1].b == 12)
 
         """
-        if not data: return 
+        if not data: return
         for key, value in data.items():
             #if isinstance(value, Yaco):
             #    raise Exception("Wow - updating with a Yaco - "+
@@ -244,7 +245,7 @@ class Yaco(dict):
                 else:
                     super(Yaco, self).__setitem__(key, Yaco(value))
             elif isinstance(value, list):
-                #parse the list to see if there are dicts - which need to be translated to Yaco objects                
+                #parse the list to see if there are dicts - which need to be translated to Yaco objects
                 new_value = self._list_parser(value)
                 super(Yaco, self).__setitem__(key, new_value)
             else:
@@ -256,7 +257,7 @@ class Yaco(dict):
     def copy(self):
         ch = Yaco(self)
         return ch
-    
+
     def load(self, from_file):
         """
         Load this dict from_file
@@ -280,7 +281,7 @@ class Yaco(dict):
         Return data as a pprint.pformatted string
         """
         return pprint.pformat(self.get_data())
-    
+
     def get_data(self):
         """
         Prepare & parse data for export
@@ -299,7 +300,7 @@ class Yaco(dict):
         >>> assert(d.has_key('a') == True)
         >>> assert(d.has_key('b') == False)
         >>> assert(d.has_key('_c') == False)
-        
+
         """
         data = {}
         _priv = self.get('_private', [])
@@ -313,17 +314,17 @@ class Yaco(dict):
                 val = val.get_data()
             data[k] = val
         return data
-                 
+
     def save(self, to_file, doNotSave=[]):
         """
-        
-        """        
+
+        """
         with open(to_file, 'w') as F:
             data = self.get_data()
             for k in data.keys():
                 if k in doNotSave:
                     del data[k]
-            
+
             F.write(yaml.dump(data, default_flow_style=False))
 
 if __name__ == "__main__":
