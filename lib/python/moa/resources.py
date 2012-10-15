@@ -15,17 +15,27 @@ gets resources from the moa libraries
 """
 
 import os
-import sys
 import pkg_resources
-import moa.logger as l
+import moa.logger
+
+l = moa.logger.getLogger(__name__)
 
 
 def resourceExists(what):
-    return pkg_resources.resource_exists(
+
+    in_package = pkg_resources.resource_exists(
         __name__, os.path.join('..', what)) \
         or \
         pkg_resources.resource_exists(
             __name__, os.path.join('..', '..', '..', what))
+
+    if in_package:
+        return True
+
+    if os.path.exists(os.path.join('/usr/local/share/moa', what)):
+        return True
+
+    return False
 
 
 def getResource(what):
@@ -39,21 +49,45 @@ def getResource(what):
 
     try:
         res = pkg_resources.resource_string(__name__, os.path.join('..', what))
+        return res
     except IOError:
-        #this seems to be the package structure - bit inconvenient really
+        pass
+
+    try:
+        # old package structure - or so I'm afraid
         res = pkg_resources.resource_string(
-            __name__, os.path.join('..','..','..', what))
-    return res
+            __name__, os.path.join('..', '..', '..', what))
+        return res
+    except:
+        pass
+
+    usl = os.path.join('/usr/local/share/moa', what)
+    if os.path.exists(usl):
+        with open(usl) as F:
+            res = F.read()
+        return res
+
+    raise IOError
 
 
 def listResource(what):
     """
     List a directory
     """
+    usl = os.path.join('/usr/local/share/moa', what)
 
     if pkg_resources.resource_isdir(__name__, os.path.join('..', what)):
         what = os.path.join('..', what)
-    else:
+        return  pkg_resources.resource_listdir(__name__, what)
+    elif pkg_resources.resource_isdir(__name__,
+                                      os.path.join('..', '..', '..', what)):
         what = os.path.join('..', '..', '..', what)
+        return  pkg_resources.resource_listdir(__name__, what)
+    elif os.path.exists(usl):
+        return  os.listdir(usl)
 
-    return  pkg_resources.resource_listdir(__name__, what)
+
+
+
+
+
