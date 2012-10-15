@@ -1,6 +1,7 @@
 include VERSION
 include README
 include COPYING
+include Changelog.txt
 include etc/bash_completion.d/moa
 include etc/config
 
