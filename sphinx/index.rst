@@ -10,17 +10,15 @@ giving the user full access to all aspects of the workflow (see also
 :ref:`goals`).
 
 
-**NOTE: both the software and the manual are under development. Things
-  might change.**
+**NOTE: The software (and manual) are under development. Things might change.**
 
 Quick links
 ===========
-* Source code: https://github.com/mfiers/Moa
+* Latest documentation: http://moa.readthedocs.org/en/latest
+* Source code at `Github <https://github.com/mfiers/Moa>`_
 * Issue tracker: https://github.com/mfiers/Moa/issues
 * Old issue tracker <http://moamoa.lighthouseapp.com/projects/73665-moa/overview>
-* Python Package Index: http://pypi.python.org/pypi/moa/ (note - this
-  is not updated regularly - might not work)
-* Source code at `Github <https://github.com/mfiers/Moa>`_
+* Python Package Index: http://pypi.python.org/pypi/moa/
 * `PDF version of the manual <_static/MoaManual.pdf>`_
 
 Table of contents:
@@ -33,6 +31,10 @@ Table of contents:
    goals
    intro
    install
+   using
+   configuration
+   execution
+   filesets
    coretemplates
    sync
    git
@@ -43,9 +45,6 @@ Table of contents:
    commands/index
    templates/index
    api/index
-
-More information
-================
 
 
 Indices and tables

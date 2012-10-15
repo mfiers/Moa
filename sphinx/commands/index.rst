@@ -61,6 +61,40 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+moa **archive_excl**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa archive_excl [-h] [-r] [-v] [--profile]
+
+Toggle a directory to be included in an moa archive.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **archive_incl**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa archive_incl [-h] [-r] [-v] [--profile]
+
+Toggle a directory to be included in an moa archive.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
 moa **blog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -138,6 +172,24 @@ optional arguments:
   --profile        Run the profiler
   -o, --overwrite  if the target dir exists - overwrite (instead of copying
                    into that dir
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **dumpTemplate**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa dumpTemplate [-h] [-r] [-v] [--profile]
+
+**moa template_dump** - Show raw template information Usage:: moa
+template_dump [TEMPLATE_NAME] Show the raw template sysConf.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -444,6 +496,42 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+moa **raw_commands**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa raw_commands [-h] [-r] [-v] [--profile]
+
+return a list available commands Print a list of known Moa commands, both
+global, plugin defined commands as template specified ones. This command meant
+to be used by software interacting with Moa.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **raw_parameters**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa raw_parameters [-h] [-r] [-v] [--profile]
+
+Print a list of all known parameters
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
 moa **readme**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -470,6 +558,23 @@ moa **refresh**
 usage: moa refresh [-h] [-r] [-v] [--profile]
 
 Refresh the template Reload the template from the original repository.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **rehash**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa rehash [-h] [-r] [-v] [--profile]
+
+cache a list of variables for command line completion
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -592,6 +697,24 @@ optional arguments:
                    local template
   -p               show private parameters
   -a               show all parameters
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **template**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa template [-h] [-r] [-v] [--profile]
+
+**moa template** - Print the template name of the current job Usage:: moa
+template
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
 ~~~~~~~~~~~~~~~~~~
 
