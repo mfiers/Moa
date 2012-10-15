@@ -27,7 +27,7 @@ characters::
 This fileset object contains a list with all `*.txt` files in
 `/tmp`. Subsequently it is possible to map this set
 
- 
+
 
 """
 
@@ -39,9 +39,10 @@ import urlparse
 
 logging.basicConfig(level=logging.WARNING)
 l = logging.getLogger(__name__)
-#l.setLevel(logging.DEBUG)
-DEBUG=False
-    
+
+DEBUG = False
+
+
 class fistCore(list):
     """
     Core class for all fist classes
@@ -53,8 +54,9 @@ class fistCore(list):
         :param context: If the URI is relative - render from this viewpoint
         :type context: Str
         """
+
         l.debug("preparing fileset %s (context %s)" % (url, context))
-        
+
         self.url = url.strip()
         self.context = os.path.abspath(context)
         self.init()
@@ -62,7 +64,7 @@ class fistCore(list):
 
     def init(self):
         self.scheme, self.netloc, self.path, self.glob = \
-             self._urlparse(self.url)
+            self._urlparse(self.url)
 
     def absolute(self):
         olddir = os.getcwd()
@@ -70,22 +72,22 @@ class fistCore(list):
             os.chdir(self.context)
 
         rv = [os.path.abspath(os.path.expanduser(x)) for x in self]
-        
+
         if self.context:
             os.chdir(olddir)
 
         return rv
-            
+
     def _urlparse(self, url):
         o = urlparse.urlparse(url)
-        
-        if o.scheme: scheme = o.scheme
-        else: scheme = 'file'
-        
+
+        if o.scheme:
+            scheme = o.scheme
+        else:
+            scheme = 'file'
+
         netloc = o.netloc
 
-        ext = ''
-        
         urlglob = '*'
 
         if o.path and o.path[-1] == '/':
@@ -97,8 +99,8 @@ class fistCore(list):
         elif '/' in o.path:
             urlpath, urlglob = o.path.rsplit('/', 1)
         else:
-            urlpath='.'
-            urlglob=o.path
+            urlpath = '.'
+            urlglob = o.path
 
         return scheme, netloc, urlpath, urlglob
 
@@ -114,15 +116,16 @@ class fistCore(list):
     def resolve(self):
         """
         This function needs to be overridden
-        context 
+        context
         """
 
-        raise Exception("needs to be overridden")    
+        raise Exception("needs to be overridden")
+
 
 class fistSingle(fistCore):
     """
     Represents a single file
-    
+
     """
     def init(self):
         """
@@ -131,34 +134,33 @@ class fistSingle(fistCore):
         super(fistSingle, self).init()
         self.resolved = True
         self.append(self.url)
-        
+
     def resolve(self):
         self.resolved = True
-    
+
 
 class fistFileset(fistCore):
-    """
-    Most basic set of files - handle a set of files described by a single URI with wildcards, for
-    example::
-    
+    """Most basic set of files - handle a set of files described by a
+    single URI with wildcards, for example::
+
     * `*.txt`
     * `../*.txt`
     * `file:///home/name/data/*.txt`
-        
+
     >>> f = fistFileset('*.txt')
     >>> assert(f.path=='.')
-    >>> assert(f.glob=='*.txt')   
+    >>> assert(f.glob=='*.txt')
     >>> assert(f.path=='.')
-    >>> assert(f.glob=='*.txt')     
+    >>> assert(f.glob=='*.txt')
     >>> f = fistFileset('/tmp')
     >>> assert(f.path=='/tmp')
-    >>> assert(f.glob=='*')    
+    >>> assert(f.glob=='*')
     >>> f = fistFileset('/tmp/*.txt')
     >>> assert(f.path=='/tmp')
-    >>> assert(f.glob=='*.txt')       
+    >>> assert(f.glob=='*.txt')
     >>> f = fistFileset('../*.txt')
     >>> assert(f.path=='..')
-    >>> assert(f.glob=='*.txt')        
+    >>> assert(f.glob=='*.txt')
     >>> f = fistFileset(os.path.join(wd, 'in', '*.txt'))
     >>> f.resolve()
     >>> assert(len(f) == 100)
@@ -168,13 +170,14 @@ class fistFileset(fistCore):
     >>> f = fistFileset('~/*')
     >>> f.resolve()
     >>> assert(len(f) > 0)
+
     """
-    
+
     def init(self):
         if '~' in self.url:
             self.url = os.path.expanduser(self.url)
         super(fistFileset, self).init()
-    
+
     def resolve(self):
         olddir = os.getcwd()
         if self.context:
@@ -190,13 +193,12 @@ class fistFileset(fistCore):
         self.resolved = True
 
 
-
 class fistMapset(fistCore):
     """
     fistMapset
-    
+
     Map set - map a fileset based on a target uri
-    
+
     >>> f = fistFileset(os.path.join(wd, 'in', '*'))
     >>> f.resolve()
     >>> assert(len(f) == 100)
@@ -261,27 +263,27 @@ class fistMapset(fistCore):
     >>> assert(len(m) == 100)
     >>> assert('out/test18.txt' in m)
     """
-    
+
     def init(self):
         if '~' in self.url:
             self.url = os.path.expanduser(self.url)
         super(fistMapset, self).init()
-    
+
     def __str__(self):
-        return self.url    
-    
+        return self.url
+
     def resolver(self, mapFrom, list):
         """
         map all files in the incoming list
         """
-        
+
         reF = ''
         reT = ''
         method = ''
 
         if len(mapFrom) == 0:
             return
-        
+
         l.info("Start mapping. First file: %s" % mapFrom[0])
 
         if not '*' in self.path and not '*' in self.glob:
@@ -290,7 +292,8 @@ class fistMapset(fistCore):
                 return []
             if len(list) == 1:
                 return [os.path.join(self.path, self.glob)]
-            raise Exception("mapping more than one file to a wildcardless map pattern")
+            raise Exception("mapping more than one file to a " +
+                            "wildcardless map pattern")
 
         if '*' in mapFrom.path and '*' in self.path:
             method += 'a'
@@ -304,24 +307,24 @@ class fistMapset(fistCore):
             method += 'c'
             reF = mapFrom.path.replace('*', '.*')
             reT = self.path
-        elif ('*' in self.path) or ('*' in mapFrom.path):            
+        elif ('*' in self.path) or ('*' in mapFrom.path):
             raise Exception("Cannot handle path globs other than '*'")
         else:
             method += 'd'
             reF = mapFrom.path.replace('.', '\.')
             reT = self.path
-            
-
 
         fromStarCount = mapFrom.glob.count('*')
         toStarCount = self.glob.count('*')
 
         if fromStarCount == 0 and toStarCount == 1:
             method += '9'
-            reF += '/(?P<glob>.*)\.[^\.\s]*?$' 
+            reF += '/(?P<glob>.*)\.[^\.\s]*?$'
             reT += '/' + self.glob.replace('*', '\g<glob>')
         elif fromStarCount != toStarCount:
-            raise Exception("Invalid patterns '%s' -> '%s'" % (mapFrom.glob, self.glob))
+            raise Exception("Invalid patterns '%s' -> '%s'" %
+                            (mapFrom.glob, self.glob))
+
         elif  fromStarCount == 0:
             method = '0'
             reF += '/.*$'
@@ -330,48 +333,41 @@ class fistMapset(fistCore):
             addReF = mapFrom.glob
             addReT = self.glob
             for c in range(fromStarCount):
-                addReF = addReF.replace('*', '(?P<glob' + str(c) +'>[\S]*)',1)
-                addReT = addReT.replace('*', '\g<glob' + str(c) +'>',1)
+                addReF = addReF.replace('*', '(?P<glob' + str(c) + '>[\S]*)',
+                                        1)
+                addReT = addReT.replace('*', '\g<glob' + str(c) + '>', 1)
             reF += '/' + addReF
             reT += '/' + addReT
-            
+
         if DEBUG:
-            l.debug( '#' * 95 )
+            l.debug('#' * 95 )
             l.debug(" Method %s *count %d" % (method, fromStarCount))
-            l.debug( 'PATH cur.value : %50s -> %-50s' % (mapFrom.path, self.path))
-            l.debug( 'GLOB cur.value : %50s -> %-50s' % (mapFrom.glob, self.glob))
-            l.debug( 'REGEX FROM '+ reF)
-            l.debug( 'REGEX TO   '+ reT)
-            l.debug( 'METHOD %s' % method)
-            for x in range(min(len(list),3)):
-                logging.debug( 'input file no %d: %s' % (x +1, list[x]))
-                
-        rex = re.compile(reF)        
+            l.debug('PATH cur.value : %50s -> %-50s' %
+                    (mapFrom.path, self.path))
+            l.debug('GLOB cur.value : %50s -> %-50s' %
+                    (mapFrom.glob, self.glob))
+            l.debug('REGEX FROM ' + reF)
+            l.debug('REGEX TO   ' + reT)
+            l.debug('METHOD %s' % method)
+
+            for x in range(min(len(list), 3)):
+                logging.debug('input file no %d: %s' % (x + 1, list[x]))
+
+        rex = re.compile(reF)
         rv = [rex.sub(reT, x) for x in list]
         l.debug("processed map regex. First file is %s" % rv[0])
         if DEBUG:
-            for x in range(min(len(list),3)):
-                logging.debug( 'output file no %d: %s' % (x +1, rv[x]))     
+            for x in range(min(len(list), 3)):
+                logging.debug('output file no %d: %s' % (x + 1, rv[x]))
         return rv
-    
+
     def resolve(self, mapFrom):
         """
-        Resolve the mapped set based on a input fileSet    
+        Resolve the mapped set based on a input fileSet
         """
-        olddir = os.getcwd()
-        #if self.context:
-        #    l.debug("Chdir to %s" % self.context)
-        #    os.chdir(self.context)
         self.extend(self.resolver(mapFrom, mapFrom))
-        # l.debug("found files (first %s)" % self[0])
-        # if self.context:
-        #    os.chdir(olddir)
         self.resolved = True
 
-
-
-
-    
 if __name__ == '__main__':
     import tempfile
 
@@ -385,11 +381,9 @@ if __name__ == '__main__':
         fn = os.path.join(indir, 'in%02d.txt' % x)
         with open(fn, 'w') as F:
             F.write('x' * 1000)
-        fn = os.path.join(outdir, 'out%02d.txt' %x)
+        fn = os.path.join(outdir, 'out%02d.txt' % x)
         with open(fn, 'w') as F:
             F.write('y' * 1000)
-        
-    
+
     import doctest
-    doctest.testmod(extraglobs={'wd' : wd})
- 
+    doctest.testmod(extraglobs={'wd': wd})
