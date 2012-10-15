@@ -2,8 +2,8 @@
 """
 Setup script --
 """
-
 import os
+import glob
 
 from setuptools import setup
 
@@ -13,59 +13,21 @@ with open('VERSION') as F:
 scripts = [os.path.join('bin', x) for x in """
 moa        fastaSplitter  fastaNfinder  fastaInfo  fastaExtract
 fasta2gff  blastReport    blastInfo     blast2gff  moaprompt
-moainit
+moainit    moar
 """.split()]
 
 data_files = []
 template_data = []
 exclude = ['build', 'sphinx', 'debian', 'dist', 'util', 'www']
 
-for dirpath, dirnames, filenames in os.walk('.'):
-
-    toRemove = []
-    for dirname in dirnames:
-        if dirname[0] == '.':
-            toRemove.append(dirname)
-
-        if dirpath == '.' and dirname in exclude:
-            toRemove.append(dirname)
-
-    for t in toRemove:
-        dirnames.remove(t)
-
-    if 'moa.egg-info' in dirpath:
-        continue
-
-    if dirpath[-5:] == '/dist':
-        continue
-
-    toRemove = []
-    for filename in filenames:
-        if filename[-1] in ['~']:
-            toRemove.append(filename)
-        if filename[0] in ['#', '.']:
-            toRemove.append(filename)
-    for t in toRemove:
-        filenames.remove(t)
-
-    if '__init__.py' in filenames:
-        continue
-
-    #np = os.path.join('./', dirpath)
-    if dirpath[0] == '/':
-        np = dirpath[1:]
-    elif dirpath[:2] == './':
-        np = dirpath[2:]
-    else:
-        np = dirpath
-    if np[:3] == 'etc':
-        np = '/etc/moa' + np[3:]
-    data_files.append([np, [os.path.join(dirpath, f) for f in filenames]])
-
-#data_files.append(['/etc/moa', ['./etc/config']])
-
-#from pprint import pprint
-#pprint(data_files)
+data_files = [
+    ('/usr/local/share/moa/template2', glob.glob('template2/*')),
+    ('/usr/local/share/moa/logo', ['share/logo/moa.logo.txt']),
+    ('/usr/local/share/moa/test', glob.glob('share/test/*')),
+    ('/etc/moa',  ['etc/config']),
+    ('/etc/profile.d',  ['etc/profile.d/moa.sh']),
+    ('/etc/bash_completion.d',  ['etc/bash_completion.d/moa']),
+]
 
 packagenames = []
 
@@ -86,14 +48,15 @@ for dirpath, dirnames, filenames in os.walk('./lib/python/moa'):
 
 setup(name='moa',
       version=version,
-      description='Moa - lightweight workflows in bioinformatics',
+      description='Moa - command-line workflows (in bioinformatics)',
       author='Mark Fiers',
       author_email='mark.fiers.42@gmail.com',
       url='http://mfiers.github.com/Moa/',
       packages=packagenames,
       package_dir={'': os.path.join('lib', 'python')},
-      scripts=scripts,
       data_files=data_files,
+      scripts=scripts,
+      zip_safe=False,
       install_requires=[
           'Jinja2>2.0',
           'GitPython>0.3',

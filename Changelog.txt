@@ -1,3 +1,9 @@
+Moa 0.11.2 / 2012-10-15
+==========================
+
+  * some code cleanup
+  * improved installer (that might even work)
+
 Moa 0.11.1 / 2012-10-14
 ==========================
 

@@ -1,25 +1,24 @@
-exclude .*
 include VERSION
 include README
 include COPYING
 include etc/bash_completion.d/moa
 include etc/config
 
-recursive-include bin/ *
-recursive-include template2 *.mk *.moa *.jinja2
+include bin/moa
+include bin/moar
+include bin/moainit
 
-recursive-include lib/jinja2/ *.jinja2
-recursive-include lib/ruff/ *.jinja2
-recursive-include lib/gnumake/ *.mk
+recursive-include template2 *.moa *.jinja2
 
-include lib/gnumake/util/__gmsl
-include lib/gnumake/util/gmsl
+recursive-include lib/jinja2 *jinja2
 
-recursive-include share/ *.fq *fasta
+recursive-include share/test *.fq *fasta
 
-recursive-include etc *.mk *.conf *.jinja2
-recursive-include share/ *.txt
-recursive-include www/ *.html *.js *.css *.png *.gif *.jpg *.css *.cgi
+include etc/config
+include etc/bash_completion.d/moa
+include etc/profile.d/moa.sh
+
+include share/logo/moa.logo.txt
 
 
- 
+
