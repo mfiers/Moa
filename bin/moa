@@ -31,6 +31,6 @@ import sys
 
 from moa.cli import *
 
-## Main dispatcher
+## dispatcher
 if __name__ == "__main__":
     dispatch()
