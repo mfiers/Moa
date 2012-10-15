@@ -1,3 +1,9 @@
+Moa 0.11.3 / 2012-10-16
+==========================
+
+  * fix to work with /usr/local/share/moa for moa data
+  * improved docs
+
 Moa 0.11.2 / 2012-10-15
 ==========================
 

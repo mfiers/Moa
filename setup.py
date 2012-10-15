@@ -23,6 +23,8 @@ exclude = ['build', 'sphinx', 'debian', 'dist', 'util', 'www']
 data_files = [
     ('/usr/local/share/moa/template2', glob.glob('template2/*')),
     ('/usr/local/share/moa/logo', ['share/logo/moa.logo.txt']),
+    ('/usr/local/share/moa/', ['VERSION', 'README', 'COPYING',
+                               'Changelog.txt']),
     ('/usr/local/share/moa/test', glob.glob('share/test/*')),
     ('/etc/moa',  ['etc/config']),
     ('/etc/profile.d',  ['etc/profile.d/moa.sh']),
@@ -63,7 +65,7 @@ setup(name='moa',
           'pyyaml>3',
           'ruffus>=2.2',
           'Yaco>=0.1.7',
-          'fist>=0.1.2',
+          'fist>=0.1.5',
           'unittest2>=0.5',
           'lockfile>=0.9',
           'mdGraph>=0.1'

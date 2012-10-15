@@ -1,7 +1,7 @@
 Welcome to Moa!
 ###############
 
-*Lightweight, command line, workflows for bioinformatics*
+*Command line workflows for bioinformatics*
 
 Moa aims to assist a bioinformatician to organize, document, share,
 execute and repeat workflows in a command line environment without

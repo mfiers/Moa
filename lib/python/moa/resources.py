@@ -85,9 +85,3 @@ def listResource(what):
         return  pkg_resources.resource_listdir(__name__, what)
     elif os.path.exists(usl):
         return  os.listdir(usl)
-
-
-
-
-
-
