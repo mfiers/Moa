@@ -66,7 +66,12 @@ class MoaFormatter(logging.Formatter):
             record.colon = ""
             record.coloff = ""
 
-        caller = traceback.extract_stack()[-11]
+        trext = traceback.extract_stack()
+        if len(trext) > 11:
+            caller = trext[-11]
+        else:
+            caller = trext[0]
+
         record.file = caller[0]
         module = os.path.basename(record.file).replace('.py', '')
         if module == '__init__':
