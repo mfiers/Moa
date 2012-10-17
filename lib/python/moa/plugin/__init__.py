@@ -46,6 +46,7 @@ class PluginHandler():
         l.debug('Start plugin init')
         successfully_loaded = []
         for plugin in self.pluginList:
+            l.debug("Loading plugin %s" % plugin)
             self.config[plugin] = Yaco.Yaco()
             pyModule = self.config[plugin].module
             try:
@@ -53,7 +54,7 @@ class PluginHandler():
                 _m = __import__(pyModule, globals(), locals(), ['git'], -1)
                 self.config[plugin]['loaded_module'] = _m
                 successfully_loaded.append(pyModule)
-            except ImportError, e:
+            except ImportError:
                 sys.stderr.write(
                     "ERROR - Plugin %s is not (properly) installed\n" % plugin)
                 if '-v' in sys.argv or '-vv' in sys.argv:
