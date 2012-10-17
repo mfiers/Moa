@@ -50,8 +50,7 @@ class PluginHandler():
             self.config[plugin] = Yaco.Yaco()
             pyModule = self.config[plugin].module
             try:
-                #print plugin, pyModule
-                _m = __import__(pyModule, globals(), locals(), ['git'], -1)
+                _m = __import__(pyModule, globals(), locals(), [plugin], -1)
                 self.config[plugin]['loaded_module'] = _m
                 successfully_loaded.append(pyModule)
             except ImportError:
