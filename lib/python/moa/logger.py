@@ -78,7 +78,6 @@ class MoaFormatter(logging.Formatter):
             module = os.path.basename(
                 record.file.replace('/__init__.py', '')) + '.m'
 
-        record.msg = record.msg[:30]
         record.module = module
         record.lineno = str(caller[1])
         record.function = caller[2]
@@ -92,7 +91,17 @@ class MoaFormatter(logging.Formatter):
             record.colon = ""
             record.coloff = ""
 
-        return logging.Formatter.format(self, record)
+        try:
+            fmtter = logging.Formatter.format(self, record)
+        except TypeError:
+            print "Error with record %s" % record
+            print dir(record)
+            print record.args
+            print 'msg:', record.msg
+            print record.module
+            raise
+
+        return fmtter
 
 LOGGER = logging.getLogger()
 handler = logging.StreamHandler()
