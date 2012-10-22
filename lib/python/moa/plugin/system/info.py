@@ -28,6 +28,7 @@ from moa.sysConf import sysConf
 
 @moa.args.argument('filter', nargs='?', help='show only directories that match this filter')
 @moa.args.addFlag('-a', '--all')
+@moa.args.doNotLog
 @moa.args.command
 def tree(job, args):
     """
@@ -104,6 +105,7 @@ def tree(job, args):
         #    ("%%s %%-%ds | %%s"  % maxTemplateLen) % (s,t,p), f='jinja')
 
 @moa.args.needsJob
+@moa.args.doNotLog
 @moa.args.command
 def out(job, args):
     """
@@ -116,6 +118,7 @@ def out(job, args):
         print out
 
 @moa.args.needsJob
+@moa.args.doNotLog
 @moa.args.command
 def err(job, args):
     """
@@ -127,6 +130,7 @@ def err(job, args):
     else:
         print err
 
+@moa.args.doNotLog
 @moa.args.command
 def version(job, args):
     """
@@ -176,8 +180,8 @@ def raw_commands(job, args):
     print ' '.join(c)
 
 @moa.args.private
-@moa.args.command
 @moa.args.doNotLog
+@moa.args.command
 def raw_parameters(job, args):
     """
     Print a list of all known parameters
