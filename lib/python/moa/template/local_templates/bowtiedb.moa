@@ -1,0 +1,36 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  clean:
+    help: Remove all job data, not the Moa job itself, note that this must be implemented
+      by the template.
+    mode: simple
+  run:
+    help: Create the bowtie database
+    mode: reduce
+creation_date: Wed Nov 10 07:56:48 2010
+description: Builds a bowtie index from a reference sequence
+filesets:
+  input:
+    category: input
+    help: Input fasta file for the bowtie database
+    optional: false
+    pattern: '*/*.fasta'
+    type: set
+  output:
+    category: output
+    type: single
+    help: database name to create
+    pattern: db
+moa_id: bowtiedb
+modification_date: Wed Dec 09 07:56:48 2010
+name: bowtiedb
+parameters:
+  extra_params:
+    category: ''
+    default: ''
+    help: any option parameters
+    optional: true
+    type: string
+  title:
+    default: Bowtie index builder

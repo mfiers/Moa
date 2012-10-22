@@ -1,10 +1,14 @@
-#!/bin/bash
+#!/bin/bash -v
+
+set -x
 
 cd `mktemp -d`
 echo "Running in $PWD"
 
 echo "set up a simple job"
-moa simple --np -t test -- echo
+moa new simple
+moa set title='test'
+moa set process='echo hello'
 
 echo "check if the title is properly set"
 moa show | grep 'title' | grep -q 'test'
@@ -24,11 +28,10 @@ moa show | grep 'dummy' | grep -q 'dumb'
 echo "create a job in a subdir"
 mkdir sub
 cd sub
-moa new simple --np -t 'subtest' -- echo
+moa new simple
+moa set title='test'
 
-echo "dummy should still be set"
-
-echo "check if the dummy is set"
-moa show | grep 'dummy' | grep -q 'dumb'
+echo "dummy should still be set - check"
+moa show -a | grep 'dummy' | grep -q 'dumb'
 
 

@@ -14,9 +14,7 @@ Print info on Moa jobs and Moa
 
 import os
 import re
-import glob
 import fnmatch
-import optparse
 
 import moa.ui
 import moa.utils
@@ -139,8 +137,8 @@ def version(job, args):
     print sysConf.getVersion()
 
 @moa.args.private
-@moa.args.command
 @moa.args.doNotLog
+@moa.args.command
 def rehash(job, args):
     """
     cache a list of variables for command line completion
@@ -163,8 +161,8 @@ def rehash(job, args):
 
 
 @moa.args.private
-@moa.args.command
 @moa.args.doNotLog
+@moa.args.command
 def raw_commands(job, args):
     """
     return a list available commands

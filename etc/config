@@ -9,7 +9,29 @@ plugins:
       enabled: true
   system:
     moaGit:
+      module: moa.plugin.system.moaGit
       enabled: false
+      commit:
+        - '.moa/template'
+        - '.gitignore'
+        - '.gitmodules'
+        - '.moa/template.d/*'
+        - '.moa/config'
+        - '.moa/doc'
+        - '.moa/history'
+        - '.moa/local_bash_history'
+        - 'moa.*'
+        - 'Moa.*'
+        - 'src/*'
+        - '*.md'
+        - 'Readme'
+        - 'README'
+        - 'Readme.*'
+        - 'Changelog'
+        - 'CHANGELOG'
+        - 'Changelog.*'
+      ignore:
+        - '*'
     project:
       module: moa.plugin.system.project
       enable: true
@@ -54,14 +76,14 @@ plugins:
       module: moa.plugin.system.status
     template:
       module: moa.plugin.system.template
-    info: 
+    info:
       module: moa.plugin.system.info
       enabled: true
-    moautil: 
+    moautil:
       module: moa.plugin.system.moautil
       enabled: true
       dir: ~/.config/moa/archive
-    moaGit: 
+    moaGit:
       module: moa.plugin.system.moaGit
       enabled: false
       warn: true
@@ -100,7 +122,7 @@ ansi:
   bmagenta: '48;5;165'
   bcyan: '48;5;32'
   bgray: '48;5;240'
-  bwhite: '48;5;255'    
+  bwhite: '48;5;255'
 template:
   providers:
     core:

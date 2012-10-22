@@ -1,0 +1,58 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: 'recusive map'
+    mode: reduce
+creation_date: Fri, 08 Jun 2012 13:32:30 +1200
+title: Recursively map a genome to the reference
+description: Recursively map a resequence dataset against a reference genome
+modification_date: Fri, 08 Jun 2012 13:43:19 +1200
+moa_id: recursive_map
+name: recursive_map
+filesets:
+  reference:
+    category: prerequisite
+    type: single
+    optional: false
+    pattern: '*/*'
+  fq_forward:
+    category: input
+    help: fastq input files directory - forward
+    optional: false
+    pattern: '*/*_1.fq'
+    type: set
+  fq_reverse:
+    category: input
+    help: fastq input files directory - reverse
+    optional: true
+    pattern: '*/*_2.fq'
+    source: fq_forward
+    type: map
+  output:
+    category: output
+    help: 'base output filename'  
+    optional: true
+    pattern: output
+    type: single
+parameters:
+  iterations:
+    help: 'no of iterations to run'
+    optional: true
+    type: integer
+    default: 3
+  threads:
+    help: 'Number of threads to use'
+    optional: true
+    type: integer
+    default: 4
+  param_first:
+    help: 'First set of parameters - get the low hanging fruit'
+    optional: true
+    type: string
+    default: '--fast'
+  param_second:
+    help: 'Second set of parameters - more sensitive'
+    optional: true
+    type: string
+    default: '--very-sensitive'

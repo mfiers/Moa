@@ -1,0 +1,50 @@
+### run
+
+ mkdir out
+ mkdir cds
+ mkdir fasta
+ mkdir gff
+
+#echo "Implement this":
+#echo genemarks_input_files = $(wildcard $(genemarks_input_dir)/*.$(genemarks_input_extension))
+#echo
+#echo genemarks_out_files = $(addprefix out/, 										\
+#echo 		$(notdir $(patsubst %.$(genemarks_input_extension), %.lst, 				\
+#echo 		$(genemarks_input_files))))
+#echo
+#echo genemarks_gff_files = $(addprefix gff/, 										\
+#echo 		$(notdir $(patsubst %.$(genemarks_input_extension), %.gff, 				\
+#echo 		$(genemarks_input_files))))
+#echo
+#echo genemarks_cds_files = $(addprefix cds/, 										\
+#echo 		$(notdir $(patsubst %.$(genemarks_input_extension), %.cds.fasta, 		\
+#echo 		$(genemarks_input_files))))
+#echo
+#echo genemarks: $(genemarks_gff_files) $(genemarks_cds_files)
+#echo 	@#echo "Created $(genemarks_gff_files)"
+#echo 	@#echo "Via $(genemarks_out_files)"
+#echo 	@#echo "From $(genemarks_input_files)"
+#echo 	@#echo "again $(genemarks_input_dir)/*.$(genemarks_input_extension)"
+#echo
+#echo $(genemarks_gff_files): gff/%.gff: out/%.lst
+#echo
+#echo $(genemarks_cds_files): cds/%.cds.fasta: out/%.orf
+#echo 	cat $< 											\
+#echo 		| grep -v '^;'								\
+#echo 		| sed "s/orf_\([0-9]*\)/$*.gms.g\1/" 		\
+#echo 		> $@
+#echo
+#echo $(genemarks_out_files): out/%.lst: $(genemarks_input_dir)/%.$(genemarks_input_extension)
+#echo 	@#echo "working from $< to create $@"
+#echo 	cd out; 														\
+#echo 		ln -s  $(realpath $<) $*;
+#echo 		gm -m $(genemarks_matrix) -onq -v $*							\
+#echo
+#echo
+
+### clean
+
+rm -rf fasta/
+rm -rf cds/
+rm -rf gff/
+rm -rf out/

@@ -1,15 +1,18 @@
 
-import unittest2 as unittest
+import unittest
+import Yaco
 from moa.sysConf import sysConf
 import moa.job
 import moa.logger as l
+
 
 class templateTest(unittest.TestCase):
     """
     Test a ruff template
     """
-    def setJob(self, job):
+    def __init__(self, job, *args, **kwargs):
         self.job = job
+        super(templateTest, self).__init__(*args, **kwargs)
 
     def runTest(self):
         if not hasattr(self, 'job'):
@@ -29,14 +32,17 @@ class templateTest(unittest.TestCase):
             self.skipTest("Only testing ruff jobs - not %s" %
                           templateName)
 
-        #if 
+        #if
         if not self.job.hasCommand('unittest'):
             self.skipTest("no unittest defined for %s" %
                           templateName)
-            
-        self.job.prepare()
+
+        #self.job.prepare()
         sysConf.pluginHandler.run('prepare_3')
-        rc = self.job.execute("unittest")
+        dummyargs = Yaco.Yaco()
+        dummyargs.command = 'unittest'
+        rc = self.job.execute(self.job, dummyargs)
+        print rc
         self.assertEqual(rc, 0, 'test failed for %s' %
                          templateName)
 

@@ -1,0 +1,24 @@
+### run 
+
+bwa index -p {{ prefix }} -a {{ algorithm }} \
+	{% if color_space %} -c {% endif %} \
+        {{ input }} 
+
+touch {{ prefix }}
+
+### clean
+
+rm -f {{prefix}}*
+
+### unittest
+
+moa set input_fasta="${MOABASE}/share/test/test.fasta"
+moa set prefix=testDB
+moa run
+ls -l
+[[ -s testDB.amb ]]
+[[ -s testDB.ann ]]
+[[ -s testDB.bwt ]]
+[[ -s testDB.pac ]]
+[[ -s testDB.rbwt ]]
+[[ -s testDB.rpac ]]

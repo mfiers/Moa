@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.template.template
 ---------------------
@@ -15,28 +15,27 @@ retrieving template information.
 """
 
 import os
-import copy
 
 import Yaco
 
 import moa.logger as l
 import moa.template
 
+
 class Template(Yaco.Yaco):
     """
-    Template extends Yaco    
-    
+    Template extends Yaco
     """
-    
-    def __init__(self, templateFile):
+
+    def __init__(self, wd):
         """
         Initialze the template object, which means:
-        
+
         * Check if the template exists, if not raise an Exception
         * Load template info
 
         >>> import moa.job
-        >>> job = moa.job.newTestJob(template='adhoc')
+        >>> job = moa.job.newTestJob(template='simple')
         >>> tfile = os.path.join(job.confDir, 'template')
         >>> t = Template(tfile)
         >>> assert(isinstance(t, Yaco.Yaco))
@@ -46,26 +45,35 @@ class Template(Yaco.Yaco):
 
         super(Template, self).__init__(self)
 
-        self.templateFile = templateFile
+        templateFile1 = os.path.join('.moa', 'template.d', 'template')
+        templateFile2 = os.path.join('.moa', 'template')
+
+        self.metaFile = os.path.join('.moa', 'template.meta')
+        self.loadMeta()
+
+        if os.path.exists(templateFile1):
+            self.templateFile = templateFile1
+        elif os.path.exists(templateFile2):
+            self.templateFile = templateFile2
+        else:
+            self.templateFile = templateFile1
 
         #set a few defaults to be used by each template
         self.parameters = {}
         self.parameters.default_command = {
-            'default' : 'run',
-            'help' : 'command to run for this template',
-            'optional' : True,
-            'private' : True,
-            }
-        
+            'default': 'run',
+            'help': 'command to run for this template',
+            'optional': True,
+            'private': True}
+
         self.parameters.jobid = {
-            'help' : 'Identifier for this job - Should unique in the' +
-               'context of this workflow',
-            'optional' : True,
-            'recursive' : False,
-            'type' : 'string',
-            'default' : 'unset'
-            }
-        
+            'help': 'Identifier for this job - Should unique in the' +
+            'context of this workflow',
+            'optional': True,
+            'recursive': False,
+            'type': 'string',
+            'default': 'unset'}
+
         self.filesets = {}
 
         #try to load the template!!
@@ -77,16 +85,15 @@ class Template(Yaco.Yaco):
             noTemplate = True
         else:
             _tempTemplate = open(self.templateFile).read().strip()
-            if len(_tempTemplate) < 50 and \
-                   not "\n" in _tempTemplate:
+            if len(_tempTemplate) < 50 and not "\n" in _tempTemplate:
                 if os.access(self.templateFile, os.W_OK):
-                    #this must be an old style template name- try to load the template
+                    # this must be an old style template name-
+                    # try to load the template
                     moa.template.installTemplate(
                         os.path.dirname(os.path.dirname(templateFile)),
                         _tempTemplate)
                 else:
                     noTemplate = True
-
 
         if noTemplate:
             self.name = 'nojob'
@@ -101,19 +108,27 @@ class Template(Yaco.Yaco):
             original.load(self.templateFile)
             self.original = original
 
-
         l.debug("set template to %s, backend %s" % (self.name, self.backend))
         if not self.name == 'nojob' and not self.modification_date:
             self.modification_date = os.path.getmtime(self.templateFile)
+
+    def loadMeta(self):
+        """
+        Load the template meta data for this job, based on what configuration
+        can be found
+        """
+        self.meta = Yaco.Yaco()
+        if os.path.exists(self.metaFile):
+            self.templateMeta.load(self.metaFile)
 
     def getRaw(self):
         """
         Return a Yaco representation of the yaml-template, without any
         of this Template processing. This is really useful when
         processing a template that needs to be written back to disk
-        
+
         >>> import moa.job
-        >>> job = moa.job.newTestJob(template='adhoc')
+        >>> job = moa.job.newTestJob(template='simple')
         >>> raw = job.template.getRaw()
         >>> assert(isinstance(raw, Yaco.Yaco))
         >>> assert(raw.has_key('parameters'))
@@ -121,10 +136,9 @@ class Template(Yaco.Yaco):
         y = Yaco.Yaco()
         y.load(self.templateFile)
         return y
-    
+
     def saveRaw(self, raw):
         raw.save(self.templateFile)
-    
+
     def save(self):
         raise Exception("direct saving of template files is disabled")
-        

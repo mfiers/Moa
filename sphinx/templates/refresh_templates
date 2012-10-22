@@ -19,16 +19,16 @@ jTi = jTemplate(open(jTemplateIndexFile).read())
 os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'templates'))
 
 _allTemplates = []
-for tfile in moa.template.templateList():
+for provider, tfile in moa.template.templateList():
     print tfile
-    template = moa.template.getMoaFile(tfile)    
-    if not template: 
+    template = moa.template.getMoaFile(tfile)
+    if not template:
         continue
 
     tname = template.moa_id
     assert(template.moa_id == tfile)
-    
-    
+
+
     _allTemplates.append(tname)
     with open('%s.rst' % tname, 'w') as F:
         F.write(jT.render(template))

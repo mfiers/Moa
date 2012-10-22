@@ -18,7 +18,8 @@ import fist
 import moa.ui
 import moa.args
 import moa.utils
-import moa.logger as l
+import moa.logger
+l = moa.logger.getLogger(__name__)
 
 from moa.sysConf import sysConf
 
@@ -93,6 +94,8 @@ def _preformatFile(f):
 
 @moa.args.doNotLog
 @moa.args.needsJob
+@moa.args.argument('-n', '--no_files', type=int, help="No filesets to show (default 10)", default=10)
+@moa.args.addFlag('-a', '--all', help="Show all filesets")
 @moa.args.command
 def files(job, args):
     """
@@ -134,8 +137,13 @@ def files(job, args):
     #rearrange the files into logical sets
     nofiles = len(job.data.filesets[(fsets + fmaps)[0]].files) 
     moa.ui.fprint("")
-   
-    for i in range(min(5, nofiles)):
+
+    if args.all:
+        toprint = nofiles
+    else:
+        toprint = min(args.no_files, nofiles)
+        
+    for i in range(toprint):
         thisSet = []
         for j, fsid in enumerate((fsets + fmaps)):
             files = job.data.filesets[fsid].files
@@ -160,3 +168,5 @@ def files(job, args):
             moa.ui.fprint(_preformatFile(files[i]), f='jinja', newline=False)
             moa.ui.fprint("")
         moa.ui.fprint("")
+    if toprint < nofiles:
+        moa.ui.fprint("... and %d more" % (nofiles - toprint))

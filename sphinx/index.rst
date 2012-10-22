@@ -1,7 +1,7 @@
 Welcome to Moa!
 ###############
 
-*Lightweight, command line, workflows for bioinformatics*
+*Command line workflows for bioinformatics*
 
 Moa aims to assist a bioinformatician to organize, document, share,
 execute and repeat workflows in a command line environment without
@@ -10,17 +10,15 @@ giving the user full access to all aspects of the workflow (see also
 :ref:`goals`).
 
 
-**NOTE: both the software and the manual are under development. Things
-  might change.**
+**NOTE: The software (and manual) are under development. Things might change.**
 
 Quick links
 ===========
-* Source code: https://github.com/mfiers/Moa
-* Issue tracker: https://github.com/mfiers/Moa/issues 
-* Old issue tracker <http://moamoa.lighthouseapp.com/projects/73665-moa/overview>
-* Python Package Index: http://pypi.python.org/pypi/moa/ (note - this
-  is not updated regularly - might not work)
+* Latest documentation: http://moa.readthedocs.org/en/latest
 * Source code at `Github <https://github.com/mfiers/Moa>`_
+* Issue tracker: https://github.com/mfiers/Moa/issues
+* Old issue tracker <http://moamoa.lighthouseapp.com/projects/73665-moa/overview>
+* Python Package Index: http://pypi.python.org/pypi/moa/
 * `PDF version of the manual <_static/MoaManual.pdf>`_
 
 Table of contents:
@@ -31,10 +29,15 @@ Table of contents:
    :glob:
 
    goals
-   intro   
+   intro
    install
+   using
+   configuration
+   execution
+   filesets
    coretemplates
    sync
+   git
    #using
    #configuration
    #filesets
@@ -42,9 +45,6 @@ Table of contents:
    commands/index
    templates/index
    api/index
-
-More information
-================
 
 
 Indices and tables

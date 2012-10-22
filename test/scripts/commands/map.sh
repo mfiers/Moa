@@ -11,7 +11,7 @@ for x in `seq -w 1 20`; do
    touch test.$x
 done
 
-moa map --np -t test
+moa new map -t test
 moa set process="echo {{ output }}; cp {{input}} {{ output }}"
 moa set input="./test.*"  output="./out.*"
 
@@ -39,7 +39,7 @@ output=`moa run 2>&1`
 # out.01 should be in the output (it was touched since the last process)
 [[ "$output" =~ "out.01" ]] || (echo "invalid output 3" && false )
 # but out.02 not
-[[ ! "$output" =~ "out.02" ]]  ||  (echo "invalid output 4" && false ) 
+[[ ! "$output" =~ "out.02" ]]  ||  (echo "invalid output 4" && false )
 #echo $output
 
 

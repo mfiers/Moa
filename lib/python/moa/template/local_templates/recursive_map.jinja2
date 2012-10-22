@@ -1,0 +1,70 @@
+### run
+
+reference={{reference}}
+lastreference=$reference
+lasti=0
+
+{% for i in range(iterations) %}
+
+
+    {% if i <= (iterations / 2) %}{% set aln_param=param_first %}
+    {% else %}{% set aln_param=param_second %}
+    {% endif %}
+    echo "Iteration {{i}} ---"
+    echo "With reference: ${reference}"
+    if [[ ! -f "db.{{i}}.1.bt2" ]]
+    then
+        echo "create bowtie2 database {{i}}"
+        bowtie2-build ${reference} db.{{i}}
+    fi
+
+    echo "start aligning $i"
+
+    bamfiles=""
+    {% for ffq in fq_forward %}
+       {% set rfq =  fq_reverse[loop.index0] %}
+       base=`basename {{ ffq }} .fq`
+       if [[ ! -f "${base}__{{i}}.bam" ]]
+       then
+           echo "start align {{i}} - "
+           bowtie2 --reorder -p {{ threads }} {{ aln_param }} \
+               -x db.{{i}} \
+               -1 {{ ffq }} -2 {{ rfq }} \
+               | samtools view -Sb -f 2 - \
+               | samtools sort - ${base}__{{i}}
+       fi
+       bamfiles="${bamfiles} ${base}__{{i}}.bam"
+    {% endfor %}
+    
+    echo "bamfiles collected: ${bamfiles}"
+    if [[ ! -f variants.{{i}}.vcf ]]
+    then
+        samtools mpileup -C50 -d 5000 -L 5000 -uf $reference \
+            ${bamfiles} \
+            | bcftools view -bvcg - \
+            > variants.raw.{{i}}.bcf
+        bcftools view variants.raw.{{i}}.bcf \
+            | vcfutils.pl varFilter -D100 \
+            > variants.{{i}}.vcf
+    fi
+
+    if [[ ! -f consensus.{{i}}.fasta ]]
+    then
+        vcf_applicator ${reference} variants.{{i}}.vcf \
+            consensus.{{i}}.fasta
+    fi
+
+    lastreference=$reference
+
+    reference=consensus.{{i}}.fasta
+
+    lasti={{i}}
+{% endfor %}
+
+samtools mpileup -uf $lastreference ${bamfiles} \
+    | bcftools view -cg - \
+    | vcfutils.pl vcf2fq > final.consensus.fq
+
+
+echo "Convert the fq output to contigs - for postprocessing"
+fastq2contigs  final.consensus.fq final.contigs.fasta

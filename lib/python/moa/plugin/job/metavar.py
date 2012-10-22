@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **metavar** - Create a number of meta variables
 -----------------------------------------------
@@ -17,7 +17,7 @@ configuration. Variable that are currently created are:
 `_`
     name of the current directory. In the example, `_`
     renders to `test`
-    
+
 `__`
     name of the parent directory - (example: `a`)
 
@@ -26,13 +26,13 @@ configuration. Variable that are currently created are:
 
 `dir1`
     same as `_`
-    
+
 `dir2`
     same as `__`
-    
+
 `dir3`
     same as `___`
-    
+
 `dir4`
     parent directory of dir3
 
@@ -109,58 +109,13 @@ Note that
 Then this plugin will filter set the variable qual to 13 and cutoff to 0.12.
 
 """
-import re
 import os
-import sys
-import subprocess as sp
+import re
 
-import frappant
-
-import jinja2
-from jinja2.ext import Extension
-from jinja2 import nodes
-
-from moa.sysConf import sysConf
 import moa.logger
-import moa.utils
 
 l = moa.logger.getLogger(__name__)
-#l.setLevel(moa.logger.DEBUG)
-import moa.ui
 
-class MoaPathParser(Extension):
-    tags = set(['mp'])
-
-    def processDirString(self, s):
-        cwd = moa.utils.getCwd()
-        return frappant.frp(cwd, s)
-        # l.critical(cwd)
-
-        # l.critical("parsing %s" % s)
-        # sp = s.split(os.path.sep)
-        # return '_'.join(sp)
-        
-    def parse(self, parser):
-        node = nodes.Scope(lineno=next(parser.stream).lineno)
-        lineno = parser.stream.current.lineno
-        #get first argument
-        expr = parser.parse_expression()
-        
-        while parser.stream.current.type != 'block_end':
-            #flush superfluous arguments
-            parser.stream.expect('comma')
-            parser.parse_expression()
-
-        #process the string!
-        return nodes.Const(self.processDirString(expr.value))
-
-
-def hook_prepare(job):
-
-    #register metavar jinja plugin!
-    if not sysConf.jinja2.extensions:
-        sysConf.jinja2.extensions = []
-    sysConf.jinja2.extensions += [MoaPathParser]
 
 def _varparser(conf, name):
     """
@@ -168,12 +123,13 @@ def _varparser(conf, name):
     """
     l.debug('parsing parameters from directory name %s', name)
     for item in name.split('__')[1:]:
-        if not '_' in item: 
+        if not '_' in item:
             continue
         k, v = item.split('_', 1)
         l.debug('setting %s to %s' % (k, v))
         conf[k] = v
-    
+
+
 def hook_pre_filesets(job):
 
     wd = job.wd
@@ -182,10 +138,8 @@ def hook_pre_filesets(job):
     job.conf.setPrivateVar('wd', awd)
 
     dirparts = awd.split(os.path.sep)
-    #print 'x', awd, dirparts
     job.conf.setPrivateVar('_', dirparts[-1])
     i = 1
-    lastp = None
 
     while dirparts:
         cp = os.path.sep.join(dirparts)
@@ -196,43 +150,10 @@ def hook_pre_filesets(job):
 
         clean_p = re.sub("^[0-9]+\.+", "", p).replace('.', '_')
 
-        #print i, clean_p, p, cp
-        if not p: break
-
-        #job.conf.setPrivateVar('_%d' % i, p)
-        #job.conf.setPrivateVar('_%s' % clean_p, cp)
-        #job.conf.setPrivateVar('__%s' % clean_p, cp)
+        if not p:
+            break
 
         if i <= 3:
             job.conf.setPrivateVar('_' * i, p)
 
-        # if i > 1 and  i <= 3:
-        #     thisdirlist = [x for x in os.listdir(cp) if not x[0] == '.']
-        #     thisdirlist.sort()
-            
-        #     iofp = thisdirlist.index(lastp)
-
-        #     job.conf.setPrivateVar('_' + ('f' * (i-1)), thisdirlist[0])
-        #     job.conf.setPrivateVar('__' + ('f' * (i-1)),
-        #                            os.path.join(cp, thisdirlist[0]))
-            
-        #     job.conf.setPrivateVar('_' +('l' * (i-1)), thisdirlist[-1])
-        #     job.conf.setPrivateVar('__' +('l' * (i-1)),
-        #                            os.path.join(cp, thisdirlist[-1]))
-
-        #     if iofp > 0:
-        #         job.conf.setPrivateVar('_' +('p' * (i-1)), thisdirlist[iofp-1])
-        #         job.conf.setPrivateVar('__' +('p' * (i-1)),
-        #                                os.path.join(cp, thisdirlist[iofp-1]))
-
-
-        #     if iofp < (len(thisdirlist)-1):
-        #         job.conf.setPrivateVar('_' +('n' * (i-1)), thisdirlist[iofp+1])
-        #         job.conf.setPrivateVar('__' +('n' * (i-1)),
-        #                                os.path.join(cp, thisdirlist[iofp+1]))
-
-
-        lastp = p
         i += 1
-
-    

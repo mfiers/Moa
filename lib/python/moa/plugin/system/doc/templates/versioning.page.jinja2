@@ -1,0 +1,18 @@
+Title: version info
+
+Key             |   Run id  | Value
+----------------|-----------|----------------------------------------------------------------
+{% for a in allkeys %}{% for r in vrange -%}
+{% if loop.index0 == 0 -%}
+{{ "%15s"|format('**' + a + '**') }} | {% set dummy=1 -%}
+{{ "**%5d**"|format(r) }} | {% set dummy=1 -%}
+{% if vinfo[r][a] %}{{ vinfo[r][a] }}{%else%}_(no value)_{% endif %}
+{% else -%}
+{%- if "%s"|format(vinfo[r][a]) != "%s"|format(vinfo[r+1][a]) -%}
+{{ "%15s"|format("") }} | {% set dummy=1 -%}
+{{ "%9d"|format(r) }} | {% set dummy=1 -%}
+{% if vinfo[r][a] %}**{{ vinfo[r][a] }}**{%else%}***(no value)***{% endif %}
+{% endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor %}

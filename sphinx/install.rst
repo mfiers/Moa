@@ -10,7 +10,7 @@ Moa is developed and tested on `Ubuntu <http://www.ubuntu.com>`_ and
 much problems on all modern Linux distributions. Moa has the following
 prerequisites (and a large number more for all templates). Version
 numbers are an indication, not strict prerequisites. Other, even
-older, versions might work. 
+older, versions might work.
 
 
 - `Python <http://python.org>`_ (2.6 or 2.7). Moa will not work with
@@ -40,19 +40,19 @@ older, versions might work.
 Python prerequisites
 --------------------
 
-These prereqs can be installed manually or with `easy_install` or
-`pip`:
+These prereqs can be installed manually or with `pip` or
+`easy_install`:
 
 - `pyyaml <http://pyyaml.org/wiki/PyYAML>`_ (unless already installed)
-- `Jinja2 <http://jinja.pocoo.org/2/>`_ 
+- `Jinja2 <http://jinja.pocoo.org/2/>`_
 - `Ruffus <http://code.google.com/p/ruffus/>`_
 - `gitpython <http://gitorious.org/git-python>`_
 - `unittest2 http://pypi.python.org/pypi/unittest2`_
 - `lockfile http://pypi.python.org/pypi/lockfile`_
+- `GitPython http://pypi.python.org/pypi/GitPython`_
 
-
-Not part of the list of prerequisites are the following libraries, which
-you'll only need if you are planning to run the web interface:
+Not part of the list of prerequisites are the following libraries,
+which you'll only need if you are planning to run the web interface:
 
 - `ElementTree <http://effbot.org/zone/element-index.htm>`_
 - `Markdown <http://freewisdom.org/projects/python-markdown/>`_
@@ -73,8 +73,8 @@ PATH. The standard Moa distribution comes with wrappers for:
 and many more
 
 
-Installing git (from github)
-----------------------------
+Installation using git (from github)
+-------------------------------------
 
 Moa is hosted on, and can be installed from, `github <http://github.com/mfiers/Moa>`_::
 
@@ -110,7 +110,11 @@ are a few options that you can pursue:
 Installing the web interface
 ----------------------------
 
-Note - this is highly experimental - you will probably need to fiddle
+Note - this is highly experimental and possibly deprecated.
+
+In the future Moa will support static websites build using `Pelican <http://pelican.notmyidea.org/en/3.0/index.html>`_
+
+you will probably need to fiddle
 with the configuration files to get it working. Start with installing
 apache2.
 

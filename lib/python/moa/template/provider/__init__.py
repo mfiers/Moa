@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.provider
 -------------
@@ -13,19 +13,25 @@ Provides templates..
 
 
 """
-
-import os
 import datetime
+import os
 
 import Yaco
-
-import moa.ui
 import moa.exceptions
-
+import moa.logger
+import moa.ui
 from moa.sysConf import sysConf
 
+l = moa.logger.getLogger(__name__)
+#l.setLevel(moa.logger.DEBUG)
+
+
 class Providers(object):
-    
+    """
+    A class representing all providers - dispatches requests to the
+    correct provider class
+    """
+
     def __init__(self):
         self.providers = {}
         self.order = []
@@ -35,15 +41,16 @@ class Providers(object):
             pInfo = sysConf.template.providers[pName]
             priority = pInfo.get('priority', 1)
             assert(isinstance(priority, int))
-            
+
             #import the correct module
             mod = 'moa.template.provider.%s' % pInfo['class']
-            pMod =  __import__( mod, globals(), locals(), [mod], -1)
+            pMod = __import__(mod, globals(), locals(), [mod], -1)
 
             #instantiate the class (mod.Mod())
-            self.providers[pName] = getattr(pMod, pInfo['class'].capitalize())(pName, pInfo)
+            self.providers[pName] = \
+                getattr(pMod, pInfo['class'].capitalize())(pName, pInfo)
             _order.append((priority, pName))
-            
+
         _order.sort()
         self.order = [x[1] for x in _order]
 
@@ -67,17 +74,17 @@ class Providers(object):
         #nothing found
         return None
 
-    def getTemplate(self, tName, pName = None):
+    def getTemplate(self, tName, pName=None):
         """
         Return the (Yaco) template object
 
         :param tName: Template name
         :param pName: The provider to get the template from - if not provider
-          find the first provider that recognizes a template with this name 
+          find the first provider that recognizes a template with this name
         :returns: Yaco template object
         """
         provider = self.findProvider(tName, pName)
-        
+
         if not provider:
             moa.ui.exitError("Cannot find provider for template %s.%s" % (
                 provider, tName))
@@ -87,26 +94,40 @@ class Providers(object):
         rv = set()
         for pName in self.order:
             #print self.providers[pName].templateList()
-            rv.update(set(self.providers[pName].templateList()))
+            rv.update(set((pName, x)
+                          for x
+                          in self.providers[pName].templateList()))
         rv = list(rv)
         rv.sort()
         return rv
 
+    def refreshTemplate(self, wd, meta):
+        """Refresh the current template- based on the meta data
+        provided
+
+        """
+        l.debug("refreshing template in %s" % self.__class__.__name__)
+
+        #base operation is to not thing, but just reinstall
+        provider = self.findProvider(meta.name, meta.provider)
+        provider.refresh(wd, meta)
+        pass
+
     def installTemplate(self, wd, tName, pName=None):
 
-        p = self.findProvider(tName, pName)
-        
-        if not p:
-            raise moa.exceptions.InvalidTemplate()
-        
-        p.installTemplate(wd, tName)
+        provider = self.findProvider(tName, pName)
 
-        templateddir = os.path.join(wd, '.moa', 'template.d')        
-                    
-        meta = p.getMeta()
+        if not provider:
+            raise moa.exceptions.InvalidTemplate()
+
+        provider.installTemplate(wd, tName)
+
+        confdir = os.path.join(wd, '.moa')
+
+        meta = provider.getMeta()
         meta.name = tName
         meta.installed = datetime.datetime.now().isoformat()
-        p.saveMeta(meta, templateddir)
+        provider.saveMeta(meta, confdir)
 
 
 #base class for all providers
@@ -124,5 +145,10 @@ class ProviderBase(object):
     def saveMeta(self, meta, dir):
         if not os.path.exists(dir):
             os.makedirs(dir)
+        meta.save(os.path.join(dir, 'template.meta'))
 
-        meta.save(os.path.join(dir, 'meta'))
+    def refresh(self, wd, meta):
+        """
+        default operation is to reinstall
+        """
+        self.installTemplate(wd, meta.name)

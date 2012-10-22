@@ -4,7 +4,11 @@ moa.plugin
 .. toctree::
    :maxdepth: 2
 
+   job__completion
    job__metavar
+   job__openLavaActor
+   job__smw
+   job__versioning
    system__adhoc
    system__configure
    system__doc
@@ -15,12 +19,12 @@ moa.plugin
    system__lock
    system__logger
    system__moaGit
+   system__moamad
    system__moautil
    system__newjob
    system__parameterCheck
    system__project
    system__remoteLogger
-   system__smw
    system__status
    system__template
    system__test

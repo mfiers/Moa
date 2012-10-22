@@ -1,0 +1,5 @@
+This work is derived from the Pelican 'bootstrap' team from Massimo
+Santini, which in turn was derived, in part, from Bootstrap, from
+Twitter http://twitter.github.com/bootstrap/
+
+

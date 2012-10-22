@@ -1,27 +1,27 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **adhoc** - create jobs from adhoc bash code
 --------------------------------------------
-"""
 
+"""
 import os
 import re
 import sys
-import optparse
 
+import moa.args
 import moa.job
 import moa.logger
-import moa.plugin
-import moa.args
 from moa.sysConf import sysConf
 
+
 l = moa.logger.getLogger(__name__)
+
 
 @moa.args.argument('-t', '--title', help='A title for this job')
 @moa.args.forceable
@@ -34,49 +34,53 @@ def simple(job, args):
     query you for a command to execute (the `process` parameter).
     """
 
-    wd = job.wd    
-    if not args.force and \
-           os.path.exists(os.path.join(wd, '.moa', 'template')):
+    wd = job.wd
+    if (not args.force and
+            os.path.exists(os.path.join(wd, '.moa', 'template'))):
+
         moa.ui.exitError("Job already exists, use -f to override")
 
-    command=moa.ui.askUser('process:\n> ', '')
-    
+    command = moa.ui.askUser('process:\n> ', '')
+
     params = [('process', command)]
 
     #make sure the correct hooks are called
     sysConf.pluginHandler.run("preNew")
-    
+
     job = moa.job.newJob(
         job, template='simple',
-        title = args.title,
+        title=args.title,
         parameters=params)
 
     #make sure the correct hooks are called
     sysConf.pluginHandler.run("postNew")
 
+
 def exclamateNoJob(job, args, command):
     """
     Create a "simple" job & set the last command
-    to the 'process' parameter 
+    to the 'process' parameter
     """
     title = args.title
-    if not options.title: 
+    if not args.title:
         moa.ui.warn("Do not forget to set a title")
 
     job = moa.job.newJob(
-        job, template='simple', 
-        title = title,
-        parameters = [('process', command)])
+        job, template='simple',
+        title=title,
+        parameters=[('process', command)])
+
 
 def exclamateInJob(job, args, command):
     """
     Reuse the last issued command: set it as the 'process' parameters
-    in the current job    
-    """        
+    in the current job
+    """
     moa.ui.fprint("{{bold}}Using command:{{reset}}", f='jinja')
     moa.ui.fprint(command)
-    job.conf.process=command
+    job.conf.process = command
     job.conf.save()
+
 
 @moa.args.argument('-t', '--title', help='A title for this job')
 @moa.args.forceable
@@ -84,7 +88,7 @@ def exclamateInJob(job, args, command):
 def exclamate(job, args):
     """
     Create a 'simple' job from the last command issued.
-    
+
     Set the `process` parameter to the last issued command. If a moa
     job exists in the current directory, then the `process` parameter
     is set without questions. (even if the Moa job in question does
@@ -103,7 +107,7 @@ def exclamate(job, args):
 
     pc = os.environ.get('PROMPT_COMMAND', '')
     if not '_moa_prompt' in pc:
-        moa.ui.exitError("moa is not set up to capture the last command issued")
+        moa.ui.exitError("moa is not set up to capture the last command")
 
     histFile = os.path.join(os.path.expanduser('~'), '.moa.last.command')
     with open(histFile) as F:
@@ -111,7 +115,7 @@ def exclamate(job, args):
 
     if job.isMoa():
         exclamateInJob(job, args, last)
-    else: 
+    else:
         exclamateNoJob(job, args, last)
 
 
@@ -126,25 +130,26 @@ def createMap(job, args):
     example session
     """
     wd = job.wd
-        
-    if not args.force and \
-           os.path.exists(os.path.join(wd, '.moa', 'template')):
+
+    if (not args.force and
+            os.path.exists(os.path.join(wd, '.moa', 'template'))):
+
         moa.ui.exitError("Job already exists, use -f to override")
 
     params = []
-    
-    command=moa.ui.askUser('process:\n> ', '')
+
+    command = moa.ui.askUser('process:\n> ', '')
+
     params.append(('process', command))
 
-    input=moa.ui.askUser('input:\n> ', '')
-    output=moa.ui.askUser('output:\n> ', './*')
+    input = moa.ui.askUser('input:\n> ', '')
+    output = moa.ui.askUser('output:\n> ', './*')
     params.append(('input', input))
     params.append(('output', output))
-        
 
     moa.job.newJob(
         job, template='map',
-        title = args.title,
+        title=args.title,
         parameters=params)
 
 
@@ -182,30 +187,29 @@ def createReduce(job):
     wd = job.wd
     options = sysConf.options
     args = sysConf.args
-    
-    if not options.force and \
-           os.path.exists(os.path.join(wd, '.moa', 'template')):
+
+    if (not options.force and
+            os.path.exists(os.path.join(wd, '.moa', 'template'))):
+
         moa.ui.exitError("Job already exists, use -f to override")
 
     command = " ".join(args[1:]
                        ).strip()
     params = []
     if not command and not options.noprompt:
-        command=moa.ui.askUser('process:\n> ', '')
+        command = moa.ui.askUser('process:\n> ', '')
         params.append(('process', command))
 
     if not options.noprompt:
-        input=moa.ui.askUser('input:\n> ', '')
-        output=moa.ui.askUser('output:\n> ', './output')
+        input = moa.ui.askUser('input:\n> ', '')
+        output = moa.ui.askUser('output:\n> ', './output')
         params.append(('input', input))
         params.append(('output', output))
-        
+
     moa.job.newJob(
         job, template='reduce',
-        title = options.title,
+        title=options.title,
         parameters=params)
-
-
 
 
 ### Old adhoc code - still here for historical purposes
@@ -215,13 +219,16 @@ def _sourceOrTarget(g):
     target, depending on where the output is aimed to go
     """
     d = g.groups()[0]
-    if not d: return 'target'
+    if not d:
+        return 'target'
     if d[:2] == './': return 'target'
 
     if d[:2] == '..': return 'source'
-    if d[0] == '/': return 'source'
+    if d[0] == '/':
+        return 'source'
     return 'target'
-    
+
+
 def createAdhoc(job):
     """
     Creates an adhoc job.
@@ -232,23 +239,26 @@ def createAdhoc(job):
     options = sysConf['options']
     args = sysConf['newargs']
 
-    if not options.force and \
-           os.path.exists(os.path.join(wd, '.moa', 'template')):
+    if (not options.force and
+            os.path.exists(os.path.join(wd, '.moa', 'template'))):
+
         moa.ui.exitError("Job already exists, use -f to override")
-        
+
     command = " ".join(args).strip()
-    
+
     if not command:
-        command=moa.ui.askUser('command:\n>', '')
+        command = moa.ui.askUser('command:\n>', '')
 
     l.info('Parsing command: %s' % command)
     params = []
     mode = None
     searchGlobs = True
-        
+
     if options.mode:
         mode = options.mode
-        if options.mode == 'simple': searchGlobs = False
+        if options.mode == 'simple':
+            searchGlobs = False
+
         if not options.mode in ['seq', 'par', 'all', 'simple']:
             l.critical("Unknown adhoc mode: %s" % options.mode)
             sys.exit(-1)
@@ -267,16 +277,16 @@ def createAdhoc(job):
     else:
         #it appears to make sense to see if there is a glob in the command
         refindGlob = re.compile(
-            r"([^ *]+" \
-            + os.sep \
+            r"([^ *]+"
+            + os.sep
             + ")?([^ *]*\*[^ *]*?)((?:\.[^ .*]+)?)")
-        
+
         globs = []
         for g in refindGlob.finditer(command):
             globs.append(g)
 
         if globs:
-            globReplace = '$<', '$t'                                
+            globReplace = '$<', '$t'
             mode = 'seq'
             if len(globs) > 2:
                 raise Exception("Too many globs ??  I not understand :(")
@@ -284,13 +294,15 @@ def createAdhoc(job):
                 st1 = _sourceOrTarget(globs[0])
                 st2 = _sourceOrTarget(globs[1])
                 if st1 == st2:
-                    l.warn("Unsure wich is the source &  target glob, assuming:")
-                    inGlob,outGlob = globs
-                if st1 == 'source': inGlob,outGlob = globs
+                    l.warn("Unsure wich is the source & target, assuming:")
+                    inGlob, outGlob = globs
+
+                if st1 == 'source':
+                    inGlob, outGlob = globs
                 else:
-                    outGlob,inGlob = globs
+                    outGlob, inGlob = globs
                     globReplace = '$t', '$<'
-                    
+
                 l.info("Input glob: %s" % inGlob.group())
                 l.info("Output glob: %s" % outGlob.group())
             else:
@@ -298,8 +310,12 @@ def createAdhoc(job):
                 inGlob, outGlob = globs[0], None
 
             inD, inG, inE = inGlob.groups()
-            if not inD: inD = ""
-            if not inE: inE = ""
+            if not inD:
+                inD = ""
+
+            if not inE:
+                inE = ""
+
             l.info(" - set input dir        : %s" % inD)
             l.info(" - set input glob       : %s" % inG)
             l.info(" - set input extension  : %s" % inE[1:])
@@ -310,8 +326,10 @@ def createAdhoc(job):
 
             if outGlob:
                 ouD, ouG, ouE = outGlob.groups()
-                if not ouD: ouD = ""
-                if not ouE: ouE = ""
+                if not ouD:
+                    ouD = ""
+                if not ouE:
+                    ouE = ""
 
                 ouG1, ouG2 = ouG.split('*')
                 sed = r"s^\(.*\)%s^%s%s\1%s%s^g" % (
@@ -327,9 +345,11 @@ def createAdhoc(job):
                 params.append(('name_sed', sed))
 
             #hack the commandline
-            for i in range(len(globs)-1, -1, -1):
+            for i in range(len(globs) - 1, -1, -1):
                 g = globs[i]
-                command = command[:g.start()] + globReplace[i] + command[g.end():]
+                command = (command[:g.start()] +
+                           globReplace[i] +
+                           command[g.end():])
 
     if not mode:
         mode = 'simple'
@@ -339,19 +359,18 @@ def createAdhoc(job):
         params.append(('process', command))
 
     params.append(('mode', mode))
-    
+
     l.info(" - set mode             : %s" % mode)
 
     if mode == 'seq':
         l.warning("Note: adhoc is running in sequential ('seq') mode. If ")
-        l.warning("you are confident that the individual jobs do not interfere, you might ")
+        l.warning("if the individual jobs do not interfere ")
         l.warning("consider setting adhoc to parallel operation:")
         l.warning("$ moa set mode=par")
 
     for pk, pv in params:
         l.debug('setting parameters %s to %s' % (pk, pv))
-    
-    moa.job.newJob(job, template='adhoc',
-                         title = options.title,
-                         parameters=params)
 
+    moa.job.newJob(job, template='adhoc',
+                   title=options.title,
+                   parameters=params)

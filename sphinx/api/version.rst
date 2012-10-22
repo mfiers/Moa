@@ -1,0 +1,2 @@
+.. automodule:: moa.version
+   :members:

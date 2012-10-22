@@ -44,7 +44,7 @@ def hook_finish(job):
         
     params = job.conf.getPublicParameters()
     with open(os.path.join(compdir, 'parameters'), 'w') as F:
-        F.write(" ".join(params))
+        F.write(" ".join(map(str, params)))
     return
         
 

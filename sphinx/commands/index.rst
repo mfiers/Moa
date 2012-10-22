@@ -61,18 +61,55 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+moa **archive_excl**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa archive_excl [-h] [-r] [-v] [--profile]
+
+Toggle a directory to be included in an moa archive.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **archive_incl**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa archive_incl [-h] [-r] [-v] [--profile]
+
+Toggle a directory to be included in an moa archive.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
 moa **blog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa blog [-h] [-r] [-v] [--profile]
+usage: moa blog [-h] [-r] [-v] [--profile] [message [message ...]]
 
-Add an entry to the blog job (Blog.md) Allows a user to maintain a blog for
-this job (in Blog.md). Use as follows:: $ moa blog Enter your blog message
+Add an entry to the job blog (BLOG.md) Allows a user to maintain a blog for
+this job (in BLOG.md). Use as follows:: $ moa blog Enter your blog message
 (ctrl-d on an empty line to finish) ... enter your message here .. [ctrl-d]
 Note: the ctrl-d needs to be given on an empty line. The text is appended to
 moa.desciption. In the web interface this is converted to Markdown_. ..
 _Markdown: http://daringfireball.net/projects/markdown/ markdown.
+
+positional arguments:
+  message
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -87,7 +124,7 @@ moa **change**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa change [-h] [-r] [-v] [--profile]
+usage: moa change [-h] [-r] [-v] [--profile] [message [message ...]]
 
 Add entry to CHANGELOG.md This function allows the user to add an entry to
 CHANGELOG.md (including a timestamp). Use it as follows:: $ moa change Enter
@@ -96,7 +133,12 @@ message here .. [ctrl-d] Note: the ctrl-d needs to be given on an empty line.
 The text is appended to moa.desciption. In the web interface this is converted
 to Markdown_. .. _Markdown: http://daringfireball.net/projects/markdown/
 markdown. Note the same can be achieved by specifying the -m parameter (before
-the command - for example: `moa -m 'intelligent remark' set ...`
+the command - for example: `moa -m 'intelligent remark' set ...` Note. It is
+also possible to cat some text into moa change: wc -l | moa change Moa will
+still query you for a message and append the data from stdin to the message
+
+positional arguments:
+  message
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -120,16 +162,34 @@ files in the moa directory that start with `moa.` (for example
 used in conjunction with the -r (recursive) flag the complete tree is copied.
 
 positional arguments:
-  from             copy from this path
-  to               copy to this path
+  from             copy from
+  to               copy to
 
 optional arguments:
   -h, --help       show this help message and exit
   -r, --recursive  Run this job recursively
   -v, --verbose    Show debugging output
   --profile        Run the profiler
-  -o, --overwrite  if the target dir exists - overwrite (insteadof copying
+  -o, --overwrite  if the target dir exists - overwrite (instead of copying
                    into that dir
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **dumpTemplate**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa dumpTemplate [-h] [-r] [-v] [--profile]
+
+**moa template_dump** - Show raw template information Usage:: moa
+template_dump [TEMPLATE_NAME] Show the raw template sysConf.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -155,11 +215,48 @@ moa **files**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa files [-h] [-r] [-v] [--profile]
+usage: moa files [-h] [-r] [-v] [--profile] [-a] [-n NO_FILES]
 
 Show in and output files for this job Display a list of all files discovered
 (for input & prerequisite type filesets) and inferred from these for map type
 filesets.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --recursive       Run this job recursively
+  -v, --verbose         Show debugging output
+  --profile             Run the profiler
+  -a, --all             Show all filesets
+  -n NO_FILES, --no_files NO_FILES
+                        No filesets to show (default 10)
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **gitadd**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa gitadd [-h] [-r] [-v] [--profile]
+
+add this job to a git repository
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **gitlog**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa gitlog [-h] [-r] [-v] [--profile]
+
+Print a log to screen
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -272,8 +369,8 @@ usage: moa mv [-h] [-r] [-v] [--profile] from [to]
 Move, rename or renumber a moa job.
 
 positional arguments:
-  from             copy from this path
-  to               copy to this path
+  from             copy from
+  to               copy to
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -288,7 +385,7 @@ moa **new**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa new [-h] [-r] [-v] [--profile] [-f] [-d DIRECTORY] [-t TITLE]
+usage: moa new [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
                template [parameter [parameter ...]]
 
 Create a new job. This command creates a new job with the specified template
@@ -308,8 +405,6 @@ optional arguments:
   -v, --verbose         Show debugging output
   --profile             Run the profiler
   -f, --force           Force this action
-  -d DIRECTORY, --directory DIRECTORY
-                        directory to create the job in
   -t TITLE, --title TITLE
                         mandatory job title
 
@@ -340,6 +435,23 @@ moa **pause**
 usage: moa pause [-h] [-r] [-v] [--profile]
 
 Pause a running job
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **pelican**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa pelican [-h] [-r] [-v] [--profile]
+
+Run pelican :)
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -384,6 +496,42 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+moa **raw_commands**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa raw_commands [-h] [-r] [-v] [--profile]
+
+return a list available commands Print a list of known Moa commands, both
+global, plugin defined commands as template specified ones. This command meant
+to be used by software interacting with Moa.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **raw_parameters**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa raw_parameters [-h] [-r] [-v] [--profile]
+
+Print a list of all known parameters
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
 moa **readme**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -391,7 +539,8 @@ moa **readme**
 usage: moa readme [-h] [-r] [-v] [--profile]
 
 Edit the README.md file for this job You could, obviously, also edit the file
-yourself - this is a mere shortcut to try to stimulate you in maintaining one
+yourself - this is a mere shortcut - maybe it will stimulate you to maintain a
+README file
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -409,6 +558,23 @@ moa **refresh**
 usage: moa refresh [-h] [-r] [-v] [--profile]
 
 Refresh the template Reload the template from the original repository.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **rehash**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa rehash [-h] [-r] [-v] [--profile]
+
+cache a list of variables for command line completion
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -531,6 +697,24 @@ optional arguments:
                    local template
   -p               show private parameters
   -a               show all parameters
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **template**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa template [-h] [-r] [-v] [--profile]
+
+**moa template** - Print the template name of the current job Usage:: moa
+template
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively
+  -v, --verbose    Show debugging output
+  --profile        Run the profiler
 
 ~~~~~~~~~~~~~~~~~~
 

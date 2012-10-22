@@ -14,7 +14,6 @@ import moa.exceptions
 import moa.logger as l
 
 
-
 class MoaHelpFormatter(argparse.HelpFormatter):
     """
     Copy pasted some code from argparse.py - and made minor changes
@@ -35,17 +34,16 @@ class MoaHelpFormatter(argparse.HelpFormatter):
                 return (result, ) * tuple_size
         return format
 
-
     def _format_action(self, action):
         # determine the required width and the entry label
         help_position = min(self._action_max_length + 2,
                             self._max_help_position)
         help_width = self._width - help_position
         action_width = help_position - self._current_indent - 2
-        
+
         if action.dest == 'command':
             action_header = argparse.SUPPRESS
-        else: 
+        else:
             action_header = self._format_action_invocation(action)
 
         # no nelp; start on same line and add a final newline
@@ -68,7 +66,7 @@ class MoaHelpFormatter(argparse.HelpFormatter):
         parts = [action_header]
 
         # if there was help for the action, add lines of help text
-        if action.help:            
+        if action.help:
             help_text = self._expand_help(action)
             help_lines = self._split_lines(help_text, help_width)
             if argparse.SUPPRESS in action_header:
@@ -90,14 +88,16 @@ class MoaHelpFormatter(argparse.HelpFormatter):
             if sysConf.commands[subaction.dest]['private']:
                 continue
             if sysConf.commands[subaction.dest].get('needsJob') and \
-               (not sysConf.job.isMoa()):
+                    (not sysConf.job.isMoa()):
                 continue
-            if sysConf.commands[subaction.dest].get('source', '') == \
-                   'template':
-                flag='*'
+
+            tsource = sysConf.commands[subaction.dest].get('source', '')
+
+            if tsource == 'template':
+                flag = '*'
             elif sysConf.commands[subaction.dest].get('needsJob', False):
-                flag='j'
-                
+                flag = 'j'
+
             if not re.match(r'^[\*j.] .*$', subaction.help):
                 subaction.help = '%s %s' % (flag, subaction.help)
 
@@ -106,19 +106,20 @@ class MoaHelpFormatter(argparse.HelpFormatter):
         # return a single string
         return self._join_parts(parts)
 
+
 class MoaArgumentParser(argparse.ArgumentParser):
-        
+
     def error(self, message):
         """error(message: string)
         Prints a usage message incorporating the message to stderr and
         exits.
-        
+
         If you override this in a subclass, it should not return -- it
         should either exit or raise an exception.
         """
         self.error_message = message
         raise moa.exceptions.MoaInvalidCommandLine, self
-    
+
     def real_error(self):
         """
         after argparser.error, but takes the message from self.error_meesage
@@ -127,13 +128,12 @@ class MoaArgumentParser(argparse.ArgumentParser):
         """
 
         self.print_usage(argparse._sys.stderr)
-        self.exit(2, argparse._('%s: error: %s\n') % (self.prog, self.error_message))
-                   
-                                
+        self.exit(2, argparse._('%s: error: %s\n') %
+                  (self.prog, self.error_message))
 
 
 def getParser(reuse=True):
-    
+
     if sysConf.argParser:
         if reuse:
             #work on the current parser
@@ -145,21 +145,21 @@ def getParser(reuse=True):
             sysConf.commandParser = newParser.commandParser
             return newParser, newParser.commandParser
     else:
-        parser =  MoaArgumentParser(
+        parser = MoaArgumentParser(
             prog='moa',
             formatter_class=MoaHelpFormatter)
 
-        hlptxt = ("Command legend: '.' can be executed everywhere; "+
+        hlptxt = ("Command legend: '.' can be executed everywhere; " +
                   "'j' require a job; '*' are specified by the template")
-            
+
         commandParser = parser.add_subparsers(
             title='command', help='Moa Command', dest='command',
             description=hlptxt)
 
         parser.commandParser = commandParser
         sysConf.originalParser = parser
-        sysConf.argParser = parser        
-        sysConf.commandParser =  commandParser
+        sysConf.argParser = parser
+        sysConf.commandParser = commandParser
         return parser, commandParser
 
 
@@ -169,12 +169,13 @@ def getParser(reuse=True):
 
 def _commandify(f, name):
     """
-    Do the actual commandification of function f with specified name 
+    Do the actual commandification of function f with specified name
     """
     try:
         assert(inspect.getargspec(f).args == ['job', 'args'])
     except AssertionError:
-        moa.ui.exitError("Command function for %s seems invalid - contact a developer" % name)
+        moa.ui.exitError(("Command function for %s seems invalid " +
+                          "- contact a developer") % name)
 
     l.debug("registering command %s" % name)
     _desc = [x.strip() for x in f.__doc__.strip().split("\n", 1)]
@@ -183,13 +184,12 @@ def _commandify(f, name):
     else:
         shortDesc = _desc[0]
         longDesc = ''
-    
+
     parser, cparser = getParser()
 
     cp = cparser.add_parser(
-       name, help= shortDesc,
-        description="%s %s" % ( shortDesc, longDesc))
-
+        name, help=shortDesc,
+        description="%s %s" % (shortDesc, longDesc))
 
     cp.add_argument("-r", "--recursive", dest="recursive", action="store_true",
                     default="false", help="Run this job recursively")
@@ -197,28 +197,28 @@ def _commandify(f, name):
     cp.add_argument("-v", "--verbose", dest="verbose", action="store_true",
                     help="Show debugging output")
 
-    
     cp.add_argument("--profile", dest="profile", action="store_true",
                     help="Run the profiler")
 
     sysConf.commands[name] = {
-        'desc' : shortDesc,
-        'long' : longDesc,
-        'recursive' : 'gbobal',
-        'logJob' : True,
-        'needsJob' : False,
-        'call' : f,
-        'cp' : cp,
-        }
+        'desc': shortDesc,
+        'long': longDesc,
+        'recursive': 'gbobal',
+        'logJob': True,
+        'needsJob': False,
+        'call': f,
+        'cp': cp,
+    }
     f.arg_parser = cp
     return f
-    
+
 
 def command(f):
     """
     Decorator for any function in moa - name is derived from function name
     """
     return _commandify(f, f.__name__)
+
 
 def commandName(name):
     """
@@ -229,6 +229,7 @@ def commandName(name):
         return _commandify(f, name)
     return decorator
 
+
 def argument(*args, **kwargs):
     """
     Add an argument to a function
@@ -238,36 +239,41 @@ def argument(*args, **kwargs):
         return f
     return decorator
 
+
 def addFlag(*args, **kwargs):
     """
     Add a flag to (default false - true if specified) any command
     """
     def decorator(f):
-        if not kwargs.has_key('action'):
+        if not 'action' in kwargs:
             kwargs['action'] = 'store_true'
-        if not kwargs.has_key('default'):
+        if not 'default' in kwargs:
             kwargs['default'] = False
         f.arg_parser.add_argument(*args, **kwargs)
         return f
     return decorator
-    
+
+
 def needsJob(f):
     sysConf.commands[f.func_name]['needsJob'] = True
     return f
+
 
 def doNotLog(f):
     sysConf.commands[f.func_name]['logJob'] = False
     return f
 
+
 def localRecursive(f):
     sysConf.commands[f.func_name]['recursive'] = 'local'
     return f
 
+
 def private(f):
     sysConf.commands[f.func_name]['private'] = True
+
 
 def forceable(f):
     f.arg_parser.add_argument('-f', '--force', action='store_true',
                               default=False, help='Force this action')
     return f
-    

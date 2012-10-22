@@ -1,5 +1,11 @@
 import random
-import unittest2 as unittest
+
+try:
+    import unittest
+except ImportError:
+    import unittest2 as unittest
+
+
 import doctest
 
 import moa.job
