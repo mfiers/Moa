@@ -1,10 +1,13 @@
 Moa - lightweight workflows in bioinformatics.
 
-For information on how to install and operate Moa, please refer to
-http://mfiers.github.com/Moa/
-f
-or try:
+For information on how to install and operate Moa, please read the documentation at:
+
+http://moa.readthedocs.org/en/latest/index.html
+
+check the source code at:
+
+https://github.com/mfiers/Moa
+
+or run:
 
 moa --help
-
-
