@@ -1,0 +1,57 @@
+### prepare
+
+if [[ ! -f "db.1.ebwt" ]]
+then
+    echo "Building index for {{ fasta }}"
+    bowtie-build {{ fasta }} db
+else
+    echo "Skip bowtie build - files exists"
+fi
+
+### run
+
+DEBUG=""
+
+mkdir -p touch
+[[ -f "{{ outbase }}.unsorted" ]] || (
+    echo "Running bowtie for"
+    echo "  forward: {{ fw_fq }}"
+    echo "  reverse: {{ rev_fq }}"
+    if [[ $DEBUG == 'echo' ]]
+    then
+        echo bowtie -I 1 -X 10000 -p {{ threads }} --fr  -S \
+            db -1 {{ fw_fq }} -2 {{ rev_fq }}  \
+            \| samtools view -f 2 -bS - \> {{ outbase }}.unsorted
+    else
+        bowtie -I 1 -X 10000 -p {{ threads }} --fr  -S \
+            db -1 {{ fw_fq }} -2 {{ rev_fq }}  \
+            | samtools view -f 2 -bS - > {{ outbase }}.unsorted
+    fi
+)
+
+[[ -f "{{ outbase }}.bam" ]] || (
+    echo "Sorting {{ outbase }}.bam"
+    $DEBUG samtools sort {{ outbase }}.unsorted {{ outbase }}
+)
+
+[[ -f "{{ outbase }}.bai" ]] || (
+    echo "Indexing {{ outbase }}"
+    $DEBUG samtools index {{ outbase }}.bam
+)
+
+[[ -d "readpairs/{{ outbase }}" ]] || (
+    echo "running hagfish_extract for {{ outbase }}"
+    $DEBUG hagfish_extract -v {{ outbase }}.bam 
+)
+
+### finish
+
+hagfish_gapfinder -v -f {{ fasta }}
+hagfish_coverage_combine -v
+hagfish_report -v
+
+### clean
+
+rm -rf `dirname {{ output }}`
+rm -rf bins combined coverage  readpairs  report  seqInfo  stats 
+
