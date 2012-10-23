@@ -187,15 +187,14 @@ def cp(job, args):
     if dirTo[-1] == '/':
         dirTo = dirTo[:-1]
 
+    if not os.path.exists(dirFrom):
+        moa.ui.exitError("Directory does not exists: %s" % dirFrom)
+
     toBase = os.path.basename(dirTo)
 
-    print toBase
-
-    #print fromBase, toBase
     # trick - the second argument is a number
     # renumber the target directory
     if re.match("^[0-9]+$", toBase) and re.match("^[0-9]+\..+$", fromBase):
-        print toBase, fromBase
         toBase = re.sub("^[0-9]*\.", toBase + '.', fromBase)
         dirTo = os.path.join(os.path.dirname(dirTo), toBase)
 
@@ -203,8 +202,9 @@ def cp(job, args):
         #if the 'to' directory exists - create a new sub directory
         dirTo = os.path.join(dirTo, fromBase)
 
-    l.info("Copying from %s to %s" % (dirFrom, dirTo))
-
+    moa.ui.message("Copying %s to %s" % (dirFrom, dirTo))
+    sysConf.moautil.dirFrom = dirFrom
+    sysConf.moautil.dirTo = dirTo
     if not args.recursive:
         if not os.path.isdir(dirFrom):
             moa.ui.exitError(
@@ -243,9 +243,13 @@ def _copyMoaDir(job, toDir):
 
 def hook_git_finish_cp():
     files = sysConf.moautil.get('filesCopied', [])
-    repo = sysConf.git.getRepo(sysConf.job)
-    repo.index.add(map(os.path.abspath, files))
-    repo.index.commit("moa cp %s" % " ".join(sysConf.newargs))
+    if len(files) == 0:
+        return
+
+    sysConf.git.callGit('git add -f %s' % " ".join(files))
+    sysConf.git.callGit("git commit -m 'moa cp %s %s' %s" % (
+        sysConf.moautil.dirFrom, sysConf.moautil.dirTo,
+        " ".join(files)))
 
 
 @moa.args.argument('todir', metavar='to', nargs='?', help='copy to')
