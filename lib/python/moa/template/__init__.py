@@ -20,7 +20,7 @@ import Yaco
 import moa.logger
 import moa.ui
 from moa.template import provider
-
+from moa.template.template import Template
 
 l = moa.logger.getLogger(__name__)
 l.setLevel(moa.logger.INFO)
