@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.utils
 ---------
@@ -24,26 +24,32 @@ import subprocess
 import moa.utils
 import moa.logger as l
 
+
 def getCwd():
     """
-    Do not use os.getcwd() - 
+    Do not use os.getcwd() -
     need to make sure symbolic links do not get dereferenced
-    
+
     hijacked some code from:
     http://stackoverflow.com/questions/123958/how-to-get-set-logical-directory-path-in-python
     """
-    
+
     cwd = os.environ.get("PWD")
-    if cwd is not None: 
+    if cwd is not None:
         return cwd
+
     # no environment. fall back to calling pwd on shell
-    cwd = subprocess.Popen('pwd', stdout=subprocess.PIPE).communicate()[0].strip()
+    cwd = subprocess.Popen(
+        'pwd',
+        stdout=subprocess.PIPE).communicate()[0].strip()
     return cwd
+
 
 def getTerminalSize():
     def ioctl_GWINSZ(fd):
         try:
-            cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
+            cr = struct.unpack('hh',
+                               fcntl.ioctl(fd, termios.TIOCGWINSZ, '1234'))
         except:
             return None
         return cr
@@ -57,11 +63,12 @@ def getTerminalSize():
             pass
     if not cr:
         try:
-            cr = (env['LINES'], env['COLUMNS'])
+            cr = (os.environ['LINES'], os.environ['COLUMNS'])
         except:
             cr = (25, 80)
     return int(cr[1]), int(cr[0])
-        
+
+
 def getProcessInfo(pid):
     """
     Return some info on a process
@@ -69,7 +76,10 @@ def getProcessInfo(pid):
     cl = ('ps --no-heading -fp %s' % (pid)).split()
     p = subprocess.Popen(cl, stdout=subprocess.PIPE)
     out = p.communicate()[0].strip().split(None, 7)
-    if not out: return {}
+
+    if not out:
+        return {}
+
     pi = dict(zip(
         'uid pid ppid c stime tty time cmd'.split(), out))
 
@@ -80,7 +90,8 @@ def getProcessInfo(pid):
     else:
         pi['moa'] = False
     return pi
-    
+
+
 def getMoaBase():
     """
     Return MOABASE - the directory where Moa is installed. This
@@ -90,10 +101,10 @@ def getMoaBase():
     >>> assert(os.path.isdir(d))
     >>> assert(os.path.isfile(os.path.join(d, 'README')))
     >>> assert(os.path.isdir(os.path.join(d, 'lib')))
-    
-    :rtype: string (path) 
+
+    :rtype: string (path)
     """
-    if os.environ.has_key('MOABASE'):
+    if 'MOABASE' in os.environ:
         MOABASE = os.environ["MOABASE"]
         return MOABASE
 
@@ -107,6 +118,7 @@ def getMoaBase():
     os.putenv('MOABASE', MOABASE)
     return MOABASE
 
+
 def moaDirOrExit(job):
     """
     Check if the job contains a proper Moa job, if not, exit with an
@@ -115,8 +127,9 @@ def moaDirOrExit(job):
     :param job: An instance of :class:`moa.job.Job`
     """
     if not job.isMoa():
-        moa.ui.exit("Not a moa directory")
+        moa.ui.exit("Need a Moa job")
         sys.exit(-1)
+
 
 def deprecated(func):
     """
@@ -142,7 +155,7 @@ def printstack(func):
         func(*args, **kwargs)
     return depfunc
 
-    
+
 def simple_decorator(decorator):
 
     """
@@ -157,7 +170,7 @@ def simple_decorator(decorator):
 
     Note; I got this code from somehwere, but forgot where
     exactly. This seems the most likely source:
-    
+
     http://svn.navi.cx/misc/trunk/djblets/djblets/util/decorators.py
 
     """
@@ -174,6 +187,7 @@ def simple_decorator(decorator):
     new_decorator.__dict__.update(decorator.__dict__)
     return new_decorator
 
+
 @simple_decorator
 def flog(func):
     """
@@ -185,7 +199,7 @@ def flog(func):
             ...
 
     This is for debugging purposes (obviously)
-    
+
     :param func: Any python function
     """
     def flogger(*args, **kwargs):
@@ -196,4 +210,3 @@ def flog(func):
             l.error("  - calling with kwargs %s=%s" % (k, kwargs[k]))
         return func(*args, **kwargs)
     return flogger
-                    
