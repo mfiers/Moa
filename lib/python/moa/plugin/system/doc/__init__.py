@@ -113,6 +113,8 @@ def _readFromuser(job, header):
     sys.stdin = oldstdin
     return txt
 
+
+@moa.args.needsJob
 @moa.args.argument('message', nargs='*')
 @moa.args.command
 def blog(job, args):
@@ -168,6 +170,8 @@ def _getFromStdin():
         return m
     return ""
 
+
+@moa.args.needsJob
 @moa.args.argument('message', nargs='*')
 @moa.args.command
 def change(job, args):
@@ -277,6 +281,7 @@ def pelican(job, args):
     pelican_util.generate_redirect(job)
 
 
+@moa.args.needsJob
 @moa.args.command
 def readme(job, args):
     """
