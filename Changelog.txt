@@ -1,3 +1,15 @@
+Moa 0.11.5 / 2012-10-24
+==========================
+
+  * added changelog & showblog commands
+  * lots of pep8 code cleanup
+  * better error messages
+  * Better docs for `moa set`.
+  * explicitly enabled template providers
+  * changed to git subtree (based on: https://github.com/apenwarr/git-subtree)
+  * can set user system variables using the command line
+  * send status messages to evernote - using geeknote
+
 Moa 0.11.4 / 2012-10-16
 ==========================
   * Minor fix with installation
