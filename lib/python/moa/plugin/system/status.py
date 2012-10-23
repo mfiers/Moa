@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **status** - Job Status
 -----------------------
@@ -31,11 +31,12 @@ from moa.sysConf import sysConf
 LLOG = False
 STATUS = 'unknown'
 
+
 @moa.args.addFlag('-a', dest='showAll', help='show all parameters')
 @moa.args.addFlag('-p', dest='showPrivate', help='show private parameters')
 @moa.args.addFlag('-R', dest='showRecursive', help='show recursively defined '
                   + 'parameters not specified by the local template')
-@moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values '+
+@moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values ' +
                   '(when using inline parameters)')
 @moa.args.needsJob
 @moa.args.doNotLog
@@ -62,21 +63,21 @@ def status(job, args):
         'locked' : '{{red}}{{bold}}',
         'error' : '{{red}}{{bold}}',
         'interrupted' : '{{blue}}'}.get(status, '{{bold}}')
-    message += "Status: %s%s{{reset}}" % (color, status)        
+    message += "Status: %s%s{{reset}}" % (color, status)
     moa.ui.fprint(message, f='jinja')
 
     moa.ui.fprint("\n{{bold}}Configuration{{reset}}:", f='jinja')
     if 'show' in sysConf.commands:
         commandFunction = sysConf.commands['show']['call']
         commandFunction(job, args)
-        
+
 def _getStatus(job, silent=False):
     """
     Figure out what the status of this job is
 
     If it is running -check if the pid corresponds with a moa process
     """
-    
+
     statusFile = os.path.join(job.wd, '.moa', 'status')
     lockFile = os.path.join(job.wd, '.moa', 'lock')
     pidFile = os.path.join(job.wd, '.moa', 'pid')
@@ -93,20 +94,20 @@ def _getStatus(job, silent=False):
     with open(statusFile) as F:
         status = F.read()
         l.debug("reading status file: " + status.strip())
-        
+
     if status != 'running':
         return status
 
-    #if running - check if it is really running 
+    #if running - check if it is really running
     otherPid = _getPid(job)
     l.debug("Check if we're really running - should be process id %s" % otherPid)
     if otherPid == None:
         return 'error'
-    
+
     processInfo = moa.utils.getProcessInfo(otherPid)
     if processInfo.get('moa', False):
         return 'running'
-    
+
     #So, this jobs; status says running - but the processInfo
     #disagrees - must be a stale lock
     try:
@@ -114,7 +115,7 @@ def _getStatus(job, silent=False):
             moa.ui.warn("Removing a stale lockfile")
         os.unlink(pidFile)
         _setStatus(job, 'error')
-        
+
     except OSError, e:
         if e.errno == 2:
             #weird - the pid file dissapeared -
@@ -123,7 +124,7 @@ def _getStatus(job, silent=False):
             return _getStatus(job)
         else:
             raise
-        
+
     return "error"
 
 def _setStatus(job, status):
@@ -147,7 +148,7 @@ def _removePid(job):
     except OSError, e:
         if e.errno != 2:
             raise
-        
+
 def _getPid(job):
     pidFile = os.path.join(job.wd, '.moa', 'pid')
     if not os.path.exists(pidFile):
@@ -177,9 +178,9 @@ def kill(job, args):
         moa.exitError("Failed to kill this Moa job")
     _removePid(job)
     _setStatus(job, 'interrupted')
-    
-    
-def hook_preRun(): 
+
+
+def hook_preRun():
     status = _getStatus(sysConf.job)
     if status in ['running', 'paused']:
         moa.ui.exitError("Already running")
