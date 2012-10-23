@@ -89,9 +89,13 @@ def run_3(wd, exitOnError=True):
     if command in sysConf.commands.keys():
         comInf = sysConf.commands[command]
         if comInf.get('needsJob', False) and not job.isMoa():
-            moa.ui.exitError(("Must execute 'moa %s' in a directory " +
-                              "containing a Moa job (try moa -h)")
-                             % command)
+            if command == 'status':
+                message = "Need a Moa job - try 'moa -h'"
+            else:
+                message = "'moa %s' needs a job" % command
+
+            moa.ui.message(message)
+            sys.exit(-1)
 
         sysConf.pluginHandler.run('prepare')
         #job.run_hook('prepare') #executed during job initialization
