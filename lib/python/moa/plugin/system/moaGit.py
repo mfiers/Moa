@@ -140,6 +140,7 @@ def _commit(job, message):
     #repo.git.commit(os.path.join(job.wd,  '.moa', 'template.d'))
 
 
+@moa.args.needsJob
 @moa.args.command
 def gitadd(job, args):
     """
@@ -208,6 +209,7 @@ def hook_postNew():
     _commit(sysConf.job, "New Moa Project")
 
 
+@moa.args.needsJob
 @moa.args.command
 def gitlog(job, args):
     """
