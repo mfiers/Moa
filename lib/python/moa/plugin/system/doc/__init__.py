@@ -84,25 +84,25 @@ def _writeMessage(category, txt, title=None):
 
     txt = "\n".join(txt).rstrip() + "\n"
 
-    #title = "%s" % category.capitalize()
-
+    #:date: 2010-10-03 10:20
     with open(filename, "w") as F:
         F.write("Title: %s\n" % title)
-        F.write("Author: %s\n\n" % getpass.getuser())
-        F.write("\n".join(txt))
+        F.write("Author: %s\n" % getpass.getuser())
+        F.write("Date: %d-%d-%d %d:%d\n\n" % (
+            now.year, now.month, now.day, now.hour, now.minute))
+        F.write(txt)
 
 
-def _readFromuser(job, header):
+def _readFromuser(job, ):
     """
-    gather blog or changelog information
+    get a message from the user
     """
-
-    #moa.utils.moaDirOrExit(job)
 
     oldstdin = sys.stdin
     sys.stdin = open('/dev/tty')
     txt = []
-    print header, "..."
+    print "Enter your message. First line is used as title."
+    print "Ctrl-d on an empty line to finish..."
     while True:
         try:
             line = raw_input("")
@@ -119,9 +119,9 @@ def _readFromuser(job, header):
 @moa.args.command
 def blog(job, args):
     """
-    Add an entry to the job blog (BLOG.md)
+    Add an entry to the job blog (in .moa/doc/blog/)
 
-    Allows a user to maintain a blog for this job (in BLOG.md). Use as
+    Allows a user to maintain a blog for this job. Use as
     follows::
 
         $ moa blog
@@ -140,35 +140,42 @@ def blog(job, args):
 
     sin = _getFromStdin()
 
-
     if args.message:
         message = [" ".join(args.message)]
     else:
         message = _readFromuser(
-            job,
-            header="Enter your BLOG message (ctrl-d on an empty " +
-            "line to finish)")
+            job)
 
     if sin:
         message.append("\nStdin:\n")
         message.extend(["    " + x for x in sin.split("\n")])
-
 
     _writeMessage('blog', message)
 
     moa.ui.message("Created a blog entry", store=False)
     sysConf.doc.blog = "\n".join(message)
 
+
 def _getFromStdin():
     import re
 
     if not sys.stdin.isatty():
         m = sys.stdin.read()
-        #print m
         m = re.sub(r'\x1b\[[^m]*m', '', m)
-        #print m
         return m
     return ""
+
+
+@moa.args.needsJob
+@moa.args.command
+def changelog(job, args):
+    """
+    Print a changelog to stdout
+
+    """
+
+    print
+
 
 
 @moa.args.needsJob
@@ -215,9 +222,7 @@ def change(job, args):
         message = [" ".join(args.message)]
     else:
         message = _readFromuser(
-            job,
-            header="Enter your CHANGELOG message (ctrl-d on an empty " +
-            "line to finish)")
+            job)
 
     if sin:
         message.append("\nStdin:\n")
