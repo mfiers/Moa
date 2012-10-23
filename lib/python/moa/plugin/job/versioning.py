@@ -32,9 +32,11 @@ def _run_cl(cl):
     P = sp.Popen(cl, stdout=sp.PIPE, stderr=sp.PIPE, shell=True)
     o, e = P.communicate()
     if e:
-        moa.ui.warn("error tracking version information")
-        moa.ui.warn("'%s' gave an error" % cl)
+        moa.ui.warn("Version or prerequisite problem with:")
+        moa.ui.warn("  '%s'" % cl)
+        moa.ui.warn("Error message is:")
         moa.ui.warn("%s" % e)
+
     return o.strip().split("\n")[0]
 
 
