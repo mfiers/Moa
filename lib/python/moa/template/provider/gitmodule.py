@@ -13,6 +13,7 @@ Uses git repo's as templates by installing them as a submodule
 
 """
 import os
+import sys
 
 import Yaco
 import moa.logger
@@ -22,7 +23,8 @@ from moa.template import provider
 
 
 l = moa.logger.getLogger(__name__)
-l.setLevel(moa.logger.DEBUG)
+l.setLevel(moa.logger.INFO)
+
 
 class Gitmodule(provider.ProviderBase):
 
@@ -32,6 +34,8 @@ class Gitmodule(provider.ProviderBase):
             l.critical("template provider %s is not properly installed" %
                        self.name)
             l.critical("need a git base location")
+            sys.exit(-1)
+
         self.gbase = self.data['base']
 
     def hasTemplate(self, tName):
@@ -56,36 +60,13 @@ class Gitmodule(provider.ProviderBase):
         meta = super(Gitmodule, self).getMeta()
         meta.remote = self.data.remote
         meta.git_url = self.data.git_url
+        meta.git_branch = self.data.git_branch
         return meta
 
-    def installTemplate(self, wd, tName):
-        """
-        Install a template in the directory `wd`
-        """
-
-        repo = sysConf.git.repo
-        if not repo:
-            moa.ui.exitError("To use git submodules as templates you " +
-                             "need to have the moaGit plugin active " +
-                             "and be inside a Git repository")
-
-        git_url = self.gbase + tName
-
-        #first find a good name for the remote
-        remote_id = 0
-        remote_names = [r.name for r in repo.remotes]
-        while True:
-            remote_name = '%s_%s__%02d' % (self.name, tName, remote_id)
-            if not remote_name in remote_names:
-                break
-            remote_id += 1
-
-        #create a new remote
-        self.data.remote = remote_name
-        self.data.git_url = git_url
+    def _findRelativeDir(self, wd):
 
         #find the relative dirname
-        repodir = repo.working_dir
+        repodir = sysConf.git.repo.working_dir
         thisdir = os.path.join(os.path.abspath(wd), '.moa', 'template.d')
         if repodir in thisdir:
             thisdir = thisdir.replace(repodir, '')
@@ -93,35 +74,62 @@ class Gitmodule(provider.ProviderBase):
                 thisdir = thisdir[1:]
             else:
                 moa.ui.exitError("unexpected local path %s" % thisdir)
+        else:
+            moa.ui.exitError("unexpected path %s, not in repo %s" % (
+                thisdir, repodir))
 
-        #move to the repo base dir
-        remember_wd = os.getcwd()
+        return repodir, thisdir, os.getcwd()
+
+    def installTemplate(self, wd, tName):
+        """
+        Install a template in the directory `wd`
+        """
+
+        repo = sysConf.git.repo
+        branch = 'master'  # not configurable for the time being
+
+        if not repo:
+            moa.ui.exitError("To use git submodules as templates you " +
+                             "need to have the moaGit plugin active " +
+                             "and be inside a Git repository")
+
+        git_url = self.gbase + tName
+
+        self.data.git_url = git_url
+        self.data.git_branch = branch
+
+        repodir, thisdir, jobdir = self._findRelativeDir(wd)
+
+        #move to the repo base dir for subsequent operations
         os.chdir(repodir)
 
-        moa.ui.message("creating a new git remote %s %s" % (
-            remote_name, git_url))
-        moa.ui.message("for the repo at: %s" % git_url)
-        sysConf.git.callGit('git remote add -f %s %s' % (remote_name, git_url))
+        message = "Create Moa %s:%s job" % (self.name, tName)
 
-        moa.ui.message("merging")
-        sysConf.git.callGit('git merge -s ours --no-commit %s/master' %
-                            (remote_name))
-        moa.ui.message("git read-tree")
-        sysConf.git.callGit('git read-tree --prefix=%s -u %s/master' %
-                            (thisdir, remote_name))
-
-        sysConf.git.callGit(('git commit -a  -m "merged %s:%s ' +
-                             'as a template in %s"')
-                            % (self.name, tName, thisdir))
+        moa.ui.message("Remote repo at: %s" % git_url)
+        moa.ui.message("Remote branch: %s" % branch)
+        moa.ui.message("Adding subtree")
+        sysConf.git.callGit(("git subtree add --prefix='%s' " +
+                             "-m '%s' %s %s") % (
+                                 thisdir, message, git_url, branch))
 
         #and back to the cwd
-        os.chdir(remember_wd)
-        moa.ui.message("Finished adding group")
+        os.chdir(jobdir)
+        moa.ui.message("Finished creating new job")
 
     def refresh(self, wd, meta):
+        """default operation would be to reinstall, but for git we can
+        call git subtree pull
+
+        Note: No branch support (yet)
         """
-        default operation is to reinstall
-        """
-        l.debug('refreshing! - call git pull')
-        cl = 'git pull -s subtree %s master' % meta.remote
-        sysConf.git.callGit(cl)
+
+        repodir, thisdir, jobdir = self._findRelativeDir(wd)
+        #move to the repo base dir for subsequent operations
+        os.chdir(repodir)
+
+        moa.ui.message('Refreshing job - git subtree pull')
+        sysConf.git.callGit(("git subtree pull --prefix='%s' " +
+                             " %s %s"
+                             ) % (thisdir, meta.git_url, meta.git_branch))
+        #and back to the cwd
+        os.chdir(jobdir)
