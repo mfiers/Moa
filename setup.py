@@ -43,8 +43,6 @@ for dirpath, dirnames, filenames in os.walk('./lib/python/moa'):
     for t in toRemove:
         dirnames.remove(t)
 
-    if not '__init__.py' in filenames:
-        continue
     pn = dirpath.replace('./lib/python/', '').replace('/', '.')
     packagenames.append(pn)
 
