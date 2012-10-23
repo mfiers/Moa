@@ -24,7 +24,7 @@ from moa.template.template import Template
 
 
 l = moa.logger.getLogger(__name__)
-l.setLevel(moa.logger.DEBUG)
+l.setLevel(moa.logger.INFO)
 
 PROVIDERS = provider.Providers()
 
