@@ -78,28 +78,29 @@ def _getTemplateFromData(job):
 #         template.save()
 
 
-@moa.args.addFlag('-d', dest='desc', help='Print a short template description')
+#@moa.args.addFlag('-d', dest='desc', help='adds a short description')
 @moa.args.command
 def list(job, args):
     """
-    Lists all known templates
+    Lists all known local templates
 
     Print a list of all templates known to this moa installation. This
     includes locally installed templates as well.
     """
 
     for name in moa.template.templateList():
-        if args.desc:
+        if False:  # args.desc:
+            # does not work for the time being -
             ti = moa.template.getMoaFile(name)
             txt = moa.ui.fformat(
-                '{{bold}}%s{{reset}}:{{cyan}} %s{{reset}}'
-                % (name, ti.description),
+                '{{bold}}%s:%s{{reset}}:{{cyan}} %s{{reset}}'
+                % (name[0], name[1], ti.description),
                 f='jinja')
             for line in textwrap.wrap(txt, initial_indent=' - ', width=80,
                                       subsequent_indent='   '):
                 print line
         else:
-            print name
+            print '%s:%s' % name
 
 
 @moa.args.private
