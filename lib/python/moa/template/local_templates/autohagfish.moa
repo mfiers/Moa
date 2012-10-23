@@ -1,0 +1,62 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: 'Run hagfish'
+    mode: map
+  clean:
+    mode: simple
+    help: remove all Hagfish files
+  finish:
+    help: finish up - find gaps - combine plots - create a report
+    mode: simple
+creation_date: Tue Mar 29 16:34:19 2011
+description: Run the preparatory steps for hagfish
+filesets:
+  fasta:
+    category: prerequisite
+    help: fasta sequence of the reference 
+    type: single
+    optional: false
+  fw_fq:
+    category: input
+    help: 'forward fq input'
+    optional: false
+    pattern: '*/*1.fq'
+    type: set
+  rev_fq:
+    category: input
+    help: 'reverse fq input'
+    optional: true
+    pattern: '*/*2.fq'
+    type: map
+    source: fw_fq
+  outbase:
+    category: output
+    help: 'basename for output files'
+    optional: true
+    pattern: './*'
+    type: map
+    source: fw_fq
+parameters:
+  threads:
+    default: 8
+    help: 'no threads to use'
+    optional: true
+    type: integer
+  min_ok:
+    default: 0
+    help: Minimal acceptable insert size for an aligned pair. If omitted,
+      hagfish will make an estimate
+    optional: true
+    type: int
+  max_ok:
+    default: 0
+    help: Maximal acceptable insert size for an aligned pair. If omitted,
+      hagfish will make an estimate
+    optional: true
+    type: int
+moa_id: autohagfish
+modification_date: Thu, 19 May 2011 20:49:04 +1200
+name: autohagfish
+title: Automatically run bowtie & hagfish combined

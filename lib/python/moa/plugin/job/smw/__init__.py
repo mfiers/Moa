@@ -63,6 +63,9 @@ def _savePage2(page, txt):
         #moa.ui.message("saved change message to SMW")
     except mwclient.errors.LoginError:
         moa.ui.error("Invalid login for smw - cannot save change message")
+    except:
+        moa.ui.error("Cannot save to SMW - uncertain why")
+        return
 
 def _savePage(page, txt):
     background = sysConf.plugins.job.smw.get('background', False)
@@ -155,11 +158,12 @@ def hook_finish(job):
     message = moa.ui._textFormattedMessage(
         [sysConf.args.changeMessage,
          sysConf.doc.changeMessage] )
-        
+    
     if sysConf.commands[sysConf.args.command]['logJob']:
         if sysConf.args.command != 'smw_save_job':
             _saveJobToSmw(job)
         _saveChangeMessage(job, message)
+
     sys.exit(0)
 
 def _checkJobInSmw(job):
