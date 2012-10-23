@@ -128,13 +128,16 @@ template:
     core:
       class: core
       priority: 100
-    archive_global:
-      class: archive_global
-      priority: 90
+      enabled: true
+#    archive_global:
+#      class: archive_global
+#      priority: 90
+#      enabled: true
     local:
       class: local
       priority: 80
       directory: '~/.config/moa/template/'
+      enabled: true
     archive_local:
       class: archive
       priority: 70
