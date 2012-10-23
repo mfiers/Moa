@@ -39,12 +39,21 @@ class Providers(object):
         _order = []
         for pName in sysConf.template.providers.keys():
             pInfo = sysConf.template.providers[pName]
+
+            is_enabled = pInfo.get('enabled', False)
+            if not is_enabled is True:
+                continue
+
             priority = pInfo.get('priority', 1)
             assert(isinstance(priority, int))
 
             #import the correct module
             mod = 'moa.template.provider.%s' % pInfo['class']
-            pMod = __import__(mod, globals(), locals(), [mod], -1)
+            try:
+                pMod = __import__(mod, globals(), locals(), [mod], -1)
+            except ImportError:
+                moa.ui.warn("cannot import template provider %s" % pName)
+                continue
 
             #instantiate the class (mod.Mod())
             self.providers[pName] = \
