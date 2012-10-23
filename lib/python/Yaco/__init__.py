@@ -137,7 +137,6 @@ class Yaco(dict):
 
         #print "setting %s to %s" % (key, value)
         old_value = super(Yaco, self).get(key, None)
-        #sys.stderr.write("\nSetting %s to %s (%s)\n" % (key, value, type(value)))
 
         if isinstance(value, dict):
             #setting a dict
@@ -148,15 +147,15 @@ class Yaco(dict):
             else:
                 super(Yaco, self).__setitem__(key, Yaco(value))
         elif isinstance(value, list):
-            #parse the list to see if there are dicts - which need to be translated to Yaco objects
+            # parse the list to see if there are dicts - which need to
+            # be translated to Yaco objects
             new_value = self._list_parser(value)
             super(Yaco, self).__setitem__(key, new_value)
         else:
             super(Yaco, self).__setitem__(key, value)
 
     def has_key(self, key):
-        rv = super(Yaco, self).has_key(key)
-        return rv
+        return key in super(Yaco, self).keys()
 
     def __getattr__(self, key):
         """
@@ -177,7 +176,6 @@ class Yaco(dict):
 
     def __delitem__(self, name):
         return super(Yaco, self).__delitem__(name)
-
 
     def simple(self):
         """
@@ -232,7 +230,9 @@ class Yaco(dict):
         >>> assert(v.a[3][1].b == 12)
 
         """
-        if not data: return
+        if not data:
+            return
+
         for key, value in data.items():
             #if isinstance(value, Yaco):
             #    raise Exception("Wow - updating with a Yaco - "+
@@ -245,7 +245,8 @@ class Yaco(dict):
                 else:
                     super(Yaco, self).__setitem__(key, Yaco(value))
             elif isinstance(value, list):
-                #parse the list to see if there are dicts - which need to be translated to Yaco objects
+                # parse the list to see if there are dicts - which
+                # need to be translated to Yaco objects
                 new_value = self._list_parser(value)
                 super(Yaco, self).__setitem__(key, new_value)
             else:
@@ -265,7 +266,8 @@ class Yaco(dict):
         >>> import yaml
         >>> import tempfile
         >>> tf = tempfile.NamedTemporaryFile(delete=False)
-        >>> tf.write(yaml.dump({'a' : [1,2,3, [1,2,3, {'d' : 4}]], 'b': 4, 'c': '5'}))
+        >>> tf.write(yaml.dump({'a' : [1,2,3, [1,2,3, {'d' : 4}]],
+        ...                     'b': 4, 'c': '5'}))
         >>> tf.close()
         >>> y = Yaco()
         >>> y.load(tf.name)
