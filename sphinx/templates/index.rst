@@ -9,6 +9,7 @@ Contents:
    abyss_pe
    abyss_se
    archroot
+   autohagfish
    bamextract
    bdbb
    bfast_aln

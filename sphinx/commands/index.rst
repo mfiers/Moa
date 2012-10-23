@@ -683,17 +683,19 @@ Alternative use of the set command is by just specifying the key:
 'moa set PARAMETER_NAME', in which case Moa will prompt the user
 enter a value - circumventing problems with bash interpretation.
 
-if -s is specified, the variable is stored as a system
-configuration variable in the YAML formatted::
+Note: without -s, moa needs to be executed from within a Moa job
 
-~/.config/moa/config
+System configuration
+####################
 
-Please, use this with care!
+By specifying `-s` or `--system`, the variable is stored as a
+system configuration variable in the YAML formatted
+`~/.config/moa/config`. Please, use this with care!
 
-Note that dots in the key name are interpreted as nested levels,
-so, running::
+The dots in the key name are interpreted as nested levels, so,
+running::
 
-      moa set -s plugins.job.completion.enabled=false
+    moa set -s plugins.job.completion.enabled=false
 
 will result in the following section added on top of the YAML::
 
@@ -703,12 +705,18 @@ will result in the following section added on top of the YAML::
                 enabled: false
 
 Adding keys like this mixes safely with configuration information
-that is already present. So, if one later sets::
+that is already present. So, setting::
 
-    moa set -s plugins.job.completion.enabled=false
+    moa set -s plugins.job.completion.something=else
 
-the `enabled: false` heading under `completion:` will not be
-removed
+will not remove the `enabled: false` heading under `completion:`,
+resulting in::
+
+    plugins:
+        job:
+            completion:
+                enabled: false
+                someting: else
 
 positional arguments:
   parameter        arguments for this job, specifyas KEY=VALUE without spaces
