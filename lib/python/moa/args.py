@@ -213,6 +213,7 @@ def _removeIndent(txt):
 
     return "\n".join(nld)
 
+
 def _commandify(f, name):
     """
     Do the actual commandification of function f with specified name
@@ -226,7 +227,6 @@ def _commandify(f, name):
     l.debug("registering command %s" % name)
     #_desc = [x.strip() for x in f.__doc__.strip().split("\n", 1)]
     _desc = f.__doc__.strip().split("\n", 1)
-
 
     if len(_desc) == 2:
         shortDesc, longDesc = _desc
@@ -325,7 +325,7 @@ def localRecursive(f):
 
 def private(f):
     sysConf.commands[f.func_name]['private'] = True
-
+    return f
 
 def forceable(f):
     f.arg_parser.add_argument('-f', '--force', action='store_true',
