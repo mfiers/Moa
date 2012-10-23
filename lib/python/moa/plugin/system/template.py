@@ -11,9 +11,6 @@
 -------------------------------------------
 
 """
-import sys
-import time
-import optparse
 import textwrap
 
 import moa.ui
