@@ -34,12 +34,12 @@ Installation
 ------------
 
 Install `git subtree`
-=====================
+~~~~~~~~~~~~~~~~~~~~~
 
 See: https://github.com/apenwarr/git-subtree for installation instructions
 
 Define a template provider
-==========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To set up moa to work with git template you need to define a template
 provider, for example::
