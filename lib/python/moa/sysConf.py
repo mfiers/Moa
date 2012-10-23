@@ -50,6 +50,21 @@ class SysConf(Yaco.Yaco):
         else:
             lri = 1
 
+    def getUser(self):
+        """
+        Get a Yaco representation of the user configuration file
+        """
+        rv = Yaco.Yaco()
+        if os.path.exists(USERCONFIGFILE):
+            rv.load(USERCONFIGFILE)
+        return rv
+
+    def saveUser(self, conf):
+        """
+        Save the conf Yaco object as the user config
+        """
+        conf.save(USERCONFIGFILE)
+
     def getVersion(self):
         """
         Return the version number of this Moa instance
