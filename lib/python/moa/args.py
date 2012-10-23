@@ -34,6 +34,26 @@ class MoaHelpFormatter(argparse.HelpFormatter):
                 return (result, ) * tuple_size
         return format
 
+    def _split_lines(self, text, width):
+        return  text.split("\n")
+
+    def _fill_text(self, text, width, indent):
+        """
+        Adapted to retain reformatting
+        """
+        rv = "\n".join([indent + x for x in text.split("\n")])
+        return rv
+
+
+    def _get_help_string(self, action):
+        help = action.help
+        if '%(default)' not in action.help:
+            if action.default is not argparse.SUPPRESS:
+                defaulting_nargs = [argparse.OPTIONAL, argparse.ZERO_OR_MORE]
+                if action.option_strings or action.nargs in defaulting_nargs:
+                    help += ' (default: %(default)s)'
+        return help
+
     def _format_action(self, action):
         # determine the required width and the entry label
         help_position = min(self._action_max_length + 2,
@@ -140,10 +160,11 @@ def getParser(reuse=True):
             return sysConf.argParser, sysConf.argParser.commandParser
         elif sysConf.argParser and not reuse:
             #make a copy of the parser
-            newParser = copy.deepcopy(sysConf.originalParser)
-            sysConf.argParser = newParser
-            sysConf.commandParser = newParser.commandParser
-            return newParser, newParser.commandParser
+            moa.ui.exitError("No argparse reuse please.")
+            #newParser = copy.deepcopy(sysConf.originalParser)
+            #sysConf.argParser = newParser
+            #sysConf.commandParser = newParser.commandParser
+            #return newParser, newParser.commandParser
     else:
         parser = MoaArgumentParser(
             prog='moa',
@@ -167,6 +188,31 @@ def getParser(reuse=True):
 # Decorators - @command must always come last (hence - is executed first)
 #
 
+def _removeIndent(txt):
+    ld = [x.replace("\t", "    ").rstrip()
+          for x in txt.split("\n")]
+
+    re_firstNonSpace = re.compile('\S')
+    indents = []
+
+    for line in ld:
+        # ignore empty lines
+        if not line:
+            continue
+        fns = re_firstNonSpace.search(line)
+        if fns:
+            indents.append(fns.start())
+
+    minIndent = min(indents)
+    nld = []
+    for line in ld:
+        if not line:
+            nld.append("")
+        else:
+            nld.append(line[minIndent:])
+
+    return "\n".join(nld)
+
 def _commandify(f, name):
     """
     Do the actual commandification of function f with specified name
@@ -178,18 +224,26 @@ def _commandify(f, name):
                           "- contact a developer") % name)
 
     l.debug("registering command %s" % name)
-    _desc = [x.strip() for x in f.__doc__.strip().split("\n", 1)]
+    #_desc = [x.strip() for x in f.__doc__.strip().split("\n", 1)]
+    _desc = f.__doc__.strip().split("\n", 1)
+
+
     if len(_desc) == 2:
         shortDesc, longDesc = _desc
+        longDesc = longDesc
     else:
         shortDesc = _desc[0]
         longDesc = ''
+
+    if longDesc:
+        longDesc = _removeIndent(longDesc)
 
     parser, cparser = getParser()
 
     cp = cparser.add_parser(
         name, help=shortDesc,
-        description="%s %s" % (shortDesc, longDesc))
+        description="%s\n%s" % (shortDesc, longDesc),
+        formatter_class=MoaHelpFormatter)
 
     cp.add_argument("-r", "--recursive", dest="recursive", action="store_true",
                     default="false", help="Run this job recursively")
