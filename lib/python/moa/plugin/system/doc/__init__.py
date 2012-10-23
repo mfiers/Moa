@@ -12,23 +12,25 @@
 Manage project / title / description for jobs
 
 """
+import datetime
+import getpass
 import os
+import pwd
+import socket
+import subprocess as sp
 import sys
+import time
 
 import jinja2
-import socket
-import getpass
-import datetime
-import subprocess
-
-import moa.ui
 import moa.args
-import moa.utils
 import moa.logger
-l = moa.logger.getLogger(__name__)
+import moa.ui
+from moa.plugin.system.doc import pelican_util
 from moa.sysConf import sysConf
 
-from moa.plugin.system.doc import pelican_util
+
+l = moa.logger.getLogger(__name__)
+
 
 
 def hook_finish():
@@ -88,8 +90,8 @@ def _writeMessage(category, txt, title=None):
     with open(filename, "w") as F:
         F.write("Title: %s\n" % title)
         F.write("Author: %s\n" % getpass.getuser())
-        F.write("Date: %d-%d-%d %d:%d\n\n" % (
-            now.year, now.month, now.day, now.hour, now.minute))
+        F.write("Date: %s\n\n" % (
+            now.strftime("%Y-%m-%d %H:%M")))
         F.write(txt)
 
 
@@ -166,16 +168,86 @@ def _getFromStdin():
     return ""
 
 
+def _readArticle(filename):
+    article = {}
+    body = []
+    with open(filename) as F:
+        #read header
+        for line in F:
+            if not ':' in line:
+                break
+
+            key, val = line.split(':', 1)
+            if not key in ['Title', 'Author', 'Date']:
+                break
+            article[key] = val.strip()
+
+        body.append(line)
+        for line in F:
+            body.append(line)
+
+    while body and not(body[0].strip()):
+        body = body[1:]
+    while body and not(body[-1].strip()):
+        body = body[:-1]
+
+    article['Body'] = body
+
+    if 'Date' in article:
+        article['Date'] = datetime.datetime.strptime(
+            article['Date'], "%Y-%m-%d %H:%M")
+    else:
+        article['Date'] = time.ctime(os.path.getctime(file))
+
+    if not 'Author' in article:
+        stat_info = os.stat(filename)
+        uid = stat_info.st_uid
+        article['Author'] = pwd.getpwuid(uid)[0]
+
+    return article
+
+
 @moa.args.needsJob
+@moa.args.doNotLog
+@moa.args.argument('no_entries', type=int, default=10, nargs='?',
+                   help="No of changelog entries to show (default 10)")
 @moa.args.command
 def changelog(job, args):
     """
     Print a changelog to stdout
-
     """
+    _show_stuff('change', args.no_entries)
 
-    print
 
+@moa.args.needsJob
+@moa.args.doNotLog
+@moa.args.argument('no_entries', type=int, default=10, nargs='?',
+                   help="No of blog entries to show (default 10)")
+@moa.args.command
+def showblog(job, args):
+    """
+    Print a changelog to stdout
+    """
+    _show_stuff('blog', args.no_entries)
+
+
+def _show_stuff(category, no_messages):
+    stuff_dir = os.path.join('.moa', 'doc', category)
+    #use shell shortcut to find the latest messages
+    cl = 'ls %s -t | head -%d' % (stuff_dir, no_messages)
+    P = sp.Popen(cl, shell=True, stdout=sp.PIPE)
+    out, _ = P.communicate()
+    for entry in out.split("\n"):
+        entry = entry.strip()
+        if not entry:
+            continue
+        fname = os.path.join(stuff_dir, entry)
+        article = _readArticle(fname)
+        print "%s  %s" % (article['Date'], article['Author'])
+        print "    Title: %s\n" % article['Title']
+        for line in article['Body']:
+            print "    %s" % line.rstrip()
+        print "\n"
 
 
 @moa.args.needsJob
@@ -280,7 +352,7 @@ def pelican(job, args):
 
     l.debug("Executing pelican:")
     l.debug("   %s" % cl)
-    subprocess.Popen(cl, shell=True)
+    sp.Popen(cl, shell=True)
 
     #create a redirect page to the proper index.thml
     pelican_util.generate_redirect(job)
@@ -295,7 +367,7 @@ def readme(job, args):
     You could, obviously, also edit the file yourself - this is a mere
     shortcut - maybe it will stimulate you to maintain a README file
     """
-    subprocess.call(
+    sp.call(
         os.environ.get('EDITOR', 'nano').split() + ['README.md'])
 
 
