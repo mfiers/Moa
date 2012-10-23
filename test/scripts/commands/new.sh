@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 set -e
 set -v
@@ -12,10 +12,10 @@ moa new simple -t 'test' 2>/dev/null >/dev/null
 [[ -f '.moa/template' ]]
 [[ -d '.moa/template.d' ]]
 [[ -f '.moa/template.d/simple.jinja2' ]]
-[[ -f '.moa/template.d/meta' ]]
+[[ -f '.moa/template.meta' ]]
 
-grep -q 'provider: core' .moa/template.d/meta
-grep -q 'name: simple' .moa/template.d/meta
+grep -q 'provider: core' .moa/template.meta
+grep -q 'name: simple' .moa/template.meta
 grep -q 'simple' .moa/template
 
 moa new core:simple -ft 'test' 2>/dev/null >/dev/null
@@ -28,11 +28,12 @@ cat .moa/template | sed 's/name: simple/name: newjobtest/' \
 cp .moa/template.d/simple.jinja2 ~/.config/moa/template/newjobtest.jinja2
 
 moa new -f local:newjobtest
-grep -q 'provider: local' .moa/template.d/meta
-grep -q 'name: newjobtest' .moa/template.d/meta
+grep -q 'provider: local' .moa/template.meta
+grep -q 'name: newjobtest' .moa/template.meta
 moa set process='echo qwerqwer'
 moa show
 out=`moa run 2>/dev/null`
 [[ "$out" =~ 'qwerqwer' ]]
 
+cd
 rm -rf $tmpdir
