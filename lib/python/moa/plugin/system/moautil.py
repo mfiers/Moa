@@ -26,6 +26,7 @@ from moa.sysConf import sysConf
 l = moa.logger.getLogger(__name__)
 
 
+@moa.args.needsJob
 @moa.args.private
 @moa.args.command
 def archive_incl(job, args):
@@ -44,6 +45,7 @@ def archive_incl(job, args):
         os.unlink(moaNoArchiveFile)
 
 
+@moa.args.needsJob
 @moa.args.private
 @moa.args.command
 def archive_excl(job, args):
