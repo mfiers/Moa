@@ -126,6 +126,7 @@ class Job(object):
         # and what is not.
         self.data.moaFiles = [
             '.moa/template',
+            '.moa/template.meta',
             '.moa/template.d/*',
             '.moa/config',
             '.moa/history',
