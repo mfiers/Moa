@@ -219,7 +219,6 @@ def unset(job, args):
 @moa.args.addFlag('-s', '--system', help='store this a ' +
                   'system configuration variable')
 @moa.args.forceable
-@moa.args.needsJob
 @moa.args.command
 def set(job, args):
     """Set one or more variables
@@ -236,17 +235,19 @@ def set(job, args):
     'moa set PARAMETER_NAME', in which case Moa will prompt the user
     enter a value - circumventing problems with bash interpretation.
 
-    if -s is specified, the variable is stored as a system
-    configuration variable in the YAML formatted::
+    Note: without -s, moa needs to be executed from within a Moa job
 
-    ~/.config/moa/config
+    System configuration
+    ####################
 
-    Please, use this with care!
+    By specifying `-s` or `--system`, the variable is stored as a
+    system configuration variable in the YAML formatted
+    `~/.config/moa/config`. Please, use this with care!
 
-    Note that dots in the key name are interpreted as nested levels,
-    so, running::
+    The dots in the key name are interpreted as nested levels, so,
+    running::
 
-          moa set -s plugins.job.completion.enabled=false
+        moa set -s plugins.job.completion.enabled=false
 
     will result in the following section added on top of the YAML::
 
@@ -269,9 +270,13 @@ def set(job, args):
                 completion:
                     enabled: false
                     someting: else
+
     """
 
     #see if we need to query the user for input somehwere
+    if not args.system:
+        moa.util.moaDirOrExit()
+
     new_pars = []
     for a in args.parameter:
 
@@ -285,18 +290,28 @@ def set(job, args):
             job.conf[key] = val
 
         new_pars.append((key, val))
-        moa.ui.message('setting "%s" to "%s"' % (a, " ".join(val.split())))
+        moa.ui.message('setting "%s" to "%s"' % (key, " ".join(val.split())))
 
     if args.system:
 
         sys_pars = dict(new_pars)
 
+        valCheck = {
+            'true': True,
+            'false': False}
+
         def _dictify(d):
             for k in list(d.keys()):
                 if '.' in k:
+
                     na, nb = k.split('.', 1)
                     d[na] = _dictify({nb: d[k]})
                     del d[k]
+                else:
+                    val = d[k]
+                    if val.lower() in valCheck:
+                        val = valCheck[val.lower()]
+                        d[k] = val
             return d
 
         userConf = sysConf.getUser()
