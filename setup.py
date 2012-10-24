@@ -1,50 +1,51 @@
 #!/usr/bin/env python
 """
-Setup script --
+Moa setup script
 """
-import os
-import glob
 
 from setuptools import setup
+
+entry_points = {
+    'console_scripts': [
+        'moa = moa.cli.moa:dispatch',
+        'moaprompt = moa.cli.moaprompt:moaprompt',
+        'moar = moa.cli.moar:moar',
+    ]}
+
+requires = [
+    'Jinja2>2.0',
+    'GitPython>0.3',
+    'pyyaml>3',
+    'ruffus>=2.2',
+    'Yaco>=0.1.7',
+    'fist>=0.1.5',
+    'unittest2>=0.5',
+    'lockfile>=0.9',
+    'mdGraph>=0.1'
+    'markdown'
+]
 
 with open('VERSION') as F:
     version = F.read().strip()
 
-scripts = [os.path.join('bin', x) for x in """
-moa        fastaSplitter  fastaNfinder  fastaInfo  fastaExtract
-fasta2gff  blastReport    blastInfo     blast2gff  moaprompt
-moainit    moar
-""".split()]
-
-data_files = []
-template_data = []
-exclude = ['build', 'sphinx', 'debian', 'dist', 'util', 'www']
-
-data_files = [
-    ('/usr/local/share/moa/template2', glob.glob('template2/*')),
-    ('/usr/local/share/moa/logo', ['share/logo/moa.logo.txt']),
-    ('/usr/local/share/moa/', ['VERSION', 'README', 'COPYING',
-                               'Changelog.txt']),
-    ('/usr/local/share/moa/test', glob.glob('share/test/*')),
-    ('/etc/moa',  ['etc/config']),
-    ('/etc/profile.d',  ['etc/profile.d/moa.sh']),
-    ('/etc/bash_completion.d',  ['etc/bash_completion.d/moa']),
+packages = [
+    'moa',
+    'moa.cli',
+    'moa.plugin',
+    'moa.plugin.job',
+    'moa.plugin.job.smw',
+    'moa.plugin.system',
+    'moa.plugin.system.doc',
+    'moa.template',
+    'moa.template.provider',
 ]
 
-packagenames = []
-
-for dirpath, dirnames, filenames in os.walk('./lib/python/moa'):
-
-    toRemove = []
-    for dirname in dirnames:
-        if dirname[0] == '.':
-            toRemove.append(dirname)
-
-    for t in toRemove:
-        dirnames.remove(t)
-
-    pn = dirpath.replace('./lib/python/', '').replace('/', '.')
-    packagenames.append(pn)
+#uncertain how to deal with this :/
+#data_files = (
+#    ('/etc', ['moa/data/etc/config']),
+#    ('/etc/profile.d', ['moa/data/etc/profile.d/moa.sh']),
+#    ('/etc/bash_completion.d', ['moa/data/etc/bash_completion.d/moa']),
+#)
 
 setup(name='moa',
       version=version,
@@ -52,23 +53,12 @@ setup(name='moa',
       author='Mark Fiers',
       author_email='mark.fiers.42@gmail.com',
       url='http://mfiers.github.com/Moa/',
-      packages=packagenames,
-      package_dir={'': os.path.join('lib', 'python')},
-      data_files=data_files,
-      scripts=scripts,
+      entry_points=entry_points,
+      packages=packages,
+      include_package_data=True,
+      # data_files=data_files,
       zip_safe=False,
-      install_requires=[
-          'Jinja2>2.0',
-          'GitPython>0.3',
-          'pyyaml>3',
-          'ruffus>=2.2',
-          'Yaco>=0.1.7',
-          'fist>=0.1.5',
-          'unittest2>=0.5',
-          'lockfile>=0.9',
-          'mdGraph>=0.1'
-          'markdown',
-      ],
+      install_requires=requires,
       classifiers=[
           'Development Status :: 4 - Beta',
           'Environment :: Console',

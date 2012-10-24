@@ -2,24 +2,14 @@ include VERSION
 include README
 include COPYING
 include Changelog.txt
-include etc/bash_completion.d/moa
-include etc/config
 
-include bin/moa
-include bin/moar
-include bin/moainit
+recursive-include moa/data/templates *.moa *.jinja2
+recursive-include moa/data/jinja2 *.jinja2
+recursive-include moa/data/logo *.txt
+recursive-include moa/data/test *.fq *fasta
 
-recursive-include template2 *.moa *.jinja2
-
-recursive-include lib/jinja2 *jinja2
-
-recursive-include share/test *.fq *fasta
-
-include etc/config
-include etc/bash_completion.d/moa
-include etc/profile.d/moa.sh
-
-include share/logo/moa.logo.txt
-
+include moa/data/etc/config
+include moa/data/etc/bash_completion.d/moa
+include moa/data/etc/profile.d/moa.sh
 
 
