@@ -7,7 +7,7 @@ from setuptools import setup
 
 entry_points = {
     'console_scripts': [
-        'moa = moa.cli.moa:dispatch',
+        'moa = moa.cli.main:dispatch',
         'moaprompt = moa.cli.moaprompt:moaprompt',
         'moar = moa.cli.moar:moar',
     ]}
@@ -31,6 +31,8 @@ with open('VERSION') as F:
 packages = [
     'moa',
     'moa.cli',
+    'moa.backend',
+    'moa.backend.ruff',
     'moa.plugin',
     'moa.plugin.job',
     'moa.plugin.job.smw',
