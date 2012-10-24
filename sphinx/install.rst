@@ -7,28 +7,20 @@ Prerequisites
 
 Moa is developed and tested on `Ubuntu <http://www.ubuntu.com>`_ and
 `RHEL <http://www.redhat.com>`_ and is expected to operate without
-much problems on all modern Linux distributions. Moa has the following
-prerequisites (and a large number more for all templates). Version
-numbers are an indication, not strict prerequisites. Other, even
-older, versions might work.
+much problems on most modern Linux distributions. You will need to
+install the following prerequisites (and a large number more for each
+of the templates). Version numbers are an indication, not strict
+prerequisites. Other, even older, versions might work.
 
 
 - `Python <http://python.org>`_ (2.6 or 2.7). Moa will not work with
-  versions earlier, or with 3.0 and up
-
-- `Git <http://git-scm.com/>`_ (1.6). Necessary either to download the
-  Moa software from github, or, to make use of the integrated version
-  control.
-
-- A number of support scripts & templates depend on `Biopython
-  <http://biopython.org/wiki/Main_Page>`_. Consider installing it
-  before starting to use Moa.
+  earlier versions, or with 3.0 and later.
 
 - `Python-dev`: the Python development package. A few prerequisites
   installed by easy_install try to compile C libraries, and need
   this. Although all of them have backup, python only, alteratives;
-  from a performace perspective it is probably smart to have this
-  installed::
+  from a performace perspective it does probably not do any harm to
+  have this installed::
 
     sudo apt-get install python-dev
 
@@ -37,13 +29,35 @@ older, versions might work.
 
     sudo apt-get install python-yaml
 
-Python prerequisites
---------------------
+Git integration
+...............
 
-These prereqs can be installed manually or with `pip` or
-`easy_install`:
+One feature of Moa is the ability to integrate with `Git
+<http://git-scm.com/>`_ to keep track of your workflow. If you want to
+use this, you (obviously) need Git installed. For most applications
+the package manager version is fine. However, Moa is able to pull
+templates from git repositories. If you want to use that feature,
+you'll need to install `git subtree`. This application comes bundled
+with recent version of Git (late 1.7 or 1.8), but needs to be
+installed separately. Otherwise, it can be downloaded from the
+`"apenwarr" <https://github.com/apenwarr/git-subtree>`_ repository.
 
-- `pyyaml <http://pyyaml.org/wiki/PyYAML>`_ (unless already installed)
+Installation of Moa
+-------------------
+
+It is most convenient to install Moa from the
+`Python package index <http://pypi.python.org/pypi/moa>`_::
+
+    pip install Moa
+
+Note that it is possible to install Moa within a `virtual env <http://pypi.python.org/pypi/virtualenv>`_. If you want to do this globally, you will need root rights.
+
+Installation using git (from github)
+-------------------------------------
+
+When installing manuall, you'll need the following prerequisites:
+
+- `pyyaml <http://pyyaml.org/wiki/PyYAML>`_
 - `Jinja2 <http://jinja.pocoo.org/2/>`_
 - `Ruffus <http://code.google.com/p/ruffus/>`_
 - `gitpython <http://gitorious.org/git-python>`_
@@ -51,109 +65,39 @@ These prereqs can be installed manually or with `pip` or
 - `lockfile http://pypi.python.org/pypi/lockfile`_
 - `GitPython http://pypi.python.org/pypi/GitPython`_
 
-Not part of the list of prerequisites are the following libraries,
-which you'll only need if you are planning to run the web interface:
+Once these are installed, you can get Moa from, `Github
+<http://github.com/mfiers/Moa>`_. Make sure to clone the repository in
+an appropriate location)::
 
-- `ElementTree <http://effbot.org/zone/element-index.htm>`_
-- `Markdown <http://freewisdom.org/projects/python-markdown/>`_
+    git clone git://github.com/mfiers/Moa.git moa
 
+To install Moa, please run::
+
+    cd moa
+    python setup.py install
+
+If this is for a global installation, you'll need to be root, or use sudo.
+
+Moa should now work, try `moa --help`.
+
+Troubleshooting
+---------------
+
+A potential problem is if your python version is NOT `python2.6` or
+`python2.7` there are two options that you can pursue:
+
+* Make sure python2.6 or 2.7 is installed.
+* define an alias in your `~/.bashrc`: `alias moa='python2.7 moa'`
+* create a symlink to python2.7 in your ~/bin directory and make sure
+  that that is first in your path - but note that this will change
+  your default Python to version 2.7
 
 Bioinformatics tools
 --------------------
 
 Each of the wrapped tools requires the tools to be present. Usually,
 Moa expects all tools to be present & executable on the system
-PATH. The standard Moa distribution comes with wrappers for:
+PATH. The standard Moa distribution comes with wrappers for Blast, BWA
+and Bowtie. Note that a number of tools also depends on `Biopython
+<http://biopython.org/wiki/Main_Page>`_.
 
-- Blast
-- BWA
-- Bowtie
-- Soap
-
-and many more
-
-
-Installation using git (from github)
--------------------------------------
-
-Moa is hosted on, and can be installed from, `github <http://github.com/mfiers/Moa>`_::
-
-    cd ~
-    git clone git://github.com/mfiers/Moa.git moa
-
-Note - their is also a copy of moa in the python package index - this
-one is almost certainly outdated, and is currently not supported.
-
-Configuration
--------------
-
-Configuration of Moa is simple, and can be done by sourcing the
-`moainit` script::
-
-    . ~/moa/bin/moainit
-
-(Note the dot!, alternatively use: ``source ~/moa/bin/moainit``)
-
-It is probably a good idea to add this line to your ``~/.bashrc`` for
-future sessions.
-
-Moa should now work, try `moa --help`.
-
-If your default python version is NOT `python2.6` or `python2.7` there
-are a few options that you can pursue:
-
-* change the hashbang of the `moa` script
-* define an alias in your `~/.bashrc`: `alias moa='python2.6 moa'`
-* create a symlink to python2.6 in your ~/bin directory and make sure
-  that that is first in your path.
-
-Installing the web interface
-----------------------------
-
-Note - this is highly experimental and possibly deprecated.
-
-In the future Moa will support static websites build using `Pelican <http://pelican.notmyidea.org/en/3.0/index.html>`_
-
-you will probably need to fiddle
-with the configuration files to get it working. Start with installing
-apache2.
-
-Then - assuming that:
-* Your Moa work directory is under /home/moa/work
-* Your Moa is installed in /opt/moa Create a file in
-`/etc/apache2/conf.d/moa.conf` with the following approximate
-contents::
-
-    Alias /moa/data /home/moa/work
-    <Directory /home/moa/work>
-       Options +Indexes +FollowSymLinks
-       Order allow,deny
-       Allow from all
-
-       SetEnv MOADATAROOT /home/moa/work
-       SetEnv MOAWEBROOT /moa/data
-
-       IndexOptions FoldersFirst SuppressRules HTMLTable IconHeight=24 SuppressHTMLPreamble SuppressColumnSorting SuppressDescription
-
-       HeaderName /moa/cgi/indexHeader.cgi
-       ReadmeName /moa/html/indexFooter.html
-    </Directory>
-
-    ScriptAlias /moa/cgi/ /opt/moa/www/cgi/
-    <Directory /opt/moa/www/cgi/>
-        AddType text/html .cgi
-        Order allow,deny
-        Allow from all
-        SetEnv MOABASE /opt/moa
-    </Directory>
-
-    Alias /moa/html/ /opt/moa/www/html/
-    <Directory /opt/moa/www/html>
-        Order allow,deny
-        Allow from all
-        Options +Indexes
-    </Directory>
-
-You might want to check the #! of `/opt/moa/www/cgi/indexHeader.cgi`
-depending on your system configuration. Restart apache and it should
-work
