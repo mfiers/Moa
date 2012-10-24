@@ -1,3 +1,16 @@
+Moa 0.11.6 / 2012-10-24
+==========================
+
+  * Improved installation, works with virtualenv
+  * better template refresh - based on the metadata
+  * reworked cli code
+  * reworked resources system - only using pkg_resources
+  * moved all static data into the package (moa/data)
+  * some pep8 cleanup
+  * renamed source directory from `lib/python/moa` to `moa`
+  * removed Yaco, fist & frappant to their separate modules
+  * removed helper scripts from moa core
+
 Moa 0.11.5 / 2012-10-24
 ==========================
 
