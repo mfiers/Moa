@@ -16,8 +16,9 @@ import os
 import shutil
 
 import Yaco
+import pkg_resources
+
 import moa.logger
-import moa.resources
 from moa.template import provider
 
 
@@ -27,17 +28,18 @@ l = moa.logger.getLogger(__name__)
 class Core(provider.ProviderBase):
 
     TEMPLATEBASE = 'template2'
+    RESLOC = 'data/templates'
 
     def hasTemplate(self, tName):
-        fname = os.path.join(self.TEMPLATEBASE, '%s.moa' % tName)
-        return moa.resources.resourceExists(fname)
+        return pkg_resources.resource_exists(
+            'moa', '%s/%s.moa' % (self.RESLOC, tName))
 
     def getTemplate(self, name):
         """
         Returns a Yaco instance of the moa template
         """
-        fname = os.path.join(self.TEMPLATEBASE, '%s.moa' % name)
-        return Yaco.Yaco(moa.resources.getResource(fname))
+        return Yaco.Yaco(pkg_resources.resource_string(
+            'moa', "%s/%s.moa" % (self.RESLOC, name)))
 
     def templateList(self):
         """
@@ -47,7 +49,7 @@ class Core(provider.ProviderBase):
         @rtype: a list of strings
         """
         r = []
-        for f in moa.resources.listResource(self.TEMPLATEBASE):
+        for f in pkg_resources.resource_listdir('moa', self.RESLOC):
             if f[-4:] != '.moa':
                 continue
             if f[0] == '.':
@@ -70,13 +72,14 @@ class Core(provider.ProviderBase):
         #print type(moaFile)
         moaFile.save(os.path.join(wd, '.moa', 'template'))
 
-        for f in moa.resources.listResource(self.TEMPLATEBASE):
-            if not f.find(tName) == 0:
+        for f in pkg_resources.resource_listdir('moa', self.RESLOC):
+            if not f.find("%s." % tName) == 0:
                 continue
             if f[-1] in ['~', '#']:
                 continue
 
             if f[-4:] == '.moa': continue
             with open(os.path.join(wd, '.moa', 'template.d', f), 'w') as F:
-                F.write(moa.resources.getResource(
-                    os.path.join(self.TEMPLATEBASE, f)))
+                F.write(
+                    pkg_resources.resource_string(
+                        'moa', "%s/%s" % (self.RESLOC, f)))
