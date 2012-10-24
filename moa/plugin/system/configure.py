@@ -275,7 +275,7 @@ def set(job, args):
 
     #see if we need to query the user for input somehwere
     if not args.system:
-        moa.util.moaDirOrExit()
+        moa.utils.moaDirOrExit(job)
 
     new_pars = []
     for a in args.parameter:
