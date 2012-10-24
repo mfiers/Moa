@@ -37,7 +37,7 @@ class SysConf(Yaco.Yaco):
         #first load the package default
         l.debug("loading package configuration file")
         super(SysConf, self).__init__(
-            pkg_resources.resource_string('moa/data/etc/config'))
+            pkg_resources.resource_string('moa', 'data/etc/config'))
 
         #then see if the system config file exists
         if os.path.exists(SYSCONFIGFILE):
