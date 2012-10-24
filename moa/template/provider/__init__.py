@@ -115,12 +115,20 @@ class Providers(object):
         provided
 
         """
-        l.debug("refreshing template in %s" % self.__class__.__name__)
 
-        #base operation is to not thing, but just reinstall
-        provider = self.findProvider(meta.name, meta.provider)
-        provider.refresh(wd, meta)
-        pass
+        l.debug("refreshing template in %s" % self.__class__.__name__)
+        # instead of finding the old provider - instantiate a new
+        # copy of the class stated in `meta`
+
+        #import the correct module
+        mod = 'moa.template.provider.%s' % meta['class']
+        try:
+            pMod = __import__(mod, globals(), locals(), [mod], -1)
+        except ImportError:
+            moa.ui.exitError("cannot import provider %s" % meta['class'])
+
+        cob = getattr(pMod, meta['class'].capitalize())(meta['provider'], meta)
+        cob.refresh(wd, meta)
 
     def installTemplate(self, wd, tName, pName=None):
 
