@@ -83,8 +83,8 @@ Moa should now work, try `moa --help`.
 Troubleshooting
 ---------------
 
-A potential problem is if your python version is NOT `python2.6` or
-`python2.7` there are two options that you can pursue:
+A potential problem could be that your python version is NOT
+`python2.6` or `python2.7` there are a few options that you can pursue:
 
 * Make sure python2.6 or 2.7 is installed.
 * define an alias in your `~/.bashrc`: `alias moa='python2.7 moa'`
