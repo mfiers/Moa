@@ -12,4 +12,8 @@ include moa/data/etc/config
 include moa/data/etc/bash_completion.d/moa
 include moa/data/etc/profile.d/moa.sh
 
+# SMW plugin
+recursive-include moa/plugin/job/smw/templates *.jinja2 *.smw
 
+# doc/pelican plugin
+recursive-include moa/plugin/system/doc *.png *.css *.js *.html *.ico *.jinja2 *.txt
