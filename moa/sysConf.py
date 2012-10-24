@@ -1,4 +1,4 @@
-# Copyright 2009-2011 Mark Fiers
+# Copyright 2009-2012 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
 #
 # This file is part of Moa - http://github.com/mfiers/Moa
@@ -14,36 +14,44 @@ Store Moa wide configuration
 """
 
 import os
-
+import pkg_resources
 import Yaco
 
-import moa.logger as l
-import moa.resources
+import moa.logger
 import moa.plugin
 
+l = moa.logger.getLogger(__name__)
 sysConf = None
 
+#user configuration file ~/.config/moa/config
 USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
                               '.config', 'moa', 'config')
+
+#system wide configuration file: /etc/moa/config
+SYSCONFIGFILE = os.path.join('etc', 'moa', 'config')
 
 
 class SysConf(Yaco.Yaco):
 
     def __init__(self):
+        #first load the package default
+        l.debug("loading package configuration file")
+        super(SysConf, self).__init__(
+            pkg_resources.resource_string('moa/data/etc/config'))
 
-        if os.path.exists('/etc/moa/config'):
-            with open('/etc/moa/config') as F:
-                super(SysConf, self).__init__(F.read())
-        else:
-            #try the local package
-            super(SysConf, self).__init__(
-                moa.resources.getResource('etc/config'))
+        #then see if the system config file exists
+        if os.path.exists(SYSCONFIGFILE):
+            l.debug("loading system configuration file")
+            self.load(SYSCONFIGFILE)
 
-        l.debug("Loading system config: %s" % USERCONFIGFILE)
+        #and the user config file
         if os.path.exists(USERCONFIGFILE):
+            l.debug("loading user configuration file")
             self.load(USERCONFIGFILE)
 
-        #assign a runId
+        # assign a runId
+        # TODO: must that be done here?
+        #       what happens with lri??
         runid = '.moa/last_run_id'
         if os.path.exists(runid):
             lri = open(runid).read().strip()
@@ -69,7 +77,7 @@ class SysConf(Yaco.Yaco):
         """
         Return the version number of this Moa instance
         """
-        return moa.resources.getResource('VERSION').strip()
+        return pkg_resources.get_distribution("moa").version
 
 
 if sysConf is None:
