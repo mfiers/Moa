@@ -282,6 +282,7 @@ def set(job, args):
 
         if not '=' in a:
             old = job.conf[a]
+            key = a
             val = moa.ui.askUser("%s:\n> " % a, old)
         else:
             key, val = a.split('=', 1)
