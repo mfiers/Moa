@@ -1,3 +1,11 @@
+Moa 0.11.7 / 2012-11-05
+==========================
+
+  * reinstated moainit - now returns the location of the moa.sh init script
+    call using ". `moainit`" in ~/.bashrc
+  * ./bin/moa command has returned, only for development purposes
+  * updated installation instructions
+
 Moa 0.11.6 / 2012-10-24
 ==========================
 
