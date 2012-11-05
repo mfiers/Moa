@@ -17,6 +17,8 @@ plugins:
         - '.gitmodules'
         - '.moa/template.d/*'
         - '.moa/config'
+        - '.moa/project_uid'
+        - '.moa/local_bash_history'
         - '.moa/doc'
         - '.moa/history'
         - '.moa/local_bash_history'
