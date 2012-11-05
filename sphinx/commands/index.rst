@@ -109,9 +109,9 @@ moa **blog**
 ~~~~~~~~~~~~~~~~~~
 usage: moa blog [-h] [-r] [-v] [--profile] [message [message ...]]
 
-Add an entry to the job blog (BLOG.md)
+Add an entry to the job blog (in .moa/doc/blog/)
 
-Allows a user to maintain a blog for this job (in BLOG.md). Use as
+Allows a user to maintain a blog for this job. Use as
 follows::
 
     $ moa blog
@@ -177,6 +177,26 @@ stdin to the message
 
 positional arguments:
   message
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively (default: false)
+  -v, --verbose    Show debugging output (default: False)
+  --profile        Run the profiler (default: False)
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **changelog**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa changelog [-h] [-r] [-v] [--profile] [no_entries]
+
+Print a changelog to stdout
+
+positional arguments:
+  no_entries       No of changelog entries to show (default 10) (default: 10)
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -337,9 +357,9 @@ moa **list**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa list [-h] [-r] [-v] [--profile] [-d]
+usage: moa list [-h] [-r] [-v] [--profile]
 
-Lists all known templates
+Lists all known local templates
 
 Print a list of all templates known to this moa installation. This
 includes locally installed templates as well.
@@ -349,7 +369,6 @@ optional arguments:
   -r, --recursive  Run this job recursively (default: false)
   -v, --verbose    Show debugging output (default: False)
   --profile        Run the profiler (default: False)
-  -d               Print a short template description (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -755,6 +774,26 @@ optional arguments:
   -R               show recursively defined parameters not specified by the local template (default: False)
   -p               show private parameters (default: False)
   -a               show all parameters (default: False)
+
+~~~~~~~~~~~~~~~~~~
+
+
+moa **showblog**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa showblog [-h] [-r] [-v] [--profile] [no_entries]
+
+Print a changelog to stdout
+
+positional arguments:
+  no_entries       No of blog entries to show (default 10) (default: 10)
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -r, --recursive  Run this job recursively (default: false)
+  -v, --verbose    Show debugging output (default: False)
+  --profile        Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 

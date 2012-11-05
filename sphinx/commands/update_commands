@@ -1,17 +1,17 @@
 #!/usr/bin/env python
-
 import cStringIO
 import os
 import sys
 
-import moa.commands
-import moa.logger
-import moa.plugin
+import pkg_resources
+from jinja2 import Template as jTemplate
+
 import moa.args
 import moa.job
-import moa.utils
-from jinja2 import Template as jTemplate
+import moa.logger
+import moa.plugin
 from moa.sysConf import sysConf
+
 
 l = moa.logger.getLogger(__name__)
 l.setLevel(moa.logger.DEBUG)
@@ -19,10 +19,8 @@ l.setLevel(moa.logger.DEBUG)
 
 parser, commandparser = moa.args.getParser()
 
-#sysConf.initialize()
-sysConf.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.system)
+#sysConf.initialize() -> Command definitions
 
-## Command definitions
 sysConf.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.system)
 
 # create a dummy job to make sure the job/plugin commands are available
@@ -30,12 +28,9 @@ sysConf.pluginHandler = moa.plugin.PluginHandler(sysConf.plugins.system)
 testJob = moa.job.newTestJob('simple')
 
 #initialize jinja template
-templateFile = os.path.join(
-    moa.utils.getMoaBase(), 'lib', 'jinja2', 'command.snippet.rst.jinja2')
-template = jTemplate(open(templateFile).read())
-
-MOABASE = moa.utils.getMoaBase()
-PLUGINDIR = os.path.join(MOABASE, 'lib', 'python', 'moa', 'plugin', 'system')
+templateString = pkg_resources.resource_string(
+    'moa', 'data/jinja2/command.snippet.rst.jinja2')
+template = jTemplate(templateString)
 
 if os.path.exists('commands.header'):
     command_index_header = open('commands.header').read()
