@@ -129,6 +129,7 @@ class Job(object):
             '.moa/template.meta',
             '.moa/template.d/*',
             '.moa/config',
+            '.moa/project_uid',
             '.moa/history',
             '.moa/local_bash_history',
             'moa.*',
