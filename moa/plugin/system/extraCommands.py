@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **extraCommands** - Pre & Post commands
 ---------------------------------------
@@ -19,26 +19,26 @@ import jinja2
 
 from moa.sysConf import sysConf
 
+
 def hook_prepare_3():
     job = sysConf['job']
 
     job.template.parameters.precommand = {
-        'category' : 'advanced',
-        'optional' : True,
-        'help' : 'A single command to be executed before the main run' + \
-                 'starts',
-        'recursive' : False,
-        'type' : 'string'
-        }
-    
+        'category': 'advanced',
+        'optional': True,
+        'help': 'A single command to be executed before the main run' +
+                'starts',
+        'recursive': False,
+        'type': 'string'}
+
     job.template.parameters.postcommand = {
-        'category' : 'advanced',
-        'optional' : True,
-        'help' : 'A single command to be executed after the main run ' + \
-                 'starts',
-        'recursive' : False,
-        'type' : 'string'
-        }
+        'category': 'advanced',
+        'optional': True,
+        'help': 'A single command to be executed after the main run ' +
+                'starts',
+        'recursive': False,
+        'type': 'string'}
+
 
 @moa.args.needsJob
 @moa.args.command
@@ -54,6 +54,7 @@ def postcommand(job, args):
         moa.ui.message("%s" % postcommand)
         executeExtraCommand(postcommand, job)
 
+
 @moa.args.needsJob
 @moa.args.command
 def precommand(job, args):
@@ -61,12 +62,13 @@ def precommand(job, args):
     Execute 'precommand'
     """
     job = sysConf.job
-    renderedConf = job.conf.render() 
+    renderedConf = job.conf.render()
     precommand = renderedConf.get('precommand', '')
     if precommand:
         moa.ui.message("Executing precommand")
         moa.ui.message("%s" % precommand)
         executeExtraCommand(precommand, job)
+
 
 def executeExtraCommand(command, job):
     jobData = job.conf
@@ -77,9 +79,10 @@ def executeExtraCommand(command, job):
         elif isinstance(v, dict):
             continue
         else:
-            os.putenv(k, str(v))            
+            os.putenv(k, str(v))
     template = jinja2.Template(command)
     os.system(template.render(jobData))
+
 
 def hook_preRun():
     """
@@ -90,6 +93,7 @@ def hook_preRun():
     if precommand:
         l.debug("Executing precommand %s" % precommand)
         executeExtraCommand(precommand, job)
+
 
 def hook_postRun():
     """
