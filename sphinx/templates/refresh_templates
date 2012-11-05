@@ -3,24 +3,24 @@
 import os
 import sys
 import yaml
+import pkg_resources
 import moa.utils
 import moa.template
 
 from jinja2 import Template as jTemplate
 
-jTemplateFile = os.path.join(
-    moa.utils.getMoaBase(), 'lib', 'jinja2', 'template.rst.jinja2')
-jTemplateIndexFile = os.path.join(
-    moa.utils.getMoaBase(), 'lib', 'jinja2', 'template.index.rst.jinja2')
+jt = pkg_resources.resource_string(
+    'moa', 'data/jinja2/template.rst.jinja2')
+jti = pkg_resources.resource_string(
+    'moa', 'data/jinja2/template.index.rst.jinja2')
 
-jT = jTemplate(open(jTemplateFile).read())
-jTi = jTemplate(open(jTemplateIndexFile).read())
-
-os.chdir(os.path.join(moa.utils.getMoaBase(), 'sphinx', 'templates'))
+jT = jTemplate(jt)
+jTi = jTemplate(jti)
 
 _allTemplates = []
 for provider, tfile in moa.template.templateList():
-    print tfile
+    print provider, tfile
+
     template = moa.template.getMoaFile(tfile)
     if not template:
         continue
