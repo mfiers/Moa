@@ -10,6 +10,7 @@ entry_points = {
         'moa = moa.cli.main:dispatch',
         'moaprompt = moa.cli.moaprompt:moaprompt',
         'moar = moa.cli.moar:moar',
+        'moainit = moa.cli.moainit:moainit',
     ]}
 
 requires = [
