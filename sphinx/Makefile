@@ -45,6 +45,11 @@ prepare:
 	cd templates &&  ( rm -rf *.rst || true ) && ./refresh_templates
 	cd commands && ./update_commands
 
+html_only:
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
+	@echo
+	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
+
 html: prepare pdf
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo

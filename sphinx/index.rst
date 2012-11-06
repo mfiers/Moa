@@ -38,9 +38,7 @@ Table of contents:
    coretemplates
    sync
    git
-   #using
-   #configuration
-   #filesets
+   contribute
    write_template
    commands/index
    templates/index
