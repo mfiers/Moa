@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+MB=/home/mf/project/moa
+
+export PATH=${MB}/bin:$PATH
+export PYTHONPATH=${MB}:$PYTHONPATH

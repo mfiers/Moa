@@ -1,1 +1,0 @@
-rm -rf build/deb/*; git commit -m 'work on packaging & installation' -a ; git tag -d v0.9.0; git tag v0.9.0; git tag -l ; make package version=0.9.0
