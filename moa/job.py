@@ -306,6 +306,7 @@ class Job(object):
                         "with an rc of %s") % (subcommand, rc))
                 if rc != 0:
                     sysConf.rc = rc
+                    self.pluginHandler.run("post_error", job=self)
                     sysConf.pluginHandler.run("post_error")
                     moa.ui.exitError("Exit on error")
             except moa.exceptions.MoaCommandDoesNotExist:
