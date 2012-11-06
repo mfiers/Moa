@@ -78,4 +78,14 @@ def hook_finish(job):
     """
     #print job, job.isMoa()rm
     taskid = sysConf.plugins.task.id
+    runTask("task %s done" % (taskid))
+
+
+def hook_post_error(job):
+    """
+    post error - problem!
+    """
+    #print job, job.isMoa()rm
+    taskid = sysConf.plugins.task.id
     runTask("task %s stop" % (taskid))
+    runTask("task %s modify +error Error executing this job" % (taskid))
