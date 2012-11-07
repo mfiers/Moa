@@ -28,7 +28,6 @@ The best way to understand how Moa can help you to achieve this is by an example
     $ mkdir 00.proteins
     
     ## copy or create symbolic links some protein sequences in 00.proteins 
-   
     $ mkdir 10.blast && cd 10.blast
 
 An important feature of Moa is that each separate analysis step is contained within a separate directory. Two Moa jobs never share a directory. This forces a Moa user to break a workflow down to atomic parts, which is typically beneficial to the organization and coherence of a workflow. The order of steps is easily ordered by prefixing directory names with a number. Note that these prefixes are not enforced by Moa; any alphabetical organization would work as well. Once a directory is created, a Moa job can be created::
