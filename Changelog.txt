@@ -1,3 +1,11 @@
+Moa 0.11.9 / 2012-11-08
+==========================
+
+  * restored 'moa reduce'
+  * move number of scripts to the blue-ringed-octopus repo
+  * some cleanup for openlava job scheduler
+  * added a page on contributing code & documentation
+
 Moa 0.11.8 / 2012-11-06
 ==========================
 
