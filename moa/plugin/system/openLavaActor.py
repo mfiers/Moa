@@ -1,45 +1,50 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **sgeActor** - Run jobs through SGE
 -----------------------------------------------------------
 
 """
 import os
-import sys
 import stat
-import time
-import tempfile
-import optparse
 import subprocess as sp
+import sys
+import tempfile
 
-from moa.sysConf import sysConf
-import moa.logger as l
+import moa.logger
 import moa.ui
+from moa.sysConf import sysConf
+
 
 l = moa.logger.getLogger(__name__)
 #l.setLevel(moa.logger.DEBUG)
 
+
 def hook_defineCommandOptions(job, parser):
-    parser.add_argument( '--ol', action='store_const', const='openlava',
-                               dest='actorId', help='Use OpenLava as actor' )
+    parser.add_argument('--ol', action='store_const', const='openlava',
+                        dest='actorId', help='Use OpenLava as actor')
 
-    parser.add_argument( '--olq', default='normal', dest='openlavaQueue', 
-                         help='The Openlava queue to submit this job to' )
+    parser.add_argument('--olq', default='normal', dest='openlavaQueue',
+                        help='The Openlava queue to submit this job to')
 
-    parser.add_argument( '--oln', default=1, type=int, dest='openlavaSlots', 
-                         help='The number of cores the jobs requires')
+    parser.add_argument('--olx', default='', dest='openlavaExtra',
+                        help='Extra arguments for bsub')
 
-    parser.add_argument( '--oldummy', default=False, dest='openlavaDummy', 
-                         action='store_true', help='Do not execute - just create a script to run')
+    parser.add_argument('--oln', default=1, type=int, dest='openlavaSlots',
+                        help='The number of cores the jobs requires')
 
-    parser.add_argument( '--olm', default=1, dest='openlavaHost', 
-                         help='The host to use for openlava')
+    parser.add_argument('--oldummy', default=False, dest='openlavaDummy',
+                        action='store_true',
+                        help='Do not execute - just create a script to run')
+
+    parser.add_argument('--olm', default=1, dest='openlavaHost',
+                        help='The host to use for openlava')
+
 
 def openlavaRunner(wd, cl, conf={}, **kwargs):
     """
@@ -58,10 +63,10 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
         l.critical("runner should be called with a command")
         sys.exit(-1)
 
-    l.debug("starting openlava actor for %s" % command) 
+    l.debug("starting openlava actor for %s" % command)
 
     # this is a trick to get the real path of the log dir - but not of
-    # any underlying directory - in case paths are mounted differently 
+    # any underlying directory - in case paths are mounted differently
     # on different hosts
     outDir = os.path.abspath(os.path.join(wd, '.moa', 'log.latest'))
     outDir = outDir.rsplit('.moa', 1)[0] + '.moa' + \
@@ -76,10 +81,11 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     #expect the cl to be nothing more than a single script to execute
     outfile = os.path.join(outDir, 'stdout')
     errfile = os.path.join(outDir, 'stderr')
-    
+
     bsub_cl = ['bsub']
 
     sc = []
+
     def s(*cl):
         sc.append(" ".join(map(str, cl)))
 
@@ -92,7 +98,6 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     #bsub_cl.extend(["-e", errfile])
     #bsub_cl.extend(["-q", sysConf.args.openlavaQueue])
 
-
     if '--oln' in sys.argv:
         slots = sysConf.args.openlavaSlots
     else:
@@ -101,26 +106,25 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("#BSUB -n %d" % slots)
     #bsub_cl.extend(["-n", slots])
 
+    if sysConf.args.openlavaExtra.strip():
+        s("#BSUB %s" % sysConf.args.openlavaExtra)
+
     if '--olm' in sys.argv:
         s("#BSUB -m %s" % sysConf.args.openlavaHost)
         #bsub_cl.extend(["-m", sysConf.args.openlavaHost])
-
-    lastJids = []
-
-    #if len(sysConf.job.data.openlava.get('jidlist', [])) > 1:
-    #    lastJids = sysConf.job.data.openlava.get('jidlist')[-1]
 
     if command == 'run':
         prep_jids = sysConf.job.data.openlava.jids.get('prepare', [])
         #hold until the 'prepare' jobs are done
         #l.critical("Prepare jids - wait for these! %s" % prep_jids)
-        for j in prep_jids: 
+        for j in prep_jids:
             s("#BSUB -w 'done(%d)'" % j)
             #bsub_cl.extend(["-w", "'done(%d)'" % j])
+
     elif command == 'finish':
         run_jids = sysConf.job.data.openlava.jids.get('run', [])
         #hold until the 'prepare' jobs are done
-        for j in run_jids: 
+        for j in run_jids:
             s("#BSUB -w 'done(%d)'" % j)
             #bsub_cl.extend(["-w", "'done(%d)'" % j])
 
@@ -129,17 +133,11 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     #bsub_cl.extend(["-J", jobname])
     s("#BSUB -J '%s'" % jobname)
 
-    # make sure the environment is copied
-    #qcl.append('-V')
-    #qcl.extend(cl)
-
-    #print " ".join(qcl)
     #dump the configuration in the environment
-
     s("")
     s("## ensure we're in the correct directory")
     s("cd", wd)
-    
+
 
     s("")
     s("## Defining moa specific environment variables")
@@ -156,7 +154,7 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
         v = conf[k]
 
         #this should not happen:
-        if ' ' in outk: 
+        if ' ' in outk:
             continue
 
         if isinstance(v, list):
@@ -165,26 +163,29 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
             continue
         else:
             s("%s='%s'" % (outk, v))
-         
+
     s("")
     s("## Run the command")
     s("")
 
     s(*cl)
 
-    
     if sysConf.args.openlavaDummy:
         # Dummy mode - do not execute  - just write the script.
         ii = 0
         while True:
             outFile = os.path.join(wd, 'openlava.%s.%d.bash' % (command, ii))
-            if not os.path.exists(outFile): break
+            if not os.path.exists(outFile):
+                break
             ii += 1
         with open(outFile, 'w') as F:
             F.write("\n".join(sc))
-            moa.ui.message("Created openlava submit script: %s" % outFile.rsplit('/',1)[1])
+            moa.ui.message("Created openlava submit script: %s" %
+                           outFile.rsplit('/', 1)[1])
+
             moa.ui.message("now run:")
-            moa.ui.message("   %s < %s" % ((" ".join(map(str, bsub_cl))), outFile.rsplit('/',1)[1]))
+            moa.ui.message("   %s < %s" % ((" ".join(map(str, bsub_cl))),
+                                           outFile.rsplit('/', 1)[1]))
             return 0
 
     #save the file
@@ -192,40 +193,50 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     if not os.path.exists(tmpdir):
         os.makedirs(tmpdir)
 
-    tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='openlava.', 
-                                         delete=False, suffix='.sh')
+    tmpfile = tempfile.NamedTemporaryFile(dir=tmpdir, prefix='openlava.',
+                                          delete=False, suffix='.sh')
+
     tmpfile.write("\n".join(sc))
     tmpfilename = os.path.abspath(tmpfile.name)
     tmpfile.close()
     os.chmod(tmpfile.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-        
+
     l.debug("executing bsub")
     moa.ui.message("Submitting job to openlava")
     #bsub_cl.append("<")
     #bsub_cl.append(tmpfilename)
     moa.ui.message("Executing")
     moa.ui.message(" ".join(map(str, bsub_cl)))
-    p = sp.Popen(map(str, bsub_cl), cwd = wd, stdout=sp.PIPE, stdin = sp.PIPE)
-    o,e = p.communicate("\n".join(sc))
-    
+
+    p = sp.Popen(map(str, bsub_cl), cwd=wd, stdout=sp.PIPE, stdin=sp.PIPE)
+    o, e = p.communicate("\n".join(sc))
+
     jid = int(o.split("<")[1].split(">")[0])
 
-    if not sysConf.job.data.openlava.jids.has_key(command):
+    if not sysConf.job.data.openlava.jids.get(command):
         sysConf.job.data.openlava.jids[command] = []
 
     moa.ui.message("submitted job with openlava job id %s " % jid)
+
     #store the job id submitted
-    if not sysConf.job.data.openlava.jids.has_key(command):
+    if not sysConf.job.data.openlava.jids.get(command):
             sysConf.job.data.openlava.jids[command] = []
+    if not sysConf.job.data.openlava.get('alljids'):
+            sysConf.job.data.openlava.alljids = []
     sysConf.job.data.openlava.jids[command].append(jid)
+    sysConf.job.data.openlava.alljids.append(jid)
     l.debug("jids stored %s" % str(sysConf.job.data.openlava.jids))
     return p.returncode
+
 
 def hook_postRun():
     """
     Need to exit here, and reconvene once all jobs have executed
     """
-    #print sysConf.actor.openlava.jids
+    if sysConf.job.data.openlava.get('alljids'):
+        with open('jidlist', 'w') as F:
+            F.write("\n".join(
+                map(str, sysConf.job.data.openlava.get('alljids'))))
 
 #ergister this actor globally
 sysConf.actor.actors['openlava'] = openlavaRunner
