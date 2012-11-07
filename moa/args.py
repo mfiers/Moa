@@ -44,7 +44,6 @@ class MoaHelpFormatter(argparse.HelpFormatter):
         rv = "\n".join([indent + x for x in text.split("\n")])
         return rv
 
-
     def _get_help_string(self, action):
         help = action.help
         if '%(default)' not in action.help:
@@ -137,7 +136,12 @@ class MoaArgumentParser(argparse.ArgumentParser):
         If you override this in a subclass, it should not return -- it
         should either exit or raise an exception.
         """
+
+        if 'argument command: invalid choice: ' in message:
+            message = "Invalid command, try 'moa -h'"
+
         self.error_message = message
+
         raise moa.exceptions.MoaInvalidCommandLine, self
 
     def real_error(self):
@@ -148,8 +152,9 @@ class MoaArgumentParser(argparse.ArgumentParser):
         """
 
         self.print_usage(argparse._sys.stderr)
-        self.exit(2, argparse._('%s: error: %s\n') %
-                  (self.prog, self.error_message))
+        self.exit(2, argparse._('%s\n%s' % (
+            self.error_message, self.format_usage()
+        )))
 
 
 def getParser(reuse=True):
