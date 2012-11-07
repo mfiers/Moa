@@ -1,35 +1,37 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 moa.actor
 ---------
 
 'Simple' wrapper around subprocess to execute code
 """
-
-import os
-import sys
 import fcntl
-import datetime
+import os
 import subprocess
+import sys
 
+import moa.logger
 import moa.ui
-import moa.logger as l
 from moa.sysConf import sysConf
 
+l = moa.logger.getLogger(__name__)
 
-def getRunner():    
+
+def getRunner():
     actorId = getattr(sysConf.args, 'actorId', 'default')
-    if not actorId: actorId = 'default'
-    if not sysConf.actor.actors.has_key(actorId):
+    if not actorId:
+        actorId = 'default'
+    if not sysConf.actor.actors.get(actorId):
         moa.ui.exitError("Invalid actor id: %s" % actorId)
     l.debug("Actor: %s" % actorId)
     return sysConf.actor.actors[actorId]
+
 
 def simpleRunner(wd, cl, conf={}, **kwargs):
     """
@@ -41,10 +43,7 @@ def simpleRunner(wd, cl, conf={}, **kwargs):
     - store stdout & stderr in log files
     - return the rc
     """
-    
 
-    #stst = datetime.datetime.today().strftime("%Y%m%dT%H%M%S")
-    #outDir = os.path.join(wd, '.moa', 'out', stst)
     outDir = os.path.join(wd, '.moa', 'log.latest')
     if not os.path.exists(outDir):
         try:
@@ -66,18 +65,18 @@ def simpleRunner(wd, cl, conf={}, **kwargs):
             os.putenv(outk, str(v))
 
     SOUT = open(os.path.join(outDir, 'stdout'), 'a')
-    SERR = open(os.path.join(outDir, 'stderr'), 'a')    
+    SERR = open(os.path.join(outDir, 'stderr'), 'a')
     l.debug("executing %s" % " ".join(cl))
-    
+
     if sysConf.options.silent or sysConf.force_silent:
-        p = subprocess.Popen(cl, cwd = wd, stdout=SOUT, stderr=SERR)
+        p = subprocess.Popen(cl, cwd=wd, stdout=SOUT, stderr=SERR)
         p.communicate()
         return p.returncode
 
     #non silent - split output to the output files &
     #stdout/stderr
     p = subprocess.Popen(
-        cl, cwd = wd, shell=False,
+        cl, cwd=wd, shell=False,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE)
 
@@ -92,7 +91,8 @@ def simpleRunner(wd, cl, conf={}, **kwargs):
 
     #now start polling & output the data
     while True:
-        if p.poll() != None: break
+        if p.poll() is not None:
+            break
         try:
             o = p.stdout.read(1024)
             sys.stdout.write(o)
@@ -106,13 +106,14 @@ def simpleRunner(wd, cl, conf={}, **kwargs):
         except IOError:
             pass
 
-        sys.stdout.flush(); sys.stderr.flush()
-        
+        sys.stdout.flush()
+        sys.stderr.flush()
+
     #make sure that nothing is left
     try:
-        o = p.stdout.read(); 
+        o = p.stdout.read()
         sys.stdout.write(o)
-        SOUT.write(o);
+        SOUT.write(o)
     except IOError:
         pass
 
@@ -123,7 +124,7 @@ def simpleRunner(wd, cl, conf={}, **kwargs):
     except IOError:
         pass
 
-    sys.stdout.flush()    
+    sys.stdout.flush()
     sys.stderr.flush()
 
     #return returncode
@@ -156,6 +157,7 @@ def getLastStdout(job):
     with open(outFile) as F:
         return F.read().strip()
 
+
 def getLastStderr(job):
     """
     Get the last stderr
@@ -172,5 +174,5 @@ def getLastStderr(job):
 #set up some actor data in the sysConf
 sysConf.actor = {}
 sysConf.actor.actors = {
-    'default' : simpleRunner
-    }
+    'default': simpleRunner
+}
