@@ -39,7 +39,7 @@ git-changelog --list | grep -v '^  \* minor' >> $tmp
 echo '' >> $tmp
 if [ -f Changelog.txt ]; then cat Changelog.txt >> $tmp; fi
 mv $tmp Changelog.txt
-ls $EDITOR Changelog.txt
+emacs Changelog.txt
 
 echo git commit -m \"version to $VERSION\" -a
 echo git tag v${VERSION}

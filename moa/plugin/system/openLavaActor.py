@@ -199,14 +199,11 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
                                           delete=False, suffix='.sh')
 
     tmpfile.write("\n".join(sc))
-    tmpfilename = os.path.abspath(tmpfile.name)
     tmpfile.close()
     os.chmod(tmpfile.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
     l.debug("executing bsub")
     moa.ui.message("Submitting job to openlava")
-    #bsub_cl.append("<")
-    #bsub_cl.append(tmpfilename)
     moa.ui.message("Executing")
     moa.ui.message(" ".join(map(str, bsub_cl)))
 
@@ -246,6 +243,6 @@ def hook_postRun():
                 map(str, sysConf.job.data.openlava.get('alljids'))))
             
 
-#ergister this actor globally
+#register this actor globally
 sysConf.actor.actors['openlava'] = openlavaRunner
 sysConf.actor.openlava.jids = []
