@@ -3,7 +3,7 @@ include README
 include COPYING
 include Changelog.txt
 
-recursive-include moa/data/templates *.moa *.jinja2
+recursive-include moa/data/templates *.moa *.jinja2 *.py
 recursive-include moa/data/jinja2 *.jinja2
 recursive-include moa/data/logo *.txt
 recursive-include moa/data/test *.fq *fasta
