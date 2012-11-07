@@ -27,7 +27,7 @@ The best way to understand how Moa can help you to achieve this is by an example
     $ mkdir test.project && cd test.project
     $ mkdir 00.proteins
     
-    ( copy or link some protein sequences into 00.proteins )
+    ## copy or create symbolic links some protein sequences in 00.proteins 
    
     $ mkdir 10.blast && cd 10.blast
 
