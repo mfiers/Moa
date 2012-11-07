@@ -153,7 +153,10 @@ def createMap(job, args):
         parameters=params)
 
 
-def createReduce(job):
+@moa.args.argument('-t', '--title', help='A title for this job')
+@moa.args.forceable
+@moa.args.commandName('reduce')
+def createReduce(job, args):
     """
     Create a 'reduce' adhoc job.
 
@@ -185,30 +188,26 @@ def createReduce(job):
 
     """
     wd = job.wd
-    options = sysConf.options
-    args = sysConf.args
 
-    if (not options.force and
+    if (not args.force and
             os.path.exists(os.path.join(wd, '.moa', 'template'))):
 
         moa.ui.exitError("Job already exists, use -f to override")
 
-    command = " ".join(args[1:]
-                       ).strip()
     params = []
-    if not command and not options.noprompt:
-        command = moa.ui.askUser('process:\n> ', '')
-        params.append(('process', command))
 
-    if not options.noprompt:
-        input = moa.ui.askUser('input:\n> ', '')
-        output = moa.ui.askUser('output:\n> ', './output')
-        params.append(('input', input))
-        params.append(('output', output))
+    command = moa.ui.askUser('process:\n> ', '')
+
+    params.append(('process', command))
+
+    input = moa.ui.askUser('input:\n> ', '')
+    output = moa.ui.askUser('output:\n> ', './output')
+    params.append(('input', input))
+    params.append(('output', output))
 
     moa.job.newJob(
         job, template='reduce',
-        title=options.title,
+        title=args.title,
         parameters=params)
 
 
