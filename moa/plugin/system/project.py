@@ -104,7 +104,7 @@ def hook_prepare_3():
     while True:
 
         if lookat == '/':
-            moa.ui.warn("No project found")
+            #moa.ui.warn("No project found")
             break
 
         templateFile = os.path.join(lookat, '.moa', 'template')
