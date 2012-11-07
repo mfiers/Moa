@@ -12,7 +12,7 @@ custom code (called `process`) in your project are:
 `map`:
 
     Takes a set of in- and output files and executes the custom
-    commands for each in- and output file (using the 
+    commands for each in- and output file (using the
     `Jinja2 <http://jinja.pocoo.org/docs/>`_ template language).
 
 `reduce`:
@@ -33,7 +33,7 @@ For example, a `simple` job::
     process:
     > for x in `seq 1 5`; do touch test.$x; done
     $ moa run
-    $ ls        
+    $ ls
     test.1  test.2  test.3  test.4  test.5
 
 Note that you can make your `process` as complicated as you
@@ -77,7 +77,7 @@ And a `reduce` example::
     $ mkdir ../reduce_test && cd ../reduce_test
     $ moa reduce -t 'Reduce some files'
     process:
-    > echo {{ " ".join(input) }} >> {{ output }}
+    > echo {{ input|join(" ") }} >> {{ output }}
     input:
     > ../map_test/out.*
     output:
