@@ -47,7 +47,7 @@ def _getTaskId(job):
 
     pidlist = out.strip().split()
     if len(pidlist) > 1:
-        moa.ui.warn("multiple jobs with the warn")
+        moa.ui.warn("multiple jobs with this job's uid - not good")
         return pidlist[-1]
 
     if len(pidlist) == 1:
