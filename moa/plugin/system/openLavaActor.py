@@ -16,6 +16,8 @@ import subprocess as sp
 import sys
 import tempfile
 
+
+import jinja2
 import moa.logger
 import moa.ui
 from moa.sysConf import sysConf
@@ -228,6 +230,11 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     l.debug("jids stored %s" % str(sysConf.job.data.openlava.jids))
     return p.returncode
 
+OnErrorScript = """
+
+
+
+"""
 
 def hook_postRun():
     """
@@ -237,6 +244,7 @@ def hook_postRun():
         with open('jidlist', 'w') as F:
             F.write("\n".join(
                 map(str, sysConf.job.data.openlava.get('alljids'))))
+            
 
 #ergister this actor globally
 sysConf.actor.actors['openlava'] = openlavaRunner
