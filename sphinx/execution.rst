@@ -4,70 +4,49 @@ Execution
 What is executed upon a Moa run can either be defined by a plugin, or
 by a template. Most Moa commands (such as `moa show` are plugin
 defined). Only `moa prepare`, `moa run` and `moa finish` call code
-defined in a template. 
-
-
-Each Moa run goes through a number of processes during execution:
-
-- **Main invocation**
-- *hook* `prepare_background`
-- **Step 1 - Background check**
-- *hook*: `post_background` or `background_exit`
-- **Step 2 - Recursive check**
-- **Step 3 - Execute**
+defined in a template. A number of steps are:
 
 Main invocation
-###############
+---------------
 
 The complete Moa Invocation is embedded in a try / except.
 
-On an error, Moa tries to executed a `post_error` hook and only then
-further raise the error
+On an error, Moa tries to executed a `post_error` hook and then (tries
+to) fail quietly. If you are interested in the actual error, run moa with the
+'-v' flag
 
-Upon keyboard interrupt, Moa executes the `post_interrupt` hook and
+Upon a keyboard interrupt, Moa executes the `post_interrupt` hook and
 exists with a return code of -2.
 
-Step 1 - Background check
-#########################
+Background execution
+--------------------
 
-Is '--bg' defined on the command line? If so, fork, let the child
-thread continue and let parent thread exit.
+The first thing Moa does is to check if '--bg' is defined on the
+command line? If so, fork, let the child thread continue and let
+parent thread exit.
 
 Before continuation, the parent thread executes the `background_exit`
-hook. The child thread executes the `post_background` hook.
+hook before exit. The child thread executes the `post_background`
+hook before continuing.
 
-Step 2 - Recursive check
-########################
+Recursive execution
+-------------------
 
-Moa can be executed recursively by defining -r on the command line. If
-`-r` is defined on the commandline, Moa will check what `recursivity
-mode` the command has, and proceed accordingly. If it concerns a
-template defined command - the recusivity mode is always
-`global`, plugins have more options.
+Moa **used** to have the '-r' flag for all operations, allowing
+recursive operation of Moa. This was rather confusing and has been
+removed. Some commands still define -r (such as 'moa cp'), but for the
+majority of commands, you will need to use bash (find, xargs, etc), or
+use the new, stand-alone, helper script 'moar'. Using 'moar' is very
+simple::
 
-global recursive mode (default) 
-  Recursive operation is executed at the top level. This means that
-  Moa starts walking through the directory structure (starting at
-  `cwd`) and executes the command in each directory subsequently
-  (proceeding with step 3). The approach is depth first. Directories
-  are processed alphabetically and directories starting with '.' or
-  '_' are ignored. This is the only option for template defined
-  commands.
+    moar -- moa run
 
-local recursive mode
-  Only for plugins - Recursive operation is executed by the
-  plugin. From the top level this means that Moa proceeds as if -r has
-  not been defined and expects the plugin callback to deal with
-  recursivity.
+runs 'moa run' in this directory, and all (non hidden)
+sub-directories. If you would like to limit execution to a certain
+depth, for example only first level sub-directories, you can run::
+
+    moar -d 1 -- moa run
 
 
-none recursive mode 
-  Only for plugins - recusive execution is not allowed - Moa should
-  exit with an error message
-  
-Each Moa template can have three that are executed in successively:
 
-- Prepare
-- Run 
-- Finish
 
