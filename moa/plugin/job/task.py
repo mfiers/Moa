@@ -47,7 +47,7 @@ def _getTaskId(job):
 
     pidlist = out.strip().split()
     if len(pidlist) > 1:
-        moa.ui.warn("multiple jobs with this job's uid - not good")
+        #moa.ui.warn("multiple jobs with this job's uid - not good")
         return pidlist[-1]
 
     if len(pidlist) == 1:
@@ -75,7 +75,7 @@ def _getTaskId(job):
 def hook_pre_run(job):
 
     taskid = _getTaskId(job)
-    moa.ui.message("TaskId %s" % taskid)
+    #moa.ui.message("TaskId %s" % taskid)
     hostname = socket.gethostname()
 
     runTask("task %s modify +moa +%s" % (taskid, hostname))
