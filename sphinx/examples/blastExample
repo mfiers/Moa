@@ -1,3 +1,8 @@
+#!/usr/bin/env bash
+
+## Mark: The input data for this script needs to be modified to conform to your original example
+## which included a bash post command doing 'grep dicer ...'
+
 mkdir test.project && cd test.project
 mkdir 00.blastdb && cd 00.blastdb
 
