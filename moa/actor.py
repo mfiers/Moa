@@ -44,6 +44,9 @@ def simpleRunner(wd, cl, conf={}, **kwargs):
     - return the rc
     """
 
+    #declare this as an synchronous runner
+    simpleRunner.category = 'sync'
+
     outDir = os.path.join(wd, '.moa', 'log.latest')
     if not os.path.exists(outDir):
         try:
