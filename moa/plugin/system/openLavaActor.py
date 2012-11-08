@@ -16,6 +16,8 @@ import subprocess as sp
 import sys
 import tempfile
 
+
+import jinja2
 import moa.logger
 import moa.ui
 from moa.sysConf import sysConf
@@ -35,7 +37,7 @@ def hook_defineCommandOptions(job, parser):
     parser.add_argument('--olx', default='', dest='openlavaExtra',
                         help='Extra arguments for bsub')
 
-    parser.add_argument('--oln', default=1, type=int, dest='openlavaSlots',
+    parser.add_argument('--olC', default=1, type=int, dest='openlavaCores',
                         help='The number of cores the jobs requires')
 
     parser.add_argument('--oldummy', default=False, dest='openlavaDummy',
@@ -94,17 +96,12 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("#BSUB -e %s" % errfile)
     s("#BSUB -q %s" % sysConf.args.openlavaQueue)
 
-    #bsub_cl.extend(["-o", outfile])
-    #bsub_cl.extend(["-e", errfile])
-    #bsub_cl.extend(["-q", sysConf.args.openlavaQueue])
-
     if '--oln' in sys.argv:
-        slots = sysConf.args.openlavaSlots
+        cores = sysConf.args.openlavaCores
     else:
-        slots = sysConf.job.conf.get('threads', sysConf.args.openlavaSlots)
+        cores = sysConf.job.conf.get('threads', sysConf.args.openlavaCores)
 
-    s("#BSUB -n %d" % slots)
-    #bsub_cl.extend(["-n", slots])
+    s("#BSUB -C %d" % cores)
 
     if sysConf.args.openlavaExtra.strip():
         s("#BSUB %s" % sysConf.args.openlavaExtra)
@@ -201,14 +198,13 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     os.chmod(tmpfile.name, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
     l.debug("executing bsub")
-    moa.ui.message("Submitting job to openlava")
-    moa.ui.message("Executing")
-    moa.ui.message(" ".join(map(str, bsub_cl)))
 
     p = sp.Popen(map(str, bsub_cl), cwd=wd, stdout=sp.PIPE, stdin=sp.PIPE)
     o, e = p.communicate("\n".join(sc))
 
     jid = int(o.split("<")[1].split(">")[0])
+
+    moa.ui.message("Submitted a job to openlava with id %d" % jid)
 
     if not sysConf.job.data.openlava.jids.get(command):
         sysConf.job.data.openlava.jids[command] = []
@@ -225,6 +221,16 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     l.debug("jids stored %s" % str(sysConf.job.data.openlava.jids))
     return p.returncode
 
+OnSuccessScript = """
+#BSUB -w '({%- for j in jids -%}
+{%- if loop.index0 > 0 %}&&{% endif -%}
+done({{j}})
+{%- endfor -%})'
+"""
+
+OnErrorScript = """
+
+"""
 
 def hook_postRun():
     """
@@ -234,6 +240,7 @@ def hook_postRun():
         with open('jidlist', 'w') as F:
             F.write("\n".join(
                 map(str, sysConf.job.data.openlava.get('alljids'))))
+            
 
 #register this actor globally
 sysConf.actor.actors['openlava'] = openlavaRunner

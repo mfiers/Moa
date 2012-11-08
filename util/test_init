@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-MB=/home/mf/project/moa
-
+MB=$1
+echo "base $1"
 export PATH=${MB}/bin:$PATH
 export PYTHONPATH=${MB}:$PYTHONPATH
