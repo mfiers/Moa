@@ -77,6 +77,12 @@ moa set program=blastp
 ## List template variables
 moa show
 
-## 
+## Execute the moa job 
 moa run
 
+## Manually check output descriptions for the pattern 'dicer'
+grep -i dicer blast_report
+
+## Set a moa post command (Check: can this be configured without STDIN intervention?)
+## moa set postcommand
+## > grep -i dicer blast_report > dicer.out
