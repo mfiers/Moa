@@ -1,7 +1,7 @@
 Configuring Moa
 ===============
 
-Moa is configured using the command line tool `Moa`. For example, you
+Moa is configured using the command line tool `moa`. For example, you
 are creating a simple job somewhere::
 
     $ moa simple -t 'test job' -- echo "Hello"

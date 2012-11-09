@@ -465,14 +465,16 @@ Create a new job.
 
 This command creates a new job with the specified template in the
 current directory. If the directory already contains a job it
-needs to be forced using '-f'. It is possible to define arguments
-for the job on the commandline using KEY=VALUE after the
-template. Note: do not use spaces around the '=' sign. Use quotes
+needs to be forced using '-f'. It is possible to redefine arguments
+for the job on the command line using KEY=VALUE pairs after a
+template has been created. 
+
+Note: Do not use spaces around the '=' sign. Use quotes
 if you need spaces in variables (KEY='two values')
 
 positional arguments:
   template              name of the template to use for this moa job 
-  parameter             arguments for this job, specifyas KEY=VALUE without spaces (default: None)
+  parameter             arguments for this job, specified as KEY=VALUE without spaces (default: None)
 
 optional arguments:
   -h, --help            show this help message and exit
