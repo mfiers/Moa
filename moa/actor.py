@@ -22,6 +22,19 @@ from moa.sysConf import sysConf
 
 l = moa.logger.getLogger(__name__)
 
+def async(f):
+    """
+    decorator designating an actor to be asynchronous
+    """
+    f.category = 'async'
+    return f
+
+def sync(f):
+    """
+    decorator designating an actor to be synchronous
+    """
+    f.category = 'sync'
+    return f
 
 def getRunner():
     actorId = getattr(sysConf.args, 'actorId', 'default')
@@ -32,7 +45,10 @@ def getRunner():
     l.debug("Actor: %s" % actorId)
     return sysConf.actor.actors[actorId]
 
+#should use this
+getActor = getRunner
 
+@sync
 def simpleRunner(wd, cl, conf={}, **kwargs):
     """
     Don't think - just run - here & now
