@@ -12,6 +12,7 @@ moa.job
 """
 
 import os
+import sys
 import glob
 import tempfile
 
@@ -22,6 +23,7 @@ import shutil
 
 import moa.ui
 import moa.args
+import moa.actor
 import moa.utils
 import moa.logger
 import moa.plugin
@@ -257,6 +259,7 @@ class Job(object):
         Execute `command` in the context of this job. Execution is
         alwasy deferred to the backend
 
+        #Note: this is the function that will be called from argparse
         #Note: Uncertain how to test verbose & silent
 
         :param verbose: output lots of data
@@ -275,6 +278,9 @@ class Job(object):
         if not self.backend:
             moa.ui.exitError("No backend loaded - cannot execute %s" % command)
 
+        actor = moa.actor.getActor()
+        moa.ui.message("loaded %s actor %s" % (actor.category, actor.__name__))
+
         #figure out what we were really after
         command = args.command
 
@@ -283,12 +289,13 @@ class Job(object):
         #prepare for execution - i.e. prepare log dir, etc..
         self.prepareExecute()
 
-        #unless command == 'run' - just execute it and return the RC
+        # unless command == 'run' - just execute it and return the RC
         if command != 'run':
             l.debug("Simple type execute of '%s'" % command)
             rc = self.backend.execute(self, command, args)
             sysConf.rc = rc
             if rc != 0:
+                self.pluginHandler.run("post_error", job=self)
                 sysConf.pluginHandler.run("post_error")
                 moa.ui.exitError("Error running")
             return rc
@@ -314,7 +321,15 @@ class Job(object):
 
         self.finishExecute()
 
+        #if async - exit here
+        if actor.category == 'async':
+            self.pluginHandler.run("async_exit", job=self)
+            sysConf.pluginHandler.run("async_exit")
+            moa.ui.message("async run started - quiting now")
+            sys.exit(0)
+
         return sysConf.rc
+
 
     def prepareExecute(self):
         """
@@ -406,9 +421,9 @@ class Job(object):
             cp = cparser.add_parser(
                 str(c), help=hlp)
 
-            cp.add_argument(
-                "-r", "--recursive", dest="recursive", action="store_true",
-                default="false", help="Run this job recursively")
+            # cp.add_argument(
+            #    "-r", "--recursive", dest="recursive", action="store_true",
+            #    default="false", help="Run this job recursively")
 
             cp.add_argument(
                 "-v", "--verbose", dest="verbose", action="store_true",

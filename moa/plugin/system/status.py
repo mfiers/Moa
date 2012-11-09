@@ -13,6 +13,7 @@ Possible job states:
 
 * waiting - not yet executed
 * running - is currently being executed
+* running_async - is currently being executed ansynchronously
 * success - finished succesfully
 * error   - finished with an error
 * interrupted - manual interruption
@@ -135,6 +136,7 @@ def _setStatus(job, status):
     with open(statusFile, 'w') as F:
         F.write("%s" % status)
 
+
 def _setPid(job, pid):
     l.debug("write PID file (%s)" % pid)
     pidFile = os.path.join(job.wd, '.moa', 'pid')
@@ -202,10 +204,15 @@ def hook_postInterrupt():
         _setStatus(sysConf.job, 'interrupted')
         _removePid(sysConf.job)
 
+
 def hook_postError():
     if sysConf.job.isMoa():
         _setStatus(sysConf.job, 'error')
         _removePid(sysConf.job)
+
+def hook_async_exit():
+    if sysConf.job.isMoa():
+        _setStatus(sysConf.job, 'running_async')
 
 @moa.args.needsJob
 @moa.args.command
