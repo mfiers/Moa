@@ -27,10 +27,11 @@ def setstatus():
         sys.stderr.write('invalid status: %s\n' % status)
         sys.exit(-1)
 
-    if status != 'run':
+    if status not in ['running', 'running_async']:
         if os.path.exists(pidFile):
             os.unlink(pidFile)
 
+    print 'SETTING STATE', status
     with open(statusFile, 'w') as F:
         F.write(status)
 
