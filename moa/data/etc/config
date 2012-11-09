@@ -5,7 +5,7 @@ plugins:
       enable: true
       order: 50
     openLavaActor:
-      module: moa.plugin.system.openLavaActor
+      module: moa.plugin.job.openLavaActor
       enabled: true
   system:
     moaGit:
