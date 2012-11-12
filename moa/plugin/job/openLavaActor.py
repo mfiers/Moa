@@ -37,8 +37,8 @@ def hook_defineCommandOptions(job, parser):
     parser.add_argument('--olx', default='', dest='openlavaExtra',
                         help='Extra arguments for bsub')
 
-    parser.add_argument('--olC', default=1, type=int, dest='openlavaCores',
-                        help='The number of cores the jobs requires')
+    parser.add_argument('--oln', default=1, type=int, dest='openlavaProcs',
+                        help='The number of processors the jobs requires')
 
     parser.add_argument('--oldummy', default=False, dest='openlavaDummy',
                         action='store_true',
@@ -119,12 +119,12 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
     s("#BSUB -e %s" % errfile)
     s("#BSUB -q %s" % sysConf.args.openlavaQueue)
 
-    if '--olC' in sys.argv:
-        cores = sysConf.args.openlavaCores
+    if '--oln' in sys.argv:
+        procs = sysConf.args.openlavaProcs
     else:
-        cores = sysConf.job.conf.get('threads', sysConf.args.openlavaCores)
+        procs = sysConf.job.conf.get('threads', sysConf.args.openlavaProcs)
 
-    s("#BSUB -C %d" % cores)
+    s("#BSUB -C %d" % procs)
 
     if sysConf.args.openlavaExtra.strip():
         s("#BSUB %s" % sysConf.args.openlavaExtra)
@@ -209,7 +209,7 @@ def openlavaRunner(wd, cl, conf={}, **kwargs):
             return 0
 
     tmpfile = _writeOlTmpFile(wd, sc)
-    
+
     moa.ui.message("Running %s:" % " ".join(map(str, bsub_cl)))
     moa.ui.message("(copy of) the bsub script: %s" % tmpfile)
     p = sp.Popen(map(str, bsub_cl), cwd=wd, stdout=sp.PIPE, stdin=sp.PIPE)
@@ -250,7 +250,7 @@ done({{j}})
 cd {{ job.wd }}
 echo "Openlava OnSuccess Start"
 echo "Killing the OnError job"
-bkill -J "{{ job.data.openlava.uid }}_Err" 
+bkill -J "{{ job.data.openlava.uid }}_Err"
 moasetstatus success
 """
 
@@ -267,7 +267,7 @@ OnErrorScript = """#!/bin/bash
 {%- endif %}
 #BSUB -w '({%- for j in job.data.openlava.alljids -%}
 {%- if loop.index0 > 0 %}||{% endif -%}
-exit({{j}},!=0) 
+exit({{j}},!=0)
 {%- endfor -%}
 )'
 
@@ -279,7 +279,7 @@ echo "Killing the all other jobs"
 bkill -s 9 {{ j }}
 {% endfor %}
 
-bkill -J "{{ job.data.openlava.uid }}_Ok" 
+bkill -J "{{ job.data.openlava.uid }}_Ok"
 moasetstatus error
 """
 
@@ -311,9 +311,9 @@ def hook_async_exit(job):
     P.communicate(onsuccess)
     P = sp.Popen('bsub', stdin=sp.PIPE)
     P.communicate(onerror)
-    
-        
-            
+
+
+
 
 #register this actor globally
 sysConf.actor.actors['openlava'] = openlavaRunner
