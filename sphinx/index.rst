@@ -1,25 +1,37 @@
 Welcome to Moa!
 ###############
 
-*Command line workflows for bioinformatics*
+*Command line workflows in bioinformatics*
 
 Moa aims to assist a bioinformatician to organize, document, share,
-execute and repeat workflows in a command line environment without
-losing any of the flexibility of the command line, and, at all times
-giving the user full access to all aspects of the workflow (see also
+inspect, execute and repeat workflows in a command line environment -
+without losing any of the flexibility of the command line (see
 :ref:`goals`).
 
 
 **NOTE: The software (and manual) are under development. Things might change.**
 
-Quick links
-===========
-* Latest documentation: http://moa.readthedocs.org/en/latest
-* Source code at `Github <https://github.com/mfiers/Moa>`_
-* Issue tracker: https://github.com/mfiers/Moa/issues
-* Old issue tracker <http://moamoa.lighthouseapp.com/projects/73665-moa/overview>
-* Python Package Index: http://pypi.python.org/pypi/moa/
-* `PDF version of the manual <_static/MoaManual.pdf>`_
+Introduction
+============
+
+These days, generating massive amounts of data is an everyday element
+of biological research; and almost all projects have a computational
+biology, or bioinformatics, components. Such embedded work commonly
+consists of chaining a number of 3\ :sup:`rd` party tools together,
+often with some data manipulation in between the steps. It is
+important to have such projects properly organized, particularly when
+a projects grows bigger.
+
+There are many different ways to organize bioinformatics
+projects. Many bioinformaticians use the command line or tailor made
+scripts (or Makefiles) to organize and automate their work. This
+approach has obvious advantages, most importantly
+flexibility. Potential downsides to a scripting approach is that a
+project easily becomes disorganized and hard to understand, unless
+measures are taken. Moa hopes to make the organization of a command
+line project easier.
+
+
 
 Table of contents:
 ==================
@@ -29,8 +41,8 @@ Table of contents:
    :glob:
 
    goals
-   intro
    install
+   intro
    using
    configuration
    execution
