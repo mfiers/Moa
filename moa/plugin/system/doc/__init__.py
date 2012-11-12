@@ -32,6 +32,15 @@ from moa.sysConf import sysConf
 l = moa.logger.getLogger(__name__)
 
 
+def hook_prepare_3():
+    job = sysConf['job']
+
+    job.template.parameters.title = {
+        'optional': False,
+        'help': 'Job title',
+        'recursive': False,
+        'type': 'string'}
+
 
 def hook_finish():
 
