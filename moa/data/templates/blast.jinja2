@@ -5,8 +5,8 @@ rm -rf gff || true
 
 ### prepare
 
-mkdir out || true > /dev/null
-mkdir gff || true > /dev/null
+mkdir -p out || true > /dev/null
+mkdir -p gff || true > /dev/null
 
 ### run
 blastall -i {{ input }} -p {{ program }}               \
