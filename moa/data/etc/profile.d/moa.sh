@@ -13,17 +13,8 @@ if [[ "$0" =~ "moainit" ]]; then
     exit -1;
 fi
 
-#few shortcuts
+#shortcut
 alias msp='moa set process'
-
-#Set environment variables for moa
-export MOADATA=`dirname $(dirname $(dirname $(cd ${BASH_ARGV%/*} && echo $PWD/${BASH_ARGV##*/})))`
-
-echo $MOADATA
-#export PATH=$MOADATA/bin:$PATH
-#export PYTHONPATH=$MOADATA/lib/python:$PYTHONPATH
-
-source $MOADATA/etc/bash_completion.d/moa
 
 ###
 ### Moa prompt stuff!
@@ -73,3 +64,107 @@ function _moa_prompt {
         moaprompt
     fi
 }
+
+
+# Bash completion stuff
+
+__moa_is_moadir() {
+	if [[ -e ".moa/template" ]]; then
+		echo "yes";
+	else
+		echo "no"
+	fi
+}
+
+__moa_get_template() {
+	echo `moa template`
+}
+
+__moa_all_templates() {
+	#return a list of all known moa templates
+    echo `moa list`
+}
+
+__moa_all_vars() {
+    #return a list of all known moa templates
+    if [[ $(__moa_is_moadir) == "yes" ]]
+    then
+        if [[ -f ".moa/completion/parameters" ]]
+        then
+            echo `cat .moa/completion/parameters`
+        else
+	    echo `moa raw_parameters`
+	fi
+    fi
+}
+
+_moa()
+{
+    local cur prev opts shopts moacomms moacommand
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    opts="--help --force --verbose --bg --title"
+    shopts="-h -f -v -j -t"
+    moacommand=""
+
+    if [[ ${cur} == --* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts} ${shopts}" -- ${cur}) )
+        return 0
+    fi
+
+    if [[ ${prev} == moa ]]; then
+        globalcommandfile="~/.config/moa/globalCommands"
+        if [[ -f ".moa/completion/commands" ]]
+        then
+            local commands=`cat .moa/completion/commands`
+        elif [[ -f ".moa/template" ]]
+        then
+            echo 'raw'
+            local commands=`moa raw_commands`
+        elif [[ -f `eval "echo ~/.config/moa/globalCommands"` ]]
+        then
+            local commands=`cat  ~/.config/moa/globalCommands`
+        else
+            echo 'raw2'
+            local commands=`moa raw_commands`;
+        fi
+    	COMPREPLY=( $(compgen -W "${commands}" -- ${cur}) )
+        return 0
+    fi
+
+    #Find the currently entered command (if there is one)
+        for x in $(seq 1 ${COMP_CWORD})
+	  do
+	  [[ ${COMP_WORDS[x]} == -* ]] && continue
+	  moacommand=${COMP_WORDS[x]}
+          for y in $(seq $((x+1)) ${COMP_CWORD})
+	  do
+	      [[ ${COMP_WORDS[y]} == -* ]] && continue
+	      moaSecCommand=${COMP_WORDS[y]}
+	      break
+	  done
+	  break
+	done
+
+    case "${moacommand}" in
+
+	new)
+       	   local templates=$(__moa_all_templates)
+       	   COMPREPLY=( $(compgen -W "${templates}" -- ${cur}) )
+            ;;
+        set)
+	    local vars=$(__moa_all_vars)
+	    COMPREPLY=( $(compgen -o nospace -W "${vars}" -- ${cur}) )
+	    ;;
+        *)
+        	;;
+    esac
+}
+complete -o nospace -o default -o bashdefault -F _moa moa
