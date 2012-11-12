@@ -34,10 +34,11 @@ def _run_cl(cl):
     if e:
         moa.ui.warn("Version or prerequisite problem with:")
         moa.ui.warn("  '%s'" % cl)
-        moa.ui.warn("Error message is:")
-        moa.ui.warn("%s" % e)
+        moa.ui.warn("Error: %s" % e)
 
-    return o.strip().split("\n")[0]
+    rc = P.returncode
+
+    return rc, o.strip().split("\n")[0]
 
 
 def _get_specific_versioninfo(run_id):
@@ -117,6 +118,7 @@ def hook_pelican(job):
 def hook_pre_run(job):
     version_data = {'moa': sysConf.getVersion()}
 
+    found_error = False
     #check versioning - first generate versioning document
     versionDir = os.path.join(job.confDir, 'version')
     if not os.path.exists(versionDir):
@@ -132,15 +134,19 @@ def hook_pre_run(job):
     core_keys = sorted(core_set.keys())
     for k in core_keys:
         v = core_set[k]
-        version_data[k] = _run_cl(v)
+        rc, version_data[k] = _run_cl(v)
+        if rc != 0:
+            found_error = True
 
     #template set:
     template_set = job.template.prerequisites
     template_keys = template_set.keys()
     for k in template_keys:
         v = template_set[k]
-        val = _run_cl(v)
+        rc, val = _run_cl(v)
         version_data[k] = val
+        if rc != 0:
+            found_error = True
 
     vfile = os.path.join(versionDir, "%04d.version" % (sysConf.runId))
     lfile = os.path.join(versionDir, "%04d.version" % (sysConf.runId - 1))
@@ -150,6 +156,9 @@ def hook_pre_run(job):
     if not os.path.exists(lfile):
         moa.ui.warn("No previous version information found")
         return
+
+    if found_error is True:
+        moa.ui.exitError("Prerequisite/versioning problem")
 
     lastv = {}
     with open(lfile) as F:
