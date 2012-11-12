@@ -14,7 +14,13 @@ Store Moa wide configuration
 """
 
 import os
-import pkg_resources
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import pkg_resources
+
+
 import Yaco
 
 import moa.logger

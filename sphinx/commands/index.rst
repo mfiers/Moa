@@ -631,6 +631,52 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+moa **reduce**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa reduce [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
+
+Create a 'reduce' adhoc job.
+
+There are a number of ways this command can be used::
+
+    $ moa reduce -t 'a title' -- echo 'define a command'
+
+Anything after `--` will be the executable command. If omitted,
+Moa will query the user for a command.
+
+Moa will also query the user for input & output files. An example
+session::
+
+    $ moa map -t 'something intelligent'
+    process:
+    > echo 'processing {{ input }} {{ output }}'
+    input:
+    > ../10.input/*.txt
+    output:
+    > ./*.out
+
+Assuming you have a number of text files in the `../10/input/`
+directory, you will see, upon running::
+
+   processing ../10.input/test.01.txt ./test.01.out
+   processing ../10.input/test.02.txt ./test.02.out
+   processing ../10.input/test.03.txt ./test.03.out
+   ...
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --recursive       Run this job recursively (default: false)
+  -v, --verbose         Show debugging output (default: False)
+  --profile             Run the profiler (default: False)
+  -f, --force           Force this action (default: False)
+  -t TITLE, --title TITLE
+                        A title for this job (default: None)
+
+~~~~~~~~~~~~~~~~~~
+
+
 moa **refresh**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

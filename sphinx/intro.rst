@@ -1,40 +1,43 @@
-Introduction
-============
+Quick start
+-----------
 
-These days, generating massive amounts of data is an everyday element
-of biological research; and almost all projects have a computational
-biology, or bioinformatics, components. Such embedded work commonly
-consists of chaining a number of 3\ :sup:`rd` party tools together,
-often with some data manipulation in between the steps. It is
-important to have such projects properly organized, particularly when
-a projects grows bigger.
+The best way to understand how Moa can help to organize a command line
+bioinformatics project is by an example.
 
-There are many different ways to organize bioinformatics
-projects. Many bioinformaticians use the command line or tailor made
-scripts to organize and automate their work. This approach has obvious
-advantages, most importantly flexibility. Potential downsides to
-scripting are that a project easily becomes disorganized and
-untraceable unless measures are taken.
+Each Moa workflow consists of separate Moa jobs. An important feature
+of Moa is that each Moa job resides in a directory, and each directory
+can hold only one Moa job. A workflow is organised as a directory
+tree, where the structure of the directory tree reflects the structure
+of the project. This (hopefully) stimulates a user to break a workflow
+down into atomic parts, which is typically beneficial to the
+organization and coherence of a workflow. So, Starting a Moa project
+starts with creating a directory to hold the workflow::
 
-*Moa* aims to assist in organizing, automating and maintaining a
-command line bioinformatics project without loss of flexibility.
-
-Example
--------
-
-The best way to understand how Moa can help you to achieve this is by an example. A Moa workflow consists of separate Moa jobs. A workflow is typically organised as a directory tree, where the structure of the tree reflects the structure of the project. So, Starting a Moa project starts with outlining a directory structure to contain the workflow::
-
-    $ mkdir test.project && cd test.project
+    $ mkdir test.project
+	$ cd test.project
     $ mkdir 00.proteins
-    
-    ## copy or create symbolic links some protein sequences in 00.proteins 
-    $ mkdir 10.blast && cd 10.blast
 
-An important feature of Moa is that each separate analysis step is contained within a separate directory. Two Moa jobs never share a directory. This forces a Moa user to break a workflow down to atomic parts, which is typically beneficial to the organization and coherence of a workflow. The order of steps is easily ordered by prefixing directory names with a number. Note that these prefixes are not enforced by Moa; any alphabetical organization would work as well. Once a directory is created, a Moa job can be created::
+    ## copy some protein sequences in 00.proteins
+    $ mkdir 10.blast
+	$ cd 10.blast
+
+The order of steps is easily ordered by prefixing directory names with
+a number. Note that this not enforced by Moa; any alphanumerical
+organization would work. Once a directory is created, a Moa job can be
+created::
 
     $ moa new blast -t "demo run"
 
-All interaction with Moa is done through a single command: `moa`. It is, at all times, possible to get help on the use of the `moa` command by invoking `moa --help`. The command above creates a `BLAST` job titled "demo run" in the current directory. All Moa related files are stored in a (hidden) sub-directory names `.moa` (have a look!).  A Moa job consists, amongst others, of a configuration file and a number of template files. All template files are copied into the `.moa` directory. This ensures that a workflow remains the same over time, even if the templates are updated (`moa refresh` would update a template to the latest version).
+All interaction with Moa is done through a single command: `moa`. It
+is, at all times, possible to get help on the use of the `moa` command
+by invoking `moa --help`. The command above creates a `BLAST` job
+titled "demo run" in the current directory. All Moa related files are
+stored in a (hidden) sub-directory names `.moa` (have a look!).  A Moa
+job consists, amongst others, of a configuration file and a number of
+template files. All template files are copied into the `.moa`
+directory. This ensures that a workflow remains the same over time,
+even if the templates are updated (`moa refresh` would update a
+template to the latest version).
 
 Another topic in which Moa tries to help is by embedding (some)
 documentation. In the above command line the `-t` parameter sets a
@@ -57,7 +60,7 @@ Note the variable `db` and `title`, which were set earlier. If you run `show -a`
 
     $ moa set program=blastp
     $ moa set input=../00.proteins/*.fasta
-    
+
 The last statement defines the input files to blast. Once all is set you can actually run the BLAST analysis with::
 
     $ moa run

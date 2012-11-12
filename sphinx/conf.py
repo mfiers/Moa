@@ -51,7 +51,7 @@ with open('../VERSION') as F:
     _long = F.read().strip()
     _short = _long.rsplit('.',1)[0]
 
-    
+
 # The short X.Y version.
 version = _short
 # The full version, including alpha/beta/rc tags.
@@ -142,8 +142,8 @@ html_use_smartypants = True
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
 html_sidebars = {
-   '*': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
-   '*/*': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
+   '*': ['globaltoc.html', 'staticlinks.html', 'searchbox.html'],
+   '*/*': ['globaltoc.html', 'staticlinks.html', 'searchbox.html'],
 }
 
 # Additional templates that should be rendered to pages, maps page names to

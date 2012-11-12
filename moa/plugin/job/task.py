@@ -26,7 +26,7 @@ l = moa.logger.getLogger(__name__)
 
 
 def runTask(cl):
-    l.warning("Executing task: %s" % cl)
+    l.debug("Executing task: %s" % cl)
     sp.call(cl.split(), stdout=sp.PIPE, stderr=sp.PIPE)
 
 
@@ -37,7 +37,6 @@ def _getTaskId(job):
     P = sp.Popen(cl, stdout=sp.PIPE, stderr=sp.PIPE)
     out, err = P.communicate()
     data = json.loads('[' + out + ']')
-    import pprint
     for item in data:
         annotations = item.get('annotations', [])
 
@@ -46,15 +45,9 @@ def _getTaskId(job):
             if not 'uid:' in desc:
                 continue
 
-            pprint.pprint(anno)
-            print 'd', desc
-            print
-
-    import sys
-    sys.exit()
     pidlist = out.strip().split()
     if len(pidlist) > 1:
-        moa.ui.warn("multiple jobs with the warn")
+        #moa.ui.warn("multiple jobs with this job's uid - not good")
         return pidlist[-1]
 
     if len(pidlist) == 1:
@@ -82,7 +75,7 @@ def _getTaskId(job):
 def hook_pre_run(job):
 
     taskid = _getTaskId(job)
-    moa.ui.message("TaskId %s" % taskid)
+    #moa.ui.message("TaskId %s" % taskid)
     hostname = socket.gethostname()
 
     runTask("task %s modify +moa +%s" % (taskid, hostname))

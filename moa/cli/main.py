@@ -114,35 +114,6 @@ def run_3(wd, exitOnError=True):
         sysConf.pluginHandler.run('finish', reverse=True)
 
 
-def run_recursive(wd):
-    """
-    Run through the subdirs (depth first) and execute all moa jobs
-    """
-    sysConf.pluginHandler.run('prepare_recursive')
-    for path, dirs, files in os.walk(wd):
-        dirs.sort()  # make sure the dirs are sorted
-        if '.moa' in dirs:
-            if os.path.exists(os.path.join(path, '.moa', 'template')):
-                clargs = " ".join(sys.argv)
-                moa.ui.message("Trying to run '%s' .." % clargs)
-                moa.ui.message("  .. in %s" % (path))
-                try:
-                    rc = run_3(path, exitOnError=False)
-                    if rc is False:
-                        moa.ui.message("Error running %s" % clargs)
-
-                except moa.exceptions.MoaInvalidCommandLine:
-                    moa.ui.warn("Cannot run moa %s in %s" % (
-                        " ".join(sys.argv[1:]), path))
-
-        # remove all '.' directories from the list to recurse
-
-        drem = [x for x in dirs if x[0] in ['.', '_']]
-        [dirs.remove(t) for t in drem]
-
-    sysConf.pluginHandler.run('post_recursive')
-
-
 def run_2(force_silent=False):
     """
     Are we going to do a recursive run?: check if -r is in the arguments...
@@ -159,45 +130,19 @@ def run_2(force_silent=False):
 
     """
 
-    sysConf.pluginHandler.run('prepare_recursion')
+    # sysConf.pluginHandler.run('prepare_recursion')
 
     wd = moa.utils.getCwd()
     l.debug("starting run_2 in %s" % wd)
-    if not '-r' in sys.argv:
-        #not recursive - go directly to stage 3
-        try:
-            run_3(wd)
-        except moa.exceptions.MoaInvalidCommandLine, e:
-            parser = e.args[0]
-            parser.real_error()
 
-    else:
-        #default mode is global
-        recurseMode = 'global'
+    # never recursive - jump directly into run_3
+    try:
+        run_3(wd)
+    except moa.exceptions.MoaInvalidCommandLine, e:
+        parser = e.args[0]
+        parser.real_error()
 
-        # check if the command allows for recursive execution
-        # therefore - a quick & dirty approach to getting the
-        # command name - we haven't properly parsed the
-        # arguments yet
-        command = sysConf.default_command
-        tas = [x for x in sys.argv[1:] if not x[0] == '-']
-
-        if len(tas) > 0:
-            command = tas[0]
-
-        if command in sysConf.commands:
-            recurseMode = sysConf.commands[command].get('recursive', 'global')
-        else:
-            recurseMode = 'global'
-
-        if recurseMode == 'global':
-            run_recursive(wd)
-        elif recurseMode == 'none':
-            moa.ui.exitError("Recursive execution is not allowed")
-        else:
-            run_3(wd)
-
-    sysConf.pluginHandler.run('post_recursion')
+    # sysConf.pluginHandler.run('post_recursion')
 
 
 def run_1():

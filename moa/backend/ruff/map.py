@@ -141,13 +141,12 @@ class RuffMapJob(RuffBaseJob):
             #caught here.
             l.debug("Caught a Ruffus error!")
             l.debug(str(e))
-            startOfError = "{{gray}}" + re.sub(r'\s+', " ", str(e))[:72].strip() + "...{{reset}}"
-            endOfError = "{{gray}}..." + re.sub(r'\s+', " ", str(e)).strip()[-72:] + \
-                         "{{reset}}"
-            moa.ui.error("Caught a Ruffus error")
-            moa.ui.error(startOfError)
-            print endOfError
-            moa.ui.error(endOfError.replace('%', '%%'))
+            #startOfError = "{{gray}}" + re.sub(r'\s+', " ", str(e))[:72].strip() + "...{{reset}}"
+            #endOfError = "{{gray}}..." + re.sub(r'\s+', " ", str(e)).strip()[-72:] + \
+            #             "{{reset}}"
+            moa.ui.error("Caught an execution error")
+            #moa.ui.error(startOfError)
+            #moa.ui.error(endOfError.replace('%', '%%'))
             try:
                 #try to get some structured info & output that.
                 einfo = e[0][1].split('->')[0].split('=')[1].strip()

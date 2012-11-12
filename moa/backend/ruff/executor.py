@@ -1,6 +1,7 @@
 import os
 import stat
 import tempfile
+import ruffus 
 
 import moa.actor
 
@@ -38,6 +39,7 @@ def ruffusExecutor(input, output, script, jobData):
             os.putenv(k, str(v))
 
     runner = moa.actor.getRunner()
+    #print runner.category
     rc = runner(jobData['wd'],  [tf.name], jobData, command=jobData['command'])
     if rc != 0:
         raise ruffus.JobSignalledBreak

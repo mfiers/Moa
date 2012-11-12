@@ -1,8 +1,12 @@
 #!/usr/bin/env python
+"""Return the path to the moa environment initializiation
+script. Should be called as:
 
-import os
+. `moainit`
+
+"""
+
 import pkg_resources
-import subprocess as sp
 
 
 def moainit():
@@ -11,6 +15,7 @@ def moainit():
     moash = pkg_resources.resource_filename(
         'moa', 'data/etc/profile.d/moa.sh')
     print moash
+
 
 if __name__ == '__main__':
     moainit()

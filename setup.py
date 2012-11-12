@@ -9,6 +9,7 @@ entry_points = {
     'console_scripts': [
         'moa = moa.cli.main:dispatch',
         'moaprompt = moa.cli.moaprompt:moaprompt',
+        'moasetstatus = moa.cli.setstatus:setstatus',
         'moar = moa.cli.moar:moar',
         'moainit = moa.cli.moainit:moainit',
     ]}
