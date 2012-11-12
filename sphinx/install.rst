@@ -12,9 +12,11 @@ install the following prerequisites (and a large number more for each
 of the templates). Version numbers are an indication, not strict
 prerequisites. Other, even older, versions might work.
 
-
 - `Python <http://python.org>`_ (2.6 or 2.7). Moa will not work with
-  earlier versions, or with 3.0 and later.
+  earlier versions, or with Python3.
+
+Recommended
+...........
 
 - `Python-dev`: the Python development package. A few prerequisites
   installed by easy_install try to compile C libraries, and need
@@ -29,6 +31,7 @@ prerequisites. Other, even older, versions might work.
 
     sudo apt-get install python-yaml
 
+
 Git integration
 ...............
 
@@ -36,11 +39,12 @@ One feature of Moa is the ability to integrate with `Git
 <http://git-scm.com/>`_ to keep track of your workflow. If you want to
 use this, you (obviously) need Git installed. For most applications
 the package manager version is fine. However, Moa is able to pull
-templates from git repositories. If you want to use that feature,
-you'll need to install `git subtree`. This application comes bundled
-with recent version of Git (late 1.7 or 1.8), but needs to be
-installed separately. Otherwise, it can be downloaded from the
-`"apenwarr" <https://github.com/apenwarr/git-subtree>`_ repository.
+templates from git repositories. If you want to use that feature, you
+must install `git subtree`. This application comes bundled with recent
+version of Git (certainly with 1.8) but still needs to be installed
+separately. Otherwise, it can be downloaded from the `"apenwarr"
+<https://github.com/apenwarr/git-subtree>`_ repository.
+
 
 Installation of Moa
 -------------------
@@ -50,17 +54,21 @@ It is most convenient to install Moa from the
 
     pip install Moa
 
-Note that it is possible to install Moa within a `virtual env <http://pypi.python.org/pypi/virtualenv>`_. If you want to do this globally, you will need root rights.
+(You might need root rights to do this)
 
-Installation using git (from github)
--------------------------------------
+Note that it is possible, and even recommended, to install Moa within
+a `virtual environment <http://pypi.python.org/pypi/virtualenv>`_.
 
-When installing manuall, you'll need the following prerequisites:
+Moa should now work, try `moa --help`.
+
+Manual installation (from Github)
+---------------------------------
+
+When installing manually, you'll need the following prerequisites:
 
 - `pyyaml <http://pyyaml.org/wiki/PyYAML>`_
 - `Jinja2 <http://jinja.pocoo.org/2/>`_
 - `Ruffus <http://code.google.com/p/ruffus/>`_
-- `gitpython <http://gitorious.org/git-python>`_
 - `unittest2 http://pypi.python.org/pypi/unittest2`_
 - `lockfile http://pypi.python.org/pypi/lockfile`_
 - `GitPython http://pypi.python.org/pypi/GitPython`_
