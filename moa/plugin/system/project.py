@@ -88,6 +88,7 @@ def hook_prepare_3():
                 'the context of this job',
         'recursive': False,
         'private': True,
+        'system': True,
         'type': 'string'
     }
 
@@ -96,6 +97,7 @@ def hook_prepare_3():
         'help': 'A unique project job identifier - only unique in ' +
                 'the context of this job',
         'recursive': False,
+        'system': True,
         'private': True,
         'type': 'string'
     }
