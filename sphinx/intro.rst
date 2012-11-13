@@ -1,8 +1,7 @@
 Quick start
 -----------
 
-The best way to understand how Moa can help to organize a command line
-bioinformatics project is by an example.
+The best way to understand how Moa can help to organize a command line bioinformatics project is by an example.
 
 Each Moa workflow consists of separate Moa jobs. An important feature
 of Moa is that each Moa job resides in a directory, and each directory
