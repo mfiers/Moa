@@ -1,12 +1,14 @@
-Quick start
------------
+.. _tutorial1:
+
+Tutorial 1
+----------
 
 (note, to fully use the blast template - you will need the
 `blastReport` script from the `Blue Ringed Octopus
 <https://github.com/mfiers/Blue-Ringed-Octopus>`_ repository).
 
- The best way to understand how Moa can help to organize a command
-line bioinformatics project is by an example.
+This quick start aims to help you understand how Moa can help to
+organize a command line bioinformatics project.
 
 Each Moa workflow consists of separate Moa jobs. An important feature
 of Moa is that each Moa job resides in a directory, and each directory
@@ -118,5 +120,7 @@ and, at the prompt enter::
 If you now rerun `moa`, the BLAST job will not be repeated, but the
 `postcommand` will be executed and a `dicer.out` file will be
 generated. (note, there is also a `precommand`)
+
+If this is all clear, continue with :ref:`tutorial2`.
 
 
