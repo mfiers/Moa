@@ -250,8 +250,8 @@ def _commandify(f, name):
         description="%s\n%s" % (shortDesc, longDesc),
         formatter_class=MoaHelpFormatter)
 
-    cp.add_argument("-r", "--recursive", dest="recursive", action="store_true",
-                    default="false", help="Run this job recursively")
+    #cp.add_argument("-r", "--recursive", dest="recursive", action="store_true",
+    #                default="false", help="Run this job recursively")
 
     cp.add_argument("-v", "--verbose", dest="verbose", action="store_true",
                     help="Show debugging output")
@@ -331,6 +331,7 @@ def localRecursive(f):
 def private(f):
     sysConf.commands[f.func_name]['private'] = True
     return f
+
 
 def forceable(f):
     f.arg_parser.add_argument('-f', '--force', action='store_true',
