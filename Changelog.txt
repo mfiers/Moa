@@ -1,3 +1,15 @@
+Moa 0.11.13 / 2012-11-13
+==========================
+
+  * lost of work on the documentation
+  * forcing a commit -a before running subtree add
+  * more detail in what files we do want to commit
+  * updated documentation
+  * further removed recursive operation (-r)
+  * improved moa show output
+  * define pud & ppud as system defined
+  * make sure title is defined as a project parameter
+
 Moa 0.11.12 / 2012-11-13
 ==========================
 
