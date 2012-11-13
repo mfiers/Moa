@@ -18,8 +18,11 @@ import time
 
 import git
 import moa.args
-import moa.logger as l
+import moa.logger
 from moa.sysConf import sysConf
+
+l = moa.logger.getLogger(__name__)
+l.setLevel(moa.logger.DEBUG)
 
 
 def _callGit(cl):
@@ -175,7 +178,6 @@ def hook_prepare_3():
     sysConf.git.repo = _getRepo(sysConf.job)
     if not sysConf.git.repo and sysConf.plugin_settings.moaGit.warn:
             moa.ui.warn("Cannot find a git repository!")
-
 
 def hook_finish():
     """
