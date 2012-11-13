@@ -407,7 +407,6 @@ class Job(object):
                 'desc': hlp,
                 'long': hlp,
                 'source': 'template',
-                'recursive': 'global',
                 'needsJob': True,
                 'call': self.execute
             }
@@ -420,10 +419,6 @@ class Job(object):
 
             cp = cparser.add_parser(
                 str(c), help=hlp)
-
-            # cp.add_argument(
-            #    "-r", "--recursive", dest="recursive", action="store_true",
-            #    default="false", help="Run this job recursively")
 
             cp.add_argument(
                 "-v", "--verbose", dest="verbose", action="store_true",
@@ -446,7 +441,6 @@ class Job(object):
                 'desc': hlp,
                 'long': hlp,
                 'source': 'template',
-                'recursive': 'global',
                 'needsJob': True,
                 'call': self.execute
             }

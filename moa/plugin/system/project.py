@@ -92,6 +92,15 @@ def hook_prepare_3():
         'type': 'string'
     }
 
+    job.template.parameters.project = {
+        'optional': True,
+        'help': 'Project name - automatically assigned',
+        'recursive': False,
+        'private': False,
+        'system': True,
+        'type': 'string'
+    }
+
     job.template.parameters.ppud = {
         'optional': True,
         'help': 'A unique project job identifier - only unique in ' +

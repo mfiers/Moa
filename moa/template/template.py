@@ -64,6 +64,7 @@ class Template(Yaco.Yaco):
             'default': 'run',
             'help': 'command to run for this template',
             'optional': True,
+            'system': True,
             'private': True}
 
         self.parameters.jobid = {
@@ -71,6 +72,7 @@ class Template(Yaco.Yaco):
             'context of this workflow',
             'optional': True,
             'recursive': False,
+            'system': True,
             'type': 'string',
             'default': 'unset'}
 
