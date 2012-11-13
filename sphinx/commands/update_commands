@@ -56,6 +56,7 @@ for command in sysConf.commands:
     func =fi['call']
 
     cp = fi['cp'] # argparse object
+
     #capture usage by temporary redirecting stdout
     tmpstdout = sys.stdout
     sys.stdout=cStringIO.StringIO()
@@ -70,6 +71,7 @@ for command in sysConf.commands:
     td = {
         'name' : command,
         'helptext' : helptext,
+        'label' : 'command_moa_%s' % command,
         'needsJob' : fi.get('needsJob', True),
         'log' : fi.get('log', True)
           }

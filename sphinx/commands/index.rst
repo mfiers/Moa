@@ -1,6 +1,8 @@
 Command reference
 =================
 
+.. _command_moa_!:
+
 moa **!**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -36,6 +38,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_archive:
+
 moa **archive**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -69,6 +73,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_archive_excl:
+
 moa **archive_excl**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -86,6 +92,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_archive_incl:
+
 moa **archive_incl**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -102,6 +110,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_blog:
 
 moa **blog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -138,6 +148,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_change:
 
 moa **change**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -187,6 +199,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_changelog:
+
 moa **changelog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -206,6 +220,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_cp:
 
 moa **cp**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -236,6 +252,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_dumpTemplate:
+
 moa **dumpTemplate**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -259,6 +277,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_err:
+
 moa **err**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -275,6 +295,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_files:
 
 moa **files**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -299,6 +321,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_gitadd:
+
 moa **gitadd**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -316,6 +340,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_gitlog:
+
 moa **gitlog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -332,6 +358,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_kill:
 
 moa **kill**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -353,6 +381,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_list:
+
 moa **list**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -373,6 +403,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_lock:
+
 moa **lock**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -389,6 +421,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_log:
 
 moa **log**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -409,6 +443,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_map:
 
 moa **map**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -433,6 +469,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_mv:
+
 moa **mv**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -454,6 +492,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_new:
+
 moa **new**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -465,16 +505,14 @@ Create a new job.
 
 This command creates a new job with the specified template in the
 current directory. If the directory already contains a job it
-needs to be forced using '-f'. It is possible to redefine arguments
-for the job on the command line using KEY=VALUE pairs after a
-template has been created. 
-
-Note: Do not use spaces around the '=' sign. Use quotes
+needs to be forced using '-f'. It is possible to define arguments
+for the job on the commandline using KEY=VALUE after the
+template. Note: do not use spaces around the '=' sign. Use quotes
 if you need spaces in variables (KEY='two values')
 
 positional arguments:
   template              name of the template to use for this moa job 
-  parameter             arguments for this job, specified as KEY=VALUE without spaces (default: None)
+  parameter             arguments for this job, specifyas KEY=VALUE without spaces (default: None)
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -487,6 +525,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_out:
 
 moa **out**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -505,6 +545,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_pause:
+
 moa **pause**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -521,6 +563,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_pelican:
 
 moa **pelican**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -539,6 +583,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_postcommand:
+
 moa **postcommand**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -556,6 +602,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_precommand:
+
 moa **precommand**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -572,6 +620,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_raw_commands:
 
 moa **raw_commands**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -594,6 +644,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_raw_parameters:
+
 moa **raw_parameters**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -610,6 +662,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_readme:
 
 moa **readme**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -630,6 +684,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_reduce:
 
 moa **reduce**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -677,6 +733,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_refresh:
+
 moa **refresh**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -696,6 +754,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_rehash:
+
 moa **rehash**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -713,6 +773,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_resume:
+
 moa **resume**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -729,6 +791,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_set:
 
 moa **set**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -799,32 +863,41 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_show:
+
 moa **show**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa show [-h] [-r] [-v] [--profile] [-u] [-R] [-p] [-a]
+usage: moa show [-h] [-r] [-v] [--profile] [-u] [-a] [-p]
 
-Show all parameters know to this job.
+Show parameters known to this job.
 
-Parameters in **bold** are specifically configured for this job
-(as opposed to those parameters that are set to their default
-value). Parameters in red are not configured, but need to be for
-the template to operate. Parameters in blue are not configured
-either, but are optional.
+The command outputs three columns, parameter name, flag and
+value. The two flags have the following meaning:
+
+* Origin: (l) locally defined; (`d`) default value; (`r`) recursively
+  defined; (`s`) system defined; (`x`) extra value, not in the
+  template; and (`.`) not defined.
+
+* Private: a `p` indicates this variable to be private.
+
+* Mandatory: a lower case `o` indicates this to be an optional
+  variable and `M` means mandatory.
 
 optional arguments:
   -h, --help       show this help message and exit
   -r, --recursive  Run this job recursively (default: false)
   -v, --verbose    Show debugging output (default: False)
   --profile        Run the profiler (default: False)
-  -u               show unrendered values (when using inline parameters) (default: False)
-  -R               show recursively defined parameters not specified by the local template (default: False)
-  -p               show private parameters (default: False)
+  -u               show unrendered values (default: False)
   -a               show all parameters (default: False)
+  -p               show private parameters (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_showblog:
 
 moa **showblog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -845,6 +918,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_simple:
 
 moa **simple**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -869,6 +944,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_status:
+
 moa **status**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -892,6 +969,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_template:
+
 moa **template**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -913,6 +992,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_test:
+
 moa **test**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -929,6 +1010,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_tree:
 
 moa **tree**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -951,6 +1034,8 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_unlock:
+
 moa **unlock**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -967,6 +1052,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_unset:
 
 moa **unset**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -992,6 +1079,8 @@ optional arguments:
 
 ~~~~~~~~~~~~~~~~~~
 
+
+.. _command_moa_version:
 
 moa **version**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
