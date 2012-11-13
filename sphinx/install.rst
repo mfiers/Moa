@@ -101,6 +101,7 @@ Manual installation (from Github)
 When installing manually, you'll need the following prerequisites:
 
 - `pyyaml <http://pyyaml.org/wiki/PyYAML>`_
+- `argparse <http://pypi.python.org/pypi/argparse>`_ (only for Python2.6)
 - `Jinja2 <http://jinja.pocoo.org/2/>`_
 - `ruffus <http://code.google.com/p/ruffus/>`_
 - `unittest2 <http://pypi.python.org/pypi/unittest2>`_
