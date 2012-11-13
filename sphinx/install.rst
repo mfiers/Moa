@@ -92,7 +92,8 @@ This does a number of things:
 
        find . -name local_bash_history | xargs rm
 
-  The local_bash_history is also tracked by Git
+  The local_bash_history is, however, not tracked by the Git module
+  (unless specified explicitly)
 
 Manual installation (from Github)
 ---------------------------------
