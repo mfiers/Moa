@@ -23,7 +23,7 @@ from moa.template import provider
 
 
 l = moa.logger.getLogger(__name__)
-l.setLevel(moa.logger.INFO)
+l.setLevel(moa.logger.DEBUG)
 
 
 class Gitmodule(provider.ProviderBase):
@@ -88,12 +88,16 @@ class Gitmodule(provider.ProviderBase):
         repo = sysConf.git.repo
         branch = 'master'  # not configurable for the time being
 
+        #safety check
+        sysConf.git.callGit(("git commit -m 'prepare git subtree' -a"))
+        sysConf.git.callGit(("git diff-index HEAD"))
+
         if not repo:
             moa.ui.exitError("To use git submodules as templates you " +
                              "need to have the moaGit plugin active " +
                              "and be inside a Git repository")
 
-        git_url = self.gbase + tName
+        git_url = self.gbase % tName
 
         self.data.git_url = git_url
         self.data.git_branch = branch
@@ -101,6 +105,7 @@ class Gitmodule(provider.ProviderBase):
         repodir, thisdir, jobdir = self._findRelativeDir(wd)
 
         #move to the repo base dir for subsequent operations
+        moa.ui.message("repository base %s" % repodir)
         os.chdir(repodir)
 
         message = "Create Moa %s:%s job" % (self.name, tName)
