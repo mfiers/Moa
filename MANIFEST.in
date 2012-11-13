@@ -9,7 +9,6 @@ recursive-include moa/data/logo *.txt
 recursive-include moa/data/test *.fq *fasta
 
 include moa/data/etc/config
-include moa/data/etc/bash_completion.d/moa
 include moa/data/etc/profile.d/moa.sh
 
 # SMW plugin
