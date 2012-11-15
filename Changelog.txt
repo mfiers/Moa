@@ -1,3 +1,12 @@
+Moa 0.11.14 / 2012-11-15
+==========================
+
+  * restored moa cp (recursive was gone)
+  * introduced set -v in moa simple,map,reduce
+  * more test scripts
+  * added documentation on filesets
+  * added argparse as a prereq
+
 Moa 0.11.13 / 2012-11-13
 ==========================
 

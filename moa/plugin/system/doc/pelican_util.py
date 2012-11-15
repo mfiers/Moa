@@ -147,6 +147,10 @@ def generate_file_page(job):
     pagename = _getpagename('files.md')
 
     filesets = job.template.filesets.keys()
+    if len(filesets) == 0:
+        #no filesets - nothing to display
+        return
+
     filesets.sort()
 
     fsets = []
