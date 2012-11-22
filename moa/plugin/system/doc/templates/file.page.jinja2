@@ -12,14 +12,14 @@ Set  | Input                   | Output                 |
 {%- if fset.input|length <= i -%}
 {{ '                         |' }}
 {%- else -%}{% set f=fset['input'][i] -%}
-[{{f[3]}}]({{ f[3] }}) / [&psi;]({{ f[3] }}/index.html) / [{{ f[4] }}]({{ f[2] }}) |
+[{{f[3]}}](../../../../{{ f[3] }}) / [&psi;](../../../../{{ f[3] }}/index.html) / [{{ f[4] }}](../../../../{{ f[2] }}) |
 {%- endif -%}
 {%- if fset.output|length <= i -%}
 {{ '                         |' }}
 {%- else -%}{% set f=fset['output'][i] -%}
-[{{f[3]}}]({{ f[3] }}) / [&psi;]({{ f[3] }}/index.html) / [{{ f[4] }}]({{ f[2] }})
+[{{f[3]}}](../../../../{{ f[3] }}) / [&psi;](../../../../{{ f[3] }}/index.html) / [{{ f[4] }}](../../../../{{ f[2] }})
 {%- endif -%}
 {{ '\n' }}
-{%- endfor -%}
 {%- endfor %}
+{%- endfor -%}
 

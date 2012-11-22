@@ -137,6 +137,29 @@ def generate_parameter_page(job):
         }))
 
 
+def generate_directory_page(job):
+    """
+    Create a parameter page for pelican
+    """
+
+    jtemplate = jenv.select_template(['localdir.page.jinja2'])
+    pagename = _getpagename('localdir.md')
+
+    #get local file listing
+    data = dict([(x, os.stat(x))
+                 for x
+                 in os.listdir(job.wd)
+                 if not x[0] == '.'])
+
+    files = sorted(data.keys())
+
+    with open(pagename, 'w') as F:
+        F.write(jtemplate.render({
+            'files': files,
+            'data': data
+        }))
+
+
 def generate_file_page(job):
     """
     Prepare a list of files for display

@@ -16,8 +16,25 @@ CONTENT_STATIC_LOC = '../../../'
 MD_EXTENSIONS = ['tables', 'def_list']
 SUMMARY_MAX_LENGTH = 50
 
-LINKS = (('Moa docs', 'http://mfiers.github.com/Moa/'),
-         ('Moa source', 'https://github.com/mfiers/Moa'),
+ARTICLE_URL = '{slug}.html'
+ARTICLE_SAVE_AS = '{slug}.html'
+PAGE_URL = 'pages_{slug}.html'
+PAGE_SAVE_AS = 'pages_{slug}.html'
+PAGE_LANG_URL = 'pages_{slug}-{lang}.html'
+PAGE_LANG_SAVE_AS = 'pages_{slug}-{lang}.html'
+AUTHOR_URL = 'author_{name}.html'
+AUTHOR_SAVE_AS = 'author_{name}.html'
+CATEGORY_URL = 'category_{name}.html'
+CATEGORY_SAVE_AS ='category_{name}.html'
+TAG_URL = 'tag_{name}.html'
+TAG_SAVE_AS = 'tag_{name}.html'
+
+FEED_ATOM = None
+FEED_RSS = None
+
+LINKS = (('Moa', 'http://moa.rtfd.org/'),
+         ('Source', 'https://github.com/mfiers/Moa'),
+		 ('Issues', 'https://github.com/mfiers/Moa/issues'),
          )
 
 

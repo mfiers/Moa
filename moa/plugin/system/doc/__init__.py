@@ -89,9 +89,13 @@ def _writeMessage(category, txt, title=None):
         category, now.year, now.month, now.day,
         now.hour, now.minute, now.second))
 
-    if title is None:
-        title = txt[0]
+    while txt[0].strip() == "":
         txt = txt[1:]
+
+    if title is None or title.strip() == "":
+        title = '%s %d/%d/%d %d:%d:%d' % (
+            category, now.year, now.month, now.day,
+            now.hour, now.minute, now.second)
 
     txt = "\n".join(txt).rstrip() + "\n"
 
@@ -127,6 +131,7 @@ def _readFromuser(job, ):
 
 @moa.args.needsJob
 @moa.args.argument('message', nargs='*')
+@moa.args.argument('-t', '--title', help='mandatory job title')
 @moa.args.command
 def blog(job, args):
     """
@@ -149,6 +154,9 @@ def blog(job, args):
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
     """
 
+    if args.title is None:
+        moa.ui.exitError("Please provide a blog title using -t")
+
     sin = _getFromStdin()
 
     if args.message:
@@ -161,7 +169,7 @@ def blog(job, args):
         message.append("\nStdin:\n")
         message.extend(["    " + x for x in sin.split("\n")])
 
-    _writeMessage('blog', message)
+    _writeMessage('blog', message, title=args.title)
 
     moa.ui.message("Created a blog entry", store=False)
     sysConf.doc.blog = "\n".join(message)
@@ -261,6 +269,7 @@ def _show_stuff(category, no_messages):
 
 @moa.args.needsJob
 @moa.args.argument('message', nargs='*')
+@moa.args.argument('-t', '--title', help='mandatory job title')
 @moa.args.command
 def change(job, args):
     """
@@ -309,7 +318,7 @@ def change(job, args):
         message.append("\nStdin:\n")
         message.extend(["    " + x for x in sin.split("\n")])
 
-    _writeMessage('change', message)
+    _writeMessage('change', message, title=args.title)
 
     moa.ui.message("Created a changelog entry", store=False)
     sysConf.doc.changeMessage = "\n".join(message)
@@ -317,6 +326,8 @@ def change(job, args):
 
 @moa.args.doNotLog
 @moa.args.needsJob
+#@moa.args.addFlag('-r', '--recursive', help='run recursively - ' +
+#                  'including all subdirectories')
 @moa.args.command
 def pelican(job, args):
     """
@@ -346,6 +357,7 @@ def pelican(job, args):
     pelican_util.generate_file_page(job)
     pelican_util.generate_readme_page(job)
     pelican_util.generate_template_page(job)
+    pelican_util.generate_directory_page(job)
 
     jtemplate = jenv.select_template(['pelican.conf.jinja2'])
 
