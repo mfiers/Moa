@@ -15,6 +15,7 @@ fi
 
 #shortcut
 alias msp='moa set process'
+alias mst='moa set title'
 
 ###
 ### Moa prompt stuff!
