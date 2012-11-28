@@ -1,3 +1,9 @@
+Moa 0.11.17 / 2012-11-28
+==========================
+
+  * moa prepare & finish work again
+  * removed unset -r from the test suite
+
 Moa 0.11.16 / 2012-11-28
 ==========================
 
