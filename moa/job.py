@@ -396,22 +396,24 @@ class Job(object):
         """
         parser, cparser = moa.args.getParser()
 
-        if self.hasCommand('unittest'):
-            # this does not have to be defined in the .moa - if it is here
-            # we'll register it
-            hlp = 'run unittest for this template'
-            cp = cparser.add_parser(
-                'unittest', help=hlp)
-
-            sysConf.commands['unittest'] = {
-                'desc': hlp,
-                'long': hlp,
-                'source': 'template',
-                'needsJob': True,
-                'call': self.execute
-            }
+        for comm in ['unittest', 'prepare', 'finish']:
+            if self.hasCommand(comm):
+                # this does not have to be defined in the .moa - if it is here
+                # we'll register it
+                hlp = 'run "%s" for this template' % comm
+                cp = cparser.add_parser(
+                    comm, help=hlp)
+                
+                sysConf.commands[comm] = {
+                    'desc': hlp,
+                    'long': hlp,
+                    'source': 'template',
+                    'needsJob': True,
+                    'call': self.execute
+                    }
 
         for c in self.template.commands:
+
             cinf = self.template.commands[c]
             hlp = cinf.get('help', '').strip()
             if not hlp:
