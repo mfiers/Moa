@@ -22,10 +22,5 @@ moa set process=echo
 
 moa set aaa=bbb
 moa show | grep 'aaa' | grep -q 'bbb'
-cd ..
-moa unset -r aaa
-moa show | grep -qv 'aaa'
-cd 10.sub
-moa show | grep -qv 'aaa'
 
 rm -rf $tmpdir
