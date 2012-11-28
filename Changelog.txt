@@ -1,3 +1,9 @@
+Moa 0.11.16 / 2012-11-28
+==========================
+
+  * Sanity checks on filesets
+  * added alias mst for moa set title in '. $(moainit)'
+
 Moa 0.11.15 / 2012-11-22
 ==========================
 
