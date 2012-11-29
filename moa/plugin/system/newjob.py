@@ -47,6 +47,7 @@ def new(job, args):
 
     if job.conf.title and job.conf.is_local('title'):
         title = job.conf.title
+
     if args.title:
         title = args.title
 
@@ -66,16 +67,6 @@ def new(job, args):
         else:
             params.append(a)
 
-    # if targetdir != '.':
-    #     fulltarget = os.path.abspath(targetdir)
-    #     if not os.path.exists(fulltarget):
-    #         moa.ui.message("Creating directory %s" % targetdir)
-    #         os.makedirs(fulltarget)
-
-    #     os.chdir(fulltarget)
-    #     #create a new job for the target dir
-    #     job = moa.job.Job(fulltarget)
-
     wd = job.wd
 
     if os.path.exists(os.path.join(wd, '.moa', 'template')) and not args.force:
@@ -93,6 +84,9 @@ def new(job, args):
                              provider=provider)
     except moa.exceptions.InvalidTemplate:
         moa.ui.exitError("Invalid template: %s" % template)
+
+    if title is None or str(title).strip() == "":
+         title = moa.ui.askUser('title: ', "")
 
     job.conf['title'] = title
 
