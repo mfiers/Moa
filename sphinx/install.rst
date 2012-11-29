@@ -21,12 +21,21 @@ Recommended prerequisites are:
 
     sudo apt-get install python-dev
 
+  While on RHEL flavoured distribution users should call::
+
+    sudo yum install -y python-devel
+
 - `python-yaml`: This will install a faster YAML parser, as opposed to
    the python only YAML parser you would probably get when installing
    through pip or easy-install. On a debian based distro::
-
+   
     sudo apt-get install python-yaml
-
+    
+  While on RHEL flavoured distribution users will find this in the 
+  `EPEL <http://fedoraproject.org/wiki/EPEL>`_ repository and should 
+  call::
+  
+    sudo yum install -y pyyaml
 
 Git integration
 ...............
@@ -61,7 +70,10 @@ It is most convenient to install Moa from the
 
     pip install Moa
 
-(You might need root rights to do this)
+(You might need root rights to do this) 
+
+You will definitely need `pip <http://www.pip-installer.org>`_ installed
+to run the pip command above which is a replacement for easy_install.
 
 Note that it is possible, and even recommended, to install Moa within
 a `virtual environment <http://pypi.python.org/pypi/virtualenv>`_.

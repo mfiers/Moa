@@ -27,6 +27,18 @@ am more elaborate comment, and click "Propose File Change". On the
 next page you get the option to "Send a pull request", which pings me
 that you've made changes. (note that you now forked Moa)
 
+Software Prerequisites
+----------------------
+
+Obviously, in order to build documentation you will need to install
+`Sphinx <http://sphinx-doc.org/>`_ using the call::
+
+  pip install Sphinx
+
+For Python 2.6 users `argparse <http://pypi.python.org/pypi/argparse>`_
+is also required so call::
+
+  pip install argparse
 
 Code
 ----
