@@ -277,7 +277,10 @@ def fsCompleter(text, state):
     except IndexError:
         return None
     
-def askUser(prompt, d):
+def askUser(prompt, d=""):
+    
+    if d is None:
+        d = ""
     
     def startup_hook():
         readline.insert_text('%s' % d)
