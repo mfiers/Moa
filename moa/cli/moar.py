@@ -35,6 +35,8 @@ def moar():
         localpath = path.replace(base, '')
         level = len(localpath.split('/')) - 1
 
+        dirs.sort()
+
         if args.depth and args.depth != level:
             continue
 
