@@ -86,7 +86,7 @@ def new(job, args):
         moa.ui.exitError("Invalid template: %s" % template)
 
     if title is None or str(title).strip() == "":
-         title = moa.ui.askUser('title: ', "")
+         title = moa.ui.askUser('title:\n> ', "")
 
     job.conf['title'] = title
 
