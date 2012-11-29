@@ -22,6 +22,16 @@ from moa.sysConf import sysConf
 
 l = moa.logger.getLogger(__name__)
 
+def _checkTitle(t):
+    """
+    check if there is anything resembling a title in `t` - otherwise
+    ask the user for one
+    """
+    if t is None or str(t).strip() == "":
+        return moa.ui.askUser("Title: ")
+    else:
+        return t
+
 
 @moa.args.argument('-t', '--title', help='A title for this job')
 @moa.args.forceable
@@ -47,9 +57,11 @@ def simple(job, args):
     #make sure the correct hooks are called
     sysConf.pluginHandler.run("preNew")
 
+    title = _checkTitle(args.title)
+
     job = moa.job.newJob(
         job, template='simple',
-        title=args.title,
+        title=title,
         parameters=params)
 
     #make sure the correct hooks are called
@@ -61,9 +73,8 @@ def exclamateNoJob(job, args, command):
     Create a "simple" job & set the last command
     to the 'process' parameter
     """
-    title = args.title
-    if not args.title:
-        moa.ui.warn("Do not forget to set a title")
+
+    title = _checkTitle(args.title)
 
     job = moa.job.newJob(
         job, template='simple',
@@ -136,11 +147,15 @@ def createMap(job, args):
 
         moa.ui.exitError("Job already exists, use -f to override")
 
+
     params = []
 
     command = moa.ui.askUser('process:\n> ', '')
 
     params.append(('process', command))
+
+
+    title = _checkTitle(args.title)
 
     input = moa.ui.askUser('input:\n> ', '')
     output = moa.ui.askUser('output:\n> ', './*')
@@ -149,7 +164,7 @@ def createMap(job, args):
 
     moa.job.newJob(
         job, template='map',
-        title=args.title,
+        title=title,
         parameters=params)
 
 
@@ -200,6 +215,8 @@ def createReduce(job, args):
 
     params.append(('process', command))
 
+    title = _checkTitle(args.title)
+
     input = moa.ui.askUser('input:\n> ', '')
     output = moa.ui.askUser('output:\n> ', './output')
     params.append(('input', input))
@@ -207,7 +224,7 @@ def createReduce(job, args):
 
     moa.job.newJob(
         job, template='reduce',
-        title=args.title,
+        title=title,
         parameters=params)
 
 
@@ -227,149 +244,3 @@ def _sourceOrTarget(g):
         return 'source'
     return 'target'
 
-
-def createAdhoc(job):
-    """
-    Creates an adhoc job.
-    """
-    l.critical("I don't think this function is ever called!!")
-
-    wd = sysConf['cwd']
-    options = sysConf['options']
-    args = sysConf['newargs']
-
-    if (not options.force and
-            os.path.exists(os.path.join(wd, '.moa', 'template'))):
-
-        moa.ui.exitError("Job already exists, use -f to override")
-
-    command = " ".join(args).strip()
-
-    if not command:
-        command = moa.ui.askUser('command:\n>', '')
-
-    l.info('Parsing command: %s' % command)
-    params = []
-    mode = None
-    searchGlobs = True
-
-    if options.mode:
-        mode = options.mode
-        if options.mode == 'simple':
-            searchGlobs = False
-
-        if not options.mode in ['seq', 'par', 'all', 'simple']:
-            l.critical("Unknown adhoc mode: %s" % options.mode)
-            sys.exit(-1)
-    elif '$<' in command:
-        mode = 'seq'
-        searchGlobs = False
-    elif ('$^' in command) or ('$?' in command):
-        mode = 'all'
-        searchGlobs = False
-        l.warning("Observed '$^' or '$?', setting mode to 'all'")
-        l.warning("Processing all files in one go")
-
-    #see if we have to look for file globs
-    if not searchGlobs:
-        l.info("No recognizable globs found")
-    else:
-        #it appears to make sense to see if there is a glob in the command
-        refindGlob = re.compile(
-            r"([^ *]+"
-            + os.sep
-            + ")?([^ *]*\*[^ *]*?)((?:\.[^ .*]+)?)")
-
-        globs = []
-        for g in refindGlob.finditer(command):
-            globs.append(g)
-
-        if globs:
-            globReplace = '$<', '$t'
-            mode = 'seq'
-            if len(globs) > 2:
-                raise Exception("Too many globs ??  I not understand :(")
-            if len(globs) == 2:
-                st1 = _sourceOrTarget(globs[0])
-                st2 = _sourceOrTarget(globs[1])
-                if st1 == st2:
-                    l.warn("Unsure wich is the source & target, assuming:")
-                    inGlob, outGlob = globs
-
-                if st1 == 'source':
-                    inGlob, outGlob = globs
-                else:
-                    outGlob, inGlob = globs
-                    globReplace = '$t', '$<'
-
-                l.info("Input glob: %s" % inGlob.group())
-                l.info("Output glob: %s" % outGlob.group())
-            else:
-                l.info("Input glob: %s" % globs[0].group())
-                inGlob, outGlob = globs[0], None
-
-            inD, inG, inE = inGlob.groups()
-            if not inD:
-                inD = ""
-
-            if not inE:
-                inE = ""
-
-            l.info(" - set input dir        : %s" % inD)
-            l.info(" - set input glob       : %s" % inG)
-            l.info(" - set input extension  : %s" % inE[1:])
-
-            params.append(('input_dir', inD))
-            params.append(('input_glob', inG))
-            params.append(('input_extension', inE[1:]))
-
-            if outGlob:
-                ouD, ouG, ouE = outGlob.groups()
-                if not ouD:
-                    ouD = ""
-                if not ouE:
-                    ouE = ""
-
-                ouG1, ouG2 = ouG.split('*')
-                sed = r"s^\(.*\)%s^%s%s\1%s%s^g" % (
-                    inE.replace('.', '\.'),
-                    ouD.replace('/', '/'),
-                    ouG.split('*')[0],
-                    ouG.split('*')[1],
-                    ouE
-                    )
-                l.info(" - set name_sed         : %s " % sed)
-                l.info(" - set output dir       : %s " % ouD)
-                params.append(('output_dir', ouD))
-                params.append(('name_sed', sed))
-
-            #hack the commandline
-            for i in range(len(globs) - 1, -1, -1):
-                g = globs[i]
-                command = (command[:g.start()] +
-                           globReplace[i] +
-                           command[g.end():])
-
-    if not mode:
-        mode = 'simple'
-
-    if command:
-        l.info(" - set command          : %s" % command)
-        params.append(('process', command))
-
-    params.append(('mode', mode))
-
-    l.info(" - set mode             : %s" % mode)
-
-    if mode == 'seq':
-        l.warning("Note: adhoc is running in sequential ('seq') mode. If ")
-        l.warning("if the individual jobs do not interfere ")
-        l.warning("consider setting adhoc to parallel operation:")
-        l.warning("$ moa set mode=par")
-
-    for pk, pv in params:
-        l.debug('setting parameters %s to %s' % (pk, pv))
-
-    moa.job.newJob(job, template='adhoc',
-                   title=options.title,
-                   parameters=params)
