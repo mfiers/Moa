@@ -37,17 +37,13 @@ function _moa_prompt {
     local lc=$(history 1)
     lc="${lc# *[0-9]*  }"
 
-    #save the last command to a user specific location
-    if [[ ! -d '~/.config/moa' ]]
-    then
-        mkdir -p ~/.config/moa
-    fi
-    echo $lc > ~/.config/moa/last.command
+    #make sure history is flushed
+    history -a
 
     #if not in a moa dir - stop here
     [[ -d '.moa' ]] || return 0
 
-    #and add it to the local history if this is a mob job
+    #and add the last history command to a local history
     if [[ -w '.moa' ]]
     then
         if [[ ! -a '.moa/local_bash_history' ]]
