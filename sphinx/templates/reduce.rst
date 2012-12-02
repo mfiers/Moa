@@ -49,7 +49,7 @@ Parameters
   The command to execute
 
   | *type*: `string`
-  | *default*: `True`
+  | *default*: `echo "input: {{ input|join(" ")}}"; echo "output: {{ output }}"`
   | *optional*: `False`
 
 

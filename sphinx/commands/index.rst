@@ -1,50 +1,38 @@
 Command reference
 =================
 
-.. _command_moa_!:
+.. _command_moa_run:
 
-moa **!**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+moa **run**
+~~~~~~~~~~~~~~~~~~~~~~~
 
-~~~~~~~~~~~~~~~~~~
-usage: moa ! [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
+usage: moa run [-h] [-v] [--bg] [--profile] [-j THREADS] [--ol]
+               [--olq OPENLAVAQUEUE] [--olx OPENLAVAEXTRA]
+               [--oln OPENLAVAPROCS] [--oldummy] [--olm OPENLAVAHOST]
 
-Create a 'simple' job from the last command issued.
-
-Set the `process` parameter to the last issued command. If a moa
-job exists in the current directory, then the `process` parameter
-is set without questions. (even if the Moa job in question does
-not use the `process` parameter).  If no moa job exists, a
-`simple` job is created first.
-
-*Note:* This works only when using `bash` and if `moainit` is
-sourced properly. `moainit` defines a bash function `_moa_prompt`
-that is called every time a command is issued (using
-`$PROMPT_COMMAND`). The `_moa_prompt` function takes the last
-command from the bash history and stores it in
-`~/.config/moa/last.command`. Additionally, the `_moa_prompt`
-function stores all commands issued in a Moa directory in
-`.moa/local_bash_history`.
+execute the template 'run' command. Execution depends on the
+template. This command can only be exeucted from within a template.
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -r, --recursive       Run this job recursively (default: false)
-  -v, --verbose         Show debugging output (default: False)
-  --profile             Run the profiler (default: False)
-  -f, --force           Force this action (default: False)
-  -t TITLE, --title TITLE
-                        A title for this job (default: None)
+  -h, --help           show this help message and exit
+  -v, --verbose        Show debugging output
+  --bg                 Run moa in the background (implies -s)
+  --profile            Run the profiler
+  -j THREADS           No threads to use when running Ruffus
+  --ol                 Use OpenLava as actor
+  --olq OPENLAVAQUEUE  The Openlava queue to submit this job to
+  --olx OPENLAVAEXTRA  Extra arguments for bsub
+  --oln OPENLAVAPROCS  The number of processors the jobs requires
+  --oldummy            Do not execute - just create a script to run
+  --olm OPENLAVAHOST   The host to use for openlava
 
-~~~~~~~~~~~~~~~~~~
-
-
-.. _command_moa_archive:
+~~~~~~~~~~~~~~~~~~.. _command_moa_archive:
 
 moa **archive**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa archive [-h] [-r] [-v] [--profile] [-f] [-s] [-t] [name]
+usage: moa archive [-h] [-v] [--profile] [-f] [-s] [-t] [name]
 
 Archive a job, or tree with jobs for later reuse.
 
@@ -59,16 +47,15 @@ parameter - in which case all (moa job containing) subdirectories
 are included in the archive.
 
 positional arguments:
-  name             archive name (default: None)
+  name            archive name (default: None)
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
-  -f, --force      Force this action (default: False)
-  -s, --sync       Alternative approach to deal with sync type jobs - only include _ref directories (default: False)
-  -t, --template   Store this archive as a template (default: False)
+  -h, --help      show this help message and exit
+  -v, --verbose   Show debugging output (default: False)
+  --profile       Run the profiler (default: False)
+  -f, --force     Force this action (default: False)
+  -s, --sync      Alternative approach to deal with sync type jobs - only include _ref directories (default: False)
+  -t, --template  Store this archive as a template (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -79,15 +66,14 @@ moa **archive_excl**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa archive_excl [-h] [-r] [-v] [--profile]
+usage: moa archive_excl [-h] [-v] [--profile]
 
 Toggle a directory to be included in an moa archive.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -98,15 +84,14 @@ moa **archive_incl**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa archive_incl [-h] [-r] [-v] [--profile]
+usage: moa archive_incl [-h] [-v] [--profile]
 
 Toggle a directory to be included in an moa archive.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -117,7 +102,7 @@ moa **blog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa blog [-h] [-r] [-v] [--profile] [message [message ...]]
+usage: moa blog [-h] [-v] [--profile] [-t TITLE] [message [message ...]]
 
 Add an entry to the job blog (in .moa/doc/blog/)
 
@@ -141,10 +126,11 @@ positional arguments:
   message
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help            show this help message and exit
+  -v, --verbose         Show debugging output (default: False)
+  --profile             Run the profiler (default: False)
+  -t TITLE, --title TITLE
+                        mandatory job title (default: None)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -155,7 +141,7 @@ moa **change**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa change [-h] [-r] [-v] [--profile] [message [message ...]]
+usage: moa change [-h] [-v] [--profile] [-t TITLE] [message [message ...]]
 
 Add entry to CHANGELOG.md
 
@@ -191,10 +177,11 @@ positional arguments:
   message
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help            show this help message and exit
+  -v, --verbose         Show debugging output (default: False)
+  --profile             Run the profiler (default: False)
+  -t TITLE, --title TITLE
+                        mandatory job title (default: None)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -205,18 +192,17 @@ moa **changelog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa changelog [-h] [-r] [-v] [--profile] [no_entries]
+usage: moa changelog [-h] [-v] [--profile] [no_entries]
 
 Print a changelog to stdout
 
 positional arguments:
-  no_entries       No of changelog entries to show (default 10) (default: 10)
+  no_entries     No of changelog entries to show (default 10) (default: 10)
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -227,7 +213,7 @@ moa **cp**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa cp [-h] [-r] [-v] [--profile] [-o] from [to]
+usage: moa cp [-h] [-v] [--profile] [-r] [-o] from [to]
 
 Copy a moa job, or a tree with jobs (with -r).
 
@@ -244,9 +230,9 @@ positional arguments:
 
 optional arguments:
   -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
   -v, --verbose    Show debugging output (default: False)
   --profile        Run the profiler (default: False)
+  -r, --recursive  copy recursively - including all subdirectories (default: False)
   -o, --overwrite  if the target dir exists - overwrite (instead of copying into that dir (default: False)
 
 ~~~~~~~~~~~~~~~~~~
@@ -258,7 +244,7 @@ moa **dumpTemplate**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa dumpTemplate [-h] [-r] [-v] [--profile]
+usage: moa dumpTemplate [-h] [-v] [--profile]
 
 **moa template_dump** - Show raw template information
 
@@ -269,10 +255,9 @@ Usage::
 Show the raw template sysConf.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -283,15 +268,14 @@ moa **err**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa err [-h] [-r] [-v] [--profile]
+usage: moa err [-h] [-v] [--profile]
 
 Show the stderr of the most recently executed moa job
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -302,7 +286,7 @@ moa **files**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa files [-h] [-r] [-v] [--profile] [-a] [-n NO_FILES]
+usage: moa files [-h] [-v] [--profile] [-a] [-n NO_FILES]
 
 Show in and output files for this job
 
@@ -311,7 +295,6 @@ type filesets) and inferred from these for map type filesets.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -r, --recursive       Run this job recursively (default: false)
   -v, --verbose         Show debugging output (default: False)
   --profile             Run the profiler (default: False)
   -a, --all             Show all filesets (default: False)
@@ -327,15 +310,14 @@ moa **gitadd**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa gitadd [-h] [-r] [-v] [--profile]
+usage: moa gitadd [-h] [-v] [--profile]
 
 add this job to a git repository
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -346,15 +328,14 @@ moa **gitlog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa gitlog [-h] [-r] [-v] [--profile]
+usage: moa gitlog [-h] [-v] [--profile]
 
 Print a log to screen
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -365,7 +346,7 @@ moa **kill**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa kill [-h] [-r] [-v] [--profile]
+usage: moa kill [-h] [-v] [--profile]
 
 Kill a running job.
 
@@ -373,10 +354,9 @@ This command checks if a job is running. If so - it tries to kill
 it by sending SIGKILL (-9) to the job.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -387,7 +367,7 @@ moa **list**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa list [-h] [-r] [-v] [--profile]
+usage: moa list [-h] [-v] [--profile]
 
 Lists all known local templates
 
@@ -395,10 +375,9 @@ Print a list of all templates known to this moa installation. This
 includes locally installed templates as well.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -409,15 +388,14 @@ moa **lock**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa lock [-h] [-r] [-v] [--profile]
+usage: moa lock [-h] [-v] [--profile]
 
 Lock a job - prevent execution
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -428,7 +406,7 @@ moa **log**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa log [-h] [-r] [-v] [--profile]
+usage: moa log [-h] [-v] [--profile]
 
 Show activity log
 
@@ -436,10 +414,9 @@ Shows a log of moa commands executed. Only commands with an impact
 on the pipeline are logged, such as `moa run` & `moa set`.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -450,16 +427,42 @@ moa **map**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa map [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
+usage: moa map [-h] [-v] [--profile] [-f] [-t TITLE]
 
 create an adhoc moa 'map' job
 
-Moa will query the user for process, input & output files. An
-example session
+Moa will query the user for process, input & output files. A `map`
+job maps a set of input files on a set of output files, executing
+the `process` command for each combination. The `process`
+parameter is interpreted as a Jinja2 template with the input file
+available as `{{ input }}` and the output as `{{ output }}`.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -r, --recursive       Run this job recursively (default: false)
+  -v, --verbose         Show debugging output (default: False)
+  --profile             Run the profiler (default: False)
+  -f, --force           Force this action (default: False)
+  -t TITLE, --title TITLE
+                        A title for this job (default: None)
+
+~~~~~~~~~~~~~~~~~~
+
+
+.. _command_moa_map!:
+
+moa **map!**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa map! [-h] [-v] [--profile] [-f] [-t TITLE]
+
+create an adhoc moa 'map' job
+
+This command is exactly the same as `moa map` but uses the Moa
+local (or user) bash history instead.
+
+optional arguments:
+  -h, --help            show this help message and exit
   -v, --verbose         Show debugging output (default: False)
   --profile             Run the profiler (default: False)
   -f, --force           Force this action (default: False)
@@ -475,19 +478,18 @@ moa **mv**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa mv [-h] [-r] [-v] [--profile] from [to]
+usage: moa mv [-h] [-v] [--profile] from [to]
 
 Move, rename or renumber a moa job.
 
 positional arguments:
-  from             copy from
-  to               copy to (default: None)
+  from           copy from
+  to             copy to (default: None)
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -498,7 +500,7 @@ moa **new**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa new [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
+usage: moa new [-h] [-v] [--profile] [-f] [-t TITLE]
                template [parameter [parameter ...]]
 
 Create a new job.
@@ -516,7 +518,6 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -r, --recursive       Run this job recursively (default: false)
   -v, --verbose         Show debugging output (default: False)
   --profile             Run the profiler (default: False)
   -f, --force           Force this action (default: False)
@@ -532,15 +533,14 @@ moa **out**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa out [-h] [-r] [-v] [--profile]
+usage: moa out [-h] [-v] [--profile]
 
 Show the stdout of the most recently executed moa job
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -551,15 +551,14 @@ moa **pause**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa pause [-h] [-r] [-v] [--profile]
+usage: moa pause [-h] [-v] [--profile]
 
 Pause a running job
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -570,15 +569,14 @@ moa **pelican**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa pelican [-h] [-r] [-v] [--profile]
+usage: moa pelican [-h] [-v] [--profile]
 
 Run pelican :)
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -589,15 +587,14 @@ moa **postcommand**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa postcommand [-h] [-r] [-v] [--profile]
+usage: moa postcommand [-h] [-v] [--profile]
 
 Execute 'postcommand'
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -608,15 +605,14 @@ moa **precommand**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa precommand [-h] [-r] [-v] [--profile]
+usage: moa precommand [-h] [-v] [--profile]
 
 Execute 'precommand'
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -627,7 +623,7 @@ moa **raw_commands**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa raw_commands [-h] [-r] [-v] [--profile]
+usage: moa raw_commands [-h] [-v] [--profile]
 
 return a list available commands
 
@@ -636,10 +632,9 @@ commands as template specified ones. This command meant to be used
 by software interacting with Moa.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -650,15 +645,14 @@ moa **raw_parameters**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa raw_parameters [-h] [-r] [-v] [--profile]
+usage: moa raw_parameters [-h] [-v] [--profile]
 
 Print a list of all known parameters
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -669,7 +663,7 @@ moa **readme**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa readme [-h] [-r] [-v] [--profile]
+usage: moa readme [-h] [-v] [--profile]
 
 Edit the README.md file for this job
 
@@ -677,10 +671,9 @@ You could, obviously, also edit the file yourself - this is a mere
 shortcut - maybe it will stimulate you to maintain a README file
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -691,7 +684,7 @@ moa **reduce**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa reduce [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
+usage: moa reduce [-h] [-v] [--profile] [-f] [-t TITLE]
 
 Create a 'reduce' adhoc job.
 
@@ -723,7 +716,30 @@ directory, you will see, upon running::
 
 optional arguments:
   -h, --help            show this help message and exit
-  -r, --recursive       Run this job recursively (default: false)
+  -v, --verbose         Show debugging output (default: False)
+  --profile             Run the profiler (default: False)
+  -f, --force           Force this action (default: False)
+  -t TITLE, --title TITLE
+                        A title for this job (default: None)
+
+~~~~~~~~~~~~~~~~~~
+
+
+.. _command_moa_reduce!:
+
+moa **reduce!**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa reduce! [-h] [-v] [--profile] [-f] [-t TITLE]
+
+Create a 'reduce' adhoc job using the bash history
+
+This command is exactly the same as moa reduce, but uses the bash
+history instead of the moa process history.
+
+optional arguments:
+  -h, --help            show this help message and exit
   -v, --verbose         Show debugging output (default: False)
   --profile             Run the profiler (default: False)
   -f, --force           Force this action (default: False)
@@ -739,17 +755,16 @@ moa **refresh**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa refresh [-h] [-r] [-v] [--profile]
+usage: moa refresh [-h] [-v] [--profile]
 
 Refresh the template
 
 Reload the template from the original repository.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -760,15 +775,14 @@ moa **rehash**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa rehash [-h] [-r] [-v] [--profile]
+usage: moa rehash [-h] [-v] [--profile]
 
 cache a list of variables for command line completion
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -779,15 +793,14 @@ moa **resume**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa resume [-h] [-r] [-v] [--profile]
+usage: moa resume [-h] [-v] [--profile]
 
 Resume a running job
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -798,7 +811,7 @@ moa **set**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa set [-h] [-r] [-v] [--profile] [-f] [-s] parameter [parameter ...]
+usage: moa set [-h] [-v] [--profile] [-f] [-s] parameter [parameter ...]
 
 Set one or more variables
 
@@ -850,15 +863,14 @@ resulting in::
                 someting: else
 
 positional arguments:
-  parameter        arguments for this job, specifyas KEY=VALUE without spaces
+  parameter      arguments for this job, specifyas KEY=VALUE without spaces
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
-  -f, --force      Force this action (default: False)
-  -s, --system     store this a system configuration variable (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
+  -f, --force    Force this action (default: False)
+  -s, --system   store this a system configuration variable (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -869,7 +881,7 @@ moa **show**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa show [-h] [-r] [-v] [--profile] [-u] [-a] [-p]
+usage: moa show [-h] [-v] [--profile] [-u] [-a] [-p]
 
 Show parameters known to this job.
 
@@ -886,13 +898,12 @@ value. The two flags have the following meaning:
   variable and `M` means mandatory.
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
-  -u               show unrendered values (default: False)
-  -a               show all parameters (default: False)
-  -p               show private parameters (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
+  -u             show unrendered values (default: False)
+  -a             show all parameters (default: False)
+  -p             show private parameters (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -903,18 +914,17 @@ moa **showblog**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa showblog [-h] [-r] [-v] [--profile] [no_entries]
+usage: moa showblog [-h] [-v] [--profile] [no_entries]
 
 Print a changelog to stdout
 
 positional arguments:
-  no_entries       No of blog entries to show (default 10) (default: 10)
+  no_entries     No of blog entries to show (default 10) (default: 10)
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -925,16 +935,43 @@ moa **simple**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa simple [-h] [-r] [-v] [--profile] [-f] [-t TITLE]
+usage: moa simple [-h] [-v] [--profile] [-f] [-t TITLE]
 
 Create a 'simple' adhoc job.
 
 Simple meaning that no in or output files are tracked. Moa will
-query you for a command to execute (the `process` parameter).
+query you for a command to execute (the `process` parameter). Note
+that Moa tracks a history for all 'process' parameters used.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -r, --recursive       Run this job recursively (default: false)
+  -v, --verbose         Show debugging output (default: False)
+  --profile             Run the profiler (default: False)
+  -f, --force           Force this action (default: False)
+  -t TITLE, --title TITLE
+                        A title for this job (default: None)
+
+~~~~~~~~~~~~~~~~~~
+
+
+.. _command_moa_simple!:
+
+moa **simple!**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa simple! [-h] [-v] [--profile] [-f] [-t TITLE]
+
+Create a 'simple' adhoc job. 
+
+This command is exactly the same as `moa simple` except for the
+fact that Moa uses the bash history specific for the moa job or,
+if absent, the user bash history. This is convenient if you would
+like to register or reuse a command that you have alreayd
+executed.
+
+optional arguments:
+  -h, --help            show this help message and exit
   -v, --verbose         Show debugging output (default: False)
   --profile             Run the profiler (default: False)
   -f, --force           Force this action (default: False)
@@ -950,21 +987,20 @@ moa **status**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa status [-h] [-r] [-v] [--profile] [-u] [-R] [-p] [-a]
+usage: moa status [-h] [-v] [--profile] [-u] [-R] [-p] [-a]
 
 Show job status
 
 Print a short status of the job, including configuration
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
-  -u               show unrendered values (when using inline parameters) (default: False)
-  -R               show recursively defined parameters not specified by the local template (default: False)
-  -p               show private parameters (default: False)
-  -a               show all parameters (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
+  -u             show unrendered values (when using inline parameters) (default: False)
+  -R             show recursively defined parameters not specified by the local template (default: False)
+  -p             show private parameters (default: False)
+  -a             show all parameters (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -975,7 +1011,7 @@ moa **template**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa template [-h] [-r] [-v] [--profile]
+usage: moa template [-h] [-v] [--profile]
 
 **moa template** - Print the template name of the current job
 
@@ -984,10 +1020,9 @@ Usage::
     moa template
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -998,15 +1033,14 @@ moa **test**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa test [-h] [-r] [-v] [--profile]
+usage: moa test [-h] [-v] [--profile]
 
 Test the job parameters
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -1017,18 +1051,17 @@ moa **tree**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa tree [-h] [-r] [-v] [--profile] [-a] [filter]
+usage: moa tree [-h] [-v] [--profile] [-a] [filter]
 
 Show a directory tree and job status
 
 positional arguments:
-  filter           show only directories that match this filter (default: None)
+  filter         show only directories that match this filter (default: None)
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
   -a, --all
 
 ~~~~~~~~~~~~~~~~~~
@@ -1040,15 +1073,14 @@ moa **unlock**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa unlock [-h] [-r] [-v] [--profile]
+usage: moa unlock [-h] [-v] [--profile]
 
 Unlock a job - allow execution
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -1059,7 +1091,7 @@ moa **unset**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa unset [-h] [-r] [-v] [--profile] parameter [parameter ...]
+usage: moa unset [-h] [-v] [--profile] parameter [parameter ...]
 
 Remove a parameter from the configuration
 
@@ -1069,13 +1101,12 @@ value. If it was an ad-hoc parameter, it is lost from the
 configuration.
 
 positional arguments:
-  parameter        parameter to unset
+  parameter      parameter to unset
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -1086,15 +1117,14 @@ moa **version**
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ~~~~~~~~~~~~~~~~~~
-usage: moa version [-h] [-r] [-v] [--profile]
+usage: moa version [-h] [-v] [--profile]
 
 print moa version number
 
 optional arguments:
-  -h, --help       show this help message and exit
-  -r, --recursive  Run this job recursively (default: false)
-  -v, --verbose    Show debugging output (default: False)
-  --profile        Run the profiler (default: False)
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
