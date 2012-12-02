@@ -93,7 +93,8 @@ def simple(job, args):
     Create a 'simple' adhoc job.
 
     Simple meaning that no in or output files are tracked. Moa will
-    query you for a command to execute (the `process` parameter).
+    query you for a command to execute (the `process` parameter). Note
+    that Moa tracks a history for all 'process' parameters used.
     """
     _createAdhocJob(job, args, 'simple', 
                     [ ('process', None)
@@ -104,30 +105,18 @@ def simple(job, args):
 @moa.args.commandName('simple!')
 def simpleX(job, args):
     """
-    Create a 'simple' adhoc job.
+    Create a 'simple' adhoc job. 
 
-    Simple meaning that no in or output files are tracked. Moa will
-    query you for a command to execute (the `process` parameter).
+    This command is exactly the same as `moa simple` except for the
+    fact that Moa uses the bash history specific for the moa job or,
+    if absent, the user bash history. This is convenient if you would
+    like to register or reuse a command that you have alreayd
+    executed.
     """
 
     _createAdhocJob(job, args, 'simple', 
                     [ ('process', _get_bash_history_file())])
 
-@moa.args.argument('-t', '--title', help='A title for this job')
-@moa.args.forceable
-@moa.args.commandName('map!')
-def createMapX(job, args):
-    """
-    create an adhoc moa 'map' job
-
-    Moa will query the user for process, input & output files. An
-    example session
-    """
-    _createAdhocJob(job, args, 'map', [
-            ( 'process', _get_bash_history_file() ),
-            ('input', None),
-            ('output', None),
-            ])
 
 @moa.args.argument('-t', '--title', help='A title for this job')
 @moa.args.forceable
@@ -136,8 +125,12 @@ def createMap(job, args):
     """
     create an adhoc moa 'map' job
 
-    Moa will query the user for process, input & output files. An
-    example session
+    Moa will query the user for process, input & output files. A `map`
+    job maps a set of input files on a set of output files, executing
+    the `process` command for each combination. The `process`
+    parameter is interpreted as a Jinja2 template with the input file
+    available as `{{ input }}` and the output as `{{ output }}`.
+
     """
     _createAdhocJob(job, args, 'map', [
             ('process', None ),
@@ -145,6 +138,23 @@ def createMap(job, args):
             ('output', None),
             ])
 
+
+@moa.args.argument('-t', '--title', help='A title for this job')
+@moa.args.forceable
+@moa.args.commandName('map!')
+def createMapX(job, args):
+    """
+    create an adhoc moa 'map' job
+
+    This command is exactly the same as `moa map` but uses the Moa
+    local (or user) bash history instead.
+
+    """
+    _createAdhocJob(job, args, 'map', [
+            ( 'process', _get_bash_history_file() ),
+            ('input', None),
+            ('output', None),
+            ])
 
 @moa.args.argument('-t', '--title', help='A title for this job')
 @moa.args.forceable
