@@ -207,6 +207,31 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
+.. _command_moa_clean:
+
+moa **clean**
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~
+usage: moa clean [-h] [-v] [--profile]
+
+Clean everything except the moa job from a directory.
+
+moa clean removes all files in the current directory plus all
+known output files that are not in the current directory. Empty
+directories will be removed as well.
+
+Note that this command can be overridden by defining a template
+"clean" command
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -v, --verbose  Show debugging output (default: False)
+  --profile      Run the profiler (default: False)
+
+~~~~~~~~~~~~~~~~~~
+
+
 .. _command_moa_cp:
 
 moa **cp**
