@@ -10,8 +10,7 @@ without losing any of the flexibility of the command line (see
 
 Download and installation instructions can be found in: :ref:`install-label`.
 
-*NOTE: The software (and manual) are under development. Things might
- still change.*
+*NOTE: The software and manual are under development. Things might change.*
 
 
 Introduction
