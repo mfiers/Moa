@@ -30,7 +30,7 @@ def _checkTitle(j, argstitle):
     rv = ""
 
     if argstitle:
-        rv = t
+        rv = argstitle
     else:
         default = ""
         if j.conf.is_local('title') and j.conf.title:
