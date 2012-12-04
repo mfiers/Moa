@@ -396,7 +396,7 @@ class Job(object):
         """
         parser, cparser = moa.args.getParser()
 
-        for comm in ['unittest', 'prepare', 'finish']:
+        for comm in ['unittest', 'prepare', 'finish', 'clean']:
             if self.hasCommand(comm):
                 # this does not have to be defined in the .moa - if it is here
                 # we'll register it
