@@ -8,6 +8,8 @@ inspect, execute and repeat workflows in a command line environment -
 without losing any of the flexibility of the command line (see
 :ref:`goals`).
 
+Download and installation instructions can be found in: :ref:`install-label`.
+
 *NOTE: The software (and manual) are under development. Things might
  still change.*
 
@@ -85,6 +87,7 @@ Table of contents:
    sync
    git
    contribute
+   thanks
    write_template
    commands/index
    templates/index
