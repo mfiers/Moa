@@ -27,6 +27,62 @@ l = moa.logger.getLogger(__name__)
 
 
 @moa.args.needsJob
+@moa.args.command
+def clean(job, args):
+    """
+    Clean everything except the moa job from a directory.
+
+    moa clean removes all files in the current directory plus all
+    known output files that are not in the current directory. Empty
+    directories will be removed as well.
+
+    Note that this command can be overridden by defining a template
+    "clean" command
+    """ 
+    jobfiles = list(job.getFiles())
+    
+    moa.ui.warn("Cleaning job - retaining %d files" % len(jobfiles))
+
+    noRemoved = 0
+
+    def mess():        
+        if noRemoved < 15:
+            moa.ui.message("removing %s" % f)
+        elif noRemoved == 15:
+            moa.ui.message("surpressing further messages")
+
+    for fs in job.data.filesets:
+        fsi = job.data.filesets[fs]
+        if fsi.category != 'output': 
+            continue
+        for f in fsi.files:
+            if os.path.exists(f):
+                noRemoved += 1
+                os.remove(f)
+                mess()
+        
+    dirsToRemove = []
+    for f in os.listdir('.'):
+        if f in jobfiles:
+            continue
+        if f == '.moa':
+            continue
+        
+        if os.path.isdir(f):
+            if os.listdir(f) == []:
+                noRemoved += 1
+                os.rmdir(f)
+                mess()
+            else:
+                moa.ui.message("not removing '%s' - not empty" % f)
+        else:
+            os.remove(f)
+            noRemoved += 1
+            mess()
+            
+    moa.ui.message("Removed %d files and directories" % noRemoved)
+
+@moa.args.needsJob
 @moa.args.private
 @moa.args.command
 def archive_incl(job, args):
