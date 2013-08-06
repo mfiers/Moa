@@ -7,6 +7,9 @@ plugins:
     openLavaActor:
       enabled: true
       module: moa.plugin.job.openLavaActor
+    pbsActor:
+      enabled: true
+      module: moa.plugin.job.pbsActor
   system:
     moaGit:
       module: moa.plugin.system.moaGit
@@ -95,7 +98,7 @@ mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True
 default_command: status
-default_shell: '/bin/bash -e'
+default_shell: '/bin/bash -el'
 plugin_settings:
   moaGit:
     warnings: False
