@@ -7,6 +7,9 @@ plugins:
     openLavaActor:
       enabled: true
       module: moa.plugin.job.openLavaActor
+    parallelActor:
+      enabled: true
+      module: moa.plugin.job.parallelActor
     pbsActor:
       enabled: true
       module: moa.plugin.job.pbsActor
