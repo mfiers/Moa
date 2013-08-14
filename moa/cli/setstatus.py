@@ -5,7 +5,9 @@ import sys
 import argparse
 import subprocess as sp
 
-parser = argparse.ArgumentParser(description='set moa status, needs to ' + 
+import moa.utils
+
+parser = argparse.ArgumentParser(description='set moa status, needs to ' +
                                  'be executed in a moa job directory')
 
 parser.add_argument('status', help='status to set')

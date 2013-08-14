@@ -16,7 +16,7 @@ import subprocess as sp
 import sys
 import time
 
-import git
+#import git
 import moa.args
 import moa.logger
 from moa.sysConf import sysConf

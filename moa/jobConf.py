@@ -122,6 +122,8 @@ class JobConf(object):
         self.private.append(k)
         self.job.template.parameters[k].private = True
         self.job.template.parameters[k].mandatory = False
+        self.job.template.parameters[k].system = True
+
         #self.template.parameters[k].private = True
         self.jobConf[k] = v
 

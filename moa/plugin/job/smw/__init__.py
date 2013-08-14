@@ -157,7 +157,7 @@ def hook_finish(job):
 
     message = moa.ui._textFormattedMessage(
         [sysConf.args.changeMessage,
-         sysConf.doc.changeMessage] )
+         sysConf.plugin.doc.changeMessage] )
     
     if sysConf.commands[sysConf.args.command]['logJob']:
         if sysConf.args.command != 'smw_save_job':
@@ -275,7 +275,7 @@ def _saveChangeMessage(job, message):
 def _saveBlogToSmw(job):
 
     project = job.conf.get('project', DEFAULT_PROJECT)
-    blog = sysConf.doc.blog
+    blog = sysConf.plugin.doc.blog
 
     if not "\n".join(blog).strip():
         #empty message - return

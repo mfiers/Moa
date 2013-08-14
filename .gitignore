@@ -9,3 +9,5 @@ MANIFEST
 dist/
 build
 moa.egg-info
+Moa.sublime-workspace
+Moa.sublime-project

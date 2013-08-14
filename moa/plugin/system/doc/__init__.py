@@ -14,6 +14,7 @@ Manage project / title / description for jobs
 """
 import datetime
 import getpass
+import markdown
 import os
 import pwd
 import socket
@@ -24,6 +25,8 @@ import time
 import jinja2
 import moa.args
 import moa.logger
+import moa.api
+
 import moa.ui
 from moa.sysConf import sysConf
 
@@ -127,6 +130,22 @@ def _readFromuser(job, ):
     sys.stdin = oldstdin
     return txt
 
+
+@moa.api.api
+def get_readme(job, format='md'):
+    """
+    Returns the README
+    """
+    readme_file = os.path.join(job.wd, 'README.md')
+    if os.path.exists(readme_file):
+        with open(readme_file) as F:
+            readme = F.read()
+            if format == 'md':
+                return readme
+            elif format == 'html':
+                return markdown.markdown(readme)
+    else:
+        return ""
 
 @moa.args.needsJob
 @moa.args.argument('message', nargs='*')
