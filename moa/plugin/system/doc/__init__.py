@@ -25,7 +25,6 @@ import jinja2
 import moa.args
 import moa.logger
 import moa.ui
-from moa.plugin.system.doc import pelican_util
 from moa.sysConf import sysConf
 
 
@@ -53,7 +52,7 @@ def hook_finish():
 
     message = moa.ui._textFormattedMessage([
         'changelog', sysConf.args.changeMessage,
-        sysConf.doc.changeMessage
+        sysConf.plugins.doc.changeMessage
     ])
 
     if message:
@@ -172,7 +171,7 @@ def blog(job, args):
     _writeMessage('blog', message, title=args.title)
 
     moa.ui.message("Created a blog entry", store=False)
-    sysConf.doc.blog = "\n".join(message)
+    sysConf.plugins.doc.blog = "\n".join(message)
 
 
 def _getFromStdin():
@@ -321,63 +320,7 @@ def change(job, args):
     _writeMessage('change', message, title=args.title)
 
     moa.ui.message("Created a changelog entry", store=False)
-    sysConf.doc.changeMessage = "\n".join(message)
-
-
-@moa.args.doNotLog
-@moa.args.needsJob
-#@moa.args.addFlag('-r', '--recursive', help='run recursively - ' +
-#                  'including all subdirectories')
-@moa.args.command
-def pelican(job, args):
-    """
-    Run pelican :)
-    """
-
-    jenv = jinja2.Environment(
-        loader=jinja2.PackageLoader('moa.plugin.system.doc'))
-    sysConf.plugins.pelican.jenv = jenv
-
-    themedir = os.path.join(os.path.dirname(__file__), 'theme')
-
-    sysConf.doc.server = socket.gethostname()
-    peliconf = '.moa/pelican.conf.py'
-    renderdir = '.moa/doc/pelican'
-
-    if not os.path.exists('.moa/doc/pages'):
-        os.makedirs('.moa/doc/pages')
-
-    #call a plugin hook to let other plugins generate pelican pages
-    # (if they want to)
-
-    job.pluginHandler.run('pelican', job=job)
-    sysConf.pluginHandler.run('pelican')
-
-    pelican_util.generate_parameter_page(job)
-    pelican_util.generate_file_page(job)
-    pelican_util.generate_readme_page(job)
-    pelican_util.generate_template_page(job)
-    pelican_util.generate_directory_page(job)
-
-    jtemplate = jenv.select_template(['pelican.conf.jinja2'])
-
-    txt = jtemplate.render(sysConf)
-    with open(peliconf, 'w') as F:
-        F.write(txt)
-
-    if not os.path.exists(renderdir):
-        os.makedirs(renderdir)
-
-    cl = ('pelican -q -t %s -m md -s .moa/pelican.conf.py ' +
-          '-o .moa/doc/pelican/ .moa/doc/') % (themedir)
-
-    l.debug("Executing pelican:")
-    l.debug("   %s" % cl)
-    sp.Popen(cl, shell=True)
-
-    #create a redirect page to the proper index.thml
-    pelican_util.generate_redirect(job)
-
+    sysConf.plugins.doc.changeMessage = "\n".join(message)
 
 @moa.args.needsJob
 @moa.args.command
