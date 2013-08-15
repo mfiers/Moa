@@ -12,6 +12,7 @@ from moa.sysConf import sysConf
 from Yaco import Yaco
 import moa.ui
 import moa.exceptions
+import moa.utils
 import moa.logger as l
 
 #make sure api is i sysConf
@@ -44,7 +45,7 @@ def _apify(f, name):
         longDesc = ''
 
     if longDesc:
-        longDesc = _removeIndent(longDesc)
+        longDesc = moa.utils.removeIndent(longDesc)
 
     # sysConf.commands[name] = {
     #     'desc': shortDesc,

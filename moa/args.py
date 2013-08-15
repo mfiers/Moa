@@ -10,6 +10,7 @@ import inspect
 from moa.sysConf import sysConf
 
 import moa.ui
+import moa.utils
 import moa.exceptions
 import moa.logger as l
 
@@ -193,32 +194,6 @@ def getParser(reuse=True):
 # Decorators - @command must always come last (hence - is executed first)
 #
 
-def _removeIndent(txt):
-    ld = [x.replace("\t", "    ").rstrip()
-          for x in txt.split("\n")]
-
-    re_firstNonSpace = re.compile('\S')
-    indents = []
-
-    for line in ld:
-        # ignore empty lines
-        if not line:
-            continue
-        fns = re_firstNonSpace.search(line)
-        if fns:
-            indents.append(fns.start())
-
-    minIndent = min(indents)
-    nld = []
-    for line in ld:
-        if not line:
-            nld.append("")
-        else:
-            nld.append(line[minIndent:])
-
-    return "\n".join(nld)
-
-
 def _commandify(f, name):
     """
     Do the actual commandification of function f with specified name
@@ -241,7 +216,7 @@ def _commandify(f, name):
         longDesc = ''
 
     if longDesc:
-        longDesc = _removeIndent(longDesc)
+        longDesc = moa.utils.removeIndent(longDesc)
 
     parser, cparser = getParser()
 

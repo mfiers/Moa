@@ -19,12 +19,43 @@ import os
 import smtplib
 import struct
 import subprocess
+import re
 import sys
 import termios
 import traceback
 
 import moa.utils
 import moa.logger as l
+
+
+def removeIndent(txt):
+    """
+    Removes indentation from a txt - for use by moa.args and moa.api
+    """
+
+    ld = [x.replace("\t", "    ").rstrip()
+          for x in txt.split("\n")]
+
+    re_firstNonSpace = re.compile('\S')
+    indents = []
+
+    for line in ld:
+        # ignore empty lines
+        if not line:
+            continue
+        fns = re_firstNonSpace.search(line)
+        if fns:
+            indents.append(fns.start())
+
+    minIndent = min(indents)
+    nld = []
+    for line in ld:
+        if not line:
+            nld.append("")
+        else:
+            nld.append(line[minIndent:])
+
+    return "\n".join(nld)
 
 
 def sendmail(server, sender, recipient, subject, message):

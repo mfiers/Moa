@@ -1,3 +1,5 @@
+environ:
+  MOA_GIT_ENFORCE: plugins.system.moaGit.enforce
 plugins:
   job:
     metavar:
@@ -16,7 +18,8 @@ plugins:
   system:
     moaGit:
       module: moa.plugin.system.moaGit
-      enabled: false
+      enabled: true
+      enforce: false
       commit:
         - '.moa/template'
         - '.gitignore'
@@ -87,11 +90,7 @@ plugins:
     moautil:
       module: moa.plugin.system.moautil
       enabled: true
-      dir: ~/.config/moa/archive
-    moaGit:
-      module: moa.plugin.system.moaGit
-      enabled: false
-      warn: true
+      dir: ~/.config/moa/archivemoa
     varInject:
       module: moa.plugin.system.varInject
       enabled: true
@@ -102,9 +101,6 @@ pandocbin: pandoc
 use_ansi: True
 default_command: status
 default_shell: '/bin/bash -el'
-plugin_settings:
-  moaGit:
-    warnings: False
 ansi:
   reset: '0'
   bold: '1'

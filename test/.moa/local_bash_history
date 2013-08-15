@@ -1,2 +1,12 @@
 /Users/u0089478/project/Moa/test/scripts/configure/00.main.sh
 /Users/u0089478/project/Moa/test/scripts/configure/00.main.sh
+/Users/u0089478/project/Moa/test/scripts/configure/00.main.sh
+/Users/u0089478/project/Moa/test/scripts/configure/00.main.sh
+/Users/u0089478/project/Moa/test/scripts/configure/00.main.sh
+/Users/u0089478/project/Moa/test/scripts/configure/00.main.sh
+ls -l
+sh ./test_scripts.py
+bash test_scripts.py
+python test_scripts.py
+git status
+git commit -m 'working on git plugin - added possibility to escape git enforcing using "export MOA_GIT_ENFORCE=False

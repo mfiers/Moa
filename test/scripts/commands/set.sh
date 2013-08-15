@@ -1,4 +1,7 @@
-tmpdir=`mktemp -d`
+#!/bin/bash
+export MOA_GIT_ENFORCE=False
+
+tmpdir=`mktemp -d -t moatest`
 cd $tmpdir
 echo "Running in $PWD"
 

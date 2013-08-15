@@ -111,5 +111,6 @@ def new(job, args):
 def hook_git_finish_new():
     l.debug('running git add for newjob')
     job = sysConf.job
-    sysConf.git.commitJob(job,
-                          "Created job %s in %s" % (job.template.name, job.wd))
+    sysConf.api.git_commit_job(
+            job,
+            "Created new %s job in %s" % (job.template.name, job.wd))

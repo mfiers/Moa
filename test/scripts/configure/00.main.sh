@@ -1,12 +1,18 @@
 #!/bin/bash -v
 
-set -x
+set -xe
 
-cd `mktemp -d`
+
+export MOA_GIT_ENFORCE=False
+
+tmpdir=`mktemp -d -t moatest`
+cd $tmpdir
 echo "Running in $PWD"
 
 echo "set up a simple job"
-moa new simple
+
+
+moa new simple -t 'something else'
 moa set title='test'
 moa set process='echo hello'
 
@@ -28,7 +34,7 @@ moa show | grep 'dummy' | grep -q 'dumb'
 echo "create a job in a subdir"
 mkdir sub
 cd sub
-moa new simple
+moa new simple -t 'something else'
 moa set title='test'
 
 echo "dummy should still be set - check"

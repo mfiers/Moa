@@ -1,6 +1,8 @@
 set -e
 
-tmpdir=`mktemp -d`
+export MOA_GIT_ENFORCE=False
+
+tmpdir=`mktemp -d -t moatest`
 
 cd $tmpdir
 
