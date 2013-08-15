@@ -1,0 +1,24 @@
+author: Mark Fiers
+backend: ruff
+commands:
+  run:
+    help: ''
+    mode: simple
+creation_date: Tue Mar 29 16:34:19 2011
+description: Execute one command, No in or output files are tracked by Moa.
+moa_id: simple
+modification_date: Wed Mar 30 06:02:01 2011
+name: simple
+parameter_category_order:
+- ''
+- input
+- system
+- advanced
+parameters:
+  process:
+    category: ''
+    help: The command to execute
+    optional: false
+    prevent_expansion: true
+    type: string
+title: Execute a "simple" ad hoc analysis
