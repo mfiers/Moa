@@ -1,2 +1,3 @@
 jobid: test
+process: echo hello
 title: test
