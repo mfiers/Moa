@@ -1,7 +1,0 @@
-class: core
-enabled: true
-installed: '2013-08-16T00:12:58.588571'
-name: simple
-priority: 100
-provider: core
-provider_type: core
