@@ -358,6 +358,8 @@ class JobConf(object):
             return self.localConf
 
     def is_local(self, key):
+        if self.job.template.parameters[key].system:
+            return True
         if key in self.localConf:
             return True
         else:
