@@ -45,12 +45,13 @@ class Template(Yaco.Yaco):
 
         super(Template, self).__init__(self)
 
-        templateFile1 = os.path.join('.moa', 'template.d', 'template')
-        templateFile2 = os.path.join('.moa', 'template')
+        templateFile1 = os.path.join(wd, '.moa', 'template.d', 'template')
+        templateFile2 = os.path.join(wd, '.moa', 'template')
 
-        self.metaFile = os.path.join('.moa', 'template.meta')
+        self.metaFile = os.path.join(wd, '.moa', 'template.meta')
         self.loadMeta()
 
+        #l.critical(templateFile1)
         if os.path.exists(templateFile1):
             self.templateFile = templateFile1
         elif os.path.exists(templateFile2):
