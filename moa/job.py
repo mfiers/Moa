@@ -154,7 +154,7 @@ class Job(object):
         self.run_hook('prepare')
 
         self.loadTemplate()
-
+        l.debug("template loaded: {}".format(self.template.name))
         self.load_config()
         #prepare filesets (if need be)
         self.run_hook('pre_filesets')
@@ -403,7 +403,7 @@ class Job(object):
                 hlp = 'run "%s" for this template' % comm
                 cp = cparser.add_parser(
                     comm, help=hlp)
-                
+
                 sysConf.commands[comm] = {
                     'desc': hlp,
                     'long': hlp,
