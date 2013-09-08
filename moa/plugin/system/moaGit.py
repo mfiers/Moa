@@ -33,7 +33,7 @@ def _exit_need_git_repo():
 @moa.api.api
 def git_check_repo():
     """
-    Check if this is git reso
+    Check if this directory is inside a git repo
 
     return False if not, returns the git root if true
     """
