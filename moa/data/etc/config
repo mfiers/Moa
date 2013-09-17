@@ -54,7 +54,7 @@ plugins:
     parameterCheck:
       module: moa.plugin.system.parameterCheck
     doc:
-      enabled: true
+      enabled: false
       module: moa.plugin.system.doc
     configure:
       module: moa.plugin.system.configure
