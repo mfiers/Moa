@@ -1,3 +1,8 @@
+Moa 0.11.20 / 2013-09-17
+==========================
+  * maintenace update
+  * disabled doc
+
 Moa 0.11.19 / 2013-09-08
 ==========================
   * many small improvements
