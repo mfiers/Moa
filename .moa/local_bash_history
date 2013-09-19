@@ -56,3 +56,4 @@ cd ~/project/Moa/
 python setup.py develop
 popd
 moa
+moa new ncbi -t test
