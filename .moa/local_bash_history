@@ -58,3 +58,5 @@ popd
 moa
 moa new ncbi -t test
 moa set ncbi_query=elephant
+moa set db=nucest
+moa

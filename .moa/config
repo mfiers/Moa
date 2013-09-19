@@ -1,4 +1,5 @@
 db: nucest
 jobid: Moa
 ncbi_query: elephant
+query: elephant
 title: test
