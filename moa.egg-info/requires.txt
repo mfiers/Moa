@@ -1,0 +1,10 @@
+Jinja2>2.0
+argparse
+sh
+pyyaml>3
+ruffus>=2.2
+Yaco>=0.1.7
+fist>=0.1.5
+unittest2>=0.5
+lockfile>=0.9
+mdGraph>=0.1markdown

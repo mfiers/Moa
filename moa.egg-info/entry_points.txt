@@ -1,0 +1,7 @@
+[console_scripts]
+moainit = moa.cli.moainit:moainit
+moa = moa.cli.main:dispatch
+moaprompt = moa.cli.moaprompt:moaprompt
+moar = moa.cli.moar:moar
+moasetstatus = moa.cli.setstatus:setstatus
+

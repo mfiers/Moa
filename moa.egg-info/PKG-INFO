@@ -1,0 +1,20 @@
+Metadata-Version: 1.0
+Name: moa
+Version: 0.11.20
+Summary: Moa - command-line workflows (in bioinformatics)
+Home-page: http://mfiers.github.com/Moa/
+Author: Mark Fiers
+Author-email: mark.fiers.42@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU General Public License (GPL)
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Unix Shell
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
