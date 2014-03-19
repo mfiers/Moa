@@ -245,15 +245,15 @@ def _copyMoaDir(job, toDir):
             sysConf.moautil.filesCopied.append(toFile)
 
 
-def hook_git_finish_cp():
-    files = sysConf.moautil.get('filesCopied', [])
-    if len(files) == 0:
-        return
+# def hook_git_finish_cp():
+#     files = sysConf.moautil.get('filesCopied', [])
+#     if len(files) == 0:
+#         return
 
-    sysConf.git.callGit('git add -f %s' % " ".join(files))
-    sysConf.git.callGit("git commit -m 'moa cp %s %s' %s" % (
-        sysConf.moautil.dirFrom, sysConf.moautil.dirTo,
-        " ".join(files)))
+#     sysConf.git.callGit('git add -f %s' % " ".join(files))
+#     sysConf.git.callGit("git commit -m 'moa cp %s %s' %s" % (
+#         sysConf.moautil.dirFrom, sysConf.moautil.dirTo,
+#         " ".join(files)))
 
 
 @moa.args.argument('todir', metavar='to', nargs='?', help='copy to')
@@ -301,17 +301,17 @@ def mv(job, args):
         shutil.move(fr, to)
 
 
-def hook_git_finish_mv():
+# def hook_git_finish_mv():
 
-    #make sure the 'from' directory is under git control
-    sysConf.git.commitDir(sysConf.moautil.mv.fr, 'Preparing for git mv')
-    #seems that we need to call git directly gitpython does not work
-    os.system('git mv %s %s' % (sysConf.moautil.mv.fr, sysConf.moautil.mv.to))
-    os.system('git commit %s %s -m "moa mv %s %s"' % (
-        sysConf.moautil.mv.fr, sysConf.moautil.mv.to,
-        sysConf.moautil.mv.fr, sysConf.moautil.mv.to))
-    #repo.index.add(map(os.path.abspath, files))
-    #repo.index.commit("moa cp %s" % " ".join(sysConf.newargs))
+#     #make sure the 'from' directory is under git control
+#     sysConf.git.commitDir(sysConf.moautil.mv.fr, 'Preparing for git mv')
+#     #seems that we need to call git directly gitpython does not work
+#     os.system('git mv %s %s' % (sysConf.moautil.mv.fr, sysConf.moautil.mv.to))
+#     os.system('git commit %s %s -m "moa mv %s %s"' % (
+#         sysConf.moautil.mv.fr, sysConf.moautil.mv.to,
+#         sysConf.moautil.mv.fr, sysConf.moautil.mv.to))
+#     #repo.index.add(map(os.path.abspath, files))
+#     #repo.index.commit("moa cp %s" % " ".join(sysConf.newargs))
 
 
 #Unittest scripts

@@ -18,7 +18,7 @@ plugins:
   system:
     moaGit:
       module: moa.plugin.system.moaGit
-      enabled: true
+      enabled: false
       enforce: false
       commit:
         - '.moa/template'

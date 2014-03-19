@@ -27,6 +27,10 @@ import moa.api
 l = moa.logger.getLogger(__name__)
 l.setLevel(moa.logger.DEBUG)
 
+
+ACTIVE = False
+
+
 def _exit_need_git_repo():
     moa.ui.exitError("Enforcing git use - please initialze a git rep")
 
@@ -162,6 +166,8 @@ def hook_prepare_3():
     """
     Register a function for submitting a job
     """
+    if not ACTIVE:
+        return
     repo = sysConf.api.git_check_repo()
 
 
@@ -171,6 +177,9 @@ def hook_finish():
     plugin specific calls
 
     """
+    if not ACTIVE:
+        return
+
     if sysConf.git.repo is None:
         return
     sysConf.pluginHandler.run('git_finish_%s' % sysConf.originalCommand)
@@ -181,6 +190,9 @@ def hook_postNew():
     'project'. If so, and there is no git repo yet - create one
 
     """
+    if not ACTIVE:
+        return
+
     if sysConf.git.repo:
         return
 
