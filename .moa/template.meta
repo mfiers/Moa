@@ -1,7 +1,0 @@
-class: core
-enabled: true
-installed: '2013-09-19T16:46:18.491909'
-name: ncbi
-priority: 100
-provider: core
-provider_type: core

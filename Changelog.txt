@@ -1,3 +1,7 @@
+Moa 0.11.21 / 2014-03-19
+==========================
+  * fixed a bug that mistook a .pyc file as belonging to a template
+
 Moa 0.11.20 / 2013-09-17
 ==========================
   * maintenace update
