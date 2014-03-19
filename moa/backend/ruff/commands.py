@@ -16,17 +16,17 @@ l = moa.logger.getLogger(__name__)
 
 class RuffCommands(Yaco.Yaco):
     """
-    Read commands for use with Ruff    
+    Read commands for use with Ruff
     """
 
     def __init__(self, confDir, moaid):
 
         super(RuffCommands, self).__init__()
-        
+
         self._confDir = confDir
         self._moaid = moaid
         self.load()
-        
+
     def load(self):
         """
         Load a ruff/jinja file
@@ -48,7 +48,7 @@ class RuffCommands(Yaco.Yaco):
                 r = r.strip()
                 if not r: continue
                 splitr = r.split("\n", 1)
-                if len(splitr) != 2:                
+                if len(splitr) != 2:
                     continue
 
                 firstline, rest = splitr
@@ -60,7 +60,7 @@ class RuffCommands(Yaco.Yaco):
                 self[spl[0]] = {
                     'script' : rest,
                     'args' : spl[1:] }
-            
+
         # then load new style -looking for files called
         # {{moa_id}}.command.*
 
@@ -68,28 +68,33 @@ class RuffCommands(Yaco.Yaco):
         glb = "%s/template.d/%s.*" % (
             self._confDir, self._moaid)
 
-        finare = re.compile(r'.*/' 
-                            + self._moaid 
+        finare = re.compile(r'.*/'
+                            + self._moaid
                             + r'\.(\w+)\.(\w+)')
 
         for f in glob.glob(glb):
             if f[-1] == '~': continue
 
             findName = finare.match(f)
-            if not findName: 
+            if not findName:
                 #this could be the .jinja or .moa file
                 continue
             cname, cext = findName.groups()
+
+            if cext in ['pyc']:
+                continue
+
             with open(f) as F:
                 raw = F.read()
             cargs = []
             if cext != 'jinja':
                 cargs.append('noexpand')
+
             self[cname] = {
                 'script' : raw,
                 'ext' : cext,
                 'args' : cargs}
-                    
+
     def  render(self, command, data):
 
         if not self.has_key(command):
@@ -98,6 +103,7 @@ class RuffCommands(Yaco.Yaco):
         this = self[command]
 
         script = this.get('script', '')
+
         args = this.get('args', [])
 
         if 'noexpand' in args:
@@ -117,7 +123,7 @@ class RuffCommands(Yaco.Yaco):
             l.debug("script")
             l.debug(script)
             raise
-            moa.ui.exitError("Error jinja rendering command") 
+            moa.ui.exitError("Error jinja rendering command")
 
         if '{{' or '{%' in rscript:
             #try a second level jinja interpretation
