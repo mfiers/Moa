@@ -49,7 +49,7 @@ def niceRunTime(d):
         if days == 1:
             return "1 day, %d hrs" % hours
         else:
-            return "%d days, %d hrs" % (days, hours)
+            return "%s days, %d hrs" % (days, hours)
 
     if hours == 0 and minutes == 0 and seconds == 0:
         return "<1 sec"
