@@ -1,3 +1,7 @@
+Moa 0.11.23 / 2014-06-09
+==========================
+  * minor bug fix with the logger for long running jobs
+
 Moa 0.11.22 / 2014-03-19
 ==========================
   * deactivated moa/git plugin
