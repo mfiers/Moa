@@ -1,3 +1,29 @@
 Command reference
 =================
 
+.. _command_moa_run:
+
+moa **run**
+~~~~~~~~~~~~~~~~~~~~~~~
+
+usage: moa run [-h] [-v] [--bg] [--profile] [-j THREADS] [--ol]
+               [--olq OPENLAVAQUEUE] [--olx OPENLAVAEXTRA]
+               [--oln OPENLAVAPROCS] [--oldummy] [--olm OPENLAVAHOST]
+
+execute the template 'run' command. Execution depends on the
+template. This command can only be exeucted from within a template.
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -v, --verbose        Show debugging output
+  --bg                 Run moa in the background (implies -s)
+  --profile            Run the profiler
+  -j THREADS           No threads to use when running Ruffus
+  --ol                 Use OpenLava as actor
+  --olq OPENLAVAQUEUE  The Openlava queue to submit this job to
+  --olx OPENLAVAEXTRA  Extra arguments for bsub
+  --oln OPENLAVAPROCS  The number of processors the jobs requires
+  --oldummy            Do not execute - just create a script to run
+  --olm OPENLAVAHOST   The host to use for openlava
+
+~~~~~~~~~~~~~~~~~~

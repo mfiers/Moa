@@ -14,6 +14,7 @@ Manage project / title / description for jobs
 """
 import datetime
 import getpass
+import markdown
 import os
 import pwd
 import socket
@@ -24,13 +25,23 @@ import time
 import jinja2
 import moa.args
 import moa.logger
+import moa.api
+
 import moa.ui
-from moa.plugin.system.doc import pelican_util
 from moa.sysConf import sysConf
 
 
 l = moa.logger.getLogger(__name__)
 
+
+def hook_prepare_3():
+    job = sysConf['job']
+
+    job.template.parameters.title = {
+        'optional': False,
+        'help': 'Job title',
+        'recursive': False,
+        'type': 'string'}
 
 
 def hook_finish():
@@ -44,7 +55,7 @@ def hook_finish():
 
     message = moa.ui._textFormattedMessage([
         'changelog', sysConf.args.changeMessage,
-        sysConf.doc.changeMessage
+        sysConf.plugins.doc.changeMessage
     ])
 
     if message:
@@ -80,9 +91,13 @@ def _writeMessage(category, txt, title=None):
         category, now.year, now.month, now.day,
         now.hour, now.minute, now.second))
 
-    if title is None:
-        title = txt[0]
+    while txt[0].strip() == "":
         txt = txt[1:]
+
+    if title is None or title.strip() == "":
+        title = '%s %d/%d/%d %d:%d:%d' % (
+            category, now.year, now.month, now.day,
+            now.hour, now.minute, now.second)
 
     txt = "\n".join(txt).rstrip() + "\n"
 
@@ -116,8 +131,25 @@ def _readFromuser(job, ):
     return txt
 
 
+@moa.api.api
+def get_readme(job, format='md'):
+    """
+    Returns the README
+    """
+    readme_file = os.path.join(job.wd, 'README.md')
+    if os.path.exists(readme_file):
+        with open(readme_file) as F:
+            readme = F.read()
+            if format == 'md':
+                return readme
+            elif format == 'html':
+                return markdown.markdown(readme)
+    else:
+        return ""
+
 @moa.args.needsJob
 @moa.args.argument('message', nargs='*')
+@moa.args.argument('-t', '--title', help='mandatory job title')
 @moa.args.command
 def blog(job, args):
     """
@@ -140,6 +172,9 @@ def blog(job, args):
     .. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
     """
 
+    if args.title is None:
+        moa.ui.exitError("Please provide a blog title using -t")
+
     sin = _getFromStdin()
 
     if args.message:
@@ -152,10 +187,10 @@ def blog(job, args):
         message.append("\nStdin:\n")
         message.extend(["    " + x for x in sin.split("\n")])
 
-    _writeMessage('blog', message)
+    _writeMessage('blog', message, title=args.title)
 
     moa.ui.message("Created a blog entry", store=False)
-    sysConf.doc.blog = "\n".join(message)
+    sysConf.plugins.doc.blog = "\n".join(message)
 
 
 def _getFromStdin():
@@ -252,6 +287,7 @@ def _show_stuff(category, no_messages):
 
 @moa.args.needsJob
 @moa.args.argument('message', nargs='*')
+@moa.args.argument('-t', '--title', help='mandatory job title')
 @moa.args.command
 def change(job, args):
     """
@@ -300,63 +336,10 @@ def change(job, args):
         message.append("\nStdin:\n")
         message.extend(["    " + x for x in sin.split("\n")])
 
-    _writeMessage('change', message)
+    _writeMessage('change', message, title=args.title)
 
     moa.ui.message("Created a changelog entry", store=False)
-    sysConf.doc.changeMessage = "\n".join(message)
-
-
-@moa.args.doNotLog
-@moa.args.needsJob
-@moa.args.command
-def pelican(job, args):
-    """
-    Run pelican :)
-    """
-
-    jenv = jinja2.Environment(
-        loader=jinja2.PackageLoader('moa.plugin.system.doc'))
-    sysConf.plugins.pelican.jenv = jenv
-
-    themedir = os.path.join(os.path.dirname(__file__), 'theme')
-
-    sysConf.doc.server = socket.gethostname()
-    peliconf = '.moa/pelican.conf.py'
-    renderdir = '.moa/doc/pelican'
-
-    if not os.path.exists('.moa/doc/pages'):
-        os.makedirs('.moa/doc/pages')
-
-    #call a plugin hook to let other plugins generate pelican pages
-    # (if they want to)
-
-    job.pluginHandler.run('pelican', job=job)
-    sysConf.pluginHandler.run('pelican')
-
-    pelican_util.generate_parameter_page(job)
-    pelican_util.generate_file_page(job)
-    pelican_util.generate_readme_page(job)
-    pelican_util.generate_template_page(job)
-
-    jtemplate = jenv.select_template(['pelican.conf.jinja2'])
-
-    txt = jtemplate.render(sysConf)
-    with open(peliconf, 'w') as F:
-        F.write(txt)
-
-    if not os.path.exists(renderdir):
-        os.makedirs(renderdir)
-
-    cl = ('pelican -q -t %s -m md -s .moa/pelican.conf.py ' +
-          '-o .moa/doc/pelican/ .moa/doc/') % (themedir)
-
-    l.debug("Executing pelican:")
-    l.debug("   %s" % cl)
-    sp.Popen(cl, shell=True)
-
-    #create a redirect page to the proper index.thml
-    pelican_util.generate_redirect(job)
-
+    sysConf.plugins.doc.changeMessage = "\n".join(message)
 
 @moa.args.needsJob
 @moa.args.command

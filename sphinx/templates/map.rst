@@ -46,20 +46,11 @@ Parameters
 
 
 
-**dummy**
-  do a dummy run
-
-  | *type*: `boolean`
-  | *default*: `False`
-  | *optional*: `True`
-
-
-
 **process**
   The command to execute
 
   | *type*: `string`
-  | *default*: `True`
+  | *default*: `{}`
   | *optional*: `False`
 
 

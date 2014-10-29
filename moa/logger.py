@@ -105,7 +105,7 @@ class MoaFormatter(logging.Formatter):
 
 LOGGER = logging.getLogger()
 handler = logging.StreamHandler()
-logmark = chr(27) + '[0;45mⲮ' + chr(27) + '[0m'
+logmark = chr(27) + '[0;45mmoa:' + chr(27) + '[0m'
 
 normalFormatter = MoaFormatter(logmark + '%(colon)s%(vis1)s%(coloff)s ' +
                                '%(name)s - %(message)s')

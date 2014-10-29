@@ -1,10 +1,10 @@
 # Copyright 2009-2011 Mark Fiers
 # The New Zealand Institute for Plant & Food Research
-# 
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
 **help** - generate help
 ------------------------
@@ -24,11 +24,12 @@ import moa.utils
 import moa.template
 import moa.plugin
 from moa.sysConf import sysConf
+import moa.args
 
 MOABASE = moa.utils.getMoaBase()
 
 JENV = None
-    
+
 def hook_defineCommands():
     sysConf['commands']['help'] = {
         'desc' : 'Display help for a template',
@@ -36,22 +37,27 @@ def hook_defineCommands():
         'needsJob' : True,
         'unittest' : TESTHELP
         }
-    
-    sysConf['commands']['welcome'] = {
-        'desc' : 'Display a welcome text',
-        'call' : welcome,
-        'private' : True,
-        'unittest' : TESTWELCOME
-        }
 
-def templateHelp(job):
+    # sysConf['commands']['welcome'] = {
+    #     'desc' : 'Display a welcome text',
+    #     'call' : welcome,
+    #     'private' : True,
+    #     'unittest' : TESTWELCOME
+    #     }
+
+
+
+#@moa.args.argument('template', nargs='?', help='template to get help for - omit for current job')
+#@moa.args.doNotLog
+#@moa.args.command
+def help(job, args):
     """
     """
 
-    args = sysConf['newargs']
-
+    template_name = args.template
+    print template_name
     tmpjob = None
-    if len(args) > 0:
+    if not template_name is None:
         #create a tmp job
         tmpjob = moa.job.newTestJob(args[0])
         template = tmpjob.template
@@ -84,8 +90,8 @@ def templateHelp(job):
 
     jinjaTemplate = JENV.get_template('template.help.jinja2')
     pager(jinjaTemplate, template)
-    
-    
+
+
 def pager(template, templateData):
     """
     render the template & send it to the pager
@@ -97,7 +103,7 @@ def pager(template, templateData):
     doc, err = p2.communicate()
     pydoc.pager(doc)
 
-    
+
 def welcome(job):
     """
     print a welcome message
@@ -109,8 +115,8 @@ def welcome(job):
         subsequent_indent='   ',
         initial_indent='                   ',
         )).lstrip()
-    
-    
+
+
     moa.ui.fprint("""{{bold}}{{blue}}Welcome to MOA!{{reset}} (v %(version)s)
 
 {{bold}}Available commands{{reset}}: %(commands)s

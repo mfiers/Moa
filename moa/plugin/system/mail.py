@@ -1,88 +1,133 @@
-# Copyright 2009-2011 Mark Fiers
-# The New Zealand Institute for Plant & Food Research
-# 
+# Copyright 2013 Mark Fiers
+#
 # This file is part of Moa - http://github.com/mfiers/Moa
-# 
+#
 # Licensed under the GPL license (see 'COPYING')
-# 
+#
 """
-**twit** - Tweet results
+**mail** - Tweet results
 ------------------------
 
-Use twitter to send a message upon job completion
+Use mailer to send a message upon job completion
+
+Depends on a working "mail" command in the path.
 """
 
 import os
 import sys
-import time
-import smtplib
-import jinja2
-from email.mime.text import MIMEText
+import getpass
+import socket
+from datetime import datetime, timedelta
 
-import Yaco
+import moa.logger
+l = moa.logger.getLogger(__name__)
+import moa.ui
+import moa.utils
 
-import moa.logger as l
 from moa.sysConf import sysConf
-import moa.plugin.logger
 
-def hook_postError():
-    postRun(data)
-def hook_postInterrupt():
-    postRun(data)
 
-MESSAGE = """
-Your job, named '{{ job.conf.title }}' has finished with state '{{ job.status }}'
+def get_core_message(job):
 
-location : {{ job.absPath }}
-start    : {{ logger.start_time }}
-stop     : {{ logger.end_time }}
-run time : {{ logger.run_time }} ({{logger.niceRunTime}})
+    template = sysConf.job.template.get('name', "")
+    title = sysConf.job.conf.getRendered('title')
 
-Parameters:
-===========
+    content = ['Moa job finished\n']
+    content.append("    Run time: %(runtime)s")
+    content.append("    Template: %s" % template)
+    content.append("      Status: %(status)s")
+    content.append("        User: %s" % getpass.getuser())
+    content.append("       Title: %s" % title)
+    content.append("          Wd: %s" % job.wd)
+    content.append("        Host: %s" % (socket.gethostname()))
+    content.append("     Command: %s" % sysConf.logger.moa_command)
+    content.append("    Full Cmd: %s" % sysConf.logger.full_command)
+    content.append("   Job start: %s" %
+                   sysConf.logger.start_time.strftime("%Y-%m-%d %H:%M:%S"))
+    content.append("     Job end: %%(jobend)s")
 
-{% for param in job.conf.keys() %}
-{{- "%20s : "|format(param) -}}
-{{ job.conf[param] }}
-{% endfor %}
+    # Add configuration
+    content.append("\nConfiguration:\n")
 
-"""
+    conf = job.conf.render()
+    ckeys = sorted(conf.keys())
 
-def postRun(job):
+    for p in ckeys:
+        if p[0] == '_':
+            continue
+        if p[:4] == 'moa_': continue
+        if job.conf.isPrivate(p):
+            continue
+        content.append("%12s: %s" % (p, conf[p]))
+
+    content = "\n".join(content)
+    return content
+
+
+def hook_async_exit():
+    print 'async'
+    pass
+
+
+def hook_logMessage():
     """
-    Send a mail out upon completion of this job
+    Send a mail out upon completing the default run
     """
-    l.info('sending mail')
-    server = sysConf.plugins.mail.server
+    runtime = datetime.today() - sysConf.logger.start_time
+    status =  sysConf.logger.status
+    if status == 'start':
+        #no messages when startin!
+        return
 
-    frm = sysConf.plugins.mail['from']
-    tom = sysConf.plugins.mail['to']
-    
-    job = sysConf.job
-    data = Yaco.Yaco()
+    recipient = sysConf.plugins.system.mail.recipient
+    sender = sysConf.plugins.system.mail.sender
+    smtp = sysConf.plugins.system.mail.smtp
 
-    sysConf.job.absPath = os.path.abspath(sysConf.job.wd)
+    if timedelta(seconds=sysConf.plugins.system.mail.mintime) > runtime:
+        # do not return anythin unless it ran for at least a certain
+        # amount of time
+        return
 
-    status = sysConf.job.get('status', 'unknown')
-    subject = "Moa job '%s' finished (%s) in '%s'" % (
-        sysConf.job.conf.title, status,
-        sysConf.job.absPath)
+    # fork - don't wait for this!
+    pid = os.fork()
 
+    if pid != 0:
+        moa.ui.message("Sending email", store=False)
+        return
 
+    content = get_core_message(sysConf.job)
+    content = content % {
+        'status': sysConf.logger.status,
+        'runtime': moa.utils.niceRunTime(runtime),
+        'jobend': sysConf.logger.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+    }
 
-    template = jinja2.Template(MESSAGE)
-    message = template.render(sysConf)
+    subject = 'Moa job %s in %s|%s (%s)' % (
+        sysConf.logger.status,
+        socket.gethostname().split('.')[0],
+        sysConf.job.wd.rsplit('/', 1)[-1],
+        moa.utils.niceRunTime(runtime))
 
-    smtp = smtplib.SMTP(server)
-    smtp.helo()
+    # start mail process
+    moa.utils.sendmail(sysConf.plugins.system.mail.smtp, sender,
+                       recipient, subject, content)
 
-    msg = MIMEText(message)
+    sys.exit(0)  # this was a fork, remember!
 
-    msg['Subject'] = 'Moa job finished in %s (%s)' % (
-        os.path.basename(sysConf.job.wd),
-        sysConf.job.status)
-    msg['From'] = frm
-    msg['To'] = tom
+    # P = sp.Popen(cl, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE,
+    # shell=True)
 
-    smtp.sendmail(frm, [tom], msg.as_string())
+    # moa.ui.message('Subject ' + subject)
+    # o, e = P.communicate(content)
 
+    # with open('.moa/mailto.log', 'a') as F:
+    #     F.write("\n%s\n%s\n" % ('-' * 90, subject))
+    #     F.write(content + "\n")
+    #     if o.strip():
+    #         F.write('\noutput:\n')
+    #         F.write(o)
+    #     if e.strip():
+    #         F.write('\n\nerror:\n')
+    #         F.write(e)
+    #     F.write("%s\n" % ("=" * 90))
+    # sys.exit(0)

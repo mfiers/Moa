@@ -158,6 +158,8 @@ def archive(job, args):
 @moa.args.argument('fromdir', metavar='from', nargs=1, help='copy from')
 @moa.args.addFlag('-o', '--overwrite', help='if the target dir exists' +
                   ' - overwrite (instead of copying into that dir')
+@moa.args.addFlag('-r', '--recursive', help='copy recursively - ' +
+                  'including all subdirectories')
 @moa.args.localRecursive
 @moa.args.command
 def cp(job, args):

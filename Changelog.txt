@@ -1,3 +1,65 @@
+Moa 0.11.19 / 2013-09-08
+==========================
+  * many small improvements
+  * Pelican is deprecated - use: https://github.com/mfiers/Woa
+
+Moa 0.11.18 / 2012-12-02
+==========================
+
+  * major rework of moa simple, map & reduce - now uses history
+  * removed moa logging the last command
+  * moar sorts dirs so that the subdirs are executed in alphanumerical order
+  * make sure title query is consistent
+  * removed deprecated code
+  * set default default to "" catch None as default & use ""
+  * Additional details in docs for newbies and RHEL package names
+
+Moa 0.11.17 / 2012-11-28
+==========================
+
+  * moa prepare & finish work again
+  * removed unset -r from the test suite
+
+Moa 0.11.16 / 2012-11-28
+==========================
+
+  * Sanity checks on filesets
+  * added alias mst for moa set title in '. $(moainit)'
+
+Moa 0.11.15 / 2012-11-22
+==========================
+
+  * vastly improved static pages based on pelican
+  * works with default pelican 3 now
+
+Moa 0.11.14 / 2012-11-15
+==========================
+
+  * restored moa cp (recursive was gone)
+  * introduced set -v in moa simple,map,reduce
+  * more test scripts
+  * added documentation on filesets
+  * added argparse as a prereq
+
+Moa 0.11.13 / 2012-11-13
+==========================
+
+  * lost of work on the documentation
+  * forcing a commit -a before running subtree add
+  * more detail in what files we do want to commit
+  * updated documentation
+  * further removed recursive operation (-r)
+  * improved moa show output
+  * define pud & ppud as system defined
+  * make sure title is defined as a project parameter
+
+Moa 0.11.12 / 2012-11-13
+==========================
+
+  * work on the documentation
+  * integrated command line completion & profile script
+  * moved --olC to --oln - that was stupid
+
 Moa 0.11.11 / 2012-11-09
 ==========================
 

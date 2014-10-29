@@ -1,3 +1,5 @@
+environ:
+  MOA_GIT_ENFORCE: plugins.system.moaGit.enforce
 plugins:
   job:
     metavar:
@@ -7,10 +9,17 @@ plugins:
     openLavaActor:
       enabled: true
       module: moa.plugin.job.openLavaActor
+    parallelActor:
+      enabled: true
+      module: moa.plugin.job.parallelActor
+    pbsActor:
+      enabled: true
+      module: moa.plugin.job.pbsActor
   system:
     moaGit:
       module: moa.plugin.system.moaGit
-      enabled: false
+      enabled: true
+      enforce: false
       commit:
         - '.moa/template'
         - '.gitignore'
@@ -18,10 +27,7 @@ plugins:
         - '.moa/template.d/*'
         - '.moa/config'
         - '.moa/project_uid'
-        - '.moa/local_bash_history'
         - '.moa/doc'
-        - '.moa/history'
-        - '.moa/local_bash_history'
         - 'moa.*'
         - 'Moa.*'
         - 'src/*'
@@ -48,7 +54,7 @@ plugins:
     parameterCheck:
       module: moa.plugin.system.parameterCheck
     doc:
-      enabled: true
+      enabled: false
       module: moa.plugin.system.doc
     configure:
       module: moa.plugin.system.configure
@@ -84,11 +90,7 @@ plugins:
     moautil:
       module: moa.plugin.system.moautil
       enabled: true
-      dir: ~/.config/moa/archive
-    moaGit:
-      module: moa.plugin.system.moaGit
-      enabled: false
-      warn: true
+      dir: ~/.config/moa/archivemoa
     varInject:
       module: moa.plugin.system.varInject
       enabled: true
@@ -98,10 +100,7 @@ mancommand: "nroff -c -mandoc 2>/dev/null | less -is"
 pandocbin: pandoc
 use_ansi: True
 default_command: status
-default_shell: '/bin/bash -e'
-plugin_settings:
-  moaGit:
-    warnings: False
+default_shell: '/bin/bash -el'
 ansi:
   reset: '0'
   bold: '1'

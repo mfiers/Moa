@@ -17,7 +17,6 @@ parameter_category_order:
 parameters:
   process:
     category: ''
-    default: 'echo "Need to specify a process"'
     help: The command to execute
     optional: false
     type: string

@@ -23,30 +23,35 @@ from moa.sysConf import sysConf
 ##
 ## Show command
 ##
-@moa.args.addFlag('-a', dest='showAll', help='show all parameters')
 @moa.args.addFlag('-p', dest='showPrivate', help='show private parameters')
-@moa.args.addFlag('-R', dest='showRecursive', help='show recursively defined '
-                  + 'parameters not specified by the local template')
-@moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values ' +
-                  '(when using inline parameters)')
+@moa.args.addFlag('-a', dest='showAll', help='show all parameters')
+@moa.args.addFlag('-u', dest='showUnrendered', help='show unrendered values')
 @moa.args.needsJob
 @moa.args.doNotLog
 @moa.args.command
 def show(job, args):
-    """
-    Show all parameters know to this job.
+    """Show parameters known to this job.
 
-    Parameters in **bold** are specifically configured for this job
-    (as opposed to those parameters that are set to their default
-    value). Parameters in red are not configured, but need to be for
-    the template to operate. Parameters in blue are not configured
-    either, but are optional.
+    The command outputs three columns, parameter name, flag and
+    value. The two flags have the following meaning:
+
+    * Origin: (l) locally defined; (`d`) default value; (`r`) recursively
+      defined; (`s`) system defined; (`x`) extra value, not in the
+      template; and (`.`) not defined.
+
+    * Private: a `p` indicates this variable to be private.
+
+    * Mandatory: a lower case `o` indicates this to be an optional
+      variable and `M` means mandatory.
+
     """
+
     moa.utils.moaDirOrExit(job)
 
     keys = job.conf.keys()
     keys.sort()
 
+    rawTemplate = job.template.getRaw()
     outkeys = []
     outvals = []
     outflags = []
@@ -71,31 +76,39 @@ def show(job, args):
             isPrivate = True
 
         isOptional = job.template.parameters[p].get('optional', True)
+        isDefault = job.template.parameters[p].get('default') == job.conf[p]
         isLocal = job.conf.is_local(p)
         isDefined = len(str(job.conf[p])) > 0
-
-        # args.showPrivate:
-        # args.showAll
-        # args.showRecursive
+        isSystem = job.template.parameters[p].get('system', False)
+        inTemplate = p in rawTemplate.parameters or p in rawTemplate.filesets
 
         if isPrivate and not args.showPrivate:
             continue
 
         if not args.showAll:
-            if not isLocal and isOptional:
+            if isOptional and isDefault:
                 continue
-
+            if isOptional and (not isDefined):
+                continue
         outkeys.append(p)
-
-        #print '%s "%s" %s' % (p, job.conf[p], isDefined)
 
         key = ''
         if not isDefined:
             key += '{{gray}}.{{reset}}'
             outvals.append('')
-        elif isLocal:
+        elif isSystem:
+
+            outvals.append(str(job.conf[p]))
+            key += '{{bold}}{{red}}s{{reset}}'
+        elif isLocal and (not inTemplate):
+            outvals.append(str(job.conf[p]))
+            key += '{{bold}}{{blue}}x{{reset}}'
+        elif isLocal and (not isDefault):
             outvals.append(str(job.conf[p]))
             key += '{{bold}}{{green}}l{{reset}}'
+        elif isDefault:
+            outvals.append(str(job.conf[p]))
+            key += '{{gray}}d{{reset}}'
         else:
             outvals.append(str(job.conf[p]))
             key += '{{magenta}}r{{reset}}'
@@ -108,33 +121,9 @@ def show(job, args):
         if isOptional:
             key += '{{gray}}o{{reset}}'
         else:
-            key += '{{green}}{{bold}}M{{reset}}'
+            key += '{{green}}{{red}}M{{reset}}'
 
         outflags.append(key)
-
-        #     #yes: locally?
-        #     if job.conf.is_local(p):
-        #         outflags.append('{{green}}L{{reset}}')
-        #     else:
-        #         outflags.append('{{magenta}}R{{reset}}')
-        #     outvals.append(job.conf[p])
-        # else:
-        #     #not defined - does it need to be??
-        #     if job.template.parameters[p].optional:
-        #         val = job.conf[p]
-        #         if val != None:
-        #             outvals.append(
-        #                 moa.ui.fformat('{{gray}}%s{{reset}}' % val, f='j'))
-        #         else:
-        #             outvals.append(
-        #                 moa.ui.fformat(
-        #                     '{{gray}}(undefined){{reset}}', f='j'))
-        #     else:
-        #         #not optional
-        #         outflags.append('{{bold}}{{red}}E{{reset}}')
-        #         outvals.append(
-        #             moa.ui.fformat(
-        #                 '{{red}}{{bold}}(undefined){{reset}}', f='j'))
 
     maxKeylen = max([len(x) for x in outkeys]) + 1
 
@@ -143,7 +132,7 @@ def show(job, args):
     wrapInit = termx - (maxKeylen + 5)
     spacer = ' ' * (maxKeylen + 5)
     spacerR = ' ' * (maxKeylen + 1) + \
-              moa.ui.fformat('{{gray}}r ', newline=False, f='j')
+              moa.ui.fformat('{{gray}}-->  ', newline=False, f='j')
     closeR = moa.ui.fformat('{{reset}}', newline=False, f='j')
 
     #print outkeys
@@ -154,17 +143,11 @@ def show(job, args):
 
     for i, zippy in enumerate(zipped):
         key, val, flag = zippy
-        if not args.showAll:
-            if not val:
-                continue
 
         moa.ui.fprint(("%%-%ds" % maxKeylen) % key, f='jinja', newline=False)
-        moa.ui.fprint(" " + flag + " ", f='jinja', newline=False)
+        moa.ui.fprint(" " + flag + "  ", f='jinja', newline=False)
         if len(str(val)) == 0:
             print
-
-        #print str( val)
-        #print textwrap.wrap(str(val), wrapInit)
 
         if args.showUnrendered:
             mainval = val
@@ -327,5 +310,6 @@ def hook_git_finish_set():
     Execute just after setting a parameter
     """
     job = sysConf.job
-    sysConf.git.commitJob(job, 'moa set %s in %s' % (
+    sysConf.api.git_commit_job(
+        job, 'moa set %s in %s' % (
         " ".join(sysConf['newargs']), job.wd))

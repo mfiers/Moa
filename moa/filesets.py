@@ -23,6 +23,10 @@ l = moa.logger.getLogger(__name__)
 
 from moa.sysConf import sysConf
     
+def tmpE(message):
+    moa.ui.error("Template error")
+    moa.ui.exitError(message)
+
 def prepare(job):
 
     try:
@@ -35,6 +39,29 @@ def prepare(job):
         
     if not job.template.has_key('filesets'):
         return
+
+    #do some sanity checking first
+    tinf = job.template.filesets
+    nosets = 0
+    for fs in tinf:
+        fsi = tinf[fs]
+        if not fsi.category in ['input', 'output', 'prerequisite']:
+            tmpE('Fileset "%s" has invalid category "%s"' % (
+                    fs, fsi.category))
+        if not fsi.type in ['map', 'single', 'set']:
+            tmpE('Fileset "%s" has invalid type "%s"' % (
+                    fs, fsi.type))
+
+        if fsi.type == 'set':
+            nosets += 1
+        elif fsi.type == 'map':
+            if not 'source' in fsi:
+                tmpE(('Fileset "%s" is of type map but has no "source" '
+                      'configured') % (
+                        fs))
+            
+    if nosets > 1:
+        tmpE('More than one "set" fileset defined')
 
     if len(job.template.filesets.keys()) > 0:
         job.conf['moa_filesets'] = []

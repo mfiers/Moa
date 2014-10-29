@@ -36,6 +36,23 @@ USERCONFIGFILE = os.path.join(os.path.expanduser('~'),
 #system wide configuration file: /etc/moa/config
 SYSCONFIGFILE = os.path.join('etc', 'moa', 'config')
 
+def _interpret_var(v):
+    try:
+        return int(v)
+    except:
+        pass
+    try:
+        return float(v)
+    except:
+        pass
+
+    if v.lower() == 'true':
+        return True
+    if v.lower() == 'false':
+        return False
+
+    return '"%s"' % v
+
 
 class SysConf(Yaco.Yaco):
 
@@ -63,6 +80,22 @@ class SysConf(Yaco.Yaco):
             lri = open(runid).read().strip()
         else:
             lri = 1
+
+        #finally, map environment variables on top of config
+        if self.has_key('environ'):
+            for k, v in self.environ.items():
+                if not k in os.environ:
+                    continue
+                venv = _interpret_var(os.environ[k])
+                cp = self
+                for sv in v.split('.'):
+                    cp = cp[sv]
+                cp = venv
+                l.debug("Environment override %s with %s" % (v, venv))
+                exec('self.%s = %s' % (v, venv))
+                #print eval('self.%s' % v)
+
+        else: print self.keys()
 
     def getUser(self):
         """

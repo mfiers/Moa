@@ -16,7 +16,8 @@ entry_points = {
 
 requires = [
     'Jinja2>2.0',
-    'GitPython>0.3',
+    'argparse',
+    'sh',
     'pyyaml>3',
     'ruffus>=2.2',
     'Yaco>=0.1.7',

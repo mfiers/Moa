@@ -25,7 +25,7 @@ Parameters
   The command to execute
 
   | *type*: `string`
-  | *default*: `echo "Need to specify a process"`
+  | *default*: `{}`
   | *optional*: `False`
 
 

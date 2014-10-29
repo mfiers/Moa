@@ -15,42 +15,43 @@ import os
 import subprocess as sp
 import sys
 import time
+import tempfile
 
-import git
+#import git
+from sh import git, ErrorReturnCode
 import moa.args
-import moa.logger as l
+import moa.logger
 from moa.sysConf import sysConf
+import moa.api
 
+l = moa.logger.getLogger(__name__)
+l.setLevel(moa.logger.DEBUG)
 
-def _callGit(cl):
-    moa.ui.message("executing %s" % cl)
-    return sp.call(cl, shell=True)
+def _exit_need_git_repo():
+    moa.ui.exitError("Enforcing git use - please initialze a git rep")
 
-
-def _getRepo(job):
+@moa.api.api
+def git_check_repo():
     """
-    Return the git repository object
+    Check if this directory is inside a git repo
+
+    return False if not, returns the git root if true
     """
 
-    wd = job.wd
     try:
-        repo = git.Repo(wd)
-        return repo
-    except git.InvalidGitRepositoryError:
-        return None
-
-
-def _checkInRepo(job):
-    """
-    Check if we're inside a repository
-    """
-    rc = sp.call(['git status --porcelain -uno'].split())
-    if rc == 0:
-        l.debug("In a git repository (%s)" % job.wd)
-        return True
-    else:
-        l.debug("NOT in a git repository (%s)" % job.wd)
+        gitdir = git('rev-parse', git_dir=True).strip()
+    except ErrorReturnCode:
+        #no git repo here.
+        if sysConf.plugins.system.moaGit.enforce:
+            _exit_need_git_repo()
         return False
+
+    if gitdir == '.git':
+        gitdir = sysConf.job.wd
+    else:
+        assert(gitdir[-4:] == '.git')
+        gitdir = gitdir[:-4]
+    return gitdir
 
 
 def _realCommit(repo, files, wd, message):
@@ -58,43 +59,45 @@ def _realCommit(repo, files, wd, message):
     Do the actual commit
     """
     message += "\n\n"
-    message += "Committed by the moa/ moaGit plugin\n"
+    message += "Committed by the moa/moaGit plugin\n"
     message += "work directory: %s\n" % wd
     message += "command line:\n"
     message += "   %s\n" % " ".join(sys.argv)
 
-    repo.index.add(map(os.path.abspath, files))
+    filename = None
+    with tempfile.NamedTemporaryFile(delete=False) as F:
+        filename = F.name
+        F.write(message)
 
-    if (len(repo.heads) == 0) or (repo.is_dirty()):
-        moa.ui.message("Committing changes to git")
-        repo.index.commit(message)
-    else:
-        l.debug("Skipping git add - repository is not dirty")
+    for f in map(os.path.abspath, files):
+        git.add(f, f=True)
 
-    #now try to remove all deleted files under wd
-    repo.git.add(u="")
-    try:
-        repo.git.commit(m='"remove deleted files"')
-    except git.exc.GitCommandError:
-        pass
+    git.commit(F=filename)
 
 
-def _checkGitIgnore(wd):
+def _checkGitIgnore(repo):
     """Approach is simple - we're ignoring everything unless
     specifically added. Both for the moa job in&output files as the
     .moa files. (unless specified differntly in the config
     """
 
-    gitignoreFile = os.path.join(wd, '.gitignore')
+    print repo
+    gitignoreFile = os.path.join(repo, '.gitignore')
     if not os.path.exists(gitignoreFile):
         if 'ignore' in sysConf.plugins.system.moaGit:
             to_ignore = sysConf.plugins.system.moaGit.ignore
         else:
             to_ignore = ['*']
+
         with open(gitignoreFile, 'w') as F:
             for ignore in to_ignore:
                 F.write("%s\n" % ignore)
 
+        git.add(gitignoreFile, f=True)
+        git.commit(gitignoreFile, m='automatic update of the .gitignore file')
+
+    else:
+        l.debug(".gitignore exists - ignoring")
 
 def _commitDir(wd, message):
     """
@@ -110,7 +113,7 @@ def _commitDir(wd, message):
     if not os.path.exists(moadir):
         return
 
-    #_checkGitIgnore(wd)
+    _checkGitIgnore(repo)
 
     files = set()
     for gl in sysConf.plugins.system.moaGit.commit:
@@ -120,25 +123,21 @@ def _commitDir(wd, message):
         remove = [x for x in files if x[-1] == '~']
         files.difference_update(remove)
 
-    _realCommit(repo, list(files), wd, message)
+    _realCommit(list(files), wd, message)
 
-
-def _commit(job, message):
+@moa.api.api
+def git_commit_job(job, message):
     """
     Commit the current job to the repository
     """
-    repo = sysConf.git.repo
-    if not repo:
-        return
+    repo = sysConf.api.git_check_repo()
+    if not repo: return
 
-    #_checkGitIgnore(job.wd)
+    _checkGitIgnore(repo)
 
     files = []
     files.extend(job.getFiles())
     _realCommit(repo, files, job.wd, message)
-
-    #repo.git.commit(os.path.join(job.wd,  '.moa', 'template.d'))
-
 
 @moa.args.needsJob
 @moa.args.command
@@ -146,15 +145,12 @@ def gitadd(job, args):
     """
     add this job to a git repository
     """
-    l.debug("adding to git %s" % job.wd)
-    _commit(job, "add/refresh of %s" % job.wd)
+    git_commit_job(job, "add/refresh of %s" % job.wd)
 
 
 def tag(job):
-    repo = _getRepo(job)
-    if not repo:
-        moa.ui.exitError("Not inside a git repository")
-        return
+    repo = sysConf.api.git_check_repo()
+    if not repo: return
 
     tagname = sysConf.args[1]
     message = sysConf.options.message
@@ -166,20 +162,11 @@ def hook_prepare_3():
     """
     Register a function for submitting a job
     """
-    sysConf.git.commit = _commit
-    sysConf.git.active = True
-    sysConf.git.callGit = _callGit
-    sysConf.git.commitJob = _commit
-    sysConf.git.commitDir = _commitDir
-    sysConf.git.getRepo = _getRepo
-    sysConf.git.repo = _getRepo(sysConf.job)
-    if not sysConf.git.repo and sysConf.plugin_settings.moaGit.warn:
-            moa.ui.warn("Cannot find a git repository!")
+    repo = sysConf.api.git_check_repo()
 
 
 def hook_finish():
     """
-
     Handle all git changes post execution - actually defer to
     plugin specific calls
 

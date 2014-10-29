@@ -154,7 +154,7 @@ class Job(object):
         self.run_hook('prepare')
 
         self.loadTemplate()
-
+        l.debug("template loaded: {}".format(self.template.name))
         self.load_config()
         #prepare filesets (if need be)
         self.run_hook('pre_filesets')
@@ -396,23 +396,24 @@ class Job(object):
         """
         parser, cparser = moa.args.getParser()
 
-        if self.hasCommand('unittest'):
-            # this does not have to be defined in the .moa - if it is here
-            # we'll register it
-            hlp = 'run unittest for this template'
-            cp = cparser.add_parser(
-                'unittest', help=hlp)
+        for comm in ['unittest', 'prepare', 'finish', 'clean']:
+            if self.hasCommand(comm):
+                # this does not have to be defined in the .moa - if it is here
+                # we'll register it
+                hlp = 'run "%s" for this template' % comm
+                cp = cparser.add_parser(
+                    comm, help=hlp)
 
-            sysConf.commands['unittest'] = {
-                'desc': hlp,
-                'long': hlp,
-                'source': 'template',
-                'recursive': 'global',
-                'needsJob': True,
-                'call': self.execute
-            }
+                sysConf.commands[comm] = {
+                    'desc': hlp,
+                    'long': hlp,
+                    'source': 'template',
+                    'needsJob': True,
+                    'call': self.execute
+                    }
 
         for c in self.template.commands:
+
             cinf = self.template.commands[c]
             hlp = cinf.get('help', '').strip()
             if not hlp:
@@ -420,10 +421,6 @@ class Job(object):
 
             cp = cparser.add_parser(
                 str(c), help=hlp)
-
-            # cp.add_argument(
-            #    "-r", "--recursive", dest="recursive", action="store_true",
-            #    default="false", help="Run this job recursively")
 
             cp.add_argument(
                 "-v", "--verbose", dest="verbose", action="store_true",
@@ -446,7 +443,6 @@ class Job(object):
                 'desc': hlp,
                 'long': hlp,
                 'source': 'template',
-                'recursive': 'global',
                 'needsJob': True,
                 'call': self.execute
             }

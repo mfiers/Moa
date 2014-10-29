@@ -13,16 +13,97 @@ moa.utils
 A set of random utilities used by Moa
 """
 
-import os
-import sys
+from email.mime.text import MIMEText
 import fcntl
+import os
+import smtplib
 import struct
+import subprocess
+import re
+import sys
 import termios
 import traceback
-import subprocess
 
 import moa.utils
 import moa.logger as l
+
+
+def removeIndent(txt):
+    """
+    Removes indentation from a txt - for use by moa.args and moa.api
+    """
+
+    ld = [x.replace("\t", "    ").rstrip()
+          for x in txt.split("\n")]
+
+    re_firstNonSpace = re.compile('\S')
+    indents = []
+
+    for line in ld:
+        # ignore empty lines
+        if not line:
+            continue
+        fns = re_firstNonSpace.search(line)
+        if fns:
+            indents.append(fns.start())
+
+    minIndent = min(indents)
+    nld = []
+    for line in ld:
+        if not line:
+            nld.append("")
+        else:
+            nld.append(line[minIndent:])
+
+    return "\n".join(nld)
+
+
+def sendmail(server, sender, recipient, subject, message):
+    """
+    Send an email.
+    """
+    msg = MIMEText(message)
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = recipient
+
+    smtp_server = smtplib.SMTP(server)
+    smtp_server.sendmail(sender, [recipient], msg.as_string())
+    smtp_server.quit()
+
+
+def niceRunTime(d):
+    """
+    Nice representation of the run time
+    d is time duration string
+    """
+    d = str(d)
+    if ',' in d:
+        days, time = d.split(',')
+    else:
+        days = 0
+        time = d
+
+    hours, minutes, seconds = time.split(':')
+    hours, minutes = int(hours), int(minutes)
+    seconds, miliseconds = seconds.split('.')
+    seconds = int(seconds)
+    miliseconds = int(miliseconds)
+
+    if days > 0:
+        if days == 1:
+            return "1 day, %d hrs" % hours
+        else:
+            return "%d days, %d hrs" % (days, hours)
+
+    if hours == 0 and minutes == 0 and seconds == 0:
+        return "<1 sec"
+    if hours > 0:
+        return "%d:%02d hrs" % (hours, minutes)
+    elif minutes > 0:
+        return "%d:%02d min" % (minutes, seconds)
+    else:
+        return "%d sec" % seconds
 
 
 def getCwd():
@@ -83,7 +164,7 @@ def getProcessInfo(pid):
     pi = dict(zip(
         'uid pid ppid c stime tty time cmd'.split(), out))
 
-    #check if this is moa invocation
+    # check if this is moa invocation
     if 'python' in pi['cmd'] and \
        'moa' in pi['cmd']:
         pi['moa'] = True
@@ -114,7 +195,7 @@ def getMoaBase():
     else:
         MOABASE = '/usr/share/moa'
 
-    #for depending scripts
+    # for depending scripts
     os.putenv('MOABASE', MOABASE)
     return MOABASE
 
@@ -157,7 +238,6 @@ def printstack(func):
 
 
 def simple_decorator(decorator):
-
     """
     This decorator can be used to turn simple functions into
     well-behaved decorators, so long as the decorators are fairly

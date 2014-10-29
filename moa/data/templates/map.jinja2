@@ -1,16 +1,13 @@
 ### run
 
-cat <<EndOfScriptEndOfScriptEndOfScriptEndOfScript
+set -v
+
 {{ process }}
-EndOfScriptEndOfScriptEndOfScriptEndOfScript
-{% if not dummy %}
-{{ process }}
-{% endif %}
 
 ### unittest noexpand
 
 moa map -t test -f --np
-for x in `seq -w 1 20`; do 
+for x in `seq -w 1 20`; do
    touch test.${x}.in
 done
 moa set process='cp {{input}} {{output}}'

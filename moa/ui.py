@@ -277,19 +277,82 @@ def fsCompleter(text, state):
     except IndexError:
         return None
     
-def askUser(prompt, d):
+
+def _get_moa_history_file(n):
+    """
+    return the history file for this parameter
+    """
+    histdir =  os.path.join(os.path.expanduser('~'), '.config', 'moa',
+                            'history')
+    if not os.path.exists(histdir):
+        os.makedirs(histdir)
+    histfile = os.path.join(histdir, n)
+    return histfile
+
+def _check_history_duplicates(value):
+    # prevent duplicates in histtory the last ten lines
+    # of the history - if the item is already there -
+    # remove it again
+    histlen = readline.get_current_history_length()
+    if histlen > 1:
+        for i in range(max(histlen-10, 0), histlen):
+            previtem = readline.get_history_item(i)
+            if previtem == value:
+                l.debug("removing duplicate %s" % value)
+                readline.remove_history_item(histlen-1)
+                break
+
+def askUser(parameter, default="", xtra_history=None):
+    """
+    :param parameter: paramter to ask value of
+    :param default: default value - if absent use the last
+      history item
+    :param xtra_history: extra history file to show to the user
+    """
+    
+    if not default:
+        default = ""
     
     def startup_hook():
-        readline.insert_text('%s' % d)
-  
+        readline.insert_text('%s' % default)
+
+    if xtra_history:
+        history_file = xtra_history
+    else:
+        history_file = _get_moa_history_file(parameter)
+
+    l.debug("reading history from %s" % history_file)
+    readline.clear_history()
     readline.set_completer_delims("\n`~!@#$^&*()-=+[]\|,?")
     readline.set_startup_hook(startup_hook)
 
     readline.set_completer(fsCompleter)
     readline.parse_and_bind("tab: complete")
     
-    vl = raw_input(prompt)
+    if history_file and os.path.exists(history_file):
+        readline.read_history_file(history_file)
+
+    vl = raw_input('%s\n> ' % parameter) 
 
     readline.set_startup_hook() 
+
+    if not xtra_history:
+        # if we're note reading from an xtra history file - 
+        # save it to the parameter history
+        _check_history_duplicates(vl)
+        readline.write_history_file(history_file)
+    else:
+        #see if we want to write to an additional history file
+        l.debug("xtra history file processed - now do boring one")
+        history_file = _get_moa_history_file(parameter)
+        l.debug("boring read %s" % history_file)
+        readline.clear_history()
+        if os.path.exists(history_file):
+            readline.read_history_file(history_file)
+        readline.add_history(vl)
+        _check_history_duplicates(vl)
+
+        readline.write_history_file(history_file)
+
     return vl 
     
