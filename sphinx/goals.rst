@@ -3,15 +3,15 @@
 Goals
 =====
 
-Moa has as objective to assist in keeping a bioinformatics project:
+The objective of Moa is to assist a bioinformatics project by keeping it;
 
 - *Organized*: 
 
     Moa facilitates project organization in many (smaller and more
-    major) ways, for example by providing a uniform way to capture
+    major) ways by providing a uniform way to capture
     commands as Moa jobs. Each Moa job is linked to a specific
-    directory, and has all configuration, templates, data, and
-    intermediate data available as files in this directory structure.
+    directory, which contains all configuration, template, data, and
+    intermediate data available as files within the directory structure.
 
 - *Documented*: 
 
@@ -21,9 +21,9 @@ Moa has as objective to assist in keeping a bioinformatics project:
 - *Reproducible*
 
    By having all templates and configuration copied into a workflow -
-   the workflow does never change (unless the user wants it to), even
+   the workflow never changes (unless the user wants it to), even
    if templates in the repository change. Moreover, all templates are
-   easy to find & inspect so it is always clear what happened.
+   easy to find and inspect so it is always clear what happened.
 
 - *Reusable & Shareable*: 
 
