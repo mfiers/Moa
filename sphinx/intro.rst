@@ -1,8 +1,5 @@
 .. _tutorial1:
 
-<<<<<<< HEAD
-The best way to understand how Moa can help to organize a command line bioinformatics project is by an example.
-=======
 Tutorial 1
 ----------
 
