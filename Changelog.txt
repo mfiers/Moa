@@ -1,3 +1,7 @@
+Moa 0.11.24 / 2014-11-05
+==========================
+  * git plugin is off for real + minor bug fixes, 
+
 Moa 0.11.23 / 2014-06-09
 ==========================
   * minor bug fix with the logger for long running jobs
