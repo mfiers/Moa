@@ -11,8 +11,8 @@ Main invocation
 
 The complete Moa Invocation is embedded in a try / except.
 
-On an error, Moa tries to executed a `post_error` hook and then (tries
-to) fail quietly. If you are interested in the actual error, run moa with the
+On an error, Moa tries to execute a `post_error` hook and then attempts to fail quietly. 
+If you are interested in the actual error, run moa with the
 '-v' flag
 
 Upon a keyboard interrupt, Moa executes the `post_interrupt` hook and
