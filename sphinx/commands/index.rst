@@ -96,117 +96,6 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
-.. _command_moa_blog:
-
-moa **blog**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa blog [-h] [-v] [--profile] [-t TITLE] [message [message ...]]
-
-Add an entry to the job blog (in .moa/doc/blog/)
-
-Allows a user to maintain a blog for this job. Use as
-follows::
-
-    $ moa blog
-    Enter your blog message (ctrl-d on an empty line to finish)
-
-    ... enter your message here ..
-
-    [ctrl-d]
-
-Note: the ctrl-d needs to be given on an empty line. The text is
-appended to moa.desciption. In the web interface this is converted
-to Markdown_.
-
-.. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
-
-positional arguments:
-  message
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --verbose         Show debugging output (default: False)
-  --profile             Run the profiler (default: False)
-  -t TITLE, --title TITLE
-                        mandatory job title (default: None)
-
-~~~~~~~~~~~~~~~~~~
-
-
-.. _command_moa_change:
-
-moa **change**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa change [-h] [-v] [--profile] [-t TITLE] [message [message ...]]
-
-Add entry to CHANGELOG.md
-
-This function allows the user to add an entry to CHANGELOG.md
-(including a timestamp). Use it as follows::
-
-    $ moa change
-    Enter your changelog message (ctrl-d on an empty line to finish)
-
-    ... enter your message here ..
-
-    [ctrl-d]
-
-Note: the ctrl-d needs to be given on an empty line. The text is
-appended to moa.desciption. In the web interface this is converted
-to Markdown_.
-
-.. _Markdown: http://daringfireball.net/projects/markdown/ markdown.
-
-Note the same can be achieved by specifying the -m parameter
-(before the command - for example:
-
-`moa -m 'intelligent remark' set ...`
-
-Note. It is also possible to cat some text into moa change:
-
-wc -l | moa change
-
-Moa will still query you for a message and append the data from
-stdin to the message
-
-positional arguments:
-  message
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --verbose         Show debugging output (default: False)
-  --profile             Run the profiler (default: False)
-  -t TITLE, --title TITLE
-                        mandatory job title (default: None)
-
-~~~~~~~~~~~~~~~~~~
-
-
-.. _command_moa_changelog:
-
-moa **changelog**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa changelog [-h] [-v] [--profile] [no_entries]
-
-Print a changelog to stdout
-
-positional arguments:
-  no_entries     No of changelog entries to show (default 10) (default: 10)
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  Show debugging output (default: False)
-  --profile      Run the profiler (default: False)
-
-~~~~~~~~~~~~~~~~~~
-
-
 .. _command_moa_cp:
 
 moa **cp**
@@ -300,42 +189,6 @@ optional arguments:
   -a, --all             Show all filesets (default: False)
   -n NO_FILES, --no_files NO_FILES
                         No filesets to show (default 10) (default: 10)
-
-~~~~~~~~~~~~~~~~~~
-
-
-.. _command_moa_gitadd:
-
-moa **gitadd**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa gitadd [-h] [-v] [--profile]
-
-add this job to a git repository
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  Show debugging output (default: False)
-  --profile      Run the profiler (default: False)
-
-~~~~~~~~~~~~~~~~~~
-
-
-.. _command_moa_gitlog:
-
-moa **gitlog**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa gitlog [-h] [-v] [--profile]
-
-Print a log to screen
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  Show debugging output (default: False)
-  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
@@ -563,24 +416,6 @@ optional arguments:
 ~~~~~~~~~~~~~~~~~~
 
 
-.. _command_moa_pelican:
-
-moa **pelican**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa pelican [-h] [-v] [--profile]
-
-Run pelican :)
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  Show debugging output (default: False)
-  --profile      Run the profiler (default: False)
-
-~~~~~~~~~~~~~~~~~~
-
-
 .. _command_moa_postcommand:
 
 moa **postcommand**
@@ -648,27 +483,6 @@ moa **raw_parameters**
 usage: moa raw_parameters [-h] [-v] [--profile]
 
 Print a list of all known parameters
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  Show debugging output (default: False)
-  --profile      Run the profiler (default: False)
-
-~~~~~~~~~~~~~~~~~~
-
-
-.. _command_moa_readme:
-
-moa **readme**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa readme [-h] [-v] [--profile]
-
-Edit the README.md file for this job
-
-You could, obviously, also edit the file yourself - this is a mere
-shortcut - maybe it will stimulate you to maintain a README file
 
 optional arguments:
   -h, --help     show this help message and exit
@@ -904,27 +718,6 @@ optional arguments:
   -u             show unrendered values (default: False)
   -a             show all parameters (default: False)
   -p             show private parameters (default: False)
-
-~~~~~~~~~~~~~~~~~~
-
-
-.. _command_moa_showblog:
-
-moa **showblog**
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-~~~~~~~~~~~~~~~~~~
-usage: moa showblog [-h] [-v] [--profile] [no_entries]
-
-Print a changelog to stdout
-
-positional arguments:
-  no_entries     No of blog entries to show (default 10) (default: 10)
-
-optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  Show debugging output (default: False)
-  --profile      Run the profiler (default: False)
 
 ~~~~~~~~~~~~~~~~~~
 
